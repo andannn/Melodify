@@ -1,26 +1,14 @@
-// TODO: impl this test
 //package com.andannn.melodify.core.database
 //
+//import kotlin.test.BeforeTest
+//import kotlin.test.Test
+//import kotlin.test.assertEquals
 //import androidx.room.Room
 //import androidx.test.core.app.ApplicationProvider
-//import androidx.test.ext.junit.runners.AndroidJUnit4
 //import com.andannn.melodify.core.database.entity.LyricEntity
 //import kotlinx.coroutines.flow.first
 //import kotlinx.coroutines.runBlocking
-//import org.junit.After
 //
-//import org.junit.Test
-//import org.junit.runner.RunWith
-//
-//import org.junit.Assert.*
-//import org.junit.Before
-//
-///**
-// * Instrumented test, which will execute on an Android device.
-// *
-// * See [testing documentation](http://d.android.com/tools/testing).
-// */
-//@RunWith(AndroidJUnit4::class)
 //class DatabaseTest {
 //    private lateinit var dataBase: MelodifyDataBase
 //    private lateinit var lyricDao: LyricDao
@@ -50,7 +38,7 @@
 //        )
 //    )
 //
-//    @Before
+//    @BeforeTest
 //    fun setUpDatabase() {
 //        dataBase = Room.inMemoryDatabaseBuilder(
 //            ApplicationProvider.getApplicationContext(),
@@ -60,13 +48,13 @@
 //        lyricDao = dataBase.getLyricDao()
 //    }
 //
-//    @After
+//    @BeforeTest
 //    fun closeDatabase() {
 //        dataBase.close()
 //    }
 //
 //    @Test
-//    fun get_lyric_by_media_store_id() = runBlocking {
+//    fun `get lyric by media store id`() = runBlocking {
 //        lyricDao.insertLyricOfMedia(mediaStoreId = 99, lyric = dummyLyricEntities[0])
 //
 //        val lyric = lyricDao.getLyricByMediaStoreIdFlow(99).first()
@@ -74,7 +62,7 @@
 //    }
 //
 //    @Test
-//    fun get_lyric_by_media_store_id_not_exist() = runBlocking {
+//    fun `get lyric by media store id not exist`() = runBlocking {
 //        lyricDao.insertLyricOfMedia(mediaStoreId = 99, lyric = dummyLyricEntities[0])
 //
 //        val lyric = lyricDao.getLyricByMediaStoreIdFlow(100).first()

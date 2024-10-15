@@ -1,25 +1,22 @@
 package com.andannn.melodify.core.database.di
 
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.andannn.melodify.core.database.MelodifyDataBase
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import org.koin.dsl.module
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
-internal actual val platformDatabaseModule = module {
-    single<MelodifyDataBase> {
+internal actual val databaseBuilder = module {
+    single<RoomDatabase.Builder<MelodifyDataBase>> {
         val dbFilePath = documentDirectory() + "/my_room.db"
         Room.databaseBuilder<MelodifyDataBase>(
             name = dbFilePath,
         )
             .setDriver(BundledSQLiteDriver())
-            .setQueryCoroutineContext(Dispatchers.IO)
-            .build()
     }
 }
 

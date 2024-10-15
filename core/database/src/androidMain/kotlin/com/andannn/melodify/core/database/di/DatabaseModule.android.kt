@@ -8,7 +8,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-internal actual val platformDatabaseModule: Module = module {
+internal actual val databaseBuilder: Module = module {
     single<MelodifyDataBase> {
         val appContext = androidContext().applicationContext
         val dbFile = appContext.getDatabasePath("melodify_database.db")
@@ -17,7 +17,6 @@ internal actual val platformDatabaseModule: Module = module {
             name = dbFile.absolutePath
         )
             .setDriver(AndroidSQLiteDriver())
-            .setQueryCoroutineContext(Dispatchers.IO)
             .build()
     }
 }
