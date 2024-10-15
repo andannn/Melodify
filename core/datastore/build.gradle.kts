@@ -12,5 +12,11 @@ kotlin {
             implementation(libs.datastore)
             implementation(libs.datastore.preferences)
         }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.okio)
+        }
     }
 }
