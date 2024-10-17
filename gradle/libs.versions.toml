@@ -10,19 +10,14 @@ androidxTestExt = "1.2.1"
 androidx-palette = "1.0.0"
 androidxCore = "1.13.1"
 androidxCoreSplashscreen = "1.0.1"
-androidxNavigation = "2.8.2"
 androidxActivity = "1.9.2"
-androidxComposeRuntimeTracing = "1.8.0-alpha03"
-accompanistSystemuicontroller = "0.36.0"
 androidGradlePlugin = "8.2.1"
-coreSplashscreen = "1.0.1"
 kotlinxCoroutines = "1.9.0"
 coilCompose = "2.7.0"
 coil3Compose = "3.0.0-rc01"
 androidxRoom = "2.7.0-alpha09"
 androidxDatastore = "1.1.1"
 okio = "3.9.1"
-protobuf = "4.28.2"
 media3 = "1.4.1"
 androidxTestRunner = "1.6.2"
 junit = "1.2.1"
@@ -43,10 +38,8 @@ sqliteBundled = "2.5.0-alpha09"
 uiTooling = "1.7.3"
 
 [libraries]
-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-palette = { module = "androidx.palette:palette", version.ref = "androidx-palette" }
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqliteBundled" }
