@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
+import com.andannn.melodify.feature.common.util.formatTime
 import io.github.aakira.napier.Napier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.math.roundToInt
@@ -181,8 +182,7 @@ private fun LyricLine(
                     Text(
                         modifier = Modifier,
                         text = lyricsLine.startTimeMs.milliseconds.toComponents { minutes, seconds, _ ->
-//                            "%02d:%02d".format(minutes, seconds)
-                            ""
+                            formatTime(minutes, seconds)
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary

@@ -52,3 +52,5 @@ fun getCategoryResource(category: CustomTab): String {
         is CustomTab.GenreDetail -> category.label
     }
 }
+
+expect fun formatTime(minutes: Long, seconds: Int): String
