@@ -16,14 +16,16 @@ import com.andannn.melodify.core.player.library.mediastore.MediaStoreSourceImpl
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.guava.future
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 import org.koin.android.ext.android.inject
+
+private const val TAG = "PlayerService"
 
 class PlayerService : MediaLibraryService(), CoroutineScope {
     private val playerWrapper: PlayerWrapper by inject()
@@ -64,12 +66,12 @@ class PlayerService : MediaLibraryService(), CoroutineScope {
                 .build()
 
         launch {
-            // waiting for finish
-            sleepCounterController.getCounterStateFlow().first {
-                it is SleepTimeCounterState.Finish
+            sleepCounterController.getCounterStateFlow().collect {
+                if (it is SleepTimeCounterState.Finish) {
+                    Napier.d(tag = TAG) { "sleep counter finished" }
+                    player.pause()
+                }
             }
-
-            player.pause()
         }
     }
 
