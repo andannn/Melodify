@@ -19,7 +19,7 @@ val modules: List<Module> = listOf(
     playerModule,
     serviceModule,
     userPreferencesModule,
-    *databaseModule.toTypedArray(),
+    databaseModule,
 
     homeFeatureModule,
     playListFeatureModule,
