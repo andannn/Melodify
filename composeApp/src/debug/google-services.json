@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "556764403952",
+    "project_id": "melodify-dev",
+    "storage_bucket": "melodify-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556764403952:android:378e88d62511e52e420a35",
+        "android_client_info": {
+          "package_name": "com.andannn.melodify.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1VEO-Jp46hZFijSMZW4q1lMw_VrT9NXw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

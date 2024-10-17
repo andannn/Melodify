@@ -2,6 +2,8 @@ plugins {
     id("melodify.kmp.application")
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.google.service)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 kotlin {
