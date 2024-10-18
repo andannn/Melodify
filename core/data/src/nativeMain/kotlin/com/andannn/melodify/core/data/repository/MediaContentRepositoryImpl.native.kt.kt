@@ -43,6 +43,7 @@ private fun MediaItem.toModel(): AudioItemModel {
         artistId = artist,
         cdTrackNumber = trackNumber ?: 0,
         discNumberIndex = 0,
+        source = source,
     )
 }
 
