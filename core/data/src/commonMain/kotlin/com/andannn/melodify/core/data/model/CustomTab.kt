@@ -29,17 +29,17 @@ sealed interface CustomTab {
     }
 
     @Serializable
-    data class AlbumDetail(val albumId: Long, val label: String) : CustomTab {
+    data class AlbumDetail(val albumId: String, val label: String) : CustomTab {
         override fun MediaContentRepository.contentFlow() = getAudiosOfAlbumFlow(albumId)
     }
 
     @Serializable
-    data class ArtistDetail(val artistId: Long, val label: String) : CustomTab {
+    data class ArtistDetail(val artistId: String, val label: String) : CustomTab {
         override fun MediaContentRepository.contentFlow() = getAudiosOfArtistFlow(artistId)
     }
 
     @Serializable
-    data class GenreDetail(val genreId: Long, val label: String) : CustomTab {
+    data class GenreDetail(val genreId: String, val label: String) : CustomTab {
         override fun MediaContentRepository.contentFlow() = getAudiosOfGenreFlow(genreId)
     }
 }

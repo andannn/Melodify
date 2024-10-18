@@ -16,13 +16,13 @@ import com.andannn.melodify.core.player.util.buildMediaItem
 
 fun MediaItem.toAppItem(): MediaItemModel = when {
     mediaId.contains(PLAYABLE_MEDIA_ITEM_PREFIX) -> AudioItemModel(
-        id = mediaId.substringAfter(PLAYABLE_MEDIA_ITEM_PREFIX).toLong(),
+        id = mediaId.substringAfter(PLAYABLE_MEDIA_ITEM_PREFIX),
         name = mediaMetadata.title.toString(),
         modifiedDate = 0,
         album = mediaMetadata.albumTitle.toString(),
-        albumId = 0,
+        albumId = "0",
         artist = mediaMetadata.artist.toString(),
-        artistId = 0,
+        artistId = "0",
         cdTrackNumber = mediaMetadata.trackNumber ?: 0,
         discNumberIndex = 0,
         artWorkUri = mediaMetadata.artworkUri.toString(),
@@ -30,14 +30,14 @@ fun MediaItem.toAppItem(): MediaItemModel = when {
     )
 
     mediaId.contains(LibraryRootCategory.ALBUM.childrenPrefix) -> AlbumItemModel(
-        id = mediaId.substringAfter(LibraryRootCategory.ALBUM.childrenPrefix).toLong(),
+        id = mediaId.substringAfter(LibraryRootCategory.ALBUM.childrenPrefix),
         name = mediaMetadata.title.toString(),
         trackCount = mediaMetadata.totalTrackCount ?: 0,
         artWorkUri = mediaMetadata.artworkUri.toString()
     )
 
     mediaId.contains(LibraryRootCategory.ARTIST.childrenPrefix) -> ArtistItemModel(
-        id = mediaId.substringAfter(LibraryRootCategory.ARTIST.childrenPrefix).toLong(),
+        id = mediaId.substringAfter(LibraryRootCategory.ARTIST.childrenPrefix),
         name = mediaMetadata.title.toString(),
         trackCount = mediaMetadata.totalTrackCount ?: 0,
         artWorkUri = mediaMetadata.artworkUri.toString()
@@ -46,7 +46,7 @@ fun MediaItem.toAppItem(): MediaItemModel = when {
     mediaId.contains(LibraryRootCategory.GENRE.childrenPrefix) -> {
         val id = mediaId.substringAfter(LibraryRootCategory.GENRE.childrenPrefix)
         GenreItemModel(
-            id = id.toLong(),
+            id = id,
             name = mediaMetadata.title.toString(),
             trackCount = mediaMetadata.totalTrackCount ?: 0,
             artWorkUri = mediaMetadata.artworkUri.toString()

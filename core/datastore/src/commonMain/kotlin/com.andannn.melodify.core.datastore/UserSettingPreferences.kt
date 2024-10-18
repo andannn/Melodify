@@ -29,7 +29,7 @@ class UserSettingPreferences(
                     preferences[intPreferencesKey(PreferencesKeyName.MEDIA_PREVIEW_MODE_KEY_NAME)]
                         ?: PreviewModeValues.LIST_PREVIEW_VALUE,
                     customTabs =
-                    preferences[stringPreferencesKey(PreferencesKeyName.CUSTOM_TABS_KEY_NAME)]
+                    preferences[stringPreferencesKey(PreferencesKeyName.CUSTOM_TABS_V2_KEY_NAME)]
                 )
             }
 
@@ -42,7 +42,7 @@ class UserSettingPreferences(
 
     suspend fun setCustomTabs(customTabs: String) {
         preferences.edit { preferences ->
-            preferences[stringPreferencesKey(PreferencesKeyName.CUSTOM_TABS_KEY_NAME)] =
+            preferences[stringPreferencesKey(PreferencesKeyName.CUSTOM_TABS_V2_KEY_NAME)] =
                 customTabs
         }
     }

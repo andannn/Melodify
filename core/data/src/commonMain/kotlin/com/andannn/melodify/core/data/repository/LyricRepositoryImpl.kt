@@ -16,13 +16,13 @@ class LyricRepositoryImpl(
     private val lyricLocalDataSource: LrclibService
 ) : LyricRepository {
     override suspend fun tryGetLyricOrIgnore(
-        mediaStoreId: Long,
+        mediaId: String,
         trackName: String,
         artistName: String,
         albumName: String?,
         duration: Long?,
     ) {
-        val lyric = lyricDao.getLyricByMediaStoreIdFlow(mediaStoreId).first()
+        val lyric = lyricDao.getLyricByMediaIdFlow(mediaId).first()
         if (lyric != null) return
 
         try {
@@ -33,7 +33,7 @@ class LyricRepositoryImpl(
                 duration = duration
             )
             lyricDao.insertLyricOfMedia(
-                mediaStoreId = mediaStoreId,
+                mediaStoreId = mediaId,
                 lyric = lyricData.toLyricEntity()
             )
         } catch (e: Exception) {
@@ -42,8 +42,8 @@ class LyricRepositoryImpl(
         }
     }
 
-    override fun getLyricByMediaStoreIdFlow(mediaStoreId: Long) =
-        lyricDao.getLyricByMediaStoreIdFlow(mediaStoreId).map {
+    override fun getLyricByMediaIdFlow(mediaStoreId: String) =
+        lyricDao.getLyricByMediaIdFlow(mediaStoreId).map {
             it?.toLyricModel()
         }
 }
