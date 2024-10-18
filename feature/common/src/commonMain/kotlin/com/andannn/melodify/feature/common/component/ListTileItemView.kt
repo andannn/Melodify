@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import io.github.aakira.napier.Napier
 
 @Composable
 fun ListTileItemView(
@@ -43,6 +44,7 @@ fun ListTileItemView(
     onMusicItemClick: () -> Unit = {},
     onOptionButtonClick: () -> Unit = {}
 ) {
+    Napier.d("ListTileItemView $albumArtUri")
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = if (isActive) {
@@ -75,7 +77,7 @@ fun ListTileItemView(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 } else {
-                        AsyncImage(
+                    AsyncImage(
                         modifier =
                         Modifier
                             .size(50.dp)
