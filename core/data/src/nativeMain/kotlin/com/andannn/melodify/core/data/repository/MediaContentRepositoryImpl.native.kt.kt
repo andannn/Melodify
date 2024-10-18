@@ -39,26 +39,31 @@ private fun MediaItem.toModel(): AudioItemModel {
         artWorkUri = source,
         modifiedDate = -1,
         album = album,
-        albumId = album.toLong(),
+        albumId = album,
         artist = artist,
-        artistId = artist.toLong(),
+        artistId = artist,
         cdTrackNumber = trackNumber,
         discNumberIndex = 0,
     )
 }
 
 internal class MediaContentRepositoryImpl : MediaContentRepository {
-    private val mediaList = Json.decodeFromString<MediaList>(mediaItems)
+    private var mediaList: MediaList = MediaList(emptyList())
 
     init {
-        Napier.d { "mediaList: $mediaList" }
+//        try {
+//            mediaList = Json.decodeFromString<MediaList>(mediaItems)
+//        } catch (e: Exception) {
+//            Napier.d { "JQN: exception $e" }
+//        }
+//        Napier.d { "JQN: mediaList $mediaList" }
     }
 
     override fun getAllMediaItemsFlow(): Flow<List<AudioItemModel>> {
         return flow {
-            emit(
-                mediaList.media.map { it.toModel() }
-            )
+//            emit(
+//                mediaList.media.map { it.toModel() }
+//            )
         }
     }
 
@@ -74,51 +79,51 @@ internal class MediaContentRepositoryImpl : MediaContentRepository {
         return flow { emit(emptyList()) }
     }
 
-    override fun getAudiosOfAlbumFlow(albumId: Long): Flow<List<AudioItemModel>> {
+    override fun getAudiosOfAlbumFlow(albumId: String): Flow<List<AudioItemModel>> {
         return flow { emit(emptyList()) }
     }
 
-    override suspend fun getAudiosOfAlbum(albumId: Long): List<AudioItemModel> {
+    override suspend fun getAudiosOfAlbum(albumId: String): List<AudioItemModel> {
         return emptyList()
     }
 
-    override fun getAudiosOfArtistFlow(artistId: Long): Flow<List<AudioItemModel>> {
+    override fun getAudiosOfArtistFlow(artistId: String): Flow<List<AudioItemModel>> {
         return flow { emit(emptyList()) }
     }
 
-    override suspend fun getAudiosOfArtist(artistId: Long): List<AudioItemModel> {
+    override suspend fun getAudiosOfArtist(artistId: String): List<AudioItemModel> {
         return emptyList()
     }
 
-    override fun getAudiosOfGenreFlow(genreId: Long): Flow<List<AudioItemModel>> {
+    override fun getAudiosOfGenreFlow(genreId: String): Flow<List<AudioItemModel>> {
         return flow { emit(emptyList()) }
     }
 
-    override suspend fun getAudiosOfGenre(genreId: Long): List<AudioItemModel> {
+    override suspend fun getAudiosOfGenre(genreId: String): List<AudioItemModel> {
         return emptyList()
     }
 
-    override fun getAlbumByAlbumIdFlow(albumId: Long): Flow<AlbumItemModel?> {
+    override fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumItemModel?> {
         return flow { emit(null) }
     }
 
-    override fun getArtistByArtistIdFlow(artistId: Long): Flow<ArtistItemModel?> {
+    override fun getArtistByArtistIdFlow(artistId: String): Flow<ArtistItemModel?> {
         return flow { emit(null) }
     }
 
-    override fun getGenreByGenreIdFlow(genreId: Long): Flow<GenreItemModel?> {
+    override fun getGenreByGenreIdFlow(genreId: String): Flow<GenreItemModel?> {
         return flow { emit(null) }
     }
 
-    override suspend fun getAlbumByAlbumId(albumId: Long): AlbumItemModel? {
+    override suspend fun getAlbumByAlbumId(albumId: String): AlbumItemModel? {
         return null
     }
 
-    override suspend fun getArtistByArtistId(artistId: Long): ArtistItemModel? {
+    override suspend fun getArtistByArtistId(artistId: String): ArtistItemModel? {
         return null
     }
 
-    override suspend fun getGenreByGenreId(genreId: Long): GenreItemModel? {
+    override suspend fun getGenreByGenreId(genreId: String): GenreItemModel? {
         return null
     }
 }

@@ -150,7 +150,6 @@ internal fun CustomTabSettingContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TabOrderPreview(
     modifier: Modifier = Modifier,
