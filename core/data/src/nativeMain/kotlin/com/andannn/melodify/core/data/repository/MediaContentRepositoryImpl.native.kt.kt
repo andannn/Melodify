@@ -34,7 +34,7 @@ private data class MediaItem(
 
 private fun MediaItem.toModel(): AudioItemModel {
     return AudioItemModel(
-        id = id.toLong(),
+        id = id,
         name = title,
         artWorkUri = source,
         modifiedDate = -1,

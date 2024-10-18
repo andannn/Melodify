@@ -270,13 +270,13 @@ private fun BottomPlayQueueSheetPreview() {
             state = state,
             playListQueue = listOf(
                 AudioItemModel(
-                    id = 0,
+                    id = "0",
                     name = "Song 1",
                     modifiedDate = 0,
                     album = "Album 1",
-                    albumId = 0,
+                    albumId = "0",
                     artist = "Artist 1",
-                    artistId = 0,
+                    artistId = "0",
                     cdTrackNumber = 1,
                     discNumberIndex = 0,
                     artWorkUri = "",

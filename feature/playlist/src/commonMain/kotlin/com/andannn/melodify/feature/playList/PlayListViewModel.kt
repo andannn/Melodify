@@ -67,27 +67,27 @@ class PlayListViewModel(
     private fun getPlayListContent() = with(mediaContentRepository) {
         when (mediaListSource) {
             MediaListSource.ALBUM -> {
-                getAudiosOfAlbumFlow(id.toLong()).map {
+                getAudiosOfAlbumFlow(id).map {
                     PlayListContent(
-                        headerInfoItem = getAlbumByAlbumId(id.toLong()),
+                        headerInfoItem = getAlbumByAlbumId(id),
                         audioList = it.toImmutableList(),
                     )
                 }
             }
 
             MediaListSource.ARTIST -> {
-                getAudiosOfArtistFlow(id.toLong()).map {
+                getAudiosOfArtistFlow(id).map {
                     PlayListContent(
-                        headerInfoItem = getArtistByArtistId(id.toLong()),
+                        headerInfoItem = getArtistByArtistId(id),
                         audioList = it.toImmutableList(),
                     )
                 }
             }
 
             MediaListSource.GENRE -> {
-                getAudiosOfGenreFlow(id.toLong()).map {
+                getAudiosOfGenreFlow(id).map {
                     PlayListContent(
-                        headerInfoItem = getGenreByGenreId(id.toLong()),
+                        headerInfoItem = getGenreByGenreId(id),
                         audioList = it.toImmutableList(),
                     )
                 }
