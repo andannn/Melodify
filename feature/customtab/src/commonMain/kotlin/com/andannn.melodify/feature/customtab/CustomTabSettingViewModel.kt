@@ -142,7 +142,7 @@ internal class CustomTabSettingViewModel(
                     )
 
                     val playListTabs = allPlayListDeferred.await().map {
-                        CustomTab.ArtistDetail(it.id, it.name)
+                        CustomTab.PlayListDetail(it.id, it.name)
                     }
                     add(
                         TabSector(

@@ -28,7 +28,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import io.github.aakira.napier.Napier
+import melodify.feature.common.generated.resources.Res
+import melodify.feature.common.generated.resources.default_image_icon
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun ListTileItemView(
@@ -37,6 +40,7 @@ fun ListTileItemView(
     albumArtUri: String = "",
     isActive: Boolean = false,
     defaultColor: Color = MaterialTheme.colorScheme.surface,
+    defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
     title: String = "",
     subTitle: String = "",
     trackNum: Int = 0,
@@ -44,7 +48,6 @@ fun ListTileItemView(
     onMusicItemClick: () -> Unit = {},
     onOptionButtonClick: () -> Unit = {}
 ) {
-    Napier.d("ListTileItemView $albumArtUri")
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = if (isActive) {
@@ -82,6 +85,8 @@ fun ListTileItemView(
                         Modifier
                             .size(50.dp)
                             .clip(MaterialTheme.shapes.extraSmall),
+                        placeholder = painterResource(defaultImagePlaceholderRes),
+                        error = painterResource(defaultImagePlaceholderRes),
                         model = albumArtUri,
                         contentDescription = "",
                     )

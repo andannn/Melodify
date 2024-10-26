@@ -7,6 +7,7 @@ import androidx.sqlite.execSQL
 import com.andannn.melodify.core.database.LyricDao
 import com.andannn.melodify.core.database.MelodifyDataBase
 import com.andannn.melodify.core.database.PlayListDao
+import com.andannn.melodify.core.database.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.module.Module
@@ -28,10 +29,21 @@ val databaseModule = module {
                     .addMigrations(
                         MIGRATION_1_2
                     )
+                    .addCallback(addFavoritePlayListCallback)
                     .build()
             }
         },
     )
+}
+
+private val addFavoritePlayListCallback = object : RoomDatabase.Callback() {
+    override fun onOpen(connection: SQLiteConnection) {
+        // Insert a default play list.
+        connection.execSQL("""
+            INSERT OR IGNORE INTO play_list_table (play_list_id, play_list_created_date, play_list_name, play_list_artwork_uri)
+            VALUES (${FAVORITE_PLAY_LIST_ID}, 0, 'My Favorite Songs', '');
+        """.trimIndent())
+    }
 }
 
 private val MIGRATION_1_2 = object : Migration(1, 2) {

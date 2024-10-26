@@ -14,6 +14,7 @@ import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.database.PlayListDao
 import com.andannn.melodify.core.database.entity.PlayListAndMedias
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
+import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.player.MediaBrowserManager
 import com.andannn.melodify.core.player.library.ALBUM_ID
 import com.andannn.melodify.core.player.library.ALBUM_PREFIX
@@ -81,7 +82,7 @@ internal class MediaContentRepositoryImpl(
 
     override fun getAllPlayListFlow(): Flow<List<PlayListItemModel>> =
         playListDao
-            .getPlayListFlow()
+            .getAllPlayListFlow()
             .map(::mapPlayListToAudioList)
 
     override fun getAudiosOfAlbumFlow(albumId: String) =
@@ -206,12 +207,12 @@ internal class MediaContentRepositoryImpl(
         ?: emptyList()
 
     override fun getAudiosOfPlayListFlow(playListId: Long): Flow<List<AudioItemModel>> {
-        return playListDao.getPlayListFlow(playListId).mapLatest(::mapPlayListToAudioList)
+        return playListDao.getPlayListFlowById(playListId).mapLatest(::mapPlayListToAudioList)
     }
 
     override suspend fun getAudiosOfPlayList(playListId: Long): List<AudioItemModel> =
         coroutineScope {
-            val playList = playListDao.getPlayListFlow(playListId).first()
+            val playList = playListDao.getPlayListFlowById(playListId).first()
 
             ensureActive()
 
@@ -243,8 +244,8 @@ internal class MediaContentRepositoryImpl(
         }
     }
 
-    override suspend fun getPlayListById(playListId: Long): PlayListItemModel? {
-        return playListDao.getPlayList(playListId)?.let {
+    override suspend fun getPlayListById(playListId: Long) =
+        playListDao.getPlayList(playListId)?.let {
             PlayListItemModel(
                 id = it.playList.id.toString(),
                 name = it.playList.name,
@@ -252,7 +253,31 @@ internal class MediaContentRepositoryImpl(
                 trackCount = it.medias.size
             )
         }
+
+    override suspend fun addMusicToPlayList(playListId: Long, musics: List<String>): List<Long> {
+        val insertedIndexList = playListDao.insertPlayListWithMediaCrossRef(
+            crossRefs = musics.map {
+                PlayListWithMediaCrossRef(
+                    playListId = playListId,
+                    mediaStoreId = it,
+                    addedDate = System.currentTimeMillis()
+                )
+            }
+        )
+
+        return insertedIndexList
+            .filterTo(mutableListOf()) { it == -1L }
+            .toList()
     }
+
+    override fun isMediaInFavoritePlayListFlow(mediaStoreId: String) =
+        playListDao.getIsMediaInPlayListFlow(
+            PlayListDao.FAVORITE_PLAY_LIST_ID.toString(),
+            mediaStoreId
+        )
+
+    override suspend fun removeMusicFromPlayList(playListId: Long, mediaIdList: List<String>) =
+        playListDao.deleteMediaFromPlayList(playListId, mediaIdList)
 
     private val allAlbumUri: String
         get() = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI.toString()

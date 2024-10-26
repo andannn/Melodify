@@ -39,4 +39,11 @@ kotlin {
 
 android {
     namespace = "com.andannn.melodify.feature.player"
+
+    buildFeatures {
+        compose = true
+    }
+}
+dependencies {
+    debugImplementation(libs.androidx.ui.tooling)
 }

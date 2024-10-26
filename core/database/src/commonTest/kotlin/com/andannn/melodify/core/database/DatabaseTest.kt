@@ -77,7 +77,7 @@ class DatabaseTest {
             )
         )
 
-        val playLists = playListDao.getPlayListFlow().first()
+        val playLists = playListDao.getAllPlayListFlow().first()
         assertEquals(1, playLists.size)
         assertEquals(1, playLists.first().playListEntity.id)
     }
@@ -103,7 +103,7 @@ class DatabaseTest {
                 ),
             )
         )
-        val playLists = playListDao.getPlayListFlow().first()
+        val playLists = playListDao.getAllPlayListFlow().first()
         assertEquals(3, playLists.size)
         assertEquals(listOf(2L, 3L, 1L), playLists.map { it.playListEntity.id })
     }
@@ -135,7 +135,7 @@ class DatabaseTest {
             )
         )
 
-        val playList = playListDao.getPlayListFlow(1).first()
+        val playList = playListDao.getPlayListFlowById(1).first()
         assertEquals(2, playList.medias.size)
     }
 
@@ -162,7 +162,7 @@ class DatabaseTest {
             )
         )
 
-        val playList = playListDao.getPlayListFlow(1).first()
+        val playList = playListDao.getPlayListFlowById(1).first()
         assertEquals(1, playList.medias.size)
 
         val insertIds = playListDao.insertPlayListWithMediaCrossRef(
@@ -176,7 +176,7 @@ class DatabaseTest {
         )
         assertEquals(-1, insertIds.first())
 
-        val playList2 = playListDao.getPlayListFlow(1).first()
+        val playList2 = playListDao.getPlayListFlowById(1).first()
         assertEquals(1, playList2.medias.size)
     }
 
@@ -208,7 +208,7 @@ class DatabaseTest {
             )
         )
 
-        val playLists = playListDao.getPlayListFlow().first()
+        val playLists = playListDao.getAllPlayListFlow().first()
         assertEquals(2, playLists.first().mediaCount)
 
         playListDao.insertPlayListWithMediaCrossRef(
@@ -220,5 +220,60 @@ class DatabaseTest {
                 ),
             )
         )
+    }
+
+    @Test
+    fun check_is_media_in_play_list() = testScope.runTest {
+        val res = playListDao.insertPlayListEntities(
+            entities = listOf(
+                PlayListEntity(
+                    id = 12,
+                    name = "",
+                    createdDate = 1L,
+                    artworkUri = null
+                ),
+            )
+        )
+        val mediaStoreId = "1"
+        assertEquals(false, playListDao.getIsMediaInPlayListFlow(res.first().toString(), mediaStoreId).first())
+
+        playListDao.insertPlayListWithMediaCrossRef(
+            crossRefs = listOf(
+                PlayListWithMediaCrossRef(
+                    playListId = res.first(),
+                    mediaStoreId = mediaStoreId,
+                    addedDate = 1L
+                ),
+            )
+        )
+        assertEquals(true, playListDao.getIsMediaInPlayListFlow(res.first().toString(), mediaStoreId).first())
+    }
+
+    @Test
+    fun delete_media_from_play_list() = testScope.runTest {
+        playListDao.insertPlayListEntities(
+            entities = listOf(
+                PlayListEntity(
+                    id = 1,
+                    createdDate = 1,
+                    artworkUri = null,
+                    name = "name"
+                )
+            )
+        )
+        playListDao.insertPlayListWithMediaCrossRef(
+            crossRefs = listOf(
+                PlayListWithMediaCrossRef(
+                    playListId = 1,
+                    mediaStoreId = "1",
+                    addedDate = 1
+                ),
+            )
+        )
+
+        assertEquals(1, playListDao.getPlayListFlowById(1).first().medias.size)
+
+        playListDao.deleteMediaFromPlayList(1, listOf("1"))
+        assertEquals(0, playListDao.getPlayListFlowById(1).first().medias.size)
     }
 }
