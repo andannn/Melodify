@@ -37,6 +37,8 @@ interface MediaStoreSource {
     suspend fun getAudioOfArtist(id: Long): List<AudioData>
 
     suspend fun getAudioOfGenre(id: Long): List<AudioData>
+
+    suspend fun getAudioByIds(mediaStoreIds: List<String>): List<AudioData>
 }
 
 class MediaStoreSourceImpl(
@@ -142,6 +144,15 @@ class MediaStoreSourceImpl(
             parseMusicInfoCursor(cursor)
         } ?: emptyList()
     }
+
+    override suspend fun getAudioByIds(mediaStoreIds: List<String>) =
+        app.contentResolver.query2(
+            uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            selection = "${MediaStore.Audio.Media._ID} IN (${mediaStoreIds.joinToString(",") { "?" }})",
+            selectionArgs = mediaStoreIds.toTypedArray(),
+        )?.use { cursor ->
+            parseMusicInfoCursor(cursor)
+        } ?: emptyList()
 
     private fun parseGenreInfoCursor(cursor: Cursor): List<GenreData> {
         val itemList = mutableListOf<GenreData>()

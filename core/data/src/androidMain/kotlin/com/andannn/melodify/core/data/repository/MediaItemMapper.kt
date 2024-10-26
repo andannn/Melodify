@@ -9,7 +9,9 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.player.library.LibraryRootCategory
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.util.uri
+import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.player.library.PLAYABLE_MEDIA_ITEM_PREFIX
 import com.andannn.melodify.core.player.util.UNIQUE_ID_KEY
 import com.andannn.melodify.core.player.util.buildMediaItem
@@ -55,6 +57,13 @@ fun MediaItem.toAppItem(): MediaItemModel = when {
 
     else -> error("Not a AppMediaItem $this")
 }
+
+fun PlayListWithMediaCount.toAppItem() = PlayListItemModel(
+    id = playListEntity.id.toString(),
+    name = playListEntity.name,
+    artWorkUri = playListEntity.artworkUri ?: "",
+    trackCount = mediaCount
+)
 
 private var counter = 1
 

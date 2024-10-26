@@ -58,3 +58,11 @@ data class GenreItemModel(
         val UNKNOWN = GenreItemModel("-1", "", "", 0)
     }
 }
+
+data class PlayListItemModel(
+    override val id: String,
+    override val name: String,
+    override val artWorkUri: String,
+    val trackCount: Int,
+) : MediaItemModel {
+}

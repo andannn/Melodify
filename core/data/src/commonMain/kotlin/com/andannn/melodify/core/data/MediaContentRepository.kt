@@ -4,6 +4,7 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
+import com.andannn.melodify.core.data.model.PlayListItemModel
 import kotlinx.coroutines.flow.Flow
 
 interface MediaContentRepository {
@@ -14,6 +15,8 @@ interface MediaContentRepository {
     fun getAllArtistFlow(): Flow<List<ArtistItemModel>>
 
     fun getAllGenreFlow(): Flow<List<GenreItemModel>>
+
+    fun getAllPlayListFlow(): Flow<List<PlayListItemModel>>
 
     fun getAudiosOfAlbumFlow(albumId: String): Flow<List<AudioItemModel>>
 
@@ -26,6 +29,10 @@ interface MediaContentRepository {
     fun getAudiosOfGenreFlow(genreId: String): Flow<List<AudioItemModel>>
 
     suspend fun getAudiosOfGenre(genreId: String): List<AudioItemModel>
+
+    fun getAudiosOfPlayListFlow(playListId: Long): Flow<List<AudioItemModel>>
+
+    suspend fun getAudiosOfPlayList(playListId: Long): List<AudioItemModel>
 
     fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumItemModel?>
 
