@@ -35,4 +35,10 @@ interface PlayListDao {
         where ${PlayListColumns.ID} = :playListId
     """)
     fun getPlayListFlow(playListId: Long): Flow<PlayListAndMedias>
+
+    @Query("""
+        select * from ${Tables.PLAY_LIST}
+        where ${PlayListColumns.ID} = :playListId
+    """)
+    fun getPlayList(playListId: Long): PlayListAndMedias?
 }

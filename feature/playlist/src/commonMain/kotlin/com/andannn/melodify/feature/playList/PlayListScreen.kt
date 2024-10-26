@@ -70,10 +70,11 @@ fun PlayListScreen(
         }
 
     when (source) {
-        MediaListSource.ALBUM -> {
-            AlbumPlayListContent(
+        MediaListSource.ALBUM,
+        MediaListSource.PLAY_LIST-> {
+            HeaderPlayListContent(
                 modifier = modifier,
-                header = uiState.headerInfoItem as AlbumItemModel? ?: AlbumItemModel.DEFAULT,
+                header = uiState.headerInfoItem ?: AlbumItemModel.DEFAULT,
                 audioList = uiState.audioList,
                 playingMediaItem = uiState.playingMediaItem,
                 onEvent = viewModel::onEvent,
@@ -81,21 +82,11 @@ fun PlayListScreen(
             )
         }
 
-        MediaListSource.ARTIST -> {
-            CommonPlayListContent(
-                modifier = modifier,
-                header = uiState.headerInfoItem as ArtistItemModel? ?: ArtistItemModel.DEFAULT,
-                audioList = uiState.audioList,
-                playingMediaItem = uiState.playingMediaItem,
-                onEvent = viewModel::onEvent,
-                onBackPressed = onBackPressed,
-            )
-        }
-
+        MediaListSource.ARTIST,
         MediaListSource.GENRE -> {
             CommonPlayListContent(
                 modifier = modifier,
-                header = uiState.headerInfoItem ?: GenreItemModel.DEFAULT,
+                header = uiState.headerInfoItem ?: ArtistItemModel.DEFAULT,
                 audioList = uiState.audioList,
                 playingMediaItem = uiState.playingMediaItem,
                 onEvent = viewModel::onEvent,
@@ -166,8 +157,8 @@ fun CommonPlayListContent(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun AlbumPlayListContent(
-    header: AlbumItemModel,
+private fun HeaderPlayListContent(
+    header: MediaItemModel,
     audioList: ImmutableList<AudioItemModel>,
     playingMediaItem: AudioItemModel?,
     modifier: Modifier = Modifier,
@@ -396,7 +387,7 @@ private fun PlayListScreenContentPreview() {
 @Composable
 private fun AlbumPlayListContentPreview() {
     MelodifyTheme {
-        AlbumPlayListContent(
+        HeaderPlayListContent(
             header = AlbumItemModel(
                 id = "0",
                 name = "Album 1",

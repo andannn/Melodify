@@ -45,4 +45,6 @@ interface MediaContentRepository {
     suspend fun getArtistByArtistId(artistId: String): ArtistItemModel?
 
     suspend fun getGenreByGenreId(genreId: String): GenreItemModel?
+
+    suspend fun getPlayListById(playListId: Long): PlayListItemModel?
 }

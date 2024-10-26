@@ -4,6 +4,7 @@ package com.andannn.melodify.core.data.model
 enum class MediaListSource {
     ALBUM,
     GENRE,
+    PLAY_LIST,
     ARTIST;
 
     fun toNavArg() = this.name

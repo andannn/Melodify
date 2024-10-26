@@ -3,6 +3,7 @@ package com.andannn.melodify.core.database.di
 import androidx.room.RoomDatabase
 import com.andannn.melodify.core.database.LyricDao
 import com.andannn.melodify.core.database.MelodifyDataBase
+import com.andannn.melodify.core.database.PlayListDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.module.Module
@@ -15,6 +16,7 @@ val databaseModule = module {
         databaseBuilder,
         module {
             single<LyricDao> { get<MelodifyDataBase>().getLyricDao() }
+            single<PlayListDao> { get<MelodifyDataBase>().getPlayListDao() }
         },
         module {
             single<MelodifyDataBase> {

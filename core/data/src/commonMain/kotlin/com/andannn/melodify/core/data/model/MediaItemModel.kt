@@ -4,6 +4,7 @@ sealed interface MediaItemModel {
     val id: String
     val name: String
     val artWorkUri: String
+    val trackCount: Int
 }
 
 data class AudioItemModel(
@@ -19,6 +20,7 @@ data class AudioItemModel(
     val discNumberIndex: Int,
     val extraUniqueId: String? = null,
     val source: String? = null,
+    override val trackCount: Int = -1,
 ) : MediaItemModel {
     companion object {
         val DEFAULT = AudioItemModel("0", "", "", 0, "", "0", "", "0", 0, 0)
@@ -29,7 +31,7 @@ data class AlbumItemModel(
     override val id: String,
     override val name: String,
     override val artWorkUri: String,
-    val trackCount: Int,
+    override val trackCount: Int,
 ) : MediaItemModel {
     companion object {
         val DEFAULT = AlbumItemModel("0", "", "", 0)
@@ -40,7 +42,7 @@ data class ArtistItemModel(
     override val id: String,
     override val name: String,
     override val artWorkUri: String,
-    val trackCount: Int,
+    override val trackCount: Int,
 ) : MediaItemModel {
     companion object {
         val DEFAULT = ArtistItemModel("0", "", "", 0)
@@ -51,7 +53,7 @@ data class GenreItemModel(
     override val id: String,
     override val name: String,
     override val artWorkUri: String,
-    val trackCount: Int,
+    override val trackCount: Int,
 ) : MediaItemModel {
     companion object {
         val DEFAULT = GenreItemModel("0", "", "", 0)
@@ -63,6 +65,6 @@ data class PlayListItemModel(
     override val id: String,
     override val name: String,
     override val artWorkUri: String,
-    val trackCount: Int,
+    override val trackCount: Int,
 ) : MediaItemModel {
 }

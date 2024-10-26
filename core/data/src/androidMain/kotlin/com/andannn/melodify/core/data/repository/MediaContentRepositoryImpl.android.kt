@@ -36,8 +36,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.guava.await
-import kotlinx.coroutines.isActive
-import kotlin.coroutines.coroutineContext
 
 private const val TAG = "MediaContentRepository"
 
@@ -242,6 +240,17 @@ internal class MediaContentRepositoryImpl(
             GENRE_PREFIX + genreId,
         ).await().value?.let {
             it.toAppItem() as? GenreItemModel ?: throw IllegalStateException("Invalid $it")
+        }
+    }
+
+    override suspend fun getPlayListById(playListId: Long): PlayListItemModel? {
+        return playListDao.getPlayList(playListId)?.let {
+            PlayListItemModel(
+                id = it.playList.id.toString(),
+                name = it.playList.name,
+                artWorkUri = it.playList.artworkUri ?: "",
+                trackCount = it.medias.size
+            )
         }
     }
 
