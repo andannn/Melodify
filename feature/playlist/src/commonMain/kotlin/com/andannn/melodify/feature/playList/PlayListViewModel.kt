@@ -92,6 +92,15 @@ class PlayListViewModel(
                     )
                 }
             }
+
+            MediaListSource.PLAY_LIST -> {
+                getAudiosOfPlayListFlow(id.toLong()).map {
+                    PlayListContent(
+                        headerInfoItem = getPlayListById(id.toLong()),
+                        audioList = it.toImmutableList(),
+                    )
+                }
+            }
         }
     }
 

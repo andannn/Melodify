@@ -8,6 +8,7 @@ import com.andannn.melodify.core.data.MediaContentRepository
 import com.andannn.melodify.core.data.MediaControllerRepository
 import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.model.GenreItemModel
+import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.util.uri
 import com.andannn.melodify.feature.common.drawer.SheetModel
 import com.andannn.melodify.feature.common.drawer.SheetOptionItem
@@ -171,6 +172,7 @@ internal class GlobalUiControllerImpl(
                 listOf(source)
             }
 
+            is PlayListItemModel -> TODO("implement later")
         }
         val uris = items.map { it.uri }
 
@@ -219,6 +221,10 @@ internal class GlobalUiControllerImpl(
 
             is AudioItemModel -> {
                 listOf(source)
+            }
+
+            is PlayListItemModel -> {
+                mediaContentRepository.getAudiosOfPlayList(source.id.toLong())
             }
         }
     }

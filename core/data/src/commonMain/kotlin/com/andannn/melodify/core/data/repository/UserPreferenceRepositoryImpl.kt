@@ -18,6 +18,7 @@ val DefaultCustomTabs = CurrentCustomTabs(
     listOf(
         CustomTab.AllMusic,
         CustomTab.AllAlbum,
+        CustomTab.AllPlayList,
         CustomTab.AllGenre,
         CustomTab.AllArtist,
     )

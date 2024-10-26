@@ -4,6 +4,7 @@
     <string name="audio_page_title">Songs</string>
     <string name="album_page_title">Album</string>
     <string name="artist_page_title">Artist</string>
+    <string name="playlist_page_title">Play List</string>
     <string name="genre_title">Genre</string>
     <string name="add_to_queue">Add to Queue</string>
     <string name="delete">Delete</string>

@@ -17,7 +17,6 @@ import androidx.compose.material.icons.rounded.SkipPrevious
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberUpdatedState
@@ -28,10 +27,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.player.PlayerUiEvent
-import com.andannn.melodify.feature.player.ui.ShrinkPlayerHeight
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 internal fun MiniPlayerLayout(
@@ -124,25 +120,6 @@ internal fun MiniPlayerLayout(
                 )
             }
         }
-        Spacer(modifier = Modifier.width(5.dp))
-    }
-}
-
-@Preview
-@Composable
-private fun MiniPlayerLayoutPreview() {
-    MelodifyTheme {
-        Surface {
-            MiniPlayerLayout(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ShrinkPlayerHeight),
-                title = "BBBBB",
-                artist = "AAAAA",
-                isPlaying = true,
-                isFavorite = false,
-                enabled = true,
-            )
-        }
+        Spacer(modifier = Modifier.width(10.dp))
     }
 }

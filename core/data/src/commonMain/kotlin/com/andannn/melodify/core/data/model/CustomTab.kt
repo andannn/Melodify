@@ -29,6 +29,11 @@ sealed interface CustomTab {
     }
 
     @Serializable
+    data object AllPlayList : CustomTab {
+        override fun MediaContentRepository.contentFlow() = getAllPlayListFlow()
+    }
+
+    @Serializable
     data class AlbumDetail(val albumId: String, val label: String) : CustomTab {
         override fun MediaContentRepository.contentFlow() = getAudiosOfAlbumFlow(albumId)
     }
@@ -41,6 +46,12 @@ sealed interface CustomTab {
     @Serializable
     data class GenreDetail(val genreId: String, val label: String) : CustomTab {
         override fun MediaContentRepository.contentFlow() = getAudiosOfGenreFlow(genreId)
+    }
+
+    @Serializable
+    data class PlayListDetail(val playListId: String, val label: String) : CustomTab {
+        override fun MediaContentRepository.contentFlow() =
+            getAudiosOfPlayListFlow(playListId.toLong())
     }
 }
 

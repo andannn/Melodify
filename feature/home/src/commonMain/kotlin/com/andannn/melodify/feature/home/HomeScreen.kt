@@ -56,6 +56,7 @@ import com.andannn.melodify.feature.common.component.LargePreviewCard
 import com.andannn.melodify.feature.common.component.ListTileItemView
 import com.andannn.melodify.core.data.model.MediaListSource
 import com.andannn.melodify.core.data.model.MediaPreviewMode
+import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.feature.common.component.ExtraPaddingBottom
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.common.util.getCategoryResource
@@ -89,7 +90,11 @@ fun HomeRoute(
             }
 
             is GenreItemModel -> {
-                onNavigateToPlayList(mediaItem.id.toString(), MediaListSource.GENRE)
+                onNavigateToPlayList(mediaItem.id, MediaListSource.GENRE)
+            }
+
+            is PlayListItemModel -> {
+                onNavigateToPlayList(mediaItem.id, MediaListSource.PLAY_LIST)
             }
         }
     }
@@ -246,7 +251,6 @@ private fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun <T : MediaItemModel> LazyGridContent(
     mediaItems: ImmutableList<T>,
@@ -374,9 +378,10 @@ private fun subTitle(
     model: MediaItemModel
 ): String = when (model) {
     is AudioItemModel -> model.artist
-    is AlbumItemModel -> stringResource(Res.string.track_count, model.trackCount.toString())
+    is AlbumItemModel,
+    is PlayListItemModel,
     is ArtistItemModel -> stringResource(Res.string.track_count, model.trackCount.toString())
-    else -> ""
+    is GenreItemModel -> ""
 }
 
 @Preview

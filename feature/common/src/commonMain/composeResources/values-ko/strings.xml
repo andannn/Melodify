@@ -5,6 +5,7 @@
     <string name="album_page_title">앨범</string>
     <string name="artist_page_title">아티스트</string>
     <string name="genre_title">장르</string>
+    <string name="playlist_page_title">플레이리스트</string>
     <string name="add_to_queue">대기열에 추가</string>
     <string name="delete">삭제</string>
     <string name="play_next">다음 재생</string>
