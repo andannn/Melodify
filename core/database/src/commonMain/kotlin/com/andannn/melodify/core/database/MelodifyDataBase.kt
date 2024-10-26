@@ -23,7 +23,7 @@ internal object Tables {
         PlayListEntity::class,
         PlayListWithMediaCrossRef::class,
     ],
-    version = 1
+    version = 2,
 )
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class MelodifyDataBase : RoomDatabase() {

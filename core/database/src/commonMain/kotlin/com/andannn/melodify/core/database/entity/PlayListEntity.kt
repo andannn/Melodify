@@ -7,7 +7,7 @@ import com.andannn.melodify.core.database.Tables
 
 internal object PlayListColumns {
     const val ID = "play_list_id"
-    const val NAME = "play_list_NAME"
+    const val NAME = "play_list_name"
     const val CREATED_DATE = "play_list_created_date"
     const val ARTWORK_URI = "play_list_artwork_uri"
 }

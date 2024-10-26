@@ -5,6 +5,7 @@
     <string name="album_page_title">Альбом</string>
     <string name="artist_page_title">Исполнитель</string>
     <string name="genre_title">Жанр</string>
+    <string name="playlist_page_title">Playlist</string>
     <string name="add_to_queue">Добавить в очередь</string>
     <string name="delete">Удалить</string>
     <string name="play_next">Следующий трек</string>

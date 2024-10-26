@@ -20,6 +20,7 @@ import melodify.feature.common.generated.resources.album_page_title
 import melodify.feature.common.generated.resources.artist_page_title
 import melodify.feature.common.generated.resources.genre_title
 import melodify.feature.common.generated.resources.home
+import melodify.feature.common.generated.resources.playlist_page_title
 import org.jetbrains.compose.resources.StringResource
 
 internal sealed interface UiEvent {
@@ -108,6 +109,9 @@ internal class CustomTabSettingViewModel(
         val allGenreDeferred = async {
             contentRepository.getAllGenreFlow().first()
         }
+        val allPlayListDeferred = async {
+            contentRepository.getAllPlayListFlow().first()
+        }
 
         UiState.Ready(
             currentTabs = currentSettingDeferred.await().customTabs,
@@ -118,6 +122,7 @@ internal class CustomTabSettingViewModel(
                             Res.string.home,
                             listOf(
                                 CustomTab.AllMusic,
+                                CustomTab.AllPlayList,
                                 CustomTab.AllAlbum,
                                 CustomTab.AllArtist,
                                 CustomTab.AllGenre,
@@ -133,6 +138,16 @@ internal class CustomTabSettingViewModel(
                         TabSector(
                             Res.string.album_page_title,
                             albumTabs
+                        )
+                    )
+
+                    val playListTabs = allPlayListDeferred.await().map {
+                        CustomTab.ArtistDetail(it.id, it.name)
+                    }
+                    add(
+                        TabSector(
+                            Res.string.playlist_page_title,
+                            playListTabs
                         )
                     )
 
