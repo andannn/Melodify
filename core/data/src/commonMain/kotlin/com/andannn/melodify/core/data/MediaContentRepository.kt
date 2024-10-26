@@ -15,27 +15,27 @@ interface MediaContentRepository {
 
     fun getAllGenreFlow(): Flow<List<GenreItemModel>>
 
-    fun getAudiosOfAlbumFlow(albumId: Long): Flow<List<AudioItemModel>>
+    fun getAudiosOfAlbumFlow(albumId: String): Flow<List<AudioItemModel>>
 
-    suspend fun getAudiosOfAlbum(albumId: Long): List<AudioItemModel>
+    suspend fun getAudiosOfAlbum(albumId: String): List<AudioItemModel>
 
-    fun getAudiosOfArtistFlow(artistId: Long): Flow<List<AudioItemModel>>
+    fun getAudiosOfArtistFlow(artistId: String): Flow<List<AudioItemModel>>
 
-    suspend fun getAudiosOfArtist(artistId: Long): List<AudioItemModel>
+    suspend fun getAudiosOfArtist(artistId: String): List<AudioItemModel>
 
-    fun getAudiosOfGenreFlow(genreId: Long): Flow<List<AudioItemModel>>
+    fun getAudiosOfGenreFlow(genreId: String): Flow<List<AudioItemModel>>
 
-    suspend fun getAudiosOfGenre(genreId: Long): List<AudioItemModel>
+    suspend fun getAudiosOfGenre(genreId: String): List<AudioItemModel>
 
-    fun getAlbumByAlbumIdFlow(albumId: Long): Flow<AlbumItemModel?>
+    fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumItemModel?>
 
-    fun getArtistByArtistIdFlow(artistId: Long): Flow<ArtistItemModel?>
+    fun getArtistByArtistIdFlow(artistId: String): Flow<ArtistItemModel?>
 
-    fun getGenreByGenreIdFlow(genreId: Long): Flow<GenreItemModel?>
+    fun getGenreByGenreIdFlow(genreId: String): Flow<GenreItemModel?>
 
-    suspend fun getAlbumByAlbumId(albumId: Long): AlbumItemModel?
+    suspend fun getAlbumByAlbumId(albumId: String): AlbumItemModel?
 
-    suspend fun getArtistByArtistId(artistId: Long): ArtistItemModel?
+    suspend fun getArtistByArtistId(artistId: String): ArtistItemModel?
 
-    suspend fun getGenreByGenreId(genreId: Long): GenreItemModel?
+    suspend fun getGenreByGenreId(genreId: String): GenreItemModel?
 }

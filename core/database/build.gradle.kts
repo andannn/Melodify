@@ -15,6 +15,8 @@ kotlin {
 
         iosMain.dependencies {
             implementation(libs.androidx.sqlite.bundled)
+            implementation(libs.coil.network.ktor3)
+            implementation(libs.ktor.client.darwin)
         }
     }
 }

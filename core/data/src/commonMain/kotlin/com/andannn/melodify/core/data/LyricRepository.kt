@@ -5,12 +5,12 @@ import kotlinx.coroutines.flow.Flow
 
 interface LyricRepository {
     suspend fun tryGetLyricOrIgnore(
-        mediaStoreId: Long,
+        mediaId: String,
         trackName: String,
         artistName: String,
         albumName: String? = null,
         duration: Long? = null,
     )
 
-    fun getLyricByMediaStoreIdFlow(mediaStoreId: Long): Flow<LyricModel?>
+    fun getLyricByMediaIdFlow(mediaStoreId: String): Flow<LyricModel?>
 }

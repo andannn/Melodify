@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.guava.await
 
 private const val TAG = "MediaContentRepository"
@@ -68,43 +67,43 @@ internal class MediaContentRepositoryImpl(
             }
             .distinctUntilChanged()
 
-    override fun getAudiosOfAlbumFlow(albumId: Long) =
-        contentChangedEventFlow(getAlbumUri(albumId))
+    override fun getAudiosOfAlbumFlow(albumId: String) =
+        contentChangedEventFlow(getAlbumUri(albumId.toLong()))
             .mapLatest {
                 getAudiosOfAlbum(albumId)
             }
             .distinctUntilChanged()
 
-    override fun getAudiosOfArtistFlow(artistId: Long) =
-        contentChangedEventFlow(getArtistUri(artistId))
+    override fun getAudiosOfArtistFlow(artistId: String) =
+        contentChangedEventFlow(getArtistUri(artistId.toLong()))
             .mapLatest {
                 getAudiosOfArtist(artistId)
             }
             .distinctUntilChanged()
 
-    override fun getAudiosOfGenreFlow(genreId: Long) =
-        contentChangedEventFlow(getGenreUri(genreId))
+    override fun getAudiosOfGenreFlow(genreId: String) =
+        contentChangedEventFlow(getGenreUri(genreId.toLong()))
             .mapLatest {
                 getAudiosOfGenre(genreId)
             }
             .distinctUntilChanged()
 
-    override fun getAlbumByAlbumIdFlow(albumId: Long) =
-        contentChangedEventFlow(getAlbumUri(albumId))
+    override fun getAlbumByAlbumIdFlow(albumId: String) =
+        contentChangedEventFlow(getAlbumUri(albumId.toLong()))
             .mapLatest {
                 getAlbumByAlbumId(albumId)
             }
             .distinctUntilChanged()
 
-    override fun getArtistByArtistIdFlow(artistId: Long) =
-        contentChangedEventFlow(getArtistUri(artistId))
+    override fun getArtistByArtistIdFlow(artistId: String) =
+        contentChangedEventFlow(getArtistUri(artistId.toLong()))
             .mapLatest {
                 getArtistByArtistId(artistId)
             }
             .distinctUntilChanged()
 
-    override fun getGenreByGenreIdFlow(genreId: Long) =
-        contentChangedEventFlow(getGenreUri(genreId))
+    override fun getGenreByGenreIdFlow(genreId: String) =
+        contentChangedEventFlow(getGenreUri(genreId.toLong()))
             .mapLatest {
                 getGenreByGenreId(genreId)
             }
@@ -156,7 +155,7 @@ internal class MediaContentRepositoryImpl(
         }
         ?: emptyList()
 
-    override suspend fun getAudiosOfAlbum(albumId: Long) = mediaBrowser.getChildren(
+    override suspend fun getAudiosOfAlbum(albumId: String) = mediaBrowser.getChildren(
         ALBUM_PREFIX + albumId,
         0,
         Int.MAX_VALUE,
@@ -167,7 +166,7 @@ internal class MediaContentRepositoryImpl(
         }
         ?: emptyList()
 
-    override suspend fun getAudiosOfArtist(artistId: Long) = mediaBrowser.getChildren(
+    override suspend fun getAudiosOfArtist(artistId: String) = mediaBrowser.getChildren(
         ARTIST_PREFIX + artistId,
         0,
         Int.MAX_VALUE,
@@ -178,7 +177,7 @@ internal class MediaContentRepositoryImpl(
         }
         ?: emptyList()
 
-    override suspend fun getAudiosOfGenre(genreId: Long) = mediaBrowser.getChildren(
+    override suspend fun getAudiosOfGenre(genreId: String) = mediaBrowser.getChildren(
         GENRE_PREFIX + genreId,
         0,
         Int.MAX_VALUE,
@@ -189,21 +188,21 @@ internal class MediaContentRepositoryImpl(
         }
         ?: emptyList()
 
-    override suspend fun getAlbumByAlbumId(albumId: Long) = mediaBrowser.getItem(
+    override suspend fun getAlbumByAlbumId(albumId: String) = mediaBrowser.getItem(
         ALBUM_PREFIX + albumId,
     ).await().value?.let {
         it.toAppItem() as? AlbumItemModel ?: throw IllegalStateException("Invalid $it")
     }
 
-    override suspend fun getArtistByArtistId(artistId: Long) = mediaBrowser.getItem(
+    override suspend fun getArtistByArtistId(artistId: String) = mediaBrowser.getItem(
         ARTIST_PREFIX + artistId,
     ).await().value?.let {
         it.toAppItem() as? ArtistItemModel ?: throw IllegalStateException("Invalid $it")
     }
 
-    override suspend fun getGenreByGenreId(genreId: Long): GenreItemModel? {
+    override suspend fun getGenreByGenreId(genreId: String): GenreItemModel? {
         Napier.d(tag = TAG, message = "getGenreByGenreId: $genreId")
-        if (genreId == -1L) {
+        if (genreId.toLong() == -1L) {
             return GenreItemModel.UNKNOWN
         }
 

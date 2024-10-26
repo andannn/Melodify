@@ -28,7 +28,7 @@ internal object LyricWithAudioCrossRefColumns {
 )
 data class LyricWithAudioCrossRef(
     @ColumnInfo(name = LyricWithAudioCrossRefColumns.MEDIA_STORE_ID)
-    val mediaStoreId: Long,
+    val mediaStoreId: String,
     @ColumnInfo(name = LyricWithAudioCrossRefColumns.LYRIC_ID)
     val lyricId: Long,
 )

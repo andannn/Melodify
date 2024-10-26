@@ -77,11 +77,11 @@ fun HomeRoute(
     fun onMediaItemClick(mediaItem: MediaItemModel) {
         when (mediaItem) {
             is AlbumItemModel -> {
-                onNavigateToPlayList(mediaItem.id.toString(), MediaListSource.ALBUM)
+                onNavigateToPlayList(mediaItem.id, MediaListSource.ALBUM)
             }
 
             is ArtistItemModel -> {
-                onNavigateToPlayList(mediaItem.id.toString(), MediaListSource.ARTIST)
+                onNavigateToPlayList(mediaItem.id, MediaListSource.ARTIST)
             }
 
             is AudioItemModel -> {
@@ -387,7 +387,7 @@ private fun HomeScreenPreview() {
             state = HomeUiState(
                 mediaItems = (1..4).map {
                     AlbumItemModel(
-                        id = it.toLong(),
+                        id = it.toString(),
                         name = "Album $it",
                         artWorkUri = "",
                         trackCount = 10

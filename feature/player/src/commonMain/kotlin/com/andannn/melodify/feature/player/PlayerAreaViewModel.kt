@@ -73,7 +73,7 @@ class PlayerStateViewModel(
     private val lyricFlow: Flow<LyricState> = interactingMusicItem
         .filterNotNull()
         .flatMapLatest {
-            lyricRepository.getLyricByMediaStoreIdFlow(it.id)
+            lyricRepository.getLyricByMediaIdFlow(it.id)
                 .map<LyricModel?, LyricState> { lyricOrNull -> LyricState.Loaded(lyricOrNull) }
                 .onStart { emit(LyricState.Loading) }
         }
@@ -118,7 +118,7 @@ class PlayerStateViewModel(
                 .distinctUntilChanged()
                 .onEach { audio ->
                     lyricRepository.tryGetLyricOrIgnore(
-                        mediaStoreId = audio.id,
+                        mediaId = audio.id,
                         trackName = audio.name,
                         artistName = audio.artist,
                         albumName = audio.album,
