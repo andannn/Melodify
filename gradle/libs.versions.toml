@@ -35,7 +35,7 @@ androidx-lifecycle = "2.8.3"
 jetbrainsNavigation = "2.8.0-alpha10"
 napierVersion = "2.7.1"
 sqliteBundled = "2.5.0-alpha10"
-uiTooling = "1.7.3"
+uiTooling = "1.7.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
