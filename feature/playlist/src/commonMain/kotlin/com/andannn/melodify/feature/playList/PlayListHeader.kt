@@ -30,9 +30,12 @@ import coil3.compose.AsyncImage
 import com.andannn.melodify.feature.common.component.SmpTextButton
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import melodify.feature.common.generated.resources.Res
+import melodify.feature.common.generated.resources.default_image_icon
 import melodify.feature.common.generated.resources.play
 import melodify.feature.common.generated.resources.shuffle
 import melodify.feature.common.generated.resources.track_count
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -42,6 +45,7 @@ fun PlayListHeader(
     coverArtUri: String = "",
     title: String = "",
     trackCount: Int = 0,
+    defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
     onPlayAllButtonClick: () -> Unit = {},
     onShuffleButtonClick: () -> Unit = {},
     onOptionClick: () -> Unit = {},
@@ -65,6 +69,8 @@ fun PlayListHeader(
                         .weight(1f)
                         .aspectRatio(1f)
                         .clip(MaterialTheme.shapes.extraSmall),
+                    placeholder = painterResource(defaultImagePlaceholderRes),
+                    error = painterResource(defaultImagePlaceholderRes),
                     model = coverArtUri,
                     contentDescription = "",
                 )

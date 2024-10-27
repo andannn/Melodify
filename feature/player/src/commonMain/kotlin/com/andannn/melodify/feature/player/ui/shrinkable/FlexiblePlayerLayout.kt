@@ -49,6 +49,7 @@ import com.andannn.melodify.feature.player.ui.shrinkable.bottom.PlayerBottomShee
 import com.andannn.melodify.feature.player.PlayerUiEvent
 import com.andannn.melodify.feature.player.ui.MinImageSize
 import com.andannn.melodify.feature.player.ui.PlayerViewState
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -140,36 +141,36 @@ internal fun FlexiblePlayerLayout(
                 onEvent = onEvent,
             )
 
-            IconButton(
-                modifier =
-                Modifier
-                    .padding(top = statusBarHeight, start = 4.dp)
-                    .rotate(-90f)
-                    .graphicsLayer {
-                        alpha = fadeInAreaAlpha
+            if (fadeInAreaAlpha != 0f) {
+                IconButton(
+                    modifier =
+                    Modifier
+                        .padding(top = statusBarHeight, start = 4.dp)
+                        .rotate(-90f)
+                        .graphicsLayer {
+                            alpha = fadeInAreaAlpha
+                        },
+                    onClick = onShrinkButtonClick,
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
+                        contentDescription = "Shrink",
+                    )
+                }
+                IconButton(
+                    modifier =
+                    Modifier
+                        .padding(top = statusBarHeight, end = 4.dp)
+                        .align(Alignment.TopEnd)
+                        .graphicsLayer {
+                            alpha = fadeInAreaAlpha
+                        },
+                    onClick = {
+                        onEvent(PlayerUiEvent.OnOptionIconClick(activeMediaItem))
                     },
-                enabled = fadeInAreaAlpha == 1f,
-                onClick = onShrinkButtonClick,
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
-                    contentDescription = "Shrink",
-                )
-            }
-            IconButton(
-                modifier =
-                Modifier
-                    .padding(top = statusBarHeight, end = 4.dp)
-                    .align(Alignment.TopEnd)
-                    .graphicsLayer {
-                        alpha = fadeInAreaAlpha
-                    },
-                enabled = fadeInAreaAlpha == 1f,
-                onClick = {
-                    onEvent(PlayerUiEvent.OnOptionIconClick(activeMediaItem))
-                },
-            ) {
-                Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Menu")
+                ) {
+                    Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Menu")
+                }
             }
 
             CircleBorderImage(

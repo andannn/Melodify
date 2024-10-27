@@ -43,6 +43,10 @@ import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.feature.common.icons.SmpIcon
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import kotlinx.coroutines.CoroutineScope
+import melodify.feature.common.generated.resources.Res
+import melodify.feature.common.generated.resources.default_image_icon
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -90,6 +94,7 @@ fun MediaOptionBottomSheet(
 private fun SheetHeader(
     mediaItem: MediaItemModel,
     modifier: Modifier = Modifier,
+    defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
 ) {
     Row(
         modifier = modifier
@@ -103,6 +108,8 @@ private fun SheetHeader(
             Modifier
                 .size(65.dp)
                 .clip(MaterialTheme.shapes.extraSmall),
+            placeholder = painterResource(defaultImagePlaceholderRes),
+            error = painterResource(defaultImagePlaceholderRes),
             model = mediaItem.artWorkUri,
             contentDescription = "",
         )
