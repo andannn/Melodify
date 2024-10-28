@@ -15,9 +15,11 @@ import com.andannn.melodify.feature.playList.navigation.ID
 import com.andannn.melodify.feature.playList.navigation.SOURCE
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -64,40 +66,41 @@ class PlayListViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), PlayListUiState())
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPlayListContent() = with(mediaContentRepository) {
         when (mediaListSource) {
             MediaListSource.ALBUM -> {
-                getAudiosOfAlbumFlow(id).map {
+                getAudiosOfAlbumFlow(id).mapLatest { audioList ->
                     PlayListContent(
                         headerInfoItem = getAlbumByAlbumId(id),
-                        audioList = it.toImmutableList(),
+                        audioList = audioList.sortedBy { it.cdTrackNumber }.toImmutableList(),
                     )
                 }
             }
 
             MediaListSource.ARTIST -> {
-                getAudiosOfArtistFlow(id).map {
+                getAudiosOfArtistFlow(id).mapLatest { audioList ->
                     PlayListContent(
                         headerInfoItem = getArtistByArtistId(id),
-                        audioList = it.toImmutableList(),
+                        audioList = audioList.sortedBy { it.name }.toImmutableList(),
                     )
                 }
             }
 
             MediaListSource.GENRE -> {
-                getAudiosOfGenreFlow(id).map {
+                getAudiosOfGenreFlow(id).mapLatest { audioList ->
                     PlayListContent(
                         headerInfoItem = getGenreByGenreId(id),
-                        audioList = it.toImmutableList(),
+                        audioList = audioList.sortedBy { it.name }.toImmutableList(),
                     )
                 }
             }
 
             MediaListSource.PLAY_LIST -> {
-                getAudiosOfPlayListFlow(id.toLong()).map {
+                getAudiosOfPlayListFlow(id.toLong()).mapLatest { audioList ->
                     PlayListContent(
                         headerInfoItem = getPlayListById(id.toLong()),
-                        audioList = it.toImmutableList(),
+                        audioList = audioList.toImmutableList(),
                     )
                 }
             }

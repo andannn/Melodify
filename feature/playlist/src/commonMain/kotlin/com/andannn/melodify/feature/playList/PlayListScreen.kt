@@ -76,6 +76,7 @@ fun PlayListScreen(
                 modifier = modifier,
                 header = uiState.headerInfoItem ?: AlbumItemModel.DEFAULT,
                 audioList = uiState.audioList,
+                showTrackNum = source == MediaListSource.ALBUM,
                 playingMediaItem = uiState.playingMediaItem,
                 onEvent = viewModel::onEvent,
                 onBackPressed = onBackPressed,
@@ -162,6 +163,7 @@ private fun HeaderPlayListContent(
     audioList: ImmutableList<AudioItemModel>,
     playingMediaItem: AudioItemModel?,
     modifier: Modifier = Modifier,
+    showTrackNum: Boolean = true,
     onBackPressed: () -> Unit = {},
     onEvent: (PlayListEvent) -> Unit = {},
 ) {
@@ -269,7 +271,7 @@ private fun HeaderPlayListContent(
                     isActive = playingMediaItem?.id == item.id,
                     albumArtUri = header.artWorkUri,
                     title = item.name,
-                    showTrackNum = true,
+                    showTrackNum = showTrackNum,
                     subTitle = item.artist,
                     trackNum = item.cdTrackNumber,
                     onMusicItemClick = {
