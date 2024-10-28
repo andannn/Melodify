@@ -27,10 +27,15 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.andannn.melodify.feature.common.dialog.ConnectFailedAlertDialog
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import android.graphics.Color
+import com.andannn.melodify.feature.common.GlobalUiController
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.activityRetainedScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
+import org.koin.core.scope.Scope
 
 private const val TAG = "MainActivity"
 
@@ -41,14 +46,21 @@ private val runTimePermissions =
         listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
-class MainActivity : ComponentActivity() {
-    private val mainViewModel: MainActivityViewModel by viewModel()
+class MainActivity : ComponentActivity(), AndroidScopeComponent {
+
+    override val scope: Scope by activityRetainedScope()
+
+    private val mainViewModel: MainActivityViewModel by viewModel {
+        parametersOf(scope.get<GlobalUiController>())
+    }
 
     private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        scope
 
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(

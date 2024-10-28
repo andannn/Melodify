@@ -55,7 +55,7 @@ interface GlobalUiController : BottomSheetStateProvider, DeleteMediaItemEventPro
     suspend fun onEvent(event: UiEvent)
 }
 
-internal class GlobalUiControllerImpl(
+class GlobalUiControllerImpl(
     private val mediaContentRepository: MediaContentRepository,
     private val mediaControllerRepository: MediaControllerRepository,
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,

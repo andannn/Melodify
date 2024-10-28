@@ -25,16 +25,21 @@ import com.andannn.melodify.feature.common.drawer.MediaOptionBottomSheet
 import com.andannn.melodify.feature.common.drawer.SheetModel
 import com.andannn.melodify.feature.common.drawer.SleepTimerCountingBottomSheet
 import com.andannn.melodify.feature.common.drawer.SleepTimerOptionBottomSheet
+import com.andannn.melodify.feature.common.util.getUiRetainedScope
 import com.andannn.melodify.feature.player.PlayerAreaView
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+import org.koin.core.scope.Scope
 
 @Composable
 fun MelodifyApp(
     modifier: Modifier = Modifier,
-    playerStateViewModel: PlayerStateViewModel = koinViewModel(),
-    controller: GlobalUiController = koinInject(),
+    retainedScope: Scope = getUiRetainedScope()!!,
+    playerStateViewModel: PlayerStateViewModel = koinViewModel {
+        parametersOf(retainedScope.get<GlobalUiController>())
+    },
+    controller: GlobalUiController = retainedScope.get<GlobalUiController>(),
 ) {
     Box(
         modifier = modifier

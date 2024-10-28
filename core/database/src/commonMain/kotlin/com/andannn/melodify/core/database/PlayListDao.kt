@@ -27,8 +27,7 @@ interface PlayListDao {
             on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
         group by ${PlayListColumns.ID}
         order by ${PlayListColumns.CREATED_DATE} desc
-    """
-    )
+    """)
     fun getAllPlayListFlow(): Flow<List<PlayListWithMediaCount>>
 
     @Insert(entity = PlayListEntity::class, onConflict = OnConflictStrategy.IGNORE)
