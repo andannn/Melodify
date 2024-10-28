@@ -1,7 +1,6 @@
 plugins {
     id("melodify.kmp.application")
-    alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.compose.compiler)
+    id("melodify.compose.multiplatform.application")
     alias(libs.plugins.google.service)
     alias(libs.plugins.firebase.crashlytics)
 }
@@ -20,11 +19,6 @@ kotlin {
             implementation(project(":feature:player"))
             implementation(project(":feature:customtab"))
             implementation(project(":feature:playlist"))
-
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.ui)
-            implementation(compose.material3)
 
             implementation(libs.koin.core.viewmodel)
             implementation(libs.koin.compose.viewmodel)

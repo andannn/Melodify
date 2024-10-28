@@ -1,13 +1,11 @@
 plugins {
     id("melodify.kmp.library")
-    alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.compose.compiler)
+    id("melodify.compose.multiplatform.library")
 }
 
 kotlin {
     sourceSets {
         androidMain.dependencies {
-            implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.material.color.utilities.android)
             implementation(libs.androidx.palette)
@@ -15,17 +13,8 @@ kotlin {
 
         commonMain.dependencies {
             implementation(project(":core:data"))
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.coil3.compose)
 
+            implementation(libs.coil3.compose)
             implementation(libs.reorderable)
         }
     }
@@ -38,11 +27,5 @@ compose.resources {
 
 android {
     namespace = "com.andannn.melodify.common"
+}
 
-    buildFeatures {
-        compose = true
-    }
-}
-dependencies {
-    debugImplementation(libs.androidx.ui.tooling)
-}
