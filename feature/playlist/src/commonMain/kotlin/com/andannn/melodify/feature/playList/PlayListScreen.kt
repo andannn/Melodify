@@ -49,9 +49,9 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.MediaListSource
-import com.andannn.melodify.feature.common.GlobalUiController
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.common.util.getUiRetainedScope
+import com.andannn.melodify.feature.drawer.DrawerController
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -64,7 +64,7 @@ fun PlayListScreen(
     modifier: Modifier = Modifier,
     scope: Scope? = getUiRetainedScope(),
     viewModel: PlayListViewModel = koinViewModel(
-        parameters = { parametersOf(scope?.get<GlobalUiController>()) }
+        parameters = { parametersOf(scope?.get<DrawerController>()) }
     ),
     onBackPressed: () -> Unit,
 ) {

@@ -7,6 +7,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":feature:common"))
+            implementation(project(":feature:drawer"))
             implementation(project(":core:data"))
 
             implementation(libs.coil3.compose)

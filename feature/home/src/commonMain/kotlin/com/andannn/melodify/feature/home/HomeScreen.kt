@@ -57,11 +57,11 @@ import com.andannn.melodify.feature.common.component.ListTileItemView
 import com.andannn.melodify.core.data.model.MediaListSource
 import com.andannn.melodify.core.data.model.MediaPreviewMode
 import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.feature.common.GlobalUiController
 import com.andannn.melodify.feature.common.component.ExtraPaddingBottom
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.common.util.getCategoryResource
 import com.andannn.melodify.feature.common.util.getUiRetainedScope
+import com.andannn.melodify.feature.drawer.DrawerController
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import melodify.feature.common.generated.resources.Res
@@ -77,7 +77,7 @@ fun HomeRoute(
     modifier: Modifier = Modifier,
     scope: Scope? = getUiRetainedScope(),
     homeViewModel: HomeViewModel = koinViewModel {
-        parametersOf(scope?.get<GlobalUiController>())
+        parametersOf(scope?.get<DrawerController>())
     },
     onNavigateToPlayList: (id: String, source: MediaListSource) -> Unit,
     onNavigateCustomTabSetting: () -> Unit,

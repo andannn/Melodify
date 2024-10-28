@@ -15,17 +15,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.andannn.melodify.feature.common.GlobalUiController
-import com.andannn.melodify.feature.common.UiEvent
 import com.andannn.melodify.feature.player.PlayerStateViewModel
 import com.andannn.melodify.feature.player.PlayerUiState
 import com.andannn.melodify.feature.player.ui.ShrinkPlayerHeight
 import com.andannn.melodify.navigation.MelodifyNavHost
-import com.andannn.melodify.feature.common.drawer.MediaOptionBottomSheet
-import com.andannn.melodify.feature.common.drawer.SheetModel
-import com.andannn.melodify.feature.common.drawer.SleepTimerCountingBottomSheet
-import com.andannn.melodify.feature.common.drawer.SleepTimerOptionBottomSheet
 import com.andannn.melodify.feature.common.util.getUiRetainedScope
+import com.andannn.melodify.feature.drawer.BottomDrawerContainer
+import com.andannn.melodify.feature.drawer.DrawerController
 import com.andannn.melodify.feature.player.PlayerAreaView
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -37,9 +33,9 @@ fun MelodifyApp(
     modifier: Modifier = Modifier,
     retainedScope: Scope = getUiRetainedScope()!!,
     playerStateViewModel: PlayerStateViewModel = koinViewModel {
-        parametersOf(retainedScope.get<GlobalUiController>())
+        parametersOf(retainedScope.get<DrawerController>())
     },
-    controller: GlobalUiController = retainedScope.get<GlobalUiController>(),
+    drawerController: DrawerController = retainedScope.get<DrawerController>(),
 ) {
     Box(
         modifier = modifier
@@ -59,63 +55,19 @@ fun MelodifyApp(
             )
         }
 
-        val bottomSheetModel by controller.bottomSheetModel.collectAsState(null)
+        val bottomSheetModel by drawerController.bottomSheetModel.collectAsState(null)
         val scope = rememberCoroutineScope()
-        BottomSheetContainer(
+        BottomDrawerContainer(
             bottomSheet = bottomSheetModel,
             onEvent = { event ->
                 scope.launch {
-                    controller.onEvent(event)
+                    drawerController.onEvent(event)
                 }
             }
         )
     }
 }
 
-@Composable
-private fun BottomSheetContainer(
-    bottomSheet: SheetModel?,
-    onEvent: (UiEvent) -> Unit = {},
-) {
-    if (bottomSheet != null) {
-        when (bottomSheet) {
-            is SheetModel.MediaOptionSheet -> {
-                MediaOptionBottomSheet(
-                    optionSheet = bottomSheet,
-                    onClickOption = {
-                        onEvent(UiEvent.OnMediaOptionClick(bottomSheet, it))
-                    },
-                    onRequestDismiss = {
-                        onEvent(UiEvent.OnDismissSheet(bottomSheet))
-                    }
-                )
-            }
-
-            SheetModel.TimerOptionSheet -> {
-                SleepTimerOptionBottomSheet(
-                    onSelectOption = {
-                        onEvent(UiEvent.OnTimerOptionClick(it))
-                    },
-                    onRequestDismiss = {
-                        onEvent(UiEvent.OnDismissSheet(bottomSheet))
-                    }
-                )
-            }
-
-            is SheetModel.TimerRemainTimeSheet -> {
-                SleepTimerCountingBottomSheet(
-                    remain = bottomSheet.remainTime,
-                    onCancelTimer = {
-                        onEvent(UiEvent.OnCancelTimer)
-                    },
-                    onRequestDismiss = {
-                        onEvent(UiEvent.OnDismissSheet(bottomSheet))
-                    }
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun SmpNavHostContainer(

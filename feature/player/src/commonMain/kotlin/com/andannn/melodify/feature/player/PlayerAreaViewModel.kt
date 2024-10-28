@@ -6,12 +6,13 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.MediaControllerRepository
 import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.model.PlayMode
-import com.andannn.melodify.feature.common.GlobalUiController
 import com.andannn.melodify.core.data.model.LyricModel
 import com.andannn.melodify.core.data.LyricRepository
 import com.andannn.melodify.core.data.MediaContentRepository
 import com.andannn.melodify.core.data.model.next
-import com.andannn.melodify.feature.common.drawer.SheetModel
+import com.andannn.melodify.feature.drawer.DrawerController
+import com.andannn.melodify.feature.drawer.DrawerEvent
+import com.andannn.melodify.feature.drawer.model.SheetModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -62,7 +63,7 @@ class PlayerStateViewModel(
     private val mediaControllerRepository: MediaControllerRepository,
     private val lyricRepository: LyricRepository,
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
-    private val globalUiController: GlobalUiController
+    private val drawerController: DrawerController
 ) : ViewModel() {
     private val interactingMusicItem = playerStateMonitoryRepository.playingMediaStateFlow
     private val playStateFlow = combine(
@@ -168,8 +169,8 @@ class PlayerStateViewModel(
 
             is PlayerUiEvent.OnOptionIconClick -> {
                 viewModelScope.launch {
-                    globalUiController.updateBottomSheet(
-                        SheetModel.PlayerOptionSheet(event.mediaItem)
+                    drawerController.onEvent(
+                        DrawerEvent.OnShowBottomDrawer(SheetModel.PlayerOptionSheet(event.mediaItem))
                     )
                 }
             }

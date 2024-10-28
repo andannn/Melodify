@@ -27,7 +27,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.andannn.melodify.feature.common.dialog.ConnectFailedAlertDialog
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import android.graphics.Color
-import com.andannn.melodify.feature.common.GlobalUiController
+import com.andannn.melodify.feature.drawer.DrawerController
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
     override val scope: Scope by activityRetainedScope()
 
     private val mainViewModel: MainActivityViewModel by viewModel {
-        parametersOf(scope.get<GlobalUiController>())
+        parametersOf(scope.get<DrawerController>())
     }
 
     private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
@@ -60,7 +60,8 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        scope
+        // initialize koin activity retained scope.
+        checkNotNull(scope)
 
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(
@@ -75,7 +76,8 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
         }
 
         lifecycleScope.launch {
-            mainViewModel.deleteMediaItemEventFlow.collect { uris ->
+            val deleteMediaItemEventFlow = scope.get<DrawerController>().deleteMediaItemEventFlow
+            deleteMediaItemEventFlow.collect { uris ->
                 Napier.d(tag = TAG) { "Requesting delete media items: $uris" }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     val editPendingIntent = MediaStore.createTrashRequest(

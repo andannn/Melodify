@@ -3,14 +3,15 @@ package com.andannn.melodify.feature.playList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andannn.melodify.feature.common.GlobalUiController
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaListSource
 import com.andannn.melodify.core.data.MediaControllerRepository
 import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.MediaContentRepository
-import com.andannn.melodify.feature.common.drawer.SheetModel
+import com.andannn.melodify.feature.drawer.DrawerController
+import com.andannn.melodify.feature.drawer.DrawerEvent
+import com.andannn.melodify.feature.drawer.model.SheetModel
 import com.andannn.melodify.feature.playList.navigation.ID
 import com.andannn.melodify.feature.playList.navigation.SOURCE
 import kotlinx.collections.immutable.ImmutableList
@@ -18,7 +19,6 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -44,7 +44,7 @@ class PlayListViewModel(
     playerStateMonitoryRepository: PlayerStateMonitoryRepository,
     private val mediaControllerRepository: MediaControllerRepository,
     private val mediaContentRepository: MediaContentRepository,
-    private val globalUiController: GlobalUiController,
+    private val drawerController: DrawerController,
 ) : ViewModel() {
     private val id =
         savedStateHandle.get<String>(ID) ?: ""
@@ -123,8 +123,10 @@ class PlayListViewModel(
 
             is PlayListEvent.OnOptionClick -> {
                 viewModelScope.launch {
-                    globalUiController.updateBottomSheet(
-                        SheetModel.MediaOptionSheet.fromMediaModel(event.mediaItem)
+                    drawerController.onEvent(
+                        DrawerEvent.OnShowBottomDrawer(
+                            SheetModel.MediaOptionSheet.fromMediaModel(event.mediaItem)
+                        )
                     )
                 }
             }
@@ -132,8 +134,10 @@ class PlayListViewModel(
             PlayListEvent.OnHeaderOptionClick -> {
                 viewModelScope.launch {
                     state.value.headerInfoItem?.let {
-                        globalUiController.updateBottomSheet(
-                            SheetModel.MediaOptionSheet.fromMediaModel(it)
+                        drawerController.onEvent(
+                            DrawerEvent.OnShowBottomDrawer(
+                                SheetModel.MediaOptionSheet.fromMediaModel(it)
+                            )
                         )
                     }
                 }

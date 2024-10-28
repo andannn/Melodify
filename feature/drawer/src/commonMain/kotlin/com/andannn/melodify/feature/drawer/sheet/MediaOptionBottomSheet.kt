@@ -1,4 +1,4 @@
-package com.andannn.melodify.feature.common.drawer
+package com.andannn.melodify.feature.drawer.sheet
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -25,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +41,8 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.feature.common.icons.SmpIcon
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
-import kotlinx.coroutines.CoroutineScope
+import com.andannn.melodify.feature.drawer.model.SheetModel
+import com.andannn.melodify.feature.drawer.model.SheetOptionItem
 import melodify.feature.common.generated.resources.Res
 import melodify.feature.common.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
@@ -52,7 +52,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MediaOptionBottomSheet(
+internal fun MediaOptionBottomSheet(
     optionSheet: SheetModel.MediaOptionSheet,
     modifier: Modifier = Modifier,
     onClickOption: (SheetOptionItem) -> Unit = {},

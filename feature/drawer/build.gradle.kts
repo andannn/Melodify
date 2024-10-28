@@ -7,17 +7,15 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":feature:common"))
-            implementation(project(":feature:drawer"))
             implementation(project(":core:data"))
 
             implementation(libs.coil3.compose)
             implementation(libs.koin.compose.viewmodel)
-            implementation(libs.reorderable)
             implementation(libs.navigation.compose)
         }
     }
 }
 
 android {
-    namespace = "com.andannn.melodify.feature.player"
+    namespace = "com.andannn.melodify.feature.drawer"
 }

@@ -1,4 +1,4 @@
-package com.andannn.melodify.feature.common.drawer
+package com.andannn.melodify.feature.drawer.sheet
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.common.util.durationString
+import com.andannn.melodify.feature.drawer.model.SleepTimerOption
 import kotlinx.coroutines.CoroutineScope
 import melodify.feature.common.generated.resources.Res
 import melodify.feature.common.generated.resources.end_of_song
@@ -36,7 +37,7 @@ import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SleepTimerOptionBottomSheet(
+internal fun SleepTimerOptionBottomSheet(
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
     onSelectOption: (SleepTimerOption) -> Unit = {},
@@ -58,16 +59,6 @@ fun SleepTimerOptionBottomSheet(
             }
         )
     }
-}
-
-enum class SleepTimerOption(
-    val timeMinutes: Duration?,
-) {
-    FIVE_MINUTES(5.minutes),
-    FIFTEEN_MINUTES(15.minutes),
-    THIRTY_MINUTES(30.minutes),
-    SIXTY_MINUTES(60.minutes),
-    SONG_FINISH(null),
 }
 
 @Composable
