@@ -5,33 +5,25 @@ kotlinxCollectionsImmutable = "0.3.8"
 ksp = "2.0.21-1.0.25"
 materialColorUtilitiesAndroid = "2.0.0"
 kotlin = "2.0.21"
-junit4 = "4.13.2"
-androidxTestExt = "1.2.1"
 androidx-palette = "1.0.0"
 androidxCore = "1.13.1"
 androidxCoreSplashscreen = "1.0.1"
 androidxActivity = "1.9.3"
 androidGradlePlugin = "8.2.1"
 kotlinxCoroutines = "1.9.0"
-coilCompose = "2.7.0"
 coil3Compose = "3.0.0-rc01"
 androidxRoom = "2.7.0-alpha10"
 androidxDatastore = "1.1.1"
 okio = "3.9.1"
 media3 = "1.4.1"
 androidxTestRunner = "1.6.2"
-junit = "1.2.1"
-espresso-core = "3.6.1"
 googleService = "4.4.2"
-appcompat = "1.7.0"
-material = "1.12.0"
 firebaseCrashlytics = "3.0.2"
 reorderable = "2.4.0"
 kotlinxSerializationJson = "1.7.3"
 ktor = "3.0.0"
 koin-bom = "4.0.0"
 compose-plugin = "1.7.0"
-androidx-lifecycle = "2.8.3"
 jetbrainsNavigation = "2.8.0-alpha10"
 napierVersion = "2.7.1"
 sqliteBundled = "2.5.0-alpha10"
@@ -49,22 +41,16 @@ compose-lint-checks = { group = "com.slack.lint.compose", name = "compose-lint-c
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
-junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
-androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
-kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version.ref = "kotlinxCoroutines" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
-coil = { group = "io.coil-kt.coil3", name = "coil", version.ref = "coil3Compose" }
 coil3-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil3Compose" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 material-color-utilities-android = { module = "com.materialkolor:material-color-utilities-android", version.ref = "materialColorUtilitiesAndroid" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidxRoom" }
-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "androidxRoom" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidxRoom" }
 datastore = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDatastore" }
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDatastore" }
@@ -88,8 +74,6 @@ koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-android = { module = "io.insert-koin:koin-android" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
-androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
-androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "jetbrainsNavigation" }
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napierVersion" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
@@ -98,11 +82,9 @@ core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtx"
 # dependecy in build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+composeCompiler-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+jetbrainsCompose-gradlePlugin = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "compose-plugin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -114,3 +96,4 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin
 google-service = { id = "com.google.gms.google-services", version.ref = "googleService" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

@@ -1,4 +1,4 @@
-package com.andannn.melodify.feature.common.drawer
+package com.andannn.melodify.feature.drawer.sheet
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,7 +28,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SleepTimerCountingBottomSheet(
+internal fun SleepTimerCountingBottomSheet(
     remain: Duration,
     modifier: Modifier = Modifier,
     onRequestDismiss: () -> Unit = {},

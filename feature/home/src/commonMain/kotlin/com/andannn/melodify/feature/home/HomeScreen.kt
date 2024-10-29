@@ -60,6 +60,8 @@ import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.feature.common.component.ExtraPaddingBottom
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.common.util.getCategoryResource
+import com.andannn.melodify.feature.common.util.getUiRetainedScope
+import com.andannn.melodify.feature.drawer.DrawerController
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import melodify.feature.common.generated.resources.Res
@@ -67,11 +69,16 @@ import melodify.feature.common.generated.resources.track_count
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+import org.koin.core.scope.Scope
 
 @Composable
 fun HomeRoute(
     modifier: Modifier = Modifier,
-    homeViewModel: HomeViewModel = koinViewModel(),
+    scope: Scope? = getUiRetainedScope(),
+    homeViewModel: HomeViewModel = koinViewModel {
+        parametersOf(scope?.get<DrawerController>())
+    },
     onNavigateToPlayList: (id: String, source: MediaListSource) -> Unit,
     onNavigateCustomTabSetting: () -> Unit,
 ) {
@@ -381,6 +388,7 @@ private fun subTitle(
     is AlbumItemModel,
     is PlayListItemModel,
     is ArtistItemModel -> stringResource(Res.string.track_count, model.trackCount.toString())
+
     is GenreItemModel -> ""
 }
 

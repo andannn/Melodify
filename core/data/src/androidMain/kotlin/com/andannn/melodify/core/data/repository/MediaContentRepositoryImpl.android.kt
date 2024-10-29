@@ -207,7 +207,8 @@ internal class MediaContentRepositoryImpl(
         ?: emptyList()
 
     override fun getAudiosOfPlayListFlow(playListId: Long): Flow<List<AudioItemModel>> {
-        return playListDao.getPlayListFlowById(playListId).mapLatest(::mapPlayListToAudioList)
+        return playListDao.getPlayListFlowById(playListId)
+            .mapLatest(::mapPlayListToAudioList)
     }
 
     override suspend fun getAudiosOfPlayList(playListId: Long): List<AudioItemModel> =

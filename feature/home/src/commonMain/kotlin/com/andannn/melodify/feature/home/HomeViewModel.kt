@@ -2,7 +2,6 @@ package com.andannn.melodify.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andannn.melodify.feature.common.GlobalUiController
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaPreviewMode
@@ -10,7 +9,9 @@ import com.andannn.melodify.core.data.MediaContentRepository
 import com.andannn.melodify.core.data.MediaControllerRepository
 import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.feature.common.drawer.SheetModel
+import com.andannn.melodify.feature.drawer.DrawerController
+import com.andannn.melodify.feature.drawer.DrawerEvent
+import com.andannn.melodify.feature.drawer.model.SheetModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,7 +37,7 @@ sealed interface HomeUiEvent {
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
     private val mediaControllerRepository: MediaControllerRepository,
-    private val globalUiController: GlobalUiController,
+    private val drawerController: DrawerController,
     private val mediaContentRepository: MediaContentRepository,
     private val userPreferenceRepository: UserPreferenceRepository
 ) : ViewModel() {
@@ -111,8 +112,12 @@ class HomeViewModel(
 
     private fun onShowMusicItemOption(mediaItemModel: MediaItemModel) {
         viewModelScope.launch {
-            globalUiController.updateBottomSheet(
-                SheetModel.MediaOptionSheet.fromMediaModel(mediaItemModel)
+            drawerController.onEvent(
+                DrawerEvent.OnShowBottomDrawer(
+                    SheetModel.MediaOptionSheet.fromMediaModel(
+                        mediaItemModel
+                    )
+                )
             )
         }
     }

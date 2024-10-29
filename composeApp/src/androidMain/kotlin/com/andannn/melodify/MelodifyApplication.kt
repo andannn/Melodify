@@ -1,11 +1,15 @@
 package com.andannn.melodify
 
 import android.app.Application
+import com.andannn.melodify.feature.drawer.DrawerController
+import com.andannn.melodify.feature.drawer.DrawerControllerImpl
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
-import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.scopedOf
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 class MelodifyApplication : Application() {
@@ -20,6 +24,7 @@ class MelodifyApplication : Application() {
             modules(
                 listOf(
                     activityViewModelModule,
+                    globalUiControllerModule,
                     *modules.toTypedArray(),
                 )
             )
@@ -28,7 +33,11 @@ class MelodifyApplication : Application() {
 }
 
 private val activityViewModelModule = module {
-    viewModel {
-        MainActivityViewModel(get(), get())
+    viewModelOf(::MainActivityViewModel)
+}
+
+private val globalUiControllerModule = module {
+    scope<MainActivity> {
+        scopedOf(::DrawerControllerImpl).bind(DrawerController::class)
     }
 }

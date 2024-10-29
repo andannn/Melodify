@@ -9,13 +9,13 @@ kotlin {
             implementation(project(":feature:common"))
             implementation(project(":core:data"))
 
+            implementation(libs.coil3.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.navigation.compose)
-            implementation(libs.reorderable)
         }
     }
 }
 
 android {
-    namespace = "com.andannn.melodify.feature.customtab"
+    namespace = "com.andannn.melodify.feature.drawer"
 }

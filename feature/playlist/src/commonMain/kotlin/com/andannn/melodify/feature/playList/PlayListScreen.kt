@@ -47,19 +47,25 @@ import com.andannn.melodify.feature.common.component.ExtraPaddingBottom
 import com.andannn.melodify.feature.common.component.ListTileItemView
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
-import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.MediaListSource
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
+import com.andannn.melodify.feature.common.util.getUiRetainedScope
+import com.andannn.melodify.feature.drawer.DrawerController
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+import org.koin.core.scope.Scope
 
 @Composable
 fun PlayListScreen(
     modifier: Modifier = Modifier,
-    viewModel: PlayListViewModel = koinViewModel(),
+    scope: Scope? = getUiRetainedScope(),
+    viewModel: PlayListViewModel = koinViewModel(
+        parameters = { parametersOf(scope?.get<DrawerController>()) }
+    ),
     onBackPressed: () -> Unit,
 ) {
     val uiState by viewModel.state.collectAsState()
@@ -71,11 +77,12 @@ fun PlayListScreen(
 
     when (source) {
         MediaListSource.ALBUM,
-        MediaListSource.PLAY_LIST-> {
+        MediaListSource.PLAY_LIST -> {
             HeaderPlayListContent(
                 modifier = modifier,
                 header = uiState.headerInfoItem ?: AlbumItemModel.DEFAULT,
                 audioList = uiState.audioList,
+                showTrackNum = source == MediaListSource.ALBUM,
                 playingMediaItem = uiState.playingMediaItem,
                 onEvent = viewModel::onEvent,
                 onBackPressed = onBackPressed,
@@ -162,6 +169,7 @@ private fun HeaderPlayListContent(
     audioList: ImmutableList<AudioItemModel>,
     playingMediaItem: AudioItemModel?,
     modifier: Modifier = Modifier,
+    showTrackNum: Boolean = true,
     onBackPressed: () -> Unit = {},
     onEvent: (PlayListEvent) -> Unit = {},
 ) {
@@ -269,7 +277,7 @@ private fun HeaderPlayListContent(
                     isActive = playingMediaItem?.id == item.id,
                     albumArtUri = header.artWorkUri,
                     title = item.name,
-                    showTrackNum = true,
+                    showTrackNum = showTrackNum,
                     subTitle = item.artist,
                     trackNum = item.cdTrackNumber,
                     onMusicItemClick = {

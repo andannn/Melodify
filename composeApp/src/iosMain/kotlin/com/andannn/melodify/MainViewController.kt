@@ -6,9 +6,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.ComposeUIViewController
+import com.andannn.melodify.feature.drawer.DrawerController
+import com.andannn.melodify.feature.drawer.DrawerControllerImpl
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.core.context.startKoin
+import org.koin.core.module.dsl.scopedOf
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
 import platform.MediaPlayer.MPMediaLibrary
 
 fun MainViewController() = ComposeUIViewController(
@@ -17,7 +23,12 @@ fun MainViewController() = ComposeUIViewController(
         Napier.base(DebugAntilog())
 
         startKoin {
-            modules(modules)
+            modules(
+                listOf(
+                    globalUiControllerModule,
+                    *modules.toTypedArray()
+                )
+            )
         }
     }
 ) {
@@ -33,9 +44,13 @@ fun MainViewController() = ComposeUIViewController(
     }
 
     Napier.d("Permission granted: $permissionGranted")
-    if (permissionGranted)  {
+    if (permissionGranted) {
         MelodifyApp()
     }
+}
+
+private val globalUiControllerModule = module {
+    singleOf(::DrawerControllerImpl).bind(DrawerController::class)
 }
 
 private fun haveMediaPermission(): Boolean {

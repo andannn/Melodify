@@ -1,4 +1,4 @@
-package com.andannn.melodify.feature.common.drawer
+package com.andannn.melodify.feature.drawer.model
 
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
@@ -12,6 +12,7 @@ import melodify.feature.common.generated.resources.Res
 import melodify.feature.common.generated.resources.*
 import org.jetbrains.compose.resources.StringResource
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 sealed interface SheetModel {
     abstract class MediaOptionSheet(
@@ -114,3 +115,14 @@ enum class SheetOptionItem(
         text = Res.string.sleep_timer,
     ),
 }
+
+enum class SleepTimerOption(
+    val timeMinutes: Duration?,
+) {
+    FIVE_MINUTES(5.minutes),
+    FIFTEEN_MINUTES(15.minutes),
+    THIRTY_MINUTES(30.minutes),
+    SIXTY_MINUTES(60.minutes),
+    SONG_FINISH(null),
+}
+
