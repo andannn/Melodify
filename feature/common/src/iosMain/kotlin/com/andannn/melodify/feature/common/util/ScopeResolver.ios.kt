@@ -5,5 +5,5 @@ import org.koin.core.scope.Scope
 
 @Composable
 actual fun getUiRetainedScope(): Scope? {
-    TODO("Not yet implemented")
+    return null
 }

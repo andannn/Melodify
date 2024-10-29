@@ -31,11 +31,11 @@ import org.koin.core.scope.Scope
 @Composable
 fun MelodifyApp(
     modifier: Modifier = Modifier,
-    retainedScope: Scope = getUiRetainedScope()!!,
+    retainedScope: Scope? = getUiRetainedScope(),
     playerStateViewModel: PlayerStateViewModel = koinViewModel {
-        parametersOf(retainedScope.get<DrawerController>())
+        parametersOf(retainedScope?.get<DrawerController>())
     },
-    drawerController: DrawerController = retainedScope.get<DrawerController>(),
+    drawerController: DrawerController? = retainedScope?.get<DrawerController>(),
 ) {
     Box(
         modifier = modifier
@@ -55,16 +55,18 @@ fun MelodifyApp(
             )
         }
 
-        val bottomSheetModel by drawerController.bottomSheetModel.collectAsState(null)
-        val scope = rememberCoroutineScope()
-        BottomDrawerContainer(
-            bottomSheet = bottomSheetModel,
-            onEvent = { event ->
-                scope.launch {
-                    drawerController.onEvent(event)
+        if (drawerController != null) {
+            val bottomSheetModel by drawerController.bottomSheetModel.collectAsState(null)
+            val scope = rememberCoroutineScope()
+            BottomDrawerContainer(
+                bottomSheet = bottomSheetModel,
+                onEvent = { event ->
+                    scope.launch {
+                        drawerController.onEvent(event)
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
