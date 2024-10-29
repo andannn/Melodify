@@ -68,7 +68,6 @@ fun MelodifyApp(
     }
 }
 
-
 @Composable
 fun SmpNavHostContainer(
     modifier: Modifier = Modifier,

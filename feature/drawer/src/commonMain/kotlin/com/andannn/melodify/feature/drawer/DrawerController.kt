@@ -14,17 +14,21 @@ import com.andannn.melodify.feature.drawer.model.SheetModel
 import com.andannn.melodify.feature.drawer.model.SheetOptionItem
 import com.andannn.melodify.feature.drawer.model.SleepTimerOption
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 private const val TAG = "DrawerController"
 
 sealed interface DrawerEvent {
-    data class OnShowBottomDrawer(val sheet: SheetModel): DrawerEvent
+    data class OnShowBottomDrawer(val sheet: SheetModel) : DrawerEvent
 
     data object OnCancelTimer : DrawerEvent
 
@@ -49,14 +53,18 @@ interface BottomSheetStateProvider {
 }
 
 interface DrawerController : BottomSheetStateProvider, DeleteMediaItemEventProvider {
-    suspend fun onEvent(event: DrawerEvent)
+    fun onEvent(event: DrawerEvent)
+
+    fun close()
 }
 
 class DrawerControllerImpl(
     private val mediaContentRepository: MediaContentRepository,
     private val mediaControllerRepository: MediaControllerRepository,
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
-) : DrawerController {
+) : DrawerController, CoroutineScope {
+    override val coroutineContext: CoroutineContext = Dispatchers.Main + Job()
+
     override val bottomSheetModel: SharedFlow<SheetModel?>
         get() = _bottomSheetModelFlow.asSharedFlow()
 
@@ -68,63 +76,70 @@ class DrawerControllerImpl(
 
     private var collectingJob: Job? = null
 
-    override suspend fun onEvent(event: DrawerEvent) {
-        Napier.d(tag = TAG) { "onEvent: $event" }
-        when (event) {
-            is DrawerEvent.OnTimerOptionClick -> {
-                closeSheet()
-                when (val option = event.option) {
-                    SleepTimerOption.FIVE_MINUTES,
-                    SleepTimerOption.FIFTEEN_MINUTES,
-                    SleepTimerOption.THIRTY_MINUTES,
-                    SleepTimerOption.SIXTY_MINUTES -> {
-                        mediaControllerRepository.startSleepTimer(option.timeMinutes!!)
-                    }
+    override fun onEvent(event: DrawerEvent) {
+        launch {
+            Napier.d(tag = TAG) { "onEvent: $event" }
+            when (event) {
+                is DrawerEvent.OnTimerOptionClick -> {
+                    closeSheet()
+                    when (val option = event.option) {
+                        SleepTimerOption.FIVE_MINUTES,
+                        SleepTimerOption.FIFTEEN_MINUTES,
+                        SleepTimerOption.THIRTY_MINUTES,
+                        SleepTimerOption.SIXTY_MINUTES -> {
+                            mediaControllerRepository.startSleepTimer(option.timeMinutes!!)
+                        }
 
-                    SleepTimerOption.SONG_FINISH -> {
+                        SleepTimerOption.SONG_FINISH -> {
 // TODO:
 //                        val duration = mediaControllerRepository.duration!!
 //                        mediaControllerRepository.startSleepTimer(duration.milliseconds)
+                        }
                     }
                 }
-            }
 
-            is DrawerEvent.OnMediaOptionClick -> {
-                closeSheet()
-                event.clickedItem.let {
-                    when (it) {
-                        SheetOptionItem.PLAY_NEXT -> onPlayNextClick(event.sheet.source)
-                        SheetOptionItem.DELETE -> onDeleteMediaItem(event.sheet.source)
-                        SheetOptionItem.ADD_TO_QUEUE -> onAddToQueue(event.sheet.source)
-                        SheetOptionItem.SLEEP_TIMER -> onClickSleepTimer()
+                is DrawerEvent.OnMediaOptionClick -> {
+                    closeSheet()
+                    event.clickedItem.let {
+                        when (it) {
+                            SheetOptionItem.PLAY_NEXT -> onPlayNextClick(event.sheet.source)
+                            SheetOptionItem.DELETE -> onDeleteMediaItem(event.sheet.source)
+                            SheetOptionItem.ADD_TO_QUEUE -> onAddToQueue(event.sheet.source)
+                            SheetOptionItem.SLEEP_TIMER -> onClickSleepTimer()
+                        }
                     }
                 }
-            }
 
-            DrawerEvent.OnCancelTimer -> {
-                mediaControllerRepository.cancelSleepTimer()
-                cancelCollectingRemainTime()
-                closeSheet()
-            }
+                DrawerEvent.OnCancelTimer -> {
+                    mediaControllerRepository.cancelSleepTimer()
+                    cancelCollectingRemainTime()
+                    closeSheet()
+                }
 
-            is DrawerEvent.OnDismissSheet -> {
-                when (event.bottomSheet) {
-                    is SheetModel.MediaOptionSheet,
-                    SheetModel.TimerOptionSheet -> {
-                        closeSheet()
-                    }
+                is DrawerEvent.OnDismissSheet -> {
+                    when (event.bottomSheet) {
+                        is SheetModel.MediaOptionSheet,
+                        SheetModel.TimerOptionSheet -> {
+                            closeSheet()
+                        }
 
-                    is SheetModel.TimerRemainTimeSheet -> {
-                        cancelCollectingRemainTime()
-                        closeSheet()
+                        is SheetModel.TimerRemainTimeSheet -> {
+                            cancelCollectingRemainTime()
+                            closeSheet()
+                        }
                     }
                 }
-            }
 
-            is DrawerEvent.OnShowBottomDrawer -> {
-                _bottomSheetModelFlow.emit(event.sheet)
+                is DrawerEvent.OnShowBottomDrawer -> {
+                    _bottomSheetModelFlow.emit(event.sheet)
+                }
             }
         }
+    }
+
+    override fun close() {
+        Napier.d(tag = TAG) { "scope is closed" }
+        this.cancel()
     }
 
     private fun cancelCollectingRemainTime() {
@@ -146,6 +161,7 @@ class DrawerControllerImpl(
     private suspend fun collectRemainTimeToShowCountingSheet() = coroutineScope {
         collectingJob = launch {
             mediaControllerRepository.observeRemainTime().collect {
+                Napier.d(tag = TAG) { "remain time: $it" }
                 _bottomSheetModelFlow.emit(SheetModel.TimerRemainTimeSheet(it))
             }
         }

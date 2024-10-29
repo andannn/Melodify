@@ -34,8 +34,10 @@ import kotlinx.coroutines.launch
 import org.koin.android.scope.AndroidScopeComponent
 import org.koin.androidx.scope.activityRetainedScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.definition.OnCloseCallback
 import org.koin.core.parameter.parametersOf
 import org.koin.core.scope.Scope
+import org.koin.core.scope.ScopeCallback
 
 private const val TAG = "MainActivity"
 
@@ -62,6 +64,12 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
 
         // initialize koin activity retained scope.
         checkNotNull(scope)
+
+        scope.registerCallback(object : ScopeCallback {
+            override fun onScopeClose(scope: Scope) {
+                scope.get<DrawerController>().close()
+            }
+        })
 
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(
