@@ -32,7 +32,9 @@ sealed interface SheetModel {
         }
     }
 
-    data class AudioOptionSheet(override val source: AudioItemModel) : MediaOptionSheet(
+    data class AudioOptionSheet(
+        override val source: AudioItemModel,
+    ) : MediaOptionSheet(
         source = source,
         options = listOf(
             SheetOptionItem.ADD_TO_QUEUE,

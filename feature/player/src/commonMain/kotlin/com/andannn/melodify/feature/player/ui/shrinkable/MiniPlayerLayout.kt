@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.feature.common.component.FavoriteIconButton
 import com.andannn.melodify.feature.player.PlayerUiEvent
 
 @Composable
@@ -100,26 +101,14 @@ internal fun MiniPlayerLayout(
             )
         }
         Spacer(modifier = Modifier.width(10.dp))
-        IconButton(
+        FavoriteIconButton(
             modifier = Modifier.size(30.dp),
             enabled = enabled,
+            isFavorite = isFavorite,
             onClick = {
                 onEvent(PlayerUiEvent.OnFavoriteButtonClick)
             },
-        ) {
-            if (isFavorite) {
-                Icon(
-                    imageVector = Icons.Rounded.Favorite,
-                    tint = Color.Red,
-                    contentDescription = "",
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Rounded.FavoriteBorder,
-                    contentDescription = "",
-                )
-            }
-        }
+        )
         Spacer(modifier = Modifier.width(10.dp))
     }
 }

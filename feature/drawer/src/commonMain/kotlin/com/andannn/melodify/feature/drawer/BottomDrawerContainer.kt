@@ -19,6 +19,9 @@ fun BottomDrawerContainer(
                     onClickOption = {
                         onEvent(DrawerEvent.OnMediaOptionClick(bottomSheet, it))
                     },
+                    onToggleFavorite = { id ->
+                        onEvent(DrawerEvent.OnToggleFavorite(id))
+                    },
                     onRequestDismiss = {
                         onEvent(DrawerEvent.OnDismissSheet(bottomSheet))
                     }

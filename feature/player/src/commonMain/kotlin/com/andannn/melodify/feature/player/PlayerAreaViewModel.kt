@@ -215,18 +215,7 @@ class PlayerStateViewModel(
     }
 
     private suspend fun onToggleFavoriteState(mediaId: String) {
-        if (isCurrentMediaFavoriteFlow.value) {
-            Napier.d(tag = TAG) { "Add to favorite start: $mediaId" }
-            val failedIndex =
-                mediaContentRepository.removeMusicFromFavoritePlayList(listOf(mediaId))
-            Napier.d(tag = TAG) { "Add to favorite done: failedIndex: $failedIndex" }
-
-        } else {
-            Napier.d(tag = TAG) { "Add to favorite start: $mediaId" }
-            val failedIndex =
-                mediaContentRepository.addMusicToFavoritePlayList(listOf(mediaId))
-            Napier.d(tag = TAG) { "Add to favorite done: failedIndex: $failedIndex" }
-        }
+        mediaContentRepository.toggleFavoriteMedia(mediaId)
     }
 
     private fun togglePlayState() {

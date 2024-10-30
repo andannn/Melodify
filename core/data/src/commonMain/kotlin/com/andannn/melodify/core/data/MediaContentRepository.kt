@@ -128,6 +128,11 @@ interface MediaContentRepository {
     fun isMediaInFavoritePlayListFlow(mediaStoreId: String): Flow<Boolean>
 
     /**
+     * Toggle favorite media
+     */
+    suspend fun toggleFavoriteMedia(mediaId: String)
+
+    /**
      * Remove musics from favorite playList
      */
     suspend fun removeMusicFromFavoritePlayList(mediaIdList: List<String>) =

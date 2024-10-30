@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -111,15 +112,13 @@ class HomeViewModel(
     }
 
     private fun onShowMusicItemOption(mediaItemModel: MediaItemModel) {
-        viewModelScope.launch {
-            drawerController.onEvent(
-                DrawerEvent.OnShowBottomDrawer(
-                    SheetModel.MediaOptionSheet.fromMediaModel(
-                        mediaItemModel
-                    )
+        drawerController.onEvent(
+            DrawerEvent.OnShowBottomDrawer(
+                SheetModel.MediaOptionSheet.fromMediaModel(
+                    item = mediaItemModel,
                 )
             )
-        }
+        )
     }
 }
 

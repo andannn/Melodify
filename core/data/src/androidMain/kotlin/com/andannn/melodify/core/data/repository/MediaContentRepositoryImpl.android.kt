@@ -277,6 +277,18 @@ internal class MediaContentRepositoryImpl(
             mediaStoreId
         )
 
+    override suspend fun toggleFavoriteMedia(mediaId: String) {
+        val isFavorite = playListDao.getIsMediaInPlayListFlow(
+            PlayListDao.FAVORITE_PLAY_LIST_ID.toString(),
+            mediaId
+        ).first()
+        if (isFavorite) {
+            removeMusicFromFavoritePlayList(listOf(mediaId))
+        } else {
+            addMusicToFavoritePlayList(listOf(mediaId))
+        }
+    }
+
     override suspend fun removeMusicFromPlayList(playListId: Long, mediaIdList: List<String>) =
         playListDao.deleteMediaFromPlayList(playListId, mediaIdList)
 

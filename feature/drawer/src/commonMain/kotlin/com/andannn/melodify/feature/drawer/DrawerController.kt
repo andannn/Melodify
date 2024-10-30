@@ -44,6 +44,8 @@ sealed interface DrawerEvent {
     data class OnDismissSheet(val bottomSheet: SheetModel) : DrawerEvent
 
     data object OnShowTimerSheet : DrawerEvent
+
+    data class OnToggleFavorite(val id: String) : DrawerEvent
 }
 
 interface DeleteMediaItemEventProvider {
@@ -137,6 +139,10 @@ class DrawerControllerImpl(
                 }
 
                 DrawerEvent.OnShowTimerSheet -> onClickSleepTimer()
+
+                is DrawerEvent.OnToggleFavorite -> {
+                    mediaContentRepository.toggleFavoriteMedia(event.id)
+                }
             }
         }
     }
