@@ -108,6 +108,7 @@ internal fun PlayerView(
                 isFavorite = state.isFavorite,
                 playListQueue = state.playListQueue,
                 activeMediaItem = state.mediaItem,
+                isCounting = state.isCounting,
                 title = state.mediaItem.name,
                 artist = state.mediaItem.artist,
                 progress = state.progress,

@@ -34,6 +34,8 @@ interface MediaControllerRepository {
 
     fun isCounting(): Boolean
 
+    fun observeIsCounting(): Flow<Boolean>
+
     fun observeRemainTime(): Flow<Duration>
 
     fun startSleepTimer(duration: Duration)

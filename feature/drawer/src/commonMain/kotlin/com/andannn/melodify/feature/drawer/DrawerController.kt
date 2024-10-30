@@ -42,6 +42,8 @@ sealed interface DrawerEvent {
     ) : DrawerEvent
 
     data class OnDismissSheet(val bottomSheet: SheetModel) : DrawerEvent
+
+    data object OnShowTimerSheet : DrawerEvent
 }
 
 interface DeleteMediaItemEventProvider {
@@ -133,6 +135,8 @@ class DrawerControllerImpl(
                 is DrawerEvent.OnShowBottomDrawer -> {
                     _bottomSheetModelFlow.emit(event.sheet)
                 }
+
+                DrawerEvent.OnShowTimerSheet -> onClickSleepTimer()
             }
         }
     }

@@ -8,6 +8,7 @@ import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.player.MediaBrowserManager
 import com.andannn.melodify.core.player.SleepTimeCounterState
 import com.andannn.melodify.core.player.SleepTimerController
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.takeWhile
 import kotlin.time.Duration
@@ -89,6 +90,10 @@ internal class MediaControllerRepositoryImpl(
     override fun isCounting(): Boolean {
         return sleepTimerController.counterState is SleepTimeCounterState.Counting
     }
+
+    override fun observeIsCounting() = sleepTimerController.getCounterStateFlow()
+        .map { it is SleepTimeCounterState.Counting }
+        .distinctUntilChanged()
 
     override fun observeRemainTime() =
         sleepTimerController.getCounterStateFlow()

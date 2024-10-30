@@ -10,6 +10,7 @@ import com.andannn.melodify.core.data.model.LyricModel
 import com.andannn.melodify.core.data.LyricRepository
 import com.andannn.melodify.core.data.MediaContentRepository
 import com.andannn.melodify.core.data.model.next
+import com.andannn.melodify.core.data.util.combine6
 import com.andannn.melodify.feature.drawer.DrawerController
 import com.andannn.melodify.feature.drawer.DrawerEvent
 import com.andannn.melodify.feature.drawer.model.SheetModel
@@ -54,6 +55,8 @@ sealed interface PlayerUiEvent {
     data class OnItemClickInQueue(val item: AudioItemModel) : PlayerUiEvent
 
     data class OnSeekLyrics(val timeMs: Long) : PlayerUiEvent
+
+    data object OnTimerIconClick : PlayerUiEvent
 }
 
 private const val TAG = "PlayerStateViewModel"
@@ -85,6 +88,7 @@ class PlayerStateViewModel(
                 .onStart { emit(LyricState.Loading) }
         }
 
+    private val isCountingFlow = mediaControllerRepository.observeIsCounting()
     private val playListQueueFlow = playerStateMonitoryRepository.playListQueueStateFlow
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -99,13 +103,14 @@ class PlayerStateViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     val playerUiStateFlow =
-        combine(
+        combine6(
             interactingMusicItem,
             playStateFlow,
             playListQueueFlow,
             lyricFlow,
             isCurrentMediaFavoriteFlow,
-        ) { interactingMusicItem, state, playListQueue, lyric, isFavorite ->
+            isCountingFlow,
+        ) { interactingMusicItem, state, playListQueue, lyric, isFavorite, isCounting ->
             if (interactingMusicItem == null) {
                 PlayerUiState.Inactive
             } else {
@@ -119,6 +124,7 @@ class PlayerStateViewModel(
                     playListQueue = playListQueue,
                     isPlaying = state.isPlaying,
                     progress = state.playProgress,
+                    isCounting = isCounting
                 )
             }
         }
@@ -201,6 +207,10 @@ class PlayerStateViewModel(
             is PlayerUiEvent.OnSeekLyrics -> {
                 seekToTime(event.timeMs)
             }
+
+            PlayerUiEvent.OnTimerIconClick -> {
+                drawerController.onEvent(DrawerEvent.OnShowTimerSheet)
+            }
         }
     }
 
@@ -271,5 +281,6 @@ sealed class PlayerUiState {
         val playListQueue: List<AudioItemModel>,
         val progress: Float,
         val isPlaying: Boolean,
+        val isCounting: Boolean,
     ) : PlayerUiState()
 }
