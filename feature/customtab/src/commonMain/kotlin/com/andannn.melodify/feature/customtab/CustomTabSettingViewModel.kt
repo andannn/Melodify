@@ -2,8 +2,9 @@ package com.andannn.melodify.feature.customtab
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andannn.melodify.core.data.MediaContentRepository
-import com.andannn.melodify.core.data.UserPreferenceRepository
+import com.andannn.melodify.core.data.repository.MediaContentRepository
+import com.andannn.melodify.core.data.repository.PlayListRepository
+import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.repository.DefaultCustomTabs
 import kotlinx.coroutines.async
@@ -30,6 +31,7 @@ internal sealed interface UiEvent {
 }
 
 internal class CustomTabSettingViewModel(
+    private val playListRepository: PlayListRepository,
     private val contentRepository: MediaContentRepository,
     private val userPreferenceRepository: UserPreferenceRepository
 ) : ViewModel() {
@@ -110,7 +112,7 @@ internal class CustomTabSettingViewModel(
             contentRepository.getAllGenreFlow().first()
         }
         val allPlayListDeferred = async {
-            contentRepository.getAllPlayListFlow().first()
+            playListRepository.getAllPlayListFlow().first()
         }
 
         UiState.Ready(

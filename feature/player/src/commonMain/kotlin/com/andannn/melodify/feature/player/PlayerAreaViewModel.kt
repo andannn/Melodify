@@ -3,12 +3,12 @@ package com.andannn.melodify.feature.player
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.MediaControllerRepository
-import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
+import com.andannn.melodify.core.data.repository.MediaControllerRepository
+import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.data.model.LyricModel
-import com.andannn.melodify.core.data.LyricRepository
-import com.andannn.melodify.core.data.MediaContentRepository
+import com.andannn.melodify.core.data.repository.LyricRepository
+import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.model.next
 import com.andannn.melodify.core.data.util.combine6
 import com.andannn.melodify.feature.drawer.DrawerController
@@ -62,7 +62,7 @@ sealed interface PlayerUiEvent {
 private const val TAG = "PlayerStateViewModel"
 
 class PlayerStateViewModel(
-    private val mediaContentRepository: MediaContentRepository,
+    private val playListRepository: PlayListRepository,
     private val mediaControllerRepository: MediaControllerRepository,
     private val lyricRepository: LyricRepository,
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
@@ -98,7 +98,7 @@ class PlayerStateViewModel(
             if (it == null) {
                 return@flatMapLatest flowOf(false)
             }
-            mediaContentRepository.isMediaInFavoritePlayListFlow(it.id)
+            playListRepository.isMediaInFavoritePlayListFlow(it.id)
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
@@ -215,7 +215,7 @@ class PlayerStateViewModel(
     }
 
     private suspend fun onToggleFavoriteState(mediaId: String) {
-        mediaContentRepository.toggleFavoriteMedia(mediaId)
+        playListRepository.toggleFavoriteMedia(mediaId)
     }
 
     private fun togglePlayState() {

@@ -1,4 +1,4 @@
-package com.andannn.melodify.core.data
+package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayMode

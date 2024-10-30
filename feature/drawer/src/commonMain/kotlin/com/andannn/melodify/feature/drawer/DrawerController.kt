@@ -1,8 +1,9 @@
 package com.andannn.melodify.feature.drawer
 
-import com.andannn.melodify.core.data.MediaContentRepository
-import com.andannn.melodify.core.data.MediaControllerRepository
-import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
+import com.andannn.melodify.core.data.repository.MediaContentRepository
+import com.andannn.melodify.core.data.repository.MediaControllerRepository
+import com.andannn.melodify.core.data.repository.PlayListRepository
+import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -66,6 +67,7 @@ class DrawerControllerImpl(
     private val mediaContentRepository: MediaContentRepository,
     private val mediaControllerRepository: MediaControllerRepository,
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
+    private val playListRepository: PlayListRepository,
 ) : DrawerController, CoroutineScope {
     override val coroutineContext: CoroutineContext = Dispatchers.Main + Job()
 
@@ -141,7 +143,7 @@ class DrawerControllerImpl(
                 DrawerEvent.OnShowTimerSheet -> onClickSleepTimer()
 
                 is DrawerEvent.OnToggleFavorite -> {
-                    mediaContentRepository.toggleFavoriteMedia(event.id)
+                    playListRepository.toggleFavoriteMedia(event.id)
                 }
             }
         }
@@ -247,7 +249,7 @@ class DrawerControllerImpl(
             }
 
             is PlayListItemModel -> {
-                mediaContentRepository.getAudiosOfPlayList(source.id.toLong())
+                playListRepository.getAudiosOfPlayList(source.id.toLong())
             }
         }
     }

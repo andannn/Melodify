@@ -1,0 +1,62 @@
+package com.andannn.melodify.core.data.repository
+
+import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.database.PlayListDao
+import kotlinx.coroutines.flow.Flow
+
+interface PlayListRepository {
+    /**
+     * Return flow of all playLists
+     */
+    fun getAllPlayListFlow(): Flow<List<PlayListItemModel>>
+
+    /**
+     * Return flow of audios of playList
+     */
+    fun getAudiosOfPlayListFlow(playListId: Long): Flow<List<AudioItemModel>>
+
+    /**
+     * Return audios of playList
+     */
+    suspend fun getAudiosOfPlayList(playListId: Long): List<AudioItemModel>
+
+    /**
+     * Return playList by playListId
+     */
+    suspend fun getPlayListById(playListId: Long): PlayListItemModel?
+
+    /**
+     * Add musics to favorite playList
+     */
+    suspend fun addMusicToFavoritePlayList(musics: List<String>) =
+        addMusicToPlayList(PlayListDao.FAVORITE_PLAY_LIST_ID, musics)
+
+    /**
+     * Add musics to playList
+     *
+     * return index of musics that already exist
+     */
+    suspend fun addMusicToPlayList(playListId: Long, musics: List<String>): List<Long>
+
+    /**
+     * Return flow of whether [mediaStoreId] is in favorite playList
+     */
+    fun isMediaInFavoritePlayListFlow(mediaStoreId: String): Flow<Boolean>
+
+    /**
+     * Toggle favorite media
+     */
+    suspend fun toggleFavoriteMedia(mediaId: String)
+
+    /**
+     * Remove musics from favorite playList
+     */
+    suspend fun removeMusicFromFavoritePlayList(mediaIdList: List<String>) =
+        removeMusicFromPlayList(PlayListDao.FAVORITE_PLAY_LIST_ID, mediaIdList)
+
+    /**
+     * Remove musics from playList
+     */
+    suspend fun removeMusicFromPlayList(playListId: Long, mediaIdList: List<String>)
+}

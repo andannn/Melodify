@@ -34,7 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.andannn.melodify.core.data.MediaContentRepository
+import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -151,7 +151,7 @@ private fun SheetHeader(
             )
         }
         if (showFavorite) {
-            val isFavorite by getKoin().get<MediaContentRepository>()
+            val isFavorite by getKoin().get<PlayListRepository>()
                 .isMediaInFavoritePlayListFlow(mediaItem.id).collectAsState(false)
 
             Spacer(modifier = Modifier.weight(1f))

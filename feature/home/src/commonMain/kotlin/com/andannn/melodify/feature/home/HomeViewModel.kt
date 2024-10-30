@@ -5,9 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaPreviewMode
-import com.andannn.melodify.core.data.MediaContentRepository
-import com.andannn.melodify.core.data.MediaControllerRepository
-import com.andannn.melodify.core.data.UserPreferenceRepository
+import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.feature.drawer.DrawerController
 import com.andannn.melodify.feature.drawer.DrawerEvent
@@ -19,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -37,11 +34,12 @@ sealed interface HomeUiEvent {
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
-    private val mediaControllerRepository: MediaControllerRepository,
-    private val drawerController: DrawerController,
-    private val mediaContentRepository: MediaContentRepository,
-    private val userPreferenceRepository: UserPreferenceRepository
+    private val repository: Repository,
+    private val drawerController: DrawerController
 ) : ViewModel() {
+    private val mediaControllerRepository = repository.mediaControllerRepository
+    private val userPreferenceRepository = repository.userPreferenceRepository
+
     private val _userSettingFlow = userPreferenceRepository.userSettingFlow
     private val _selectedTabIndexFlow = MutableStateFlow(0)
 
@@ -64,7 +62,7 @@ class HomeViewModel(
                 return@flatMapLatest flow { emit(emptyList()) }
             }
             with(tab) {
-                mediaContentRepository.contentFlow()
+                repository.contentFlow()
             }
         }
 
