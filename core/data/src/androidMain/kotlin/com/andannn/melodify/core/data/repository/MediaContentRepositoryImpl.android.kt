@@ -1,15 +1,11 @@
 package com.andannn.melodify.core.data.repository
 
-import android.content.Context
-import android.database.ContentObserver
-import android.net.Uri
 import android.provider.MediaStore
-import android.util.Log
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
-import com.andannn.melodify.core.database.PlayListDao
+import com.andannn.melodify.core.data.util.contentChangedEventFlow
 import com.andannn.melodify.core.player.MediaBrowserManager
 import com.andannn.melodify.core.player.library.ALBUM_ID
 import com.andannn.melodify.core.player.library.ALBUM_PREFIX
@@ -18,13 +14,8 @@ import com.andannn.melodify.core.player.library.ARTIST_ID
 import com.andannn.melodify.core.player.library.ARTIST_PREFIX
 import com.andannn.melodify.core.player.library.GENRE_ID
 import com.andannn.melodify.core.player.library.GENRE_PREFIX
-import com.andannn.melodify.core.player.library.mediastore.MediaStoreSource
-import com.andannn.melodify.core.player.library.mediastore.model.AudioData
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.guava.await
@@ -33,15 +24,10 @@ private const val TAG = "MediaContentRepository"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class MediaContentRepositoryImpl(
-    context: Context,
     private val mediaBrowserManager: MediaBrowserManager,
-    private val playListDao: PlayListDao,
-    private val mediaStoreSource: MediaStoreSource,
 ) : MediaContentRepository {
     private val mediaBrowser
         get() = mediaBrowserManager.mediaBrowser
-
-    private val contentResolver = context.contentResolver
 
     override fun getAllMediaItemsFlow() =
         contentChangedEventFlow(allAudioUri)
@@ -147,7 +133,7 @@ internal class MediaContentRepositoryImpl(
         }
         ?: emptyList()
 
-    private suspend fun getAllGenre(): List<GenreItemModel> = mediaBrowser.getChildren(
+    private suspend fun getAllGenre() = mediaBrowser.getChildren(
         GENRE_ID,
         0,
         Int.MAX_VALUE,
@@ -241,45 +227,4 @@ internal class MediaContentRepositoryImpl(
     private fun getGenreUri(genreId: Long): String {
         return MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI.toString() + "/" + genreId
     }
-
-    private fun contentChangedEventFlow(uri: String): Flow<Unit> {
-        Log.d(TAG, "getContentChangedEventFlow: $uri")
-        return callbackFlow {
-            val observer =
-                object : ContentObserver(null) {
-                    override fun onChange(selfChange: Boolean) {
-                        trySend(Unit)
-                    }
-                }
-
-            contentResolver.registerContentObserver(
-                /* uri = */ Uri.parse(uri),
-                /* notifyForDescendants = */ true,
-                /* observer = */ observer,
-            )
-
-            trySend(Unit)
-
-            awaitClose {
-                contentResolver.unregisterContentObserver(observer)
-            }
-        }
-    }
 }
-
-private fun AudioData.toAppItem() = AudioItemModel(
-    id = id.toString(),
-    name = title,
-    modifiedDate = modifiedDate,
-    artWorkUri = Uri.withAppendedPath(
-        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-        albumId.toString(),
-    ).toString(),
-    album = album ?: "",
-    albumId = albumId.toString(),
-    artist = artist.toString(),
-    artistId = artistId.toString(),
-    cdTrackNumber = cdTrackNumber ?: 0,
-    discNumberIndex = discNumber ?: 0,
-)
-

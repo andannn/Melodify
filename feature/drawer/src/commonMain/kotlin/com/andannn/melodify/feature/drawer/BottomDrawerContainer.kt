@@ -41,7 +41,6 @@ fun BottomDrawerContainer(
 
             is SheetModel.TimerRemainTimeSheet -> {
                 SleepTimerCountingBottomSheet(
-                    remain = bottomSheet.remainTime,
                     onCancelTimer = {
                         onEvent(DrawerEvent.OnCancelTimer)
                     },

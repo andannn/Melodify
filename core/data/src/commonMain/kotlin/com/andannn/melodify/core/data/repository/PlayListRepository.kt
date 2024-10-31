@@ -29,7 +29,7 @@ interface PlayListRepository {
     /**
      * Add musics to favorite playList
      */
-    suspend fun addMusicToFavoritePlayList(musics: List<String>) =
+    suspend fun addMusicToFavoritePlayList(musics: List<AudioItemModel>) =
         addMusicToPlayList(PlayListDao.FAVORITE_PLAY_LIST_ID, musics)
 
     /**
@@ -37,7 +37,7 @@ interface PlayListRepository {
      *
      * return index of musics that already exist
      */
-    suspend fun addMusicToPlayList(playListId: Long, musics: List<String>): List<Long>
+    suspend fun addMusicToPlayList(playListId: Long, musics: List<AudioItemModel>): List<Long>
 
     /**
      * Return flow of whether [mediaStoreId] is in favorite playList
@@ -47,7 +47,7 @@ interface PlayListRepository {
     /**
      * Toggle favorite media
      */
-    suspend fun toggleFavoriteMedia(mediaId: String)
+    suspend fun toggleFavoriteMedia(audio: AudioItemModel)
 
     /**
      * Remove musics from favorite playList

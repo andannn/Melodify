@@ -10,6 +10,7 @@ import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.feature.drawer.DrawerController
 import com.andannn.melodify.feature.drawer.DrawerEvent
 import com.andannn.melodify.feature.drawer.model.SheetModel
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,7 +28,7 @@ private const val TAG = "HomeViewModel"
 
 sealed interface HomeUiEvent {
     data class OnSelectedCategoryChanged(val tabIndex: Int) : HomeUiEvent
-    data class OnPlayMusic(val mediaItem: AudioItemModel) : HomeUiEvent
+    data class OnMusicItemClick(val mediaItem: AudioItemModel) : HomeUiEvent
     data class OnShowItemOption(val audioItemModel: MediaItemModel) : HomeUiEvent
     data object OnTogglePreviewMode : HomeUiEvent
 }
@@ -83,7 +84,7 @@ class HomeViewModel(
     fun onEvent(event: HomeUiEvent) {
         when (event) {
             is HomeUiEvent.OnSelectedCategoryChanged -> onSelectedCategoryChanged(event.tabIndex)
-            is HomeUiEvent.OnPlayMusic -> playMusic(event.mediaItem)
+            is HomeUiEvent.OnMusicItemClick -> playMusic(event.mediaItem)
             is HomeUiEvent.OnShowItemOption -> onShowMusicItemOption(event.audioItemModel)
             is HomeUiEvent.OnTogglePreviewMode -> onTogglePreviewMode()
         }
@@ -100,13 +101,19 @@ class HomeViewModel(
     }
 
     private fun playMusic(mediaItem: AudioItemModel) {
-        val mediaItems = state.value.mediaItems.toList() as? List<AudioItemModel>
-            ?: error("invalid state")
+        Napier.d(tag = TAG) { "invalid media item click $mediaItem" }
+        if (mediaItem.isValid()) {
+            val mediaItems = state.value.mediaItems.toList() as? List<AudioItemModel>
+                ?: error("invalid state")
 
-        mediaControllerRepository.playMediaList(
-            mediaItems.toList(),
-            mediaItems.indexOf(mediaItem)
-        )
+            mediaControllerRepository.playMediaList(
+                mediaItems.toList(),
+                mediaItems.indexOf(mediaItem)
+            )
+        } else {
+            Napier.d(tag = TAG) { "invalid media item click $mediaItem" }
+            // TODO: show delete dialog
+        }
     }
 
     private fun onShowMusicItemOption(mediaItemModel: MediaItemModel) {

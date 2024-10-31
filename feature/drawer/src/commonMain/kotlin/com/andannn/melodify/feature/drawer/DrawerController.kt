@@ -19,7 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -46,7 +45,7 @@ sealed interface DrawerEvent {
 
     data object OnShowTimerSheet : DrawerEvent
 
-    data class OnToggleFavorite(val id: String) : DrawerEvent
+    data class OnToggleFavorite(val audio: AudioItemModel) : DrawerEvent
 }
 
 interface DeleteMediaItemEventProvider {
@@ -79,8 +78,6 @@ class DrawerControllerImpl(
 
     private val _bottomSheetModelFlow = MutableSharedFlow<SheetModel?>()
     private val _deleteMediaItemEventFlow = MutableSharedFlow<List<String>>()
-
-    private var collectingJob: Job? = null
 
     override fun onEvent(event: DrawerEvent) {
         launch {
@@ -118,7 +115,6 @@ class DrawerControllerImpl(
 
                 DrawerEvent.OnCancelTimer -> {
                     mediaControllerRepository.cancelSleepTimer()
-                    cancelCollectingRemainTime()
                     closeSheet()
                 }
 
@@ -130,7 +126,6 @@ class DrawerControllerImpl(
                         }
 
                         is SheetModel.TimerRemainTimeSheet -> {
-                            cancelCollectingRemainTime()
                             closeSheet()
                         }
                     }
@@ -143,7 +138,7 @@ class DrawerControllerImpl(
                 DrawerEvent.OnShowTimerSheet -> onClickSleepTimer()
 
                 is DrawerEvent.OnToggleFavorite -> {
-                    playListRepository.toggleFavoriteMedia(event.id)
+                    playListRepository.toggleFavoriteMedia(event.audio)
                 }
             }
         }
@@ -154,28 +149,15 @@ class DrawerControllerImpl(
         this.cancel()
     }
 
-    private fun cancelCollectingRemainTime() {
-        collectingJob?.cancel()
-    }
-
     private suspend fun closeSheet() {
         _bottomSheetModelFlow.emit(null)
     }
 
     private suspend fun onClickSleepTimer() {
         if (mediaControllerRepository.isCounting()) {
-            collectRemainTimeToShowCountingSheet()
+            _bottomSheetModelFlow.emit(SheetModel.TimerRemainTimeSheet)
         } else {
             _bottomSheetModelFlow.emit(SheetModel.TimerOptionSheet)
-        }
-    }
-
-    private suspend fun collectRemainTimeToShowCountingSheet() = coroutineScope {
-        collectingJob = launch {
-            mediaControllerRepository.observeRemainTime().collect {
-                Napier.d(tag = TAG) { "remain time: $it" }
-                _bottomSheetModelFlow.emit(SheetModel.TimerRemainTimeSheet(it))
-            }
         }
     }
 
@@ -201,7 +183,7 @@ class DrawerControllerImpl(
         }
         val uris = items.map { it.uri }
 
-        _deleteMediaItemEventFlow.tryEmit(uris)
+        _deleteMediaItemEventFlow.emit(uris)
     }
 
     private suspend fun onPlayNextClick(source: MediaItemModel) {

@@ -91,9 +91,7 @@ sealed interface SheetModel {
 
     data object TimerOptionSheet : SheetModel
 
-    data class TimerRemainTimeSheet(
-        val remainTime: Duration
-    ) : SheetModel
+    data object TimerRemainTimeSheet: SheetModel
 }
 
 enum class SheetOptionItem(

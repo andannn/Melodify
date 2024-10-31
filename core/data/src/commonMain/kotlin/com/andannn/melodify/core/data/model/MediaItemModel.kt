@@ -24,7 +24,12 @@ data class AudioItemModel(
 ) : MediaItemModel {
     companion object {
         val DEFAULT = AudioItemModel("0", "", "", 0, "", "0", "", "0", 0, 0)
+
+        // prefix for invalid item which local file is deleted but still in playlist
+        const val INVALID_ID_PREFIX = "invalid_id_"
     }
+
+    fun isValid() = !this.id.contains(INVALID_ID_PREFIX)
 }
 
 data class AlbumItemModel(

@@ -12,6 +12,7 @@ import com.andannn.melodify.feature.drawer.DrawerEvent
 import com.andannn.melodify.feature.drawer.model.SheetModel
 import com.andannn.melodify.feature.playList.navigation.ID
 import com.andannn.melodify.feature.playList.navigation.SOURCE
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,6 +38,8 @@ sealed interface PlayListEvent {
 
     data object OnHeaderOptionClick : PlayListEvent
 }
+
+private const val TAG = "PlayListViewModel"
 
 class PlayListViewModel(
     savedStateHandle: SavedStateHandle,
@@ -116,11 +119,12 @@ class PlayListViewModel(
             }
 
             is PlayListEvent.OnPlayAllButtonClick -> {
-                setPlayListAndStartIndex(state.value.audioList, 0)
+                playAll()
             }
 
             is PlayListEvent.OnShuffleButtonClick -> {
-                setPlayListAndStartIndex(state.value.audioList, 0, isShuffle = true)
+// TODO: Implement shuffle play
+//                setPlayListAndStartIndex(state.value.audioList, 0, isShuffle = true)
             }
 
             is PlayListEvent.OnOptionClick -> {
@@ -150,9 +154,20 @@ class PlayListViewModel(
     private fun setPlayListAndStartIndex(
         mediaItems: List<AudioItemModel>,
         index: Int,
-        isShuffle: Boolean = false,
     ) {
-        mediaControllerRepository.playMediaList(mediaItems, index)
+        if (mediaItems.getOrNull(index)?.isValid() == true) {
+            mediaControllerRepository.playMediaList(mediaItems, index)
+        } else {
+            Napier.d(tag = TAG) { "click invalid index $index in $mediaItems" }
+            // TODO: show delete dialog
+        }
+    }
+
+    private fun playAll() {
+        val filtered = state.value.audioList.filter { it.isValid() }
+        if (filtered.isNotEmpty()) {
+            mediaControllerRepository.playMediaList(filtered, 0)
+        }
     }
 }
 

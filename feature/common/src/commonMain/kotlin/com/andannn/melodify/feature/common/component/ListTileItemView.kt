@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +37,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun ListTileItemView(
     modifier: Modifier = Modifier,
+    playable: Boolean = true,
     swapIconModifier: Modifier? = null,
     albumArtUri: String = "",
     isActive: Boolean = false,
@@ -49,12 +51,10 @@ fun ListTileItemView(
     onOptionButtonClick: () -> Unit = {}
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth(),
-        color = if (isActive) {
-            MaterialTheme.colorScheme.inversePrimary
-        } else {
-            defaultColor
-        },
+        modifier = modifier
+            .fillMaxWidth()
+            .alpha(if (playable) 1f else 0.5f),
+        color = if (isActive) MaterialTheme.colorScheme.inversePrimary else defaultColor,
         onClick = onMusicItemClick,
     ) {
         Row(
@@ -114,6 +114,7 @@ fun ListTileItemView(
 
             if (swapIconModifier == null) {
                 IconButton(
+                    enabled = playable,
                     onClick = onOptionButtonClick,
                 ) {
                     Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "menu")

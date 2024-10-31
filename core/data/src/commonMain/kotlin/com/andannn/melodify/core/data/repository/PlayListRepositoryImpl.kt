@@ -2,20 +2,23 @@ package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.util.allAudioChangedEventFlow
 import com.andannn.melodify.core.database.PlayListDao
 import com.andannn.melodify.core.database.entity.PlayListAndMedias
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 
 internal class PlayListRepositoryImpl(
     private val playListDao: PlayListDao,
-): PlayListRepository {
+) : PlayListRepository {
 
     override fun getAllPlayListFlow(): Flow<List<PlayListItemModel>> =
         playListDao
@@ -32,13 +35,19 @@ internal class PlayListRepositoryImpl(
             )
         }
 
-    override suspend fun addMusicToPlayList(playListId: Long, musics: List<String>): List<Long> {
+    override suspend fun addMusicToPlayList(
+        playListId: Long,
+        musics: List<AudioItemModel>
+    ): List<Long> {
         val insertedIndexList = playListDao.insertPlayListWithMediaCrossRef(
             crossRefs = musics.map {
                 PlayListWithMediaCrossRef(
                     playListId = playListId,
-                    mediaStoreId = it,
-                    addedDate = 0
+                    mediaStoreId = it.id,
+                    artist = it.artist,
+                    title = it.name,
+                    // TODO: addedDate ,
+                    addedDate = 0,
                 )
             }
         )
@@ -54,25 +63,28 @@ internal class PlayListRepositoryImpl(
             mediaStoreId
         )
 
-    override suspend fun toggleFavoriteMedia(mediaId: String) {
+    override suspend fun toggleFavoriteMedia(audio: AudioItemModel) {
         val isFavorite = playListDao.getIsMediaInPlayListFlow(
             PlayListDao.FAVORITE_PLAY_LIST_ID.toString(),
-            mediaId
+            audio.id
         ).first()
         if (isFavorite) {
-            removeMusicFromFavoritePlayList(listOf(mediaId))
+            removeMusicFromFavoritePlayList(listOf(audio.id))
         } else {
-            addMusicToFavoritePlayList(listOf(mediaId))
+            addMusicToFavoritePlayList(listOf(audio))
         }
     }
 
     override suspend fun removeMusicFromPlayList(playListId: Long, mediaIdList: List<String>) =
         playListDao.deleteMediaFromPlayList(playListId, mediaIdList)
 
-    override fun getAudiosOfPlayListFlow(playListId: Long): Flow<List<AudioItemModel>> {
-        return playListDao.getPlayListFlowById(playListId)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getAudiosOfPlayListFlow(playListId: Long)=
+        combine(
+            allAudioChangedEventFlow(), // trigger flow when audio changed.
+            playListDao.getPlayListFlowById(playListId)
+        ) { _, playList -> playList }
             .mapLatest(::mapPlayListToAudioList)
-    }
 
     override suspend fun getAudiosOfPlayList(playListId: Long): List<AudioItemModel> =
         coroutineScope {
@@ -84,12 +96,11 @@ internal class PlayListRepositoryImpl(
         }
 
     private suspend fun mapPlayListToAudioList(playList: PlayListAndMedias): List<AudioItemModel> {
-        val mediaStoreIds = playList.medias.map { it.mediaStoreId }
-        return getMediaListFromIds(mediaStoreIds)
+        return getMediaListFromIds(playList.medias)
     }
 }
 
-expect suspend fun getMediaListFromIds(mediaStoreIds: List<String>): List<AudioItemModel>
+expect suspend fun getMediaListFromIds(playListItems: List<PlayListWithMediaCrossRef>): List<AudioItemModel>
 
 private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>): List<PlayListItemModel> {
     return list.map { it.toAppItem() }

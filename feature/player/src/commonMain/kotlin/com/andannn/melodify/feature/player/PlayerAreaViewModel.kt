@@ -151,13 +151,13 @@ class PlayerStateViewModel(
         Napier.d(tag = TAG) { "onEvent: $event" }
         when (event) {
             PlayerUiEvent.OnFavoriteButtonClick -> {
-                val currentId =
-                    (playerUiStateFlow.value as? PlayerUiState.Active)?.mediaItem?.id
-                Napier.d(tag = TAG) { "currentId: $currentId" }
-                if (currentId == null) return
+                val current =
+                    (playerUiStateFlow.value as? PlayerUiState.Active)?.mediaItem
+                Napier.d(tag = TAG) { "currentId: $current" }
+                if (current == null) return
 
                 viewModelScope.launch {
-                    onToggleFavoriteState(currentId)
+                    onToggleFavoriteState(current)
                 }
             }
 
@@ -214,8 +214,8 @@ class PlayerStateViewModel(
         }
     }
 
-    private suspend fun onToggleFavoriteState(mediaId: String) {
-        playListRepository.toggleFavoriteMedia(mediaId)
+    private suspend fun onToggleFavoriteState(audio: AudioItemModel) {
+        playListRepository.toggleFavoriteMedia(audio)
     }
 
     private fun togglePlayState() {

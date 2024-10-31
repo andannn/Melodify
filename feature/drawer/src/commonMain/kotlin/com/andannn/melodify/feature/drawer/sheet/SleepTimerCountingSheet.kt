@@ -13,23 +13,30 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.common.util.durationString
+import com.andannn.melodify.feature.common.util.getUiRetainedScope
+import com.andannn.melodify.feature.drawer.DrawerController
 import melodify.feature.common.generated.resources.Res
 import melodify.feature.common.generated.resources.cancel_timer
 import melodify.feature.common.generated.resources.sleep_timer
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.getKoin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SleepTimerCountingBottomSheet(
-    remain: Duration,
     modifier: Modifier = Modifier,
     onRequestDismiss: () -> Unit = {},
     onCancelTimer: () -> Unit = {},
@@ -38,13 +45,16 @@ internal fun SleepTimerCountingBottomSheet(
         rememberModalBottomSheetState()
 
     ModalBottomSheet(
+        modifier = modifier,
         sheetState = sheetState,
         onDismissRequest = {
             onRequestDismiss.invoke()
         },
     ) {
+        val remainTime by getKoin().get<MediaControllerRepository>().observeRemainTime()
+            .collectAsState(0.seconds)
         SleepTimerCounterSheetContent(
-            remain = remain,
+            remain = remainTime,
             onClickCancel = {
                 onCancelTimer.invoke()
             }

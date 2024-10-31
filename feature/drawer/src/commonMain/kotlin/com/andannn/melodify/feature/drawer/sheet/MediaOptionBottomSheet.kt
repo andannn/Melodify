@@ -60,7 +60,7 @@ internal fun MediaOptionBottomSheet(
     optionSheet: SheetModel.MediaOptionSheet,
     modifier: Modifier = Modifier,
     onClickOption: (SheetOptionItem) -> Unit = {},
-    onToggleFavorite: (id: String) -> Unit = {},
+    onToggleFavorite: (model: AudioItemModel) -> Unit = {},
     onRequestDismiss: () -> Unit = {}
 ) {
     val sheetState =
@@ -81,7 +81,7 @@ internal fun MediaOptionBottomSheet(
                     showFavorite = isAudioOptionSheet,
                     mediaItem = optionSheet.source,
                     onToggleFavorite = {
-                        onToggleFavorite(optionSheet.source.id)
+                        onToggleFavorite(optionSheet.source as AudioItemModel)
                     }
                 )
 

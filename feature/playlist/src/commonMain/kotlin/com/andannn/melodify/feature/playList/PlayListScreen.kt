@@ -50,7 +50,9 @@ import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.MediaListSource
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
+import com.andannn.melodify.feature.common.util.browsableOrPlayable
 import com.andannn.melodify.feature.common.util.getUiRetainedScope
+import com.andannn.melodify.feature.common.util.key
 import com.andannn.melodify.feature.drawer.DrawerController
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -134,7 +136,7 @@ fun CommonPlayListContent(
         LazyColumn(modifier = Modifier.padding(top = it.calculateTopPadding())) {
             items(
                 items = audioList,
-                key = { item -> item.id },
+                key = { item -> item.key },
             ) { item: AudioItemModel ->
                 ListTileItemView(
                     modifier = Modifier.padding(vertical = 4.dp).animateItemPlacement(),
@@ -144,6 +146,7 @@ fun CommonPlayListContent(
                     showTrackNum = false,
                     subTitle = item.artist,
                     trackNum = item.cdTrackNumber,
+                    playable = item.browsableOrPlayable,
                     onMusicItemClick = {
                         onEvent(
                             PlayListEvent.OnStartPlayAtIndex(
@@ -270,7 +273,7 @@ private fun HeaderPlayListContent(
 
             items(
                 items = audioList,
-                key = { it.id },
+                key = { it.key },
             ) { item ->
                 ListTileItemView(
                     modifier = Modifier.padding(vertical = 4.dp).animateItemPlacement(),
@@ -280,6 +283,7 @@ private fun HeaderPlayListContent(
                     showTrackNum = showTrackNum,
                     subTitle = item.artist,
                     trackNum = item.cdTrackNumber,
+                    playable = item.browsableOrPlayable,
                     onMusicItemClick = {
                         onEvent(
                             PlayListEvent.OnStartPlayAtIndex(
