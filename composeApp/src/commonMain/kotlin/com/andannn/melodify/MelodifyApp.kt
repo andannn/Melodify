@@ -32,9 +32,10 @@ fun MelodifyApp(
     ) {
         val navController = appState.navController
         MelodifyNavHost(
-            modifier = Modifier.fillMaxWidth(),
             navHostController = navController,
+            modifier = Modifier.fillMaxWidth(),
             onBackPressed = navController::popBackStack,
+            onDialogResult = appState::onDialogResult
         )
 
         val playerUiState by playerStateViewModel.playerUiStateFlow.collectAsState()

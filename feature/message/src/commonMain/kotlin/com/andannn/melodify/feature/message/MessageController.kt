@@ -17,7 +17,7 @@ sealed interface InteractionResult {
 interface MessageController {
     val sendDialogChannel: Channel<MessageDialog>
 
-    suspend fun showMessageDialog(dialog: MessageDialog): InteractionResult
+    suspend fun showMessageDialogAndWaitResult(dialog: MessageDialog): InteractionResult
 
     fun onResult(dialog: MessageDialog, result: InteractionResult)
 
@@ -28,7 +28,7 @@ class MessageControllerImpl : MessageController {
     override val sendDialogChannel: Channel<MessageDialog> = Channel(capacity = UNLIMITED)
     private val resultChannelMap: MutableMap<MessageDialog, Channel<InteractionResult>> = mutableMapOf()
 
-    override suspend fun showMessageDialog(dialog: MessageDialog): InteractionResult {
+    override suspend fun showMessageDialogAndWaitResult(dialog: MessageDialog): InteractionResult {
         if (resultChannelMap.containsKey(dialog)) {
             throw IllegalArgumentException("Dialog $dialog is already shown")
         }

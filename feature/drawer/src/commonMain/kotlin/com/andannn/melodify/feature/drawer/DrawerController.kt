@@ -109,6 +109,10 @@ class DrawerControllerImpl(
                             SheetOptionItem.DELETE -> onDeleteMediaItem(event.sheet.source)
                             SheetOptionItem.ADD_TO_QUEUE -> onAddToQueue(event.sheet.source)
                             SheetOptionItem.SLEEP_TIMER -> onClickSleepTimer()
+                            SheetOptionItem.DELETE_FROM_PLAYLIST -> onDeleteItemInPlayList(
+                                (event.sheet as SheetModel.AudioOptionInPlayListSheet).playListId,
+                                event.sheet.source
+                            )
                         }
                     }
                 }
@@ -142,6 +146,10 @@ class DrawerControllerImpl(
                 }
             }
         }
+    }
+
+    private suspend  fun onDeleteItemInPlayList(playListId: String, source: AudioItemModel) {
+        playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(source.id))
     }
 
     override fun close() {

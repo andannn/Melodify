@@ -43,6 +43,27 @@ sealed interface SheetModel {
         ),
     )
 
+    data class AudioOptionInPlayListSheet(
+        val playListId: String,
+        override val source: AudioItemModel,
+    ) : MediaOptionSheet(
+        source = source,
+        options = listOf(
+            SheetOptionItem.ADD_TO_QUEUE,
+            SheetOptionItem.PLAY_NEXT,
+            SheetOptionItem.DELETE_FROM_PLAYLIST,
+            SheetOptionItem.DELETE,
+        ),
+    )
+
+    data class PlayerOptionSheet(override val source: AudioItemModel) : MediaOptionSheet(
+        source = source,
+        options = listOf(
+            SheetOptionItem.ADD_TO_QUEUE,
+            SheetOptionItem.PLAY_NEXT,
+            SheetOptionItem.SLEEP_TIMER,
+        ),
+    )
 
     data class PlayListOptionSheet(override val source: PlayListItemModel) : MediaOptionSheet(
         source = source,
@@ -60,15 +81,6 @@ sealed interface SheetModel {
             SheetOptionItem.PLAY_NEXT,
             SheetOptionItem.DELETE,
         )
-    )
-
-    data class PlayerOptionSheet(override val source: AudioItemModel) : MediaOptionSheet(
-        source = source,
-        options = listOf(
-            SheetOptionItem.ADD_TO_QUEUE,
-            SheetOptionItem.PLAY_NEXT,
-            SheetOptionItem.SLEEP_TIMER,
-        ),
     )
 
     data class AlbumOptionSheet(override val source: AlbumItemModel) : MediaOptionSheet(
@@ -105,6 +117,10 @@ enum class SheetOptionItem(
     DELETE(
         smpIcon = SimpleMusicIcons.Delete,
         text = Res.string.delete,
+    ),
+    DELETE_FROM_PLAYLIST(
+        smpIcon = SimpleMusicIcons.PlayListRemove,
+        text = Res.string.delete_from_playlist,
     ),
     ADD_TO_QUEUE(
         smpIcon = SimpleMusicIcons.Delete,

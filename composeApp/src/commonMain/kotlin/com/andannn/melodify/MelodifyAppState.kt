@@ -7,7 +7,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.andannn.melodify.feature.common.util.getUiRetainedScope
 import com.andannn.melodify.feature.drawer.DrawerController
+import com.andannn.melodify.feature.message.InteractionResult
 import com.andannn.melodify.feature.message.MessageController
+import com.andannn.melodify.feature.message.MessageDialog
 import com.andannn.melodify.feature.message.navigateToAlertDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -38,8 +40,12 @@ class MelodifyAppState(
     val scope: CoroutineScope,
     val navController: NavHostController,
     val drawerController: DrawerController,
-    messageController: MessageController
+    private val messageController: MessageController
 ) {
+    fun onDialogResult(messageDialog: MessageDialog, interactionResult: InteractionResult) {
+        messageController.onResult(messageDialog, interactionResult)
+    }
+
     init {
         scope.launch {
             for (dialog in messageController.sendDialogChannel) {

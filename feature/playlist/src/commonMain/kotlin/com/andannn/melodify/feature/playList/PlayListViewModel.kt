@@ -33,7 +33,7 @@ sealed interface PlayListEvent {
     data object OnShuffleButtonClick : PlayListEvent
 
     data class OnOptionClick(
-        val mediaItem: MediaItemModel,
+        val mediaItem: AudioItemModel,
     ) : PlayListEvent
 
     data object OnHeaderOptionClick : PlayListEvent
@@ -128,7 +128,16 @@ class PlayListViewModel(
             }
 
             is PlayListEvent.OnOptionClick -> {
-                viewModelScope.launch {
+                if (mediaListSource == MediaListSource.PLAY_LIST) {
+                    drawerController.onEvent(
+                        DrawerEvent.OnShowBottomDrawer(
+                            SheetModel.AudioOptionInPlayListSheet(
+                                playListId = id,
+                                source = event.mediaItem
+                            )
+                        )
+                    )
+                } else {
                     drawerController.onEvent(
                         DrawerEvent.OnShowBottomDrawer(
                             SheetModel.MediaOptionSheet.fromMediaModel(event.mediaItem)
@@ -138,14 +147,12 @@ class PlayListViewModel(
             }
 
             PlayListEvent.OnHeaderOptionClick -> {
-                viewModelScope.launch {
-                    state.value.headerInfoItem?.let {
-                        drawerController.onEvent(
-                            DrawerEvent.OnShowBottomDrawer(
-                                SheetModel.MediaOptionSheet.fromMediaModel(it)
-                            )
+                state.value.headerInfoItem?.let {
+                    drawerController.onEvent(
+                        DrawerEvent.OnShowBottomDrawer(
+                            SheetModel.MediaOptionSheet.fromMediaModel(it)
                         )
-                    }
+                    )
                 }
             }
         }

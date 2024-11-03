@@ -22,7 +22,7 @@ class MessageControllerTest {
             messageController.onResult(dialog!!, InteractionResult.ACCEPT)
         }
 
-        val result = messageController.showMessageDialog(MessageDialog.ConfirmDeletePlaylist)
+        val result = messageController.showMessageDialogAndWaitResult(MessageDialog.ConfirmDeletePlaylist)
 
         assertEquals(MessageDialog.ConfirmDeletePlaylist, dialog)
         assertEquals(InteractionResult.ACCEPT, result)
@@ -45,7 +45,7 @@ class MessageControllerTest {
         val job2 = launch(
             start = CoroutineStart.UNDISPATCHED
         ) {
-            result = messageController.showMessageDialog(MessageDialog.ConfirmDeletePlaylist)
+            result = messageController.showMessageDialogAndWaitResult(MessageDialog.ConfirmDeletePlaylist)
         }
         job2.cancel()
         joinAll(job1, job2)
