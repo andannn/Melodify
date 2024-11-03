@@ -26,7 +26,7 @@ koin-bom = "4.0.0"
 compose-plugin = "1.7.0"
 jetbrainsNavigation = "2.8.0-alpha10"
 napierVersion = "2.7.1"
-sqliteBundled = "2.5.0-alpha10"
+sqliteBundled = "2.5.0-alpha11"
 uiTooling = "1.7.4"
 coreKtx = "1.6.1"
 
