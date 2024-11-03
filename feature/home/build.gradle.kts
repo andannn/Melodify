@@ -8,6 +8,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":feature:common"))
             implementation(project(":feature:drawer"))
+            implementation(project(":feature:message"))
             implementation(project(":core:data"))
 
             implementation(libs.koin.core.viewmodel)

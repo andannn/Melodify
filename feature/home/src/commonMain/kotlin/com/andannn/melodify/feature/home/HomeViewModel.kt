@@ -10,6 +10,8 @@ import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.feature.drawer.DrawerController
 import com.andannn.melodify.feature.drawer.DrawerEvent
 import com.andannn.melodify.feature.drawer.model.SheetModel
+import com.andannn.melodify.feature.message.MessageController
+import com.andannn.melodify.feature.message.MessageDialog
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -36,7 +38,8 @@ sealed interface HomeUiEvent {
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
     private val repository: Repository,
-    private val drawerController: DrawerController
+    private val drawerController: DrawerController,
+    private val messageController: MessageController,
 ) : ViewModel() {
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val userPreferenceRepository = repository.userPreferenceRepository
@@ -101,7 +104,6 @@ class HomeViewModel(
     }
 
     private fun playMusic(mediaItem: AudioItemModel) {
-        Napier.d(tag = TAG) { "invalid media item click $mediaItem" }
         if (mediaItem.isValid()) {
             val mediaItems = state.value.mediaItems.toList() as? List<AudioItemModel>
                 ?: error("invalid state")
@@ -112,7 +114,9 @@ class HomeViewModel(
             )
         } else {
             Napier.d(tag = TAG) { "invalid media item click $mediaItem" }
-            // TODO: show delete dialog
+            viewModelScope.launch {
+                messageController.showMessageDialog(MessageDialog.ConfirmDeletePlaylist)
+            }
         }
     }
 

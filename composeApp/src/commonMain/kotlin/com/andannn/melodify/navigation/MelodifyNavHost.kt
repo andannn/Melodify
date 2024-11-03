@@ -8,6 +8,7 @@ import com.andannn.melodify.feature.customtab.navigation.customTabSetting
 import com.andannn.melodify.feature.customtab.navigation.navigateToCustomTabSetting
 import com.andannn.melodify.feature.home.navigation.HOME_ROUTE
 import com.andannn.melodify.feature.home.navigation.homeScreen
+import com.andannn.melodify.feature.message.alertDialog
 import com.andannn.melodify.feature.playList.navigation.navigateToPlayList
 import com.andannn.melodify.feature.playList.navigation.playListScreen
 
@@ -33,6 +34,10 @@ fun MelodifyNavHost(
         )
         customTabSetting(
             onBackPressed = onBackPressed
+        )
+
+        alertDialog(
+            onDismiss = {}
         )
     }
 }

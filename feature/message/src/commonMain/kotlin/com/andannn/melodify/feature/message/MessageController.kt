@@ -24,7 +24,7 @@ interface MessageController {
     fun close()
 }
 
-internal class MessageControllerImpl : MessageController {
+class MessageControllerImpl : MessageController {
     override val sendDialogChannel: Channel<MessageDialog> = Channel(capacity = UNLIMITED)
     private val resultChannelMap: MutableMap<MessageDialog, Channel<InteractionResult>> = mutableMapOf()
 

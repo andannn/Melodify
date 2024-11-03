@@ -64,6 +64,7 @@ import com.andannn.melodify.feature.common.util.getCategoryResource
 import com.andannn.melodify.feature.common.util.getUiRetainedScope
 import com.andannn.melodify.feature.common.util.key
 import com.andannn.melodify.feature.drawer.DrawerController
+import com.andannn.melodify.feature.message.MessageController
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -80,7 +81,10 @@ fun HomeRoute(
     modifier: Modifier = Modifier,
     scope: Scope? = getUiRetainedScope(),
     homeViewModel: HomeViewModel = koinViewModel {
-        parametersOf(scope?.get<DrawerController>())
+        parametersOf(
+            scope?.get<DrawerController>(),
+            scope?.get<MessageController>(),
+        )
     },
     onNavigateToPlayList: (id: String, source: MediaListSource) -> Unit,
     onNavigateCustomTabSetting: () -> Unit,

@@ -7,9 +7,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.andannn.melodify.feature.common.util.getUiRetainedScope
 import com.andannn.melodify.feature.drawer.DrawerController
+import com.andannn.melodify.feature.message.MessageController
+import com.andannn.melodify.feature.message.navigateToAlertDialog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.koin.core.scope.Scope
-
 
 @Composable
 fun rememberAppState(
@@ -17,21 +19,32 @@ fun rememberAppState(
     scope: CoroutineScope = rememberCoroutineScope(),
     retainedScope: Scope = getUiRetainedScope()!!,
     drawerController: DrawerController = retainedScope.get<DrawerController>(),
+    messageController: MessageController = retainedScope.get<MessageController>()
 ) = remember(
-    key1 = navController,
-    key2 = drawerController,
-    key3 = scope
+    navController,
+    drawerController,
+    scope,
+    messageController
 ) {
     MelodifyAppState(
         scope = scope,
         navController = navController,
-        drawerController = drawerController
+        drawerController = drawerController,
+        messageController = messageController,
     )
 }
 
 class MelodifyAppState(
     val scope: CoroutineScope,
     val navController: NavHostController,
-    val drawerController: DrawerController
+    val drawerController: DrawerController,
+    messageController: MessageController
 ) {
+    init {
+        scope.launch {
+            for (dialog in messageController.sendDialogChannel) {
+                navController.navigateToAlertDialog(dialog)
+            }
+        }
+    }
 }
