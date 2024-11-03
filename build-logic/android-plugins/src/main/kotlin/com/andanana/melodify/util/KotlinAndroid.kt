@@ -24,7 +24,7 @@ import org.gradle.api.Project
  * Configure base Kotlin with Android options
  */
 internal fun Project.configureKotlinAndroid(
-    commonExtension: CommonExtension<*, *, *, *, *>,
+    commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
     // android extensions
     commonExtension.apply {

@@ -41,7 +41,7 @@ fun Project.configureComposeMultiplatform(
 
 @ExperimentalKotlinGradlePluginApi
 fun Project.configureComposeBuildFeature(
-    commonExtension: CommonExtension<*, *, *, *, *>,
+    commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
     with(commonExtension) {
         dependencies {
