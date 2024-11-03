@@ -22,5 +22,5 @@ data class PlayListEntity(
     @ColumnInfo(name = PlayListColumns.NAME)
     val name: String,
     @ColumnInfo(name = PlayListColumns.ARTWORK_URI)
-    val artworkUri: String?
+    val artworkUri: String?,
 )

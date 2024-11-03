@@ -125,12 +125,16 @@ class DatabaseTest {
                 PlayListWithMediaCrossRef(
                     playListId = 1,
                     mediaStoreId = "1",
-                    addedDate = 1
+                    addedDate = 1,
+                    artist = "",
+                    title = ""
                 ),
                 PlayListWithMediaCrossRef(
                     playListId = 1,
                     mediaStoreId = "2",
-                    addedDate = 2
+                    addedDate = 2,
+                    artist = "",
+                    title = ""
                 )
             )
         )
@@ -157,7 +161,9 @@ class DatabaseTest {
                 PlayListWithMediaCrossRef(
                     playListId = 1,
                     mediaStoreId = "1",
-                    addedDate = 1
+                    addedDate = 1,
+                    artist = "",
+                    title = ""
                 ),
             )
         )
@@ -170,7 +176,9 @@ class DatabaseTest {
                 PlayListWithMediaCrossRef(
                     playListId = 1,
                     mediaStoreId = "1",
-                    addedDate = 1
+                    addedDate = 1,
+                    artist = "",
+                    title = ""
                 ),
             )
         )
@@ -198,12 +206,16 @@ class DatabaseTest {
                 PlayListWithMediaCrossRef(
                     playListId = 1,
                     mediaStoreId = "1",
-                    addedDate = 1
+                    addedDate = 1,
+                    artist = "",
+                    title = ""
                 ),
                 PlayListWithMediaCrossRef(
                     playListId = 1,
                     mediaStoreId = "2",
-                    addedDate = 2
+                    addedDate = 2,
+                    artist = "",
+                    title = ""
                 )
             )
         )
@@ -216,7 +228,9 @@ class DatabaseTest {
                 PlayListWithMediaCrossRef(
                     playListId = 1,
                     mediaStoreId = "3",
-                    addedDate = 3
+                    addedDate = 3,
+                    artist = "",
+                    title = ""
                 ),
             )
         )
@@ -242,7 +256,9 @@ class DatabaseTest {
                 PlayListWithMediaCrossRef(
                     playListId = res.first(),
                     mediaStoreId = mediaStoreId,
-                    addedDate = 1L
+                    addedDate = 1L,
+                    artist = "",
+                    title = ""
                 ),
             )
         )
@@ -266,7 +282,9 @@ class DatabaseTest {
                 PlayListWithMediaCrossRef(
                     playListId = 1,
                     mediaStoreId = "1",
-                    addedDate = 1
+                    addedDate = 1,
+                    artist = "",
+                    title = ""
                 ),
             )
         )

@@ -20,4 +20,7 @@
     <string name="number_minutes">%1$s 분</string>
     <string name="number_seconds">%1$s 초</string>
     <string name="cancel_timer">타이머 취소</string>
+    <string name="ok">확인</string>
+    <string name="decline">취소</string>
+    <string name="confirm_delete_playlist_item">플레이리스트에서 이 노래를 삭제하시겠습니까?</string>
 </resources>

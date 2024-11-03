@@ -17,11 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -33,7 +28,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
@@ -49,7 +43,7 @@ import com.andannn.melodify.feature.player.ui.shrinkable.bottom.PlayerBottomShee
 import com.andannn.melodify.feature.player.PlayerUiEvent
 import com.andannn.melodify.feature.player.ui.MinImageSize
 import com.andannn.melodify.feature.player.ui.PlayerViewState
-import io.github.aakira.napier.Napier
+import com.andannn.melodify.feature.player.ui.shrinkable.header.PlayerHeader
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -75,6 +69,7 @@ internal fun FlexiblePlayerLayout(
     isShuffle: Boolean = false,
     isPlaying: Boolean = false,
     isFavorite: Boolean = false,
+    isCounting: Boolean = false,
     title: String = "",
     artist: String = "",
     progress: Float = 1f,
@@ -142,35 +137,22 @@ internal fun FlexiblePlayerLayout(
             )
 
             if (fadeInAreaAlpha != 0f) {
-                IconButton(
+                PlayerHeader(
                     modifier =
                     Modifier
-                        .padding(top = statusBarHeight, start = 4.dp)
-                        .rotate(-90f)
+                        .padding(top = statusBarHeight)
                         .graphicsLayer {
                             alpha = fadeInAreaAlpha
                         },
-                    onClick = onShrinkButtonClick,
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
-                        contentDescription = "Shrink",
-                    )
-                }
-                IconButton(
-                    modifier =
-                    Modifier
-                        .padding(top = statusBarHeight, end = 4.dp)
-                        .align(Alignment.TopEnd)
-                        .graphicsLayer {
-                            alpha = fadeInAreaAlpha
-                        },
-                    onClick = {
+                    showTimerIcon = isCounting,
+                    onShrinkButtonClick = onShrinkButtonClick,
+                    onTimerIconClick = {
+                        onEvent(PlayerUiEvent.OnTimerIconClick)
+                    },
+                    onOptionIconClick = {
                         onEvent(PlayerUiEvent.OnOptionIconClick(activeMediaItem))
                     },
-                ) {
-                    Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Menu")
-                }
+                )
             }
 
             CircleBorderImage(

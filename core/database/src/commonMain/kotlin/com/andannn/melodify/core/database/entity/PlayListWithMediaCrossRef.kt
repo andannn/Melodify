@@ -11,7 +11,8 @@ internal object PlayListWithMediaCrossRefColumns {
     const val PLAY_LIST_ID = "play_list_with_media_cross_ref_play_list_id"
     const val MEDIA_STORE_ID = "play_list_with_media_cross_ref_media_store_id"
     const val ADDED_DATE = "play_list_with_media_cross_ref_added_date"
-}
+    const val ARTIST = "play_list_with_media_cross_ref_song_artist"
+    const val TITLE = "play_list_with_media_cross_ref_song_title"}
 
 @Entity(
     tableName = Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF,
@@ -38,4 +39,10 @@ data class PlayListWithMediaCrossRef(
 
     @ColumnInfo(name = PlayListWithMediaCrossRefColumns.ADDED_DATE)
     val addedDate: Long,
+
+    @ColumnInfo(name = PlayListWithMediaCrossRefColumns.ARTIST)
+    val artist: String,
+
+    @ColumnInfo(name = PlayListWithMediaCrossRefColumns.TITLE)
+    val title: String,
 )

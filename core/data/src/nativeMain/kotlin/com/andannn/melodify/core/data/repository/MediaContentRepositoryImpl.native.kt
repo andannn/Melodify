@@ -1,12 +1,10 @@
 package com.andannn.melodify.core.data.repository
 
-import com.andannn.melodify.core.data.MediaContentRepository
 import com.andannn.melodify.core.data.dummy.mediaItems
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
-import com.andannn.melodify.core.data.model.PlayListItemModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.Serializable
@@ -84,10 +82,6 @@ internal class MediaContentRepositoryImpl : MediaContentRepository {
         return flow { emit(getAllGenres()) }
     }
 
-    override fun getAllPlayListFlow(): Flow<List<PlayListItemModel>> {
-        return flow { emit(emptyList()) }
-    }
-
     override fun getAudiosOfAlbumFlow(albumId: String): Flow<List<AudioItemModel>> {
         return flow {
             emit(getAudiosOfAlbum(albumId))
@@ -115,14 +109,6 @@ internal class MediaContentRepositoryImpl : MediaContentRepository {
         return genreMaps[genreId]?.map { it.toModel() } ?: emptyList()
     }
 
-    override fun getAudiosOfPlayListFlow(playListId: Long): Flow<List<AudioItemModel>> {
-        return flow { emit(emptyList()) }
-    }
-
-    override suspend fun getAudiosOfPlayList(playListId: Long): List<AudioItemModel> {
-        return emptyList()
-    }
-
     override fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumItemModel?> {
         return flow { emit(getAlbumByAlbumId(albumId)) }
     }
@@ -145,21 +131,6 @@ internal class MediaContentRepositoryImpl : MediaContentRepository {
 
     override suspend fun getGenreByGenreId(genreId: String): GenreItemModel? {
         return getAllGenres().find { it.id == genreId }
-    }
-
-    override suspend fun getPlayListById(playListId: Long): PlayListItemModel? {
-        return null
-    }
-
-    override suspend fun addMusicToPlayList(playListId: Long, musics: List<String>): List<Long> {
-        return emptyList()
-    }
-
-    override fun isMediaInFavoritePlayListFlow(mediaStoreId: String): Flow<Boolean> {
-        return flow { emit(false) }
-    }
-
-    override suspend fun removeMusicFromPlayList(playListId: Long, mediaIdList: List<String>) {
     }
 
     private fun getAllAlbums(): List<AlbumItemModel> {

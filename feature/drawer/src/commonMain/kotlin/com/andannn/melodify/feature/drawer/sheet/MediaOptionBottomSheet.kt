@@ -22,6 +22,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,12 +34,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.feature.common.component.FavoriteIconButton
 import com.andannn.melodify.feature.common.icons.SmpIcon
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.drawer.model.SheetModel
@@ -49,6 +52,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.getKoin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,6 +60,7 @@ internal fun MediaOptionBottomSheet(
     optionSheet: SheetModel.MediaOptionSheet,
     modifier: Modifier = Modifier,
     onClickOption: (SheetOptionItem) -> Unit = {},
+    onToggleFavorite: (model: AudioItemModel) -> Unit = {},
     onRequestDismiss: () -> Unit = {}
 ) {
     val sheetState =
@@ -68,9 +73,16 @@ internal fun MediaOptionBottomSheet(
         },
     ) {
         Surface(modifier = modifier.navigationBarsPadding()) {
+            val isAudioOptionSheet = remember(optionSheet) {
+                optionSheet is SheetModel.AudioOptionSheet || optionSheet is SheetModel.PlayerOptionSheet
+            }
             Column(Modifier.fillMaxWidth()) {
                 SheetHeader(
+                    showFavorite = isAudioOptionSheet,
                     mediaItem = optionSheet.source,
+                    onToggleFavorite = {
+                        onToggleFavorite(optionSheet.source as AudioItemModel)
+                    }
                 )
 
                 HorizontalDivider()
@@ -93,8 +105,10 @@ internal fun MediaOptionBottomSheet(
 @Composable
 private fun SheetHeader(
     mediaItem: MediaItemModel,
+    showFavorite: Boolean,
     modifier: Modifier = Modifier,
     defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
+    onToggleFavorite: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -136,18 +150,23 @@ private fun SheetHeader(
                 style = MaterialTheme.typography.bodySmall,
             )
         }
+        if (showFavorite) {
+            val isFavorite by getKoin().get<PlayListRepository>()
+                .isMediaInFavoritePlayListFlow(mediaItem.id).collectAsState(false)
+
+            Spacer(modifier = Modifier.weight(1f))
+            FavoriteIconButton(
+                isFavorite = isFavorite,
+                enabled = true,
+                onClick = onToggleFavorite,
+            )
+        }
     }
 }
 
 private fun MediaItemModel.subTitle() = when (this) {
-    is AlbumItemModel -> {
-        "$trackCount songs"
-    }
-
-    is ArtistItemModel -> {
-        "$trackCount songs"
-    }
-
+    is AlbumItemModel,
+    is ArtistItemModel,
     is PlayListItemModel -> {
         "$trackCount songs"
     }
@@ -199,6 +218,7 @@ private fun SheetHeaderPreview() {
         Surface {
             SheetHeader(
                 mediaItem = source,
+                showFavorite = true,
             )
         }
     }

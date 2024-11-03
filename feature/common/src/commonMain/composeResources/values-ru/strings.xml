@@ -20,4 +20,7 @@
     <string name="number_minutes">%1$s минут</string>
     <string name="number_seconds">%1$s секунд</string>
     <string name="cancel_timer">Отменить таймер</string>
+    <string name="ok">Ok</string>
+    <string name="decline">Отменить</string>
+    <string name="confirm_delete_playlist_item">Вы уверены, что хотите удалить эту песню из плейлиста?</string>
 </resources>

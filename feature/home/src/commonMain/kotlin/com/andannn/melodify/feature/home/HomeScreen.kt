@@ -59,9 +59,13 @@ import com.andannn.melodify.core.data.model.MediaPreviewMode
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.feature.common.component.ExtraPaddingBottom
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
+import com.andannn.melodify.feature.common.util.browsableOrPlayable
 import com.andannn.melodify.feature.common.util.getCategoryResource
 import com.andannn.melodify.feature.common.util.getUiRetainedScope
+import com.andannn.melodify.feature.common.util.key
 import com.andannn.melodify.feature.drawer.DrawerController
+import com.andannn.melodify.feature.message.MessageController
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import melodify.feature.common.generated.resources.Res
@@ -77,7 +81,10 @@ fun HomeRoute(
     modifier: Modifier = Modifier,
     scope: Scope? = getUiRetainedScope(),
     homeViewModel: HomeViewModel = koinViewModel {
-        parametersOf(scope?.get<DrawerController>())
+        parametersOf(
+            scope?.get<DrawerController>(),
+            scope?.get<MessageController>(),
+        )
     },
     onNavigateToPlayList: (id: String, source: MediaListSource) -> Unit,
     onNavigateCustomTabSetting: () -> Unit,
@@ -93,7 +100,7 @@ fun HomeRoute(
             }
 
             is AudioItemModel -> {
-                homeViewModel.onEvent(HomeUiEvent.OnPlayMusic(mediaItem))
+                homeViewModel.onEvent(HomeUiEvent.OnMusicItemClick(mediaItem))
             }
 
             is GenreItemModel -> {
@@ -277,7 +284,7 @@ private fun <T : MediaItemModel> LazyGridContent(
 
         items(
             items = mediaItems,
-            key = { it.id },
+            key = { it.key },
         ) { item ->
             LargePreviewCard(
                 modifier = Modifier
@@ -319,13 +326,15 @@ private fun <T : MediaItemModel> LazyListContent(
         }
         items(
             items = mediaItems,
-            key = { it.id },
+            key = { it.key },
         ) { item ->
+            Napier.d("ListTileItemView: $item")
             ListTileItemView(
                 modifier =
                 Modifier
                     .padding(vertical = 4.dp)
                     .animateItem(),
+                playable = item.browsableOrPlayable,
                 isActive = false,
                 albumArtUri = item.artWorkUri,
                 title = item.name,

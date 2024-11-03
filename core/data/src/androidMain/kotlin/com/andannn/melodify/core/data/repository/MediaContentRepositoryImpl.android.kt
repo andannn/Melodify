@@ -1,20 +1,11 @@
 package com.andannn.melodify.core.data.repository
 
-import android.content.Context
-import android.database.ContentObserver
-import android.net.Uri
 import android.provider.MediaStore
-import android.util.Log
-import com.andannn.melodify.core.data.MediaContentRepository
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
-import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.core.database.PlayListDao
-import com.andannn.melodify.core.database.entity.PlayListAndMedias
-import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
-import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
+import com.andannn.melodify.core.data.util.contentChangedEventFlow
 import com.andannn.melodify.core.player.MediaBrowserManager
 import com.andannn.melodify.core.player.library.ALBUM_ID
 import com.andannn.melodify.core.player.library.ALBUM_PREFIX
@@ -23,18 +14,9 @@ import com.andannn.melodify.core.player.library.ARTIST_ID
 import com.andannn.melodify.core.player.library.ARTIST_PREFIX
 import com.andannn.melodify.core.player.library.GENRE_ID
 import com.andannn.melodify.core.player.library.GENRE_PREFIX
-import com.andannn.melodify.core.player.library.mediastore.MediaStoreSource
-import com.andannn.melodify.core.player.library.mediastore.model.AudioData
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.guava.await
 
@@ -42,15 +24,10 @@ private const val TAG = "MediaContentRepository"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class MediaContentRepositoryImpl(
-    context: Context,
     private val mediaBrowserManager: MediaBrowserManager,
-    private val playListDao: PlayListDao,
-    private val mediaStoreSource: MediaStoreSource,
 ) : MediaContentRepository {
     private val mediaBrowser
         get() = mediaBrowserManager.mediaBrowser
-
-    private val contentResolver = context.contentResolver
 
     override fun getAllMediaItemsFlow() =
         contentChangedEventFlow(allAudioUri)
@@ -79,11 +56,6 @@ internal class MediaContentRepositoryImpl(
                 getAllGenre()
             }
             .distinctUntilChanged()
-
-    override fun getAllPlayListFlow(): Flow<List<PlayListItemModel>> =
-        playListDao
-            .getAllPlayListFlow()
-            .map(::mapPlayListToAudioList)
 
     override fun getAudiosOfAlbumFlow(albumId: String) =
         contentChangedEventFlow(getAlbumUri(albumId.toLong()))
@@ -161,7 +133,7 @@ internal class MediaContentRepositoryImpl(
         }
         ?: emptyList()
 
-    private suspend fun getAllGenre(): List<GenreItemModel> = mediaBrowser.getChildren(
+    private suspend fun getAllGenre() = mediaBrowser.getChildren(
         GENRE_ID,
         0,
         Int.MAX_VALUE,
@@ -206,19 +178,6 @@ internal class MediaContentRepositoryImpl(
         }
         ?: emptyList()
 
-    override fun getAudiosOfPlayListFlow(playListId: Long): Flow<List<AudioItemModel>> {
-        return playListDao.getPlayListFlowById(playListId)
-            .mapLatest(::mapPlayListToAudioList)
-    }
-
-    override suspend fun getAudiosOfPlayList(playListId: Long): List<AudioItemModel> =
-        coroutineScope {
-            val playList = playListDao.getPlayListFlowById(playListId).first()
-
-            ensureActive()
-
-            mapPlayListToAudioList(playList)
-        }
 
     override suspend fun getAlbumByAlbumId(albumId: String) = mediaBrowser.getItem(
         ALBUM_PREFIX + albumId,
@@ -245,41 +204,6 @@ internal class MediaContentRepositoryImpl(
         }
     }
 
-    override suspend fun getPlayListById(playListId: Long) =
-        playListDao.getPlayList(playListId)?.let {
-            PlayListItemModel(
-                id = it.playList.id.toString(),
-                name = it.playList.name,
-                artWorkUri = it.playList.artworkUri ?: "",
-                trackCount = it.medias.size
-            )
-        }
-
-    override suspend fun addMusicToPlayList(playListId: Long, musics: List<String>): List<Long> {
-        val insertedIndexList = playListDao.insertPlayListWithMediaCrossRef(
-            crossRefs = musics.map {
-                PlayListWithMediaCrossRef(
-                    playListId = playListId,
-                    mediaStoreId = it,
-                    addedDate = System.currentTimeMillis()
-                )
-            }
-        )
-
-        return insertedIndexList
-            .filterTo(mutableListOf()) { it == -1L }
-            .toList()
-    }
-
-    override fun isMediaInFavoritePlayListFlow(mediaStoreId: String) =
-        playListDao.getIsMediaInPlayListFlow(
-            PlayListDao.FAVORITE_PLAY_LIST_ID.toString(),
-            mediaStoreId
-        )
-
-    override suspend fun removeMusicFromPlayList(playListId: Long, mediaIdList: List<String>) =
-        playListDao.deleteMediaFromPlayList(playListId, mediaIdList)
-
     private val allAlbumUri: String
         get() = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI.toString()
 
@@ -303,55 +227,4 @@ internal class MediaContentRepositoryImpl(
     private fun getGenreUri(genreId: Long): String {
         return MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI.toString() + "/" + genreId
     }
-
-    private suspend fun mapPlayListToAudioList(playList: PlayListAndMedias): List<AudioItemModel> {
-        val mediaStoreIds = playList.medias.map { it.mediaStoreId }
-        val audioDataList = mediaStoreSource.getAudioByIds(mediaStoreIds)
-        return audioDataList.map { it.toAppItem() }
-    }
-
-    private fun contentChangedEventFlow(uri: String): Flow<Unit> {
-        Log.d(TAG, "getContentChangedEventFlow: $uri")
-        return callbackFlow {
-            val observer =
-                object : ContentObserver(null) {
-                    override fun onChange(selfChange: Boolean) {
-                        trySend(Unit)
-                    }
-                }
-
-            contentResolver.registerContentObserver(
-                /* uri = */ Uri.parse(uri),
-                /* notifyForDescendants = */ true,
-                /* observer = */ observer,
-            )
-
-            trySend(Unit)
-
-            awaitClose {
-                contentResolver.unregisterContentObserver(observer)
-            }
-        }
-    }
 }
-
-private fun AudioData.toAppItem() = AudioItemModel(
-    id = id.toString(),
-    name = title,
-    modifiedDate = modifiedDate,
-    artWorkUri = Uri.withAppendedPath(
-        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-        albumId.toString(),
-    ).toString(),
-    album = album ?: "",
-    albumId = albumId.toString(),
-    artist = artist.toString(),
-    artistId = artistId.toString(),
-    cdTrackNumber = cdTrackNumber ?: 0,
-    discNumberIndex = discNumber ?: 0,
-)
-
-private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>): List<PlayListItemModel> {
-    return list.map { it.toAppItem() }
-}
-

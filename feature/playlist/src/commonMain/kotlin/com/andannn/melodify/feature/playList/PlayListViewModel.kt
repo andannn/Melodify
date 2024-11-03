@@ -6,17 +6,17 @@ import androidx.lifecycle.viewModelScope
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaListSource
-import com.andannn.melodify.core.data.MediaControllerRepository
-import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
-import com.andannn.melodify.core.data.MediaContentRepository
+import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.feature.drawer.DrawerController
 import com.andannn.melodify.feature.drawer.DrawerEvent
 import com.andannn.melodify.feature.drawer.model.SheetModel
 import com.andannn.melodify.feature.playList.navigation.ID
 import com.andannn.melodify.feature.playList.navigation.SOURCE
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapLatest
@@ -33,19 +33,24 @@ sealed interface PlayListEvent {
     data object OnShuffleButtonClick : PlayListEvent
 
     data class OnOptionClick(
-        val mediaItem: MediaItemModel,
+        val mediaItem: AudioItemModel,
     ) : PlayListEvent
 
     data object OnHeaderOptionClick : PlayListEvent
 }
 
+private const val TAG = "PlayListViewModel"
+
 class PlayListViewModel(
     savedStateHandle: SavedStateHandle,
-    playerStateMonitoryRepository: PlayerStateMonitoryRepository,
-    private val mediaControllerRepository: MediaControllerRepository,
-    private val mediaContentRepository: MediaContentRepository,
+    repository: Repository,
     private val drawerController: DrawerController,
 ) : ViewModel() {
+    private val playerStateMonitoryRepository = repository.playerStateMonitoryRepository
+    private val mediaControllerRepository = repository.mediaControllerRepository
+    private val mediaContentRepository = repository.mediaContentRepository
+    private val playListRepository = repository.playListRepository
+
     private val id =
         savedStateHandle.get<String>(ID) ?: ""
 
@@ -67,39 +72,39 @@ class PlayListViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), PlayListUiState())
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getPlayListContent() = with(mediaContentRepository) {
-        when (mediaListSource) {
+    private fun getPlayListContent(): Flow<PlayListContent> {
+        return when (mediaListSource) {
             MediaListSource.ALBUM -> {
-                getAudiosOfAlbumFlow(id).mapLatest { audioList ->
+                mediaContentRepository.getAudiosOfAlbumFlow(id).mapLatest { audioList ->
                     PlayListContent(
-                        headerInfoItem = getAlbumByAlbumId(id),
+                        headerInfoItem = mediaContentRepository.getAlbumByAlbumId(id),
                         audioList = audioList.sortedBy { it.cdTrackNumber }.toImmutableList(),
                     )
                 }
             }
 
             MediaListSource.ARTIST -> {
-                getAudiosOfArtistFlow(id).mapLatest { audioList ->
+                mediaContentRepository.getAudiosOfArtistFlow(id).mapLatest { audioList ->
                     PlayListContent(
-                        headerInfoItem = getArtistByArtistId(id),
+                        headerInfoItem = mediaContentRepository.getArtistByArtistId(id),
                         audioList = audioList.sortedBy { it.name }.toImmutableList(),
                     )
                 }
             }
 
             MediaListSource.GENRE -> {
-                getAudiosOfGenreFlow(id).mapLatest { audioList ->
+                mediaContentRepository.getAudiosOfGenreFlow(id).mapLatest { audioList ->
                     PlayListContent(
-                        headerInfoItem = getGenreByGenreId(id),
+                        headerInfoItem = mediaContentRepository.getGenreByGenreId(id),
                         audioList = audioList.sortedBy { it.name }.toImmutableList(),
                     )
                 }
             }
 
             MediaListSource.PLAY_LIST -> {
-                getAudiosOfPlayListFlow(id.toLong()).mapLatest { audioList ->
+                playListRepository.getAudiosOfPlayListFlow(id.toLong()).mapLatest { audioList ->
                     PlayListContent(
-                        headerInfoItem = getPlayListById(id.toLong()),
+                        headerInfoItem = playListRepository.getPlayListById(id.toLong()),
                         audioList = audioList.toImmutableList(),
                     )
                 }
@@ -114,15 +119,25 @@ class PlayListViewModel(
             }
 
             is PlayListEvent.OnPlayAllButtonClick -> {
-                setPlayListAndStartIndex(state.value.audioList, 0)
+                playAll()
             }
 
             is PlayListEvent.OnShuffleButtonClick -> {
-                setPlayListAndStartIndex(state.value.audioList, 0, isShuffle = true)
+// TODO: Implement shuffle play
+//                setPlayListAndStartIndex(state.value.audioList, 0, isShuffle = true)
             }
 
             is PlayListEvent.OnOptionClick -> {
-                viewModelScope.launch {
+                if (mediaListSource == MediaListSource.PLAY_LIST) {
+                    drawerController.onEvent(
+                        DrawerEvent.OnShowBottomDrawer(
+                            SheetModel.AudioOptionInPlayListSheet(
+                                playListId = id,
+                                source = event.mediaItem
+                            )
+                        )
+                    )
+                } else {
                     drawerController.onEvent(
                         DrawerEvent.OnShowBottomDrawer(
                             SheetModel.MediaOptionSheet.fromMediaModel(event.mediaItem)
@@ -132,14 +147,12 @@ class PlayListViewModel(
             }
 
             PlayListEvent.OnHeaderOptionClick -> {
-                viewModelScope.launch {
-                    state.value.headerInfoItem?.let {
-                        drawerController.onEvent(
-                            DrawerEvent.OnShowBottomDrawer(
-                                SheetModel.MediaOptionSheet.fromMediaModel(it)
-                            )
+                state.value.headerInfoItem?.let {
+                    drawerController.onEvent(
+                        DrawerEvent.OnShowBottomDrawer(
+                            SheetModel.MediaOptionSheet.fromMediaModel(it)
                         )
-                    }
+                    )
                 }
             }
         }
@@ -148,9 +161,20 @@ class PlayListViewModel(
     private fun setPlayListAndStartIndex(
         mediaItems: List<AudioItemModel>,
         index: Int,
-        isShuffle: Boolean = false,
     ) {
-        mediaControllerRepository.playMediaList(mediaItems, index)
+        if (mediaItems.getOrNull(index)?.isValid() == true) {
+            mediaControllerRepository.playMediaList(mediaItems, index)
+        } else {
+            Napier.d(tag = TAG) { "click invalid index $index in $mediaItems" }
+            // TODO: show delete dialog
+        }
+    }
+
+    private fun playAll() {
+        val filtered = state.value.audioList.filter { it.isValid() }
+        if (filtered.isNotEmpty()) {
+            mediaControllerRepository.playMediaList(filtered, 0)
+        }
     }
 }
 

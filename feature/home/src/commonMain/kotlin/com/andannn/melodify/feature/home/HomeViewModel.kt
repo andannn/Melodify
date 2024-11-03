@@ -5,13 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaPreviewMode
-import com.andannn.melodify.core.data.MediaContentRepository
-import com.andannn.melodify.core.data.MediaControllerRepository
-import com.andannn.melodify.core.data.UserPreferenceRepository
+import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.feature.drawer.DrawerController
 import com.andannn.melodify.feature.drawer.DrawerEvent
 import com.andannn.melodify.feature.drawer.model.SheetModel
+import com.andannn.melodify.feature.message.InteractionResult
+import com.andannn.melodify.feature.message.MessageController
+import com.andannn.melodify.feature.message.MessageDialog
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,18 +31,21 @@ private const val TAG = "HomeViewModel"
 
 sealed interface HomeUiEvent {
     data class OnSelectedCategoryChanged(val tabIndex: Int) : HomeUiEvent
-    data class OnPlayMusic(val mediaItem: AudioItemModel) : HomeUiEvent
+    data class OnMusicItemClick(val mediaItem: AudioItemModel) : HomeUiEvent
     data class OnShowItemOption(val audioItemModel: MediaItemModel) : HomeUiEvent
     data object OnTogglePreviewMode : HomeUiEvent
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
-    private val mediaControllerRepository: MediaControllerRepository,
+    private val repository: Repository,
     private val drawerController: DrawerController,
-    private val mediaContentRepository: MediaContentRepository,
-    private val userPreferenceRepository: UserPreferenceRepository
+    private val messageController: MessageController,
 ) : ViewModel() {
+    private val mediaControllerRepository = repository.mediaControllerRepository
+    private val userPreferenceRepository = repository.userPreferenceRepository
+    private val playListRepository = repository.playListRepository
+
     private val _userSettingFlow = userPreferenceRepository.userSettingFlow
     private val _selectedTabIndexFlow = MutableStateFlow(0)
 
@@ -63,7 +68,7 @@ class HomeViewModel(
                 return@flatMapLatest flow { emit(emptyList()) }
             }
             with(tab) {
-                mediaContentRepository.contentFlow()
+                repository.contentFlow()
             }
         }
 
@@ -84,7 +89,7 @@ class HomeViewModel(
     fun onEvent(event: HomeUiEvent) {
         when (event) {
             is HomeUiEvent.OnSelectedCategoryChanged -> onSelectedCategoryChanged(event.tabIndex)
-            is HomeUiEvent.OnPlayMusic -> playMusic(event.mediaItem)
+            is HomeUiEvent.OnMusicItemClick -> playMusic(event.mediaItem)
             is HomeUiEvent.OnShowItemOption -> onShowMusicItemOption(event.audioItemModel)
             is HomeUiEvent.OnTogglePreviewMode -> onTogglePreviewMode()
         }
@@ -101,21 +106,46 @@ class HomeViewModel(
     }
 
     private fun playMusic(mediaItem: AudioItemModel) {
-        val mediaItems = state.value.mediaItems.toList() as? List<AudioItemModel>
-            ?: error("invalid state")
+        if (mediaItem.isValid()) {
+            val mediaItems = state.value.mediaItems.toList() as? List<AudioItemModel>
+                ?: error("invalid state")
 
-        mediaControllerRepository.playMediaList(
-            mediaItems.toList(),
-            mediaItems.indexOf(mediaItem)
-        )
+            mediaControllerRepository.playMediaList(
+                mediaItems.toList(),
+                mediaItems.indexOf(mediaItem)
+            )
+        } else {
+            Napier.d(tag = TAG) { "invalid media item click $mediaItem" }
+            viewModelScope.launch {
+                val result =
+                    messageController.showMessageDialogAndWaitResult(MessageDialog.ConfirmDeletePlaylist)
+                Napier.d(tag = TAG) { "ConfirmDeletePlaylist result: $result" }
+                if (result == InteractionResult.ACCEPT) {
+                    val playListId = (state.value.currentTab as CustomTab.PlayListDetail).playListId
+                    val mediaId = mediaItem.id.substringAfter(AudioItemModel.INVALID_ID_PREFIX)
+
+                    playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(mediaId))
+                }
+            }
+        }
     }
 
     private fun onShowMusicItemOption(mediaItemModel: MediaItemModel) {
-        viewModelScope.launch {
+        val currentTab = state.value.currentTab
+        if (mediaItemModel is AudioItemModel && currentTab is CustomTab.PlayListDetail) {
+            drawerController.onEvent(
+                DrawerEvent.OnShowBottomDrawer(
+                    SheetModel.AudioOptionInPlayListSheet(
+                        playListId = currentTab.playListId,
+                        mediaItemModel
+                    )
+                )
+            )
+        } else {
             drawerController.onEvent(
                 DrawerEvent.OnShowBottomDrawer(
                     SheetModel.MediaOptionSheet.fromMediaModel(
-                        mediaItemModel
+                        item = mediaItemModel,
                     )
                 )
             )
@@ -136,4 +166,7 @@ data class HomeUiState(
     val customTabList: List<CustomTab> = emptyList(),
     val mediaItems: ImmutableList<MediaItemModel> = emptyList<MediaItemModel>().toImmutableList(),
     val previewMode: MediaPreviewMode = MediaPreviewMode.GRID_PREVIEW,
-)
+) {
+    val currentTab: CustomTab
+        get() = customTabList[selectedIndex]
+}

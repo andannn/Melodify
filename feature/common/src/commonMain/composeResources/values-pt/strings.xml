@@ -20,4 +20,7 @@
     <string name="number_minutes">%1$s minutos</string>
     <string name="number_seconds">%1$s segundos</string>
     <string name="cancel_timer">Cancelar temporizador</string>
+    <string name="ok">Ok</string>
+    <string name="decline">Cancelar</string>
+    <string name="confirm_delete_playlist_item">Tem certeza de que deseja excluir esta música da playlist?</string>
 </resources>

@@ -58,13 +58,6 @@ fun MediaItem.toAppItem(): MediaItemModel = when {
     else -> error("Not a AppMediaItem $this")
 }
 
-fun PlayListWithMediaCount.toAppItem() = PlayListItemModel(
-    id = playListEntity.id.toString(),
-    name = playListEntity.name,
-    artWorkUri = playListEntity.artworkUri ?: "",
-    trackCount = mediaCount
-)
-
 private var counter = 1
 
 private val uniqueId get() = "media_item_unique_id" + counter++

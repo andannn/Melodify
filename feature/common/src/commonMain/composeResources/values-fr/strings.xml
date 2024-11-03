@@ -20,4 +20,7 @@
     <string name="number_minutes">%1$s minutes</string>
     <string name="number_seconds">%1$s secondes</string>
     <string name="cancel_timer">Annuler le minuteur</string>
+    <string name="ok">Ok</string>
+    <string name="decline">Annuler</string>
+    <string name="confirm_delete_playlist_item">Êtes-vous sûr de vouloir supprimer cette chanson de la playlist?</string>
 </resources>
