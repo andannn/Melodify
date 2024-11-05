@@ -39,6 +39,7 @@ sealed interface SheetModel {
         options = listOf(
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
+            SheetOptionItem.ADD_TO_PLAYLIST,
             SheetOptionItem.DELETE,
         ),
     )
@@ -101,9 +102,13 @@ sealed interface SheetModel {
         ),
     )
 
+    data class AddToPlayListSheet(
+        val source: MediaItemModel,
+    ) : SheetModel
+
     data object TimerOptionSheet : SheetModel
 
-    data object TimerRemainTimeSheet: SheetModel
+    data object TimerRemainTimeSheet : SheetModel
 }
 
 enum class SheetOptionItem(
@@ -117,6 +122,10 @@ enum class SheetOptionItem(
     DELETE(
         smpIcon = SimpleMusicIcons.Delete,
         text = Res.string.delete,
+    ),
+    ADD_TO_PLAYLIST(
+        smpIcon = SimpleMusicIcons.PlaylistAddCircle,
+        text = Res.string.delete_from_playlist,
     ),
     DELETE_FROM_PLAYLIST(
         smpIcon = SimpleMusicIcons.PlayListRemove,

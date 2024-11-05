@@ -34,10 +34,17 @@ import melodify.feature.common.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
+enum class ActionType {
+    NONE,
+    OPTION,
+    SWAP,
+}
+
 @Composable
 fun ListTileItemView(
     modifier: Modifier = Modifier,
     playable: Boolean = true,
+    actionType: ActionType = ActionType.OPTION,
     swapIconModifier: Modifier? = null,
     albumArtUri: String = "",
     isActive: Boolean = false,
@@ -112,19 +119,21 @@ fun ListTileItemView(
                 }
             }
 
-            if (swapIconModifier == null) {
-                IconButton(
+            when (actionType) {
+                ActionType.NONE -> Spacer(Modifier)
+                ActionType.OPTION -> IconButton(
                     enabled = playable,
                     onClick = onOptionButtonClick,
                 ) {
                     Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "menu")
                 }
-            } else {
-                Icon(
-                    modifier = Modifier.padding(12.dp).then(swapIconModifier),
+
+                ActionType.SWAP -> Icon(
+                    modifier = Modifier.padding(12.dp).then(swapIconModifier!!),
                     imageVector = Icons.Filled.Menu, contentDescription = "menu"
                 )
             }
+
         }
     }
 }

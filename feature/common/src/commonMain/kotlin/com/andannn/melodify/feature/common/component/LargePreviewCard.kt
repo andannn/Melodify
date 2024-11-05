@@ -32,7 +32,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun LargePreviewCard(
     artCoverUri: String,
     title: String,
-    subTitle: String,
+    subTitle: String? = null,
     modifier: Modifier = Modifier,
     imageModifier: Modifier = Modifier,
     defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
@@ -68,14 +68,15 @@ fun LargePreviewCard(
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyLarge,
                 )
-                Text(
-                    text = subTitle,
-                    style = MaterialTheme.typography.bodyLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                if (subTitle != null) {
+                    Text(
+                        text = subTitle,
+                        style = MaterialTheme.typography.bodyLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
-
         }
     }
 }

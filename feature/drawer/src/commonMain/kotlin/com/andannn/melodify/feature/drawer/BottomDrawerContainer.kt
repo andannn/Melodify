@@ -2,6 +2,7 @@ package com.andannn.melodify.feature.drawer
 
 import androidx.compose.runtime.Composable
 import com.andannn.melodify.feature.drawer.model.SheetModel
+import com.andannn.melodify.feature.drawer.sheet.AddToPlayListRequestSheet
 import com.andannn.melodify.feature.drawer.sheet.MediaOptionBottomSheet
 import com.andannn.melodify.feature.drawer.sheet.SleepTimerCountingBottomSheet
 import com.andannn.melodify.feature.drawer.sheet.SleepTimerOptionBottomSheet
@@ -44,6 +45,15 @@ fun BottomDrawerContainer(
                     onCancelTimer = {
                         onEvent(DrawerEvent.OnCancelTimer)
                     },
+                    onRequestDismiss = {
+                        onEvent(DrawerEvent.OnDismissSheet(bottomSheet))
+                    }
+                )
+            }
+
+            is SheetModel.AddToPlayListSheet -> {
+                AddToPlayListRequestSheet(
+                    sheet = bottomSheet,
                     onRequestDismiss = {
                         onEvent(DrawerEvent.OnDismissSheet(bottomSheet))
                     }
