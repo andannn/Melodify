@@ -43,6 +43,7 @@ fun MelodifyNavHost(
             MessageDialog.ConfirmDeletePlaylist
         ).forEach {
             alertDialog(
+                navHostController = navHostController,
                 dialog = it,
                 onRequestDismiss = onBackPressed,
                 onResult = onDialogResult
