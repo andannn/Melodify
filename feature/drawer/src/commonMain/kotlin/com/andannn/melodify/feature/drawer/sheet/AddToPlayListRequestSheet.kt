@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
@@ -120,6 +121,7 @@ internal fun AddToPlayListRequestSheetContent(
                         LargePreviewCard(
                             modifier = Modifier.width(100.dp),
                             title = audio.name,
+                            backGroundColor = Color.Transparent,
                             artCoverUri = audio.artWorkUri,
                         )
                     }
@@ -155,6 +157,7 @@ internal fun AddToPlayListRequestSheetContent(
                     subTitle = "${playList.trackCount} songs",
                     albumArtUri = playList.artWorkUri,
                     actionType = ActionType.NONE,
+                    defaultColor = Color.Transparent,
                 )
             }
         }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -32,18 +33,21 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun LargePreviewCard(
     artCoverUri: String,
     title: String,
+    backGroundColor: Color = MaterialTheme.colorScheme.surface,
     subTitle: String? = null,
     modifier: Modifier = Modifier,
     imageModifier: Modifier = Modifier,
     defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
-    onClick: () -> Unit = {},
-    onLongClick: () -> Unit = {},
+    onClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
 ) {
     Surface(
-        modifier = modifier.combinedClickable(
+        modifier = if (onClick == null) modifier
+        else modifier.combinedClickable(
             onClick = onClick,
             onLongClick = onLongClick,
         ),
+        color = backGroundColor,
         shape = MaterialTheme.shapes.medium,
     ) {
         Column {
