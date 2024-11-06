@@ -71,6 +71,7 @@ sealed interface SheetModel {
         options = listOf(
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
+            SheetOptionItem.ADD_TO_PLAYLIST,
             SheetOptionItem.DELETE,
         ),
     )
@@ -80,6 +81,7 @@ sealed interface SheetModel {
         options = listOf(
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
+            SheetOptionItem.ADD_TO_PLAYLIST,
             SheetOptionItem.DELETE,
         )
     )
@@ -89,6 +91,7 @@ sealed interface SheetModel {
         options = listOf(
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
+            SheetOptionItem.ADD_TO_PLAYLIST,
             SheetOptionItem.DELETE,
         ),
     )
@@ -98,6 +101,7 @@ sealed interface SheetModel {
         options = listOf(
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
+            SheetOptionItem.ADD_TO_PLAYLIST,
             SheetOptionItem.DELETE,
         ),
     )
