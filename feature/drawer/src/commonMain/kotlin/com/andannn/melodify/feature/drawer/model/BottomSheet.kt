@@ -128,8 +128,8 @@ enum class SheetOptionItem(
         text = Res.string.delete,
     ),
     ADD_TO_PLAYLIST(
-        smpIcon = SimpleMusicIcons.PlaylistAddCircle,
-        text = Res.string.delete_from_playlist,
+        smpIcon = SimpleMusicIcons.AddPlayList,
+        text = Res.string.add_to_playlist,
     ),
     DELETE_FROM_PLAYLIST(
         smpIcon = SimpleMusicIcons.PlayListRemove,

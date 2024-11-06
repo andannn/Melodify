@@ -23,4 +23,9 @@
     <string name="ok">Ok</string>
     <string name="decline">Abbrechen</string>
     <string name="confirm_delete_playlist_item">Sind Sie sicher, dass Sie dieses Lied aus der Playlist entfernen möchten?</string>
+    <string name="delete_from_playlist">Aus der Playlist entfernen</string>
+    <string name="add_to_playlist">Zur Playlist hinzufügen</string>
+    <string name="selected_songs">Ausgewählte Lieder</string>
+    <string name="all_playlists">Alle Playlists</string>
+    <string name="all_to_playlist_page_title">%1$s Lieder zur Playlist hinzufügen</string>
 </resources>

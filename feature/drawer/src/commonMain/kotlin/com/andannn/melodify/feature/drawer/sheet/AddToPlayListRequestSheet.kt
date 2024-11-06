@@ -36,6 +36,12 @@ import com.andannn.melodify.feature.common.component.LargePreviewCard
 import com.andannn.melodify.feature.common.component.ListTileItemView
 import com.andannn.melodify.feature.common.util.key
 import com.andannn.melodify.feature.drawer.model.SheetModel
+import melodify.feature.common.generated.resources.Res
+import melodify.feature.common.generated.resources.all_playlists
+import melodify.feature.common.generated.resources.all_to_playlist_page_title
+import melodify.feature.common.generated.resources.selected_songs
+import melodify.feature.common.generated.resources.track_count
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +83,7 @@ internal fun AddToPlayListRequestSheetContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Add $itemCount songs to Playlist",
+                text = stringResource(Res.string.all_to_playlist_page_title, itemCount),
                 style = MaterialTheme.typography.titleLarge,
             )
 
@@ -98,7 +104,7 @@ internal fun AddToPlayListRequestSheetContent(
             item {
                 Text(
                     modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                    text = "Selected Songs",
+                    text = stringResource(Res.string.selected_songs),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -138,7 +144,7 @@ internal fun AddToPlayListRequestSheetContent(
                         end = 16.dp,
                         bottom = 8.dp
                     ),
-                    text = "All Playlists",
+                    text = stringResource(Res.string.all_playlists),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -149,7 +155,7 @@ internal fun AddToPlayListRequestSheetContent(
                 ListTileItemView(
                     modifier = Modifier.padding(horizontal = 6.dp),
                     title = playList.name,
-                    subTitle = "${playList.trackCount} songs",
+                    subTitle = stringResource(Res.string.track_count, playList.trackCount),
                     albumArtUri = playList.artWorkUri,
                     actionType = ActionType.NONE,
                     defaultColor = Color.Transparent,

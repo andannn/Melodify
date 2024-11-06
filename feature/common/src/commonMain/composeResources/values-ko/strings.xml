@@ -23,4 +23,9 @@
     <string name="ok">확인</string>
     <string name="decline">취소</string>
     <string name="confirm_delete_playlist_item">플레이리스트에서 이 노래를 삭제하시겠습니까?</string>
+    <string name="delete_from_playlist">플레이리스트에서 삭제</string>
+    <string name="add_to_playlist">플레이리스트에 추가</string>
+    <string name="selected_songs">선택한 노래</string>
+    <string name="all_playlists">모든 플레이리스트</string>
+    <string name="all_to_playlist_page_title">%1$s 곡을 플레이리스트에 추가</string>
 </resources>

@@ -23,4 +23,9 @@
     <string name="ok">OK</string>
     <string name="decline">キャンセル</string>
     <string name="confirm_delete_playlist_item">プレイリストからこの曲を取り除きますか？</string>
+    <string name="delete_from_playlist">プレイリストから削除</string>
+    <string name="add_to_playlist">プレイリストに追加</string>
+    <string name="selected_songs">選択した曲</string>
+    <string name="all_playlists">すべてのプレイリスト</string>
+    <string name="all_to_playlist_page_title">%1$s 曲をプレイリストに追加</string>
 </resources>
