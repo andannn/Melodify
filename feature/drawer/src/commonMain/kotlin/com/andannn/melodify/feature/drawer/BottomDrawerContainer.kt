@@ -56,6 +56,9 @@ fun BottomDrawerContainer(
                     sheet = bottomSheet,
                     onRequestDismiss = {
                         onEvent(DrawerEvent.OnDismissSheet(bottomSheet))
+                    },
+                    onAddToPlay = { playList, audioList ->
+                        onEvent(DrawerEvent.OnAddToPlayList(playList, audioList))
                     }
                 )
             }

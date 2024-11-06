@@ -4,6 +4,7 @@ import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.getAudios
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
@@ -44,6 +45,11 @@ sealed interface DrawerEvent {
     data object OnShowTimerSheet : DrawerEvent
 
     data class OnToggleFavorite(val audio: AudioItemModel) : DrawerEvent
+
+    data class OnAddToPlayList(
+        val playList: PlayListItemModel,
+        val audioList: List<AudioItemModel>
+    ) : DrawerEvent
 }
 
 interface DeleteMediaItemEventProvider {
@@ -138,6 +144,29 @@ class DrawerControllerImpl(
 
                 is DrawerEvent.OnToggleFavorite -> {
                     playListRepository.toggleFavoriteMedia(event.audio)
+                }
+
+                is DrawerEvent.OnAddToPlayList -> {
+                    closeSheet()
+                    val invalidList = playListRepository.addMusicToPlayList(
+                        playListId = event.playList.id.toLong(),
+                        musics = event.audioList
+                    )
+
+                    Napier.d(tag = TAG) { "add music to playlist complete. invalidList: $invalidList" }
+                    when {
+                        invalidList.isEmpty() -> {
+                            // Show success toast message
+                        }
+
+                        invalidList.size == 1 -> {
+                            // Show error toast message
+                        }
+
+                        else -> {
+                            // invalidList.size > 1, Show alert message
+                        }
+                    }
                 }
             }
         }

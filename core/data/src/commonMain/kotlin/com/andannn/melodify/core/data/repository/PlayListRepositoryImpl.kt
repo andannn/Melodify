@@ -53,7 +53,10 @@ internal class PlayListRepositoryImpl(
         )
 
         return insertedIndexList
-            .filterTo(mutableListOf()) { it == -1L }
+            .mapIndexed { index, insertedIndex ->
+                if (insertedIndex == -1L) index.toLong() else null
+            }
+            .filterNotNull()
             .toList()
     }
 

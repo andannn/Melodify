@@ -49,6 +49,7 @@ fun AddToPlayListRequestSheet(
     modifier: Modifier = Modifier,
     sheet: SheetModel.AddToPlayListSheet,
     onRequestDismiss: () -> Unit = {},
+    onAddToPlay: (PlayListItemModel, List<AudioItemModel>) -> Unit,
 ) {
     val state = rememberAddToPlayListSheetState(sheet.source)
     ModalBottomSheet(
@@ -61,7 +62,10 @@ fun AddToPlayListRequestSheet(
             modifier.fillMaxWidth(),
             audioList = state.audioListState,
             playLists = state.playListState,
-            onRequestDismiss = onRequestDismiss
+            onRequestDismiss = onRequestDismiss,
+            onPlayListClick = { playList ->
+                onAddToPlay(playList, state.audioListState)
+            }
         )
     }
 }
@@ -72,6 +76,7 @@ internal fun AddToPlayListRequestSheetContent(
     audioList: List<AudioItemModel>,
     playLists: List<PlayListItemModel>,
     onRequestDismiss: () -> Unit = {},
+    onPlayListClick: (PlayListItemModel) -> Unit = {},
 ) {
     val itemCount by rememberUpdatedState(audioList.size)
 
@@ -159,6 +164,9 @@ internal fun AddToPlayListRequestSheetContent(
                     albumArtUri = playList.artWorkUri,
                     actionType = ActionType.NONE,
                     defaultColor = Color.Transparent,
+                    onMusicItemClick = {
+                        onPlayListClick(playList)
+                    },
                 )
             }
         }
