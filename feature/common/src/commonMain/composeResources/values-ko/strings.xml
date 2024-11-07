@@ -28,4 +28,9 @@
     <string name="selected_songs">선택한 노래</string>
     <string name="all_playlists">모든 플레이리스트</string>
     <string name="all_to_playlist_page_title">%1$s 곡을 플레이리스트에 추가</string>
+    <string name="add_to_playlist_success_message">%1$s에 저장되었습니다</string>
+    <string name="add_to_playlist_failed_message">이 노래는 이미 플레이리스트에 있습니다</string>
+    <string name="having_registered_track_in_playlist">이미 플레이리스트에 등록된 노래가 있습니다</string>
+    <string name="duplicated_alert_dialog_title">중복</string>
+    <string name="skip_registered_songs">중복 건너뛰기</string>
 </resources>

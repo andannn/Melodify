@@ -28,4 +28,9 @@
     <string name="selected_songs">Chansons sélectionnées</string>
     <string name="all_playlists">Toutes les playlists</string>
     <string name="all_to_playlist_page_title">Ajouter %1$s chansons à la playlist</string>
+    <string name="add_to_playlist_success_message">Enregistré dans %1$s</string>
+    <string name="add_to_playlist_failed_message">Cette chanson est déjà présente dans la playlist</string>
+    <string name="having_registered_track_in_playlist">Déjà des chansons enregistrées dans la playlist</string>
+    <string name="duplicated_alert_dialog_title">Doublons</string>
+    <string name="skip_registered_songs">Ignorer les doublons</string>
 </resources>

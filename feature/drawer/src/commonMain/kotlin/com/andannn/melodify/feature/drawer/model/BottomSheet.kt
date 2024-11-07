@@ -53,6 +53,7 @@ sealed interface SheetModel {
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
             SheetOptionItem.DELETE_FROM_PLAYLIST,
+            SheetOptionItem.ADD_TO_PLAYLIST,
             SheetOptionItem.DELETE,
         ),
     )

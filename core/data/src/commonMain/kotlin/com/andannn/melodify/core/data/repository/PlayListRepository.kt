@@ -40,6 +40,11 @@ interface PlayListRepository {
     suspend fun addMusicToPlayList(playListId: Long, musics: List<AudioItemModel>): List<Long>
 
     /**
+     * Return indexes of [musics] which is duplicated in playList
+     */
+    suspend fun getDuplicatedMediaInPlayList(playListId: Long, musics: List<AudioItemModel>): List<String>
+
+    /**
      * Return flow of whether [mediaStoreId] is in favorite playList
      */
     fun isMediaInFavoritePlayListFlow(mediaStoreId: String): Flow<Boolean>

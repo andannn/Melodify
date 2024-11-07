@@ -5,7 +5,6 @@ import com.andannn.melodify.core.data.getAudios
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
@@ -13,6 +12,10 @@ import com.andannn.melodify.core.data.util.uri
 import com.andannn.melodify.feature.drawer.model.SheetModel
 import com.andannn.melodify.feature.drawer.model.SheetOptionItem
 import com.andannn.melodify.feature.drawer.model.SleepTimerOption
+import com.andannn.melodify.feature.message.InteractionResult
+import com.andannn.melodify.feature.message.MessageController
+import com.andannn.melodify.feature.message.dialog.MessageDialog
+import com.andannn.melodify.feature.message.snackbar.SnackBarMessage
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,8 +71,8 @@ interface DrawerController : BottomSheetStateProvider, DeleteMediaItemEventProvi
 
 class DrawerControllerImpl(
     private val repository: Repository,
+    private val messageController: MessageController,
 ) : DrawerController, CoroutineScope {
-    private val mediaContentRepository: MediaContentRepository = repository.mediaContentRepository
     private val mediaControllerRepository: MediaControllerRepository =
         repository.mediaControllerRepository
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository =
@@ -148,25 +151,7 @@ class DrawerControllerImpl(
 
                 is DrawerEvent.OnAddToPlayList -> {
                     closeSheet()
-                    val invalidList = playListRepository.addMusicToPlayList(
-                        playListId = event.playList.id.toLong(),
-                        musics = event.audioList
-                    )
-
-                    Napier.d(tag = TAG) { "add music to playlist complete. invalidList: $invalidList" }
-                    when {
-                        invalidList.isEmpty() -> {
-                            // Show success toast message
-                        }
-
-                        invalidList.size == 1 -> {
-                            // Show error toast message
-                        }
-
-                        else -> {
-                            // invalidList.size > 1, Show alert message
-                        }
-                    }
+                    onAddToPlayList(event.playList, event.audioList)
                 }
             }
         }
@@ -175,6 +160,46 @@ class DrawerControllerImpl(
     override fun close() {
         Napier.d(tag = TAG) { "scope is closed" }
         this.cancel()
+    }
+
+    private suspend fun onAddToPlayList(playList: PlayListItemModel, audioList: List<AudioItemModel>) {
+        val duplicatedMedias = playListRepository.getDuplicatedMediaInPlayList(
+            playListId = playList.id.toLong(),
+            musics = audioList
+        )
+
+        Napier.d(tag = TAG) { "add music to playlist complete. duplicated Medias: $duplicatedMedias" }
+        when {
+            duplicatedMedias.isEmpty() -> {
+                playListRepository.addMusicToPlayList(
+                    playListId = playList.id.toLong(),
+                    musics = audioList
+                )
+
+                messageController.showSnackBarAndWaitResult(
+                    message = SnackBarMessage.AddPlayListSuccess,
+                    messageFormatArgs = listOf(playList.name),
+                )
+            }
+
+            duplicatedMedias.size == 1 -> {
+                // Show error toast message
+                messageController.showSnackBarAndWaitResult(SnackBarMessage.AddPlayListFailed)
+            }
+
+            else -> {
+                // invalidList.size > 1, Show alert message
+                val result =
+                    messageController.showMessageDialogAndWaitResult(MessageDialog.DuplicatedAlert)
+
+                if (result == InteractionResult.ACCEPT) {
+                    playListRepository.addMusicToPlayList(
+                        playListId = playList.id.toLong(),
+                        musics = audioList.filter { it.id !in duplicatedMedias }
+                    )
+                }
+            }
+        }
     }
 
     private suspend fun onAddToPlaylistOptionClick(source: MediaItemModel) {

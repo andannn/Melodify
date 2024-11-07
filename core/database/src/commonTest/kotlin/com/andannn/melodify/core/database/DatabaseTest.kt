@@ -294,4 +294,32 @@ class DatabaseTest {
         playListDao.deleteMediaFromPlayList(1, listOf("1"))
         assertEquals(0, playListDao.getPlayListFlowById(1).first().medias.size)
     }
+
+    @Test
+    fun get_duplicate_media_in_play_list() = testScope.runTest {
+        playListDao.insertPlayListEntities(
+            entities = listOf(
+                PlayListEntity(
+                    id = 1,
+                    createdDate = 1,
+                    artworkUri = null,
+                    name = "name"
+                )
+            )
+        )
+        playListDao.insertPlayListWithMediaCrossRef(
+            crossRefs = listOf(
+                PlayListWithMediaCrossRef(
+                    playListId = 1,
+                    mediaStoreId = "1",
+                    addedDate = 1,
+                    artist = "",
+                    title = ""
+                ),
+            )
+        )
+
+        val res = playListDao.getDuplicateMediaInPlayList(1, listOf("1"))
+        assertEquals(listOf("1"), res)
+    }
 }

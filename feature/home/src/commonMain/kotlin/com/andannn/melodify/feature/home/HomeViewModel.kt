@@ -12,7 +12,7 @@ import com.andannn.melodify.feature.drawer.DrawerEvent
 import com.andannn.melodify.feature.drawer.model.SheetModel
 import com.andannn.melodify.feature.message.InteractionResult
 import com.andannn.melodify.feature.message.MessageController
-import com.andannn.melodify.feature.message.MessageDialog
+import com.andannn.melodify.feature.message.dialog.MessageDialog
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

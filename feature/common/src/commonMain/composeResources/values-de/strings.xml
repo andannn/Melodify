@@ -28,4 +28,9 @@
     <string name="selected_songs">Ausgewählte Lieder</string>
     <string name="all_playlists">Alle Playlists</string>
     <string name="all_to_playlist_page_title">%1$s Lieder zur Playlist hinzufügen</string>
+    <string name="add_to_playlist_success_message">In %1$s gespeichert</string>
+    <string name="add_to_playlist_failed_message">Dieses Lied ist bereits in der Playlist enthalten</string>
+    <string name="having_registered_track_in_playlist">Bereits registrierte Lieder in der Playlist enthalten</string>
+    <string name="duplicated_alert_dialog_title">Duplikate</string>
+    <string name="skip_registered_songs">Duplikate überspringen</string>
 </resources>
