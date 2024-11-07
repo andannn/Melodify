@@ -23,4 +23,14 @@
     <string name="ok">Ok</string>
     <string name="decline">Отменить</string>
     <string name="confirm_delete_playlist_item">Вы уверены, что хотите удалить эту песню из плейлиста?</string>
+    <string name="delete_from_playlist">Удалить из плейлиста</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
+    <string name="selected_songs">Выбранные песни</string>
+    <string name="all_playlists">Все плейлисты</string>
+    <string name="all_to_playlist_page_title">Добавить %1$s песен в плейлист</string>
+    <string name="add_to_playlist_success_message">Сохранено в %1$s</string>
+    <string name="add_to_playlist_failed_message">Эта песня уже существует в плейлисте</string>
+    <string name="having_registered_track_in_playlist">Уже есть зарегистрированные песни в плейлисте</string>
+    <string name="duplicated_alert_dialog_title">Дубликаты</string>
+    <string name="skip_registered_songs">Пропустить дубликаты</string>
 </resources>

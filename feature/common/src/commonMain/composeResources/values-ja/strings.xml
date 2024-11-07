@@ -23,4 +23,14 @@
     <string name="ok">OK</string>
     <string name="decline">キャンセル</string>
     <string name="confirm_delete_playlist_item">プレイリストからこの曲を取り除きますか？</string>
+    <string name="delete_from_playlist">プレイリストから削除</string>
+    <string name="add_to_playlist">プレイリストに追加</string>
+    <string name="selected_songs">選択した曲</string>
+    <string name="all_playlists">すべてのプレイリスト</string>
+    <string name="all_to_playlist_page_title">%1$s 曲をプレイリストに追加</string>
+    <string name="add_to_playlist_success_message">%1$s に保存しました</string>
+    <string name="add_to_playlist_failed_message">この曲はすでにプレイリストに存在します</string>
+    <string name="having_registered_track_in_playlist">すでにプレイリストに登録されている曲があります</string>
+    <string name="duplicated_alert_dialog_title">重複</string>
+    <string name="skip_registered_songs">重複をスキップ</string>
 </resources>

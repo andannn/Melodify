@@ -1,19 +1,21 @@
 package com.andannn.melodify.feature.drawer
 
-import com.andannn.melodify.core.data.repository.MediaContentRepository
+import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.getAudios
+import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
-import com.andannn.melodify.core.data.model.AlbumItemModel
-import com.andannn.melodify.core.data.model.ArtistItemModel
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.GenreItemModel
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.util.uri
 import com.andannn.melodify.feature.drawer.model.SheetModel
 import com.andannn.melodify.feature.drawer.model.SheetOptionItem
 import com.andannn.melodify.feature.drawer.model.SleepTimerOption
+import com.andannn.melodify.feature.message.InteractionResult
+import com.andannn.melodify.feature.message.MessageController
+import com.andannn.melodify.feature.message.dialog.MessageDialog
+import com.andannn.melodify.feature.message.snackbar.SnackBarMessage
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +48,11 @@ sealed interface DrawerEvent {
     data object OnShowTimerSheet : DrawerEvent
 
     data class OnToggleFavorite(val audio: AudioItemModel) : DrawerEvent
+
+    data class OnAddToPlayList(
+        val playList: PlayListItemModel,
+        val audioList: List<AudioItemModel>
+    ) : DrawerEvent
 }
 
 interface DeleteMediaItemEventProvider {
@@ -63,11 +70,15 @@ interface DrawerController : BottomSheetStateProvider, DeleteMediaItemEventProvi
 }
 
 class DrawerControllerImpl(
-    private val mediaContentRepository: MediaContentRepository,
-    private val mediaControllerRepository: MediaControllerRepository,
-    private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
-    private val playListRepository: PlayListRepository,
+    private val repository: Repository,
+    private val messageController: MessageController,
 ) : DrawerController, CoroutineScope {
+    private val mediaControllerRepository: MediaControllerRepository =
+        repository.mediaControllerRepository
+    private val playerStateMonitoryRepository: PlayerStateMonitoryRepository =
+        repository.playerStateMonitoryRepository
+    private val playListRepository: PlayListRepository = repository.playListRepository
+
     override val coroutineContext: CoroutineContext = Dispatchers.Main + Job()
 
     override val bottomSheetModel: SharedFlow<SheetModel?>
@@ -113,6 +124,8 @@ class DrawerControllerImpl(
                                 (event.sheet as SheetModel.AudioOptionInPlayListSheet).playListId,
                                 event.sheet.source
                             )
+
+                            SheetOptionItem.ADD_TO_PLAYLIST -> onAddToPlaylistOptionClick(event.sheet.source)
                         }
                     }
                 }
@@ -123,16 +136,7 @@ class DrawerControllerImpl(
                 }
 
                 is DrawerEvent.OnDismissSheet -> {
-                    when (event.bottomSheet) {
-                        is SheetModel.MediaOptionSheet,
-                        SheetModel.TimerOptionSheet -> {
-                            closeSheet()
-                        }
-
-                        is SheetModel.TimerRemainTimeSheet -> {
-                            closeSheet()
-                        }
-                    }
+                    closeSheet()
                 }
 
                 is DrawerEvent.OnShowBottomDrawer -> {
@@ -144,17 +148,66 @@ class DrawerControllerImpl(
                 is DrawerEvent.OnToggleFavorite -> {
                     playListRepository.toggleFavoriteMedia(event.audio)
                 }
+
+                is DrawerEvent.OnAddToPlayList -> {
+                    closeSheet()
+                    onAddToPlayList(event.playList, event.audioList)
+                }
             }
         }
-    }
-
-    private suspend  fun onDeleteItemInPlayList(playListId: String, source: AudioItemModel) {
-        playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(source.id))
     }
 
     override fun close() {
         Napier.d(tag = TAG) { "scope is closed" }
         this.cancel()
+    }
+
+    private suspend fun onAddToPlayList(playList: PlayListItemModel, audioList: List<AudioItemModel>) {
+        val duplicatedMedias = playListRepository.getDuplicatedMediaInPlayList(
+            playListId = playList.id.toLong(),
+            musics = audioList
+        )
+
+        Napier.d(tag = TAG) { "add music to playlist complete. duplicated Medias: $duplicatedMedias" }
+        when {
+            duplicatedMedias.isEmpty() -> {
+                playListRepository.addMusicToPlayList(
+                    playListId = playList.id.toLong(),
+                    musics = audioList
+                )
+
+                messageController.showSnackBarAndWaitResult(
+                    message = SnackBarMessage.AddPlayListSuccess,
+                    messageFormatArgs = listOf(playList.name),
+                )
+            }
+
+            duplicatedMedias.size == 1 -> {
+                // Show error toast message
+                messageController.showSnackBarAndWaitResult(SnackBarMessage.AddPlayListFailed)
+            }
+
+            else -> {
+                // invalidList.size > 1, Show alert message
+                val result =
+                    messageController.showMessageDialogAndWaitResult(MessageDialog.DuplicatedAlert)
+
+                if (result == InteractionResult.ACCEPT) {
+                    playListRepository.addMusicToPlayList(
+                        playListId = playList.id.toLong(),
+                        musics = audioList.filter { it.id !in duplicatedMedias }
+                    )
+                }
+            }
+        }
+    }
+
+    private suspend fun onAddToPlaylistOptionClick(source: MediaItemModel) {
+        _bottomSheetModelFlow.emit(SheetModel.AddToPlayListSheet(source))
+    }
+
+    private suspend fun onDeleteItemInPlayList(playListId: String, source: AudioItemModel) {
+        playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(source.id))
     }
 
     private suspend fun closeSheet() {
@@ -170,32 +223,14 @@ class DrawerControllerImpl(
     }
 
     private suspend fun onDeleteMediaItem(source: MediaItemModel) {
-        val items = when (source) {
-            is AlbumItemModel -> {
-                mediaContentRepository.getAudiosOfAlbum(source.id)
-            }
-
-            is ArtistItemModel -> {
-                mediaContentRepository.getAudiosOfArtist(source.id)
-            }
-
-            is GenreItemModel -> {
-                mediaContentRepository.getAudiosOfGenre(source.id)
-            }
-
-            is AudioItemModel -> {
-                listOf(source)
-            }
-
-            is PlayListItemModel -> TODO("implement later")
-        }
+        val items = repository.getAudios(source)
         val uris = items.map { it.uri }
 
         _deleteMediaItemEventFlow.emit(uris)
     }
 
     private suspend fun onPlayNextClick(source: MediaItemModel) {
-        val items = getAudios(source)
+        val items = repository.getAudios(source)
         val havePlayingQueue = playerStateMonitoryRepository.playListQueue.isNotEmpty()
         if (havePlayingQueue) {
             mediaControllerRepository.addMediaItems(
@@ -208,7 +243,7 @@ class DrawerControllerImpl(
     }
 
     private suspend fun onAddToQueue(source: MediaItemModel) {
-        val items = getAudios(source)
+        val items = repository.getAudios(source)
         val playListQueue = playerStateMonitoryRepository.playListQueue
         if (playListQueue.isNotEmpty()) {
             mediaControllerRepository.addMediaItems(
@@ -217,30 +252,6 @@ class DrawerControllerImpl(
             )
         } else {
             mediaControllerRepository.playMediaList(items, 0)
-        }
-    }
-
-    private suspend fun getAudios(source: MediaItemModel): List<AudioItemModel> {
-        return when (source) {
-            is AlbumItemModel -> {
-                mediaContentRepository.getAudiosOfAlbum(source.id)
-            }
-
-            is ArtistItemModel -> {
-                mediaContentRepository.getAudiosOfArtist(source.id)
-            }
-
-            is GenreItemModel -> {
-                mediaContentRepository.getAudiosOfGenre(source.id)
-            }
-
-            is AudioItemModel -> {
-                listOf(source)
-            }
-
-            is PlayListItemModel -> {
-                playListRepository.getAudiosOfPlayList(source.id.toLong())
-            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.andannn.melodify.feature.message
+package com.andannn.melodify.feature.message.dialog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +13,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,7 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.dialog
+import com.andannn.melodify.feature.message.InteractionResult
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import org.jetbrains.compose.resources.stringResource
 
 internal const val ALERT_DIALOG_ROUTE_PREFIX = "alert_dialog_route_"
@@ -32,6 +36,7 @@ fun NavController.navigateToAlertDialog(dialog: MessageDialog) {
 }
 
 fun NavGraphBuilder.alertDialog(
+    navHostController: NavHostController,
     dialog: MessageDialog,
     onRequestDismiss: () -> Unit,
     onResult: (MessageDialog, InteractionResult) -> Unit
@@ -39,12 +44,26 @@ fun NavGraphBuilder.alertDialog(
     dialog(
         route = "$ALERT_DIALOG_ROUTE_PREFIX${dialog.id}",
         dialogProperties = dialog.dialogProperties
-    ) {
+    ) { entry ->
+        var interaction by remember {
+            mutableStateOf<InteractionResult>(InteractionResult.DISMISS)
+        }
+
+        LaunchedEffect(Unit) {
+            navHostController.currentBackStack
+                .map { it.contains(entry) }
+                .distinctUntilChanged()
+                .collect { inBackStack ->
+                    if (!inBackStack) {
+                        onResult(dialog, interaction)
+                    }
+                }
+        }
         AlertMessageDialog(
             dialog = dialog,
             onRequestDismiss = onRequestDismiss,
             onResult = {
-                onResult(dialog, it)
+                interaction = it
             }
         )
     }
@@ -56,16 +75,6 @@ fun AlertMessageDialog(
     onRequestDismiss: () -> Unit,
     onResult: (InteractionResult) -> Unit
 ) {
-    var interactionResult: InteractionResult by remember {
-        mutableStateOf(InteractionResult.DISMISS)
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            onResult(interactionResult)
-        }
-    }
-
     Surface(
         modifier = Modifier.wrapContentWidth().wrapContentHeight(),
     ) {
@@ -94,7 +103,7 @@ fun AlertMessageDialog(
                     TextButton(
                         onClick = {
                             onRequestDismiss()
-                            interactionResult = InteractionResult.DECLINE
+                            onResult(InteractionResult.DECLINE)
                         },
                     ) {
                         Text(stringResource(dialog.negative))
@@ -104,7 +113,7 @@ fun AlertMessageDialog(
                 TextButton(
                     onClick = {
                         onRequestDismiss()
-                        interactionResult = InteractionResult.ACCEPT
+                        onResult(InteractionResult.ACCEPT)
                     },
                 ) {
                     Text(stringResource(dialog.positive))

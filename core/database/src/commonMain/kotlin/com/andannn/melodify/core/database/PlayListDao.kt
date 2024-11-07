@@ -36,6 +36,14 @@ interface PlayListDao {
     suspend fun insertPlayListWithMediaCrossRef(crossRefs: List<PlayListWithMediaCrossRef>): List<Long>
 
     @Query("""
+        select ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}
+        from ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
+        where ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID} = :playListId and
+            ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} in (:mediaIdList)
+    """)
+    suspend fun getDuplicateMediaInPlayList(playListId: Long, mediaIdList: List<String>): List<String>
+
+    @Query("""
             delete from ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
             where ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID} = :playListId and
                 ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} in (:mediaIdList)

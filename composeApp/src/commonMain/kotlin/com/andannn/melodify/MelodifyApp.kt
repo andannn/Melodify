@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,14 +29,17 @@ fun MelodifyApp(
     Scaffold(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surface),
+        snackbarHost = {
+            SnackbarHost(appState.snackBarHostState)
+        }
     ) {
         val navController = appState.navController
         MelodifyNavHost(
             navHostController = navController,
             modifier = Modifier.fillMaxWidth(),
             onBackPressed = navController::popBackStack,
-            onDialogResult = appState::onDialogResult
+            onDialogResult = appState::onDialogResult,
         )
 
         val playerUiState by playerStateViewModel.playerUiStateFlow.collectAsState()

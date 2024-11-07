@@ -1,5 +1,6 @@
 package com.andannn.melodify
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -9,8 +10,8 @@ import com.andannn.melodify.feature.common.util.getUiRetainedScope
 import com.andannn.melodify.feature.drawer.DrawerController
 import com.andannn.melodify.feature.message.InteractionResult
 import com.andannn.melodify.feature.message.MessageController
-import com.andannn.melodify.feature.message.MessageDialog
-import com.andannn.melodify.feature.message.navigateToAlertDialog
+import com.andannn.melodify.feature.message.dialog.MessageDialog
+import com.andannn.melodify.feature.message.dialog.navigateToAlertDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.scope.Scope
@@ -21,18 +22,21 @@ fun rememberAppState(
     scope: CoroutineScope = rememberCoroutineScope(),
     retainedScope: Scope = getUiRetainedScope()!!,
     drawerController: DrawerController = retainedScope.get<DrawerController>(),
-    messageController: MessageController = retainedScope.get<MessageController>()
+    messageController: MessageController = retainedScope.get<MessageController>(),
+    snackBarHostState :SnackbarHostState =  remember { SnackbarHostState() }
 ) = remember(
     navController,
     drawerController,
     scope,
-    messageController
+    messageController,
+    snackBarHostState
 ) {
     MelodifyAppState(
         scope = scope,
         navController = navController,
         drawerController = drawerController,
         messageController = messageController,
+        snackBarHostState = snackBarHostState
     )
 }
 
@@ -40,17 +44,25 @@ class MelodifyAppState(
     val scope: CoroutineScope,
     val navController: NavHostController,
     val drawerController: DrawerController,
-    private val messageController: MessageController
+    private val messageController: MessageController,
+    val snackBarHostState: SnackbarHostState
 ) {
-    fun onDialogResult(messageDialog: MessageDialog, interactionResult: InteractionResult) {
-        messageController.onResult(messageDialog, interactionResult)
-    }
-
     init {
         scope.launch {
             for (dialog in messageController.sendDialogChannel) {
                 navController.navigateToAlertDialog(dialog)
             }
         }
+
+        scope.launch {
+            for (message in messageController.snackBarMessageChannel) {
+                val result = snackBarHostState.showSnackbar(message)
+                messageController.snackBarResultChannel.send(result)
+            }
+        }
+    }
+
+    fun onDialogResult(messageDialog: MessageDialog, interactionResult: InteractionResult) {
+        messageController.onResult(messageDialog, interactionResult)
     }
 }

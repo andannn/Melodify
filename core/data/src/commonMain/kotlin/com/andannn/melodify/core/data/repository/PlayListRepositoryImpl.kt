@@ -53,8 +53,18 @@ internal class PlayListRepositoryImpl(
         )
 
         return insertedIndexList
-            .filterTo(mutableListOf()) { it == -1L }
+            .mapIndexed { index, insertedIndex ->
+                if (insertedIndex == -1L) index.toLong() else null
+            }
+            .filterNotNull()
             .toList()
+    }
+
+    override suspend fun getDuplicatedMediaInPlayList(
+        playListId: Long,
+        musics: List<AudioItemModel>
+    ): List<String> {
+        return playListDao.getDuplicateMediaInPlayList(playListId, musics.map { it.id })
     }
 
     override fun isMediaInFavoritePlayListFlow(mediaStoreId: String) =
@@ -79,7 +89,7 @@ internal class PlayListRepositoryImpl(
         playListDao.deleteMediaFromPlayList(playListId, mediaIdList)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getAudiosOfPlayListFlow(playListId: Long)=
+    override fun getAudiosOfPlayListFlow(playListId: Long) =
         combine(
             allAudioChangedEventFlow(), // trigger flow when audio changed.
             playListDao.getPlayListFlowById(playListId)

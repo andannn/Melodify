@@ -23,4 +23,14 @@
     <string name="ok">Ok</string>
     <string name="decline">Cancelar</string>
     <string name="confirm_delete_playlist_item">¿Está seguro de eliminar esta canción de la lista de reproducción?</string>
+    <string name="delete_from_playlist">Eliminar de la lista de reproducción</string>
+    <string name="add_to_playlist">Añadir a la lista de reproducción</string>
+    <string name="selected_songs">Canciones seleccionadas</string>
+    <string name="all_playlists">Todas las listas de reproducción</string>
+    <string name="all_to_playlist_page_title">Añadir %1$s canciones a la lista de reproducción</string>
+    <string name="add_to_playlist_success_message">Guardado en %1$s</string>
+    <string name="add_to_playlist_failed_message">Esta canción ya existe en la lista de reproducción</string>
+    <string name="having_registered_track_in_playlist">Ya hay canciones registradas en la lista de reproducción</string>
+    <string name="duplicated_alert_dialog_title">Duplicado</string>
+    <string name="skip_registered_songs">Saltar duplicados</string>
 </resources>

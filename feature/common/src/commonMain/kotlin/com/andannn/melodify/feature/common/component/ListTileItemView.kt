@@ -34,10 +34,17 @@ import melodify.feature.common.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
+enum class ActionType {
+    NONE,
+    OPTION,
+    SWAP,
+}
+
 @Composable
 fun ListTileItemView(
     modifier: Modifier = Modifier,
     playable: Boolean = true,
+    actionType: ActionType = ActionType.OPTION,
     swapIconModifier: Modifier? = null,
     albumArtUri: String = "",
     isActive: Boolean = false,
@@ -47,15 +54,34 @@ fun ListTileItemView(
     subTitle: String = "",
     trackNum: Int = 0,
     showTrackNum: Boolean = false,
-    onMusicItemClick: () -> Unit = {},
-    onOptionButtonClick: () -> Unit = {}
+    onMusicItemClick: (() -> Unit)? = null,
+    onOptionButtonClick: (() -> Unit)? = null
 ) {
-    Surface(
+    @Composable
+    fun CustomContainer(
+        modifier: Modifier = Modifier,
+        content: @Composable () -> Unit
+    ) {
+        if (onMusicItemClick != null) {
+            Surface(
+                modifier = modifier,
+                onClick = onMusicItemClick,
+                color = if (isActive) MaterialTheme.colorScheme.inversePrimary else defaultColor,
+                content = content,
+            )
+        } else {
+            Surface(
+                modifier = modifier,
+                content = content,
+                color = if (isActive) MaterialTheme.colorScheme.inversePrimary else defaultColor,
+            )
+        }
+    }
+
+    CustomContainer(
         modifier = modifier
             .fillMaxWidth()
             .alpha(if (playable) 1f else 0.5f),
-        color = if (isActive) MaterialTheme.colorScheme.inversePrimary else defaultColor,
-        onClick = onMusicItemClick,
     ) {
         Row(
             modifier =
@@ -112,19 +138,21 @@ fun ListTileItemView(
                 }
             }
 
-            if (swapIconModifier == null) {
-                IconButton(
+            when (actionType) {
+                ActionType.NONE -> Spacer(Modifier)
+                ActionType.OPTION -> IconButton(
                     enabled = playable,
-                    onClick = onOptionButtonClick,
+                    onClick = onOptionButtonClick!!,
                 ) {
                     Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "menu")
                 }
-            } else {
-                Icon(
-                    modifier = Modifier.padding(12.dp).then(swapIconModifier),
-                    imageVector = Icons.Filled.Menu, contentDescription = "menu"
+
+                ActionType.SWAP -> Icon(
+                    modifier = Modifier.padding(12.dp).then(swapIconModifier!!),
+                    imageVector = Icons.Filled.Menu, contentDescription = "swap"
                 )
             }
+
         }
     }
 }

@@ -23,4 +23,14 @@
     <string name="ok">Ok</string>
     <string name="decline">Cancelar</string>
     <string name="confirm_delete_playlist_item">Tem certeza de que deseja excluir esta música da playlist?</string>
+    <string name="delete_from_playlist">Excluir da playlist</string>
+    <string name="add_to_playlist">Adicionar à playlist</string>
+    <string name="selected_songs">Músicas selecionadas</string>
+    <string name="all_playlists">Todas as playlists</string>
+    <string name="all_to_playlist_page_title">Adicionar %1$s músicas à playlist</string>
+    <string name="add_to_playlist_success_message">Salvo em %1$s</string>
+    <string name="add_to_playlist_failed_message">Esta música já existe na playlist</string>
+    <string name="having_registered_track_in_playlist">Já existem músicas registradas na playlist</string>
+    <string name="duplicated_alert_dialog_title">Duplicado</string>
+    <string name="skip_registered_songs">Pular duplicados</string>
 </resources>

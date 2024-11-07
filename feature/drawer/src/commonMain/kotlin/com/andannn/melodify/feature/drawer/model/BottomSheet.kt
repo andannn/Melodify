@@ -39,6 +39,7 @@ sealed interface SheetModel {
         options = listOf(
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
+            SheetOptionItem.ADD_TO_PLAYLIST,
             SheetOptionItem.DELETE,
         ),
     )
@@ -52,6 +53,7 @@ sealed interface SheetModel {
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
             SheetOptionItem.DELETE_FROM_PLAYLIST,
+            SheetOptionItem.ADD_TO_PLAYLIST,
             SheetOptionItem.DELETE,
         ),
     )
@@ -70,6 +72,7 @@ sealed interface SheetModel {
         options = listOf(
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
+            SheetOptionItem.ADD_TO_PLAYLIST,
             SheetOptionItem.DELETE,
         ),
     )
@@ -79,6 +82,7 @@ sealed interface SheetModel {
         options = listOf(
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
+            SheetOptionItem.ADD_TO_PLAYLIST,
             SheetOptionItem.DELETE,
         )
     )
@@ -88,6 +92,7 @@ sealed interface SheetModel {
         options = listOf(
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
+            SheetOptionItem.ADD_TO_PLAYLIST,
             SheetOptionItem.DELETE,
         ),
     )
@@ -97,13 +102,18 @@ sealed interface SheetModel {
         options = listOf(
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
+            SheetOptionItem.ADD_TO_PLAYLIST,
             SheetOptionItem.DELETE,
         ),
     )
 
+    data class AddToPlayListSheet(
+        val source: MediaItemModel,
+    ) : SheetModel
+
     data object TimerOptionSheet : SheetModel
 
-    data object TimerRemainTimeSheet: SheetModel
+    data object TimerRemainTimeSheet : SheetModel
 }
 
 enum class SheetOptionItem(
@@ -117,6 +127,10 @@ enum class SheetOptionItem(
     DELETE(
         smpIcon = SimpleMusicIcons.Delete,
         text = Res.string.delete,
+    ),
+    ADD_TO_PLAYLIST(
+        smpIcon = SimpleMusicIcons.AddPlayList,
+        text = Res.string.add_to_playlist,
     ),
     DELETE_FROM_PLAYLIST(
         smpIcon = SimpleMusicIcons.PlayListRemove,

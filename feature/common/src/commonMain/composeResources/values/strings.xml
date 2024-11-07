@@ -22,6 +22,15 @@
     <string name="cancel_timer">Cancel Timer</string>
     <string name="ok">Ok</string>
     <string name="decline">Cancel</string>
-    <string name="confirm_delete_playlist_item">Are you sure you want to delete this song from playlist?</string>`
-    <string name="delete_from_playlist">Delete from playlist</string>`
+    <string name="confirm_delete_playlist_item">Are you sure you want to delete this song from playlist?</string>
+    <string name="delete_from_playlist">Delete from playlist</string>
+    <string name="add_to_playlist">Add to playlist</string>
+    <string name="selected_songs">Selected songs</string>
+    <string name="all_playlists">All playlists</string>
+    <string name="all_to_playlist_page_title">Add %1$s songs to Playlist</string>
+    <string name="add_to_playlist_success_message">Saved to %1$s</string>
+    <string name="add_to_playlist_failed_message">This song is already exist in playlist</string>
+    <string name="having_registered_track_in_playlist">Already having duplicated songs in playlist</string>
+    <string name="duplicated_alert_dialog_title">Duplicates</string>
+    <string name="skip_registered_songs">Skip duplicates</string>
 </resources>
