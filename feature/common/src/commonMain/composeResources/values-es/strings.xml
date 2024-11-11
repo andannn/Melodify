@@ -33,4 +33,6 @@
     <string name="having_registered_track_in_playlist">Ya hay canciones registradas en la lista de reproducción</string>
     <string name="duplicated_alert_dialog_title">Duplicado</string>
     <string name="skip_registered_songs">Saltar duplicados</string>
+    <string name="new_playlist_dialog_title">Crear nueva lista de reproducción</string>
+    <string name="new_playlist_dialog_input_hint">Título</string>
 </resources>

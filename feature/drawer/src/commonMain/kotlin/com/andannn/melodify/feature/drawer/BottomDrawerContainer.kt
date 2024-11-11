@@ -59,6 +59,9 @@ fun BottomDrawerContainer(
                     },
                     onAddToPlay = { playList, audioList ->
                         onEvent(DrawerEvent.OnAddToPlayList(playList, audioList))
+                    },
+                    onCreateNewPlayList = {
+                        onEvent(DrawerEvent.OnCreateNewPlayList(bottomSheet.source))
                     }
                 )
             }

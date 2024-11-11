@@ -1,6 +1,7 @@
 package com.andannn.melodify.feature.message
 
-import com.andannn.melodify.feature.message.dialog.MessageDialog
+import com.andannn.melodify.feature.message.dialog.Dialog
+import com.andannn.melodify.feature.message.dialog.InteractionResult
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
@@ -16,22 +17,22 @@ class MessageControllerTest {
 
     @Test
     fun message_controller_test() = testScope.runTest {
-        var dialog: MessageDialog? = null
+        var dialog: Dialog? = null
         launch {
             dialog = messageController.sendDialogChannel.receive()
 
-            messageController.onResult(dialog!!, InteractionResult.ACCEPT)
+            messageController.onResult(dialog!!, InteractionResult.AlertDialog.ACCEPT)
         }
 
-        val result = messageController.showMessageDialogAndWaitResult(MessageDialog.ConfirmDeletePlaylist)
+        val result = messageController.showMessageDialogAndWaitResult(Dialog.ConfirmDeletePlaylist)
 
-        assertEquals(MessageDialog.ConfirmDeletePlaylist, dialog)
-        assertEquals(InteractionResult.ACCEPT, result)
+        assertEquals(Dialog.ConfirmDeletePlaylist, dialog)
+        assertEquals(InteractionResult.AlertDialog.ACCEPT, result)
     }
 
     @Test
     fun message_controller_cancel_test() = testScope.runTest {
-        var dialog: MessageDialog? = null
+        var dialog: Dialog? = null
         val job1 = launch(
             start = CoroutineStart.UNDISPATCHED
         ) {
@@ -39,19 +40,19 @@ class MessageControllerTest {
 
             delay(10)
 
-            messageController.onResult(dialog!!, InteractionResult.ACCEPT)
+            messageController.onResult(dialog!!, InteractionResult.AlertDialog.ACCEPT)
         }
 
         var result: InteractionResult? = null
         val job2 = launch(
             start = CoroutineStart.UNDISPATCHED
         ) {
-            result = messageController.showMessageDialogAndWaitResult(MessageDialog.ConfirmDeletePlaylist)
+            result = messageController.showMessageDialogAndWaitResult(Dialog.ConfirmDeletePlaylist)
         }
         job2.cancel()
         joinAll(job1, job2)
 
-        assertEquals(MessageDialog.ConfirmDeletePlaylist, dialog)
+        assertEquals(Dialog.ConfirmDeletePlaylist, dialog)
         assertEquals(null, result)
     }
 }

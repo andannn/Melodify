@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 interface UserPreferenceRepository {
     val userSettingFlow: Flow<UserSetting>
 
+    val currentCustomTabsFlow: Flow<List<CustomTab>>
+
     suspend fun setPreviewMode(previewMode: MediaPreviewMode)
 
     suspend fun updateCurrentCustomTabs(currentCustomTabs: List<CustomTab>)
