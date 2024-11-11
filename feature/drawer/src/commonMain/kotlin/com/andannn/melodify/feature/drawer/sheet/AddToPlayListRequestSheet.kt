@@ -1,6 +1,7 @@
 package com.andannn.melodify.feature.drawer.sheet
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,7 +15,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.PlusOne
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -34,11 +38,15 @@ import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.feature.common.component.ActionType
 import com.andannn.melodify.feature.common.component.LargePreviewCard
 import com.andannn.melodify.feature.common.component.ListTileItemView
+import com.andannn.melodify.feature.common.component.SmpTextButton
 import com.andannn.melodify.feature.common.util.key
 import com.andannn.melodify.feature.drawer.model.SheetModel
 import melodify.feature.common.generated.resources.Res
+import melodify.feature.common.generated.resources.add_to_playlist
 import melodify.feature.common.generated.resources.all_playlists
 import melodify.feature.common.generated.resources.all_to_playlist_page_title
+import melodify.feature.common.generated.resources.new_playlist_dialog_title
+import melodify.feature.common.generated.resources.play
 import melodify.feature.common.generated.resources.selected_songs
 import melodify.feature.common.generated.resources.track_count
 import org.jetbrains.compose.resources.stringResource
@@ -50,6 +58,7 @@ fun AddToPlayListRequestSheet(
     sheet: SheetModel.AddToPlayListSheet,
     onRequestDismiss: () -> Unit = {},
     onAddToPlay: (PlayListItemModel, List<AudioItemModel>) -> Unit,
+    onCreateNewPlayList: () -> Unit = {},
 ) {
     val state = rememberAddToPlayListSheetState(sheet.source)
     ModalBottomSheet(
@@ -59,13 +68,14 @@ fun AddToPlayListRequestSheet(
         },
     ) {
         AddToPlayListRequestSheetContent(
-            modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             audioList = state.audioListState,
             playLists = state.playListState,
             onRequestDismiss = onRequestDismiss,
             onPlayListClick = { playList ->
                 onAddToPlay(playList, state.audioListState)
-            }
+            },
+            onCreateNewClick = onCreateNewPlayList,
         )
     }
 }
@@ -77,6 +87,7 @@ internal fun AddToPlayListRequestSheetContent(
     playLists: List<PlayListItemModel>,
     onRequestDismiss: () -> Unit = {},
     onPlayListClick: (PlayListItemModel) -> Unit = {},
+    onCreateNewClick: () -> Unit = {},
 ) {
     val itemCount by rememberUpdatedState(audioList.size)
 
@@ -103,72 +114,87 @@ internal fun AddToPlayListRequestSheetContent(
 
         HorizontalDivider()
 
-        LazyColumn(
+        Box(
             modifier = Modifier.fillMaxWidth().weight(1f),
         ) {
-            item {
-                Text(
-                    modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                    text = stringResource(Res.string.selected_songs),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                item {
+                    Text(
+                        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                        text = stringResource(Res.string.selected_songs),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
 
-            item {
-                LazyRow(
-                    modifier = Modifier.padding(top = 16.dp).height(150.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(
-                        items = audioList,
-                        key = { it.key }
-                    ) { audio ->
-                        LargePreviewCard(
-                            modifier = Modifier.width(100.dp),
-                            title = audio.name,
-                            backGroundColor = Color.Transparent,
-                            artCoverUri = audio.artWorkUri,
-                        )
+                item {
+                    LazyRow(
+                        modifier = Modifier.padding(top = 16.dp).height(150.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        items(
+                            items = audioList,
+                            key = { it.key }
+                        ) { audio ->
+                            LargePreviewCard(
+                                modifier = Modifier.width(100.dp),
+                                title = audio.name,
+                                backGroundColor = Color.Transparent,
+                                artCoverUri = audio.artWorkUri,
+                            )
+                        }
                     }
                 }
-            }
 
-            item {
-                Column {
-                    HorizontalDivider()
-                    Spacer(modifier = Modifier.height(16.dp))
+                item {
+                    Column {
+                        HorizontalDivider()
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+
+                item {
+                    Text(
+                        modifier = Modifier.padding(
+                            top = 16.dp,
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 8.dp
+                        ),
+                        text = stringResource(Res.string.all_playlists),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+                items(
+                    items = playLists,
+                    key = { it.key }
+                ) { playList ->
+                    ListTileItemView(
+                        modifier = Modifier.padding(horizontal = 6.dp),
+                        title = playList.name,
+                        subTitle = stringResource(Res.string.track_count, playList.trackCount),
+                        albumArtUri = playList.artWorkUri,
+                        actionType = ActionType.NONE,
+                        defaultColor = Color.Transparent,
+                        onMusicItemClick = {
+                            onPlayListClick(playList)
+                        },
+                    )
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(64.dp))
                 }
             }
 
-            item {
-                Text(
-                    modifier = Modifier.padding(
-                        top = 16.dp,
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 8.dp
-                    ),
-                    text = stringResource(Res.string.all_playlists),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-            items(
-                items = playLists,
-                key = { it.key }
-            ) { playList ->
-                ListTileItemView(
-                    modifier = Modifier.padding(horizontal = 6.dp),
-                    title = playList.name,
-                    subTitle = stringResource(Res.string.track_count, playList.trackCount),
-                    albumArtUri = playList.artWorkUri,
-                    actionType = ActionType.NONE,
-                    defaultColor = Color.Transparent,
-                    onMusicItemClick = {
-                        onPlayListClick(playList)
-                    },
-                )
-            }
+            SmpTextButton(
+                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+                imageVector = Icons.Rounded.Add,
+                text = stringResource(Res.string.new_playlist_dialog_title),
+                onClick = onCreateNewClick,
+            )
         }
     }
 }

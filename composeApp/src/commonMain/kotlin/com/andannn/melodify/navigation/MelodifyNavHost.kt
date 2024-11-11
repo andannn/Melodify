@@ -8,9 +8,9 @@ import com.andannn.melodify.feature.customtab.navigation.customTabSetting
 import com.andannn.melodify.feature.customtab.navigation.navigateToCustomTabSetting
 import com.andannn.melodify.feature.home.navigation.HOME_ROUTE
 import com.andannn.melodify.feature.home.navigation.homeScreen
-import com.andannn.melodify.feature.message.InteractionResult
-import com.andannn.melodify.feature.message.dialog.MessageDialog
-import com.andannn.melodify.feature.message.dialog.alertDialog
+import com.andannn.melodify.feature.message.dialog.Dialog
+import com.andannn.melodify.feature.message.dialog.InteractionResult
+import com.andannn.melodify.feature.message.dialog.melodifyDialog
 import com.andannn.melodify.feature.playList.navigation.navigateToPlayList
 import com.andannn.melodify.feature.playList.navigation.playListScreen
 
@@ -19,7 +19,7 @@ fun MelodifyNavHost(
     navHostController: NavHostController,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit,
-    onDialogResult: (MessageDialog, InteractionResult) -> Unit,
+    onDialogResult: (Dialog, InteractionResult) -> Unit,
 ) {
     NavHost(
         navController = navHostController,
@@ -39,11 +39,8 @@ fun MelodifyNavHost(
             onBackPressed = onBackPressed
         )
 
-        listOf(
-            MessageDialog.ConfirmDeletePlaylist,
-            MessageDialog.DuplicatedAlert,
-        ).forEach {
-            alertDialog(
+        Dialog.getAllDialogs().forEach {
+            melodifyDialog(
                 navHostController = navHostController,
                 dialog = it,
                 onRequestDismiss = onBackPressed,

@@ -2,7 +2,8 @@ package com.andannn.melodify.feature.message
 
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SnackbarVisuals
-import com.andannn.melodify.feature.message.dialog.MessageDialog
+import com.andannn.melodify.feature.message.dialog.Dialog
+import com.andannn.melodify.feature.message.dialog.InteractionResult
 import com.andannn.melodify.feature.message.snackbar.SnackBarMessage
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
@@ -11,43 +12,34 @@ import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 
-
-sealed interface InteractionResult {
-    data object ACCEPT : InteractionResult
-
-    data object DISMISS : InteractionResult
-
-    data object DECLINE : InteractionResult
-}
-
 interface MessageController {
-    val sendDialogChannel: Channel<MessageDialog>
+    val sendDialogChannel: Channel<Dialog>
 
     val snackBarMessageChannel: ReceiveChannel<SnackbarVisuals>
 
     val snackBarResultChannel: SendChannel<SnackbarResult>
 
-    suspend fun showMessageDialogAndWaitResult(dialog: MessageDialog): InteractionResult
+    suspend fun showMessageDialogAndWaitResult(dialog: Dialog): InteractionResult
 
     suspend fun showSnackBarAndWaitResult(
         message: SnackBarMessage,
         messageFormatArgs: List<Any> = emptyList()
     ): SnackbarResult
 
-    fun onResult(dialog: MessageDialog, result: InteractionResult)
+    fun onResult(dialog: Dialog, result: InteractionResult)
 
     fun close()
 }
 
 class MessageControllerImpl : MessageController {
-    override val sendDialogChannel: Channel<MessageDialog> = Channel(capacity = UNLIMITED)
-    private val dialogResultChannelMap: MutableMap<MessageDialog, Channel<InteractionResult>> =
+    override val sendDialogChannel: Channel<Dialog> = Channel(capacity = UNLIMITED)
+    private val dialogResultChannelMap: MutableMap<Dialog, Channel<InteractionResult>> =
         mutableMapOf()
 
     override val snackBarMessageChannel: Channel<SnackbarVisuals> = Channel()
     override val snackBarResultChannel: Channel<SnackbarResult> = Channel()
 
-    override suspend fun showMessageDialogAndWaitResult(dialog: MessageDialog): InteractionResult {
+    override suspend fun showMessageDialogAndWaitResult(dialog: Dialog): InteractionResult {
         if (dialogResultChannelMap.containsKey(dialog)) {
             throw IllegalArgumentException("Dialog $dialog is already shown")
         }
@@ -73,7 +65,7 @@ class MessageControllerImpl : MessageController {
         return snackBarResultChannel.receive()
     }
 
-    override fun onResult(dialog: MessageDialog, result: InteractionResult) {
+    override fun onResult(dialog: Dialog, result: InteractionResult) {
         if (!dialogResultChannelMap.containsKey(dialog)) {
             // dialog now shown or request canceled
             return

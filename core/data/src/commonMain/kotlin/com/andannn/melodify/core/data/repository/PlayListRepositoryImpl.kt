@@ -5,6 +5,7 @@ import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.util.allAudioChangedEventFlow
 import com.andannn.melodify.core.database.PlayListDao
 import com.andannn.melodify.core.database.entity.PlayListAndMedias
+import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -87,6 +88,20 @@ internal class PlayListRepositoryImpl(
 
     override suspend fun removeMusicFromPlayList(playListId: Long, mediaIdList: List<String>) =
         playListDao.deleteMediaFromPlayList(playListId, mediaIdList)
+
+    override suspend fun createNewPlayList(name: String): Long {
+       val ids = playListDao.insertPlayListEntities(
+            listOf(
+                PlayListEntity(
+                    name = name,
+                    // TODO: set current date time.
+                    createdDate = 0,
+                    artworkUri = null
+                )
+            )
+        )
+        return ids.first()
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getAudiosOfPlayListFlow(playListId: Long) =

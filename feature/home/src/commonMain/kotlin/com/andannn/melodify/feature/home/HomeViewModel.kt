@@ -10,9 +10,9 @@ import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.feature.drawer.DrawerController
 import com.andannn.melodify.feature.drawer.DrawerEvent
 import com.andannn.melodify.feature.drawer.model.SheetModel
-import com.andannn.melodify.feature.message.InteractionResult
 import com.andannn.melodify.feature.message.MessageController
-import com.andannn.melodify.feature.message.dialog.MessageDialog
+import com.andannn.melodify.feature.message.dialog.Dialog
+import com.andannn.melodify.feature.message.dialog.InteractionResult
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -118,9 +118,9 @@ class HomeViewModel(
             Napier.d(tag = TAG) { "invalid media item click $mediaItem" }
             viewModelScope.launch {
                 val result =
-                    messageController.showMessageDialogAndWaitResult(MessageDialog.ConfirmDeletePlaylist)
+                    messageController.showMessageDialogAndWaitResult(Dialog.ConfirmDeletePlaylist)
                 Napier.d(tag = TAG) { "ConfirmDeletePlaylist result: $result" }
-                if (result == InteractionResult.ACCEPT) {
+                if (result == InteractionResult.AlertDialog.ACCEPT) {
                     val playListId = (state.value.currentTab as CustomTab.PlayListDetail).playListId
                     val mediaId = mediaItem.id.substringAfter(AudioItemModel.INVALID_ID_PREFIX)
 

@@ -322,4 +322,24 @@ class DatabaseTest {
         val res = playListDao.getDuplicateMediaInPlayList(1, listOf("1"))
         assertEquals(listOf("1"), res)
     }
+
+    @Test
+    fun insert_play_lists_test() = testScope.runTest {
+        val ids = playListDao.inertPlayLists(
+            entities = listOf(
+                PlayListEntity(
+                    createdDate = 1,
+                    artworkUri = null,
+                    name = "name"
+                ),
+                PlayListEntity(
+                    createdDate = 1,
+                    artworkUri = null,
+                    name = "name"
+                ),
+            )
+        )
+
+        assertEquals(listOf(1L, 2L), ids)
+    }
 }

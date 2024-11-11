@@ -33,4 +33,6 @@
     <string name="having_registered_track_in_playlist">すでにプレイリストに登録されている曲があります</string>
     <string name="duplicated_alert_dialog_title">重複</string>
     <string name="skip_registered_songs">重複をスキップ</string>
+    <string name="new_playlist_dialog_title">新しいプレイリストを作成</string>
+    <string name="new_playlist_dialog_input_hint">タイトル</string>
 </resources>

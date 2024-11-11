@@ -33,4 +33,6 @@
     <string name="having_registered_track_in_playlist">Bereits registrierte Lieder in der Playlist enthalten</string>
     <string name="duplicated_alert_dialog_title">Duplikate</string>
     <string name="skip_registered_songs">Duplikate überspringen</string>
+    <string name="new_playlist_dialog_title">Neue Playlist erstellen</string>
+    <string name="new_playlist_dialog_input_hint">Titel</string>
 </resources>

@@ -3,18 +3,18 @@ package com.andannn.melodify.feature.drawer
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.getAudios
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
-import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.util.uri
 import com.andannn.melodify.feature.drawer.model.SheetModel
 import com.andannn.melodify.feature.drawer.model.SheetOptionItem
 import com.andannn.melodify.feature.drawer.model.SleepTimerOption
-import com.andannn.melodify.feature.message.InteractionResult
 import com.andannn.melodify.feature.message.MessageController
-import com.andannn.melodify.feature.message.dialog.MessageDialog
+import com.andannn.melodify.feature.message.dialog.Dialog
+import com.andannn.melodify.feature.message.dialog.InteractionResult
 import com.andannn.melodify.feature.message.snackbar.SnackBarMessage
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +24,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
@@ -53,6 +54,10 @@ sealed interface DrawerEvent {
         val playList: PlayListItemModel,
         val audioList: List<AudioItemModel>
     ) : DrawerEvent
+
+    data class OnCreateNewPlayList(
+        val interactingSource: MediaItemModel
+    ) : DrawerEvent
 }
 
 interface DeleteMediaItemEventProvider {
@@ -77,7 +82,8 @@ class DrawerControllerImpl(
         repository.mediaControllerRepository
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository =
         repository.playerStateMonitoryRepository
-    private val playListRepository: PlayListRepository = repository.playListRepository
+    private val playListRepository = repository.playListRepository
+    private val userPreferenceRepository = repository.userPreferenceRepository
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main + Job()
 
@@ -153,6 +159,11 @@ class DrawerControllerImpl(
                     closeSheet()
                     onAddToPlayList(event.playList, event.audioList)
                 }
+
+                is DrawerEvent.OnCreateNewPlayList -> {
+                    closeSheet()
+                    onCreateNewPlayList(event.interactingSource)
+                }
             }
         }
     }
@@ -190,9 +201,9 @@ class DrawerControllerImpl(
             else -> {
                 // invalidList.size > 1, Show alert message
                 val result =
-                    messageController.showMessageDialogAndWaitResult(MessageDialog.DuplicatedAlert)
+                    messageController.showMessageDialogAndWaitResult(Dialog.DuplicatedAlert)
 
-                if (result == InteractionResult.ACCEPT) {
+                if (result == InteractionResult.AlertDialog.ACCEPT) {
                     playListRepository.addMusicToPlayList(
                         playListId = playList.id.toLong(),
                         musics = audioList.filter { it.id !in duplicatedMedias }
@@ -252,6 +263,33 @@ class DrawerControllerImpl(
             )
         } else {
             mediaControllerRepository.playMediaList(items, 0)
+        }
+    }
+
+    private suspend fun onCreateNewPlayList(interactingSource: MediaItemModel) {
+        val result =  messageController.showMessageDialogAndWaitResult(Dialog.NewPlayListDialog)
+
+        if (result is InteractionResult.NewPlaylistDialog.ACCEPT) {
+            val name = result.playlistName
+            Napier.d(tag = TAG) { "create new playlist start. name = $name" }
+
+            val playListId = playListRepository.createNewPlayList(name)
+
+            Napier.d(tag = TAG) { "playlist created. id = $playListId" }
+
+            playListRepository.addMusicToPlayList(
+                playListId = playListId,
+                musics = repository.getAudios(interactingSource)
+            )
+
+// TODO: Move to home controller
+            val currentCustomTabs = userPreferenceRepository.currentCustomTabsFlow.first()
+            userPreferenceRepository.updateCurrentCustomTabs(
+                listOf(
+                    CustomTab.PlayListDetail(playListId.toString(), name),
+                    *currentCustomTabs.toTypedArray()
+                )
+            )
         }
     }
 }

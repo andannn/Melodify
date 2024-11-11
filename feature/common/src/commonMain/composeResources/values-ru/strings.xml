@@ -33,4 +33,6 @@
     <string name="having_registered_track_in_playlist">Уже есть зарегистрированные песни в плейлисте</string>
     <string name="duplicated_alert_dialog_title">Дубликаты</string>
     <string name="skip_registered_songs">Пропустить дубликаты</string>
+    <string name="new_playlist_dialog_title">Создать новый плейлист</string>
+    <string name="new_playlist_dialog_input_hint">Название</string>
 </resources>

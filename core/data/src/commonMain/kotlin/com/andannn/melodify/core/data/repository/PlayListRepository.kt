@@ -64,4 +64,9 @@ interface PlayListRepository {
      * Remove musics from playList
      */
     suspend fun removeMusicFromPlayList(playListId: Long, mediaIdList: List<String>)
+
+    /**
+     * Create new playList
+     */
+    suspend fun createNewPlayList(name: String): Long
 }
