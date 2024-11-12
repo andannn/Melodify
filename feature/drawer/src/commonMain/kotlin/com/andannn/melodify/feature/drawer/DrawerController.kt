@@ -3,7 +3,6 @@ package com.andannn.melodify.feature.drawer
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.getAudios
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
@@ -21,10 +20,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
@@ -68,7 +68,11 @@ interface BottomSheetStateProvider {
     val bottomSheetModel: SharedFlow<SheetModel?>
 }
 
-interface DrawerController : BottomSheetStateProvider, DeleteMediaItemEventProvider {
+interface PlaylistCreatedEventProvider {
+    val playlistCreatedEventChannel: ReceiveChannel<Long>
+}
+
+interface DrawerController : BottomSheetStateProvider, DeleteMediaItemEventProvider, PlaylistCreatedEventProvider {
     fun onEvent(event: DrawerEvent)
 
     fun close()
@@ -83,7 +87,6 @@ class DrawerControllerImpl(
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository =
         repository.playerStateMonitoryRepository
     private val playListRepository = repository.playListRepository
-    private val userPreferenceRepository = repository.userPreferenceRepository
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main + Job()
 
@@ -92,6 +95,11 @@ class DrawerControllerImpl(
 
     override val deleteMediaItemEventFlow: SharedFlow<List<String>>
         get() = _deleteMediaItemEventFlow.asSharedFlow()
+
+    private val _playlistCreatedEventChannel = Channel<Long>()
+
+    override val playlistCreatedEventChannel: ReceiveChannel<Long>
+        get() = _playlistCreatedEventChannel
 
     private val _bottomSheetModelFlow = MutableSharedFlow<SheetModel?>()
     private val _deleteMediaItemEventFlow = MutableSharedFlow<List<String>>()
@@ -282,14 +290,7 @@ class DrawerControllerImpl(
                 musics = repository.getAudios(interactingSource)
             )
 
-// TODO: Move to home controller
-            val currentCustomTabs = userPreferenceRepository.currentCustomTabsFlow.first()
-            userPreferenceRepository.updateCurrentCustomTabs(
-                listOf(
-                    CustomTab.PlayListDetail(playListId.toString(), name),
-                    *currentCustomTabs.toTypedArray()
-                )
-            )
+            _playlistCreatedEventChannel.send(playListId)
         }
     }
 }
