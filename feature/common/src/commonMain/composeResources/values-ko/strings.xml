@@ -35,4 +35,5 @@
     <string name="skip_registered_songs">중복 건너뛰기</string>
     <string name="new_playlist_dialog_title">새 플레이리스트 만들기</string>
     <string name="new_playlist_dialog_input_hint">제목</string>
+    <string name="remove_playlist">플레이리스트 삭제</string>
 </resources>

@@ -131,7 +131,7 @@ class DrawerControllerImpl(
                     event.clickedItem.let {
                         when (it) {
                             SheetOptionItem.PLAY_NEXT -> onPlayNextClick(event.sheet.source)
-                            SheetOptionItem.DELETE -> onDeleteMediaItem(event.sheet.source)
+                            SheetOptionItem.DELETE_LOCAL -> onDeleteMediaItem(event.sheet.source)
                             SheetOptionItem.ADD_TO_QUEUE -> onAddToQueue(event.sheet.source)
                             SheetOptionItem.SLEEP_TIMER -> onClickSleepTimer()
                             SheetOptionItem.DELETE_FROM_PLAYLIST -> onDeleteItemInPlayList(
@@ -140,6 +140,7 @@ class DrawerControllerImpl(
                             )
 
                             SheetOptionItem.ADD_TO_PLAYLIST -> onAddToPlaylistOptionClick(event.sheet.source)
+                            SheetOptionItem.DELETE_PLAYLIST -> onDeletePlayList(event.sheet.source as PlayListItemModel)
                         }
                     }
                 }
@@ -292,5 +293,9 @@ class DrawerControllerImpl(
 
             _playlistCreatedEventChannel.send(playListId)
         }
+    }
+
+    private suspend fun onDeletePlayList(playListItemModel: PlayListItemModel) {
+        playListRepository.deletePlayList(playListItemModel.id.toLong())
     }
 }

@@ -35,4 +35,5 @@
     <string name="skip_registered_songs">Saltar duplicados</string>
     <string name="new_playlist_dialog_title">Crear nueva lista de reproducción</string>
     <string name="new_playlist_dialog_input_hint">Título</string>
+    <string name="remove_playlist">Eliminar lista de reproducción</string>
 </resources>

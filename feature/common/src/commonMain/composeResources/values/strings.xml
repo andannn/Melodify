@@ -35,4 +35,5 @@
     <string name="skip_registered_songs">Skip duplicates</string>
     <string name="new_playlist_dialog_title">Create new playlist</string>
     <string name="new_playlist_dialog_input_hint">Title</string>
+    <string name="remove_playlist">Delete playlist</string>
 </resources>
