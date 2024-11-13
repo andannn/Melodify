@@ -35,4 +35,5 @@
     <string name="skip_registered_songs">Pular duplicados</string>
     <string name="new_playlist_dialog_title">Criar nova playlist</string>
     <string name="new_playlist_dialog_input_hint">Título</string>
+    <string name="remove_playlist">Excluir playlist</string>
 </resources>

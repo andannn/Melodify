@@ -17,10 +17,12 @@ import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -45,6 +47,7 @@ class HomeViewModel(
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val userPreferenceRepository = repository.userPreferenceRepository
     private val playListRepository = repository.playListRepository
+    private val playlistCreatedEventChannel = drawerController.playlistCreatedEventChannel
 
     private val _userSettingFlow = userPreferenceRepository.userSettingFlow
     private val _selectedTabIndexFlow = MutableStateFlow(0)
@@ -85,6 +88,29 @@ class HomeViewModel(
         )
     }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), HomeUiState())
+
+    init {
+        viewModelScope.launch {
+            for (createdPlayListId in playlistCreatedEventChannel) {
+                Napier.d(tag = TAG) { "new playlist created $createdPlayListId" }
+                val playList = playListRepository.getPlayListById(createdPlayListId)
+                    ?: error("no such playlist")
+                val currentCustomTabs = userPreferenceRepository.currentCustomTabsFlow.first()
+                userPreferenceRepository.updateCurrentCustomTabs(
+                    listOf(
+                        *currentCustomTabs.toTypedArray(),
+                        CustomTab.PlayListDetail(playList.id, playList.name),
+                    )
+                )
+
+                delay(300)
+
+                Napier.d(tag = TAG) { "new playlist created ${state.value.customTabList}" }
+                // navigate to new created playlist
+                _selectedTabIndexFlow.value = state.value.customTabList.size -1
+            }
+        }
+    }
 
     fun onEvent(event: HomeUiEvent) {
         when (event) {

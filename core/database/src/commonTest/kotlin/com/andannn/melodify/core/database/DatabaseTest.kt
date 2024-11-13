@@ -139,7 +139,7 @@ class DatabaseTest {
             )
         )
 
-        val playList = playListDao.getPlayListFlowById(1).first()
+        val playList = playListDao.getPlayListFlowById(1).first()!!
         assertEquals(2, playList.medias.size)
     }
 
@@ -168,7 +168,7 @@ class DatabaseTest {
             )
         )
 
-        val playList = playListDao.getPlayListFlowById(1).first()
+        val playList = playListDao.getPlayListFlowById(1).first()!!
         assertEquals(1, playList.medias.size)
 
         val insertIds = playListDao.insertPlayListWithMediaCrossRef(
@@ -185,7 +185,7 @@ class DatabaseTest {
         assertEquals(-1, insertIds.first())
 
         val playList2 = playListDao.getPlayListFlowById(1).first()
-        assertEquals(1, playList2.medias.size)
+        assertEquals(1, playList2!!.medias.size)
     }
 
     @Test
@@ -289,10 +289,10 @@ class DatabaseTest {
             )
         )
 
-        assertEquals(1, playListDao.getPlayListFlowById(1).first().medias.size)
+        assertEquals(1, playListDao.getPlayListFlowById(1).first()!!.medias.size)
 
         playListDao.deleteMediaFromPlayList(1, listOf("1"))
-        assertEquals(0, playListDao.getPlayListFlowById(1).first().medias.size)
+        assertEquals(0, playListDao.getPlayListFlowById(1).first()!!.medias.size)
     }
 
     @Test
@@ -341,5 +341,43 @@ class DatabaseTest {
         )
 
         assertEquals(listOf(1L, 2L), ids)
+    }
+
+    @Test
+    fun delete_playlist_by_id_test() = testScope.runTest {
+        playListDao.insertPlayListEntities(
+            entities = listOf(
+                PlayListEntity(
+                    id = 1,
+                    createdDate = 1,
+                    artworkUri = null,
+                    name = "name"
+                )
+            )
+        )
+        playListDao.insertPlayListEntities(
+            entities = listOf(
+                PlayListEntity(
+                    id = 2,
+                    createdDate = 1,
+                    artworkUri = null,
+                    name = "name"
+                )
+            )
+        )
+        playListDao.insertPlayListEntities(
+            entities = listOf(
+                PlayListEntity(
+                    id = 3,
+                    createdDate = 1,
+                    artworkUri = null,
+                    name = "name"
+                )
+            )
+        )
+        playListDao.deletePlayListById(2)
+        val playLists = playListDao.getAllPlayListFlow().first()
+        assertEquals(2, playLists.size)
+        assertEquals(listOf(1L, 3L), playLists.map { it.playListEntity.id })
     }
 }

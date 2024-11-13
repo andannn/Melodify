@@ -35,4 +35,5 @@
     <string name="skip_registered_songs">重複をスキップ</string>
     <string name="new_playlist_dialog_title">新しいプレイリストを作成</string>
     <string name="new_playlist_dialog_input_hint">タイトル</string>
+    <string name="remove_playlist">プレイリストを削除</string>
 </resources>

@@ -26,7 +26,10 @@ sealed interface SheetModel {
                     is ArtistItemModel -> ArtistOptionSheet(item)
                     is AudioItemModel -> AudioOptionSheet(item)
                     is GenreItemModel -> GenreOptionSheet(item)
-                    is PlayListItemModel -> PlayListOptionSheet(item)
+                    is PlayListItemModel -> {
+                        if (item.isFavorite) FavoritePlayListOptionSheet(item)
+                        else PlayListOptionSheet(item)
+                    }
                 }
             }
         }
@@ -40,7 +43,7 @@ sealed interface SheetModel {
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
             SheetOptionItem.ADD_TO_PLAYLIST,
-            SheetOptionItem.DELETE,
+            SheetOptionItem.DELETE_LOCAL,
         ),
     )
 
@@ -54,7 +57,7 @@ sealed interface SheetModel {
             SheetOptionItem.PLAY_NEXT,
             SheetOptionItem.DELETE_FROM_PLAYLIST,
             SheetOptionItem.ADD_TO_PLAYLIST,
-            SheetOptionItem.DELETE,
+            SheetOptionItem.DELETE_LOCAL,
         ),
     )
 
@@ -73,9 +76,19 @@ sealed interface SheetModel {
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
             SheetOptionItem.ADD_TO_PLAYLIST,
-            SheetOptionItem.DELETE,
+            SheetOptionItem.DELETE_PLAYLIST,
         ),
     )
+
+    data class FavoritePlayListOptionSheet(override val source: PlayListItemModel) :
+        MediaOptionSheet(
+            source = source,
+            options = listOf(
+                SheetOptionItem.ADD_TO_QUEUE,
+                SheetOptionItem.PLAY_NEXT,
+                SheetOptionItem.ADD_TO_PLAYLIST,
+            ),
+        )
 
     data class GenreOptionSheet(override val source: GenreItemModel) : MediaOptionSheet(
         source = source,
@@ -83,7 +96,7 @@ sealed interface SheetModel {
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
             SheetOptionItem.ADD_TO_PLAYLIST,
-            SheetOptionItem.DELETE,
+            SheetOptionItem.DELETE_LOCAL,
         )
     )
 
@@ -93,7 +106,7 @@ sealed interface SheetModel {
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
             SheetOptionItem.ADD_TO_PLAYLIST,
-            SheetOptionItem.DELETE,
+            SheetOptionItem.DELETE_LOCAL,
         ),
     )
 
@@ -103,7 +116,7 @@ sealed interface SheetModel {
             SheetOptionItem.ADD_TO_QUEUE,
             SheetOptionItem.PLAY_NEXT,
             SheetOptionItem.ADD_TO_PLAYLIST,
-            SheetOptionItem.DELETE,
+            SheetOptionItem.DELETE_LOCAL,
         ),
     )
 
@@ -124,7 +137,7 @@ enum class SheetOptionItem(
         smpIcon = SimpleMusicIcons.PlayNext,
         text = Res.string.play_next,
     ),
-    DELETE(
+    DELETE_LOCAL(
         smpIcon = SimpleMusicIcons.Delete,
         text = Res.string.delete,
     ),
@@ -135,6 +148,10 @@ enum class SheetOptionItem(
     DELETE_FROM_PLAYLIST(
         smpIcon = SimpleMusicIcons.PlayListRemove,
         text = Res.string.delete_from_playlist,
+    ),
+    DELETE_PLAYLIST(
+        smpIcon = SimpleMusicIcons.Delete,
+        text = Res.string.remove_playlist,
     ),
     ADD_TO_QUEUE(
         smpIcon = SimpleMusicIcons.Delete,

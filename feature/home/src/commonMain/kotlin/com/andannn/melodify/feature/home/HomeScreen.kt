@@ -37,9 +37,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -134,16 +132,8 @@ private fun HomeScreen(
     onEvent: (HomeUiEvent) -> Unit = {},
 ) {
     val uiState by rememberUpdatedState(state)
-    val categories by remember {
-        derivedStateOf {
-            uiState.customTabList
-        }
-    }
-    val selectedIndex by remember {
-        derivedStateOf {
-            uiState.selectedIndex
-        }
-    }
+    val categories by rememberUpdatedState(state.customTabList)
+    val selectedIndex by rememberUpdatedState(state.selectedIndex)
 
     val scrollBehavior = enterAlwaysScrollBehavior()
     Scaffold(
@@ -183,7 +173,6 @@ private fun HomeScreen(
                 ) {
                     categories.forEachIndexed { index, item ->
                         Tab(
-                            modifier = Modifier,
                             selected = index == selectedIndex,
                             selectedContentColor = MaterialTheme.colorScheme.primary,
                             unselectedContentColor = MaterialTheme.colorScheme.onSurface,
@@ -200,15 +189,8 @@ private fun HomeScreen(
                 }
             }
 
-            val mediaItems by remember {
-                derivedStateOf {
-                    uiState.mediaItems
-                }
-            }
-
-            val previewMode by remember {
-                derivedStateOf { uiState.previewMode }
-            }
+            val mediaItems by rememberUpdatedState(uiState.mediaItems)
+            val previewMode by rememberUpdatedState(uiState.previewMode)
 
             when (previewMode) {
                 MediaPreviewMode.GRID_PREVIEW -> {

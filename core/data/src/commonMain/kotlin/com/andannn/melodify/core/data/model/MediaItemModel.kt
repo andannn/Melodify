@@ -1,5 +1,7 @@
 package com.andannn.melodify.core.data.model
 
+import com.andannn.melodify.core.database.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
+
 sealed interface MediaItemModel {
     val id: String
     val name: String
@@ -72,4 +74,6 @@ data class PlayListItemModel(
     override val artWorkUri: String,
     override val trackCount: Int,
 ) : MediaItemModel {
+    val isFavorite: Boolean
+        get() = id.toLong() == FAVORITE_PLAY_LIST_ID
 }

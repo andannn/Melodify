@@ -35,4 +35,5 @@
     <string name="skip_registered_songs">Duplikate überspringen</string>
     <string name="new_playlist_dialog_title">Neue Playlist erstellen</string>
     <string name="new_playlist_dialog_input_hint">Titel</string>
+    <string name="remove_playlist">Playlist löschen</string>
 </resources>

@@ -66,7 +66,7 @@ interface PlayListDao {
     """
     )
     @Transaction
-    fun getPlayListFlowById(playListId: Long): Flow<PlayListAndMedias>
+    fun getPlayListFlowById(playListId: Long): Flow<PlayListAndMedias?>
 
     @Query(
         """
@@ -90,4 +90,12 @@ interface PlayListDao {
 
     @Insert(entity = PlayListEntity::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun inertPlayLists(entities: List<PlayListEntity>): List<Long>
+
+    @Query(
+        """
+        delete from ${Tables.PLAY_LIST}
+        where ${PlayListColumns.ID} = :playListId
+    """
+    )
+    suspend fun deletePlayListById(playListId: Long)
 }

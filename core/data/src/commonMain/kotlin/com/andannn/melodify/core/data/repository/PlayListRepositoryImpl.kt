@@ -13,9 +13,12 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
 
 internal class PlayListRepositoryImpl(
     private val playListDao: PlayListDao,
@@ -47,8 +50,7 @@ internal class PlayListRepositoryImpl(
                     mediaStoreId = it.id,
                     artist = it.artist,
                     title = it.name,
-                    // TODO: addedDate ,
-                    addedDate = 0,
+                    addedDate = Clock.System.now().toEpochMilliseconds(),
                 )
             }
         )
@@ -90,12 +92,11 @@ internal class PlayListRepositoryImpl(
         playListDao.deleteMediaFromPlayList(playListId, mediaIdList)
 
     override suspend fun createNewPlayList(name: String): Long {
-       val ids = playListDao.insertPlayListEntities(
+        val ids = playListDao.insertPlayListEntities(
             listOf(
                 PlayListEntity(
                     name = name,
-                    // TODO: set current date time.
-                    createdDate = 0,
+                    createdDate = Clock.System.now().toEpochMilliseconds(),
                     artworkUri = null
                 )
             )
@@ -103,17 +104,22 @@ internal class PlayListRepositoryImpl(
         return ids.first()
     }
 
+    override suspend fun deletePlayList(playListId: Long) {
+        playListDao.deletePlayListById(playListId)
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getAudiosOfPlayListFlow(playListId: Long) =
         combine(
             allAudioChangedEventFlow(), // trigger flow when audio changed.
-            playListDao.getPlayListFlowById(playListId)
+            playListDao.getPlayListFlowById(playListId).filterNotNull()
         ) { _, playList -> playList }
             .mapLatest(::mapPlayListToAudioList)
 
     override suspend fun getAudiosOfPlayList(playListId: Long): List<AudioItemModel> =
         coroutineScope {
             val playList = playListDao.getPlayListFlowById(playListId).first()
+                ?: return@coroutineScope emptyList()
 
             ensureActive()
 
