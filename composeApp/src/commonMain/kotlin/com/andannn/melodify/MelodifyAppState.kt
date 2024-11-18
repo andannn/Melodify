@@ -1,6 +1,7 @@
 package com.andannn.melodify
 
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -12,6 +13,8 @@ import com.andannn.melodify.feature.message.MessageController
 import com.andannn.melodify.feature.message.dialog.Dialog
 import com.andannn.melodify.feature.message.dialog.InteractionResult
 import com.andannn.melodify.feature.message.dialog.navigateToDialog
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.scope.Scope
@@ -23,7 +26,7 @@ fun rememberAppState(
     retainedScope: Scope = getUiRetainedScope()!!,
     drawerController: DrawerController = retainedScope.get<DrawerController>(),
     messageController: MessageController = retainedScope.get<MessageController>(),
-    snackBarHostState :SnackbarHostState =  remember { SnackbarHostState() }
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) = remember(
     navController,
     drawerController,
@@ -39,6 +42,8 @@ fun rememberAppState(
         snackBarHostState = snackBarHostState
     )
 }
+
+private const val TAG = "MelodifyAppState"
 
 class MelodifyAppState(
     val scope: CoroutineScope,
@@ -56,8 +61,17 @@ class MelodifyAppState(
 
         scope.launch {
             for (message in messageController.snackBarMessageChannel) {
-                val result = snackBarHostState.showSnackbar(message)
-                messageController.snackBarResultChannel.send(result)
+                Napier.d(tag = TAG) { "show snackbar: $message" }
+                var result: SnackbarResult? = null
+                try {
+                    result = snackBarHostState.showSnackbar(message)
+                } catch (e: CancellationException) {
+                    result = SnackbarResult.Dismissed
+                    throw e
+                } finally {
+                    messageController.snackBarResultChannel.send(result!!)
+                    Napier.d(tag = TAG) { "show snackbar dismiss $result" }
+                }
             }
         }
     }
