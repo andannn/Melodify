@@ -72,7 +72,8 @@ interface PlaylistCreatedEventProvider {
     val playlistCreatedEventChannel: ReceiveChannel<Long>
 }
 
-interface DrawerController : BottomSheetStateProvider, DeleteMediaItemEventProvider, PlaylistCreatedEventProvider {
+interface DrawerController : BottomSheetStateProvider, DeleteMediaItemEventProvider,
+    PlaylistCreatedEventProvider {
     fun onEvent(event: DrawerEvent)
 
     fun close()
@@ -88,21 +89,21 @@ class DrawerControllerImpl(
         repository.playerStateMonitoryRepository
     private val playListRepository = repository.playListRepository
 
+    private val _bottomSheetModelFlow = MutableSharedFlow<SheetModel?>()
+    private val _deleteMediaItemEventFlow = MutableSharedFlow<List<String>>()
+
     override val coroutineContext: CoroutineContext = Dispatchers.Main + Job()
 
-    override val bottomSheetModel: SharedFlow<SheetModel?>
-        get() = _bottomSheetModelFlow.asSharedFlow()
+    override val bottomSheetModel: SharedFlow<SheetModel?> = _bottomSheetModelFlow.asSharedFlow()
 
-    override val deleteMediaItemEventFlow: SharedFlow<List<String>>
-        get() = _deleteMediaItemEventFlow.asSharedFlow()
+    override val deleteMediaItemEventFlow: SharedFlow<List<String>> =
+        _deleteMediaItemEventFlow.asSharedFlow()
 
     private val _playlistCreatedEventChannel = Channel<Long>()
 
     override val playlistCreatedEventChannel: ReceiveChannel<Long>
         get() = _playlistCreatedEventChannel
 
-    private val _bottomSheetModelFlow = MutableSharedFlow<SheetModel?>()
-    private val _deleteMediaItemEventFlow = MutableSharedFlow<List<String>>()
 
     override fun onEvent(event: DrawerEvent) {
         launch {
@@ -182,13 +183,16 @@ class DrawerControllerImpl(
         this.cancel()
     }
 
-    private suspend fun onAddToPlayList(playList: PlayListItemModel, audioList: List<AudioItemModel>) {
+    private suspend fun onAddToPlayList(
+        playList: PlayListItemModel,
+        audioList: List<AudioItemModel>
+    ) {
         val duplicatedMedias = playListRepository.getDuplicatedMediaInPlayList(
             playListId = playList.id.toLong(),
             musics = audioList
         )
 
-        Napier.d(tag = TAG) { "add music to playlist complete. duplicated Medias: $duplicatedMedias" }
+        Napier.d(tag = TAG) { "onAddToPlayList. duplicated Medias: $duplicatedMedias" }
         when {
             duplicatedMedias.isEmpty() -> {
                 playListRepository.addMusicToPlayList(
@@ -276,7 +280,7 @@ class DrawerControllerImpl(
     }
 
     private suspend fun onCreateNewPlayList(interactingSource: MediaItemModel) {
-        val result =  messageController.showMessageDialogAndWaitResult(Dialog.NewPlayListDialog)
+        val result = messageController.showMessageDialogAndWaitResult(Dialog.NewPlayListDialog)
 
         if (result is InteractionResult.NewPlaylistDialog.ACCEPT) {
             val name = result.playlistName
