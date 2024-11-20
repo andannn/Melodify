@@ -2,15 +2,22 @@ package com.andannn.melodify.core.data.repository
 
 import android.net.Uri
 import android.provider.MediaStore
+import com.andannn.melodify.core.data.model.AlbumItemModel
+import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
-import com.andannn.melodify.core.player.library.mediastore.MediaStoreSource
-import com.andannn.melodify.core.player.library.mediastore.model.AudioData
+import com.andannn.melodify.core.library.mediastore.MediaLibrary
+import com.andannn.melodify.core.library.mediastore.model.AlbumData
+import com.andannn.melodify.core.library.mediastore.model.ArtistData
+import com.andannn.melodify.core.library.mediastore.model.AudioData
+import com.andannn.melodify.core.library.mediastore.model.GenreData
 import org.koin.mp.KoinPlatform.getKoin
 
+// TODO: remove this function
 actual suspend fun getMediaListFromIds(playListItems: List<PlayListWithMediaCrossRef>): List<AudioItemModel> {
     val audioDataList =
-        getKoin().get<MediaStoreSource>().getAudioByIds(playListItems.map { it.mediaStoreId })
+        getKoin().get<MediaLibrary>().getAudioByIds(playListItems.map { it.mediaStoreId })
     return playListItems.map {
         audioDataList.firstOrNull { audioData -> audioData.id.toString() == it.mediaStoreId }
             ?.toAppItem()
@@ -29,7 +36,8 @@ actual suspend fun getMediaListFromIds(playListItems: List<PlayListWithMediaCros
     }
 }
 
-private fun AudioData.toAppItem() = AudioItemModel(
+// TODO: remove this function
+fun AudioData.toAppItem() = AudioItemModel(
     id = id.toString(),
     name = title,
     modifiedDate = modifiedDate,
@@ -43,4 +51,30 @@ private fun AudioData.toAppItem() = AudioItemModel(
     artistId = artistId.toString(),
     cdTrackNumber = cdTrackNumber ?: 0,
     discNumberIndex = discNumber ?: 0,
+)
+
+// TODO: remove this function
+fun AlbumData.toAppItem() = AlbumItemModel(
+    id = albumId.toString(),
+    name = title,
+    artWorkUri = Uri.withAppendedPath(
+        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+        albumId.toString(),
+    ).toString(),
+    trackCount = trackCount ?: 0,
+)
+
+// TODO: remove this function
+fun ArtistData.toAppItem() = ArtistItemModel(
+    id = artistId.toString(),
+    name = name,
+    artWorkUri = "",
+    trackCount = trackCount,
+)
+
+fun GenreData.toAppItem() = GenreItemModel(
+    id = genreId.toString(),
+    name = name ?: "",
+    artWorkUri = "",
+    trackCount = 0,
 )

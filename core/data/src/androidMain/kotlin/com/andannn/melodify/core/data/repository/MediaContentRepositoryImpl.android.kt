@@ -6,28 +6,19 @@ import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.util.contentChangedEventFlow
-import com.andannn.melodify.core.player.MediaBrowserManager
-import com.andannn.melodify.core.player.library.ALBUM_ID
-import com.andannn.melodify.core.player.library.ALBUM_PREFIX
-import com.andannn.melodify.core.player.library.ALL_MUSIC_ID
-import com.andannn.melodify.core.player.library.ARTIST_ID
-import com.andannn.melodify.core.player.library.ARTIST_PREFIX
-import com.andannn.melodify.core.player.library.GENRE_ID
-import com.andannn.melodify.core.player.library.GENRE_PREFIX
+import com.andannn.melodify.core.library.mediastore.MediaLibrary
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.guava.await
 
 private const val TAG = "MediaContentRepository"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class MediaContentRepositoryImpl(
-    private val mediaBrowserManager: MediaBrowserManager,
+    // TODO: Implement with Room database source
+    private val mediaLibrary: MediaLibrary
 ) : MediaContentRepository {
-    private val mediaBrowser
-        get() = mediaBrowserManager.mediaBrowser
 
     override fun getAllMediaItemsFlow() =
         contentChangedEventFlow(allAudioUri)
@@ -99,97 +90,52 @@ internal class MediaContentRepositoryImpl(
             }
             .distinctUntilChanged()
 
-    private suspend fun getAllMediaItems() = mediaBrowser.getChildren(
-        ALL_MUSIC_ID,
-        0,
-        Int.MAX_VALUE,
-        null,
-    ).await().value?.toList()
-        ?.map {
-            it.toAppItem() as? AudioItemModel ?: throw IllegalStateException("Not a audioItem $it")
-        }
-        ?: emptyList()
+    private suspend fun getAllMediaItems() = mediaLibrary.getAllMusicData()
+        .map { it.toAppItem() }
 
-    private suspend fun getAllAlbums() = mediaBrowser.getChildren(
-        ALBUM_ID,
-        0,
-        Int.MAX_VALUE,
-        null,
-    ).await().value?.toList()
-        ?.map {
+    private suspend fun getAllAlbums() = mediaLibrary.getAllAlbumData()
+        .map {
             it.toAppItem() as? AlbumItemModel ?: throw IllegalStateException("Not a AlbumItem $it")
         }
-        ?: emptyList()
 
-    private suspend fun getAllArtist() = mediaBrowser.getChildren(
-        ARTIST_ID,
-        0,
-        Int.MAX_VALUE,
-        null,
-    ).await().value?.toList()
-        ?.map {
+    private suspend fun getAllArtist() = mediaLibrary.getAllArtistData()
+        .map {
             it.toAppItem() as? ArtistItemModel
                 ?: throw IllegalStateException("Not a ArtistItem $it")
         }
-        ?: emptyList()
 
-    private suspend fun getAllGenre() = mediaBrowser.getChildren(
-        GENRE_ID,
-        0,
-        Int.MAX_VALUE,
-        null,
-    ).await().value?.toList()
-        ?.map {
+    private suspend fun getAllGenre() = mediaLibrary.getAllGenreData()
+        .map {
             (it.toAppItem() as? GenreItemModel
                 ?: throw IllegalStateException("Not a ArtistItem $it"))
         }
-        ?: emptyList()
 
-    override suspend fun getAudiosOfAlbum(albumId: String) = mediaBrowser.getChildren(
-        ALBUM_PREFIX + albumId,
-        0,
-        Int.MAX_VALUE,
-        null,
-    ).await().value?.toList()
-        ?.map {
+    override suspend fun getAudiosOfAlbum(albumId: String) =
+        mediaLibrary.getAudioInAlbum(albumId.toLong())
+            .map {
+                it.toAppItem() as? AudioItemModel
+                    ?: throw IllegalStateException("Not a audioItem $it")
+            }
+
+    override suspend fun getAudiosOfArtist(artistId: String) =
+        mediaLibrary.getAudioOfArtist(artistId.toLong()).map {
             it.toAppItem() as? AudioItemModel ?: throw IllegalStateException("Not a audioItem $it")
         }
-        ?: emptyList()
 
-    override suspend fun getAudiosOfArtist(artistId: String) = mediaBrowser.getChildren(
-        ARTIST_PREFIX + artistId,
-        0,
-        Int.MAX_VALUE,
-        null,
-    ).await().value?.toList()
-        ?.map {
+    override suspend fun getAudiosOfGenre(genreId: String) =
+        mediaLibrary.getAudioOfGenre(genreId.toLong()).map {
             it.toAppItem() as? AudioItemModel ?: throw IllegalStateException("Not a audioItem $it")
         }
-        ?: emptyList()
 
-    override suspend fun getAudiosOfGenre(genreId: String) = mediaBrowser.getChildren(
-        GENRE_PREFIX + genreId,
-        0,
-        Int.MAX_VALUE,
-        null,
-    ).await().value?.toList()
-        ?.map {
-            it.toAppItem() as? AudioItemModel ?: throw IllegalStateException("Not a audioItem $it")
+    override suspend fun getAlbumByAlbumId(albumId: String) =
+        mediaLibrary.getAlbumById(albumId.toLong())?.let {
+            it.toAppItem() as? AlbumItemModel ?: throw IllegalStateException("Invalid $it")
         }
-        ?: emptyList()
 
-
-    override suspend fun getAlbumByAlbumId(albumId: String) = mediaBrowser.getItem(
-        ALBUM_PREFIX + albumId,
-    ).await().value?.let {
-        it.toAppItem() as? AlbumItemModel ?: throw IllegalStateException("Invalid $it")
-    }
-
-    override suspend fun getArtistByArtistId(artistId: String) = mediaBrowser.getItem(
-        ARTIST_PREFIX + artistId,
-    ).await().value?.let {
-        it.toAppItem() as? ArtistItemModel ?: throw IllegalStateException("Invalid $it")
-    }
+    override suspend fun getArtistByArtistId(artistId: String) =
+        mediaLibrary.getArtistById(artistId.toLong())?.let {
+            it.toAppItem() as? ArtistItemModel ?: throw IllegalStateException("Invalid $it")
+        }
 
     override suspend fun getGenreByGenreId(genreId: String): GenreItemModel? {
         Napier.d(tag = TAG, message = "getGenreByGenreId: $genreId")
@@ -197,9 +143,7 @@ internal class MediaContentRepositoryImpl(
             return GenreItemModel.UNKNOWN
         }
 
-        return mediaBrowser.getItem(
-            GENRE_PREFIX + genreId,
-        ).await().value?.let {
+        return mediaLibrary.getGenreById(genreId.toLong())?.let {
             it.toAppItem() as? GenreItemModel ?: throw IllegalStateException("Invalid $it")
         }
     }

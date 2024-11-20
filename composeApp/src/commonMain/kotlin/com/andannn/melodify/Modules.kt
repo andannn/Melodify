@@ -3,6 +3,7 @@ package com.andannn.melodify
 import com.andannn.melodify.core.data.di.dataModule
 import com.andannn.melodify.core.database.di.databaseModule
 import com.andannn.melodify.core.datastore.di.userPreferencesModule
+import com.andannn.melodify.core.library.mediastore.di.mediaLibraryModule
 import com.andannn.melodify.core.network.di.serviceModule
 import com.andannn.melodify.core.player.di.playerModule
 import com.andannn.melodify.feature.customtab.di.customTabSettingModule
@@ -18,6 +19,7 @@ val modules: List<Module> = listOf(
     serviceModule,
     userPreferencesModule,
     databaseModule,
+    mediaLibraryModule,
 
     homeFeatureModule,
     playListFeatureModule,

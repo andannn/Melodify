@@ -13,6 +13,7 @@ kotlin {
             implementation(project(":core:datastore"))
             implementation(project(":core:network"))
             implementation(project(":core:database"))
+            implementation(project(":core:library"))
             implementation(project(":core:player"))
             implementation(libs.kotlinx.serialization.json)
         }
