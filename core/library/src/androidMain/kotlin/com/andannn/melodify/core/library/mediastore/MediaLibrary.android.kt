@@ -1,49 +1,24 @@
-package com.andannn.melodify.core.player.library.mediastore
+package com.andannn.melodify.core.library.mediastore
 
 import android.app.Application
 import android.content.ContentResolver
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
-import android.os.Build.VERSION
 import android.os.Bundle
 import android.provider.MediaStore
-import com.andannn.melodify.core.player.library.UNKNOWN_GENRE_ID
-import com.andannn.melodify.core.player.library.mediastore.model.AlbumData
-import com.andannn.melodify.core.player.library.mediastore.model.ArtistData
-import com.andannn.melodify.core.player.library.mediastore.model.AudioData
-import com.andannn.melodify.core.player.library.mediastore.model.GenreData
-import io.github.aakira.napier.Napier
+import com.andannn.melodify.core.library.mediastore.model.AlbumData
+import com.andannn.melodify.core.library.mediastore.model.ArtistData
+import com.andannn.melodify.core.library.mediastore.model.AudioData
+import com.andannn.melodify.core.library.mediastore.model.GenreData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-interface MediaStoreSource {
-    suspend fun getAllMusicData(): List<AudioData>
+internal const val UNKNOWN_GENRE_ID =  0L
 
-    suspend fun getAllAlbumData(): List<AlbumData>
-
-    suspend fun getAllArtistData(): List<ArtistData>
-
-    suspend fun getAllGenreData(): List<GenreData>
-
-    suspend fun getGenreById(id: Long): GenreData?
-
-    suspend fun getArtistById(id: Long): ArtistData?
-
-    suspend fun getAlbumById(id: Long): AlbumData?
-
-    suspend fun getAudioInAlbum(id: Long): List<AudioData>
-
-    suspend fun getAudioOfArtist(id: Long): List<AudioData>
-
-    suspend fun getAudioOfGenre(id: Long): List<AudioData>
-
-    suspend fun getAudioByIds(mediaStoreIds: List<String>): List<AudioData>
-}
-
-class MediaStoreSourceImpl(
+class MediaLibraryImpl(
     private val app: Application,
-) : MediaStoreSource {
+) : MediaLibrary {
     override suspend fun getAllMusicData() =
         app.contentResolver.query2(
             uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -123,7 +98,7 @@ class MediaStoreSourceImpl(
         } ?: emptyList()
 
     override suspend fun getAudioOfGenre(id: Long): List<AudioData> {
-        if (VERSION.SDK_INT < Build.VERSION_CODES.R) return emptyList()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return emptyList()
 
         val result = if (id == UNKNOWN_GENRE_ID) {
             // query genre id is not exist.
@@ -240,7 +215,7 @@ class MediaStoreSourceImpl(
                 ArtistData(
                     artistId = cursor.getLong(idIndex),
                     name = cursor.getString(artistIndex),
-                    artistCoverUri = Uri.parse(""),
+                    artistCoverUri = "",
                     trackCount = cursor.getInt(numberOfTracksIndex),
                 ),
             )

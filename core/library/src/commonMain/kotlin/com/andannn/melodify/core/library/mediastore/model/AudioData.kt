@@ -1,4 +1,4 @@
-package com.andannn.melodify.core.player.library.mediastore.model
+package com.andannn.melodify.core.library.mediastore.model
 
 data class AudioData(
     val id: Long,
