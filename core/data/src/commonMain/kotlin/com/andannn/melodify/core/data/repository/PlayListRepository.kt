@@ -2,7 +2,7 @@ package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.core.database.PlayListDao
+import com.andannn.melodify.core.database.dao.PlayListDao
 import kotlinx.coroutines.flow.Flow
 
 interface PlayListRepository {

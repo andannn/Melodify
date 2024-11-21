@@ -1,10 +1,11 @@
-package com.andannn.melodify.core.database
+package com.andannn.melodify.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.entity.LyricColumns
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.LyricWithAudioCrossRef

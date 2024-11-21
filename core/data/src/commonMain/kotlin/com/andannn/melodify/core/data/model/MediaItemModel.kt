@@ -1,6 +1,6 @@
 package com.andannn.melodify.core.data.model
 
-import com.andannn.melodify.core.database.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
+import com.andannn.melodify.core.database.dao.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
 
 sealed interface MediaItemModel {
     val id: String

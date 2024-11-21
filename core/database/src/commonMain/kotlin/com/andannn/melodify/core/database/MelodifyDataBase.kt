@@ -1,5 +1,6 @@
 package com.andannn.melodify.core.database
 
+import androidx.room.AutoMigration
 import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -7,9 +8,15 @@ import androidx.room.RoomDatabaseConstructor
 import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
-import com.andannn.melodify.core.database.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
+import com.andannn.melodify.core.database.dao.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
+import com.andannn.melodify.core.database.dao.LyricDao
+import com.andannn.melodify.core.database.dao.PlayListDao
+import com.andannn.melodify.core.database.entity.AlbumEntity
+import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.LyricWithAudioCrossRef
+import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 
@@ -18,6 +25,10 @@ internal object Tables {
     const val LYRIC_WITH_AUDIO_CROSS_REF = "lyric_with_audio_cross_ref_table"
     const val PLAY_LIST = "play_list_table"
     const val PLAY_LIST_WITH_MEDIA_CROSS_REF = "play_list_with_media_cross_ref_table"
+    const val LIBRARY_MEDIA = "library_media_table"
+    const val LIBRARY_ALBUM = "library_album_table"
+    const val LIBRARY_ARTIST = "library_artist_table"
+    const val LIBRARY_GENRE = "library_genre_table"
 }
 
 @Database(
@@ -26,6 +37,13 @@ internal object Tables {
         LyricWithAudioCrossRef::class,
         PlayListEntity::class,
         PlayListWithMediaCrossRef::class,
+        AlbumEntity::class,
+        ArtistEntity::class,
+        GenreEntity::class,
+        MediaEntity::class,
+    ],
+    autoMigrations = [
+        AutoMigration(from = 3, to = 4),
     ],
     version = 3,
 )
