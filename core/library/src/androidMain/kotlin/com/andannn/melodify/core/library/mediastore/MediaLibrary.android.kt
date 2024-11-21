@@ -11,10 +11,13 @@ import com.andannn.melodify.core.library.mediastore.model.AlbumData
 import com.andannn.melodify.core.library.mediastore.model.ArtistData
 import com.andannn.melodify.core.library.mediastore.model.AudioData
 import com.andannn.melodify.core.library.mediastore.model.GenreData
+import com.andannn.melodify.core.library.mediastore.model.MediaDataModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 
-internal const val UNKNOWN_GENRE_ID =  0L
+internal const val UNKNOWN_GENRE_ID = 0L
 
 class MediaLibraryImpl(
     private val app: Application,
@@ -128,6 +131,20 @@ class MediaLibraryImpl(
         )?.use { cursor ->
             parseMusicInfoCursor(cursor)
         } ?: emptyList()
+
+    override suspend fun getMediaData() = coroutineScope {
+        val musicDataDeferred = async { getAllMusicData() }
+        val albumDataDeferred = async { getAllAlbumData() }
+        val artistDataDeferred = async { getAllArtistData() }
+        val genreDataDeferred = async { getAllGenreData() }
+
+        MediaDataModel(
+            audioData = musicDataDeferred.await(),
+            albumData = albumDataDeferred.await(),
+            artistData = artistDataDeferred.await(),
+            genreData = genreDataDeferred.await(),
+        )
+    }
 
     private fun parseGenreInfoCursor(cursor: Cursor): List<GenreData> {
         val itemList = mutableListOf<GenreData>()
