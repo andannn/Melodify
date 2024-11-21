@@ -27,10 +27,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.andannn.melodify.feature.common.dialog.ConnectFailedAlertDialog
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import android.graphics.Color
+import com.andannn.melodify.core.syncer.MediaLibrarySyncer
+import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.feature.drawer.DrawerController
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.getKoin
 import org.koin.android.scope.AndroidScopeComponent
 import org.koin.androidx.scope.activityRetainedScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -61,6 +64,14 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        if (savedInstanceState == null && !SyncJobService.isScheduled(this)) {
+            Napier.d(tag = TAG) { "scheduling first sync job" }
+            lifecycleScope.launch {
+                getKoin().get<MediaLibrarySyncer>().syncMediaLibrary()
+            }
+        }
+        SyncJobService.scheduleSyncLibraryJob(this)
 
         // initialize koin activity retained scope.
         checkNotNull(scope)

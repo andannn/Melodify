@@ -9,7 +9,7 @@ import com.andannn.melodify.core.library.mediastore.model.ArtistData
 import com.andannn.melodify.core.library.mediastore.model.AudioData
 import com.andannn.melodify.core.library.mediastore.model.GenreData
 
-fun List<AlbumData>.toEntity(): List<AlbumEntity> = map {
+fun List<AlbumData>.toAlbumEntity(): List<AlbumEntity> = map {
     AlbumEntity(
         albumId = it.albumId,
         title = it.title,
@@ -18,14 +18,14 @@ fun List<AlbumData>.toEntity(): List<AlbumEntity> = map {
     )
 }
 
-fun List<GenreData>.toEntity(): List<GenreEntity> = map {
+fun List<GenreData>.toGenreEntity(): List<GenreEntity> = map {
     GenreEntity(
         genreId = it.genreId,
         name = it.name,
     )
 }
 
-fun List<ArtistData>.toEntity(): List<ArtistEntity> = map {
+fun List<ArtistData>.toArtistEntity(): List<ArtistEntity> = map {
     ArtistEntity(
         artistId = it.artistId,
         name = it.name,
@@ -34,7 +34,7 @@ fun List<ArtistData>.toEntity(): List<ArtistEntity> = map {
     )
 }
 
-fun List<AudioData>.toEntity(): List<MediaEntity> = map {
+fun List<AudioData>.toMediaEntity(): List<MediaEntity> = map {
     MediaEntity(
         id = it.id,
         title = it.title,

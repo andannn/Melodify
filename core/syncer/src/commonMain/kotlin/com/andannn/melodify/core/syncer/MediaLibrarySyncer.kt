@@ -40,10 +40,10 @@ internal class MediaLibrarySyncerImpl(
             val mediaData = mediaLibrary.getMediaData()
 
             mediaLibraryDao.insertLibrary(
-                mediaData.albumData.toEntity(),
-                mediaData.artistData.toEntity(),
-                mediaData.genreData.toEntity(),
-                mediaData.audioData.toEntity(),
+                mediaData.albumData.toAlbumEntity(),
+                mediaData.artistData.toArtistEntity(),
+                mediaData.genreData.toGenreEntity(),
+                mediaData.audioData.toMediaEntity(),
             )
             return true
         } catch (e: Exception) {

@@ -14,6 +14,7 @@ kotlin {
             implementation(project(":core:network"))
             implementation(project(":core:library"))
             implementation(project(":core:player"))
+            implementation(project(":core:syncer"))
 
             implementation(project(":feature:common"))
             implementation(project(":feature:drawer"))

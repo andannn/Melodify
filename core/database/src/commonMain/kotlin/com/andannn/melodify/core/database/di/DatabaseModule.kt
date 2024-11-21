@@ -7,6 +7,7 @@ import com.andannn.melodify.core.database.MIGRATION_2_3
 import com.andannn.melodify.core.database.MelodifyDataBase
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.addFavoritePlayListCallback
+import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.module.Module
@@ -20,6 +21,7 @@ val databaseModule = module {
         module {
             single<LyricDao> { get<MelodifyDataBase>().getLyricDao() }
             single<PlayListDao> { get<MelodifyDataBase>().getPlayListDao() }
+            single<MediaLibraryDao> { get<MelodifyDataBase>().getMediaLibraryDao() }
         },
         module {
             single<MelodifyDataBase> {
