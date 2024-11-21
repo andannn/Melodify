@@ -3,6 +3,7 @@ package com.andannn.melodify.core.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import androidx.room.Transaction
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
@@ -21,4 +22,17 @@ interface MediaLibraryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMedias(audios: List<MediaEntity>)
+
+    @Transaction
+    suspend fun insertLibrary(
+        albums: List<AlbumEntity>,
+        artists: List<ArtistEntity>,
+        genres: List<GenreEntity>,
+        audios: List<MediaEntity>
+    ) {
+        insertAlbums(albums)
+        insertArtists(artists)
+        insertGenres(genres)
+        insertMedias(audios)
+    }
 }

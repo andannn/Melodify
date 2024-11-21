@@ -17,7 +17,6 @@ internal object MediaColumns {
     const val ALBUM_ID = "media_album_id"
     const val ARTIST = "media_artist"
     const val ARTIST_ID = "media_artist_id"
-
     const val CD_TRACK_NUMBER = "media_cd_track_number"
     const val DISC_NUMBER = "media_disc_number"
     const val NUM_TRACKS = "media_num_tracks"

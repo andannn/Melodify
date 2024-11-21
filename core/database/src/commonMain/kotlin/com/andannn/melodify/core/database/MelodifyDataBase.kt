@@ -10,6 +10,7 @@ import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import com.andannn.melodify.core.database.dao.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
 import com.andannn.melodify.core.database.dao.LyricDao
+import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
@@ -51,6 +52,7 @@ internal object Tables {
 abstract class MelodifyDataBase : RoomDatabase() {
     abstract fun getLyricDao(): LyricDao
     abstract fun getPlayListDao(): PlayListDao
+    abstract fun getMediaLibraryDao(): MediaLibraryDao
 }
 
 // The Room compiler generates the `actual` implementations.
