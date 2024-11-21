@@ -45,7 +45,7 @@ internal object Tables {
     autoMigrations = [
         AutoMigration(from = 3, to = 4),
     ],
-    version = 3,
+    version = 4,
 )
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class MelodifyDataBase : RoomDatabase() {

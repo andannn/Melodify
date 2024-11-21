@@ -1,0 +1,223 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "1e12177746179c66f045ea526dd06478",
+    "entities": [
+      {
+        "tableName": "lyric_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lyric_id` INTEGER NOT NULL, `lyric_name` TEXT NOT NULL, `lyric_track_name` TEXT NOT NULL, `lyric_artist_name` TEXT NOT NULL, `lyric_album_name` TEXT NOT NULL, `lyric_duration_name` REAL NOT NULL, `lyric_instrumental` INTEGER NOT NULL, `lyric_plain_lyrics` TEXT NOT NULL, `lyric_synced_lyrics` TEXT NOT NULL, PRIMARY KEY(`lyric_id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "lyric_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "lyric_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trackName",
+            "columnName": "lyric_track_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "artistName",
+            "columnName": "lyric_artist_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "albumName",
+            "columnName": "lyric_album_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "lyric_duration_name",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "instrumental",
+            "columnName": "lyric_instrumental",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plainLyrics",
+            "columnName": "lyric_plain_lyrics",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "syncedLyrics",
+            "columnName": "lyric_synced_lyrics",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "lyric_id"
+          ]
+        }
+      },
+      {
+        "tableName": "lyric_with_audio_cross_ref_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lyric_with_audio_cross_ref_media_store_id` TEXT NOT NULL, `lyric_with_audio_cross_ref_lyric_id` INTEGER NOT NULL, PRIMARY KEY(`lyric_with_audio_cross_ref_media_store_id`, `lyric_with_audio_cross_ref_lyric_id`), FOREIGN KEY(`lyric_with_audio_cross_ref_lyric_id`) REFERENCES `lyric_table`(`lyric_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "mediaStoreId",
+            "columnName": "lyric_with_audio_cross_ref_media_store_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lyricId",
+            "columnName": "lyric_with_audio_cross_ref_lyric_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "lyric_with_audio_cross_ref_media_store_id",
+            "lyric_with_audio_cross_ref_lyric_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_lyric_with_audio_cross_ref_table_lyric_with_audio_cross_ref_lyric_id",
+            "unique": false,
+            "columnNames": [
+              "lyric_with_audio_cross_ref_lyric_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_lyric_with_audio_cross_ref_table_lyric_with_audio_cross_ref_lyric_id` ON `${TABLE_NAME}` (`lyric_with_audio_cross_ref_lyric_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "lyric_table",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "lyric_with_audio_cross_ref_lyric_id"
+            ],
+            "referencedColumns": [
+              "lyric_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "play_list_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`play_list_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `play_list_created_date` INTEGER NOT NULL, `play_list_name` TEXT NOT NULL, `play_list_artwork_uri` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "play_list_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdDate",
+            "columnName": "play_list_created_date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "play_list_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "artworkUri",
+            "columnName": "play_list_artwork_uri",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "play_list_id"
+          ]
+        }
+      },
+      {
+        "tableName": "play_list_with_media_cross_ref_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`play_list_with_media_cross_ref_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `play_list_with_media_cross_ref_play_list_id` INTEGER NOT NULL, `play_list_with_media_cross_ref_media_store_id` TEXT NOT NULL, `play_list_with_media_cross_ref_added_date` INTEGER NOT NULL, `play_list_with_media_cross_ref_song_artist` TEXT NOT NULL, `play_list_with_media_cross_ref_song_title` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "play_list_with_media_cross_ref_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "playListId",
+            "columnName": "play_list_with_media_cross_ref_play_list_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaStoreId",
+            "columnName": "play_list_with_media_cross_ref_media_store_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addedDate",
+            "columnName": "play_list_with_media_cross_ref_added_date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "artist",
+            "columnName": "play_list_with_media_cross_ref_song_artist",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "play_list_with_media_cross_ref_song_title",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "play_list_with_media_cross_ref_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_play_list_with_media_cross_ref_table_play_list_with_media_cross_ref_play_list_id_play_list_with_media_cross_ref_media_store_id",
+            "unique": true,
+            "columnNames": [
+              "play_list_with_media_cross_ref_play_list_id",
+              "play_list_with_media_cross_ref_media_store_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_play_list_with_media_cross_ref_table_play_list_with_media_cross_ref_play_list_id_play_list_with_media_cross_ref_media_store_id` ON `${TABLE_NAME}` (`play_list_with_media_cross_ref_play_list_id`, `play_list_with_media_cross_ref_media_store_id`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1e12177746179c66f045ea526dd06478')"
+    ]
+  }
+}
