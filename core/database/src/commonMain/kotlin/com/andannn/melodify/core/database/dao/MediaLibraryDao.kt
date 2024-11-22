@@ -91,6 +91,9 @@ interface MediaLibraryDao {
     @Query("SELECT * FROM ${Tables.LIBRARY_GENRE} WHERE ${GenreColumns.ID} = :genreId")
     suspend fun getGenreByGenreId(genreId: String): GenreEntity?
 
+    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ID} IN (:mediaIds)")
+    suspend fun getMediaByMediaIds(mediaIds: List<String>): List<MediaEntity>
+
     @Transaction
     suspend fun clearAndInsertLibrary(
         albums: List<AlbumEntity>,

@@ -6,6 +6,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.andannn.melodify.core.database.Tables
+import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
+import com.andannn.melodify.core.database.entity.MediaColumns
+import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListAndMedias
 import com.andannn.melodify.core.database.entity.PlayListColumns
 import com.andannn.melodify.core.database.entity.PlayListEntity
@@ -99,4 +102,15 @@ interface PlayListDao {
     """
     )
     suspend fun deletePlayListById(playListId: Long)
+
+    @Query(
+        """
+            select * from ${Tables.PLAY_LIST}
+            join ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF} on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
+            left join ${Tables.LIBRARY_MEDIA} on ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${MediaColumns.ID}
+            where ${PlayListColumns.ID} = :playListId
+            order by ${MediaColumns.MODIFIED_DATE} desc
+        """
+    )
+    fun getMediasInPlayListFlow(playListId: Long): Flow<List<CrossRefWithMediaRelation>>
 }

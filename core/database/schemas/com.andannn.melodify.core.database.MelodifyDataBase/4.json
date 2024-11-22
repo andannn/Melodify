@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "893d897414ec63f7ad30464f28cc7707",
+    "identityHash": "3ebd154d0744cf649925c78a2abaf7bd",
     "entities": [
       {
         "tableName": "lyric_table",
@@ -306,7 +306,7 @@
       },
       {
         "tableName": "library_media_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`media_id` INTEGER NOT NULL, `media_title` TEXT NOT NULL, `media_duration` INTEGER, `media_modified_date` INTEGER, `media_size` INTEGER, `media_mime_type` TEXT, `media_album` TEXT, `media_album_id` INTEGER, `media_artist` TEXT, `media_artist_id` INTEGER, `media_cd_track_number` INTEGER, `media_disc_number` INTEGER, `media_num_tracks` INTEGER, `media_bitrate` INTEGER, `media_genre` TEXT, `media_genre_id` INTEGER, `media_year` TEXT, `media_track` TEXT, `media_composer` TEXT, `media_cover` TEXT, PRIMARY KEY(`media_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`media_id` INTEGER NOT NULL, `media_title` TEXT, `media_duration` INTEGER, `media_modified_date` INTEGER, `media_size` INTEGER, `media_mime_type` TEXT, `media_album` TEXT, `media_album_id` INTEGER, `media_artist` TEXT, `media_artist_id` INTEGER, `media_cd_track_number` INTEGER, `media_disc_number` INTEGER, `media_num_tracks` INTEGER, `media_bitrate` INTEGER, `media_genre` TEXT, `media_genre_id` INTEGER, `media_year` TEXT, `media_track` TEXT, `media_composer` TEXT, `media_cover` TEXT, PRIMARY KEY(`media_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -317,8 +317,7 @@
           {
             "fieldPath": "title",
             "columnName": "media_title",
-            "affinity": "TEXT",
-            "notNull": true
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "duration",
@@ -421,7 +420,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '893d897414ec63f7ad30464f28cc7707')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3ebd154d0744cf649925c78a2abaf7bd')"
     ]
   }
 }

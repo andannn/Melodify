@@ -96,9 +96,9 @@ private fun List<GenreEntity>.mapToGenreItemModel() = map {
     it.toAppItem()
 }
 
-private fun MediaEntity.toAppItem() = AudioItemModel(
+fun MediaEntity.toAppItem() = AudioItemModel(
     id = id.toString(),
-    name = title,
+    name = title ?: "",
     artWorkUri = cover ?: "",
     modifiedDate = modifiedDate ?: -1,
     album = album ?: "",

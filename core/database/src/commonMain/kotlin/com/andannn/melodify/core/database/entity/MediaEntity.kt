@@ -35,10 +35,10 @@ internal object MediaColumns {
 data class MediaEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = MediaColumns.ID)
-    val id: Long,
+    val id: Long = 0,
 
     @ColumnInfo(name = MediaColumns.TITLE)
-    val title: String,
+    val title: String? = null,
 
     @ColumnInfo(name = MediaColumns.DURATION)
     val duration: Int? = null,
@@ -94,3 +94,5 @@ data class MediaEntity(
     @ColumnInfo(name = MediaColumns.COVER)
     val cover: String? = null,
 )
+
+val MediaEntity.valid: Boolean get() = id != 0L

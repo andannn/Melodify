@@ -2,21 +2,15 @@ package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.core.data.util.allAudioChangedEventFlow
 import com.andannn.melodify.core.database.dao.PlayListDao
-import com.andannn.melodify.core.database.entity.PlayListAndMedias
+import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.ensureActive
+import com.andannn.melodify.core.database.entity.valid
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.datetime.Clock
 
 internal class PlayListRepositoryImpl(
@@ -107,34 +101,17 @@ internal class PlayListRepositoryImpl(
         playListDao.deletePlayListById(playListId)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getAudiosOfPlayListFlow(playListId: Long) =
-        combine(
-            allAudioChangedEventFlow(), // trigger flow when audio changed.
-            playListDao.getPlayListFlowById(playListId).filterNotNull()
-        ) { _, playList -> playList }
-            .mapLatest(::mapPlayListToAudioList)
+        playListDao.getMediasInPlayListFlow(playListId)
+            .map { it.mapToAppItemList() }
 
-    override suspend fun getAudiosOfPlayList(playListId: Long): List<AudioItemModel> =
-        coroutineScope {
-            val playList = playListDao.getPlayListFlowById(playListId).first()
-                ?: return@coroutineScope emptyList()
+    override suspend fun getAudiosOfPlayList(playListId: Long) =
+        getAudiosOfPlayListFlow(playListId).first()
 
-            ensureActive()
-
-            mapPlayListToAudioList(playList)
-        }
-
-    private suspend fun mapPlayListToAudioList(playList: PlayListAndMedias): List<AudioItemModel> {
-        return getMediaListFromIds(playList.medias)
-    }
+    private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>) =
+        list.map { it.toAppItem() }
 }
 
-expect suspend fun getMediaListFromIds(playListItems: List<PlayListWithMediaCrossRef>): List<AudioItemModel>
-
-private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>): List<PlayListItemModel> {
-    return list.map { it.toAppItem() }
-}
 
 private fun PlayListWithMediaCount.toAppItem() = PlayListItemModel(
     id = playListEntity.id.toString(),
@@ -142,3 +119,20 @@ private fun PlayListWithMediaCount.toAppItem() = PlayListItemModel(
     artWorkUri = playListEntity.artworkUri ?: "",
     trackCount = mediaCount
 )
+
+private fun List<CrossRefWithMediaRelation>.mapToAppItemList() = map { entity ->
+    val media = entity.media
+    if (media.valid) media.toAppItem() else
+        AudioItemModel(
+            id = AudioItemModel.INVALID_ID_PREFIX + entity.playListWithMediaCrossRef.mediaStoreId,
+            name = entity.playListWithMediaCrossRef.title,
+            artist = entity.playListWithMediaCrossRef.artist,
+            modifiedDate = 0,
+            artWorkUri = "",
+            album = "",
+            albumId = "",
+            artistId = "",
+            cdTrackNumber = 0,
+            discNumber = 0,
+        )
+}
