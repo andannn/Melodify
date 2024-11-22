@@ -99,8 +99,7 @@ private fun List<GenreEntity>.mapToGenreItemModel() = map {
 private fun MediaEntity.toAppItem() = AudioItemModel(
     id = id.toString(),
     name = title,
-    // TODO:
-    artWorkUri = "",
+    artWorkUri = cover ?: "",
     modifiedDate = modifiedDate ?: -1,
     album = album ?: "",
     albumId = albumId?.toString() ?: "",

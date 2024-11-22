@@ -26,6 +26,7 @@ internal object MediaColumns {
     const val YEAR = "media_year"
     const val TRACK = "media_track"
     const val COMPOSER = "media_composer"
+    const val COVER = "media_cover"
 }
 
 @Entity(
@@ -89,4 +90,7 @@ data class MediaEntity(
 
     @ColumnInfo(name = MediaColumns.COMPOSER)
     val composer: String? = null,
+
+    @ColumnInfo(name = MediaColumns.COVER)
+    val cover: String? = null,
 )

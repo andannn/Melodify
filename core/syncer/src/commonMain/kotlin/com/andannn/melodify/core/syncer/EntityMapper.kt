@@ -55,6 +55,7 @@ fun List<AudioData>.toMediaEntity(): List<MediaEntity> = map {
         numTracks = it.numTracks,
         bitrate = it.bitrate,
         modifiedDate = it.modifiedDate,
+        cover = it.cover,
     )
 }
 

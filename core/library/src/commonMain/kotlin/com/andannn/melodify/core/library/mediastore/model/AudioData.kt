@@ -20,4 +20,5 @@ data class AudioData(
     val year: String? = null,
     val track: String? = null,
     val composer: String? = null,
+    val cover: String? = null
 )
