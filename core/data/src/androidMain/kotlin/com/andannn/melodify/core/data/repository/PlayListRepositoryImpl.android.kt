@@ -31,7 +31,7 @@ actual suspend fun getMediaListFromIds(playListItems: List<PlayListWithMediaCros
                 albumId = "",
                 artistId = "",
                 cdTrackNumber = 0,
-                discNumberIndex = 0,
+                discNumber = 0,
             )
     }
 }
@@ -50,7 +50,7 @@ fun AudioData.toAppItem() = AudioItemModel(
     artist = artist.toString(),
     artistId = artistId.toString(),
     cdTrackNumber = cdTrackNumber ?: 0,
-    discNumberIndex = discNumber ?: 0,
+    discNumber = discNumber ?: 0,
 )
 
 // TODO: remove this function

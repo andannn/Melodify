@@ -14,7 +14,6 @@ actual val dataModule = listOf(
     commonDataModule,
     module {
         singleOf(::MediaControllerRepositoryImpl).bind(MediaControllerRepository::class)
-        singleOf(::MediaContentRepositoryImpl).bind(MediaContentRepository::class)
         singleOf(::PlayerStateMonitoryRepositoryImpl).bind(PlayerStateMonitoryRepository::class)
     }
 )

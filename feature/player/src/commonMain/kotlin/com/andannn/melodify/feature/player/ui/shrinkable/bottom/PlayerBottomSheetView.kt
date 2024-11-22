@@ -278,7 +278,7 @@ private fun BottomPlayQueueSheetPreview() {
                     artist = "Artist 1",
                     artistId = "0",
                     cdTrackNumber = 1,
-                    discNumberIndex = 0,
+                    discNumber = 0,
                     artWorkUri = "",
                 )
             ).toImmutableList(),

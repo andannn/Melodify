@@ -18,7 +18,7 @@ fun MediaItem.toAppItem(): MediaItemModel = AudioItemModel(
     artist = mediaMetadata.artist.toString(),
     artistId = "0",
     cdTrackNumber = mediaMetadata.trackNumber ?: 0,
-    discNumberIndex = 0,
+    discNumber = 0,
     artWorkUri = mediaMetadata.artworkUri.toString(),
     extraUniqueId = mediaMetadata.extras?.getString(UNIQUE_ID_KEY)
 )

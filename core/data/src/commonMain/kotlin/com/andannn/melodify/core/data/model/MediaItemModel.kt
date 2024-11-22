@@ -19,7 +19,7 @@ data class AudioItemModel(
     val artist: String,
     val artistId: String,
     val cdTrackNumber: Int,
-    val discNumberIndex: Int,
+    val discNumber: Int,
     val extraUniqueId: String? = null,
     val source: String? = null,
     override val trackCount: Int = -1,

@@ -7,10 +7,15 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.andannn.melodify.core.database.Tables
+import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
+import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
+import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MediaLibraryDao {
@@ -37,6 +42,54 @@ interface MediaLibraryDao {
 
     @Query("DELETE FROM ${Tables.LIBRARY_MEDIA}")
     suspend fun deleteAllMedias()
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_ALBUM}")
+    fun getAllAlbumFlow(): Flow<List<AlbumEntity>>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_GENRE}")
+    fun getAllGenreFlow(): Flow<List<GenreEntity>>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_ARTIST}")
+    fun getAllArtistFlow(): Flow<List<ArtistEntity>>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA}")
+    fun getAllMediaFlow(): Flow<List<MediaEntity>>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ALBUM_ID} = :albumId")
+    fun getMediasByAlbumIdFlow(albumId: String): Flow<List<MediaEntity>>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ALBUM_ID} = :albumId")
+    suspend fun getMediasByAlbumId(albumId: String): List<MediaEntity>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ARTIST_ID} = :artistId")
+    fun getMediasByArtistIdFlow(artistId: String): Flow<List<MediaEntity>>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ARTIST_ID} = :artistId")
+    suspend fun getMediasByArtistId(artistId: String): List<MediaEntity>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.GENRE_ID} = :genreId")
+    fun getMediasByGenreIdFlow(genreId: String): Flow<List<MediaEntity>>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.GENRE_ID} = :genreId")
+    suspend fun getMediasByGenreId(genreId: String): List<MediaEntity>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} = :albumId")
+    fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumEntity?>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} = :albumId")
+    suspend fun getAlbumByAlbumId(albumId: String): AlbumEntity?
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} = :artistId")
+    fun getArtistByArtistIdFlow(artistId: String): Flow<ArtistEntity?>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} = :artistId")
+    suspend fun getArtistByArtistId(artistId: String): ArtistEntity?
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_GENRE} WHERE ${GenreColumns.ID} = :genreId")
+    fun getGenreByGenreIdFlow(genreId: String): Flow<GenreEntity?>
+
+    @Query("SELECT * FROM ${Tables.LIBRARY_GENRE} WHERE ${GenreColumns.ID} = :genreId")
+    suspend fun getGenreByGenreId(genreId: String): GenreEntity?
 
     @Transaction
     suspend fun clearAndInsertLibrary(
