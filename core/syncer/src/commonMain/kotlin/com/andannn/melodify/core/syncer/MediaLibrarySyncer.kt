@@ -39,7 +39,7 @@ internal class MediaLibrarySyncerImpl(
         try {
             val mediaData = mediaLibrary.getMediaData()
 
-            mediaLibraryDao.insertLibrary(
+            mediaLibraryDao.clearAndInsertLibrary(
                 mediaData.albumData.toAlbumEntity(),
                 mediaData.artistData.toArtistEntity(),
                 mediaData.genreData.toGenreEntity(),
