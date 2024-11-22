@@ -9,11 +9,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:data"))
-            implementation(project(":core:datastore"))
-            implementation(project(":core:database"))
-            implementation(project(":core:network"))
-            implementation(project(":core:library"))
-            implementation(project(":core:player"))
             implementation(project(":core:syncer"))
 
             implementation(project(":feature:common"))
@@ -31,6 +26,8 @@ kotlin {
         }
 
         androidMain.dependencies {
+            implementation(project(":core:player"))
+
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.androidx.activity.compose)
