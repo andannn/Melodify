@@ -52,29 +52,3 @@ fun AudioData.toAppItem() = AudioItemModel(
     cdTrackNumber = cdTrackNumber ?: 0,
     discNumber = discNumber ?: 0,
 )
-
-// TODO: remove this function
-fun AlbumData.toAppItem() = AlbumItemModel(
-    id = albumId.toString(),
-    name = title,
-    artWorkUri = Uri.withAppendedPath(
-        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-        albumId.toString(),
-    ).toString(),
-    trackCount = trackCount ?: 0,
-)
-
-// TODO: remove this function
-fun ArtistData.toAppItem() = ArtistItemModel(
-    id = artistId.toString(),
-    name = name,
-    artWorkUri = "",
-    trackCount = trackCount,
-)
-
-fun GenreData.toAppItem() = GenreItemModel(
-    id = genreId.toString(),
-    name = name ?: "",
-    artWorkUri = "",
-    trackCount = 0,
-)
