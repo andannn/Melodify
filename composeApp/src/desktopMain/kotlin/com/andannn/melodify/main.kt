@@ -38,9 +38,7 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "Melodify",
     ) {
-        Surface(Modifier.fillMaxSize().background(Color.Blue)) {
-            Text("AAAAAAAAAAAAAAAA")
-        }
+        MelodifyApp()
     }
 }
 

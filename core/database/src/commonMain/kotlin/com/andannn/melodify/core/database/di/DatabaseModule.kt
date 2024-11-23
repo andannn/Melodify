@@ -15,7 +15,6 @@ import kotlinx.coroutines.IO
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-internal const val DATABASE_FILE_NAME = "melodify_database.db"
 
 internal expect val databaseBuilder: Module
 

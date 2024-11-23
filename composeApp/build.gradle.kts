@@ -12,6 +12,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:data"))
             implementation(project(":core:syncer"))
+            implementation(project(":core:platform"))
 
             implementation(project(":feature:common"))
             implementation(project(":feature:drawer"))

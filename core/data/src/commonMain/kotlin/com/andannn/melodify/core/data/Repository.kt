@@ -7,7 +7,7 @@ import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 
-class Repository(
+class Repository constructor(
     val lyricRepository: LyricRepository,
     val mediaContentRepository: MediaContentRepository,
     val mediaControllerRepository: MediaControllerRepository,
