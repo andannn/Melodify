@@ -1,6 +1,6 @@
 package com.andannn.melodify.core.data.model
 
-import com.andannn.melodify.core.database.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
+import com.andannn.melodify.core.database.dao.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
 
 sealed interface MediaItemModel {
     val id: String
@@ -9,7 +9,7 @@ sealed interface MediaItemModel {
     val trackCount: Int
 }
 
-data class AudioItemModel(
+data class AudioItemModel constructor(
     override val id: String,
     override val name: String,
     override val artWorkUri: String,
@@ -19,13 +19,13 @@ data class AudioItemModel(
     val artist: String,
     val artistId: String,
     val cdTrackNumber: Int,
-    val discNumberIndex: Int,
+    val discNumber: Int,
+    val source: String,
     val extraUniqueId: String? = null,
-    val source: String? = null,
     override val trackCount: Int = -1,
 ) : MediaItemModel {
     companion object {
-        val DEFAULT = AudioItemModel("0", "", "", 0, "", "0", "", "0", 0, 0)
+        val DEFAULT = AudioItemModel("0", "", "", 0, "", "0", "", "0", 0, 0, "")
 
         // prefix for invalid item which local file is deleted but still in playlist
         const val INVALID_ID_PREFIX = "invalid_id_"

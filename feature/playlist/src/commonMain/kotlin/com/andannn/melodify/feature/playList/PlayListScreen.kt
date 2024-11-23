@@ -373,8 +373,9 @@ private fun PlayListScreenContentPreview() {
                     artist = "Artist 1",
                     artistId = "0",
                     cdTrackNumber = 1,
-                    discNumberIndex = 0,
+                    discNumber = 0,
                     artWorkUri = "",
+                    source = ""
                 ),
                 AudioItemModel(
                     id = "1",
@@ -385,8 +386,9 @@ private fun PlayListScreenContentPreview() {
                     artist = "Artist 1",
                     artistId = "0",
                     cdTrackNumber = 2,
-                    discNumberIndex = 0,
+                    discNumber = 0,
                     artWorkUri = "",
+                    source = ""
                 ),
             ).toImmutableList(),
             playingMediaItem = null
@@ -416,8 +418,9 @@ private fun AlbumPlayListContentPreview() {
                     artist = "Artist 1",
                     artistId = "0",
                     cdTrackNumber = 1,
-                    discNumberIndex = 0,
+                    discNumber = 0,
                     artWorkUri = "",
+                    source = ""
                 ),
                 AudioItemModel(
                     id = "1",
@@ -428,8 +431,9 @@ private fun AlbumPlayListContentPreview() {
                     artist = "Artist 1",
                     artistId = "0",
                     cdTrackNumber = 2,
-                    discNumberIndex = 0,
+                    discNumber = 0,
                     artWorkUri = "",
+                    source = ""
                 ),
             ).toImmutableList(),
             playingMediaItem = null

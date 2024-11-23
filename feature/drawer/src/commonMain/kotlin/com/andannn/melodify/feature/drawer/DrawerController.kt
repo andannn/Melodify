@@ -7,7 +7,6 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
-import com.andannn.melodify.core.data.util.uri
 import com.andannn.melodify.feature.drawer.model.SheetModel
 import com.andannn.melodify.feature.drawer.model.SheetOptionItem
 import com.andannn.melodify.feature.drawer.model.SleepTimerOption
@@ -248,7 +247,7 @@ class DrawerControllerImpl(
 
     private suspend fun onDeleteMediaItem(source: MediaItemModel) {
         val items = repository.getAudios(source)
-        val uris = items.map { it.uri }
+        val uris = items.map { it.source }
 
         _deleteMediaItemEventFlow.emit(uris)
     }

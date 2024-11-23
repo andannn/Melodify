@@ -1,5 +1,7 @@
 package com.andannn.melodify.core.database
 
+import com.andannn.melodify.core.database.dao.LyricDao
+import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef

@@ -10,8 +10,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-actual val dataModule = listOf(
-    commonDataModule,
+internal actual val platformDataModule =
     module {
         singleOf(::MediaContentRepositoryImpl).bind(
             MediaContentRepository::class
@@ -23,4 +22,3 @@ actual val dataModule = listOf(
             PlayerStateMonitoryRepository::class
         )
     }
-)
