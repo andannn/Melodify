@@ -1,3 +1,5 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+
 plugins {
     id("melodify.kmp.application")
     id("melodify.compose.multiplatform.application")
@@ -80,6 +82,18 @@ android {
             )
 
             signingConfig = signingConfigs.getByName("release")
+        }
+    }
+}
+
+compose.desktop {
+    application {
+        mainClass = "com.andannn.melodify.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "com.andannn.melodify"
+            packageVersion = "1.0.0"
         }
     }
 }
