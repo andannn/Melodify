@@ -50,16 +50,16 @@ class HomeViewModel(
     private val playlistCreatedEventChannel = drawerController.playlistCreatedEventChannel
 
     private val _userSettingFlow = userPreferenceRepository.userSettingFlow
+    private val _currentCustomTabsFlow = userPreferenceRepository.currentCustomTabsFlow
     private val _selectedTabIndexFlow = MutableStateFlow(0)
 
     private val _tabStatusFlow = combine(
         _selectedTabIndexFlow,
-        _userSettingFlow
-    ) { selectedIndex, userSetting ->
-        val customTabs = userSetting.currentCustomTabs.customTabs
+        _currentCustomTabsFlow
+    ) { selectedIndex, customTabs ->
         TabStatus(
             selectedIndex = selectedIndex.coerceAtMost(customTabs.size - 1),
-            customTabList = userSetting.currentCustomTabs.customTabs
+            customTabList = customTabs
         )
     }
 

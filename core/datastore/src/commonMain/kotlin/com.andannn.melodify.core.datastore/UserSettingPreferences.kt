@@ -5,7 +5,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import com.andannn.melodify.core.datastore.model.PlatModeValues
 import com.andannn.melodify.core.datastore.model.PreferencesKeyName
 import com.andannn.melodify.core.datastore.model.PreviewModeValues
@@ -28,8 +27,6 @@ class UserSettingPreferences(
                     mediaPreviewMode =
                     preferences[intPreferencesKey(PreferencesKeyName.MEDIA_PREVIEW_MODE_KEY_NAME)]
                         ?: PreviewModeValues.LIST_PREVIEW_VALUE,
-                    customTabs =
-                    preferences[stringPreferencesKey(PreferencesKeyName.CUSTOM_TABS_V2_KEY_NAME)]
                 )
             }
 
@@ -37,13 +34,6 @@ class UserSettingPreferences(
         preferences.edit { preferences ->
             preferences[intPreferencesKey(PreferencesKeyName.MEDIA_PREVIEW_MODE_KEY_NAME)] =
                 mediaPreviewMode
-        }
-    }
-
-    suspend fun setCustomTabs(customTabs: String) {
-        preferences.edit { preferences ->
-            preferences[stringPreferencesKey(PreferencesKeyName.CUSTOM_TABS_V2_KEY_NAME)] =
-                customTabs
         }
     }
 }
