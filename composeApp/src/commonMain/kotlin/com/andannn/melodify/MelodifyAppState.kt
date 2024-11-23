@@ -17,15 +17,18 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.compose.getKoin
 import org.koin.core.scope.Scope
 
 @Composable
 fun rememberAppState(
     navController: NavHostController = rememberNavController(),
     scope: CoroutineScope = rememberCoroutineScope(),
-    retainedScope: Scope = getUiRetainedScope()!!,
-    drawerController: DrawerController = retainedScope.get<DrawerController>(),
-    messageController: MessageController = retainedScope.get<MessageController>(),
+    retainedScope: Scope? = getUiRetainedScope(),
+    drawerController: DrawerController = retainedScope?.get<DrawerController>()
+        ?: getKoin().get<DrawerController>(),
+    messageController: MessageController = retainedScope?.get<MessageController>()
+        ?: getKoin().get<MessageController>(),
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) = remember(
     navController,

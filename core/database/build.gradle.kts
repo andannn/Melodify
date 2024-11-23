@@ -38,6 +38,10 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.androidx.room.testing)
         }
+
+        desktopMain.dependencies {
+            implementation(libs.androidx.sqlite.bundled)
+        }
     }
 }
 

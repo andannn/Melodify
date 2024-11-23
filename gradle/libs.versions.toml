@@ -4,7 +4,7 @@ firebaseBom = "33.6.0"
 kotlinxCollectionsImmutable = "0.3.8"
 ksp = "2.0.21-1.0.26"
 materialColorUtilitiesAndroid = "2.0.0"
-kotlin = "2.0.21"
+kotlin = "2.1.0-RC2"
 androidx-palette = "1.0.0"
 androidxCore = "1.15.0"
 androidxCoreSplashscreen = "1.0.1"
@@ -81,6 +81,7 @@ navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navi
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napierVersion" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtx" }
+kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinxCoroutines" }
 
 # dependecy in build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

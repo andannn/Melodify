@@ -16,7 +16,6 @@
 
 package com.andannn.melodify.feature.common.util
 
-import androidx.annotation.FloatRange
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -47,8 +46,8 @@ import kotlin.math.pow
  */
 fun Modifier.verticalGradientScrim(
     color: Color,
-    @FloatRange(from = 0.0, to = 1.0) startYPercentage: Float = 0f,
-    @FloatRange(from = 0.0, to = 1.0) endYPercentage: Float = 1f,
+    startYPercentage: Float = 0f,
+    endYPercentage: Float = 1f,
     decay: Float = 1.0f,
     numStops: Int = 16,
 ) = this then VerticalGradientElement(color, startYPercentage, endYPercentage, decay, numStops)

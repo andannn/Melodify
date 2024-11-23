@@ -15,17 +15,13 @@ import kotlinx.coroutines.IO
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
+internal const val DATABASE_FILE_NAME = "melodify_database.db"
+
 internal expect val databaseBuilder: Module
 
 val databaseModule = module {
     includes(
         databaseBuilder,
-        module {
-            single<LyricDao> { get<MelodifyDataBase>().getLyricDao() }
-            single<PlayListDao> { get<MelodifyDataBase>().getPlayListDao() }
-            single<MediaLibraryDao> { get<MelodifyDataBase>().getMediaLibraryDao() }
-            single<UserDataDao> { get<MelodifyDataBase>().getUserDataDao() }
-        },
         module {
             single<MelodifyDataBase> {
                 get<RoomDatabase.Builder<MelodifyDataBase>>()
@@ -38,6 +34,10 @@ val databaseModule = module {
                     .addCallback(addInitialCustomTabsCallback)
                     .build()
             }
+            single<LyricDao> { get<MelodifyDataBase>().getLyricDao() }
+            single<PlayListDao> { get<MelodifyDataBase>().getPlayListDao() }
+            single<MediaLibraryDao> { get<MelodifyDataBase>().getMediaLibraryDao() }
+            single<UserDataDao> { get<MelodifyDataBase>().getUserDataDao() }
         },
     )
 }

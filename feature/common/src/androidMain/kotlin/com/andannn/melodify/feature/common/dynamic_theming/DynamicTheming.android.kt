@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalCoilApi::class)
-
 package com.andannn.melodify.feature.common.dynamic_theming
 
 import android.content.Context

@@ -21,6 +21,16 @@ fun Project.configureKotlinMultiplatform(
                     sourceSetTree.set(KotlinSourceSetTree.test)
                 }
             }
+
+            // share code in android and desktop
+            applyDefaultHierarchyTemplate {
+                common {
+                    group("jvm") {
+                        withJvm()
+                        withAndroidTarget()
+                    }
+                }
+            }
         }
 
         jvm("desktop")
