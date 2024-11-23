@@ -17,7 +17,7 @@ fun AddToPlayListRequestSheetContentPreview() {
         Surface {
             AddToPlayListRequestSheetContent(
                 audioList = List(10) {
-                    AudioItemModel(it.toString(), "name $it", "", 0, "", "0", "", "0", 0, 0)
+                    AudioItemModel(it.toString(), "name $it", "", 0, "", "0", "", "0", 0, 0, "")
                 },
                 playLists = List(10) {
                     PlayListItemModel(

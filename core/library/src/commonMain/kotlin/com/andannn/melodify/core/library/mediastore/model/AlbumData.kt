@@ -5,4 +5,5 @@ data class AlbumData(
     val title: String,
     val trackCount: Int? = null,
     val numberOfSongsForArtist: Int? = null,
+    val coverUri: String? = null,
 )

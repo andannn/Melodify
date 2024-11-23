@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "3ebd154d0744cf649925c78a2abaf7bd",
+    "identityHash": "70f13f3cff517f7ad6ddc411975dfcdd",
     "entities": [
       {
         "tableName": "lyric_table",
@@ -216,7 +216,7 @@
       },
       {
         "tableName": "library_album_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`album_id` INTEGER NOT NULL, `album_title` TEXT NOT NULL, `album_track_count` INTEGER, `album_number_of_songs_for_artist` INTEGER, PRIMARY KEY(`album_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`album_id` INTEGER NOT NULL, `album_title` TEXT NOT NULL, `album_track_count` INTEGER, `album_number_of_songs_for_artist` INTEGER, `album_cover_uri` TEXT, PRIMARY KEY(`album_id`))",
         "fields": [
           {
             "fieldPath": "albumId",
@@ -239,6 +239,11 @@
             "fieldPath": "numberOfSongsForArtist",
             "columnName": "album_number_of_songs_for_artist",
             "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "coverUri",
+            "columnName": "album_cover_uri",
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -306,13 +311,18 @@
       },
       {
         "tableName": "library_media_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`media_id` INTEGER NOT NULL, `media_title` TEXT, `media_duration` INTEGER, `media_modified_date` INTEGER, `media_size` INTEGER, `media_mime_type` TEXT, `media_album` TEXT, `media_album_id` INTEGER, `media_artist` TEXT, `media_artist_id` INTEGER, `media_cd_track_number` INTEGER, `media_disc_number` INTEGER, `media_num_tracks` INTEGER, `media_bitrate` INTEGER, `media_genre` TEXT, `media_genre_id` INTEGER, `media_year` TEXT, `media_track` TEXT, `media_composer` TEXT, `media_cover` TEXT, PRIMARY KEY(`media_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`media_id` INTEGER NOT NULL, `source_uri` TEXT, `media_title` TEXT, `media_duration` INTEGER, `media_modified_date` INTEGER, `media_size` INTEGER, `media_mime_type` TEXT, `media_album` TEXT, `media_album_id` INTEGER, `media_artist` TEXT, `media_artist_id` INTEGER, `media_cd_track_number` INTEGER, `media_disc_number` INTEGER, `media_num_tracks` INTEGER, `media_bitrate` INTEGER, `media_genre` TEXT, `media_genre_id` INTEGER, `media_year` TEXT, `media_track` TEXT, `media_composer` TEXT, `media_cover` TEXT, PRIMARY KEY(`media_id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "media_id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "sourceUri",
+            "columnName": "source_uri",
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "title",
@@ -420,7 +430,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3ebd154d0744cf649925c78a2abaf7bd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '70f13f3cff517f7ad6ddc411975dfcdd')"
     ]
   }
 }

@@ -9,6 +9,7 @@ import com.andannn.melodify.core.database.Tables
 internal object MediaColumns {
     const val ID = "media_id"
     const val TITLE = "media_title"
+    const val SOURCE_URI = "source_uri"
     const val DURATION = "media_duration"
     const val MODIFIED_DATE = "media_modified_date"
     const val SIZE = "media_size"
@@ -36,6 +37,9 @@ data class MediaEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = MediaColumns.ID)
     val id: Long = 0,
+
+    @ColumnInfo(name = MediaColumns.SOURCE_URI)
+    val sourceUri: String? = null,
 
     @ColumnInfo(name = MediaColumns.TITLE)
     val title: String? = null,

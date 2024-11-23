@@ -2,6 +2,7 @@ package com.andannn.melodify.core.library.mediastore.model
 
 data class AudioData(
     val id: Long,
+    val sourceUri: String,
     val title: String = "",
     val duration: Int = -1,
     val modifiedDate: Long = -1,
@@ -20,5 +21,5 @@ data class AudioData(
     val year: String? = null,
     val track: String? = null,
     val composer: String? = null,
-    val cover: String? = null
+    val cover: String? = null,
 )

@@ -1,11 +1,11 @@
 package com.andannn.melodify.core.data.repository
 
 import android.net.Uri
+import android.provider.MediaStore
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.util.uri
 import com.andannn.melodify.core.player.util.UNIQUE_ID_KEY
 import com.andannn.melodify.core.player.util.buildMediaItem
 
@@ -20,7 +20,11 @@ fun MediaItem.toAppItem(): MediaItemModel = AudioItemModel(
     cdTrackNumber = mediaMetadata.trackNumber ?: 0,
     discNumber = 0,
     artWorkUri = mediaMetadata.artworkUri.toString(),
-    extraUniqueId = mediaMetadata.extras?.getString(UNIQUE_ID_KEY)
+    extraUniqueId = mediaMetadata.extras?.getString(UNIQUE_ID_KEY),
+    source = Uri.withAppendedPath(
+        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+        mediaId
+    ).toString()
 )
 
 private var counter = 1
@@ -31,7 +35,7 @@ fun AudioItemModel.toMediaItem(generateUniqueId: Boolean = false): MediaItem {
     return buildMediaItem(
         mediaId = id,
         title = name,
-        sourceUri = Uri.parse(uri),
+        sourceUri = Uri.parse(source),
         imageUri = Uri.parse(artWorkUri),
         trackNumber = cdTrackNumber,
         album = album,

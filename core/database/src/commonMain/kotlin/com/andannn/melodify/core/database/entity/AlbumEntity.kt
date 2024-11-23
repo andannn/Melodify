@@ -10,6 +10,7 @@ internal object AlbumColumns {
     const val TITLE = "album_title"
     const val TRACK_COUNT = "album_track_count"
     const val NUMBER_OF_SONGS_FOR_ARTIST = "album_number_of_songs_for_artist"
+    const val COVER_URI = "album_cover_uri"
 }
 
 @Entity(tableName = Tables.LIBRARY_ALBUM)
@@ -26,4 +27,7 @@ class AlbumEntity(
 
     @ColumnInfo(name = AlbumColumns.NUMBER_OF_SONGS_FOR_ARTIST)
     val numberOfSongsForArtist: Int? = null,
+
+    @ColumnInfo(name = AlbumColumns.COVER_URI)
+    val coverUri: String? = null,
 )

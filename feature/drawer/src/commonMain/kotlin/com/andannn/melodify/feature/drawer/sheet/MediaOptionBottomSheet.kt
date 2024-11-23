@@ -262,4 +262,5 @@ private val source = AudioItemModel(
     cdTrackNumber = 1,
     discNumber = 0,
     artWorkUri = "",
+    source = "",
 )

@@ -41,13 +41,14 @@ internal fun MediaEntity.toAppItem() = AudioItemModel(
     artistId = artistId?.toString() ?: "",
     cdTrackNumber = cdTrackNumber ?: 0,
     discNumber = discNumber ?: 0,
+    source = sourceUri ?: error("No source uri")
 )
 
-internal fun AlbumEntity.toAppItem()= AlbumItemModel(
+internal fun AlbumEntity.toAppItem() = AlbumItemModel(
     id = albumId.toString(),
     name = title,
-    artWorkUri = "",
-    trackCount = trackCount ?: 0
+    artWorkUri = coverUri ?: "",
+    trackCount = trackCount ?: 0,
 )
 
 internal fun ArtistEntity.toAppItem() = ArtistItemModel(
@@ -65,7 +66,6 @@ internal fun GenreEntity.toAppItem() = GenreItemModel(
     artWorkUri = "",
     trackCount = 0
 )
-
 
 
 internal fun PlayListWithMediaCount.toAppItem() = PlayListItemModel(
@@ -89,5 +89,6 @@ internal fun List<CrossRefWithMediaRelation>.mapToAppItemList() = map { entity -
             artistId = "",
             cdTrackNumber = 0,
             discNumber = 0,
+            source = ""
         )
 }

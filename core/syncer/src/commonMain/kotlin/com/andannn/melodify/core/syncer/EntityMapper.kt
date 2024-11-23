@@ -15,6 +15,7 @@ fun List<AlbumData>.toAlbumEntity(): List<AlbumEntity> = map {
         title = it.title,
         trackCount = it.trackCount,
         numberOfSongsForArtist = it.numberOfSongsForArtist,
+        coverUri = it.coverUri,
     )
 }
 
@@ -37,6 +38,7 @@ fun List<ArtistData>.toArtistEntity(): List<ArtistEntity> = map {
 fun List<AudioData>.toMediaEntity(): List<MediaEntity> = map {
     MediaEntity(
         id = it.id,
+        sourceUri = it.sourceUri,
         title = it.title,
         albumId = it.albumId,
         artistId = it.artistId,

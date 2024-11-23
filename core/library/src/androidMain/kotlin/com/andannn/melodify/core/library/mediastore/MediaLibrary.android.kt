@@ -113,9 +113,14 @@ class MediaLibraryImpl(
 
         while (cursor.moveToNext()) {
             val albumId = cursor.getLong(albumIdIndex)
+            val id = cursor.getLong(idIndex)
             itemList.add(
                 AudioData(
-                    id = cursor.getLong(idIndex),
+                    id = id,
+                    sourceUri = Uri.withAppendedPath(
+                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        id.toString()
+                    ).toString(),
                     cover = Uri.withAppendedPath(
                         MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                         albumId.toString()
@@ -172,9 +177,14 @@ class MediaLibraryImpl(
         val numberOfSongsForArtistIndex =
             cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS_FOR_ARTIST)
         while (cursor.moveToNext()) {
+            val albumId = cursor.getLong(idIndex)
             itemList.add(
                 AlbumData(
-                    albumId = cursor.getLong(idIndex),
+                    albumId = albumId,
+                    coverUri = Uri.withAppendedPath(
+                        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                        albumId.toString()
+                    ).toString(),
                     title = cursor.getString(albumIndex),
                     trackCount = cursor.getInt(numberOfSongsIndex),
                     numberOfSongsForArtist = cursor.getInt(numberOfSongsForArtistIndex),

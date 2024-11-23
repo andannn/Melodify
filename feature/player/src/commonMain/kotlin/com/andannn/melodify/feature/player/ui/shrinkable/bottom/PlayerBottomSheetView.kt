@@ -280,6 +280,7 @@ private fun BottomPlayQueueSheetPreview() {
                     cdTrackNumber = 1,
                     discNumber = 0,
                     artWorkUri = "",
+                    source = ""
                 )
             ).toImmutableList(),
             activeMediaItem = AudioItemModel.DEFAULT,
