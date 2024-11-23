@@ -1,14 +1,11 @@
 package com.andannn.melodify.core.data.repository
 
-import com.andannn.melodify.core.data.model.AlbumItemModel
-import com.andannn.melodify.core.data.model.ArtistItemModel
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.GenreItemModel
+import com.andannn.melodify.core.data.util.mapToAlbumItemModel
+import com.andannn.melodify.core.data.util.mapToArtistItemModel
+import com.andannn.melodify.core.data.util.mapToAudioItemModel
+import com.andannn.melodify.core.data.util.mapToGenreItemModel
+import com.andannn.melodify.core.data.util.toAppItem
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
-import com.andannn.melodify.core.database.entity.AlbumEntity
-import com.andannn.melodify.core.database.entity.ArtistEntity
-import com.andannn.melodify.core.database.entity.GenreEntity
-import com.andannn.melodify.core.database.entity.MediaEntity
 import kotlinx.coroutines.flow.map
 
 internal class MediaContentRepositoryImpl(
@@ -79,55 +76,3 @@ internal class MediaContentRepositoryImpl(
     override suspend fun getGenreByGenreId(genreId: String) =
         mediaLibraryDao.getGenreByGenreId(genreId)?.toAppItem()
 }
-
-private fun List<AlbumEntity>.mapToAlbumItemModel() = map {
-    it.toAppItem()
-}
-
-private fun List<MediaEntity>.mapToAudioItemModel() = map {
-    it.toAppItem()
-}
-
-private fun List<ArtistEntity>.mapToArtistItemModel() = map {
-    it.toAppItem()
-}
-
-private fun List<GenreEntity>.mapToGenreItemModel() = map {
-    it.toAppItem()
-}
-
-fun MediaEntity.toAppItem() = AudioItemModel(
-    id = id.toString(),
-    name = title ?: "",
-    artWorkUri = cover ?: "",
-    modifiedDate = modifiedDate ?: -1,
-    album = album ?: "",
-    albumId = albumId?.toString() ?: "",
-    artist = artist ?: "",
-    artistId = artistId?.toString() ?: "",
-    cdTrackNumber = cdTrackNumber ?: 0,
-    discNumber = discNumber ?: 0,
-)
-
-private fun AlbumEntity.toAppItem()= AlbumItemModel(
-    id = albumId.toString(),
-    name = title,
-    artWorkUri = "",
-    trackCount = trackCount ?: 0
-)
-
-private fun ArtistEntity.toAppItem() = ArtistItemModel(
-    id = artistId.toString(),
-    name = name,
-    // TODO:
-    artWorkUri = "",
-    trackCount = trackCount ?: 0
-)
-
-private fun GenreEntity.toAppItem() = GenreItemModel(
-    id = genreId.toString(),
-    name = name ?: "",
-    // TODO:
-    artWorkUri = "",
-    trackCount = 0
-)

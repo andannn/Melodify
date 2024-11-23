@@ -2,12 +2,12 @@ package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.util.mapToAppItemList
+import com.andannn.melodify.core.data.util.toAppItem
 import com.andannn.melodify.core.database.dao.PlayListDao
-import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
-import com.andannn.melodify.core.database.entity.valid
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -110,29 +110,4 @@ internal class PlayListRepositoryImpl(
 
     private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>) =
         list.map { it.toAppItem() }
-}
-
-
-private fun PlayListWithMediaCount.toAppItem() = PlayListItemModel(
-    id = playListEntity.id.toString(),
-    name = playListEntity.name,
-    artWorkUri = playListEntity.artworkUri ?: "",
-    trackCount = mediaCount
-)
-
-private fun List<CrossRefWithMediaRelation>.mapToAppItemList() = map { entity ->
-    val media = entity.media
-    if (media.valid) media.toAppItem() else
-        AudioItemModel(
-            id = AudioItemModel.INVALID_ID_PREFIX + entity.playListWithMediaCrossRef.mediaStoreId,
-            name = entity.playListWithMediaCrossRef.title,
-            artist = entity.playListWithMediaCrossRef.artist,
-            modifiedDate = 0,
-            artWorkUri = "",
-            album = "",
-            albumId = "",
-            artistId = "",
-            cdTrackNumber = 0,
-            discNumber = 0,
-        )
 }
