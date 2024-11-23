@@ -3,11 +3,14 @@ package com.andannn.melodify.core.data.util
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
+import com.andannn.melodify.core.database.entity.CustomTabEntity
+import com.andannn.melodify.core.database.entity.CustomTabType
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
@@ -91,4 +94,51 @@ internal fun List<CrossRefWithMediaRelation>.mapToAppItemList() = map { entity -
             discNumber = 0,
             source = ""
         )
+}
+
+internal fun List<CustomTabEntity>.mapToCustomTabModel() = map {
+    it.toAppItem()
+}
+
+internal fun CustomTabEntity.toAppItem() = when (type) {
+    CustomTabType.ALL_MUSIC -> CustomTab.AllMusic
+    CustomTabType.ALL_ALBUM -> CustomTab.AllAlbum
+    CustomTabType.ALL_PLAYLIST -> CustomTab.AllPlayList
+    CustomTabType.ALL_GENRE -> CustomTab.AllGenre
+    CustomTabType.ALL_ARTIST -> CustomTab.AllArtist
+    CustomTabType.ALBUM_DETAIL -> CustomTab.AlbumDetail(externalId!!, name!!)
+    CustomTabType.ARTIST_DETAIL -> CustomTab.ArtistDetail(externalId!!, name!!)
+    CustomTabType.GENRE_DETAIL -> CustomTab.GenreDetail(externalId!!, name!!)
+    CustomTabType.PLAYLIST_DETAIL -> CustomTab.PlayListDetail(externalId!!, name!!)
+
+    else -> error("Invalid type")
+}
+
+internal fun CustomTab.toEntity() = when (this) {
+    CustomTab.AllAlbum -> CustomTabEntity(type = CustomTabType.ALL_ALBUM, externalId = "")
+    CustomTab.AllArtist -> CustomTabEntity(type = CustomTabType.ALL_ARTIST, externalId = "")
+    CustomTab.AllGenre -> CustomTabEntity(type = CustomTabType.ALL_GENRE, externalId = "")
+    CustomTab.AllMusic -> CustomTabEntity(type = CustomTabType.ALL_MUSIC, externalId = "")
+    CustomTab.AllPlayList -> CustomTabEntity(type = CustomTabType.ALL_PLAYLIST, externalId = "")
+    is CustomTab.ArtistDetail -> CustomTabEntity(
+        type = CustomTabType.ARTIST_DETAIL,
+        externalId = artistId,
+        name = label
+    )
+
+    is CustomTab.GenreDetail -> CustomTabEntity(
+        type = CustomTabType.GENRE_DETAIL,
+        externalId = genreId,
+        name = label
+    )
+    is CustomTab.PlayListDetail -> CustomTabEntity(
+        type = CustomTabType.PLAYLIST_DETAIL,
+        externalId = playListId,
+        name = label
+    )
+    is CustomTab.AlbumDetail -> CustomTabEntity(
+        type = CustomTabType.ALBUM_DETAIL,
+        externalId = albumId,
+        name = label
+    )
 }

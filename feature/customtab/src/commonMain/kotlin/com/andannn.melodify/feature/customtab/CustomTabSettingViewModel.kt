@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import melodify.feature.common.generated.resources.Res
@@ -46,14 +45,13 @@ internal class CustomTabSettingViewModel(
                 getInitialState()
             }
 
-            userPreferenceRepository.userSettingFlow
-                .map { it.currentCustomTabs }
+            userPreferenceRepository.currentCustomTabsFlow
                 .distinctUntilChanged()
                 .collect { currentTabs ->
                     _state.update {
                         if (it !is UiState.Ready) return@update it
                         it.copy(
-                            currentTabs = currentTabs.customTabs
+                            currentTabs = currentTabs
                         )
                     }
                 }
@@ -100,7 +98,7 @@ internal class CustomTabSettingViewModel(
 
     private suspend fun getInitialState() = coroutineScope {
         val currentSettingDeferred = async {
-            userPreferenceRepository.userSettingFlow.first().currentCustomTabs
+            userPreferenceRepository.currentCustomTabsFlow.first()
         }
         val albumsDeferred = async {
             contentRepository.getAllAlbumsFlow().first()
@@ -116,7 +114,7 @@ internal class CustomTabSettingViewModel(
         }
 
         UiState.Ready(
-            currentTabs = currentSettingDeferred.await().customTabs,
+            currentTabs = currentSettingDeferred.await(),
             allAvailableTabSectors = mutableListOf<TabSector>()
                 .apply {
                     add(

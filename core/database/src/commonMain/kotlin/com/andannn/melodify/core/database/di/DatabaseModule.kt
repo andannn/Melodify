@@ -7,7 +7,9 @@ import com.andannn.melodify.core.database.MIGRATION_2_3
 import com.andannn.melodify.core.database.MelodifyDataBase
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.addFavoritePlayListCallback
+import com.andannn.melodify.core.database.addInitialCustomTabsCallback
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
+import com.andannn.melodify.core.database.dao.UserDataDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.module.Module
@@ -22,6 +24,7 @@ val databaseModule = module {
             single<LyricDao> { get<MelodifyDataBase>().getLyricDao() }
             single<PlayListDao> { get<MelodifyDataBase>().getPlayListDao() }
             single<MediaLibraryDao> { get<MelodifyDataBase>().getMediaLibraryDao() }
+            single<UserDataDao> { get<MelodifyDataBase>().getUserDataDao() }
         },
         module {
             single<MelodifyDataBase> {
@@ -32,6 +35,7 @@ val databaseModule = module {
                         MIGRATION_2_3
                     )
                     .addCallback(addFavoritePlayListCallback)
+                    .addCallback(addInitialCustomTabsCallback)
                     .build()
             }
         },

@@ -25,12 +25,4 @@ data class UserSettingPref(
      * Values: [PreviewModeValues]
      */
     val mediaPreviewMode: Int,
-
-    /**
-     * custom tabs
-     *
-     * Key: [PreferencesKeyName.CUSTOM_TABS_KEY_NAME]
-     * Values: [String]
-     */
-    val customTabs: String?
 )
