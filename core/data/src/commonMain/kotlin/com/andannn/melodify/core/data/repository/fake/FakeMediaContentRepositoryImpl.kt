@@ -91,7 +91,6 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
 
     override suspend fun getAudiosOfAlbum(albumId: String): List<AudioItemModel> {
         return albumMaps[albumId]?.map { it.toModel() } ?: emptyList()
-
     }
 
     override fun getAudiosOfArtistFlow(artistId: String): Flow<List<AudioItemModel>> {

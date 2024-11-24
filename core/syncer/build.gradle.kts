@@ -10,6 +10,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:database"))
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
         }
 
         desktopMain.dependencies {

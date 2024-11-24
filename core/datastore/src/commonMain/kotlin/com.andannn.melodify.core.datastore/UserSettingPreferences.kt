@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.andannn.melodify.core.datastore.model.PlatModeValues
 import com.andannn.melodify.core.datastore.model.PreferencesKeyName
 import com.andannn.melodify.core.datastore.model.PreviewModeValues
@@ -27,6 +28,9 @@ class UserSettingPreferences(
                     mediaPreviewMode =
                     preferences[intPreferencesKey(PreferencesKeyName.MEDIA_PREVIEW_MODE_KEY_NAME)]
                         ?: PreviewModeValues.LIST_PREVIEW_VALUE,
+                    libraryPath =
+                    preferences[stringSetPreferencesKey(PreferencesKeyName.LIBRARY_PATH_KEY_NAME)]
+                        ?: emptySet()
                 )
             }
 
@@ -34,6 +38,13 @@ class UserSettingPreferences(
         preferences.edit { preferences ->
             preferences[intPreferencesKey(PreferencesKeyName.MEDIA_PREVIEW_MODE_KEY_NAME)] =
                 mediaPreviewMode
+        }
+    }
+
+    suspend fun setLibraryPath(libraryPathList: Set<String>) {
+        preferences.edit { preferences ->
+            preferences[stringSetPreferencesKey(PreferencesKeyName.LIBRARY_PATH_KEY_NAME)] =
+                libraryPathList
         }
     }
 }

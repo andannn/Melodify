@@ -25,4 +25,13 @@ data class UserSettingPref(
      * Values: [PreviewModeValues]
      */
     val mediaPreviewMode: Int,
+
+
+    /**
+     * library path of player
+     *
+     * key: [PreferencesKeyName.LIBRARY_PATH_KEY_NAME]
+     * Value: [Set<String>]
+     */
+    val libraryPath: Set<String>,
 )

@@ -17,7 +17,18 @@ class UtilTest {
     @Test
     fun extract_tag_from_audio_file_test() {
         measureTime {
-            val audioData = extractTagFromAudioFile("src/desktopTest/testfile/track_11_Harinezumi.flac")
+            val audioData = extractTagFromAudioFile("src/desktopTest/testfile/test_audio.mp3")
+            println(audioData)
+            assertNotNull(audioData)
+        }.also { println("consumed time: $it") }
+    }
+
+    @Test
+    fun scan_all_library_audio_file() {
+        measureTime {
+            val audioData = scanAllLibraryAudioFile(setOf(
+                "src/desktopTest/"
+            ))
             println(audioData)
             assertNotNull(audioData)
         }.also { println("consumed time: $it") }

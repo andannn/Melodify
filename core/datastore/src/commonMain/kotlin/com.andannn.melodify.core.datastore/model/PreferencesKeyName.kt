@@ -6,4 +6,5 @@ object PreferencesKeyName {
     const val IS_SHUFFLE_KEY_NAME = "is_shuffle"
     const val MEDIA_PREVIEW_MODE_KEY_NAME = "media_preview_mode"
     const val CUSTOM_TABS_KEY_NAME = "custom_tabs"
+    const val LIBRARY_PATH_KEY_NAME = "custom_library_path"
 }
