@@ -135,7 +135,6 @@ class MediaLibraryScannerImpl(
                     genre = genreIndex?.let { cursor.getString(it) },
                     genreId = genreIdIndex?.let { cursor.getLong(it) },
                     year = cursor.getString(yearIndex),
-                    track = cursor.getString(trackIndex),
                     composer = cursor.getString(composerIndex),
                 ),
             )
