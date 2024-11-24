@@ -5,7 +5,9 @@ import io.github.aakira.napier.Napier
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.tag.FieldKey
 import java.io.File
-import java.util.Collections.replaceAll
+import java.nio.file.Files
+import kotlin.io.path.Path
+import kotlin.io.path.nameWithoutExtension
 
 /**
  * Extract tag from audio file
@@ -36,8 +38,7 @@ fun extractTagFromAudioFile(filePath: String): AudioData? {
             genre = tag.getFirst(FieldKey.GENRE),
             year = tag.getFirst(FieldKey.YEAR),
             composer = tag.getFirst(FieldKey.COMPOSER),
-            // TODO implement later
-//            cover = tag.getFirst(FieldKey.COVER_ART),
+            cover = getCoverFileInFolder(filePath),
         )
     } catch (e: Exception) {
         Napier.e("extractTagFromAudioFIle failed", e)
@@ -48,3 +49,24 @@ fun extractTagFromAudioFile(filePath: String): AudioData? {
 private fun String.toInt(): Int? {
     return toIntOrNull() ?: split("/").firstOrNull()?.toIntOrNull()
 }
+
+private fun getCoverFileInFolder(filePath: String): String? {
+    return Path(filePath).parent
+        ?.let { folder ->
+            val imageFiles = Files.walk(folder)
+                .filter {
+                    Files.isRegularFile(it)
+                }
+                .filter {
+                    isImageFile(it.toString())
+                }
+                .toList()
+
+            return imageFiles
+                .find { it.nameWithoutExtension.matchAlbumCover() }
+                .toString()
+        }
+}
+
+private fun String.matchAlbumCover() = contains("folder", ignoreCase = true) ||
+            contains("cover", ignoreCase = true)
