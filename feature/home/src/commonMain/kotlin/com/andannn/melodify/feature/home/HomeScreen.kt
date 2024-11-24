@@ -55,15 +55,14 @@ import com.andannn.melodify.feature.common.component.ListTileItemView
 import com.andannn.melodify.core.data.model.MediaListSource
 import com.andannn.melodify.core.data.model.MediaPreviewMode
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.model.browsableOrPlayable
+import com.andannn.melodify.core.data.model.key
 import com.andannn.melodify.feature.common.component.ExtraPaddingBottom
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
-import com.andannn.melodify.feature.common.util.browsableOrPlayable
 import com.andannn.melodify.feature.common.util.getCategoryResource
 import com.andannn.melodify.feature.common.util.getUiRetainedScope
-import com.andannn.melodify.feature.common.util.key
 import com.andannn.melodify.feature.drawer.DrawerController
 import com.andannn.melodify.feature.message.MessageController
-import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import melodify.feature.common.generated.resources.Res
@@ -310,7 +309,6 @@ private fun <T : MediaItemModel> LazyListContent(
             items = mediaItems,
             key = { it.key },
         ) { item ->
-            Napier.d("ListTileItemView: $item")
             ListTileItemView(
                 modifier =
                 Modifier

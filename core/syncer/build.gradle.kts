@@ -9,7 +9,6 @@ android {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":core:library"))
             implementation(project(":core:database"))
         }
     }

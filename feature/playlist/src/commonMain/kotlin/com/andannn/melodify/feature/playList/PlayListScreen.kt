@@ -49,10 +49,10 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.MediaListSource
+import com.andannn.melodify.core.data.model.browsableOrPlayable
+import com.andannn.melodify.core.data.model.key
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
-import com.andannn.melodify.feature.common.util.browsableOrPlayable
 import com.andannn.melodify.feature.common.util.getUiRetainedScope
-import com.andannn.melodify.feature.common.util.key
 import com.andannn.melodify.feature.drawer.DrawerController
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

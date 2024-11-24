@@ -11,7 +11,6 @@ import com.andannn.melodify.core.data.repository.PlayListRepositoryImpl
 import com.andannn.melodify.core.data.repository.UserPreferenceRepositoryImpl
 import com.andannn.melodify.core.database.di.databaseModule
 import com.andannn.melodify.core.datastore.di.userPreferencesModule
-import com.andannn.melodify.core.library.mediastore.di.mediaLibraryModule
 import com.andannn.melodify.core.network.di.serviceModule
 import com.andannn.melodify.core.player.di.playerModule
 import org.koin.core.module.Module
@@ -32,7 +31,6 @@ val dataModule = module {
         serviceModule,
         userPreferencesModule,
         databaseModule,
-        mediaLibraryModule,
     )
 }
 

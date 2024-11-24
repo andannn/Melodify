@@ -9,7 +9,11 @@ import com.andannn.melodify.feature.playList.di.playListFeatureModule
 import com.andannn.melodify.feature.player.di.playerFeatureModule
 import org.koin.core.module.Module
 
+expect val uiScopedModule: Module
+
 val modules: List<Module> = listOf(
+    uiScopedModule,
+
     dataModule,
     syncerModule,
     platformModule,
