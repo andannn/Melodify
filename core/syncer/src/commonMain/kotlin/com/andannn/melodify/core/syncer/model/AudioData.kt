@@ -19,7 +19,6 @@ data class AudioData(
     val genre: String? = null,
     val genreId: Long? = null,
     val year: String? = null,
-    val track: String? = null,
     val composer: String? = null,
     val cover: String? = null,
 )

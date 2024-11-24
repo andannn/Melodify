@@ -1,6 +1,7 @@
 [versions]
 composeLintChecks = "1.4.1"
 firebaseBom = "33.6.0"
+jaudiotagger = "2.0.3"
 kotlinxCollectionsImmutable = "0.3.8"
 ksp = "2.0.21-1.0.26"
 materialColorUtilitiesAndroid = "2.0.0"
@@ -47,6 +48,7 @@ compose-lint-checks = { group = "com.slack.lint.compose", name = "compose-lint-c
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+jaudiotagger = { module = "org:jaudiotagger", version.ref = "jaudiotagger" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }

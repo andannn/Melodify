@@ -50,7 +50,6 @@ fun List<AudioData>.toMediaEntity(): List<MediaEntity> = map {
         album = it.album,
         artist = it.artist,
         genre = it.genre,
-        track = it.track,
         composer = it.composer,
         cdTrackNumber = it.cdTrackNumber,
         discNumber = it.discNumber,
