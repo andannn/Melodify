@@ -39,6 +39,7 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.androidx.room.testing)
+            implementation(libs.okio)
         }
 
         desktopMain.dependencies {

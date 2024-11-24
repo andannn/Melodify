@@ -10,16 +10,20 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal expect val dummyDatabase: MelodifyDataBase
+internal expect fun createInMemoryDatabase(): MelodifyDataBase
 
 class DatabaseTest {
     private val dispatcher = StandardTestDispatcher()
     private val testScope = TestScope(dispatcher)
-    private val lyricDao: LyricDao = dummyDatabase.getLyricDao()
-    private val playListDao: PlayListDao = dummyDatabase.getPlayListDao()
+
+    private var _database: MelodifyDataBase? = null
+    private val database get() = _database!!
+    private val lyricDao: LyricDao get() = database.getLyricDao()
+    private val playListDao: PlayListDao get() = database.getPlayListDao()
 
     private val dummyLyricEntities = listOf(
         LyricEntity(
@@ -46,9 +50,14 @@ class DatabaseTest {
         )
     )
 
+    @BeforeTest
+    fun openDatabase() {
+        _database = createInMemoryDatabase()
+    }
+
     @AfterTest
     fun closeDatabase() {
-        dummyDatabase.close()
+        _database?.close()
     }
 
     @Test
