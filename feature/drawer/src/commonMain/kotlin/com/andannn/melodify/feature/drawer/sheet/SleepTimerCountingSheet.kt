@@ -23,8 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.common.util.durationString
-import com.andannn.melodify.feature.common.util.getUiRetainedScope
-import com.andannn.melodify.feature.drawer.DrawerController
 import melodify.feature.common.generated.resources.Res
 import melodify.feature.common.generated.resources.cancel_timer
 import melodify.feature.common.generated.resources.sleep_timer

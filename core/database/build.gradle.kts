@@ -19,7 +19,9 @@ room {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":core:platform"))
             implementation(libs.room.runtime)
+            implementation(libs.okio)
         }
 
         iosMain.dependencies {
@@ -37,6 +39,11 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.androidx.room.testing)
+            implementation(libs.okio)
+        }
+
+        desktopMain.dependencies {
+            implementation(libs.androidx.sqlite.bundled)
         }
     }
 }
@@ -45,4 +52,5 @@ dependencies {
     add("kspAndroid", libs.room.compiler)
     add("kspIosSimulatorArm64", libs.room.compiler)
     add("kspIosArm64", libs.room.compiler)
+    add("kspDesktop", libs.room.compiler)
 }

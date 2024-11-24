@@ -4,10 +4,10 @@ import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.MediaEntity
-import com.andannn.melodify.core.library.mediastore.model.AlbumData
-import com.andannn.melodify.core.library.mediastore.model.ArtistData
-import com.andannn.melodify.core.library.mediastore.model.AudioData
-import com.andannn.melodify.core.library.mediastore.model.GenreData
+import com.andannn.melodify.core.syncer.model.AlbumData
+import com.andannn.melodify.core.syncer.model.ArtistData
+import com.andannn.melodify.core.syncer.model.AudioData
+import com.andannn.melodify.core.syncer.model.GenreData
 
 fun List<AlbumData>.toAlbumEntity(): List<AlbumEntity> = map {
     AlbumEntity(
@@ -50,7 +50,6 @@ fun List<AudioData>.toMediaEntity(): List<MediaEntity> = map {
         album = it.album,
         artist = it.artist,
         genre = it.genre,
-        track = it.track,
         composer = it.composer,
         cdTrackNumber = it.cdTrackNumber,
         discNumber = it.discNumber,

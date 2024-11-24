@@ -1,10 +1,11 @@
 [versions]
 composeLintChecks = "1.4.1"
 firebaseBom = "33.6.0"
+jaudiotagger = "2.0.3"
 kotlinxCollectionsImmutable = "0.3.8"
 ksp = "2.0.21-1.0.26"
 materialColorUtilitiesAndroid = "2.0.0"
-kotlin = "2.0.21"
+kotlin = "2.1.0-RC2"
 androidx-palette = "1.0.0"
 androidxCore = "1.15.0"
 androidxCoreSplashscreen = "1.0.1"
@@ -30,6 +31,11 @@ sqliteBundled = "2.5.0-alpha11"
 uiTooling = "1.7.5"
 coreKtx = "1.6.1"
 kotlinxDatetime = "0.6.1"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+appcompat = "1.7.0"
+material = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -42,6 +48,7 @@ compose-lint-checks = { group = "com.slack.lint.compose", name = "compose-lint-c
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+jaudiotagger = { module = "org:jaudiotagger", version.ref = "jaudiotagger" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
@@ -81,6 +88,7 @@ navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navi
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napierVersion" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtx" }
+kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinxCoroutines" }
 
 # dependecy in build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -88,6 +96,11 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 composeCompiler-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 jetbrainsCompose-gradlePlugin = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "compose-plugin" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

@@ -7,6 +7,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val syncerModule: Module = module {
-    singleOf(::MediaLibrarySyncerImpl).bind(MediaLibrarySyncer::class)
-}
+expect val syncerModule: Module
+//= module {
+//    singleOf(::MediaLibrarySyncerImpl).bind(MediaLibrarySyncer::class)
+//}

@@ -1,7 +1,6 @@
 package com.andannn.melodify.core.syncer
 
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
-import com.andannn.melodify.core.library.mediastore.MediaLibrary
 import io.github.aakira.napier.Napier
 import kotlin.time.measureTime
 
@@ -20,7 +19,7 @@ interface MediaLibrarySyncer {
 }
 
 internal class MediaLibrarySyncerImpl(
-    private val mediaLibrary: MediaLibrary,
+    private val mediaLibraryScanner: MediaLibraryScanner,
     private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaLibrarySyncer {
     override suspend fun syncMediaLibrary(): Boolean {
@@ -37,7 +36,7 @@ internal class MediaLibrarySyncerImpl(
 
     private suspend fun syncMediaLibraryInternal(): Boolean {
         try {
-            val mediaData = mediaLibrary.getMediaData()
+            val mediaData = mediaLibraryScanner.scanMediaData()
 
             mediaLibraryDao.clearAndInsertLibrary(
                 mediaData.albumData.toAlbumEntity(),

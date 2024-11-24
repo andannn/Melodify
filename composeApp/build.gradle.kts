@@ -1,3 +1,5 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+
 plugins {
     id("melodify.kmp.application")
     id("melodify.compose.multiplatform.application")
@@ -10,6 +12,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:data"))
             implementation(project(":core:syncer"))
+            implementation(project(":core:platform"))
 
             implementation(project(":feature:common"))
             implementation(project(":feature:drawer"))
@@ -36,6 +39,11 @@ kotlin {
             implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.analytics)
             implementation(libs.firebase.crashlytics)
+        }
+
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
         }
     }
 }
@@ -80,6 +88,18 @@ android {
             )
 
             signingConfig = signingConfigs.getByName("release")
+        }
+    }
+}
+
+compose.desktop {
+    application {
+        mainClass = "com.andannn.melodify.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "com.andannn.melodify"
+            packageVersion = "1.0.0"
         }
     }
 }

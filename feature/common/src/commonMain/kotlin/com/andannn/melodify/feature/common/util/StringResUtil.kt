@@ -55,5 +55,3 @@ fun getCategoryResource(category: CustomTab): String {
         is CustomTab.PlayListDetail -> category.label
     }
 }
-
-expect fun formatTime(minutes: Long, seconds: Int): String

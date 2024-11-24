@@ -5,8 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 
 // ./gradlew core:database:connectedAndroidTest
 
-actual val dummyDatabase: MelodifyDataBase
-    get() = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            MelodifyDataBase::class.java
-        ).allowMainThreadQueries().build()
+internal actual fun createInMemoryDatabase() = Room.inMemoryDatabaseBuilder(
+    ApplicationProvider.getApplicationContext(),
+    MelodifyDataBase::class.java
+).allowMainThreadQueries().build()

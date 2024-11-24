@@ -31,8 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.core.platform.formatTime
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
-import com.andannn.melodify.feature.common.util.formatTime
 import io.github.aakira.napier.Napier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.math.roundToInt

@@ -21,10 +21,21 @@ fun Project.configureKotlinMultiplatform(
                     sourceSetTree.set(KotlinSourceSetTree.test)
                 }
             }
+
+            // share code in android and desktop
+            applyDefaultHierarchyTemplate {
+                common {
+                    group("jvm") {
+                        withJvm()
+                        withAndroidTarget()
+                    }
+                }
+            }
         }
 
+        jvm("desktop")
+
         listOf(
-            iosX64(),
             iosArm64(),
             iosSimulatorArm64()
         ).forEach { iosTarget ->

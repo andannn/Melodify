@@ -9,7 +9,10 @@ android {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":core:platform"))
+
             implementation(libs.datastore)
+            implementation(libs.okio)
             implementation(libs.datastore.preferences)
         }
 
