@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.syncer.model.MediaDataModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -15,7 +16,30 @@ import kotlinx.coroutines.withContext
 
 class MediaLibraryScannerImpl(
     private val app: Application,
+    private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaLibraryScanner {
+
+    override suspend fun scanMediaDataAndSyncDatabase(): Unit = coroutineScope {
+        val musicDataDeferred = async { getAllMusicData() }
+        val albumDataDeferred = async { getAllAlbumData() }
+        val artistDataDeferred = async { getAllArtistData() }
+        val genreDataDeferred = async { getAllGenreData() }
+
+        val mediaData = MediaDataModel(
+            audioData = musicDataDeferred.await(),
+            albumData = albumDataDeferred.await(),
+            artistData = artistDataDeferred.await(),
+            genreData = genreDataDeferred.await(),
+        )
+
+        mediaLibraryDao.clearAndInsertLibrary(
+            mediaData.albumData.toAlbumEntity(),
+            mediaData.artistData.toArtistEntity(),
+            mediaData.genreData.toGenreEntity(),
+            mediaData.audioData.toMediaEntity(),
+        )
+    }
+
     private suspend fun getAllMusicData() =
         app.contentResolver.query2(
             uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -43,20 +67,6 @@ class MediaLibraryScannerImpl(
         )?.use { cursor ->
             parseGenreInfoCursor(cursor)
         } ?: emptyList()
-
-    override suspend fun scanMediaData() = coroutineScope {
-        val musicDataDeferred = async { getAllMusicData() }
-        val albumDataDeferred = async { getAllAlbumData() }
-        val artistDataDeferred = async { getAllArtistData() }
-        val genreDataDeferred = async { getAllGenreData() }
-
-        MediaDataModel(
-            audioData = musicDataDeferred.await(),
-            albumData = albumDataDeferred.await(),
-            artistData = artistDataDeferred.await(),
-            genreData = genreDataDeferred.await(),
-        )
-    }
 
     private fun parseGenreInfoCursor(cursor: Cursor): List<com.andannn.melodify.core.syncer.model.GenreData> {
         val itemList = mutableListOf<com.andannn.melodify.core.syncer.model.GenreData>()
@@ -92,7 +102,6 @@ class MediaLibraryScannerImpl(
         val numTracksIndex = cursor.getColumnIndex(MediaStore.Audio.Media.NUM_TRACKS)
         val bitrateIndex = cursor.getColumnIndex(MediaStore.Audio.Media.BITRATE)
         val yearIndex = cursor.getColumnIndex(MediaStore.Audio.Media.YEAR)
-        val trackIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TRACK)
         val composerIndex = cursor.getColumnIndex(MediaStore.Audio.Media.COMPOSER)
         val genreIndex = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             cursor.getColumnIndex(MediaStore.Audio.Media.GENRE)
