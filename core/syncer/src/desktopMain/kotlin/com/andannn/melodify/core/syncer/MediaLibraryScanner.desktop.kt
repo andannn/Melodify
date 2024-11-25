@@ -23,16 +23,17 @@ class MediaLibraryScannerImpl(
     private val mediaLibraryDao: MediaLibraryDao,
     private val userSettingPreferences: UserSettingPreferences,
 ) : MediaLibraryScanner {
-    override suspend fun scanMediaData(): MediaDataModel {
+    override suspend fun scanMediaDataAndSyncDatabase() {
 
         // 1: Get All media from database
         // 2: Scan all files in library path and generated Key (generate hash from file path and last modify date).
         // 3: Loop through all files in library path and create new media data list. rules:
         //      - If key exist in db, map db entity to AudioData (skip extract metadata).
         //      - If id not exist in db. extract metadata from file and create new AudioData
-        // 4: Group album from created AudioData list
+        // 4: Group album from created AlbumData list
         // 5: Group artist from created AudioData list
-        // 6: Group genre from created AudioData list
+        // 6: Group genre from created GenreData list
+        // 7: Insert all data to database.
 
         val allMediaEntity = mediaLibraryDao.getAllMediaFlow().first()
         val mediaInDb = allMediaEntity.associateBy { it.id }
@@ -40,9 +41,10 @@ class MediaLibraryScannerImpl(
 // TODO Get Path from DataStore after implement library path setting feature.
 //        val libraryPathSet = userSettingPreferences.userDate.first().libraryPath
         val libraryPathSet = setOf(
-            "/mnt/chromeos/MyFiles/Shared"
+            "/Users/jiangqn/Documents"
         )
 
+// TODO: Scan file in worker thread.
         val audioFileWithLastModifyDateList = scanAllLibraryAudioFile(libraryPathSet)
 
         Napier.d(tag = TAG) { "scanMediaData: ${audioFileWithLastModifyDateList.size} files found" }
@@ -119,15 +121,21 @@ class MediaLibraryScannerImpl(
             )
         }
 
-        return MediaDataModel(
+        val mediaData = MediaDataModel(
             audioData = audioDataListWitId,
             albumData = albumDataList,
             artistData = artistDataList,
             genreData = genreDataList,
         )
+
+// TODO: Incremental comparison and insertion into the database, deleting outdated data.
+        mediaLibraryDao.clearAndInsertLibrary(
+            mediaData.albumData.toAlbumEntity(),
+            mediaData.artistData.toArtistEntity(),
+            mediaData.genreData.toGenreEntity(),
+            mediaData.audioData.toMediaEntity(),
+        )
     }
-
-
 }
 
 private fun MediaEntity.toAudioData() = AudioData(
