@@ -43,5 +43,16 @@ jvmMain可以在android端和desktop端共享。
 
 ### 项目架构
 
+<img src="screenshot/dependency-graph-my-generator.png" width="400" />
 
+ - `composeApp` 应用入口
+ - `:core:data` 数据层， 负责给UI层提供数据， 接受UI层的操作Event
+ - `:core:syncer` 扫描媒体库并同步数据库
+ - `:core:platform` 提供平台相关的信息
+ - `:core:database` 数据库相关， 使用了Room
+ - `:core:network` 网络相关， 使用了Ktor Client
+ - `:core:player` 播放器相关， Android侧使用了ExoPlayer， Desktop目前没实装
+ - `:core:datastore` 存储用户设置，使用了DataStore。
+ - `:feature:common` 通用的UI组件, 主题颜色等
+ - `:feature:**` 具体的功能模块 
 
