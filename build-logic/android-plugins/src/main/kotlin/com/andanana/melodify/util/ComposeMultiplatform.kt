@@ -34,6 +34,12 @@ fun Project.configureComposeMultiplatform(
                 implementation(compose.materialIconsExtended)
                 implementation(compose.components.uiToolingPreview)
             }
+
+            val desktopMain = getByName("desktopMain")
+            desktopMain.dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(compose.desktop.common)
+            }
         }
     }
 }

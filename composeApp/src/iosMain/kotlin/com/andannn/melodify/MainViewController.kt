@@ -11,7 +11,6 @@ import com.andannn.melodify.feature.drawer.DrawerControllerImpl
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.core.context.startKoin
-import org.koin.core.module.dsl.scopedOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -45,7 +44,7 @@ fun MainViewController() = ComposeUIViewController(
 
     Napier.d("Permission granted: $permissionGranted")
     if (permissionGranted) {
-        MelodifyApp()
+        MelodifyMobileApp()
     }
 }
 

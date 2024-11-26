@@ -49,16 +49,15 @@ import com.andannn.melodify.feature.common.util.getCategoryResource
 import com.andannn.melodify.feature.common.util.rememberSwapListState
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
 import sh.calvin.reorderable.ReorderableItem
 
 @Composable
 internal fun CustomTabSettingScreen(
-    viewModel: CustomTabSettingViewModel = koinViewModel(),
+    stateHolder: CustomTabSettingViewStateHolder = rememberCustomTabSettingViewStateHolder(),
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by stateHolder.state.collectAsState()
 
     when (state) {
         is UiState.Loading -> {}
@@ -67,7 +66,7 @@ internal fun CustomTabSettingScreen(
                 modifier = modifier,
                 state = state as UiState.Ready,
                 onBackPressed = onBackPressed,
-                onEvent = viewModel::onEvent
+                onEvent = stateHolder::onEvent
             )
         }
     }

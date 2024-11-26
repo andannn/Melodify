@@ -1,12 +1,15 @@
 package com.andannn.melodify.feature.customtab
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.repository.DefaultCustomTabs
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,25 +25,49 @@ import melodify.feature.common.generated.resources.genre_title
 import melodify.feature.common.generated.resources.home
 import melodify.feature.common.generated.resources.playlist_page_title
 import org.jetbrains.compose.resources.StringResource
+import org.koin.compose.getKoin
 
-internal sealed interface UiEvent {
+@Composable
+fun rememberCustomTabSettingViewStateHolder(
+    playListRepository: PlayListRepository = getKoin().get<PlayListRepository>(),
+    contentRepository: MediaContentRepository = getKoin().get<MediaContentRepository>(),
+    userPreferenceRepository: UserPreferenceRepository = getKoin().get<UserPreferenceRepository>(),
+    scope: CoroutineScope = rememberCoroutineScope(),
+) = remember(
+    playListRepository,
+    contentRepository,
+    userPreferenceRepository
+) {
+    CustomTabSettingViewStateHolder(
+        playListRepository,
+        contentRepository,
+        userPreferenceRepository,
+        scope,
+    )
+}
+
+sealed interface UiEvent {
     data class OnSelectedChange(val tab: CustomTab, val isSelected: Boolean) : UiEvent
     data class OnUpdateTabs(val newTabs: List<CustomTab>) : UiEvent
     data object OnResetClick : UiEvent
 }
 
-internal class CustomTabSettingViewModel(
+private const val TAG = "CustomTabSettingViewState"
+
+class CustomTabSettingViewStateHolder(
     private val playListRepository: PlayListRepository,
     private val contentRepository: MediaContentRepository,
-    private val userPreferenceRepository: UserPreferenceRepository
-) : ViewModel() {
+    private val userPreferenceRepository: UserPreferenceRepository,
+    scope: CoroutineScope
+) : CoroutineScope by scope {
 
     private val _state = MutableStateFlow<UiState>(UiState.Loading)
 
     val state = _state.asStateFlow()
 
     init {
-        viewModelScope.launch {
+        launch {
+            Napier.d(tag = TAG) { "CustomTabSettingViewStateHolder init ${this.hashCode()}" }
             _state.update {
                 getInitialState()
             }
@@ -58,14 +85,14 @@ internal class CustomTabSettingViewModel(
         }
     }
 
-    internal fun onEvent(event: UiEvent) {
+    fun onEvent(event: UiEvent) {
         val state = _state.value
         if (state !is UiState.Ready) return
 
         when (event) {
             is UiEvent.OnSelectedChange -> {
                 val (tab, selected) = event
-                viewModelScope.launch {
+                launch {
                     if (selected) {
                         userPreferenceRepository.updateCurrentCustomTabs(
                             state.currentTabs + tab
@@ -79,7 +106,7 @@ internal class CustomTabSettingViewModel(
             }
 
             is UiEvent.OnUpdateTabs -> {
-                viewModelScope.launch {
+                launch {
                     userPreferenceRepository.updateCurrentCustomTabs(
                         event.newTabs
                     )
@@ -87,7 +114,7 @@ internal class CustomTabSettingViewModel(
             }
 
             UiEvent.OnResetClick -> {
-                viewModelScope.launch {
+                launch {
                     userPreferenceRepository.updateCurrentCustomTabs(
                         DefaultCustomTabs.customTabs
                     )
@@ -176,7 +203,7 @@ internal class CustomTabSettingViewModel(
     }
 }
 
-internal sealed interface UiState {
+sealed interface UiState {
     data object Loading : UiState
 
     data class Ready(
@@ -185,7 +212,7 @@ internal sealed interface UiState {
     ) : UiState
 }
 
-internal data class TabSector(
+data class TabSector(
     val sectorTitle: StringResource,
     val sectorContent: List<CustomTab>
 )

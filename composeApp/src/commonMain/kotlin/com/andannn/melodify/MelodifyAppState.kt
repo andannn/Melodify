@@ -1,7 +1,10 @@
 package com.andannn.melodify
 
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -29,16 +32,19 @@ fun rememberAppState(
         ?: getKoin().get<DrawerController>(),
     messageController: MessageController = retainedScope?.get<MessageController>()
         ?: getKoin().get<MessageController>(),
-    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
 ) = remember(
     navController,
     drawerController,
     scope,
     messageController,
-    snackBarHostState
+    snackBarHostState,
+    drawerState,
 ) {
     MelodifyAppState(
         scope = scope,
+        drawerState = drawerState,
         navController = navController,
         drawerController = drawerController,
         messageController = messageController,
@@ -52,8 +58,9 @@ class MelodifyAppState(
     val scope: CoroutineScope,
     val navController: NavHostController,
     val drawerController: DrawerController,
+    val snackBarHostState: SnackbarHostState,
+    val drawerState: DrawerState,
     private val messageController: MessageController,
-    val snackBarHostState: SnackbarHostState
 ) {
     init {
         scope.launch {

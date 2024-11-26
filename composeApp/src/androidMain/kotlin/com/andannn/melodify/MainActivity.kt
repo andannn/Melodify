@@ -174,7 +174,7 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
 
                     MainUiState.Ready -> {
                         if (permissionGranted) {
-                            MelodifyApp()
+                            MelodifyMobileApp()
                         }
                     }
 
