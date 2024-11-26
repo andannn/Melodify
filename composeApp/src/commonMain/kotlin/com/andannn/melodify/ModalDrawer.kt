@@ -11,6 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import com.andannn.melodify.feature.customtab.rememberCustomTabSettingViewStateHolder
+import io.github.aakira.napier.Napier
+
+private const val TAG = "ModalDrawer"
 
 @Composable
 fun ModalDrawer(
@@ -23,6 +26,7 @@ fun ModalDrawer(
         modifier = modifier,
         drawerState = drawerState,
         drawerContent = {
+            Napier.d(tag = TAG) { "Drawer initialized" }
             val stateHolder = rememberCustomTabSettingViewStateHolder()
             stateHolder.state.collectAsState()
             ModalDrawerSheet(

@@ -3,20 +3,16 @@ package com.andannn.melodify.feature.customtab
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.repository.DefaultCustomTabs
 import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
-import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.repository.DefaultCustomTabs
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import melodify.feature.common.generated.resources.Res
 import melodify.feature.common.generated.resources.album_page_title
@@ -61,33 +57,85 @@ class CustomTabSettingViewStateHolder(
     scope: CoroutineScope
 ) : CoroutineScope by scope {
 
-    private val _state = MutableStateFlow<UiState>(UiState.Loading)
+    val state = combine(
+        userPreferenceRepository.currentCustomTabsFlow,
+        contentRepository.getAllAlbumsFlow(),
+        contentRepository.getAllArtistFlow(),
+        contentRepository.getAllGenreFlow(),
+        playListRepository.getAllPlayListFlow(),
+    ) { tabs, albums, artists, genre, playlist ->
+        TabUiState(
+            currentTabs = tabs,
+            allAvailableTabSectors = mutableListOf<TabSector>()
+                .apply {
+                    add(
+                        TabSector(
+                            Res.string.home,
+                            listOf(
+                                CustomTab.AllMusic,
+                                CustomTab.AllPlayList,
+                                CustomTab.AllAlbum,
+                                CustomTab.AllArtist,
+                                CustomTab.AllGenre,
+                            )
+                        )
+                    )
 
-    val state = _state.asStateFlow()
+
+                    val albumTabs = albums.map {
+                        CustomTab.AlbumDetail(it.id, it.name)
+                    }
+                    add(
+                        TabSector(
+                            Res.string.album_page_title,
+                            albumTabs
+                        )
+                    )
+
+                    val playListTabs = playlist.map {
+                        CustomTab.PlayListDetail(it.id, it.name)
+                    }
+                    add(
+                        TabSector(
+                            Res.string.playlist_page_title,
+                            playListTabs
+                        )
+                    )
+
+                    val artistTabs = artists.map {
+                        CustomTab.ArtistDetail(it.id, it.name)
+                    }
+                    add(
+                        TabSector(
+                            Res.string.artist_page_title,
+                            artistTabs
+                        )
+                    )
+
+                    val genreTabs = genre.map {
+                        CustomTab.GenreDetail(it.id, it.name)
+                    }
+                    add(
+                        TabSector(
+                            Res.string.genre_title,
+                            genreTabs
+                        )
+                    )
+                }
+                .toList()
+        )
+    }.stateIn(scope = scope, SharingStarted.WhileSubscribed(), TabUiState())
+
 
     init {
         launch {
             Napier.d(tag = TAG) { "CustomTabSettingViewStateHolder init ${this.hashCode()}" }
-            _state.update {
-                getInitialState()
-            }
 
-            userPreferenceRepository.currentCustomTabsFlow
-                .distinctUntilChanged()
-                .collect { currentTabs ->
-                    _state.update {
-                        if (it !is UiState.Ready) return@update it
-                        it.copy(
-                            currentTabs = currentTabs
-                        )
-                    }
-                }
         }
     }
 
     fun onEvent(event: UiEvent) {
-        val state = _state.value
-        if (state !is UiState.Ready) return
+        val state = state.value
 
         when (event) {
             is UiEvent.OnSelectedChange -> {
@@ -122,95 +170,12 @@ class CustomTabSettingViewStateHolder(
             }
         }
     }
-
-    private suspend fun getInitialState() = coroutineScope {
-        val currentSettingDeferred = async {
-            userPreferenceRepository.currentCustomTabsFlow.first()
-        }
-        val albumsDeferred = async {
-            contentRepository.getAllAlbumsFlow().first()
-        }
-        val allArtistDeferred = async {
-            contentRepository.getAllArtistFlow().first()
-        }
-        val allGenreDeferred = async {
-            contentRepository.getAllGenreFlow().first()
-        }
-        val allPlayListDeferred = async {
-            playListRepository.getAllPlayListFlow().first()
-        }
-
-        UiState.Ready(
-            currentTabs = currentSettingDeferred.await(),
-            allAvailableTabSectors = mutableListOf<TabSector>()
-                .apply {
-                    add(
-                        TabSector(
-                            Res.string.home,
-                            listOf(
-                                CustomTab.AllMusic,
-                                CustomTab.AllPlayList,
-                                CustomTab.AllAlbum,
-                                CustomTab.AllArtist,
-                                CustomTab.AllGenre,
-                            )
-                        )
-                    )
-
-
-                    val albumTabs = albumsDeferred.await().map {
-                        CustomTab.AlbumDetail(it.id, it.name)
-                    }
-                    add(
-                        TabSector(
-                            Res.string.album_page_title,
-                            albumTabs
-                        )
-                    )
-
-                    val playListTabs = allPlayListDeferred.await().map {
-                        CustomTab.PlayListDetail(it.id, it.name)
-                    }
-                    add(
-                        TabSector(
-                            Res.string.playlist_page_title,
-                            playListTabs
-                        )
-                    )
-
-                    val artistTabs = allArtistDeferred.await().map {
-                        CustomTab.ArtistDetail(it.id, it.name)
-                    }
-                    add(
-                        TabSector(
-                            Res.string.artist_page_title,
-                            artistTabs
-                        )
-                    )
-
-                    val genreTabs = allGenreDeferred.await().map {
-                        CustomTab.GenreDetail(it.id, it.name)
-                    }
-                    add(
-                        TabSector(
-                            Res.string.genre_title,
-                            genreTabs
-                        )
-                    )
-                }
-                .toList()
-        )
-    }
 }
 
-sealed interface UiState {
-    data object Loading : UiState
-
-    data class Ready(
-        val currentTabs: List<CustomTab> = emptyList(),
-        val allAvailableTabSectors: List<TabSector> = emptyList(),
-    ) : UiState
-}
+data class TabUiState(
+    val currentTabs: List<CustomTab> = emptyList(),
+    val allAvailableTabSectors: List<TabSector> = emptyList(),
+)
 
 data class TabSector(
     val sectorTitle: StringResource,

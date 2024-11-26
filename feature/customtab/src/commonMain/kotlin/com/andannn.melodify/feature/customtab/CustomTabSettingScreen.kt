@@ -59,23 +59,18 @@ internal fun CustomTabSettingScreen(
 ) {
     val state by stateHolder.state.collectAsState()
 
-    when (state) {
-        is UiState.Loading -> {}
-        is UiState.Ready -> {
-            CustomTabSettingContent(
-                modifier = modifier,
-                state = state as UiState.Ready,
-                onBackPressed = onBackPressed,
-                onEvent = stateHolder::onEvent
-            )
-        }
-    }
+    CustomTabSettingContent(
+        modifier = modifier,
+        state = state,
+        onBackPressed = onBackPressed,
+        onEvent = stateHolder::onEvent
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 internal fun CustomTabSettingContent(
-    state: UiState.Ready,
+    state: TabUiState,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit = {},
     onEvent: (UiEvent) -> Unit = {}
