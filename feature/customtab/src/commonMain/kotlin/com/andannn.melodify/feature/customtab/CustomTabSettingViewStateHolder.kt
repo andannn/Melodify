@@ -8,7 +8,6 @@ import com.andannn.melodify.core.data.repository.DefaultCustomTabs
 import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -18,7 +17,6 @@ import melodify.feature.common.generated.resources.Res
 import melodify.feature.common.generated.resources.album_page_title
 import melodify.feature.common.generated.resources.artist_page_title
 import melodify.feature.common.generated.resources.genre_title
-import melodify.feature.common.generated.resources.home
 import melodify.feature.common.generated.resources.playlist_page_title
 import org.jetbrains.compose.resources.StringResource
 import org.koin.compose.getKoin
@@ -68,18 +66,18 @@ class CustomTabSettingViewStateHolder(
             currentTabs = tabs,
             allAvailableTabSectors = mutableListOf<TabSector>()
                 .apply {
-                    add(
-                        TabSector(
-                            Res.string.home,
-                            listOf(
-                                CustomTab.AllMusic,
-                                CustomTab.AllPlayList,
-                                CustomTab.AllAlbum,
-                                CustomTab.AllArtist,
-                                CustomTab.AllGenre,
-                            )
-                        )
-                    )
+//                    add(
+//                        TabSector(
+//                            Res.string.home,
+//                            listOf(
+//                                CustomTab.AllMusic,
+//                                CustomTab.AllPlayList,
+//                                CustomTab.AllAlbum,
+//                                CustomTab.AllArtist,
+//                                CustomTab.AllGenre,
+//                            )
+//                        )
+//                    )
 
 
                     val albumTabs = albums.map {
@@ -126,13 +124,6 @@ class CustomTabSettingViewStateHolder(
         )
     }.stateIn(scope = scope, SharingStarted.WhileSubscribed(), TabUiState())
 
-
-    init {
-        launch {
-            Napier.d(tag = TAG) { "CustomTabSettingViewStateHolder init ${this.hashCode()}" }
-
-        }
-    }
 
     fun onEvent(event: UiEvent) {
         val state = state.value

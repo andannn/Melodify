@@ -40,7 +40,7 @@ class MediaLibraryScannerImpl(
 // TODO Get Path from DataStore after implement library path setting feature.
 //        val libraryPathSet = userSettingPreferences.userDate.first().libraryPath
         val libraryPathSet = setOf(
-            "/mnt/chromeos/MyFiles/Shared"
+            "/Volumes/PS2000/Music"
         )
 
         val audioFileWithLastModifyDateList = scanAllLibraryAudioFile(libraryPathSet)

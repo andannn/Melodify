@@ -31,6 +31,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -46,18 +48,20 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.AlbumItemModel
-import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
-import com.andannn.melodify.feature.common.component.LargePreviewCard
-import com.andannn.melodify.feature.common.component.ListTileItemView
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.MediaListSource
 import com.andannn.melodify.core.data.model.MediaPreviewMode
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.browsableOrPlayable
 import com.andannn.melodify.core.data.model.key
+import com.andannn.melodify.core.platform.Desktop
+import com.andannn.melodify.core.platform.PlatformInfo
 import com.andannn.melodify.feature.common.component.ExtraPaddingBottom
+import com.andannn.melodify.feature.common.component.LargePreviewCard
+import com.andannn.melodify.feature.common.component.ListTileItemView
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.common.util.getCategoryResource
 import com.andannn.melodify.feature.common.util.getUiRetainedScope
@@ -69,6 +73,7 @@ import melodify.feature.common.generated.resources.Res
 import melodify.feature.common.generated.resources.track_count
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.getKoin
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.core.scope.Scope
@@ -83,8 +88,8 @@ fun HomeRoute(
             scope?.get<MessageController>(),
         )
     },
-    onNavigateToPlayList: (id: String, source: MediaListSource) -> Unit,
-    onNavigateCustomTabSetting: () -> Unit,
+    onNavigateToPlayList: (id: String, source: MediaListSource) -> Unit = { _, _ -> },
+    onNavigateCustomTabSetting: () -> Unit = {},
 ) {
     fun onMediaItemClick(mediaItem: MediaItemModel) {
         when (mediaItem) {
@@ -131,8 +136,6 @@ private fun HomeScreen(
     onEvent: (HomeUiEvent) -> Unit = {},
 ) {
     val uiState by rememberUpdatedState(state)
-    val categories by rememberUpdatedState(state.customTabList)
-    val selectedIndex by rememberUpdatedState(state.selectedIndex)
 
     val scrollBehavior = enterAlwaysScrollBehavior()
     Scaffold(
@@ -158,89 +161,110 @@ private fun HomeScreen(
             )
         },
     ) { padding ->
-        Column(
-            modifier =
-            Modifier
-                .padding(padding)
+        HomeUiContent(
+            modifier = Modifier.padding(padding)
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .fillMaxSize(),
-        ) {
-            if (categories.isNotEmpty()) {
-                ScrollableTabRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    selectedTabIndex = selectedIndex,
-                ) {
-                    categories.forEachIndexed { index, item ->
-                        Tab(
-                            selected = index == selectedIndex,
-                            selectedContentColor = MaterialTheme.colorScheme.primary,
-                            unselectedContentColor = MaterialTheme.colorScheme.onSurface,
-                            text = @Composable {
-                                Text(
-                                    text = getCategoryResource(item),
-                                )
-                            },
-                            onClick = {
-                                onEvent(HomeUiEvent.OnSelectedCategoryChanged(index))
-                            },
-                        )
-                    }
+            uiState = uiState,
+            onMediaItemClick = onMediaItemClick,
+            onEvent = onEvent,
+        )
+    }
+}
+
+@Composable
+fun HomeUiContent(
+    modifier: Modifier = Modifier,
+    uiState: HomeUiState,
+    onMediaItemClick: (MediaItemModel) -> Unit = {},
+    onEvent: (HomeUiEvent) -> Unit = {},
+) {
+    val tabs by rememberUpdatedState(uiState.customTabList)
+    val selectedIndex by rememberUpdatedState(uiState.selectedIndex)
+    Column(
+        modifier = modifier
+    ) {
+        if (tabs.isNotEmpty()) {
+            ScrollableTabRow(
+                modifier = Modifier.fillMaxWidth(),
+                selectedTabIndex = selectedIndex,
+                indicator =
+                @Composable { tabPositions ->
+                    TabRowDefaults.SecondaryIndicator(
+                        Modifier.tabIndicatorOffset(tabPositions.getOrElse(selectedIndex) { tabPositions.last() })
+                    )
+                },
+            ) {
+                tabs.forEachIndexed { index, item ->
+                    Tab(
+                        selected = index == selectedIndex,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                        text = @Composable {
+                            Text(
+                                text = getCategoryResource(item),
+                            )
+                        },
+                        onClick = {
+                            onEvent(HomeUiEvent.OnSelectedCategoryChanged(index))
+                        },
+                    )
                 }
             }
+        }
 
-            val mediaItems by rememberUpdatedState(uiState.mediaItems)
-            val previewMode by rememberUpdatedState(uiState.previewMode)
+        val mediaItems by rememberUpdatedState(uiState.mediaItems)
+        val previewMode by rememberUpdatedState(uiState.previewMode)
 
-            when (previewMode) {
-                MediaPreviewMode.GRID_PREVIEW -> {
-                    val gridLayoutState =
-                        rememberSaveable(selectedIndex, saver = LazyGridState.Saver) {
-                            LazyGridState()
-                        }
-                    LazyGridContent(
-                        state = gridLayoutState,
-                        modifier =
-                        Modifier.fillMaxSize(),
-                        layoutToggleButton = {
-                            LayoutToggleButton(
-                                previewMode = previewMode,
-                                onClick = {
-                                    onEvent(HomeUiEvent.OnTogglePreviewMode)
-                                }
-                            )
-                        },
-                        mediaItems = mediaItems,
-                        onClick = onMediaItemClick,
-                        onLongPress = {
-                            onEvent(HomeUiEvent.OnShowItemOption(it))
-                        }
-                    )
-                }
+        when (previewMode) {
+            MediaPreviewMode.GRID_PREVIEW -> {
+                val gridLayoutState =
+                    rememberSaveable(selectedIndex, saver = LazyGridState.Saver) {
+                        LazyGridState()
+                    }
+                LazyGridContent(
+                    state = gridLayoutState,
+                    modifier =
+                    Modifier.fillMaxSize(),
+                    layoutToggleButton = {
+                        LayoutToggleButton(
+                            previewMode = previewMode,
+                            onClick = {
+                                onEvent(HomeUiEvent.OnTogglePreviewMode)
+                            }
+                        )
+                    },
+                    mediaItems = mediaItems,
+                    onClick = onMediaItemClick,
+                    onLongPress = {
+                        onEvent(HomeUiEvent.OnShowItemOption(it))
+                    }
+                )
+            }
 
-                MediaPreviewMode.LIST_PREVIEW -> {
-                    val listLayoutState =
-                        rememberSaveable(selectedIndex, saver = LazyListState.Saver) {
-                            LazyListState()
-                        }
-                    LazyListContent(
-                        modifier =
-                        Modifier.fillMaxSize(),
-                        state = listLayoutState,
-                        layoutToggleButton = {
-                            LayoutToggleButton(
-                                previewMode = previewMode,
-                                onClick = {
-                                    onEvent(HomeUiEvent.OnTogglePreviewMode)
-                                }
-                            )
-                        },
-                        mediaItems = mediaItems,
-                        onMusicItemClick = onMediaItemClick,
-                        onShowMusicItemOption = {
-                            onEvent(HomeUiEvent.OnShowItemOption(it))
-                        }
-                    )
-                }
+            MediaPreviewMode.LIST_PREVIEW -> {
+                val listLayoutState =
+                    rememberSaveable(selectedIndex, saver = LazyListState.Saver) {
+                        LazyListState()
+                    }
+                LazyListContent(
+                    modifier =
+                    Modifier.fillMaxSize(),
+                    state = listLayoutState,
+                    layoutToggleButton = {
+                        LayoutToggleButton(
+                            previewMode = previewMode,
+                            onClick = {
+                                onEvent(HomeUiEvent.OnTogglePreviewMode)
+                            }
+                        )
+                    },
+                    mediaItems = mediaItems,
+                    onMusicItemClick = onMediaItemClick,
+                    onShowMusicItemOption = {
+                        onEvent(HomeUiEvent.OnShowItemOption(it))
+                    }
+                )
             }
         }
     }
@@ -303,7 +327,9 @@ private fun <T : MediaItemModel> LazyListContent(
         contentPadding = PaddingValues(horizontal = 5.dp),
     ) {
         item {
-            layoutToggleButton()
+            if (getKoin().get<PlatformInfo>().platform !is Desktop) {
+                layoutToggleButton()
+            }
         }
         items(
             items = mediaItems,
