@@ -47,26 +47,14 @@ internal fun MiniPlayerLayout(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(
+        PlayingInfo(
             modifier =
             Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            verticalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                text = titleState.value,
-                maxLines = 1,
-                style = MaterialTheme.typography.bodyLarge,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Spacer(modifier = Modifier.height(3.dp))
-            Text(
-                text = artistState.value,
-                maxLines = 1,
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
+            title = titleState.value,
+            artist = artistState.value
+        )
         IconButton(
             modifier =
             Modifier
@@ -110,5 +98,30 @@ internal fun MiniPlayerLayout(
             },
         )
         Spacer(modifier = Modifier.width(10.dp))
+    }
+}
+
+@Composable
+internal fun PlayingInfo(
+    modifier: Modifier = Modifier,
+    title: String,
+    artist: String
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = title,
+            maxLines = 1,
+            style = MaterialTheme.typography.bodyLarge,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Spacer(modifier = Modifier.height(3.dp))
+        Text(
+            text = artist,
+            maxLines = 1,
+            style = MaterialTheme.typography.bodySmall,
+        )
     }
 }

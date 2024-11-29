@@ -17,7 +17,6 @@ import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -26,6 +25,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -61,6 +61,39 @@ class HomeViewModel(
             selectedIndex = selectedIndex.coerceAtMost(customTabs.size - 1),
             customTabList = customTabs
         )
+    }
+
+    init {
+        // Ensure selected index is valid
+        viewModelScope.launch {
+            _currentCustomTabsFlow
+                .scan<List<CustomTab>, Pair<List<CustomTab>?, List<CustomTab>?>>(null to null) { pre, next ->
+                    pre.second to next
+                }
+                .collect { (pre, next) ->
+                    if (pre == null || next == null) {
+                        return@collect
+                    }
+
+                    val currentIndex = _selectedTabIndexFlow.value
+
+                    val newIndex: Int = if (next.size < pre.size) {
+                        // new tab list is smaller than the previous one.
+                        // 1. select the previous tab
+                        // 2. if the current tab is removed, select the previous tab
+                        next.indexOf(pre.getOrNull(currentIndex))
+                            .takeIf { it != -1 } ?: (currentIndex - 1).coerceAtLeast(0)
+                    } else if (next.size > pre.size) {
+                        // always select the new created tab
+                        next.indexOf(next.firstOrNull { it !in pre })
+                    } else {
+                        next.indexOf(pre.getOrNull(currentIndex))
+                    }
+                    if (newIndex != -1) {
+                        _selectedTabIndexFlow.value = newIndex
+                    }
+                }
+        }
     }
 
     private val _mediaContentFlow = _tabStatusFlow
@@ -102,12 +135,6 @@ class HomeViewModel(
                         CustomTab.PlayListDetail(playList.id, playList.name),
                     )
                 )
-
-                delay(300)
-
-                Napier.d(tag = TAG) { "new playlist created ${state.value.customTabList}" }
-                // navigate to new created playlist
-                _selectedTabIndexFlow.value = state.value.customTabList.size -1
             }
         }
     }

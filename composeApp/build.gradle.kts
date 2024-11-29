@@ -23,7 +23,6 @@ kotlin {
             implementation(project(":feature:home"))
             implementation(project(":feature:player"))
             implementation(project(":feature:customtab"))
-            implementation(project(":feature:playlist"))
 
             implementation(libs.koin.core.viewmodel)
             implementation(libs.koin.compose.viewmodel)
@@ -45,7 +44,6 @@ kotlin {
         }
 
         desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
         }
     }

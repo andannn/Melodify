@@ -13,4 +13,6 @@ class PlatformInfoImpl : PlatformInfo {
         get() = File(System.getProperty("user.home") + "/.melodify/database/").resolve(
             DATABASE_FILE_NAME
         ).toString()
+    override val platform: Platform
+        get() = Desktop
 }

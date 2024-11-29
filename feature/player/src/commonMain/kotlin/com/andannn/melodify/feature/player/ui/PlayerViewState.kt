@@ -56,7 +56,8 @@ internal fun rememberPlayerViewState(
 
 @Stable
 @OptIn(ExperimentalFoundationApi::class)
-internal class PlayerViewState(
+internal class
+PlayerViewState(
     screenSize: Size,
     val navigationBarHeightPx: Int,
     statusBarHeightPx: Float,

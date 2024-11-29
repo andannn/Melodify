@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="home">Home</string>
-    <string name="audio_page_title">Songs</string>
+    <string name="audio_page_title">All Songs</string>
     <string name="album_page_title">Album</string>
     <string name="artist_page_title">Artist</string>
     <string name="playlist_page_title">Play List</string>
@@ -36,4 +36,5 @@
     <string name="new_playlist_dialog_title">Create new playlist</string>
     <string name="new_playlist_dialog_input_hint">Title</string>
     <string name="remove_playlist">Delete playlist</string>
+    <string name="library_title">Library</string>
 </resources>
