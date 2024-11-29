@@ -42,7 +42,6 @@ class MediaLibraryScannerImpl(
 //        val libraryPathSet = userSettingPreferences.userDate.first().libraryPath
         val libraryPathSet = setOf(
             "/Volumes/PS2000/Music",
-            "/Users/jiangqn/Documents"
         )
 
 // TODO: Scan file in worker thread.

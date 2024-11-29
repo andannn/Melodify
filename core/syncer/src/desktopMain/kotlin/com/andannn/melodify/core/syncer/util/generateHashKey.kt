@@ -1,5 +1,16 @@
 package com.andannn.melodify.core.syncer.util
 
-fun generateHashKey(absolutePath: String, lastModifiedDate: Long): Long {
-    return (absolutePath + lastModifiedDate.toString()).hashCode().toLong()
+import java.net.URLEncoder
+import java.nio.file.Paths
+
+fun generateHashKey(absolutePath: String): Long {
+    return (toFileUrl(absolutePath)).hashCode().toLong()
+}
+
+fun toFileUrl(path: String): String {
+    val file = Paths.get(path)
+    val encodedPath = file.joinToString("/") {
+        URLEncoder.encode(it.toString(), "UTF-8").replace("+", "%20")
+    }
+    return "file:///$encodedPath"
 }

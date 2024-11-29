@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.MediaPreviewMode
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.feature.drawer.DrawerController
@@ -35,7 +34,6 @@ sealed interface HomeUiEvent {
     data class OnSelectedCategoryChanged(val tabIndex: Int) : HomeUiEvent
     data class OnMusicItemClick(val mediaItem: AudioItemModel) : HomeUiEvent
     data class OnShowItemOption(val audioItemModel: MediaItemModel) : HomeUiEvent
-    data object OnTogglePreviewMode : HomeUiEvent
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -46,6 +44,7 @@ class HomeViewModel(
 ) : ViewModel() {
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val userPreferenceRepository = repository.userPreferenceRepository
+    private val playerStateMonitoryRepository = repository.playerStateMonitoryRepository
     private val playListRepository = repository.playListRepository
     private val playlistCreatedEventChannel = drawerController.playlistCreatedEventChannel
 
@@ -111,13 +110,13 @@ class HomeViewModel(
     val state = combine(
         _tabStatusFlow,
         _mediaContentFlow,
-        _userSettingFlow,
-    ) { tabStatus, mediaContents, userSetting ->
+        playerStateMonitoryRepository.playingMediaStateFlow,
+    ) { tabStatus, mediaContents, playingItem ->
         HomeUiState(
             selectedIndex = tabStatus.selectedIndex,
             customTabList = tabStatus.customTabList,
             mediaItems = mediaContents.toImmutableList(),
-            previewMode = userSetting.mediaPreviewMode,
+            playingItem = playingItem
         )
     }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), HomeUiState())
@@ -144,13 +143,6 @@ class HomeViewModel(
             is HomeUiEvent.OnSelectedCategoryChanged -> onSelectedCategoryChanged(event.tabIndex)
             is HomeUiEvent.OnMusicItemClick -> playMusic(event.mediaItem)
             is HomeUiEvent.OnShowItemOption -> onShowMusicItemOption(event.audioItemModel)
-            is HomeUiEvent.OnTogglePreviewMode -> onTogglePreviewMode()
-        }
-    }
-
-    private fun onTogglePreviewMode() {
-        viewModelScope.launch {
-            userPreferenceRepository.setPreviewMode(state.value.previewMode.next())
         }
     }
 
@@ -218,7 +210,7 @@ data class HomeUiState(
     val selectedIndex: Int = 0,
     val customTabList: List<CustomTab> = emptyList(),
     val mediaItems: ImmutableList<MediaItemModel> = emptyList<MediaItemModel>().toImmutableList(),
-    val previewMode: MediaPreviewMode = MediaPreviewMode.GRID_PREVIEW,
+    val playingItem: AudioItemModel? = null
 ) {
     val currentTab: CustomTab
         get() = customTabList[selectedIndex]

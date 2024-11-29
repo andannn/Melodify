@@ -1,6 +1,7 @@
 package com.andannn.melodify.core.syncer.util
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -26,11 +27,21 @@ class UtilTest {
     @Test
     fun scan_all_library_audio_file() {
         measureTime {
-            val audioData = scanAllLibraryAudioFile(setOf(
-                "src/desktopTest/"
-            ))
+            val audioData = scanAllLibraryAudioFile(
+                setOf(
+                    "src/desktopTest/"
+                )
+            )
             println(audioData)
             assertNotNull(audioData)
         }.also { println("consumed time: $it") }
+    }
+
+    @Test
+    fun test_to_file_uri() {
+        assertEquals(
+            "file:///Volumes/PS2000/Music/2019.12.31%20%5BRDWL-0030%5D%20%E5%BD%81%20%5BC97%5D/%E5%87%8B%E5%8F%B6%E6%A3%95%20-%20%E5%BD%81.flac",
+            toFileUrl("/Volumes/PS2000/Music/2019.12.31 [RDWL-0030] 彁 [C97]/凋叶棕 - 彁.flac")
+        )
     }
 }

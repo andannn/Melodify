@@ -12,7 +12,7 @@ private const val TAG = "MediaControllerRepository"
 
 internal class FakeMediaControllerRepositoryImpl(
 ) : MediaControllerRepository {
-    override val duration: Long?
+    override val currentDuration: Long?
         get() = 0L
 
     override fun playMediaList(mediaList: List<AudioItemModel>, index: Int) {

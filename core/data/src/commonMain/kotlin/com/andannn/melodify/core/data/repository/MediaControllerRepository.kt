@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlin.time.Duration
 
 interface MediaControllerRepository {
-    val duration: Long?
+    val currentDuration: Long?
 
     fun playMediaList(mediaList: List<AudioItemModel>, index: Int)
 

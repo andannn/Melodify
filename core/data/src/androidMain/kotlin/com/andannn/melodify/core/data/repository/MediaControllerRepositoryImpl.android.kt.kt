@@ -23,7 +23,7 @@ internal class MediaControllerRepositoryImpl(
     private val mediaBrowser
         get() = mediaBrowserManager.mediaBrowser
 
-    override val duration: Long
+    override val currentDuration: Long
         get() = mediaBrowser.duration
 
     override fun playMediaList(mediaList: List<AudioItemModel>, index: Int) {

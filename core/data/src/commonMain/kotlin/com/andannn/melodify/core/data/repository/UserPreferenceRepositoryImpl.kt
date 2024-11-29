@@ -37,10 +37,6 @@ class UserPreferenceRepositoryImpl(
             .getCustomTabsFlow()
             .map { it.mapToCustomTabModel() }
 
-    override suspend fun setPreviewMode(previewMode: MediaPreviewMode) {
-        preferences.setMediaPreviewMode(previewMode.toIntValue())
-    }
-
     override suspend fun updateCurrentCustomTabs(currentCustomTabs: List<CustomTab>) {
         userDataDao.clearAndInsertCustomTabs(
             currentCustomTabs.map { it.toEntity() }
