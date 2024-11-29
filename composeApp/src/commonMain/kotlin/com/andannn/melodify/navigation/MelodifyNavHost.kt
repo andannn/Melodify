@@ -11,8 +11,6 @@ import com.andannn.melodify.feature.home.navigation.homeScreen
 import com.andannn.melodify.feature.message.dialog.Dialog
 import com.andannn.melodify.feature.message.dialog.InteractionResult
 import com.andannn.melodify.feature.message.dialog.melodifyDialog
-import com.andannn.melodify.feature.playList.navigation.navigateToPlayList
-import com.andannn.melodify.feature.playList.navigation.playListScreen
 
 @Composable
 fun MelodifyNavHost(
@@ -27,13 +25,7 @@ fun MelodifyNavHost(
         modifier = modifier,
     ) {
         homeScreen(
-            onNavigateToPlayList = { id, source ->
-                navHostController.navigateToPlayList(id = id, source = source)
-            },
             onNavigateCustomTabSetting = navHostController::navigateToCustomTabSetting
-        )
-        playListScreen(
-            onBackPressed = onBackPressed,
         )
         customTabSetting(
             onBackPressed = onBackPressed

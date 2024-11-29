@@ -52,7 +52,6 @@ import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.MediaListSource
 import com.andannn.melodify.core.data.model.MediaPreviewMode
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.browsableOrPlayable
@@ -88,30 +87,15 @@ fun HomeRoute(
             scope?.get<MessageController>(),
         )
     },
-    onNavigateToPlayList: (id: String, source: MediaListSource) -> Unit = { _, _ -> },
     onNavigateCustomTabSetting: () -> Unit = {},
 ) {
     fun onMediaItemClick(mediaItem: MediaItemModel) {
         when (mediaItem) {
-            is AlbumItemModel -> {
-                onNavigateToPlayList(mediaItem.id, MediaListSource.ALBUM)
-            }
-
-            is ArtistItemModel -> {
-                onNavigateToPlayList(mediaItem.id, MediaListSource.ARTIST)
-            }
-
             is AudioItemModel -> {
                 homeViewModel.onEvent(HomeUiEvent.OnMusicItemClick(mediaItem))
             }
 
-            is GenreItemModel -> {
-                onNavigateToPlayList(mediaItem.id, MediaListSource.GENRE)
-            }
-
-            is PlayListItemModel -> {
-                onNavigateToPlayList(mediaItem.id, MediaListSource.PLAY_LIST)
-            }
+            else -> {}
         }
     }
 
@@ -161,7 +145,7 @@ private fun HomeScreen(
             )
         },
     ) { padding ->
-        HomeUiContent(
+        TabWithContent(
             modifier = Modifier.padding(padding)
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .fillMaxSize(),
@@ -173,7 +157,7 @@ private fun HomeScreen(
 }
 
 @Composable
-fun HomeUiContent(
+fun TabWithContent(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
     onMediaItemClick: (MediaItemModel) -> Unit = {},

@@ -1,11 +1,9 @@
 package com.andannn.melodify
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -18,7 +16,7 @@ import androidx.compose.ui.window.Window
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.feature.customtab.CustomTabSelector
-import com.andannn.melodify.feature.home.HomeUiContent
+import com.andannn.melodify.feature.home.TabWithContent
 import com.andannn.melodify.feature.home.HomeUiEvent
 import com.andannn.melodify.feature.home.HomeViewModel
 import com.andannn.melodify.feature.player.PlayerSector
@@ -59,7 +57,7 @@ fun MainWindowContent(
         Column(
             modifier = Modifier.weight(2f),
         ) {
-            HomeSector(
+            TabWithContentSector(
                 modifier = Modifier.weight(1f)
             )
 
@@ -73,7 +71,7 @@ fun MainWindowContent(
 }
 
 @Composable
-private fun HomeSector(
+private fun TabWithContentSector(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = koinViewModel(),
 ) {
@@ -82,7 +80,7 @@ private fun HomeSector(
     Surface(
         modifier = modifier
     ) {
-        HomeUiContent(
+        TabWithContent(
             modifier = Modifier,
             uiState = state,
             onEvent = homeViewModel::onEvent,
