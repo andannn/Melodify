@@ -26,7 +26,7 @@ internal class PlayerWrapperImpl : PlayerWrapper {
 
     private val _playListFlow = MutableSharedFlow<List<MediaItem>>(1)
 
-    private val playerProgressUpdater: CoroutineTicker = CoroutineTicker(delayMs = 1000 / 30L) {
+    private val playerProgressUpdater: CoroutineTimer = CoroutineTimer(delayMs = 1000 / 30L) {
         _playerStateFlow.getAndUpdate { old ->
             if (_player == null) {
                 return@getAndUpdate old

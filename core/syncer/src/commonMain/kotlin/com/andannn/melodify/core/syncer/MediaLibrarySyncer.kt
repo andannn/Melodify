@@ -18,9 +18,8 @@ interface MediaLibrarySyncer {
     suspend fun syncMediaLibrary(): Boolean
 }
 
-internal class MediaLibrarySyncerImpl(
+internal class MediaLibrarySyncerWrapper(
     private val mediaLibraryScanner: MediaLibraryScanner,
-    private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaLibrarySyncer {
     override suspend fun syncMediaLibrary(): Boolean {
         Napier.d(tag = TAG) { "Syncing media library" }
@@ -36,14 +35,7 @@ internal class MediaLibrarySyncerImpl(
 
     private suspend fun syncMediaLibraryInternal(): Boolean {
         try {
-            val mediaData = mediaLibraryScanner.scanMediaData()
-
-            mediaLibraryDao.clearAndInsertLibrary(
-                mediaData.albumData.toAlbumEntity(),
-                mediaData.artistData.toArtistEntity(),
-                mediaData.genreData.toGenreEntity(),
-                mediaData.audioData.toMediaEntity(),
-            )
+            mediaLibraryScanner.scanMediaDataAndSyncDatabase()
             return true
         } catch (e: Exception) {
             Napier.d(tag = TAG) { "Failed to sync media library: $e" }
