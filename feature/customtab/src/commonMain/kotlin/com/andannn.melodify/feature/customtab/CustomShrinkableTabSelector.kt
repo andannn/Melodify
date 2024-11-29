@@ -1,4 +1,4 @@
-package com.andannn.melodify
+package com.andannn.melodify.feature.customtab
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -15,17 +13,11 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,46 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.feature.common.util.getCategoryResource
-import com.andannn.melodify.feature.customtab.TabSector
-import com.andannn.melodify.feature.customtab.UiEvent
-import com.andannn.melodify.feature.customtab.rememberCustomTabSettingViewStateHolder
 import melodify.feature.common.generated.resources.Res
 import melodify.feature.common.generated.resources.audio_page_title
-import melodify.feature.common.generated.resources.library_title
 import org.jetbrains.compose.resources.stringResource
-
-private const val TAG = "ModalDrawer"
-
-@Composable
-fun ModalDrawer(
-    modifier: Modifier = Modifier,
-    drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
-    content: @Composable () -> Unit
-) {
-    ModalNavigationDrawer(
-        modifier = modifier,
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet(
-                modifier = modifier,
-                drawerState = drawerState
-            ) {
-                Text(
-                    modifier = Modifier.padding(16.dp),
-                    text = stringResource(Res.string.library_title),
-                    style = MaterialTheme.typography.titleLarge,
-                )
-
-                CustomShrinkableTabSelector()
-            }
-        },
-        content = content,
-    )
-}
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-fun CustomShrinkableTabSelector(
+fun CustomTabSelector(
     modifier: Modifier  = Modifier,
 ) {
     val stateHolder = rememberCustomTabSettingViewStateHolder()
@@ -161,7 +120,7 @@ fun CustomShrinkableTabSelector(
 }
 
 @Composable
-fun SelectableNavigationDrawerItem(
+private fun SelectableNavigationDrawerItem(
     modifier: Modifier = Modifier,
     label: String,
     selected: Boolean,
