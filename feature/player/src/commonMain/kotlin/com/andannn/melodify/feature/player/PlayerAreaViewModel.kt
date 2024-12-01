@@ -117,7 +117,7 @@ class PlayerStateViewModel(
                 PlayerUiState.Active(
                     lyric = lyric,
                     mediaItem = interactingMusicItem,
-                    duration = mediaControllerRepository.duration ?: 0L,
+                    duration = mediaControllerRepository.currentDuration ?: 0L,
                     playMode = state.playMode,
                     isShuffle = state.isShuffle,
                     isFavorite = isFavorite,

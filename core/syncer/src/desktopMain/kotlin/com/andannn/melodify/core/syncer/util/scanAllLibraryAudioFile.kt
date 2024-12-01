@@ -33,5 +33,5 @@ data class PathWithLastModifyDate(
     val path: String,
     val lastModified: Long,
 ) {
-    val key = generateHashKey(path, lastModified)
+    val key = generateHashKey(path)
 }

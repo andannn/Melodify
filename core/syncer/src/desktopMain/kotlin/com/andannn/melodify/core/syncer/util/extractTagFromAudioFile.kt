@@ -18,6 +18,7 @@ fun extractTagFromAudioFile(filePath: String): AudioData? {
 
         val audioFile = AudioFileIO.read(file)
         val tag = audioFile.tag
+// TODO: cache error and set default for method getFirst
         AudioData(
             id = -1, // assign id later.
             albumId = -1, // assign id later.

@@ -3,6 +3,8 @@ package com.andannn.melodify
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.VerticalDivider
@@ -11,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -47,26 +50,27 @@ fun MelodifyDeskTopApp() {
 fun MainWindowContent(
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier.fillMaxSize()) {
-        LeftSidePaneSector(
-            modifier = Modifier.weight(1f)
-        )
+    Column(
+        modifier = Modifier.fillMaxSize(),
+    ) {
 
-        VerticalDivider()
-
-        Column(
-            modifier = Modifier.weight(2f),
-        ) {
-            TabWithContentSector(
+        Row(modifier = modifier.weight(1f)) {
+            LeftSidePaneSector(
                 modifier = Modifier.weight(1f)
             )
 
-            HorizontalDivider()
+            VerticalDivider()
 
-            PlayerSector(
-                modifier = Modifier
+            TabWithContentSector(
+                modifier = Modifier.weight(2f)
             )
         }
+
+        HorizontalDivider()
+
+        PlayerSector(
+            modifier = Modifier
+        )
     }
 }
 

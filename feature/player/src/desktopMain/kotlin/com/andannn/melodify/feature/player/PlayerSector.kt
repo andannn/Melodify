@@ -2,15 +2,14 @@ package com.andannn.melodify.feature.player
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Slider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -58,7 +57,11 @@ fun PlayerSector(
             onEvent = playerStateViewModel::onEvent,
         )
 
-        PlayerUiState.Inactive -> Spacer(modifier = modifier)
+        PlayerUiState.Inactive -> PlayStateBar(
+            modifier = modifier,
+            coverUri = "",
+            activeMediaItem = AudioItemModel.DEFAULT,
+        )
     }
 }
 
@@ -80,13 +83,11 @@ fun PlayStateBar(
     onEvent: (PlayerUiEvent) -> Unit = {},
 ) {
     Surface(
-        modifier = modifier ,
+        modifier = modifier,
     ) {
-        Column(
-            Modifier.fillMaxWidth()
-        ) {
+        Column {
             Row(
-                modifier = Modifier.height(IntrinsicSize.Min),
+                modifier = Modifier.height(48.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 PlayInfoWithAlbumCover(
@@ -108,18 +109,14 @@ fun PlayStateBar(
                 Spacer(modifier = Modifier.weight(1f))
             }
 
-//            Slider(
-//                modifier = Modifier
-//                    .padding(horizontal = 36.dp)
-//                    .height(24.dp)
-//                    .requiredHeight(48.dp)
-//                    .offset(y = 12.dp),
-//                value = progress,
-//                enabled = true,
-//                onValueChange = {
-//                    onEvent(PlayerUiEvent.OnProgressChange(it))
-//                },
-//            )
+            Slider(
+                modifier = Modifier.height(24.dp),
+                value = progress,
+                enabled = true,
+                onValueChange = {
+                    onEvent(PlayerUiEvent.OnProgressChange(it))
+                },
+            )
         }
     }
 }
@@ -210,7 +207,8 @@ private fun PlayInfoWithAlbumCover(
 ) {
 
     Row(
-        modifier = modifier
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         CircleBorderImage(
             modifier = Modifier
