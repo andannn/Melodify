@@ -44,11 +44,7 @@ fun durationString(duration: Duration): String {
 @Composable
 fun getCategoryResource(category: CustomTab): String {
     return when (category) {
-        CustomTab.AllAlbum -> stringResource(Res.string.album_page_title)
-        CustomTab.AllArtist -> stringResource(Res.string.artist_page_title)
-        CustomTab.AllGenre -> stringResource(Res.string.genre_title)
         CustomTab.AllMusic -> stringResource(Res.string.audio_page_title)
-        CustomTab.AllPlayList -> stringResource(Res.string.playlist_page_title)
         is CustomTab.AlbumDetail -> category.label
         is CustomTab.ArtistDetail -> category.label
         is CustomTab.GenreDetail -> category.label
