@@ -24,12 +24,12 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.andannn.melodify.feature.common.dialog.ConnectFailedAlertDialog
-import com.andannn.melodify.feature.common.theme.MelodifyTheme
+import com.andannn.melodify.ui.common.dialog.ConnectFailedAlertDialog
+import com.andannn.melodify.ui.common.theme.MelodifyTheme
 import android.graphics.Color
 import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.core.syncer.SyncJobService
-import com.andannn.melodify.feature.drawer.DrawerController
+import com.andannn.melodify.ui.common.components.drawer.DrawerController
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch

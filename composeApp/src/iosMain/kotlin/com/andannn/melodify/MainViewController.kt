@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.ComposeUIViewController
-import com.andannn.melodify.feature.drawer.DrawerController
-import com.andannn.melodify.feature.drawer.DrawerControllerImpl
+import com.andannn.melodify.ui.common.components.drawer.DrawerController
+import com.andannn.melodify.ui.common.components.drawer.DrawerControllerImpl
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.core.context.startKoin

@@ -19,12 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.andannn.melodify.feature.home.tab.ReactiveTab
-import com.andannn.melodify.feature.home.tab.TabUiStateHolder
-import com.andannn.melodify.feature.home.tab.rememberTabUiStateHolder
-import com.andannn.melodify.feature.home.tabcontent.TabContent
-import com.andannn.melodify.feature.home.tabcontent.TabContentStateHolder
-import com.andannn.melodify.feature.home.tabcontent.rememberTabContentStateHolder
+import com.andannn.melodify.ui.common.components.tab.ReactiveTab
+import com.andannn.melodify.ui.common.components.tab.TabUiStateHolder
+import com.andannn.melodify.ui.common.components.tab.rememberTabUiStateHolder
+import com.andannn.melodify.ui.common.components.tabcontent.TabContent
+import com.andannn.melodify.ui.common.components.tabcontent.TabContentStateHolder
+import com.andannn.melodify.ui.common.components.tabcontent.rememberTabContentStateHolder
 
 const val HOME_ROUTE = "home_route"
 

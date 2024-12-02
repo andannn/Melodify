@@ -17,17 +17,14 @@ kotlin {
             implementation(project(":core:syncer"))
             implementation(project(":core:platform"))
 
-            implementation(project(":feature:common"))
-            implementation(project(":feature:drawer"))
-            implementation(project(":feature:message"))
-            implementation(project(":feature:home"))
-            implementation(project(":feature:player"))
-            implementation(project(":feature:customtab"))
+            implementation(project(":ui:common"))
+            implementation(project(":ui:player"))
 
             implementation(libs.koin.core.viewmodel)
             implementation(libs.koin.compose.viewmodel)
 
             implementation(libs.navigation.compose)
+            implementation(libs.reorderable)
         }
 
         androidMain.dependencies {
