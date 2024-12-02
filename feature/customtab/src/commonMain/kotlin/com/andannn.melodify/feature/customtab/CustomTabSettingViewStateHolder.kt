@@ -30,7 +30,7 @@ fun rememberCustomTabSettingViewStateHolder(
 ) = remember(
     playListRepository,
     contentRepository,
-    userPreferenceRepository
+    userPreferenceRepository,
 ) {
     CustomTabSettingViewStateHolder(
         playListRepository,
@@ -41,8 +41,15 @@ fun rememberCustomTabSettingViewStateHolder(
 }
 
 sealed interface UiEvent {
-    data class OnSelectedChange(val tab: CustomTab, val isSelected: Boolean) : UiEvent
-    data class OnUpdateTabs(val newTabs: List<CustomTab>) : UiEvent
+    data class OnSelectedChange(
+        val tab: CustomTab,
+        val isSelected: Boolean,
+    ) : UiEvent
+
+    data class OnUpdateTabs(
+        val newTabs: List<CustomTab>,
+    ) : UiEvent
+
     data object OnResetClick : UiEvent
 }
 
@@ -52,20 +59,21 @@ class CustomTabSettingViewStateHolder(
     private val playListRepository: PlayListRepository,
     private val contentRepository: MediaContentRepository,
     private val userPreferenceRepository: UserPreferenceRepository,
-    scope: CoroutineScope
+    scope: CoroutineScope,
 ) : CoroutineScope by scope {
-
-    val state = combine(
-        userPreferenceRepository.currentCustomTabsFlow,
-        contentRepository.getAllAlbumsFlow(),
-        contentRepository.getAllArtistFlow(),
-        contentRepository.getAllGenreFlow(),
-        playListRepository.getAllPlayListFlow(),
-    ) { tabs, albums, artists, genre, playlist ->
-        TabUiState(
-            currentTabs = tabs,
-            allAvailableTabSectors = mutableListOf<TabSector>()
-                .apply {
+    val state =
+        combine(
+            userPreferenceRepository.currentCustomTabsFlow,
+            contentRepository.getAllAlbumsFlow(),
+            contentRepository.getAllArtistFlow(),
+            contentRepository.getAllGenreFlow(),
+            playListRepository.getAllPlayListFlow(),
+        ) { tabs, albums, artists, genre, playlist ->
+            TabUiState(
+                currentTabs = tabs,
+                allAvailableTabSectors =
+                    mutableListOf<TabSector>()
+                        .apply {
 //                    add(
 //                        TabSector(
 //                            Res.string.home,
@@ -79,51 +87,52 @@ class CustomTabSettingViewStateHolder(
 //                        )
 //                    )
 
+                            val albumTabs =
+                                albums.map {
+                                    CustomTab.AlbumDetail(it.id, it.name)
+                                }
+                            add(
+                                TabSector(
+                                    Res.string.album_page_title,
+                                    albumTabs,
+                                ),
+                            )
 
-                    val albumTabs = albums.map {
-                        CustomTab.AlbumDetail(it.id, it.name)
-                    }
-                    add(
-                        TabSector(
-                            Res.string.album_page_title,
-                            albumTabs
-                        )
-                    )
+                            val playListTabs =
+                                playlist.map {
+                                    CustomTab.PlayListDetail(it.id, it.name)
+                                }
+                            add(
+                                TabSector(
+                                    Res.string.playlist_page_title,
+                                    playListTabs,
+                                ),
+                            )
 
-                    val playListTabs = playlist.map {
-                        CustomTab.PlayListDetail(it.id, it.name)
-                    }
-                    add(
-                        TabSector(
-                            Res.string.playlist_page_title,
-                            playListTabs
-                        )
-                    )
+                            val artistTabs =
+                                artists.map {
+                                    CustomTab.ArtistDetail(it.id, it.name)
+                                }
+                            add(
+                                TabSector(
+                                    Res.string.artist_page_title,
+                                    artistTabs,
+                                ),
+                            )
 
-                    val artistTabs = artists.map {
-                        CustomTab.ArtistDetail(it.id, it.name)
-                    }
-                    add(
-                        TabSector(
-                            Res.string.artist_page_title,
-                            artistTabs
-                        )
-                    )
-
-                    val genreTabs = genre.map {
-                        CustomTab.GenreDetail(it.id, it.name)
-                    }
-                    add(
-                        TabSector(
-                            Res.string.genre_title,
-                            genreTabs
-                        )
-                    )
-                }
-                .toList()
-        )
-    }.stateIn(scope = scope, SharingStarted.WhileSubscribed(), TabUiState())
-
+                            val genreTabs =
+                                genre.map {
+                                    CustomTab.GenreDetail(it.id, it.name)
+                                }
+                            add(
+                                TabSector(
+                                    Res.string.genre_title,
+                                    genreTabs,
+                                ),
+                            )
+                        }.toList(),
+            )
+        }.stateIn(scope = scope, SharingStarted.WhileSubscribed(), TabUiState())
 
     fun onEvent(event: UiEvent) {
         val state = state.value
@@ -134,11 +143,11 @@ class CustomTabSettingViewStateHolder(
                 launch {
                     if (selected) {
                         userPreferenceRepository.updateCurrentCustomTabs(
-                            state.currentTabs + tab
+                            state.currentTabs + tab,
                         )
                     } else {
                         userPreferenceRepository.updateCurrentCustomTabs(
-                            state.currentTabs - tab
+                            state.currentTabs - tab,
                         )
                     }
                 }
@@ -147,7 +156,7 @@ class CustomTabSettingViewStateHolder(
             is UiEvent.OnUpdateTabs -> {
                 launch {
                     userPreferenceRepository.updateCurrentCustomTabs(
-                        event.newTabs
+                        event.newTabs,
                     )
                 }
             }
@@ -155,7 +164,7 @@ class CustomTabSettingViewStateHolder(
             UiEvent.OnResetClick -> {
                 launch {
                     userPreferenceRepository.updateCurrentCustomTabs(
-                        DefaultCustomTabs.customTabs
+                        DefaultCustomTabs.customTabs,
                     )
                 }
             }
@@ -170,5 +179,5 @@ data class TabUiState(
 
 data class TabSector(
     val sectorTitle: StringResource,
-    val sectorContent: List<CustomTab>
+    val sectorContent: List<CustomTab>,
 )

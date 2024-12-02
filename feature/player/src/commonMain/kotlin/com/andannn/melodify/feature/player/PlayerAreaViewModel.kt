@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.data.model.next
-import com.andannn.melodify.core.data.repository.LyricRepository
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
@@ -39,15 +38,9 @@ sealed interface PlayerUiEvent {
 
     data object OnShuffleButtonClick : PlayerUiEvent
 
-    data class OnProgressChange(val progress: Float) : PlayerUiEvent
-
-    data class OnSwapPlayQueue(val from: Int, val to: Int) : PlayerUiEvent
-
-    data class OnDeleteMediaItem(val index: Int) : PlayerUiEvent
-
-    data class OnItemClickInQueue(val item: AudioItemModel) : PlayerUiEvent
-
-    data class OnSeekLyrics(val timeMs: Long) : PlayerUiEvent
+    data class OnProgressChange(
+        val progress: Float,
+    ) : PlayerUiEvent
 
     data object OnTimerIconClick : PlayerUiEvent
 }
@@ -58,32 +51,32 @@ class PlayerStateViewModel(
     private val playListRepository: PlayListRepository,
     private val mediaControllerRepository: MediaControllerRepository,
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
-    private val drawerController: DrawerController
+    private val drawerController: DrawerController,
 ) : ViewModel() {
     private val interactingMusicItem = playerStateMonitoryRepository.playingMediaStateFlow
-    private val playStateFlow = combine(
-        playerStateMonitoryRepository.observeIsPlaying(),
-        playerStateMonitoryRepository.observeProgressFactor(),
-        playerStateMonitoryRepository.observePlayMode(),
-        playerStateMonitoryRepository.observeIsShuffle()
-    ) { isPlaying, progress, playMode, isShuffle ->
-        PlayState(isPlaying, progress, playMode, isShuffle)
-    }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), PlayState())
+    private val playStateFlow =
+        combine(
+            playerStateMonitoryRepository.observeIsPlaying(),
+            playerStateMonitoryRepository.observeProgressFactor(),
+            playerStateMonitoryRepository.observePlayMode(),
+            playerStateMonitoryRepository.observeIsShuffle(),
+        ) { isPlaying, progress, playMode, isShuffle ->
+            PlayState(isPlaying, progress, playMode, isShuffle)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), PlayState())
 
     private val isCountingFlow = mediaControllerRepository.observeIsCounting()
     private val playListQueueFlow = playerStateMonitoryRepository.playListQueueStateFlow
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val isCurrentMediaFavoriteFlow = interactingMusicItem
-        .distinctUntilChanged()
-        .flatMapLatest {
-            if (it == null) {
-                return@flatMapLatest flowOf(false)
-            }
-            playListRepository.isMediaInFavoritePlayListFlow(it.id)
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+    private val isCurrentMediaFavoriteFlow =
+        interactingMusicItem
+            .distinctUntilChanged()
+            .flatMapLatest {
+                if (it == null) {
+                    return@flatMapLatest flowOf(false)
+                }
+                playListRepository.isMediaInFavoritePlayListFlow(it.id)
+            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     val playerUiStateFlow =
         combine(
@@ -105,11 +98,10 @@ class PlayerStateViewModel(
                     playListQueue = playListQueue,
                     isPlaying = state.isPlaying,
                     progress = state.playProgress,
-                    isCounting = isCounting
+                    isCounting = isCounting,
                 )
             }
-        }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), PlayerUiState.Inactive)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), PlayerUiState.Inactive)
 
     fun onEvent(event: PlayerUiEvent) {
         Napier.d(tag = TAG) { "onEvent: $event" }
@@ -140,7 +132,7 @@ class PlayerStateViewModel(
             is PlayerUiEvent.OnOptionIconClick -> {
                 viewModelScope.launch {
                     drawerController.onEvent(
-                        DrawerEvent.OnShowBottomDrawer(SheetModel.PlayerOptionSheet(event.mediaItem))
+                        DrawerEvent.OnShowBottomDrawer(SheetModel.PlayerOptionSheet(event.mediaItem)),
                     )
                 }
             }
@@ -151,25 +143,6 @@ class PlayerStateViewModel(
                         duration.times(event.progress).toLong()
                     }
                 seekToTime(time)
-            }
-
-            is PlayerUiEvent.OnSwapPlayQueue -> {
-                mediaControllerRepository.moveMediaItem(event.from, event.to)
-            }
-
-            is PlayerUiEvent.OnItemClickInQueue -> {
-                val state = playerUiStateFlow.value as PlayerUiState.Active
-                mediaControllerRepository.seekMediaItem(
-                    mediaItemIndex = state.playListQueue.indexOf(event.item)
-                )
-            }
-
-            is PlayerUiEvent.OnDeleteMediaItem -> {
-                mediaControllerRepository.removeMediaItem(event.index)
-            }
-
-            is PlayerUiEvent.OnSeekLyrics -> {
-                seekToTime(event.timeMs)
             }
 
             PlayerUiEvent.OnTimerIconClick -> {
@@ -212,7 +185,7 @@ private data class PlayState(
     val isPlaying: Boolean = false,
     val playProgress: Float = 0f,
     val playMode: PlayMode = PlayMode.REPEAT_ALL,
-    val isShuffle: Boolean = false
+    val isShuffle: Boolean = false,
 )
 
 sealed class PlayerUiState {

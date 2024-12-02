@@ -1,4 +1,4 @@
-package com.andannn.melodify.feature.home
+package com.andannn.melodify.navigation.routes
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

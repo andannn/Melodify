@@ -41,7 +41,7 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.feature.common.component.FavoriteIconButton
+import com.andannn.melodify.feature.common.widgets.FavoriteIconButton
 import com.andannn.melodify.feature.common.icons.SmpIcon
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.drawer.model.SheetModel

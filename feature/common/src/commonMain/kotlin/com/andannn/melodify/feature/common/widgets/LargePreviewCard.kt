@@ -1,4 +1,4 @@
-package com.andannn.melodify.feature.common.component
+package com.andannn.melodify.feature.common.widgets
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background

@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayMode
-import com.andannn.melodify.feature.common.component.CircleBorderImage
+import com.andannn.melodify.feature.common.widgets.CircleBorderImage
 import com.andannn.melodify.feature.player.util.getIcon
 import org.koin.compose.viewmodel.koinViewModel
 

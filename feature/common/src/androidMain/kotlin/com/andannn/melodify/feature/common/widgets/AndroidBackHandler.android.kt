@@ -1,4 +1,4 @@
-package com.andannn.melodify.feature.common.component
+package com.andannn.melodify.feature.common.widgets
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable

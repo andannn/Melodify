@@ -1,4 +1,4 @@
-package com.andannn.melodify.feature.player.ui.shrinkable.header
+package com.andannn.melodify.feature.player.ui.shrinkable
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

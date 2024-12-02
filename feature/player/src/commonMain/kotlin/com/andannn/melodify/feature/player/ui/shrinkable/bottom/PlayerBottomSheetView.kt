@@ -40,15 +40,14 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.feature.common.component.AndroidBackHandler
-import com.andannn.melodify.feature.player.ui.BottomSheetState
+import com.andannn.melodify.feature.common.widgets.AndroidBackHandler
+import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.player.PlayerUiEvent
 import com.andannn.melodify.feature.player.lyrics.LyricsView
-import com.andannn.melodify.feature.player.ui.shrinkable.bottom.queue.PlayQueue
+import com.andannn.melodify.feature.player.ui.BottomSheetState
+import com.andannn.melodify.feature.player.queue.PlayQueue
 import com.andannn.melodify.feature.player.util.getLabel
-import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -68,7 +67,7 @@ internal fun PlayerBottomSheetView(
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
     onEvent: (PlayerUiEvent) -> Unit = {},
-    onRequestExpandSheet: () -> Unit = {}
+    onRequestExpandSheet: () -> Unit = {},
 ) {
     val shrinkOffset = state.anchors.positionOf(BottomSheetState.Shrink)
     val expandOffset = state.anchors.positionOf(BottomSheetState.Expand)
@@ -95,27 +94,28 @@ internal fun PlayerBottomSheetView(
 
     Surface(
         modifier =
-        modifier
-            .fillMaxSize()
-            .offset {
-                IntOffset(
-                    0,
-                    state
-                        .requireOffset()
-                        .roundToInt(),
-                )
-            },
+            modifier
+                .fillMaxSize()
+                .offset {
+                    IntOffset(
+                        0,
+                        state
+                            .requireOffset()
+                            .roundToInt(),
+                    )
+                },
         color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = expandFactor),
-        shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
+        shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
     ) {
         Column(
-            modifier = Modifier.fillMaxHeight()
+            modifier = Modifier.fillMaxHeight(),
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             TabBar(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .anchoredDraggable(state, orientation = Orientation.Vertical),
+                modifier =
+                    Modifier
+                        .padding(horizontal = 16.dp)
+                        .anchoredDraggable(state, orientation = Orientation.Vertical),
                 isExpand = isExpand,
                 items = sheetState.sheetItems.toImmutableList(),
                 selectedTabIndex = sheetState.selectedIndex,
@@ -125,37 +125,23 @@ internal fun PlayerBottomSheetView(
                 onItemClick = {
                     sheetState.onSelectItem(it)
                     onRequestExpandSheet()
-                }
+                },
             )
             Spacer(modifier = Modifier.height(3.dp))
 
             if (expandFactor != 0f) {
                 Surface(
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .graphicsLayer { alpha = expandFactor }
-                        .padding(horizontal = 8.dp),
+                        Modifier
+                            .weight(1f)
+                            .graphicsLayer { alpha = expandFactor }
+                            .padding(horizontal = 8.dp),
                     color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
+                    shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
                 ) {
                     when (sheetState.selectedTab) {
                         SheetTab.NEXT_SONG -> {
-                            PlayQueue(
-                                onSwapFinished = { from, to ->
-                                    Napier.d(tag = TAG) { "PlayQueueView: drag stopped from $from to $to" }
-                                    onEvent(PlayerUiEvent.OnSwapPlayQueue(from, to))
-                                },
-                                onDeleteFinished = {
-                                    Napier.d(tag = TAG) { "onDeleteFinished $it" }
-                                    onEvent(PlayerUiEvent.OnDeleteMediaItem(it))
-                                },
-                                onItemClick = {
-                                    onEvent(PlayerUiEvent.OnItemClickInQueue(it))
-                                },
-                                activeMediaItem = activeMediaItem,
-                                playListQueue = playListQueue,
-                            )
+                            PlayQueue()
                         }
 
                         SheetTab.LYRICS -> {
@@ -182,20 +168,21 @@ private fun TabBar(
     selectedTabIndex: Int,
     onItemPressed: (SheetTab) -> Unit,
     modifier: Modifier = Modifier,
-    onItemClick: (SheetTab) -> Unit
+    onItemClick: (SheetTab) -> Unit,
 ) {
     val defaultIndicator =
         @Composable { tabPositions: List<TabPosition> ->
             if (selectedTabIndex < tabPositions.size) {
                 TabRowDefaults.SecondaryIndicator(
-                    Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
+                    Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
                 )
             }
         }
 
     TabRow(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier =
+            modifier
+                .fillMaxWidth(),
         selectedTabIndex = selectedTabIndex,
         containerColor = Color.Transparent,
         indicator = if (isExpand) defaultIndicator else emptyIndicator,
@@ -217,8 +204,11 @@ private fun TabBar(
             Tab(
                 selected = index == selectedTabIndex,
                 selectedContentColor =
-                if (isExpand) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.onSurfaceVariant,
+                    if (isExpand) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
                 unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 text = @Composable {
                     Text(
@@ -228,7 +218,7 @@ private fun TabBar(
                 interactionSource = source,
                 onClick = {
                     onItemClick(item)
-                }
+                },
             )
         }
     }
@@ -260,24 +250,24 @@ private fun BottomPlayQueueSheetPreview() {
                 )
             }
 
-
         PlayerBottomSheetView(
             state = state,
-            playListQueue = listOf(
-                AudioItemModel(
-                    id = "0",
-                    name = "Song 1",
-                    modifiedDate = 0,
-                    album = "Album 1",
-                    albumId = "0",
-                    artist = "Artist 1",
-                    artistId = "0",
-                    cdTrackNumber = 1,
-                    discNumber = 0,
-                    artWorkUri = "",
-                    source = ""
-                )
-            ).toImmutableList(),
+            playListQueue =
+                listOf(
+                    AudioItemModel(
+                        id = "0",
+                        name = "Song 1",
+                        modifiedDate = 0,
+                        album = "Album 1",
+                        albumId = "0",
+                        artist = "Artist 1",
+                        artistId = "0",
+                        cdTrackNumber = 1,
+                        discNumber = 0,
+                        artWorkUri = "",
+                        source = "",
+                    ),
+                ).toImmutableList(),
             activeMediaItem = AudioItemModel.DEFAULT,
         )
     }

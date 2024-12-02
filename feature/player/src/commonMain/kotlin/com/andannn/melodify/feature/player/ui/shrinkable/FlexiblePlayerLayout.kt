@@ -34,15 +34,14 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.feature.common.component.CircleBorderImage
 import com.andannn.melodify.core.data.model.PlayMode
+import com.andannn.melodify.feature.common.widgets.CircleBorderImage
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.common.util.verticalGradientScrim
-import com.andannn.melodify.feature.player.ui.shrinkable.bottom.PlayerBottomSheetView
 import com.andannn.melodify.feature.player.PlayerUiEvent
 import com.andannn.melodify.feature.player.ui.MinImageSize
 import com.andannn.melodify.feature.player.ui.PlayerViewState
-import com.andannn.melodify.feature.player.ui.shrinkable.header.PlayerHeader
+import com.andannn.melodify.feature.player.ui.shrinkable.bottom.PlayerBottomSheetView
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -82,7 +81,7 @@ internal fun FlexiblePlayerLayout(
 
     Surface(
         modifier =
-        modifier.fillMaxWidth(),
+            modifier.fillMaxWidth(),
         shadowElevation = 10.dp,
     ) {
         val primaryColor = MaterialTheme.colorScheme.primary
@@ -99,10 +98,10 @@ internal fun FlexiblePlayerLayout(
 
         Box(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                .then(backGroundModifier),
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                    .then(backGroundModifier),
         ) {
             val fadeInAreaAlpha by remember {
                 derivedStateOf {
@@ -116,15 +115,14 @@ internal fun FlexiblePlayerLayout(
             }
             MiniPlayerLayout(
                 modifier =
-                Modifier
-                    .graphicsLayer {
-                        alpha = fadeoutAreaAlpha
-                    }
-                    .fillMaxWidth()
-                    .padding(
-                        top = layoutState.miniPlayerPaddingTopDp,
-                        start = MinImagePaddingStart * 2 + MinImageSize,
-                    ),
+                    Modifier
+                        .graphicsLayer {
+                            alpha = fadeoutAreaAlpha
+                        }.fillMaxWidth()
+                        .padding(
+                            top = layoutState.miniPlayerPaddingTopDp,
+                            start = MinImagePaddingStart * 2 + MinImageSize,
+                        ),
                 enabled = fadeoutAreaAlpha == 1f,
                 title = title,
                 artist = artist,
@@ -136,11 +134,11 @@ internal fun FlexiblePlayerLayout(
             if (fadeInAreaAlpha != 0f) {
                 PlayerHeader(
                     modifier =
-                    Modifier
-                        .padding(top = statusBarHeight)
-                        .graphicsLayer {
-                            alpha = fadeInAreaAlpha
-                        },
+                        Modifier
+                            .padding(top = statusBarHeight)
+                            .graphicsLayer {
+                                alpha = fadeInAreaAlpha
+                            },
                     showTimerIcon = isCounting,
                     onShrinkButtonClick = onShrinkButtonClick,
                     onTimerIconClick = {
@@ -154,30 +152,29 @@ internal fun FlexiblePlayerLayout(
 
             CircleBorderImage(
                 modifier =
-                Modifier
-                    .padding(
-                        top = layoutState.imagePaddingTopDp,
-                        start = layoutState.imagePaddingStartDp
-                    )
-                    .width(layoutState.imageSizeDp)
-                    .aspectRatio(1f),
+                    Modifier
+                        .padding(
+                            top = layoutState.imagePaddingTopDp,
+                            start = layoutState.imagePaddingStartDp,
+                        ).width(layoutState.imageSizeDp)
+                        .aspectRatio(1f),
                 model = coverUriState.value,
             )
 
             Column(
                 modifier =
-                Modifier.fillMaxSize()
+                    Modifier.fillMaxSize(),
             ) {
                 Spacer(modifier = Modifier.height(layoutState.imagePaddingTopDp + layoutState.imageSizeDp))
 
                 LargePlayerControlArea(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .graphicsLayer {
-                            alpha = fadeInAreaAlpha
-                        },
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .graphicsLayer {
+                                alpha = fadeInAreaAlpha
+                            },
                     isPlaying = isPlaying,
                     playMode = playMode,
                     enable = layoutState.isFullExpanded,
@@ -192,7 +189,7 @@ internal fun FlexiblePlayerLayout(
 
             AnimatedVisibility(
                 modifier =
-                Modifier.align(Alignment.BottomCenter),
+                    Modifier.align(Alignment.BottomCenter),
                 enter = fadeIn(),
                 exit = fadeOut(),
                 visible = layoutState.isFullExpanded,
@@ -205,29 +202,29 @@ internal fun FlexiblePlayerLayout(
                     onEvent = onEvent,
                     onRequestExpandSheet = {
                         layoutState.expandBottomSheet()
-                    }
+                    },
                 )
             }
 
             if (!layoutState.isPlayerExpanding) {
                 Spacer(
                     modifier =
-                    Modifier
-                        .fillMaxWidth(fraction = progress)
-                        .align(Alignment.BottomStart)
-                        .padding(bottom = with(LocalDensity.current) { layoutState.navigationBarHeightPx.toDp() })
-                        .height(3.dp)
-                        .background(
-                            brush =
-                            Brush.horizontalGradient(
-                                colors =
-                                listOf(
-                                    MaterialTheme.colorScheme.tertiaryContainer,
-                                    MaterialTheme.colorScheme.inversePrimary,
-                                    MaterialTheme.colorScheme.primary,
-                                ),
+                        Modifier
+                            .fillMaxWidth(fraction = progress)
+                            .align(Alignment.BottomStart)
+                            .padding(bottom = with(LocalDensity.current) { layoutState.navigationBarHeightPx.toDp() })
+                            .height(3.dp)
+                            .background(
+                                brush =
+                                    Brush.horizontalGradient(
+                                        colors =
+                                            listOf(
+                                                MaterialTheme.colorScheme.tertiaryContainer,
+                                                MaterialTheme.colorScheme.inversePrimary,
+                                                MaterialTheme.colorScheme.primary,
+                                            ),
+                                    ),
                             ),
-                        ),
                 )
             }
         }

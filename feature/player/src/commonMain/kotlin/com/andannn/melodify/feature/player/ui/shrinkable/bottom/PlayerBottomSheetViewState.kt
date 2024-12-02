@@ -12,9 +12,10 @@ enum class SheetTab {
 }
 
 @Composable
-internal fun rememberPlayerBottomSheetState() = remember {
-    PlayerBottomSheetState()
-}
+internal fun rememberPlayerBottomSheetState() =
+    remember {
+        PlayerBottomSheetState()
+    }
 
 internal class PlayerBottomSheetState {
     var sheetItems by mutableStateOf(SheetTab.entries.toTypedArray())

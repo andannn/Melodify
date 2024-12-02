@@ -24,9 +24,9 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.feature.common.component.AutoResizedText
-import com.andannn.melodify.feature.common.component.SmpMainIconButton
-import com.andannn.melodify.feature.common.component.SmpSubIconButton
+import com.andannn.melodify.feature.common.widgets.AutoResizedText
+import com.andannn.melodify.feature.common.widgets.SmpMainIconButton
+import com.andannn.melodify.feature.common.widgets.SmpSubIconButton
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.player.PlayerUiEvent

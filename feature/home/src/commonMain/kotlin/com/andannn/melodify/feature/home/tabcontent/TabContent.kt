@@ -18,8 +18,8 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.browsableOrPlayable
 import com.andannn.melodify.core.data.model.key
-import com.andannn.melodify.feature.common.component.ExtraPaddingBottom
-import com.andannn.melodify.feature.common.component.ListTileItemView
+import com.andannn.melodify.feature.common.widgets.ExtraPaddingBottom
+import com.andannn.melodify.feature.common.widgets.ListTileItemView
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import melodify.feature.common.generated.resources.Res

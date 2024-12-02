@@ -21,10 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
-import com.andannn.melodify.feature.common.component.AndroidBackHandler
+import com.andannn.melodify.feature.common.widgets.AndroidBackHandler
 import com.andannn.melodify.feature.common.dynamic_theming.DynamicThemePrimaryColorsFromImage
-import com.andannn.melodify.feature.common.theme.MinContrastOfPrimaryVsSurface
 import com.andannn.melodify.feature.common.dynamic_theming.rememberDominantColorState
+import com.andannn.melodify.feature.common.theme.MinContrastOfPrimaryVsSurface
 import com.andannn.melodify.feature.common.util.contrastAgainst
 import com.andannn.melodify.feature.player.PlayerUiEvent
 import com.andannn.melodify.feature.player.PlayerUiState
@@ -44,22 +44,24 @@ internal fun PlayerView(
     BoxWithConstraints(
         modifier = modifier.fillMaxSize(),
     ) {
-        val layoutState: PlayerViewState = rememberPlayerViewState(
-            screenSize = Size(
-                width = constraints.maxWidth.toFloat(),
-                height = constraints.maxHeight.toFloat()
-            ),
-            navigationBarHeightPx = navigationBarHeight,
-            statusBarHeightPx = statusBarHeight,
-            density = density
-        )
+        val layoutState: PlayerViewState =
+            rememberPlayerViewState(
+                screenSize =
+                    Size(
+                        width = constraints.maxWidth.toFloat(),
+                        height = constraints.maxHeight.toFloat(),
+                    ),
+                navigationBarHeightPx = navigationBarHeight,
+                statusBarHeightPx = statusBarHeight,
+                density = density,
+            )
 
         val isPlayerDraggable by
-        remember {
-            derivedStateOf {
-                !layoutState.isBottomSheetExpanding
+            remember {
+                derivedStateOf {
+                    !layoutState.isBottomSheetExpanding
+                }
             }
-        }
 
         AndroidBackHandler(
             enabled = layoutState.playerState == PlayerState.Expand,
@@ -85,21 +87,20 @@ internal fun PlayerView(
 
             FlexiblePlayerLayout(
                 modifier =
-                Modifier
-                    .height(with(LocalDensity.current) { layoutState.playerExpandState.offset.toDp() })
-                    .align(Alignment.BottomCenter)
-                    .anchoredDraggable(
-                        layoutState.playerExpandState,
-                        enabled = isPlayerDraggable,
-                        orientation = Orientation.Vertical,
-                        reverseDirection = true,
-                    )
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() },
-                        enabled = layoutState.playerState == PlayerState.Shrink,
-                        onClick = layoutState::expandPlayerLayout,
-                    ),
+                    Modifier
+                        .height(with(LocalDensity.current) { layoutState.playerExpandState.offset.toDp() })
+                        .align(Alignment.BottomCenter)
+                        .anchoredDraggable(
+                            layoutState.playerExpandState,
+                            enabled = isPlayerDraggable,
+                            orientation = Orientation.Vertical,
+                            reverseDirection = true,
+                        ).clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                            enabled = layoutState.playerState == PlayerState.Shrink,
+                            onClick = layoutState::expandPlayerLayout,
+                        ),
                 layoutState = layoutState,
                 coverUri = state.mediaItem.artWorkUri,
                 playMode = state.playMode,

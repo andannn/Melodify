@@ -17,8 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.PlusOne
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -36,10 +34,10 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.key
-import com.andannn.melodify.feature.common.component.ActionType
-import com.andannn.melodify.feature.common.component.LargePreviewCard
-import com.andannn.melodify.feature.common.component.ListTileItemView
-import com.andannn.melodify.feature.common.component.SmpTextButton
+import com.andannn.melodify.feature.common.widgets.ActionType
+import com.andannn.melodify.feature.common.widgets.LargePreviewCard
+import com.andannn.melodify.feature.common.widgets.ListTileItemView
+import com.andannn.melodify.feature.common.widgets.SmpTextButton
 import com.andannn.melodify.feature.drawer.model.SheetModel
 import melodify.feature.common.generated.resources.Res
 import melodify.feature.common.generated.resources.all_playlists

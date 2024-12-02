@@ -23,12 +23,13 @@ fun <T> rememberSwapListState(
 ): SwapListStateHolder<T> {
     val onSwapFinishedState = rememberUpdatedState(onSwapFinished)
     val onDeleteFinishedState = rememberUpdatedState(onDeleteFinished)
-    val playQueueState = remember {
-        SwapListStateImpl(
-            onSwapFinishedState = onSwapFinishedState,
-            onDeleteFinishedState = onDeleteFinishedState,
-        )
-    }
+    val playQueueState =
+        remember {
+            SwapListStateImpl(
+                onSwapFinishedState = onSwapFinishedState,
+                onDeleteFinishedState = onDeleteFinishedState,
+            )
+        }
 
     val reorderableLazyListState =
         rememberReorderableLazyListState(lazyListState) { from, to ->
@@ -36,10 +37,10 @@ fun <T> rememberSwapListState(
         }
 
     return remember {
-        SwapListStateHolder<T>(
+        SwapListStateHolder(
             lazyListState = lazyListState,
             swapListState = playQueueState,
-            reorderableLazyListState = reorderableLazyListState
+            reorderableLazyListState = reorderableLazyListState,
         )
     }
 }
@@ -50,11 +51,18 @@ class SwapListStateHolder<T>(
     val reorderableLazyListState: ReorderableLazyListState,
 ) : SwapListState<T> by swapListState
 
-interface SwapListState<T>  {
+interface SwapListState<T> {
     val itemList: SnapshotStateList<T>
+
     fun onStopDrag()
-    fun onSwapItem(from: Int, to: Int)
+
+    fun onSwapItem(
+        from: Int,
+        to: Int,
+    )
+
     fun onApplyNewList(list: ImmutableList<T>)
+
     fun onDeleteItem(item: T)
 }
 
@@ -80,7 +88,10 @@ class SwapListStateImpl<T>(
         toDragIndex = null
     }
 
-    override fun onSwapItem(from: Int, to: Int) {
+    override fun onSwapItem(
+        from: Int,
+        to: Int,
+    ) {
         Napier.d(tag = TAG) { "PlayQueueView: onSwapItem from $from to $to" }
         toDragIndex = to
         if (fromDragIndex == null) {
