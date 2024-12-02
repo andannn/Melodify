@@ -13,11 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import com.andannn.melodify.core.syncer.MediaLibrarySyncer
-import com.andannn.melodify.ui.common.components.tabselector.CustomTabSelector
-import com.andannn.melodify.ui.common.components.tab.rememberTabUiStateHolder
-import com.andannn.melodify.ui.common.components.tabcontent.rememberTabContentStateHolder
-import com.andannn.melodify.ui.player.PlayerSector
+import com.andannn.melodify.ui.components.tabselector.CustomTabSelector
+import com.andannn.melodify.ui.components.tab.rememberTabUiStateHolder
+import com.andannn.melodify.ui.components.tabcontent.rememberTabContentStateHolder
 import com.andannn.melodify.navigation.routes.TabWithContent
+import com.andannn.melodify.ui.components.playcontrol.Player
 import org.koin.java.KoinJavaComponent.getKoin
 
 @Composable
@@ -62,7 +62,7 @@ fun MainWindowContent(
 
         HorizontalDivider()
 
-        PlayerSector(
+        Player(
             modifier = Modifier
         )
     }

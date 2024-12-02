@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.andannn.melodify.ui.common.components.message.dialog.Dialog
-import com.andannn.melodify.ui.common.components.message.dialog.InteractionResult
+import com.andannn.melodify.ui.components.message.dialog.Dialog
+import com.andannn.melodify.ui.components.message.dialog.InteractionResult
 import com.andannn.melodify.navigation.routes.melodifyDialog
 import com.andannn.melodify.navigation.routes.HOME_ROUTE
 import com.andannn.melodify.navigation.routes.customTabSetting

@@ -49,12 +49,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.ui.common.components.tabselector.CustomTabSettingViewStateHolder
-import com.andannn.melodify.ui.common.components.tabselector.TabUiState
-import com.andannn.melodify.ui.common.components.tabselector.UiEvent
-import com.andannn.melodify.ui.common.components.tabselector.rememberCustomTabSettingViewStateHolder
 import com.andannn.melodify.ui.common.util.getCategoryResource
 import com.andannn.melodify.ui.common.util.rememberSwapListState
+import com.andannn.melodify.ui.components.tabselector.CustomTabSettingViewStateHolder
+import com.andannn.melodify.ui.components.tabselector.TabUiState
+import com.andannn.melodify.ui.components.tabselector.UiEvent
+import com.andannn.melodify.ui.components.tabselector.rememberCustomTabSettingViewStateHolder
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableItem

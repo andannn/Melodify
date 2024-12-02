@@ -9,10 +9,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.dialog
-import com.andannn.melodify.ui.common.components.message.dialog.Dialog
-import com.andannn.melodify.ui.common.components.message.dialog.InteractionResult
-import com.andannn.melodify.ui.common.components.message.dialog.ui.AlertMessageDialog
-import com.andannn.melodify.ui.common.components.message.dialog.ui.NewPlayListDialog
+import com.andannn.melodify.ui.components.message.dialog.Dialog
+import com.andannn.melodify.ui.components.message.dialog.InteractionResult
+import com.andannn.melodify.ui.components.message.dialog.ui.AlertMessageDialog
+import com.andannn.melodify.ui.components.message.dialog.ui.NewPlayListDialog
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 

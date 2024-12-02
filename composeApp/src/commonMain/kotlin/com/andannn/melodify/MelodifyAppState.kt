@@ -10,12 +10,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.andannn.melodify.ui.common.util.getUiRetainedScope
-import com.andannn.melodify.ui.common.components.drawer.DrawerController
-import com.andannn.melodify.ui.common.components.message.MessageController
-import com.andannn.melodify.ui.common.components.message.dialog.Dialog
-import com.andannn.melodify.ui.common.components.message.dialog.InteractionResult
+import com.andannn.melodify.ui.components.drawer.DrawerController
+import com.andannn.melodify.ui.components.message.MessageController
+import com.andannn.melodify.ui.components.message.dialog.Dialog
+import com.andannn.melodify.ui.components.message.dialog.InteractionResult
 import com.andannn.melodify.navigation.routes.navigateToDialog
+import com.andannn.melodify.ui.common.util.getUiRetainedScope
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope

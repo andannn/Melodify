@@ -8,6 +8,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:data"))
             api(project(":core:platform"))
+            implementation(project(":ui:common"))
 
             implementation(libs.coil3.compose)
             implementation(libs.reorderable)

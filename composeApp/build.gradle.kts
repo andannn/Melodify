@@ -18,7 +18,7 @@ kotlin {
             implementation(project(":core:platform"))
 
             implementation(project(":ui:common"))
-            implementation(project(":ui:player"))
+            implementation(project(":ui:components"))
 
             implementation(libs.koin.core.viewmodel)
             implementation(libs.koin.compose.viewmodel)
