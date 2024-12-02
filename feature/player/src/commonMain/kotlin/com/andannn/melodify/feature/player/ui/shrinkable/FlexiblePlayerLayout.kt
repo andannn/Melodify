@@ -38,7 +38,6 @@ import com.andannn.melodify.feature.common.component.CircleBorderImage
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.feature.common.util.verticalGradientScrim
-import com.andannn.melodify.feature.player.LyricState
 import com.andannn.melodify.feature.player.ui.shrinkable.bottom.PlayerBottomSheetView
 import com.andannn.melodify.feature.player.PlayerUiEvent
 import com.andannn.melodify.feature.player.ui.MinImageSize
@@ -65,7 +64,6 @@ internal fun FlexiblePlayerLayout(
     playListQueue: List<AudioItemModel>,
     modifier: Modifier = Modifier,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
-    lyricState: LyricState = LyricState.Loading,
     isShuffle: Boolean = false,
     isPlaying: Boolean = false,
     isFavorite: Boolean = false,
@@ -73,7 +71,6 @@ internal fun FlexiblePlayerLayout(
     title: String = "",
     artist: String = "",
     progress: Float = 1f,
-    duration: Long = 0L,
     onEvent: (PlayerUiEvent) -> Unit = {},
     onShrinkButtonClick: () -> Unit = {},
 ) {
@@ -205,8 +202,6 @@ internal fun FlexiblePlayerLayout(
                     state = layoutState.bottomSheetState,
                     activeMediaItem = activeMediaItem,
                     playListQueue = playListQueue.toImmutableList(),
-                    lyricState = lyricState,
-                    currentPositionMs = (progress * duration).toLong(),
                     onEvent = onEvent,
                     onRequestExpandSheet = {
                         layoutState.expandBottomSheet()

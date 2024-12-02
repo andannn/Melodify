@@ -1,4 +1,4 @@
-package com.andannn.melodify.feature.player.ui.shrinkable.bottom.lyrics
+package com.andannn.melodify.feature.player.lyrics
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,17 +13,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.core.data.model.LyricModel
-import com.andannn.melodify.feature.player.LyricState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 internal fun LyricsView(
+    source: AudioItemModel? = null,
+    lyricStateHolder: LyricStateHolder = rememberLyricStateHolder(source),
+    modifier: Modifier = Modifier,
+) {
+    LyricsViewContent(
+        lyricState = lyricStateHolder.state,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun LyricsViewContent(
     lyricState: LyricState,
     modifier: Modifier = Modifier,
-    currentPositionMs: Long = 0L,
-    onRequestSeek: (timeMs: Long) -> Unit = {}
 ) {
     when (lyricState) {
         is LyricState.Loaded -> {
@@ -38,11 +48,9 @@ internal fun LyricsView(
                 }
             } else {
                 if (lyricModel.syncedLyrics.isNotBlank()) {
-                    SyncedLyricsView(
+                    SyncedLyrics(
                         modifier = modifier,
                         syncedLyric = lyricModel.syncedLyrics,
-                        currentPositionMs = currentPositionMs,
-                        onRequestSeek = onRequestSeek
                     )
                 } else if (lyricModel.plainLyrics.isNotBlank()) {
                     PlainLyricsView(
@@ -52,12 +60,14 @@ internal fun LyricsView(
                 }
             }
         }
+
         LyricState.Loading -> {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
     }
+
 }
 
 @Composable
@@ -80,7 +90,7 @@ private fun PlainLyricsView(
 private fun PlainLyricsViewPreview() {
     MelodifyTheme {
         Surface {
-            LyricsView(
+            LyricsViewContent(
                 lyricState = LyricState.Loaded(
                     LyricModel(
                         plainLyrics = "正しさとは 愚かさとは\n" +
@@ -159,7 +169,7 @@ private fun PlainLyricsViewPreview() {
 private fun LyricsViewLoadingPreview() {
     MelodifyTheme {
         Surface {
-            LyricsView(
+            LyricsViewContent(
                 lyricState = LyricState.Loading
             )
         }

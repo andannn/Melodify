@@ -1,38 +1,45 @@
-package com.andannn.melodify.feature.player.ui.shrinkable.bottom.lyrics
+package com.andannn.melodify.feature.player.lyrics
 
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.repository.MediaControllerRepository
+import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.compose.getKoin
 
 @Composable
 fun rememberSyncedLyricsState(
     syncedLyrics: String,
     lazyListState: LazyListState = rememberLazyListState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    onRequestSeek: (timeMs: Long) -> Unit = { },
+    repository: Repository = getKoin().get(),
 ): SyncedLyricsState {
-    val onRequestSeekState = rememberUpdatedState(onRequestSeek)
-    return remember(syncedLyrics, lazyListState) {
+    return remember(
+        syncedLyrics,
+        lazyListState,
+        coroutineScope,
+        repository,
+    ) {
         SyncedLyricsState(
             syncedLyrics = syncedLyrics,
+            playControlRepository = repository.mediaControllerRepository,
+            playerStateMonitoryRepository = repository.playerStateMonitoryRepository,
             lazyListState = lazyListState,
             coroutineScope = coroutineScope,
-            onRequestSeekState = onRequestSeekState
         )
     }
 }
@@ -55,7 +62,8 @@ class SyncedLyricsState(
     syncedLyrics: String,
     val lazyListState: LazyListState,
     private val coroutineScope: CoroutineScope,
-    private val onRequestSeekState: State<(timeMs: Long) -> Unit>,
+    private val playControlRepository: MediaControllerRepository,
+    private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
 ) : CoroutineScope by coroutineScope {
     var syncedLyricsLines by mutableStateOf(parseSyncedLyrics(syncedLyrics))
     var lyricsState by mutableStateOf<LyricsState>(LyricsState.AutoScrolling)
@@ -64,6 +72,13 @@ class SyncedLyricsState(
     private var waitingToCancelSeekJob: Job? = null
 
     init {
+        launch {
+            playerStateMonitoryRepository.observeProgressFactor()
+                .collect {
+                    onPositionChanged(playerStateMonitoryRepository.currentPositionMs)
+                }
+        }
+
         launch {
             lazyListState.interactionSource.interactions.collect {
                 when (it) {
@@ -109,7 +124,7 @@ class SyncedLyricsState(
         )
     }
 
-    fun onPositionChanged(currentPositionMs: Long) {
+    private fun onPositionChanged(currentPositionMs: Long) {
         val state = lyricsState
         if (state is LyricsState.WaitingSeekingResult) {
             if (state.requestTimeMs != currentPositionMs) {
@@ -133,7 +148,7 @@ class SyncedLyricsState(
         Napier.d(tag = TAG) { "onSeekTimeClick: $time" }
 
         lyricsState = LyricsState.WaitingSeekingResult(time)
-        onRequestSeekState.value(time)
+        playControlRepository.seekToTime(time)
     }
 }
 

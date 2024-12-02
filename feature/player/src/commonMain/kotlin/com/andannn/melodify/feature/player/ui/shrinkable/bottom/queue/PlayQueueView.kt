@@ -1,6 +1,5 @@
 package com.andannn.melodify.feature.player.ui.shrinkable.bottom.queue
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,7 +26,6 @@ import sh.calvin.reorderable.ReorderableItem
 
 private const val TAG = "PlayQueueView"
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun PlayQueue(
     onItemClick: (AudioItemModel) -> Unit,

@@ -44,9 +44,8 @@ import com.andannn.melodify.feature.common.theme.MelodifyTheme
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.feature.common.component.AndroidBackHandler
 import com.andannn.melodify.feature.player.ui.BottomSheetState
-import com.andannn.melodify.feature.player.LyricState
 import com.andannn.melodify.feature.player.PlayerUiEvent
-import com.andannn.melodify.feature.player.ui.shrinkable.bottom.lyrics.LyricsView
+import com.andannn.melodify.feature.player.lyrics.LyricsView
 import com.andannn.melodify.feature.player.ui.shrinkable.bottom.queue.PlayQueue
 import com.andannn.melodify.feature.player.util.getLabel
 import io.github.aakira.napier.Napier
@@ -67,8 +66,6 @@ internal fun PlayerBottomSheetView(
     playListQueue: ImmutableList<AudioItemModel>,
     activeMediaItem: AudioItemModel,
     modifier: Modifier = Modifier,
-    currentPositionMs: Long = 0L,
-    lyricState: LyricState = LyricState.Loading,
     scope: CoroutineScope = rememberCoroutineScope(),
     onEvent: (PlayerUiEvent) -> Unit = {},
     onRequestExpandSheet: () -> Unit = {}
@@ -132,43 +129,41 @@ internal fun PlayerBottomSheetView(
             )
             Spacer(modifier = Modifier.height(3.dp))
 
-            Surface(
-                modifier =
-                Modifier
-                    .weight(1f)
-                    .graphicsLayer { alpha = expandFactor }
-                    .padding(horizontal = 8.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
-            ) {
-                when (sheetState.selectedTab) {
-                    SheetTab.NEXT_SONG -> {
-                        PlayQueue(
-                            onSwapFinished = { from, to ->
-                                Napier.d(tag = TAG) { "PlayQueueView: drag stopped from $from to $to" }
-                                onEvent(PlayerUiEvent.OnSwapPlayQueue(from, to))
-                            },
-                            onDeleteFinished = {
-                                Napier.d(tag = TAG) { "onDeleteFinished $it" }
-                                onEvent(PlayerUiEvent.OnDeleteMediaItem(it))
-                            },
-                            onItemClick = {
-                                onEvent(PlayerUiEvent.OnItemClickInQueue(it))
-                            },
-                            activeMediaItem = activeMediaItem,
-                            playListQueue = playListQueue,
-                        )
-                    }
+            if (expandFactor != 0f) {
+                Surface(
+                    modifier =
+                    Modifier
+                        .weight(1f)
+                        .graphicsLayer { alpha = expandFactor }
+                        .padding(horizontal = 8.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
+                ) {
+                    when (sheetState.selectedTab) {
+                        SheetTab.NEXT_SONG -> {
+                            PlayQueue(
+                                onSwapFinished = { from, to ->
+                                    Napier.d(tag = TAG) { "PlayQueueView: drag stopped from $from to $to" }
+                                    onEvent(PlayerUiEvent.OnSwapPlayQueue(from, to))
+                                },
+                                onDeleteFinished = {
+                                    Napier.d(tag = TAG) { "onDeleteFinished $it" }
+                                    onEvent(PlayerUiEvent.OnDeleteMediaItem(it))
+                                },
+                                onItemClick = {
+                                    onEvent(PlayerUiEvent.OnItemClickInQueue(it))
+                                },
+                                activeMediaItem = activeMediaItem,
+                                playListQueue = playListQueue,
+                            )
+                        }
 
-                    SheetTab.LYRICS -> {
-                        LyricsView(
-                            modifier = Modifier,
-                            currentPositionMs = currentPositionMs,
-                            lyricState = lyricState,
-                            onRequestSeek = {
-                                onEvent(PlayerUiEvent.OnSeekLyrics(it))
-                            }
-                        )
+                        SheetTab.LYRICS -> {
+                            LyricsView(
+                                modifier = Modifier,
+                                source = activeMediaItem,
+                            )
+                        }
                     }
                 }
             }

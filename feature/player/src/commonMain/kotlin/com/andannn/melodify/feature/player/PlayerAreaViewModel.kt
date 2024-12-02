@@ -3,29 +3,22 @@ package com.andannn.melodify.feature.player
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.repository.MediaControllerRepository
-import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.model.PlayMode
-import com.andannn.melodify.core.data.model.LyricModel
-import com.andannn.melodify.core.data.repository.LyricRepository
-import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.model.next
-import com.andannn.melodify.core.data.util.combine6
+import com.andannn.melodify.core.data.repository.LyricRepository
+import com.andannn.melodify.core.data.repository.MediaControllerRepository
+import com.andannn.melodify.core.data.repository.PlayListRepository
+import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.feature.drawer.DrawerController
 import com.andannn.melodify.feature.drawer.DrawerEvent
 import com.andannn.melodify.feature.drawer.model.SheetModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -64,7 +57,6 @@ private const val TAG = "PlayerStateViewModel"
 class PlayerStateViewModel(
     private val playListRepository: PlayListRepository,
     private val mediaControllerRepository: MediaControllerRepository,
-    private val lyricRepository: LyricRepository,
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
     private val drawerController: DrawerController
 ) : ViewModel() {
@@ -78,15 +70,6 @@ class PlayerStateViewModel(
         PlayState(isPlaying, progress, playMode, isShuffle)
     }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), PlayState())
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private val lyricFlow: Flow<LyricState> = interactingMusicItem
-        .filterNotNull()
-        .flatMapLatest {
-            lyricRepository.getLyricByMediaIdFlow(it.id)
-                .map<LyricModel?, LyricState> { lyricOrNull -> LyricState.Loaded(lyricOrNull) }
-                .onStart { emit(LyricState.Loading) }
-        }
 
     private val isCountingFlow = mediaControllerRepository.observeIsCounting()
     private val playListQueueFlow = playerStateMonitoryRepository.playListQueueStateFlow
@@ -103,19 +86,17 @@ class PlayerStateViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     val playerUiStateFlow =
-        combine6(
+        combine(
             interactingMusicItem,
             playStateFlow,
             playListQueueFlow,
-            lyricFlow,
             isCurrentMediaFavoriteFlow,
             isCountingFlow,
-        ) { interactingMusicItem, state, playListQueue, lyric, isFavorite, isCounting ->
+        ) { interactingMusicItem, state, playListQueue, isFavorite, isCounting ->
             if (interactingMusicItem == null) {
                 PlayerUiState.Inactive
             } else {
                 PlayerUiState.Active(
-                    lyric = lyric,
                     mediaItem = interactingMusicItem,
                     duration = mediaControllerRepository.currentDuration ?: 0L,
                     playMode = state.playMode,
@@ -129,23 +110,6 @@ class PlayerStateViewModel(
             }
         }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), PlayerUiState.Inactive)
-
-    init {
-        viewModelScope.launch {
-            interactingMusicItem
-                .filterNotNull()
-                .distinctUntilChanged()
-                .onEach { audio ->
-                    lyricRepository.tryGetLyricOrIgnore(
-                        mediaId = audio.id,
-                        trackName = audio.name,
-                        artistName = audio.artist,
-                        albumName = audio.album,
-                    )
-                }
-                .collect {}
-        }
-    }
 
     fun onEvent(event: PlayerUiEvent) {
         Napier.d(tag = TAG) { "onEvent: $event" }
@@ -251,17 +215,10 @@ private data class PlayState(
     val isShuffle: Boolean = false
 )
 
-sealed class LyricState {
-    data object Loading : LyricState()
-
-    data class Loaded(val lyric: LyricModel?) : LyricState()
-}
-
 sealed class PlayerUiState {
     data object Inactive : PlayerUiState()
 
     data class Active(
-        val lyric: LyricState = LyricState.Loading,
         val isShuffle: Boolean = false,
         val duration: Long = 0L,
         val isFavorite: Boolean = false,

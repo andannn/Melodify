@@ -1,6 +1,6 @@
 package com.andannn.melodify.feature.player.lyrics
 
-import com.andannn.melodify.feature.player.ui.shrinkable.bottom.lyrics.parseSyncedLyrics
+import com.andannn.melodify.feature.player.lyrics.parseSyncedLyrics
 import kotlin.test.Test
 
 class ParseSyncLyricsTest {

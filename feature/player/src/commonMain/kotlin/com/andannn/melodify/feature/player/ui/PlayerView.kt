@@ -112,8 +112,6 @@ internal fun PlayerView(
                 title = state.mediaItem.name,
                 artist = state.mediaItem.artist,
                 progress = state.progress,
-                duration = state.duration,
-                lyricState = state.lyric,
                 onShrinkButtonClick = layoutState::shrinkPlayerLayout,
                 onEvent = onEvent,
             )
