@@ -17,12 +17,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import com.andannn.melodify.feature.home.tab.ReactiveTab
 import com.andannn.melodify.feature.home.tab.TabUiStateHolder
 import com.andannn.melodify.feature.home.tab.rememberTabUiStateHolder
 import com.andannn.melodify.feature.home.tabcontent.TabContent
 import com.andannn.melodify.feature.home.tabcontent.TabContentStateHolder
 import com.andannn.melodify.feature.home.tabcontent.rememberTabContentStateHolder
+
+const val HOME_ROUTE = "home_route"
+
+fun NavGraphBuilder.homeScreen(
+    onNavigateCustomTabSetting: () -> Unit
+) {
+    composable(route = HOME_ROUTE) {
+        HomeRoute(
+            onNavigateCustomTabSetting = onNavigateCustomTabSetting,
+        )
+    }
+}
 
 @Composable
 fun HomeRoute(
