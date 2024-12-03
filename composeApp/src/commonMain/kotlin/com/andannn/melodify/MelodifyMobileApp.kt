@@ -18,25 +18,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.feature.customtab.CustomTabSelector
-import com.andannn.melodify.feature.drawer.BottomDrawerContainer
-import com.andannn.melodify.feature.player.PlayerAreaView
-import com.andannn.melodify.feature.player.PlayerStateViewModel
-import com.andannn.melodify.feature.player.PlayerUiState
 import com.andannn.melodify.navigation.MelodifyNavHost
-import melodify.feature.common.generated.resources.Res
-import melodify.feature.common.generated.resources.library_title
+import com.andannn.melodify.ui.components.drawer.BottomDrawerContainer
+import com.andannn.melodify.ui.components.tabselector.CustomTabSelector
+import com.andannn.melodify.ui.components.playcontrol.ui.PlayerAreaView
+import melodify.ui.common.generated.resources.Res
+import melodify.ui.common.generated.resources.library_title
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun MelodifyMobileApp(
     modifier: Modifier = Modifier,
     appState: MelodifyAppState = rememberAppState(),
-    playerStateViewModel: PlayerStateViewModel = koinViewModel {
-        parametersOf(appState.drawerController)
-    },
 ) {
     ModalDrawer(
         drawerState = appState.drawerState,
@@ -57,13 +50,7 @@ fun MelodifyMobileApp(
                 onDialogResult = appState::onDialogResult,
             )
 
-            val playerUiState by playerStateViewModel.playerUiStateFlow.collectAsState()
-            if (playerUiState is PlayerUiState.Active) {
-                PlayerAreaView(
-                    state = playerUiState as PlayerUiState.Active,
-                    onEvent = playerStateViewModel::onEvent,
-                )
-            }
+            PlayerAreaView()
 
             val drawerController = appState.drawerController
             val bottomSheetModel by drawerController.bottomSheetModel.collectAsState(null)

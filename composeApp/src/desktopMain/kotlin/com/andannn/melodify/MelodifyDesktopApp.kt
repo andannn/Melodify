@@ -3,27 +3,21 @@ package com.andannn.melodify
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
-import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.syncer.MediaLibrarySyncer
-import com.andannn.melodify.feature.customtab.CustomTabSelector
-import com.andannn.melodify.feature.home.TabWithContent
-import com.andannn.melodify.feature.home.HomeUiEvent
-import com.andannn.melodify.feature.home.HomeViewModel
-import com.andannn.melodify.feature.player.PlayerSector
-import org.koin.compose.viewmodel.koinViewModel
+import com.andannn.melodify.ui.components.tabselector.CustomTabSelector
+import com.andannn.melodify.ui.components.tab.rememberTabUiStateHolder
+import com.andannn.melodify.ui.components.tabcontent.rememberTabContentStateHolder
+import com.andannn.melodify.navigation.routes.TabWithContent
+import com.andannn.melodify.ui.components.playcontrol.Player
 import org.koin.java.KoinJavaComponent.getKoin
 
 @Composable
@@ -68,7 +62,7 @@ fun MainWindowContent(
 
         HorizontalDivider()
 
-        PlayerSector(
+        Player(
             modifier = Modifier
         )
     }
@@ -77,22 +71,22 @@ fun MainWindowContent(
 @Composable
 private fun TabWithContentSector(
     modifier: Modifier = Modifier,
-    homeViewModel: HomeViewModel = koinViewModel(),
 ) {
-    val state by homeViewModel.state.collectAsState()
-
+    val scope = rememberCoroutineScope()
+    val tabUiStateHolder = rememberTabUiStateHolder(
+        scope = scope
+    )
+    val tabContentStateHolder = rememberTabContentStateHolder(
+        scope = scope,
+        selectedTab = tabUiStateHolder.state.selectedTab
+    )
     Surface(
         modifier = modifier
     ) {
         TabWithContent(
             modifier = Modifier,
-            uiState = state,
-            onEvent = homeViewModel::onEvent,
-            onMediaItemClick = {
-                if (it is AudioItemModel) {
-                    homeViewModel.onEvent(HomeUiEvent.OnMusicItemClick(it))
-                }
-            }
+            tabUiStateHolder = tabUiStateHolder,
+            tabContentStateHolder = tabContentStateHolder
         )
     }
 }

@@ -4,13 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.andannn.melodify.feature.customtab.navigation.customTabSetting
-import com.andannn.melodify.feature.customtab.navigation.navigateToCustomTabSetting
-import com.andannn.melodify.feature.home.navigation.HOME_ROUTE
-import com.andannn.melodify.feature.home.navigation.homeScreen
-import com.andannn.melodify.feature.message.dialog.Dialog
-import com.andannn.melodify.feature.message.dialog.InteractionResult
-import com.andannn.melodify.feature.message.dialog.melodifyDialog
+import com.andannn.melodify.ui.components.message.dialog.Dialog
+import com.andannn.melodify.ui.components.message.dialog.InteractionResult
+import com.andannn.melodify.navigation.routes.melodifyDialog
+import com.andannn.melodify.navigation.routes.HOME_ROUTE
+import com.andannn.melodify.navigation.routes.customTabSetting
+import com.andannn.melodify.navigation.routes.homeScreen
+import com.andannn.melodify.navigation.routes.navigateToCustomTabSetting
 
 @Composable
 fun MelodifyNavHost(

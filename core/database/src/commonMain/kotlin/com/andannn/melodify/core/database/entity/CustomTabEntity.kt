@@ -15,10 +15,6 @@ internal object CustomTabColumns {
 
 object CustomTabType {
     const val ALL_MUSIC = "all_music"
-    const val ALL_ALBUM = "all_album"
-    const val ALL_PLAYLIST = "all_playlist"
-    const val ALL_GENRE = "all_genre"
-    const val ALL_ARTIST = "all_artist"
     const val ALBUM_DETAIL = "album_detail"
     const val ARTIST_DETAIL = "artist_detail"
     const val GENRE_DETAIL = "genre_detail"

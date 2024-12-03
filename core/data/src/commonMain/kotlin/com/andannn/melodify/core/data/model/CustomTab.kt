@@ -6,31 +6,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface CustomTab {
-    fun Repository.contentFlow(): Flow<List<MediaItemModel>>
+    fun Repository.contentFlow(): Flow<List<AudioItemModel>>
 
     @Serializable
     data object AllMusic : CustomTab {
         override fun Repository.contentFlow() = mediaContentRepository.getAllMediaItemsFlow()
-    }
-
-    @Serializable
-    data object AllAlbum : CustomTab {
-        override fun Repository.contentFlow() = mediaContentRepository.getAllAlbumsFlow()
-    }
-
-    @Serializable
-    data object AllArtist : CustomTab {
-        override fun Repository.contentFlow() = mediaContentRepository.getAllArtistFlow()
-    }
-
-    @Serializable
-    data object AllGenre : CustomTab {
-        override fun Repository.contentFlow() = mediaContentRepository.getAllGenreFlow()
-    }
-
-    @Serializable
-    data object AllPlayList : CustomTab {
-        override fun Repository.contentFlow() = playListRepository.getAllPlayListFlow()
     }
 
     @Serializable

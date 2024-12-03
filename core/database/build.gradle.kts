@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.andannn.melodify.feature.database"
+    namespace = "com.andannn.melodify.ui.database"
 
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

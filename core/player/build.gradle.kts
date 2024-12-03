@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.andannn.melodify.feature.core.player"
+    namespace = "com.andannn.melodify.ui.core.player"
 }
 
 kotlin {
