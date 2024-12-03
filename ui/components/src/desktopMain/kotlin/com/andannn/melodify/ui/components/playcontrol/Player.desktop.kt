@@ -25,9 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.ui.common.util.getIcon
 import com.andannn.melodify.ui.common.widgets.CircleBorderImage
@@ -45,7 +45,6 @@ actual fun Player(
             isShuffle = uiState.isShuffle,
             isPlaying = uiState.isPlaying,
             isFavorite = uiState.isFavorite,
-            activeMediaItem = uiState.mediaItem,
             title = uiState.mediaItem.name,
             artist = uiState.mediaItem.artist,
             progress = uiState.progress,
@@ -56,7 +55,7 @@ actual fun Player(
         PlayerUiState.Inactive -> PlayStateBar(
             modifier = modifier,
             coverUri = "",
-            activeMediaItem = AudioItemModel.DEFAULT,
+            enabled = false,
         )
     }
 }
@@ -64,7 +63,7 @@ actual fun Player(
 @Composable
 private fun PlayStateBar(
     coverUri: String,
-    activeMediaItem: AudioItemModel,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
     isShuffle: Boolean = false,
@@ -72,7 +71,7 @@ private fun PlayStateBar(
     isFavorite: Boolean = false,
     title: String = "",
     artist: String = "",
-    progress: Float = 1f,
+    progress: Float = 0f,
     duration: Long = 0L,
     onEvent: (PlayerUiEvent) -> Unit = {},
 ) {
@@ -93,7 +92,7 @@ private fun PlayStateBar(
 
                 PlayControlBar(
                     modifier = Modifier,
-                    enabled = true,
+                    enabled = enabled,
                     isPlaying = isPlaying,
                     playMode = playMode,
                     isShuffle = isShuffle,
@@ -103,13 +102,15 @@ private fun PlayStateBar(
                 Spacer(modifier = Modifier.weight(1f))
             }
 
-            Slider(
+
+            ProgressBar(
                 modifier = Modifier.height(24.dp),
-                value = progress,
-                enabled = true,
+                enabled = enabled,
+                progress = progress,
+                duration = duration,
                 onValueChange = {
                     onEvent(PlayerUiEvent.OnProgressChange(it))
-                },
+                }
             )
         }
     }
@@ -199,18 +200,20 @@ private fun PlayInfoWithAlbumCover(
     title: String,
     artist: String
 ) {
-
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircleBorderImage(
-            modifier = Modifier
-                .fillMaxHeight()
-                .aspectRatio(1f)
-                .padding(6.dp),
-            model = coverUri
-        )
+        if (coverUri.isNotEmpty()) {
+            CircleBorderImage(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .aspectRatio(1f),
+                model = coverUri
+            )
+
+            Spacer(modifier = Modifier.width(10.dp))
+        }
 
         Column(
             modifier = Modifier,
@@ -229,5 +232,42 @@ private fun PlayInfoWithAlbumCover(
                 style = MaterialTheme.typography.bodySmall,
             )
         }
+    }
+}
+
+@Composable
+private fun ProgressBar(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    progress: Float = 0f,
+    duration: Long = 0L,
+    onValueChange: (Float) -> Unit = {},
+) {
+    Row(
+        modifier = modifier.padding(start = 8.dp, end = 8.dp, bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.graphicsLayer {
+                alpha = if (enabled) 1f else 0.5f
+            },
+            text = "0:00",
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Slider(
+            modifier = modifier.weight(1f),
+            value = progress,
+            enabled = enabled,
+            onValueChange = onValueChange,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            modifier = Modifier.graphicsLayer {
+                alpha = if (enabled) 1f else 0.5f
+            },
+            text = "0:00",
+            style = MaterialTheme.typography.bodySmall,
+        )
     }
 }
