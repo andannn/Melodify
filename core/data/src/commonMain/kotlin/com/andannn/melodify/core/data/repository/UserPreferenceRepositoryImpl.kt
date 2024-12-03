@@ -31,7 +31,7 @@ class UserPreferenceRepositoryImpl(
     override val currentCustomTabsFlow: Flow<List<CustomTab>> =
         userDataDao
             .getCustomTabsFlow()
-            .map { it.mapToCustomTabModel() }
+            .map { it.mapToCustomTabModel().filterNotNull() }
 
     override suspend fun updateCurrentCustomTabs(currentCustomTabs: List<CustomTab>) {
         userDataDao.clearAndInsertCustomTabs(

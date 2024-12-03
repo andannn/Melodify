@@ -15,5 +15,8 @@ fun main() = application {
         modules(modules)
     }
 
-    MelodifyDeskTopApp()
+    val appState = rememberMelodifyDesktopAppState()
+    MelodifyDeskTopApp(
+        appState = appState
+    )
 }

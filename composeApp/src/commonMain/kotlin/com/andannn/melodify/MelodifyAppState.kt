@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.andannn.melodify.ui.components.menu.DrawerController
 import com.andannn.melodify.ui.components.message.MessageController
 import com.andannn.melodify.ui.components.message.dialog.Dialog
 import com.andannn.melodify.ui.components.message.dialog.InteractionResult

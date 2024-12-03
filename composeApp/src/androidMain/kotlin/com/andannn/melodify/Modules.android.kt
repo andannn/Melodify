@@ -1,7 +1,7 @@
 package com.andannn.melodify
 
-import com.andannn.melodify.ui.components.menu.DrawerController
-import com.andannn.melodify.ui.components.menu.DrawerControllerImpl
+import com.andannn.melodify.ui.components.menu.MenuController
+import com.andannn.melodify.ui.components.menu.MenuControllerImpl
 import com.andannn.melodify.ui.components.message.MessageController
 import com.andannn.melodify.ui.components.message.MessageControllerImpl
 import org.koin.core.module.Module
@@ -14,7 +14,7 @@ import org.koin.dsl.module
  */
 actual val uiScopedModule: Module = module {
     scope<MainActivity> {
-        scopedOf(::DrawerControllerImpl).bind(DrawerController::class)
+        scopedOf(::MenuControllerImpl).bind(MenuController::class)
     }
     scope<MainActivity> {
         scopedOf(::MessageControllerImpl).bind(MessageController::class)

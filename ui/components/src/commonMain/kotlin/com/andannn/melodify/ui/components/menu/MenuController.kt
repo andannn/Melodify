@@ -29,34 +29,34 @@ import kotlin.coroutines.CoroutineContext
 
 private const val TAG = "DrawerController"
 
-sealed interface DrawerEvent {
-    data class OnShowBottomDrawer(val sheet: SheetModel) : DrawerEvent
+sealed interface MenuEvent {
+    data class OnShowBottomMenu(val sheet: SheetModel) : MenuEvent
 
-    data object OnCancelTimer : DrawerEvent
+    data object OnCancelTimer : MenuEvent
 
     data class OnMediaOptionClick(
         val sheet: SheetModel.MediaOptionSheet,
         val clickedItem: SheetOptionItem,
-    ) : DrawerEvent
+    ) : MenuEvent
 
     data class OnTimerOptionClick(
         val option: SleepTimerOption,
-    ) : DrawerEvent
+    ) : MenuEvent
 
-    data class OnDismissSheet(val bottomSheet: SheetModel) : DrawerEvent
+    data class OnDismissSheet(val bottomSheet: SheetModel) : MenuEvent
 
-    data object OnShowTimerSheet : DrawerEvent
+    data object OnShowTimerSheet : MenuEvent
 
-    data class OnToggleFavorite(val audio: AudioItemModel) : DrawerEvent
+    data class OnToggleFavorite(val audio: AudioItemModel) : MenuEvent
 
     data class OnAddToPlayList(
         val playList: PlayListItemModel,
         val audioList: List<AudioItemModel>
-    ) : DrawerEvent
+    ) : MenuEvent
 
     data class OnCreateNewPlayList(
         val interactingSource: MediaItemModel
-    ) : DrawerEvent
+    ) : MenuEvent
 }
 
 interface DeleteMediaItemEventProvider {
@@ -71,17 +71,17 @@ interface PlaylistCreatedEventProvider {
     val playlistCreatedEventChannel: ReceiveChannel<Long>
 }
 
-interface DrawerController : BottomSheetStateProvider, DeleteMediaItemEventProvider,
+interface MenuController : BottomSheetStateProvider, DeleteMediaItemEventProvider,
     PlaylistCreatedEventProvider {
-    fun onEvent(event: DrawerEvent)
+    fun onEvent(event: MenuEvent)
 
     fun close()
 }
 
-class DrawerControllerImpl(
+class MenuControllerImpl(
     private val repository: Repository,
     private val messageController: MessageController,
-) : DrawerController, CoroutineScope {
+) : MenuController, CoroutineScope {
     private val mediaControllerRepository: MediaControllerRepository =
         repository.mediaControllerRepository
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository =
@@ -104,11 +104,11 @@ class DrawerControllerImpl(
         get() = _playlistCreatedEventChannel
 
 
-    override fun onEvent(event: DrawerEvent) {
+    override fun onEvent(event: MenuEvent) {
         launch {
             Napier.d(tag = TAG) { "onEvent: $event" }
             when (event) {
-                is DrawerEvent.OnTimerOptionClick -> {
+                is MenuEvent.OnTimerOptionClick -> {
                     closeSheet()
                     when (val option = event.option) {
                         SleepTimerOption.FIVE_MINUTES,
@@ -126,7 +126,7 @@ class DrawerControllerImpl(
                     }
                 }
 
-                is DrawerEvent.OnMediaOptionClick -> {
+                is MenuEvent.OnMediaOptionClick -> {
                     closeSheet()
                     event.clickedItem.let {
                         when (it) {
@@ -145,31 +145,31 @@ class DrawerControllerImpl(
                     }
                 }
 
-                DrawerEvent.OnCancelTimer -> {
+                MenuEvent.OnCancelTimer -> {
                     mediaControllerRepository.cancelSleepTimer()
                     closeSheet()
                 }
 
-                is DrawerEvent.OnDismissSheet -> {
+                is MenuEvent.OnDismissSheet -> {
                     closeSheet()
                 }
 
-                is DrawerEvent.OnShowBottomDrawer -> {
+                is MenuEvent.OnShowBottomMenu -> {
                     _bottomSheetModelFlow.emit(event.sheet)
                 }
 
-                DrawerEvent.OnShowTimerSheet -> onClickSleepTimer()
+                MenuEvent.OnShowTimerSheet -> onClickSleepTimer()
 
-                is DrawerEvent.OnToggleFavorite -> {
+                is MenuEvent.OnToggleFavorite -> {
                     playListRepository.toggleFavoriteMedia(event.audio)
                 }
 
-                is DrawerEvent.OnAddToPlayList -> {
+                is MenuEvent.OnAddToPlayList -> {
                     closeSheet()
                     onAddToPlayList(event.playList, event.audioList)
                 }
 
-                is DrawerEvent.OnCreateNewPlayList -> {
+                is MenuEvent.OnCreateNewPlayList -> {
                     closeSheet()
                     onCreateNewPlayList(event.interactingSource)
                 }

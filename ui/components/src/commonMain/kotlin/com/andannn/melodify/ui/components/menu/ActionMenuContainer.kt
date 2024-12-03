@@ -13,13 +13,13 @@ import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun ActionMenuContainer(
-    drawerController: DrawerController = getUiRetainedScope()?.get() ?: getKoin().get(),
+    menuController: MenuController = getUiRetainedScope()?.get() ?: getKoin().get(),
 ) {
-    val bottomSheetModel by drawerController.bottomSheetModel.collectAsState(null)
+    val bottomSheetModel by menuController.bottomSheetModel.collectAsState(null)
     ActionMenu(
         bottomSheet = bottomSheetModel,
         onEvent = { event ->
-            drawerController.onEvent(event)
+            menuController.onEvent(event)
         }
     )
 }
@@ -27,13 +27,13 @@ fun ActionMenuContainer(
 @Composable
 expect fun ActionMenu(
     bottomSheet: SheetModel?,
-    onEvent: (DrawerEvent) -> Unit = {},
+    onEvent: (MenuEvent) -> Unit = {},
 )
 
 @Composable
 internal fun BottomDrawer(
     bottomSheet: SheetModel?,
-    onEvent: (DrawerEvent) -> Unit = {},
+    onEvent: (MenuEvent) -> Unit = {},
 ) {
     if (bottomSheet != null) {
         when (bottomSheet) {
@@ -41,13 +41,13 @@ internal fun BottomDrawer(
                 MediaOptionBottomSheet(
                     optionSheet = bottomSheet,
                     onClickOption = {
-                        onEvent(DrawerEvent.OnMediaOptionClick(bottomSheet, it))
+                        onEvent(MenuEvent.OnMediaOptionClick(bottomSheet, it))
                     },
                     onToggleFavorite = { id ->
-                        onEvent(DrawerEvent.OnToggleFavorite(id))
+                        onEvent(MenuEvent.OnToggleFavorite(id))
                     },
                     onRequestDismiss = {
-                        onEvent(DrawerEvent.OnDismissSheet(bottomSheet))
+                        onEvent(MenuEvent.OnDismissSheet(bottomSheet))
                     }
                 )
             }
@@ -55,10 +55,10 @@ internal fun BottomDrawer(
             SheetModel.TimerOptionSheet -> {
                 SleepTimerOptionBottomSheet(
                     onSelectOption = {
-                        onEvent(DrawerEvent.OnTimerOptionClick(it))
+                        onEvent(MenuEvent.OnTimerOptionClick(it))
                     },
                     onRequestDismiss = {
-                        onEvent(DrawerEvent.OnDismissSheet(bottomSheet))
+                        onEvent(MenuEvent.OnDismissSheet(bottomSheet))
                     }
                 )
             }
@@ -66,10 +66,10 @@ internal fun BottomDrawer(
             is SheetModel.TimerRemainTimeSheet -> {
                 SleepTimerCountingBottomSheet(
                     onCancelTimer = {
-                        onEvent(DrawerEvent.OnCancelTimer)
+                        onEvent(MenuEvent.OnCancelTimer)
                     },
                     onRequestDismiss = {
-                        onEvent(DrawerEvent.OnDismissSheet(bottomSheet))
+                        onEvent(MenuEvent.OnDismissSheet(bottomSheet))
                     }
                 )
             }
@@ -78,13 +78,13 @@ internal fun BottomDrawer(
                 AddToPlayListRequestSheet(
                     sheet = bottomSheet,
                     onRequestDismiss = {
-                        onEvent(DrawerEvent.OnDismissSheet(bottomSheet))
+                        onEvent(MenuEvent.OnDismissSheet(bottomSheet))
                     },
                     onAddToPlay = { playList, audioList ->
-                        onEvent(DrawerEvent.OnAddToPlayList(playList, audioList))
+                        onEvent(MenuEvent.OnAddToPlayList(playList, audioList))
                     },
                     onCreateNewPlayList = {
-                        onEvent(DrawerEvent.OnCreateNewPlayList(bottomSheet.source))
+                        onEvent(MenuEvent.OnCreateNewPlayList(bottomSheet.source))
                     }
                 )
             }

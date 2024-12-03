@@ -1,5 +1,6 @@
 package com.andannn.melodify.ui.components.tab
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +40,7 @@ fun ReactiveTab(
             ) {
                 tabs.forEachIndexed { index, item ->
                     Tab(
+                        modifier = Modifier,
                         selected = index == selectedIndex,
                         selectedContentColor = MaterialTheme.colorScheme.primary,
                         unselectedContentColor = MaterialTheme.colorScheme.onSurface,

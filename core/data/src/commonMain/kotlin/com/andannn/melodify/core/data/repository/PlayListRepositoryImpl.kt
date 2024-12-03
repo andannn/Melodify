@@ -32,6 +32,18 @@ internal class PlayListRepositoryImpl(
             )
         }
 
+    override suspend fun getPlayListFlowById(playListId: Long) =
+        playListDao.getPlayListFlow(playListId)
+            .map {
+                if (it == null) return@map null
+                PlayListItemModel(
+                    id = it.playList.id.toString(),
+                    name = it.playList.name,
+                    artWorkUri = it.playList.artworkUri ?: "",
+                    trackCount = it.medias.size
+                )
+            }
+
     override suspend fun addMusicToPlayList(
         playListId: Long,
         musics: List<AudioItemModel>

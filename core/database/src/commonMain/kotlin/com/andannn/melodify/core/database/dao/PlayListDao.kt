@@ -83,6 +83,15 @@ interface PlayListDao {
 
     @Query(
         """
+        select * from ${Tables.PLAY_LIST}
+        where ${PlayListColumns.ID} = :playListId
+    """
+    )
+    @Transaction
+    fun getPlayListFlow(playListId: Long): Flow<PlayListAndMedias?>
+
+    @Query(
+        """
         select exists(
             select 1 from ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
             where ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID} = :playList and

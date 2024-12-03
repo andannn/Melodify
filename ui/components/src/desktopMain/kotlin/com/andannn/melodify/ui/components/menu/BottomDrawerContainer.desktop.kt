@@ -9,7 +9,7 @@ import com.andannn.melodify.ui.components.menu.sheet.SheetItem
 @Composable
 actual fun ActionMenu(
     bottomSheet: SheetModel?,
-    onEvent: (DrawerEvent) -> Unit
+    onEvent: (MenuEvent) -> Unit
 ) {
     if (bottomSheet != null) {
         when (bottomSheet) {
@@ -17,10 +17,10 @@ actual fun ActionMenu(
                 CursorDropDownOptionMenu(
                     optionSheet = bottomSheet,
                     onClickOption = {
-                        onEvent(DrawerEvent.OnMediaOptionClick(bottomSheet, it))
+                        onEvent(MenuEvent.OnMediaOptionClick(bottomSheet, it))
                     },
                     onRequestDismiss = {
-                        onEvent(DrawerEvent.OnDismissSheet(bottomSheet))
+                        onEvent(MenuEvent.OnDismissSheet(bottomSheet))
                     }
                 )
             }

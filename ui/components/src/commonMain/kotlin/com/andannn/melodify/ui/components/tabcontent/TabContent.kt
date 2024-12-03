@@ -1,7 +1,9 @@
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -39,7 +41,7 @@ fun TabContent(
         modifier =
         Modifier.fillMaxSize(),
         state = listLayoutState,
-        mediaItems = stateHolder.state.itemList.toImmutableList(),
+        contentMap = stateHolder.state.contentMap,
         onMusicItemClick = stateHolder::playMusic,
         onShowMusicItemOption = stateHolder::onShowMusicItemOption
     )
@@ -47,7 +49,7 @@ fun TabContent(
 
 @Composable
 private fun LazyListContent(
-    mediaItems: ImmutableList<AudioItemModel>,
+    contentMap: Map<MediaItemModel, List<AudioItemModel>>,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     onMusicItemClick: (AudioItemModel) -> Unit = {},
@@ -58,39 +60,40 @@ private fun LazyListContent(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 5.dp),
     ) {
-        items(
-            items = mediaItems,
-            key = { it.key },
-        ) { item ->
-            ListTileItemView(
-                modifier =
-                Modifier.animateItem(),
-                playable = item.browsableOrPlayable,
-                isActive = false,
-                albumArtUri = item.artWorkUri,
-                title = item.name,
-                subTitle = subTitle(item),
-                onMusicItemClick = {
-                    onMusicItemClick.invoke(item)
-                },
-                onOptionButtonClick = {
-                    onShowMusicItemOption(item)
-                },
-            )
+        contentMap.forEach { (header, mediaItems) ->
+            item(header.key) {
+                ListHeader(
+                    coverArtUri = header.artWorkUri,
+                    title = header.name,
+                    trackCount = mediaItems.size,
+                )
+            }
+
+            items(
+                items = mediaItems,
+                key = { it.key },
+            ) { item ->
+                ListTileItemView(
+                    modifier =
+                    Modifier.animateItem(),
+                    playable = item.browsableOrPlayable,
+                    isActive = false,
+                    albumArtUri = item.artWorkUri,
+                    title = item.name,
+                    showTrackNum = header is AlbumItemModel,
+                    trackNum = item.cdTrackNumber,
+                    onMusicItemClick = {
+                        onMusicItemClick.invoke(item)
+                    },
+                    onOptionButtonClick = {
+                        onShowMusicItemOption(item)
+                    },
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(16.dp)) }
         }
 
         item { ExtraPaddingBottom() }
     }
-}
-
-@Composable
-private fun subTitle(
-    model: MediaItemModel
-): String = when (model) {
-    is AudioItemModel -> model.artist
-    is AlbumItemModel,
-    is PlayListItemModel,
-    is ArtistItemModel -> stringResource(Res.string.track_count, model.trackCount.toString())
-
-    is GenreItemModel -> ""
 }

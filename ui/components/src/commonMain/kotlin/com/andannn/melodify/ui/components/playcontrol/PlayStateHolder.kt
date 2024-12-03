@@ -14,8 +14,8 @@ import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.ui.common.util.getUiRetainedScope
-import com.andannn.melodify.ui.components.menu.DrawerController
-import com.andannn.melodify.ui.components.menu.DrawerEvent
+import com.andannn.melodify.ui.components.menu.MenuController
+import com.andannn.melodify.ui.components.menu.MenuEvent
 import com.andannn.melodify.ui.components.menu.model.SheetModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
@@ -33,18 +33,18 @@ import org.koin.mp.KoinPlatform.getKoin
 fun rememberPlayStateHolder(
     scope: CoroutineScope = rememberCoroutineScope(),
     repository: Repository = getKoin().get(),
-    drawerController: DrawerController = getUiRetainedScope()?.get() ?: getKoin().get()
+    menuController: MenuController = getUiRetainedScope()?.get() ?: getKoin().get()
 ) = remember(
     scope,
     repository,
-    drawerController
+    menuController
 ) {
     PlayStateHolder(
         scope = scope,
         playListRepository = repository.playListRepository,
         mediaControllerRepository = repository.mediaControllerRepository,
         playerStateMonitoryRepository = repository.playerStateMonitoryRepository,
-        drawerController = drawerController
+        menuController = menuController
     )
 }
 
@@ -79,7 +79,7 @@ class PlayStateHolder(
     private val playListRepository: PlayListRepository,
     private val mediaControllerRepository: MediaControllerRepository,
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
-    private val drawerController: DrawerController,
+    private val menuController: MenuController,
 ) {
     private val interactingMusicItem = playerStateMonitoryRepository.playingMediaStateFlow
     private val playStateFlow =
@@ -167,8 +167,8 @@ class PlayStateHolder(
 
             is PlayerUiEvent.OnOptionIconClick -> {
                 scope.launch {
-                    drawerController.onEvent(
-                        DrawerEvent.OnShowBottomDrawer(SheetModel.PlayerOptionSheet(event.mediaItem)),
+                    menuController.onEvent(
+                        MenuEvent.OnShowBottomMenu(SheetModel.PlayerOptionSheet(event.mediaItem)),
                     )
                 }
             }
@@ -182,7 +182,7 @@ class PlayStateHolder(
             }
 
             PlayerUiEvent.OnTimerIconClick -> {
-                drawerController.onEvent(DrawerEvent.OnShowTimerSheet)
+                menuController.onEvent(MenuEvent.OnShowTimerSheet)
             }
         }
     }

@@ -6,5 +6,5 @@ import com.andannn.melodify.ui.components.menu.model.SheetModel
 @Composable
 actual fun ActionMenu(
     bottomSheet: SheetModel?,
-    onEvent: (DrawerEvent) -> Unit
+    onEvent: (MenuEvent) -> Unit
 ) = BottomDrawer(bottomSheet, onEvent)

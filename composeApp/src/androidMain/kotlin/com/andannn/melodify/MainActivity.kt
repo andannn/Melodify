@@ -29,7 +29,7 @@ import com.andannn.melodify.ui.common.theme.MelodifyTheme
 import android.graphics.Color
 import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.core.syncer.SyncJobService
-import com.andannn.melodify.ui.components.menu.DrawerController
+import com.andannn.melodify.ui.components.menu.MenuController
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
     override val scope: Scope by activityRetainedScope()
 
     private val mainViewModel: MainActivityViewModel by viewModel {
-        parametersOf(scope.get<DrawerController>())
+        parametersOf(scope.get<MenuController>())
     }
 
     private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
 
         scope.registerCallback(object : ScopeCallback {
             override fun onScopeClose(scope: Scope) {
-                scope.get<DrawerController>().close()
+                scope.get<MenuController>().close()
             }
         })
 
@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
         }
 
         lifecycleScope.launch {
-            val deleteMediaItemEventFlow = scope.get<DrawerController>().deleteMediaItemEventFlow
+            val deleteMediaItemEventFlow = scope.get<MenuController>().deleteMediaItemEventFlow
             deleteMediaItemEventFlow.collect { uris ->
                 Napier.d(tag = TAG) { "Requesting delete media items: $uris" }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

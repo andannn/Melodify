@@ -26,6 +26,12 @@ sealed interface InteractionResult {
 
         data object DECLINE : NewPlaylistDialog
     }
+
+    interface AddToPlayListRequest : InteractionResult {
+        data class ClickPlayList(val playListId: String) : AddToPlayListRequest
+
+        data object CreateNewPlayList : AddToPlayListRequest
+    }
 }
 
 sealed class Dialog(
