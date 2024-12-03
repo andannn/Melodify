@@ -1,4 +1,4 @@
-package com.andannn.melodify.ui.components.drawer.sheet
+package com.andannn.melodify.ui.components.menu.sheet
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -44,8 +44,8 @@ import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.ui.common.widgets.FavoriteIconButton
 import com.andannn.melodify.ui.common.icons.SmpIcon
 import com.andannn.melodify.ui.common.theme.MelodifyTheme
-import com.andannn.melodify.ui.components.drawer.model.SheetModel
-import com.andannn.melodify.ui.components.drawer.model.SheetOptionItem
+import com.andannn.melodify.ui.components.menu.model.SheetModel
+import com.andannn.melodify.ui.components.menu.model.SheetOptionItem
 import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
@@ -182,7 +182,7 @@ private fun MediaItemModel.subTitle() = when (this) {
 }
 
 @Composable
-fun SheetItem(
+internal fun SheetItem(
     item: SheetOptionItem,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,

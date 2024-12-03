@@ -1,4 +1,4 @@
-package com.andannn.melodify.ui.components.drawer.model
+package com.andannn.melodify.ui.components.menu.model
 
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel

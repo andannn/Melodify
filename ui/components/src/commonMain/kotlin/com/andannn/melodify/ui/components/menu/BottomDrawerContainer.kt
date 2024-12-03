@@ -1,14 +1,37 @@
-package com.andannn.melodify.ui.components.drawer
+package com.andannn.melodify.ui.components.menu
 
 import androidx.compose.runtime.Composable
-import com.andannn.melodify.ui.components.drawer.model.SheetModel
-import com.andannn.melodify.ui.components.drawer.sheet.AddToPlayListRequestSheet
-import com.andannn.melodify.ui.components.drawer.sheet.MediaOptionBottomSheet
-import com.andannn.melodify.ui.components.drawer.sheet.SleepTimerCountingBottomSheet
-import com.andannn.melodify.ui.components.drawer.sheet.SleepTimerOptionBottomSheet
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.andannn.melodify.ui.common.util.getUiRetainedScope
+import com.andannn.melodify.ui.components.menu.model.SheetModel
+import com.andannn.melodify.ui.components.menu.sheet.AddToPlayListRequestSheet
+import com.andannn.melodify.ui.components.menu.sheet.MediaOptionBottomSheet
+import com.andannn.melodify.ui.components.menu.sheet.SleepTimerCountingBottomSheet
+import com.andannn.melodify.ui.components.menu.sheet.SleepTimerOptionBottomSheet
+import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun BottomDrawerContainer(
+fun ActionMenuContainer(
+    drawerController: DrawerController = getUiRetainedScope()?.get() ?: getKoin().get(),
+) {
+    val bottomSheetModel by drawerController.bottomSheetModel.collectAsState(null)
+    ActionMenu(
+        bottomSheet = bottomSheetModel,
+        onEvent = { event ->
+            drawerController.onEvent(event)
+        }
+    )
+}
+
+@Composable
+expect fun ActionMenu(
+    bottomSheet: SheetModel?,
+    onEvent: (DrawerEvent) -> Unit = {},
+)
+
+@Composable
+internal fun BottomDrawer(
     bottomSheet: SheetModel?,
     onEvent: (DrawerEvent) -> Unit = {},
 ) {

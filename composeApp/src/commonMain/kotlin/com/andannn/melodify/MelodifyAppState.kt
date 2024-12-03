@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.andannn.melodify.ui.components.drawer.DrawerController
+import com.andannn.melodify.ui.components.menu.DrawerController
 import com.andannn.melodify.ui.components.message.MessageController
 import com.andannn.melodify.ui.components.message.dialog.Dialog
 import com.andannn.melodify.ui.components.message.dialog.InteractionResult
@@ -28,15 +28,12 @@ fun rememberAppState(
     navController: NavHostController = rememberNavController(),
     scope: CoroutineScope = rememberCoroutineScope(),
     retainedScope: Scope? = getUiRetainedScope(),
-    drawerController: DrawerController = retainedScope?.get<DrawerController>()
-        ?: getKoin().get<DrawerController>(),
     messageController: MessageController = retainedScope?.get<MessageController>()
         ?: getKoin().get<MessageController>(),
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
 ) = remember(
     navController,
-    drawerController,
     scope,
     messageController,
     snackBarHostState,
@@ -46,7 +43,6 @@ fun rememberAppState(
         scope = scope,
         drawerState = drawerState,
         navController = navController,
-        drawerController = drawerController,
         messageController = messageController,
         snackBarHostState = snackBarHostState
     )
@@ -57,7 +53,6 @@ private const val TAG = "MelodifyAppState"
 class MelodifyAppState(
     val scope: CoroutineScope,
     val navController: NavHostController,
-    val drawerController: DrawerController,
     val snackBarHostState: SnackbarHostState,
     val drawerState: DrawerState,
     private val messageController: MessageController,

@@ -17,6 +17,8 @@ import com.andannn.melodify.ui.components.tabselector.CustomTabSelector
 import com.andannn.melodify.ui.components.tab.rememberTabUiStateHolder
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentStateHolder
 import com.andannn.melodify.navigation.routes.TabWithContent
+import com.andannn.melodify.ui.components.menu.ActionMenu
+import com.andannn.melodify.ui.components.menu.ActionMenuContainer
 import com.andannn.melodify.ui.components.playcontrol.Player
 import org.koin.java.KoinJavaComponent.getKoin
 
@@ -37,6 +39,8 @@ fun MelodifyDeskTopApp() {
         }
 
         MainWindowContent()
+
+        ActionMenuContainer()
     }
 }
 

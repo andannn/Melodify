@@ -1,4 +1,4 @@
-package com.andannn.melodify.ui.components.drawer
+package com.andannn.melodify.ui.components.menu
 
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.getAudios
@@ -7,9 +7,9 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
-import com.andannn.melodify.ui.components.drawer.model.SheetModel
-import com.andannn.melodify.ui.components.drawer.model.SheetOptionItem
-import com.andannn.melodify.ui.components.drawer.model.SleepTimerOption
+import com.andannn.melodify.ui.components.menu.model.SheetModel
+import com.andannn.melodify.ui.components.menu.model.SheetOptionItem
+import com.andannn.melodify.ui.components.menu.model.SleepTimerOption
 import com.andannn.melodify.ui.components.message.MessageController
 import com.andannn.melodify.ui.components.message.dialog.Dialog
 import com.andannn.melodify.ui.components.message.dialog.InteractionResult

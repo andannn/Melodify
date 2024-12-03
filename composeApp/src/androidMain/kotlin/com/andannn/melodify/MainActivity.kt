@@ -29,7 +29,7 @@ import com.andannn.melodify.ui.common.theme.MelodifyTheme
 import android.graphics.Color
 import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.core.syncer.SyncJobService
-import com.andannn.melodify.ui.components.drawer.DrawerController
+import com.andannn.melodify.ui.components.menu.DrawerController
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch

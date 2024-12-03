@@ -1,4 +1,4 @@
-package com.andannn.melodify.ui.components.drawer.sheet
+package com.andannn.melodify.ui.components.menu.sheet
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.common.theme.MelodifyTheme
 import com.andannn.melodify.ui.common.util.durationString
-import com.andannn.melodify.ui.components.drawer.model.SleepTimerOption
+import com.andannn.melodify.ui.components.menu.model.SleepTimerOption
 import kotlinx.coroutines.CoroutineScope
 import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.end_of_song
@@ -36,14 +36,11 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SleepTimerOptionBottomSheet(
-    modifier: Modifier = Modifier,
-    scope: CoroutineScope = rememberCoroutineScope(),
     onSelectOption: (SleepTimerOption) -> Unit = {},
     onRequestDismiss: () -> Unit = {}
 
 ) {
-    val sheetState =
-        rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
         sheetState = sheetState,

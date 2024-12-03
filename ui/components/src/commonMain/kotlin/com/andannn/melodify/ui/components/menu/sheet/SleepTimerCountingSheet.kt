@@ -1,4 +1,4 @@
-package com.andannn.melodify.ui.components.drawer.sheet
+package com.andannn.melodify.ui.components.menu.sheet
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

@@ -1,4 +1,4 @@
-package com.andannn.melodify.ui.components.drawer.sheet
+package com.andannn.melodify.ui.components.menu.sheet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,7 +38,7 @@ import com.andannn.melodify.ui.common.widgets.ActionType
 import com.andannn.melodify.ui.common.widgets.LargePreviewCard
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
 import com.andannn.melodify.ui.common.widgets.SmpTextButton
-import com.andannn.melodify.ui.components.drawer.model.SheetModel
+import com.andannn.melodify.ui.components.menu.model.SheetModel
 import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.all_playlists
 import melodify.ui.common.generated.resources.all_to_playlist_page_title

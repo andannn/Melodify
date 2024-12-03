@@ -11,9 +11,9 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.common.util.getUiRetainedScope
-import com.andannn.melodify.ui.components.drawer.DrawerController
-import com.andannn.melodify.ui.components.drawer.DrawerEvent
-import com.andannn.melodify.ui.components.drawer.model.SheetModel
+import com.andannn.melodify.ui.components.menu.DrawerController
+import com.andannn.melodify.ui.components.menu.DrawerEvent
+import com.andannn.melodify.ui.components.menu.model.SheetModel
 import com.andannn.melodify.ui.components.message.MessageController
 import com.andannn.melodify.ui.components.message.dialog.Dialog
 import com.andannn.melodify.ui.components.message.dialog.InteractionResult

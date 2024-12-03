@@ -14,9 +14,9 @@ import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.ui.common.util.getUiRetainedScope
-import com.andannn.melodify.ui.components.drawer.DrawerController
-import com.andannn.melodify.ui.components.drawer.DrawerEvent
-import com.andannn.melodify.ui.components.drawer.model.SheetModel
+import com.andannn.melodify.ui.components.menu.DrawerController
+import com.andannn.melodify.ui.components.menu.DrawerEvent
+import com.andannn.melodify.ui.components.menu.model.SheetModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi

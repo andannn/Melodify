@@ -1,7 +1,7 @@
 package com.andannn.melodify
 
-import com.andannn.melodify.ui.components.drawer.DrawerController
-import com.andannn.melodify.ui.components.drawer.DrawerControllerImpl
+import com.andannn.melodify.ui.components.menu.DrawerController
+import com.andannn.melodify.ui.components.menu.DrawerControllerImpl
 import com.andannn.melodify.ui.components.message.MessageController
 import com.andannn.melodify.ui.components.message.MessageControllerImpl
 import org.koin.core.module.dsl.singleOf
