@@ -6,20 +6,23 @@ import com.andannn.melodify.core.data.util.toAppItem
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.player.VlcPlayer
 import com.andannn.melodify.core.player.PlayerState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 
 internal class PlayerStateMonitoryRepositoryImpl(
     private val vlcPlayer: VlcPlayer,
     private val libraryDao: MediaLibraryDao
 ) : PlayerStateMonitoryRepository {
-    override val currentPositionMs: Long = vlcPlayer.currentPositionMs
+    override val currentPositionMs: Long get() = vlcPlayer.currentPositionMs
 
-    override val playingIndexInQueue: Int = vlcPlayer.playingIndexInQueue
+    override val playingIndexInQueue: Int get() = vlcPlayer.playingIndexInQueue
 
     override val playListQueue: List<AudioItemModel> = emptyList()
 
@@ -28,10 +31,17 @@ internal class PlayerStateMonitoryRepositoryImpl(
             if (mrl == null) {
                 return@map null
             }
-            libraryDao.getMediaByMediaIds(listOf(mrl.hashCode().toLong().toString())).firstOrNull()?.toAppItem()
+            libraryDao.getMediaByMediaIds(listOf(mrl.hashCode().toString())).firstOrNull()
+                ?.toAppItem()
         }
 
-    override val playListQueueStateFlow: Flow<List<AudioItemModel>> = flowOf(emptyList())
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val playListQueueStateFlow: Flow<List<AudioItemModel>> =
+        vlcPlayer.observePlayListQueue()
+            .mapLatest { mrls ->
+                libraryDao.getMediaByMediaIds(mrls.map { it.hashCode().toString() })
+                    .map { it.toAppItem() }
+            }
 
     override fun observeIsShuffle(): StateFlow<Boolean> {
         return MutableStateFlow(false)

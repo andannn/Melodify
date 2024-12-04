@@ -49,8 +49,12 @@ internal class PlayerImpl : VlcPlayer, CoroutineScope {
     private val _playingMrlFlow = MutableStateFlow<String?>(null)
     private val _playListFlow = MutableStateFlow<List<String>>(emptyList())
 
-    private val currentPosition: Long =
-        (_currentPositionFlow.value * _playingDurationFlow.value).toLong()
+    private val currentPosition: Long
+        get() {
+            return (_currentPositionFlow.value * _playingDurationFlow.value).toLong().also {
+                Napier.d { "JQN calculate ${it}" }
+            }
+        }
 
     private val playerEventLister = object : MediaPlayerEventAdapter() {
         override fun mediaChanged(mediaPlayer: MediaPlayer, media: MediaRef) {
@@ -89,6 +93,7 @@ internal class PlayerImpl : VlcPlayer, CoroutineScope {
         }
 
         override fun positionChanged(mediaPlayer: MediaPlayer?, newPosition: Float) {
+            Napier.d(tag = TAG) { "positionChanged $newPosition. thread ${Thread.currentThread()}" }
             _currentPositionFlow.value = newPosition
 
             _playerStateFlow.getAndUpdate { old ->

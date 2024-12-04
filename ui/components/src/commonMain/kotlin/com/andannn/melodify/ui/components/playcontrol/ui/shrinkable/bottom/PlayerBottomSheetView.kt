@@ -140,7 +140,6 @@ internal fun PlayerBottomSheetView(
                         SheetTab.LYRICS -> {
                             LyricsView(
                                 modifier = Modifier,
-                                source = activeMediaItem,
                             )
                         }
                     }
