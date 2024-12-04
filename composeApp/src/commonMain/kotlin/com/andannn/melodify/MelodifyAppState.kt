@@ -10,45 +10,33 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.andannn.melodify.ui.components.drawer.DrawerController
-import com.andannn.melodify.ui.components.message.MessageController
-import com.andannn.melodify.ui.components.message.dialog.Dialog
-import com.andannn.melodify.ui.components.message.dialog.InteractionResult
-import com.andannn.melodify.navigation.routes.navigateToDialog
 import com.andannn.melodify.ui.common.util.getUiRetainedScope
+import com.andannn.melodify.ui.components.popup.PopupController
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.compose.getKoin
-import org.koin.core.scope.Scope
+import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
 fun rememberAppState(
     navController: NavHostController = rememberNavController(),
     scope: CoroutineScope = rememberCoroutineScope(),
-    retainedScope: Scope? = getUiRetainedScope(),
-    drawerController: DrawerController = retainedScope?.get<DrawerController>()
-        ?: getKoin().get<DrawerController>(),
-    messageController: MessageController = retainedScope?.get<MessageController>()
-        ?: getKoin().get<MessageController>(),
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    popupController: PopupController = getUiRetainedScope()?.get() ?: getKoin().get(),
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
 ) = remember(
     navController,
-    drawerController,
     scope,
-    messageController,
     snackBarHostState,
-    drawerState,
+    drawerState
 ) {
     MelodifyAppState(
         scope = scope,
-        drawerState = drawerState,
         navController = navController,
-        drawerController = drawerController,
-        messageController = messageController,
-        snackBarHostState = snackBarHostState
+        snackBarHostState = snackBarHostState,
+        popupController = popupController,
+        drawerState = drawerState,
     )
 }
 
@@ -57,20 +45,13 @@ private const val TAG = "MelodifyAppState"
 class MelodifyAppState(
     val scope: CoroutineScope,
     val navController: NavHostController,
-    val drawerController: DrawerController,
     val snackBarHostState: SnackbarHostState,
-    val drawerState: DrawerState,
-    private val messageController: MessageController,
+    val popupController: PopupController,
+    val drawerState: DrawerState
 ) {
     init {
         scope.launch {
-            for (dialog in messageController.sendDialogChannel) {
-                navController.navigateToDialog(dialog)
-            }
-        }
-
-        scope.launch {
-            for (message in messageController.snackBarMessageChannel) {
+            for (message in popupController.snackBarMessageChannel) {
                 Napier.d(tag = TAG) { "show snackbar: $message" }
                 var result: SnackbarResult? = null
                 try {
@@ -79,14 +60,10 @@ class MelodifyAppState(
                     result = SnackbarResult.Dismissed
                     throw e
                 } finally {
-                    messageController.snackBarResultChannel.send(result!!)
+                    popupController.snackBarResultChannel.send(result!!)
                     Napier.d(tag = TAG) { "show snackbar dismiss $result" }
                 }
             }
         }
-    }
-
-    fun onDialogResult(dialog: Dialog, interactionResult: InteractionResult) {
-        messageController.onResult(dialog, interactionResult)
     }
 }

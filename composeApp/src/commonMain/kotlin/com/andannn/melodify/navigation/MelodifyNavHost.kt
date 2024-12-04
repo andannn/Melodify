@@ -4,9 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.andannn.melodify.ui.components.message.dialog.Dialog
-import com.andannn.melodify.ui.components.message.dialog.InteractionResult
-import com.andannn.melodify.navigation.routes.melodifyDialog
 import com.andannn.melodify.navigation.routes.HOME_ROUTE
 import com.andannn.melodify.navigation.routes.customTabSetting
 import com.andannn.melodify.navigation.routes.homeScreen
@@ -17,7 +14,6 @@ fun MelodifyNavHost(
     navHostController: NavHostController,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit,
-    onDialogResult: (Dialog, InteractionResult) -> Unit,
 ) {
     NavHost(
         navController = navHostController,
@@ -30,14 +26,5 @@ fun MelodifyNavHost(
         customTabSetting(
             onBackPressed = onBackPressed
         )
-
-        Dialog.getAllDialogs().forEach {
-            melodifyDialog(
-                navHostController = navHostController,
-                dialog = it,
-                onRequestDismiss = onBackPressed,
-                onResult = onDialogResult
-            )
-        }
     }
 }

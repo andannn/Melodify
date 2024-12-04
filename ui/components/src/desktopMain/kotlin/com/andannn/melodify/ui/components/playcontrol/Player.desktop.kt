@@ -23,14 +23,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
+import com.andannn.melodify.core.platform.formatTime
 import com.andannn.melodify.ui.common.util.getIcon
 import com.andannn.melodify.ui.common.widgets.CircleBorderImage
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 actual fun Player(
@@ -243,6 +247,18 @@ private fun ProgressBar(
     duration: Long = 0L,
     onValueChange: (Float) -> Unit = {},
 ) {
+    val durationString by rememberUpdatedState(
+        duration.milliseconds.toComponents { minutes, seconds, _ ->
+            formatTime(minutes, seconds)
+        }
+    )
+
+    val progressString by rememberUpdatedState(
+        (duration * progress).toLong().milliseconds.toComponents { minutes, seconds, _ ->
+            formatTime(minutes, seconds)
+        }
+    )
+
     Row(
         modifier = modifier.padding(start = 8.dp, end = 8.dp, bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -251,7 +267,7 @@ private fun ProgressBar(
             modifier = Modifier.graphicsLayer {
                 alpha = if (enabled) 1f else 0.5f
             },
-            text = "0:00",
+            text = progressString,
             style = MaterialTheme.typography.bodySmall,
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -266,7 +282,7 @@ private fun ProgressBar(
             modifier = Modifier.graphicsLayer {
                 alpha = if (enabled) 1f else 0.5f
             },
-            text = "0:00",
+            text = durationString,
             style = MaterialTheme.typography.bodySmall,
         )
     }

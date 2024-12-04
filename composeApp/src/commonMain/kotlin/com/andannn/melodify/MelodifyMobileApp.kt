@@ -14,12 +14,10 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.navigation.MelodifyNavHost
-import com.andannn.melodify.ui.components.drawer.BottomDrawerContainer
+import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.components.tabselector.CustomTabSelector
 import com.andannn.melodify.ui.components.playcontrol.ui.PlayerAreaView
 import melodify.ui.common.generated.resources.Res
@@ -47,19 +45,11 @@ fun MelodifyMobileApp(
                 navHostController = navController,
                 modifier = Modifier.fillMaxWidth(),
                 onBackPressed = navController::popBackStack,
-                onDialogResult = appState::onDialogResult,
             )
 
             PlayerAreaView()
 
-            val drawerController = appState.drawerController
-            val bottomSheetModel by drawerController.bottomSheetModel.collectAsState(null)
-            BottomDrawerContainer(
-                bottomSheet = bottomSheetModel,
-                onEvent = { event ->
-                    drawerController.onEvent(event)
-                }
-            )
+            ActionDialogContainer()
         }
     }
 }

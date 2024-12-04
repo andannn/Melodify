@@ -1,4 +1,4 @@
-package com.andannn.melodify.ui.components.message.dialog.ui
+package com.andannn.melodify.ui.components.popup.dialog.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,14 +23,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.ui.components.message.dialog.Dialog
-import com.andannn.melodify.ui.components.message.dialog.InteractionResult
+import com.andannn.melodify.ui.components.popup.DialogAction
+import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun NewPlayListDialog(
+fun NewPlayListDialogContent(
     modifier: Modifier = Modifier,
-    onResult: (InteractionResult.NewPlaylistDialog) -> Unit = {}
+    onAction: (DialogAction) -> Unit = {}
 ) {
     Surface(
         modifier = modifier.wrapContentSize(),
@@ -50,7 +50,7 @@ fun NewPlayListDialog(
 
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = stringResource(Dialog.NewPlayListDialog.title),
+                text = stringResource(DialogId.NewPlayListDialog.title),
                 style = MaterialTheme.typography.titleSmall
             )
 
@@ -62,7 +62,7 @@ fun NewPlayListDialog(
                 onValueChange = {
                     inputName = it
                 },
-                label = { Text(stringResource(Dialog.NewPlayListDialog.playListNameInputHint)) },
+                label = { Text(stringResource(DialogId.NewPlayListDialog.playListNameInputHint)) },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -71,19 +71,19 @@ fun NewPlayListDialog(
                 Spacer(modifier = Modifier.weight(1f))
                 TextButton(
                     onClick = {
-                        onResult(InteractionResult.NewPlaylistDialog.DECLINE)
+                        onAction(DialogAction.NewPlaylistDialog.Decline)
                     },
                 ) {
-                    Text(stringResource(Dialog.NewPlayListDialog.negative))
+                    Text(stringResource(DialogId.NewPlayListDialog.negative))
                 }
 
                 TextButton(
                     enabled = acceptButtonEnabled,
                     onClick = {
-                        onResult(InteractionResult.NewPlaylistDialog.ACCEPT(inputName))
+                        onAction(DialogAction.NewPlaylistDialog.Accept(playlistName = inputName))
                     },
                 ) {
-                    Text(stringResource(Dialog.NewPlayListDialog.positive))
+                    Text(stringResource(DialogId.NewPlayListDialog.positive))
                 }
                 Spacer(modifier = Modifier.width(8.dp))
             }

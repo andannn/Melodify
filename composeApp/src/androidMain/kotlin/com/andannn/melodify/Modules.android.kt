@@ -1,9 +1,7 @@
 package com.andannn.melodify
 
-import com.andannn.melodify.ui.components.drawer.DrawerController
-import com.andannn.melodify.ui.components.drawer.DrawerControllerImpl
-import com.andannn.melodify.ui.components.message.MessageController
-import com.andannn.melodify.ui.components.message.MessageControllerImpl
+import com.andannn.melodify.ui.components.popup.PopupController
+import com.andannn.melodify.ui.components.popup.PopupControllerImpl
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.scopedOf
 import org.koin.dsl.bind
@@ -14,9 +12,6 @@ import org.koin.dsl.module
  */
 actual val uiScopedModule: Module = module {
     scope<MainActivity> {
-        scopedOf(::DrawerControllerImpl).bind(DrawerController::class)
-    }
-    scope<MainActivity> {
-        scopedOf(::MessageControllerImpl).bind(MessageController::class)
+        scopedOf(::PopupControllerImpl).bind(PopupController::class)
     }
 }

@@ -107,7 +107,7 @@ internal fun CustomTabEntity.toAppItem() = when (type) {
     CustomTabType.GENRE_DETAIL -> CustomTab.GenreDetail(externalId!!, name!!)
     CustomTabType.PLAYLIST_DETAIL -> CustomTab.PlayListDetail(externalId!!, name!!)
 
-    else -> error("Invalid type")
+    else -> null
 }
 
 internal fun CustomTab.toEntity() = when (this) {

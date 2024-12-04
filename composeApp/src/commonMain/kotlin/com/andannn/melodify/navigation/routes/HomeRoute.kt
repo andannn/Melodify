@@ -88,31 +88,18 @@ private fun HomeScreen(
             )
         },
     ) { padding ->
-        TabWithContent(
+        Column(
             modifier = Modifier.padding(padding)
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .fillMaxSize(),
-            tabUiStateHolder = tabUiStateHolder,
-            tabContentStateHolder = tabContentStateHolder
-        )
-    }
-}
+                .fillMaxSize()
+        ) {
+            ReactiveTab(
+                stateHolder = tabUiStateHolder
+            )
 
-@Composable
-fun TabWithContent(
-    modifier: Modifier = Modifier,
-    tabUiStateHolder: TabUiStateHolder,
-    tabContentStateHolder: TabContentStateHolder,
-) {
-    Column(
-        modifier = modifier
-    ) {
-        ReactiveTab(
-            stateHolder = tabUiStateHolder
-        )
-
-        TabContent(
-            stateHolder = tabContentStateHolder
-        )
+            TabContent(
+                stateHolder = tabContentStateHolder
+            )
+        }
     }
 }

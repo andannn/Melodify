@@ -86,7 +86,7 @@ fun ListTileItemView(
         Row(
             modifier =
             Modifier
-                .padding(10.dp)
+                .padding(horizontal = 10.dp, vertical = 4.dp)
                 .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically,
         ) {
