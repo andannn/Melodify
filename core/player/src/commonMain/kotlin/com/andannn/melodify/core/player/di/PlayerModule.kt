@@ -8,8 +8,8 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val playerModule : Module = module {
-    includes(platformVlcPlayerModule)
+    includes(platformPlayerModule)
     singleOf(::SleepTimerControllerImpl).bind(SleepTimerController::class)
 }
 
-internal expect val platformVlcPlayerModule : Module
+internal expect val platformPlayerModule : Module
