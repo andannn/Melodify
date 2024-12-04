@@ -14,9 +14,10 @@ import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.ui.common.util.getUiRetainedScope
-import com.andannn.melodify.ui.components.menu.MenuController
-import com.andannn.melodify.ui.components.menu.MenuEvent
-import com.andannn.melodify.ui.components.menu.model.SheetModel
+import com.andannn.melodify.ui.components.popup.PopupController
+import com.andannn.melodify.ui.components.popup.DialogAction
+import com.andannn.melodify.ui.components.popup.onMediaOptionClick
+import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,18 +34,16 @@ import org.koin.mp.KoinPlatform.getKoin
 fun rememberPlayStateHolder(
     scope: CoroutineScope = rememberCoroutineScope(),
     repository: Repository = getKoin().get(),
-    menuController: MenuController = getUiRetainedScope()?.get() ?: getKoin().get()
+    popupController: PopupController = getUiRetainedScope()?.get() ?: getKoin().get()
 ) = remember(
     scope,
     repository,
-    menuController
+    popupController
 ) {
     PlayStateHolder(
         scope = scope,
-        playListRepository = repository.playListRepository,
-        mediaControllerRepository = repository.mediaControllerRepository,
-        playerStateMonitoryRepository = repository.playerStateMonitoryRepository,
-        menuController = menuController
+        repository = repository,
+        popupController = popupController
     )
 }
 
@@ -76,11 +75,15 @@ private const val TAG = "PlayerStateViewModel"
 
 class PlayStateHolder(
     private val scope: CoroutineScope,
-    private val playListRepository: PlayListRepository,
-    private val mediaControllerRepository: MediaControllerRepository,
-    private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
-    private val menuController: MenuController,
+    private val repository: Repository,
+    private val popupController: PopupController,
 ) {
+    private val playListRepository: PlayListRepository = repository.playListRepository
+    private val mediaControllerRepository: MediaControllerRepository =
+        repository.mediaControllerRepository
+    private val playerStateMonitoryRepository: PlayerStateMonitoryRepository =
+        repository.playerStateMonitoryRepository
+
     private val interactingMusicItem = playerStateMonitoryRepository.playingMediaStateFlow
     private val playStateFlow =
         combine(
@@ -167,9 +170,16 @@ class PlayStateHolder(
 
             is PlayerUiEvent.OnOptionIconClick -> {
                 scope.launch {
-                    menuController.onEvent(
-                        MenuEvent.OnShowBottomMenu(SheetModel.PlayerOptionSheet(event.mediaItem)),
+                    val result = popupController.showDialog(
+                        DialogId.PlayerOption(event.mediaItem)
                     )
+                    if (result is DialogAction.MediaOptionDialog.ClickItem) {
+                        repository.onMediaOptionClick(
+                            optionItem = result.optionItem,
+                            dialog = result.dialog,
+                            popupController = popupController
+                        )
+                    }
                 }
             }
 
@@ -182,7 +192,11 @@ class PlayStateHolder(
             }
 
             PlayerUiEvent.OnTimerIconClick -> {
-                menuController.onEvent(MenuEvent.OnShowTimerSheet)
+                scope.launch {
+                    popupController.showDialog(
+                        DialogId.SleepCountingDialog
+                    )
+                }
             }
         }
     }

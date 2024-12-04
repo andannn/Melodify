@@ -1,4 +1,4 @@
-package com.andannn.melodify.ui.components.menu.sheet
+package com.andannn.melodify.ui.components.popup.dialog.content
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,23 +22,33 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.getAudios
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.key
 import com.andannn.melodify.ui.common.widgets.ActionType
 import com.andannn.melodify.ui.common.widgets.LargePreviewCard
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
 import com.andannn.melodify.ui.common.widgets.SmpTextButton
-import com.andannn.melodify.ui.components.menu.model.SheetModel
+import com.andannn.melodify.ui.components.popup.DialogAction
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.all_playlists
 import melodify.ui.common.generated.resources.all_to_playlist_page_title
@@ -46,34 +56,30 @@ import melodify.ui.common.generated.resources.new_playlist_dialog_title
 import melodify.ui.common.generated.resources.selected_songs
 import melodify.ui.common.generated.resources.track_count
 import org.jetbrains.compose.resources.stringResource
+import org.koin.mp.KoinPlatform.getKoin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddToPlayListRequestSheet(
+fun AddToPlayListDialogContent(
     modifier: Modifier = Modifier,
-    sheet: SheetModel.AddToPlayListSheet,
-    onRequestDismiss: () -> Unit = {},
-    onAddToPlay: (PlayListItemModel, List<AudioItemModel>) -> Unit,
-    onCreateNewPlayList: () -> Unit = {},
+    source: MediaItemModel,
+    onAction: (DialogAction) -> Unit
 ) {
-    val state = rememberAddToPlayListSheetState(sheet.source)
-    ModalBottomSheet(
-        sheetState = state.sheetState,
-        onDismissRequest = {
-            onRequestDismiss.invoke()
+    val state = rememberAddToPlayListSheetState(source)
+    AddToPlayListRequestSheetContent(
+        modifier = modifier.fillMaxWidth(),
+        audioList = state.audioListState,
+        playLists = state.playListState,
+        onRequestDismiss = {
+            onAction(DialogAction.Dismissed)
         },
-    ) {
-        AddToPlayListRequestSheetContent(
-            modifier = modifier.fillMaxWidth(),
-            audioList = state.audioListState,
-            playLists = state.playListState,
-            onRequestDismiss = onRequestDismiss,
-            onPlayListClick = { playList ->
-                onAddToPlay(playList, state.audioListState)
-            },
-            onCreateNewClick = onCreateNewPlayList,
-        )
-    }
+        onPlayListClick = { playList ->
+            onAction(DialogAction.AddToPlayListDialog.OnAddToPlayList(playList, state.audioListState))
+        },
+        onCreateNewClick = {
+            onAction(DialogAction.AddToPlayListDialog.OnCreateNewPlayList)
+        },
+    )
 }
 
 @Composable
@@ -191,6 +197,55 @@ internal fun AddToPlayListRequestSheetContent(
                 text = stringResource(Res.string.new_playlist_dialog_title),
                 onClick = onCreateNewClick,
             )
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun rememberAddToPlayListSheetState(
+    source: MediaItemModel,
+    sheetState: SheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    ),
+    scope: CoroutineScope = rememberCoroutineScope(),
+) = remember(
+    scope,
+    source,
+    sheetState
+) {
+    AddToPlayListSheetState(
+        scope = scope,
+        source = source,
+        sheetState = sheetState
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+private class AddToPlayListSheetState(
+    val scope: CoroutineScope,
+    source: MediaItemModel,
+    repository: Repository = getKoin().get<Repository>(),
+    val sheetState: SheetState,
+) {
+    val audioListState = mutableStateListOf<AudioItemModel>()
+
+    val playListState = mutableStateListOf<PlayListItemModel>()
+
+    init {
+        scope.launch {
+            val audioList = repository.getAudios(source)
+            audioListState.addAll(audioList)
+        }
+
+        scope.launch {
+            repository.playListRepository.getAllPlayListFlow()
+                .distinctUntilChanged()
+                .collect {
+                    playListState.clear()
+                    playListState.addAll(it)
+                }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.andannn.melodify.ui.components.message.snackbar
+package com.andannn.melodify.ui.components.popup.snackbar
 
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarVisuals

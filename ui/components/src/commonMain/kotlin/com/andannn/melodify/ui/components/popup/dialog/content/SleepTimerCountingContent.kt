@@ -1,17 +1,14 @@
-package com.andannn.melodify.ui.components.menu.sheet
+package com.andannn.melodify.ui.components.popup.dialog.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.ui.common.theme.MelodifyTheme
 import com.andannn.melodify.ui.common.util.durationString
+import com.andannn.melodify.ui.components.popup.DialogAction
 import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.cancel_timer
 import melodify.ui.common.generated.resources.sleep_timer
@@ -30,32 +28,19 @@ import org.koin.mp.KoinPlatform.getKoin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SleepTimerCountingBottomSheet(
+internal fun SleepTimerCountingContent(
     modifier: Modifier = Modifier,
-    onRequestDismiss: () -> Unit = {},
-    onCancelTimer: () -> Unit = {},
+    onAction: (DialogAction) -> Unit = {},
 ) {
-    val sheetState =
-        rememberModalBottomSheetState()
-
-    ModalBottomSheet(
-        modifier = modifier,
-        sheetState = sheetState,
-        onDismissRequest = {
-            onRequestDismiss.invoke()
-        },
-    ) {
-        val remainTime by getKoin().get<MediaControllerRepository>().observeRemainTime()
-            .collectAsState(0.seconds)
-        SleepTimerCounterSheetContent(
-            remain = remainTime,
-            onClickCancel = {
-                onCancelTimer.invoke()
-            }
-        )
-    }
+    val remainTime by getKoin().get<MediaControllerRepository>().observeRemainTime()
+        .collectAsState(0.seconds)
+    SleepTimerCounterSheetContent(
+        remain = remainTime,
+        onClickCancel = {
+            onAction(DialogAction.SleepTimerCountingDialog.OnCancelTimer)
+        }
+    )
 }
 
 @Composable

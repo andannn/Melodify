@@ -1,6 +1,8 @@
 package com.andannn.melodify
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -9,11 +11,9 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.navigation.compose.NavHost
 import com.andannn.melodify.core.syncer.MediaLibrarySyncer
-import com.andannn.melodify.navigation.routes.melodifyDialog
 import com.andannn.melodify.routes.MAIN_ROUTE
 import com.andannn.melodify.routes.mainRoute
-import com.andannn.melodify.ui.components.menu.ActionMenuContainer
-import com.andannn.melodify.ui.components.message.dialog.Dialog
+import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
 import org.koin.java.KoinJavaComponent.getKoin
 
 @Composable
@@ -34,23 +34,20 @@ fun ApplicationScope.MelodifyDeskTopApp(
             }
         }
 
-        NavHost(
-            navController = appState.navController,
-            startDestination = MAIN_ROUTE,
-            modifier = Modifier.fillMaxSize(),
+        Scaffold(
+            snackbarHost = {
+                SnackbarHost(appState.snackBarHostState)
+            }
         ) {
-            mainRoute()
-
-            Dialog.getAllDialogs().forEach {
-                melodifyDialog(
-                    navHostController = appState.navController,
-                    dialog = it,
-                    onRequestDismiss = appState.navController::popBackStack,
-                    onResult = appState::onDialogResult
-                )
+            NavHost(
+                navController = appState.navController,
+                startDestination = MAIN_ROUTE,
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                mainRoute()
             }
         }
 
-        ActionMenuContainer()
+        ActionDialogContainer()
     }
 }

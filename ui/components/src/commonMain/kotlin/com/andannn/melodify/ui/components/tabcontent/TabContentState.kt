@@ -11,12 +11,10 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.common.util.getUiRetainedScope
-import com.andannn.melodify.ui.components.menu.MenuController
-import com.andannn.melodify.ui.components.menu.MenuEvent
-import com.andannn.melodify.ui.components.menu.model.SheetModel
-import com.andannn.melodify.ui.components.message.MessageController
-import com.andannn.melodify.ui.components.message.dialog.Dialog
-import com.andannn.melodify.ui.components.message.dialog.InteractionResult
+import com.andannn.melodify.ui.components.popup.DialogAction
+import com.andannn.melodify.ui.components.popup.PopupController
+import com.andannn.melodify.ui.components.popup.onMediaOptionClick
+import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,22 +30,18 @@ fun rememberTabContentStateHolder(
     selectedTab: CustomTab?,
     repository: Repository = getKoin().get(),
     scope: CoroutineScope = rememberCoroutineScope(),
-    menuController: MenuController = getUiRetainedScope()?.get<MenuController>()
-        ?: getKoin().get<MenuController>(),
-    messageController: MessageController = getUiRetainedScope()?.get<MessageController>()
-        ?: getKoin().get<MessageController>(),
+    popupController: PopupController = getUiRetainedScope()?.get<PopupController>()
+        ?: getKoin().get<PopupController>(),
 ) = remember(
     selectedTab,
     repository,
-    menuController,
-    messageController
+    popupController,
 ) {
     TabContentStateHolder(
         selectedTab = selectedTab,
         repository = repository,
         scope = scope,
-        messageController = messageController,
-        menuController = menuController,
+        popupController = popupController,
     )
 }
 
@@ -57,8 +51,7 @@ class TabContentStateHolder(
     private val selectedTab: CustomTab?,
     private val repository: Repository,
     private val scope: CoroutineScope,
-    private val messageController: MessageController,
-    private val menuController: MenuController,
+    private val popupController: PopupController,
 ) {
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val playListRepository = repository.playListRepository
@@ -123,9 +116,9 @@ class TabContentStateHolder(
             Napier.d(tag = TAG) { "invalid media item click $mediaItem" }
             scope.launch {
                 val result =
-                    messageController.showMessageDialogAndWaitResult(Dialog.ConfirmDeletePlaylist)
+                    popupController.showDialog(DialogId.ConfirmDeletePlaylist)
                 Napier.d(tag = TAG) { "ConfirmDeletePlaylist result: $result" }
-                if (result == InteractionResult.AlertDialog.ACCEPT) {
+                if (result == DialogAction.AlertDialog.Accept) {
                     val playListId = (selectedTab as CustomTab.PlayListDetail).playListId
                     val mediaId = mediaItem.id.substringAfter(AudioItemModel.INVALID_ID_PREFIX)
 
@@ -138,22 +131,38 @@ class TabContentStateHolder(
     fun onShowMusicItemOption(mediaItemModel: MediaItemModel) {
         val currentTab = selectedTab
         if (mediaItemModel is AudioItemModel && currentTab is CustomTab.PlayListDetail) {
-            menuController.onEvent(
-                MenuEvent.OnShowBottomMenu(
-                    SheetModel.AudioOptionInPlayListSheet(
+            scope.launch {
+                val result = popupController.showDialog(
+                    DialogId.AudioOptionInPlayList(
                         playListId = currentTab.playListId,
                         mediaItemModel
                     )
                 )
-            )
+
+                if (result is DialogAction.MediaOptionDialog.ClickItem) {
+                    repository.onMediaOptionClick(
+                        optionItem = result.optionItem,
+                        dialog = result.dialog,
+                        popupController = popupController
+                    )
+                }
+            }
         } else {
-            menuController.onEvent(
-                MenuEvent.OnShowBottomMenu(
-                    SheetModel.MediaOptionSheet.fromMediaModel(
+            scope.launch {
+                val result = popupController.showDialog(
+                    DialogId.MediaOption.fromMediaModel(
                         item = mediaItemModel,
                     )
                 )
-            )
+
+                if (result is DialogAction.MediaOptionDialog.ClickItem) {
+                    repository.onMediaOptionClick(
+                        optionItem = result.optionItem,
+                        dialog = result.dialog,
+                        popupController = popupController
+                    )
+                }
+            }
         }
     }
 }
