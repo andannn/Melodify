@@ -48,22 +48,4 @@ internal class MediaControllerRepositoryImpl(
     override fun moveMediaItem(from: Int, to: Int) = vlcPlayer.moveMediaItem(from, to)
 
     override fun removeMediaItem(index: Int) = vlcPlayer.removeMediaItem(index)
-
-    override fun isCounting(): Boolean {
-        return false
-    }
-
-    override fun observeIsCounting(): Flow<Boolean> {
-        return flowOf(false)
-    }
-
-    override fun observeRemainTime(): Flow<Duration> {
-        return flowOf()
-    }
-
-    override fun startSleepTimer(duration: Duration) {
-    }
-
-    override fun cancelSleepTimer() {
-    }
 }

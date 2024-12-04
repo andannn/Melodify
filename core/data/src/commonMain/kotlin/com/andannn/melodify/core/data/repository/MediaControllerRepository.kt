@@ -31,14 +31,4 @@ interface MediaControllerRepository {
     fun moveMediaItem(from: Int, to: Int)
 
     fun removeMediaItem(index: Int)
-
-    fun isCounting(): Boolean
-
-    fun observeIsCounting(): Flow<Boolean>
-
-    fun observeRemainTime(): Flow<Duration>
-
-    fun startSleepTimer(duration: Duration)
-
-    fun cancelSleepTimer()
 }

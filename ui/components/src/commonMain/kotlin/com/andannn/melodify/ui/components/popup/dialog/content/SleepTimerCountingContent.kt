@@ -15,7 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.repository.MediaControllerRepository
+import com.andannn.melodify.core.data.repository.SleepTimerRepository
 import com.andannn.melodify.ui.common.theme.MelodifyTheme
 import com.andannn.melodify.ui.common.util.durationString
 import com.andannn.melodify.ui.components.popup.DialogAction
@@ -33,7 +33,7 @@ internal fun SleepTimerCountingContent(
     modifier: Modifier = Modifier,
     onAction: (DialogAction) -> Unit = {},
 ) {
-    val remainTime by getKoin().get<MediaControllerRepository>().observeRemainTime()
+    val remainTime by getKoin().get<SleepTimerRepository>().observeRemainTime()
         .collectAsState(0.seconds)
     SleepTimerCounterSheetContent(
         remain = remainTime,

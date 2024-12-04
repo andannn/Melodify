@@ -50,22 +50,4 @@ internal class FakeMediaControllerRepositoryImpl(
 
     override fun removeMediaItem(index: Int) {
     }
-
-    override fun isCounting(): Boolean {
-        return false
-    }
-
-    override fun observeIsCounting(): Flow<Boolean> {
-        return flow { emit(false) }
-    }
-
-    override fun observeRemainTime() = flow {
-        emit(0.milliseconds)
-    }
-
-    override fun startSleepTimer(duration: Duration) {
-    }
-
-    override fun cancelSleepTimer() {
-    }
 }

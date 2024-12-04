@@ -41,7 +41,7 @@ class MediaLibraryScannerImpl(
 // TODO Get Path from DataStore after implement library path setting feature.
 //        val libraryPathSet = userSettingPreferences.userDate.first().libraryPath
         val libraryPathSet = setOf(
-            "/Users/jiangqn/Documents/Music"
+            "/Volumes/PS2000/Music",
         )
 
 // TODO: Scan file in worker thread.

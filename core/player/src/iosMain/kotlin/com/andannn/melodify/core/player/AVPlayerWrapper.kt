@@ -11,7 +11,6 @@ interface AVPlayerWrapper {
     fun playMediaList(mediaList: List<String>, index: Int)
 }
 
-
 class AVPlayerWrapperWrapperImpl: AVPlayerWrapper {
     override fun playMediaList(mediaList: List<String>, index: Int) {
         Napier.d(tag = TAG) { "playMediaList mediaList $mediaList, index: $index" }

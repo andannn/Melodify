@@ -205,10 +205,10 @@ private suspend fun Repository.onDeletePlayList(playListItemModel: PlayListItemM
 }
 
 private suspend fun Repository.onClickSleepTimer(popupController: PopupController) {
-    if (mediaControllerRepository.isCounting()) {
+    if (sleepTimerRepository.isCounting()) {
         val result = popupController.showDialog(DialogId.SleepCountingDialog)
         if (result is DialogAction.SleepTimerCountingDialog.OnCancelTimer) {
-            mediaControllerRepository.cancelSleepTimer()
+            sleepTimerRepository.cancelSleepTimer()
         }
     } else {
         val result = popupController.showDialog(DialogId.SleepTimerOptionDialog)
@@ -218,7 +218,7 @@ private suspend fun Repository.onClickSleepTimer(popupController: PopupControlle
                 SleepTimerOption.FIFTEEN_MINUTES,
                 SleepTimerOption.THIRTY_MINUTES,
                 SleepTimerOption.SIXTY_MINUTES -> {
-                    mediaControllerRepository.startSleepTimer(option.timeMinutes!!)
+                    sleepTimerRepository.startSleepTimer(option.timeMinutes!!)
                 }
 
                 SleepTimerOption.SONG_FINISH -> {

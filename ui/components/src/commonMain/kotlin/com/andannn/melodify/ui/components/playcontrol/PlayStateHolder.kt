@@ -13,6 +13,7 @@ import com.andannn.melodify.core.data.model.next
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
+import com.andannn.melodify.core.data.repository.SleepTimerRepository
 import com.andannn.melodify.ui.common.util.getUiRetainedScope
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.DialogAction
@@ -83,6 +84,8 @@ class PlayStateHolder(
         repository.mediaControllerRepository
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository =
         repository.playerStateMonitoryRepository
+    private val sleepTimerRepository: SleepTimerRepository =
+        repository.sleepTimerRepository
 
     private val interactingMusicItem = playerStateMonitoryRepository.playingMediaStateFlow
     private val playStateFlow =
@@ -95,7 +98,7 @@ class PlayStateHolder(
             PlayState(isPlaying, progress, playMode, isShuffle)
         }.stateIn(scope, SharingStarted.WhileSubscribed(), PlayState())
 
-    private val isCountingFlow = mediaControllerRepository.observeIsCounting()
+    private val isCountingFlow = sleepTimerRepository.observeIsCounting()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val isCurrentMediaFavoriteFlow =

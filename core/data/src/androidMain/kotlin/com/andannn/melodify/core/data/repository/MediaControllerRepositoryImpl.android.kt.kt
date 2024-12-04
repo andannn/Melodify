@@ -86,32 +86,4 @@ internal class MediaControllerRepositoryImpl(
         mediaBrowser.removeMediaItem(index)
     }
 
-    override fun isCounting(): Boolean {
-        return sleepTimerController.counterState is SleepTimeCounterState.Counting
-    }
-
-    override fun observeIsCounting() = sleepTimerController.getCounterStateFlow()
-        .map { it is SleepTimeCounterState.Counting }
-        .distinctUntilChanged()
-
-    override fun observeRemainTime() =
-        sleepTimerController.getCounterStateFlow()
-            .takeWhile {
-                it !is SleepTimeCounterState.Idle
-            }
-            .map {
-                when (it) {
-                    is SleepTimeCounterState.Counting -> it.remain
-                    SleepTimeCounterState.Finish -> 0.seconds
-                    SleepTimeCounterState.Idle -> error("")
-                }
-            }
-
-    override fun startSleepTimer(duration: Duration) {
-        sleepTimerController.startTimer(duration)
-    }
-
-    override fun cancelSleepTimer() {
-        sleepTimerController.cancelTimer()
-    }
 }
