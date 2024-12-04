@@ -1,22 +1,22 @@
 # Melodify
-This app is designed for playing local music files, with a UI/UX inspired by YouTube Music. 
-
+Melodify is designed for playing local music and is built using Compose Multiplatform.
 It's currently in the early stages of development, so feel free to report any issues or suggestions.
 
+## Android
+Retrieve content from MediaStore and play music using Media3.
 
 <p float="left">
-  <img src="screenshot/albums.png" width="25%" />
-  <img src="screenshot/play_list.png" width="25%" />
+  <img src="screenshot/home.png" width="25%" />
   <img src="screenshot/player.png" width="25%" />
-  <img src="screenshot/queue.png" width="25%" />
   <img src="screenshot/lyrics.png" width="25%" />
 </p>
 
-## Feature
- - Dark theme which will protect your eyes.
- - Reorder or delete music in the play queue.
- - Lyrics feature powered by [Lrclib](https://github.com/tranxuanthang/lrclib)
+## Desktop App
+Scan music files from the local directory and play using VLC.
+Development is progressing at a very slow pace.
 
-## Stack
- - Implement by Jetpack Compose.
- - Playing Audio with Media3.
+<img src="screenshot/desktop.png" width="75%" />
+
+## iOS
+Not yet implemented.
+
