@@ -10,8 +10,9 @@ import kotlin.time.Duration
 internal class MediaControllerRepositoryImpl(
     private val vlcPlayer: VlcPlayer
 ) : MediaControllerRepository {
-    override val currentDuration: Long
-        get() = vlcPlayer.currentDurationMs
+    override fun getCurrentPlayingItemDuration(): Long? {
+        return vlcPlayer.currentDurationMs
+    }
 
     override fun playMediaList(mediaList: List<AudioItemModel>, index: Int) {
         vlcPlayer.playMediaList(

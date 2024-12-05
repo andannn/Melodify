@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -20,13 +21,19 @@ internal class PlayerStateMonitoryRepositoryImpl(
     private val vlcPlayer: VlcPlayer,
     private val libraryDao: MediaLibraryDao
 ) : PlayerStateMonitoryRepository {
-    override val currentPositionMs: Long get() = vlcPlayer.currentPositionMs
+    override fun getCurrentPositionMs(): Long {
+        return vlcPlayer.currentPositionMs
+    }
 
-    override val playingIndexInQueue: Int get() = vlcPlayer.playingIndexInQueue
+    override fun getPlayingIndexInQueue(): Int {
+        return vlcPlayer.playingIndexInQueue
+    }
 
-    override val playListQueue: List<AudioItemModel> = emptyList()
+    override suspend fun getPlayListQueue(): List<AudioItemModel> {
+        return getPlayListQueueStateFlow().first()
+    }
 
-    override val playingMediaStateFlow: Flow<AudioItemModel?> = vlcPlayer.observePlayingMediaMrl()
+    override fun getPlayingMediaStateFlow() = vlcPlayer.observePlayingMediaMrl()
         .map { mrl ->
             if (mrl == null) {
                 return@map null
@@ -36,19 +43,22 @@ internal class PlayerStateMonitoryRepositoryImpl(
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val playListQueueStateFlow: Flow<List<AudioItemModel>> =
+    override fun getPlayListQueueStateFlow() =
         vlcPlayer.observePlayListQueue()
             .mapLatest { mrls ->
-                libraryDao.getMediaByMediaIds(mrls.map { it.hashCode().toString() })
-                    .map { it.toAppItem() }
+                val keys = mrls.map { it.hashCode().toString() }
+                val idToEntityMap =
+                    libraryDao.getMediaByMediaIds(keys).associateBy { it.id.toString() }
+                keys.mapNotNull { idToEntityMap[it]?.toAppItem() }
             }
+
+    override fun getCurrentPlayMode(): PlayMode {
+        return PlayMode.REPEAT_ALL
+    }
 
     override fun observeIsShuffle(): StateFlow<Boolean> {
         return MutableStateFlow(false)
     }
-
-    override val playMode: PlayMode
-        get() = PlayMode.REPEAT_ALL
 
     override fun observePlayMode() = flowOf(PlayMode.REPEAT_ALL)
 

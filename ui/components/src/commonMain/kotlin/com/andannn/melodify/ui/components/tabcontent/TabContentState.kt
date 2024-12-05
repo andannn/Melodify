@@ -48,7 +48,7 @@ fun rememberTabContentStateHolder(
 private const val TAG = "TabContentState"
 
 class TabContentStateHolder(
-    private val selectedTab: CustomTab?,
+    val selectedTab: CustomTab?,
     private val repository: Repository,
     private val scope: CoroutineScope,
     private val popupController: PopupController,
@@ -130,38 +130,28 @@ class TabContentStateHolder(
 
     fun onShowMusicItemOption(mediaItemModel: MediaItemModel) {
         val currentTab = selectedTab
-        if (mediaItemModel is AudioItemModel && currentTab is CustomTab.PlayListDetail) {
-            scope.launch {
-                val result = popupController.showDialog(
-                    DialogId.AudioOptionInPlayList(
-                        playListId = currentTab.playListId,
-                        mediaItemModel
+        scope.launch {
+            val result =
+                if (mediaItemModel is AudioItemModel && currentTab is CustomTab.PlayListDetail) {
+                    popupController.showDialog(
+                        DialogId.AudioOptionInPlayList(
+                            playListId = currentTab.playListId,
+                            mediaItemModel
+                        )
                     )
-                )
-
-                if (result is DialogAction.MediaOptionDialog.ClickItem) {
-                    repository.onMediaOptionClick(
-                        optionItem = result.optionItem,
-                        dialog = result.dialog,
-                        popupController = popupController
-                    )
-                }
-            }
-        } else {
-            scope.launch {
-                val result = popupController.showDialog(
-                    DialogId.MediaOption.fromMediaModel(
-                        item = mediaItemModel,
-                    )
-                )
-
-                if (result is DialogAction.MediaOptionDialog.ClickItem) {
-                    repository.onMediaOptionClick(
-                        optionItem = result.optionItem,
-                        dialog = result.dialog,
-                        popupController = popupController
+                } else {
+                    popupController.showDialog(
+                        DialogId.MediaOption.fromMediaModel(
+                            item = mediaItemModel,
+                        )
                     )
                 }
+            if (result is DialogAction.MediaOptionDialog.ClickItem) {
+                repository.onMediaOptionClick(
+                    optionItem = result.optionItem,
+                    dialog = result.dialog,
+                    popupController = popupController
+                )
             }
         }
     }

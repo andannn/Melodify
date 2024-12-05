@@ -69,8 +69,7 @@ private fun PlayQueueContent(
 
     LazyColumn(
         modifier =
-            modifier
-                .fillMaxWidth(),
+            modifier.fillMaxWidth(),
         state = playQueueState.lazyListState,
     ) {
         items(
@@ -135,7 +134,7 @@ private fun ReorderableCollectionItemScope.QueueItem(
                     onDragStopped = onSwapFinish,
                 ),
             isActive = isActive,
-            defaultColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+//            defaultColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             albumArtUri = item.artWorkUri,
             title = item.name,
             showTrackNum = false,

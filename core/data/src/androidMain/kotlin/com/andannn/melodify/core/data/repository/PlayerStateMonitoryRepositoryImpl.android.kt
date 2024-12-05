@@ -11,35 +11,37 @@ import kotlinx.coroutines.flow.map
 class PlayerStateMonitoryRepositoryImpl(
     private val playerWrapper: PlayerWrapper,
 ) : PlayerStateMonitoryRepository {
-    override val currentPositionMs: Long
-        get() = playerWrapper.currentPositionMs
+    override fun getCurrentPositionMs(): Long {
+        return playerWrapper.currentPositionMs
+    }
 
-    override val playingIndexInQueue: Int
-        get() = playerWrapper.playingIndexInQueue
+    override fun getPlayingIndexInQueue(): Int {
+        return playerWrapper.playingIndexInQueue
+    }
 
-    override val playListQueue: List<AudioItemModel>
-        get() = playerWrapper.playList.map {
+    override suspend fun getPlayListQueue(): List<AudioItemModel> {
+        return  playerWrapper.playList.map {
             it.toAppItem() as? AudioItemModel ?: error("invalid")
         }
+    }
 
-    override val playingMediaStateFlow: Flow<AudioItemModel?>
-        get() = playerWrapper.observePlayingMedia().map {
-            it?.toAppItem() as? AudioItemModel
+    override fun getPlayingMediaStateFlow()= playerWrapper.observePlayingMedia().map {
+        it?.toAppItem() as? AudioItemModel
+    }
+
+    override fun getPlayListQueueStateFlow()= playerWrapper.observePlayListQueue().map { items ->
+        items.mapNotNull {
+            it.toAppItem() as? AudioItemModel
         }
+    }
 
-    override val playListQueueStateFlow: Flow<List<AudioItemModel>>
-        get() = playerWrapper.observePlayListQueue().map { items ->
-            items.mapNotNull {
-                it.toAppItem() as? AudioItemModel
-            }
-        }
-
-    override fun observeIsShuffle() = playerWrapper.observeIsShuffle()
-
-    override val playMode: PlayMode
-        get() = playerWrapper.observePlayMode().value.let {
+    override fun getCurrentPlayMode(): PlayMode {
+        return playerWrapper.observePlayMode().value.let {
             fromRepeatMode(it)
         }
+    }
+
+    override fun observeIsShuffle() = playerWrapper.observeIsShuffle()
 
     override fun observePlayMode() = playerWrapper.observePlayMode()
         .map {
@@ -56,7 +58,7 @@ class PlayerStateMonitoryRepositoryImpl(
 
     override fun observeProgressFactor() = playerWrapper.observePlayerState()
         .map {
-            if (currentPositionMs == 0L) {
+            if (getCurrentPositionMs() == 0L) {
                 return@map 0f
             } else {
                 it.currentPositionMs.toFloat().div(playerWrapper.currentDurationMs).coerceIn(0f, 1f)

@@ -27,9 +27,8 @@ import org.koin.mp.KoinPlatform.getKoin
 fun LyricsView(
     modifier: Modifier = Modifier,
 ) {
-    val source: AudioItemModel? by getKoin().get<PlayerStateMonitoryRepository>().playingMediaStateFlow.collectAsState(
-        null
-    )
+    val source: AudioItemModel? by getKoin().get<PlayerStateMonitoryRepository>()
+        .getPlayingMediaStateFlow().collectAsState(null)
 
     if (source != null) {
         val lyricStateHolder: LyricStateHolder = rememberLyricStateHolder(source)

@@ -78,21 +78,6 @@ data class PlayListItemModel(
         get() = id.toLong() == FAVORITE_PLAY_LIST_ID
 }
 
-val MediaItemModel.key get() = when (this) {
-    is AlbumItemModel,
-    is ArtistItemModel,
-    is GenreItemModel,
-    is PlayListItemModel -> id
-    is AudioItemModel -> {
-        if (this.isValid()) {
-            // Use hashCode as key for invalid item
-            this.hashCode()
-        } else {
-            id
-        }
-    }
-}
-
 /**
  * enable state for ui item
  */

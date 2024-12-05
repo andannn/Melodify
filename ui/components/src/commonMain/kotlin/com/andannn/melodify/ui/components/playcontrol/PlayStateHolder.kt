@@ -87,7 +87,7 @@ class PlayStateHolder(
     private val sleepTimerRepository: SleepTimerRepository =
         repository.sleepTimerRepository
 
-    private val interactingMusicItem = playerStateMonitoryRepository.playingMediaStateFlow
+    private val interactingMusicItem = playerStateMonitoryRepository.getPlayingMediaStateFlow()
     private val playStateFlow =
         combine(
             playerStateMonitoryRepository.observeIsPlaying(),
@@ -126,7 +126,7 @@ class PlayStateHolder(
             } else {
                 PlayerUiState.Active(
                     mediaItem = interactingMusicItem,
-                    duration = mediaControllerRepository.currentDuration ?: 0L,
+                    duration = mediaControllerRepository.getCurrentPlayingItemDuration() ?: 0L,
                     playMode = state.playMode,
                     isShuffle = state.isShuffle,
                     isFavorite = isFavorite,
@@ -160,7 +160,7 @@ class PlayStateHolder(
             }
 
             PlayerUiEvent.OnPlayModeButtonClick -> {
-                val nextPlayMode = playerStateMonitoryRepository.playMode.next()
+                val nextPlayMode = playerStateMonitoryRepository.getCurrentPlayMode().next()
                 mediaControllerRepository.setPlayMode(nextPlayMode)
             }
 

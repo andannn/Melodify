@@ -10,8 +10,9 @@ import kotlin.time.Duration
 class MediaControllerRepositoryImpl(
     private val avPlayerWrapper: AVPlayerWrapper
 ): MediaControllerRepository {
-    override val currentDuration: Long
-        get() = 0L
+    override fun getCurrentPlayingItemDuration(): Long? {
+        return 0L
+    }
 
     override fun playMediaList(mediaList: List<AudioItemModel>, index: Int) {
         avPlayerWrapper.playMediaList(mediaList.map { it.source }, index)
@@ -48,23 +49,5 @@ class MediaControllerRepositoryImpl(
     }
 
     override fun removeMediaItem(index: Int) {
-    }
-
-    override fun isCounting(): Boolean {
-        return false
-    }
-
-    override fun observeIsCounting(): Flow<Boolean> {
-        return flowOf()
-    }
-
-    override fun observeRemainTime(): Flow<Duration> {
-        return flowOf()
-    }
-
-    override fun startSleepTimer(duration: Duration) {
-    }
-
-    override fun cancelSleepTimer() {
     }
 }

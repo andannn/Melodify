@@ -75,7 +75,7 @@ class SyncedLyricsState(
         launch {
             playerStateMonitoryRepository.observeProgressFactor()
                 .collect {
-                    onPositionChanged(playerStateMonitoryRepository.currentPositionMs)
+                    onPositionChanged(playerStateMonitoryRepository.getCurrentPositionMs())
                 }
         }
 

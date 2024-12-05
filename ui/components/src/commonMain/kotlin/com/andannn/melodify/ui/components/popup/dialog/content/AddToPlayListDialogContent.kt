@@ -40,7 +40,6 @@ import com.andannn.melodify.core.data.getAudios
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.core.data.model.key
 import com.andannn.melodify.ui.common.widgets.ActionType
 import com.andannn.melodify.ui.common.widgets.LargePreviewCard
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
@@ -138,7 +137,7 @@ internal fun AddToPlayListRequestSheetContent(
                     ) {
                         items(
                             items = audioList,
-                            key = { it.key }
+                            key = { it.id }
                         ) { audio ->
                             LargePreviewCard(
                                 modifier = Modifier.width(100.dp),
@@ -171,7 +170,7 @@ internal fun AddToPlayListRequestSheetContent(
                 }
                 items(
                     items = playLists,
-                    key = { it.key }
+                    key = { it.id }
                 ) { playList ->
                     ListTileItemView(
                         modifier = Modifier.padding(horizontal = 6.dp),

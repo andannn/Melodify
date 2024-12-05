@@ -57,7 +57,7 @@ sealed interface DialogId {
         open val options: List<OptionItem>,
     ) : DialogId {
         companion object {
-            fun fromMediaModel(item: MediaItemModel): DialogId.MediaOption {
+            fun fromMediaModel(item: MediaItemModel): MediaOption {
                 return when (item) {
                     is AlbumItemModel -> AlbumOption(item)
                     is ArtistItemModel -> ArtistOption(item)

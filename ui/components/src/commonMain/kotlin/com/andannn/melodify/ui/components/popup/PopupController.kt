@@ -172,10 +172,10 @@ suspend fun Repository.onMediaOptionClick(
 
 private suspend fun Repository.onPlayNextClick(source: MediaItemModel) {
     val items = getAudios(source)
-    val havePlayingQueue = playerStateMonitoryRepository.playListQueue.isNotEmpty()
+    val havePlayingQueue = playerStateMonitoryRepository.getPlayListQueue().isNotEmpty()
     if (havePlayingQueue) {
         mediaControllerRepository.addMediaItems(
-            index = playerStateMonitoryRepository.playingIndexInQueue + 1,
+            index = playerStateMonitoryRepository.getPlayingIndexInQueue() + 1,
             mediaItems = items
         )
     } else {
@@ -185,7 +185,7 @@ private suspend fun Repository.onPlayNextClick(source: MediaItemModel) {
 
 private suspend fun Repository.onAddToQueue(source: MediaItemModel) {
     val items = getAudios(source)
-    val playListQueue = playerStateMonitoryRepository.playListQueue
+    val playListQueue = playerStateMonitoryRepository.getPlayListQueue()
     if (playListQueue.isNotEmpty()) {
         mediaControllerRepository.addMediaItems(
             index = playListQueue.size,

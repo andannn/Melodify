@@ -6,8 +6,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.repository.MediaContentRepository
+import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
+import com.andannn.melodify.ui.common.util.getUiRetainedScope
+import com.andannn.melodify.ui.components.popup.DialogAction
+import com.andannn.melodify.ui.components.popup.PopupController
+import com.andannn.melodify.ui.components.popup.dialog.DialogId
+import com.andannn.melodify.ui.components.popup.onMediaOptionClick
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -19,21 +27,30 @@ import org.koin.mp.KoinPlatform.getKoin
 @Composable
 fun rememberTabUiStateHolder(
     scope: CoroutineScope = rememberCoroutineScope(),
-    userPreferenceRepository: UserPreferenceRepository = getKoin().get(),
+    repository: Repository = getKoin().get(),
+    popupController: PopupController = getUiRetainedScope()?.get() ?: getKoin().get(),
 ) = remember(
     scope,
-    userPreferenceRepository
+    repository,
+    popupController
 ) {
     TabUiStateHolder(
         scope,
-        userPreferenceRepository
+        repository,
+        popupController
     )
 }
 
 class TabUiStateHolder(
-    scope: CoroutineScope,
-    userPreferenceRepository: UserPreferenceRepository,
+    private val scope: CoroutineScope,
+    private val repository: Repository,
+    private val popupController: PopupController,
 ) {
+    private val userPreferenceRepository = repository.userPreferenceRepository
+    private val mediaContentRepository = repository.mediaContentRepository
+    private val playListRepository = repository.playListRepository
+
+
     private val _currentCustomTabsFlow = userPreferenceRepository.currentCustomTabsFlow
     private val _selectedTabIndexFlow = MutableStateFlow(0)
 
@@ -91,6 +108,31 @@ class TabUiStateHolder(
 
     fun onClickTab(index: Int) {
         _selectedTabIndexFlow.value = index
+    }
+
+    fun onShowTabOption(tab: CustomTab) {
+        scope.launch {
+            val model = when (tab) {
+                is CustomTab.AlbumDetail -> mediaContentRepository.getAlbumByAlbumId(tab.albumId)
+                is CustomTab.ArtistDetail -> mediaContentRepository.getArtistByArtistId(tab.artistId)
+                is CustomTab.GenreDetail -> mediaContentRepository.getGenreByGenreId(tab.genreId)
+                is CustomTab.PlayListDetail -> playListRepository.getPlayListById(tab.playListId.toLong())
+                CustomTab.AllMusic -> return@launch
+            }
+
+            if (model == null) {
+                return@launch
+            }
+            val result = popupController.showDialog(DialogId.MediaOption.fromMediaModel(model))
+
+            if (result is DialogAction.MediaOptionDialog.ClickItem) {
+                repository.onMediaOptionClick(
+                    optionItem = result.optionItem,
+                    dialog = result.dialog,
+                    popupController = popupController
+                )
+            }
+        }
     }
 }
 
