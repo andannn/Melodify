@@ -3,9 +3,6 @@ package com.andannn.melodify.core.data.repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.player.AVPlayerWrapper
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
-import kotlin.time.Duration
 
 class MediaControllerRepositoryImpl(
     private val avPlayerWrapper: AVPlayerWrapper

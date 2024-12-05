@@ -8,9 +8,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.repository.MediaContentRepository
-import com.andannn.melodify.core.data.repository.PlayListRepository
-import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import com.andannn.melodify.ui.common.util.getUiRetainedScope
 import com.andannn.melodify.ui.components.popup.DialogAction
 import com.andannn.melodify.ui.components.popup.PopupController

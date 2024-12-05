@@ -2,8 +2,6 @@ package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayMode
-import kotlinx.coroutines.flow.Flow
-import kotlin.time.Duration
 
 interface MediaControllerRepository {
     fun getCurrentPlayingItemDuration() : Long?

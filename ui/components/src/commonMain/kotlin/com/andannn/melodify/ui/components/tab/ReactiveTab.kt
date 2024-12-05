@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
@@ -44,31 +45,31 @@ fun ReactiveTab(
                 },
             ) {
                 tabs.forEachIndexed { index, item ->
-                    CustomTab(
-                        modifier = Modifier,
-                        label = getCategoryResource(item),
-                        isSelected = index == selectedIndex,
-                        onClick = {
-                            stateHolder.onClickTab(index)
-                        },
-                        onLongClick = {
-                            stateHolder.onShowTabOption(item)
-                        }
-                    )
-//                    Tab(
+//                    CustomTab(
 //                        modifier = Modifier,
-//                        selected = index == selectedIndex,
-//                        selectedContentColor = MaterialTheme.colorScheme.primary,
-//                        unselectedContentColor = MaterialTheme.colorScheme.onSurface,
-//                        text = @Composable {
-//                            Text(
-//                                text = getCategoryResource(item),
-//                            )
-//                        },
+//                        label = getCategoryResource(item),
+//                        isSelected = index == selectedIndex,
 //                        onClick = {
 //                            stateHolder.onClickTab(index)
 //                        },
+//                        onLongClick = {
+//                            stateHolder.onShowTabOption(item)
+//                        }
 //                    )
+                    Tab(
+                        modifier = Modifier,
+                        selected = index == selectedIndex,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                        text = @Composable {
+                            Text(
+                                text = getCategoryResource(item),
+                            )
+                        },
+                        onClick = {
+                            stateHolder.onClickTab(index)
+                        },
+                    )
                 }
             }
         }

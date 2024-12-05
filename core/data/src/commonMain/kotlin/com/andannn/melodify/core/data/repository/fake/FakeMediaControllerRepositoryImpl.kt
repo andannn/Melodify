@@ -3,10 +3,6 @@ package com.andannn.melodify.core.data.repository.fake
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 private const val TAG = "MediaControllerRepository"
 
