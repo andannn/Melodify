@@ -7,9 +7,11 @@ import com.andannn.melodify.core.data.model.UserSetting
 import com.andannn.melodify.core.data.util.mapToCustomTabModel
 import com.andannn.melodify.core.data.util.toEntity
 import com.andannn.melodify.core.database.dao.UserDataDao
+import com.andannn.melodify.core.database.entity.CustomTabType
 import com.andannn.melodify.core.datastore.UserSettingPreferences
 import com.andannn.melodify.core.datastore.model.PreviewModeValues
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 val DefaultCustomTabs = CurrentCustomTabs(
@@ -37,6 +39,23 @@ class UserPreferenceRepositoryImpl(
         userDataDao.clearAndInsertCustomTabs(
             currentCustomTabs.map { it.toEntity() }
         )
+    }
+
+    override suspend fun addNewCustomTab(tab: CustomTab) {
+        val currentTabs = userDataDao.getCustomTabsFlow().first()
+        userDataDao.clearAndInsertCustomTabs(currentTabs + tab.toEntity())
+    }
+
+    override suspend fun deleteCustomTab(tab: CustomTab) {
+        val (type, id) = when (tab) {
+            is CustomTab.AlbumDetail -> CustomTabType.ALBUM_DETAIL to tab.albumId
+            CustomTab.AllMusic -> CustomTabType.ALL_MUSIC to null
+            is CustomTab.ArtistDetail -> CustomTabType.ARTIST_DETAIL to tab.artistId
+            is CustomTab.GenreDetail -> CustomTabType.GENRE_DETAIL to tab.genreId
+            is CustomTab.PlayListDetail -> CustomTabType.PLAYLIST_DETAIL to tab.playListId
+        }
+
+        userDataDao.deleteCustomTab(type = type, externalId = id)
     }
 }
 

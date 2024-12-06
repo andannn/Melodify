@@ -26,4 +26,7 @@ interface UserDataDao {
         deleteAllCustomTabs()
         insertCustomTabs(customTabs)
     }
+
+    @Query("DELETE FROM ${Tables.CUSTOM_TAB} WHERE custom_tab_external_id = :externalId AND custom_tab_type = :type")
+    suspend fun deleteCustomTab(externalId: String?, type: String)
 }

@@ -5,26 +5,19 @@ import androidx.media3.common.C
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.player.MediaBrowserManager
-import com.andannn.melodify.core.player.SleepTimeCounterState
-import com.andannn.melodify.core.player.SleepTimerController
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.takeWhile
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 private const val TAG = "MediaControllerRepository"
 
 internal class MediaControllerRepositoryImpl(
     private val mediaBrowserManager: MediaBrowserManager,
-    private val sleepTimerController: SleepTimerController,
 ) : MediaControllerRepository {
 
     private val mediaBrowser
         get() = mediaBrowserManager.mediaBrowser
 
-    override val currentDuration: Long
-        get() = mediaBrowser.duration
+    override fun getCurrentPlayingItemDuration(): Long {
+        return mediaBrowser.duration
+    }
 
     override fun playMediaList(mediaList: List<AudioItemModel>, index: Int) {
         with(mediaBrowser) {
@@ -84,34 +77,5 @@ internal class MediaControllerRepositoryImpl(
 
     override fun removeMediaItem(index: Int) {
         mediaBrowser.removeMediaItem(index)
-    }
-
-    override fun isCounting(): Boolean {
-        return sleepTimerController.counterState is SleepTimeCounterState.Counting
-    }
-
-    override fun observeIsCounting() = sleepTimerController.getCounterStateFlow()
-        .map { it is SleepTimeCounterState.Counting }
-        .distinctUntilChanged()
-
-    override fun observeRemainTime() =
-        sleepTimerController.getCounterStateFlow()
-            .takeWhile {
-                it !is SleepTimeCounterState.Idle
-            }
-            .map {
-                when (it) {
-                    is SleepTimeCounterState.Counting -> it.remain
-                    SleepTimeCounterState.Finish -> 0.seconds
-                    SleepTimeCounterState.Idle -> error("")
-                }
-            }
-
-    override fun startSleepTimer(duration: Duration) {
-        sleepTimerController.startTimer(duration)
-    }
-
-    override fun cancelSleepTimer() {
-        sleepTimerController.cancelTimer()
     }
 }

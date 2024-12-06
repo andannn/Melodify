@@ -1,5 +1,6 @@
 package com.andannn.melodify.ui.components.tabcontent
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,30 +14,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.AlbumItemModel
-import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.browsableOrPlayable
-import com.andannn.melodify.core.data.model.key
 import com.andannn.melodify.ui.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
-import melodify.ui.common.generated.resources.Res
-import melodify.ui.common.generated.resources.track_count
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TabContent(
     stateHolder: TabContentStateHolder
 ) {
-    val listLayoutState =
-// TODO: add selectedIndex
-        rememberSaveable(saver = LazyListState.Saver) {
-            LazyListState()
-        }
+    val listLayoutState = rememberSaveable(saver = LazyListState.Saver) {
+        LazyListState()
+    }
     LazyListContent(
         modifier =
         Modifier.fillMaxSize(),
@@ -47,6 +37,7 @@ fun TabContent(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyListContent(
     contentMap: Map<MediaItemModel, List<AudioItemModel>>,
@@ -61,8 +52,8 @@ private fun LazyListContent(
         contentPadding = PaddingValues(horizontal = 5.dp),
     ) {
         contentMap.forEach { (header, mediaItems) ->
-            item(header.key) {
-                ListHeader(
+            stickyHeader(header.id) {
+                AlbumInfo(
                     coverArtUri = header.artWorkUri,
                     title = header.name,
                     trackCount = mediaItems.size,
@@ -71,7 +62,7 @@ private fun LazyListContent(
 
             items(
                 items = mediaItems,
-                key = { it.key },
+                key = { it.id },
             ) { item ->
                 ListTileItemView(
                     modifier =

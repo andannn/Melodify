@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -20,33 +21,22 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andannn.melodify.ui.components.tab.ReactiveTab
-import com.andannn.melodify.ui.components.tab.TabUiStateHolder
 import com.andannn.melodify.ui.components.tab.rememberTabUiStateHolder
 import com.andannn.melodify.ui.components.tabcontent.TabContent
-import com.andannn.melodify.ui.components.tabcontent.TabContentStateHolder
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentStateHolder
 
 const val HOME_ROUTE = "home_route"
 
 fun NavGraphBuilder.homeScreen(
-    onNavigateCustomTabSetting: () -> Unit
+    onNavigateCustomTabSetting: () -> Unit,
+    onOpenDrawer: () -> Unit
 ) {
     composable(route = HOME_ROUTE) {
-        HomeRoute(
-            onNavigateCustomTabSetting = onNavigateCustomTabSetting,
+        HomeScreen(
+            onSettingButtonClick = onNavigateCustomTabSetting,
+            onOpenDrawer = onOpenDrawer
         )
     }
-}
-
-@Composable
-fun HomeRoute(
-    modifier: Modifier = Modifier,
-    onNavigateCustomTabSetting: () -> Unit = {},
-) {
-    HomeScreen(
-        modifier = modifier,
-        onSettingButtonClick = onNavigateCustomTabSetting
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,6 +44,7 @@ fun HomeRoute(
 private fun HomeScreen(
     modifier: Modifier = Modifier,
     onSettingButtonClick: () -> Unit = {},
+    onOpenDrawer: () -> Unit = {},
 ) {
     val scrollBehavior = enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
@@ -75,6 +66,14 @@ private fun HomeScreen(
                 },
                 title = {
                     Text(text = "Melodify")
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onOpenDrawer,
+                        content = {
+                            Icon(Icons.Rounded.Menu, contentDescription = "")
+                        }
+                    )
                 },
                 actions = {
                     IconButton(

@@ -30,11 +30,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.platform.formatTime
-import com.andannn.melodify.ui.common.theme.MelodifyTheme
 import io.github.aakira.napier.Napier
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -131,7 +130,7 @@ private fun LyricLine(
         if (active) {
             MaterialTheme.colorScheme.primaryContainer
         } else {
-            MaterialTheme.colorScheme.surfaceContainerHighest
+            Color.Transparent
         }
     }
 

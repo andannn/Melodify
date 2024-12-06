@@ -24,7 +24,7 @@ fun extractTagFromAudioFile(filePath: String): AudioData? {
             albumId = -1, // assign id later.
             artistId = -1, // assign id later.
             genreId = -1,  // assign id later.
-            sourceUri = filePath,
+            sourceUri = convertAbsoluteFilePathToFileUri(filePath),
             title = tag.getFirst(FieldKey.TITLE),
             duration = audioFile.audioHeader.trackLength,
             modifiedDate = file.lastModified(),

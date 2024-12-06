@@ -9,6 +9,7 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.LibraryMusic
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.DeleteSweep
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.PlayCircle
@@ -30,6 +31,7 @@ object SimpleMusicIcons {
     val PlayNext = SmpIcon.ImageVectorIcon(Icons.Rounded.PlayCircle)
     val Information = SmpIcon.ImageVectorIcon(Icons.Rounded.Info)
     val Delete = SmpIcon.ImageVectorIcon(Icons.Rounded.Delete)
+    val DeleteSweep = SmpIcon.ImageVectorIcon(Icons.Rounded.DeleteSweep)
     val Timer = SmpIcon.ImageVectorIcon(Icons.Rounded.Timer)
     val PlayListRemove = SmpIcon.ImageVectorIcon(Icons.Rounded.PlaylistRemove)
 }

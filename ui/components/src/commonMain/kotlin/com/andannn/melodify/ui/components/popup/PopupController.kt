@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.getAudios
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
@@ -19,6 +20,7 @@ import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -167,15 +169,16 @@ suspend fun Repository.onMediaOptionClick(
 
         OptionItem.ADD_TO_PLAYLIST -> onAddToPlaylistOptionClick(popupController, dialog.source)
         OptionItem.DELETE_PLAYLIST -> onDeletePlayList(dialog.source as PlayListItemModel)
+        OptionItem.DELETE_TAB -> error("never")
     }
 }
 
 private suspend fun Repository.onPlayNextClick(source: MediaItemModel) {
     val items = getAudios(source)
-    val havePlayingQueue = playerStateMonitoryRepository.playListQueue.isNotEmpty()
+    val havePlayingQueue = playerStateMonitoryRepository.getPlayListQueue().isNotEmpty()
     if (havePlayingQueue) {
         mediaControllerRepository.addMediaItems(
-            index = playerStateMonitoryRepository.playingIndexInQueue + 1,
+            index = playerStateMonitoryRepository.getPlayingIndexInQueue() + 1,
             mediaItems = items
         )
     } else {
@@ -185,7 +188,7 @@ private suspend fun Repository.onPlayNextClick(source: MediaItemModel) {
 
 private suspend fun Repository.onAddToQueue(source: MediaItemModel) {
     val items = getAudios(source)
-    val playListQueue = playerStateMonitoryRepository.playListQueue
+    val playListQueue = playerStateMonitoryRepository.getPlayListQueue()
     if (playListQueue.isNotEmpty()) {
         mediaControllerRepository.addMediaItems(
             index = playListQueue.size,
@@ -202,13 +205,22 @@ private suspend fun Repository.onDeleteItemInPlayList(playListId: String, source
 
 private suspend fun Repository.onDeletePlayList(playListItemModel: PlayListItemModel) {
     playListRepository.deletePlayList(playListItemModel.id.toLong())
+
+    val currentCustomTabs = userPreferenceRepository.currentCustomTabsFlow.first()
+    val deletedTab =
+        currentCustomTabs.firstOrNull { it is CustomTab.PlayListDetail && it.playListId == playListItemModel.id }
+
+    Napier.d(tag = TAG) { "deletedTab $deletedTab" }
+    if (deletedTab != null) {
+        userPreferenceRepository.deleteCustomTab(deletedTab)
+    }
 }
 
 private suspend fun Repository.onClickSleepTimer(popupController: PopupController) {
-    if (mediaControllerRepository.isCounting()) {
+    if (sleepTimerRepository.isCounting()) {
         val result = popupController.showDialog(DialogId.SleepCountingDialog)
         if (result is DialogAction.SleepTimerCountingDialog.OnCancelTimer) {
-            mediaControllerRepository.cancelSleepTimer()
+            sleepTimerRepository.cancelSleepTimer()
         }
     } else {
         val result = popupController.showDialog(DialogId.SleepTimerOptionDialog)
@@ -218,7 +230,7 @@ private suspend fun Repository.onClickSleepTimer(popupController: PopupControlle
                 SleepTimerOption.FIFTEEN_MINUTES,
                 SleepTimerOption.THIRTY_MINUTES,
                 SleepTimerOption.SIXTY_MINUTES -> {
-                    mediaControllerRepository.startSleepTimer(option.timeMinutes!!)
+                    sleepTimerRepository.startSleepTimer(option.timeMinutes!!)
                 }
 
                 SleepTimerOption.SONG_FINISH -> {
@@ -264,6 +276,13 @@ private suspend fun Repository.onCreateNewPlayList(
         playListRepository.addMusicToPlayList(
             playListId = playListId,
             musics = getAudios(source)
+        )
+
+        userPreferenceRepository.addNewCustomTab(
+            CustomTab.PlayListDetail(
+                playListId.toString(),
+                name
+            )
         )
     }
 }

@@ -6,39 +6,58 @@ import com.andannn.melodify.core.data.util.toAppItem
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.player.VlcPlayer
 import com.andannn.melodify.core.player.PlayerState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 
 internal class PlayerStateMonitoryRepositoryImpl(
     private val vlcPlayer: VlcPlayer,
     private val libraryDao: MediaLibraryDao
 ) : PlayerStateMonitoryRepository {
-    override val currentPositionMs: Long = vlcPlayer.currentPositionMs
+    override fun getCurrentPositionMs(): Long {
+        return vlcPlayer.currentPositionMs
+    }
 
-    override val playingIndexInQueue: Int = vlcPlayer.playingIndexInQueue
+    override fun getPlayingIndexInQueue(): Int {
+        return vlcPlayer.playingIndexInQueue
+    }
 
-    override val playListQueue: List<AudioItemModel> = emptyList()
+    override suspend fun getPlayListQueue(): List<AudioItemModel> {
+        return getPlayListQueueStateFlow().first()
+    }
 
-    override val playingMediaStateFlow: Flow<AudioItemModel?> = vlcPlayer.observePlayingMediaMrl()
+    override fun getPlayingMediaStateFlow() = vlcPlayer.observePlayingMediaMrl()
         .map { mrl ->
             if (mrl == null) {
                 return@map null
             }
-            libraryDao.getMediaByMediaIds(listOf(mrl.hashCode().toLong().toString())).firstOrNull()?.toAppItem()
+            libraryDao.getMediaByMediaIds(listOf(mrl.hashCode().toString())).firstOrNull()
+                ?.toAppItem()
         }
 
-    override val playListQueueStateFlow: Flow<List<AudioItemModel>> = flowOf(emptyList())
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getPlayListQueueStateFlow() =
+        vlcPlayer.observePlayListQueue()
+            .mapLatest { mrls ->
+                val keys = mrls.map { it.hashCode().toString() }
+                val idToEntityMap =
+                    libraryDao.getMediaByMediaIds(keys).associateBy { it.id.toString() }
+                keys.mapNotNull { idToEntityMap[it]?.toAppItem() }
+            }
+
+    override fun getCurrentPlayMode(): PlayMode {
+        return PlayMode.REPEAT_ALL
+    }
 
     override fun observeIsShuffle(): StateFlow<Boolean> {
         return MutableStateFlow(false)
     }
-
-    override val playMode: PlayMode
-        get() = PlayMode.REPEAT_ALL
 
     override fun observePlayMode() = flowOf(PlayMode.REPEAT_ALL)
 

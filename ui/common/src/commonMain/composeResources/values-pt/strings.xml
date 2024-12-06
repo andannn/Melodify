@@ -36,4 +36,5 @@
     <string name="new_playlist_dialog_title">Criar nova playlist</string>
     <string name="new_playlist_dialog_input_hint">Título</string>
     <string name="remove_playlist">Excluir playlist</string>
+    <string name="delete_this_tab">Excluir esta aba</string>
 </resources>

@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.repository.DefaultCustomTabs
 import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
@@ -49,15 +48,13 @@ sealed interface UiEvent {
     data class OnUpdateTabs(
         val newTabs: List<CustomTab>,
     ) : UiEvent
-
-    data object OnResetClick : UiEvent
 }
 
 private const val TAG = "CustomTabSettingViewState"
 
 class CustomTabSettingViewStateHolder(
-    private val playListRepository: PlayListRepository,
-    private val contentRepository: MediaContentRepository,
+    playListRepository: PlayListRepository,
+    contentRepository: MediaContentRepository,
     private val userPreferenceRepository: UserPreferenceRepository,
     scope: CoroutineScope,
 ) : CoroutineScope by scope {
@@ -74,19 +71,6 @@ class CustomTabSettingViewStateHolder(
                 allAvailableTabSectors =
                     mutableListOf<TabSector>()
                         .apply {
-//                    add(
-//                        TabSector(
-//                            Res.string.home,
-//                            listOf(
-//                                CustomTab.AllMusic,
-//                                CustomTab.AllPlayList,
-//                                CustomTab.AllAlbum,
-//                                CustomTab.AllArtist,
-//                                CustomTab.AllGenre,
-//                            )
-//                        )
-//                    )
-
                             val albumTabs =
                                 albums.map {
                                     CustomTab.AlbumDetail(it.id, it.name)
@@ -157,14 +141,6 @@ class CustomTabSettingViewStateHolder(
                 launch {
                     userPreferenceRepository.updateCurrentCustomTabs(
                         event.newTabs,
-                    )
-                }
-            }
-
-            UiEvent.OnResetClick -> {
-                launch {
-                    userPreferenceRepository.updateCurrentCustomTabs(
-                        DefaultCustomTabs.customTabs,
                     )
                 }
             }

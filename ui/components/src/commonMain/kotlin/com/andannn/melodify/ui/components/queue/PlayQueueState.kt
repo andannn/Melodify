@@ -39,13 +39,13 @@ class PlayQueueStateHolder(
 
     init {
         scope.launch {
-            repository.playerStateMonitoryRepository.playListQueueStateFlow.collect {
+            repository.playerStateMonitoryRepository.getPlayListQueueStateFlow().collect {
                 playListQueue = it
             }
         }
 
         scope.launch {
-            repository.playerStateMonitoryRepository.playingMediaStateFlow
+            repository.playerStateMonitoryRepository.getPlayingMediaStateFlow()
                 .filterNotNull()
                 .collect {
                     interactingMusicItem = it

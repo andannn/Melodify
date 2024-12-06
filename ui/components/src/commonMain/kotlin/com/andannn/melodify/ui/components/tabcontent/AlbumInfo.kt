@@ -25,7 +25,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun ListHeader(
+fun AlbumInfo(
     modifier: Modifier = Modifier,
     coverArtUri: String = "",
     defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,

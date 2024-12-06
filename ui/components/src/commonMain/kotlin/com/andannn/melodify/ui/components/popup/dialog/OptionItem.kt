@@ -7,6 +7,7 @@ import melodify.ui.common.generated.resources.add_to_playlist
 import melodify.ui.common.generated.resources.add_to_queue
 import melodify.ui.common.generated.resources.delete
 import melodify.ui.common.generated.resources.delete_from_playlist
+import melodify.ui.common.generated.resources.delete_this_tab
 import melodify.ui.common.generated.resources.play_next
 import melodify.ui.common.generated.resources.remove_playlist
 import melodify.ui.common.generated.resources.sleep_timer
@@ -41,6 +42,10 @@ enum class OptionItem(
     SLEEP_TIMER(
         smpIcon = SimpleMusicIcons.Timer,
         text = Res.string.sleep_timer,
+    ),
+    DELETE_TAB(
+        smpIcon = SimpleMusicIcons.DeleteSweep,
+        text = Res.string.delete_this_tab,
     ),
 }
 

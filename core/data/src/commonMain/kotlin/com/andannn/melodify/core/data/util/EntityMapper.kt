@@ -35,6 +35,8 @@ internal fun List<GenreEntity>.mapToGenreItemModel() = map {
 
 internal fun MediaEntity.toAppItem() = AudioItemModel(
     id = id.toString(),
+// Desktop app do not support the same item in play queue.
+    extraUniqueId = id.toString(),
     name = title ?: "",
     artWorkUri = cover ?: "",
     modifiedDate = modifiedDate ?: -1,
@@ -44,7 +46,7 @@ internal fun MediaEntity.toAppItem() = AudioItemModel(
     artistId = artistId?.toString() ?: "",
     cdTrackNumber = cdTrackNumber ?: 0,
     discNumber = discNumber ?: 0,
-    source = sourceUri ?: error("No source uri")
+    source = sourceUri ?: error("No source uri"),
 )
 
 internal fun AlbumEntity.toAppItem() = AlbumItemModel(

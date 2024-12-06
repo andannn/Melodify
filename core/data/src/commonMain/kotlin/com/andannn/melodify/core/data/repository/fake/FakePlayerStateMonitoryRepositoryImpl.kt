@@ -10,29 +10,31 @@ import kotlinx.coroutines.flow.flow
 
 internal class FakePlayerStateMonitoryRepositoryImpl(
 ) : PlayerStateMonitoryRepository {
-    override val currentPositionMs: Long
-        get() = 0L
+    override fun getCurrentPositionMs(): Long {
+        return 0L
+    }
 
-    override val playingIndexInQueue: Int
-        get() = 0
+    override fun getPlayingIndexInQueue(): Int {
+        return 0
+    }
 
-    override val playListQueue: List<AudioItemModel>
-        get() = emptyList()
+    override suspend fun getPlayListQueue(): List<AudioItemModel> {
+        return emptyList()
+    }
 
-    override val playingMediaStateFlow: Flow<AudioItemModel?>
-        get() = flow {
-            emit(null)
-        }
+    override fun getPlayingMediaStateFlow() = flow {
+        emit(null)
+    }
 
-    override val playListQueueStateFlow: Flow<List<AudioItemModel>>
-        get() = flow {
-            emit(emptyList())
-        }
+    override fun getPlayListQueueStateFlow(): Flow<List<AudioItemModel>> = flow {
+        emit(emptyList())
+    }
+
+    override fun getCurrentPlayMode(): PlayMode {
+        return PlayMode.REPEAT_ALL
+    }
 
     override fun observeIsShuffle(): StateFlow<Boolean> = MutableStateFlow(false)
-
-    override val playMode: PlayMode
-        get() = PlayMode.REPEAT_ALL
 
     override fun observePlayMode(): Flow<PlayMode> = flow {
         emit(PlayMode.REPEAT_ALL)

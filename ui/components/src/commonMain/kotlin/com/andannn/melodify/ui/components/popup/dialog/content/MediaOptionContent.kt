@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,19 +29,21 @@ internal fun MediaOptionContent(
     modifier: Modifier = Modifier,
     onAction: (DialogAction) -> Unit = {},
 ) {
-    Surface(modifier = modifier.navigationBarsPadding()) {
-        Column(Modifier.fillMaxWidth()) {
-            dialogId.options.map { item ->
-                SheetItem(
-                    item = item,
-                    onClick = {
-                        onAction(DialogAction.MediaOptionDialog.ClickItem(item, dialogId))
-                    },
-                )
-            }
+    Column(modifier.navigationBarsPadding().fillMaxWidth()) {
+        dialogId.options.mapIndexed { index, item ->
+            SheetItem(
+                item = item,
+                onClick = {
+                    onAction(DialogAction.MediaOptionDialog.ClickItem(item, dialogId))
+                },
+            )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            if (index != dialogId.options.size - 1) {
+                HorizontalDivider()
+            }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 

@@ -6,19 +6,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface PlayerStateMonitoryRepository {
-    val currentPositionMs: Long
+    fun getCurrentPositionMs(): Long
 
-    val playingIndexInQueue: Int
+    fun getPlayingIndexInQueue(): Int
 
-    val playListQueue: List<AudioItemModel>
+    suspend fun getPlayListQueue(): List<AudioItemModel>
 
-    val playingMediaStateFlow: Flow<AudioItemModel?>
+    fun getPlayingMediaStateFlow(): Flow<AudioItemModel?>
 
-    val playListQueueStateFlow: Flow<List<AudioItemModel>>
+    fun getPlayListQueueStateFlow(): Flow<List<AudioItemModel>>
+
+    fun getCurrentPlayMode(): PlayMode
 
     fun observeIsShuffle(): StateFlow<Boolean>
-
-    val playMode: PlayMode
 
     fun observePlayMode(): Flow<PlayMode>
 

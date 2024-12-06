@@ -49,8 +49,8 @@ internal class PlayerImpl : VlcPlayer, CoroutineScope {
     private val _playingMrlFlow = MutableStateFlow<String?>(null)
     private val _playListFlow = MutableStateFlow<List<String>>(emptyList())
 
-    private val currentPosition: Long =
-        (_currentPositionFlow.value * _playingDurationFlow.value).toLong()
+    private val currentPosition: Long
+        get() = (_currentPositionFlow.value * _playingDurationFlow.value).toLong()
 
     private val playerEventLister = object : MediaPlayerEventAdapter() {
         override fun mediaChanged(mediaPlayer: MediaPlayer, media: MediaRef) {
@@ -89,6 +89,7 @@ internal class PlayerImpl : VlcPlayer, CoroutineScope {
         }
 
         override fun positionChanged(mediaPlayer: MediaPlayer?, newPosition: Float) {
+            Napier.d(tag = TAG) { "positionChanged $newPosition. thread ${Thread.currentThread()}" }
             _currentPositionFlow.value = newPosition
 
             _playerStateFlow.getAndUpdate { old ->
@@ -131,8 +132,7 @@ internal class PlayerImpl : VlcPlayer, CoroutineScope {
     override fun playMediaList(mediaList: List<String>, index: Int) {
         launch {
             mediaListApi.clear()
-
-            mediaList.forEach {
+            mediaList.toSet().forEach {
                 mediaListApi.add(it)
             }
 
@@ -197,14 +197,19 @@ internal class PlayerImpl : VlcPlayer, CoroutineScope {
 
     override fun addMediaItems(index: Int, mrls: List<String>) {
         launch {
-            mrls.forEachIndexed { i, mrl ->
-                mediaListApi.insert(index + i, mrl)
-            }
+            val currentMrls = mediaListApi.mrls()
+            Napier.d(tag = TAG) { "addMediaItems, currentMrls: ${currentMrls}, mrls: inserted ${mrls}. thread ${Thread.currentThread()}" }
+            mrls
+                .filter { currentMrls.contains(it).not() }
+                .forEachIndexed { i, mrl ->
+                    mediaListApi.insert(index + i, mrl)
+                }
         }
     }
 
     override fun moveMediaItem(from: Int, to: Int) {
         launch {
+            Napier.d(tag = TAG) { "moveMediaItem: from ${from}, to ${to}. thread ${Thread.currentThread()}" }
             val fromMrl = mediaListApi.mrl(from)
             mediaListApi.remove(from)
             mediaListApi.insert(to, fromMrl)

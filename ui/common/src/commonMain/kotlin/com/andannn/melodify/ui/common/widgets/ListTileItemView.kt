@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import melodify.ui.common.generated.resources.Res
@@ -128,12 +129,16 @@ fun ListTileItemView(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 if (subTitle.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = subTitle,
                         style = MaterialTheme.typography.bodySmall,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }

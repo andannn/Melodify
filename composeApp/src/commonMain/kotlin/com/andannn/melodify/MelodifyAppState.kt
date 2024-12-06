@@ -66,4 +66,10 @@ class MelodifyAppState(
             }
         }
     }
+
+    fun openDrawer() {
+        scope.launch {
+            drawerState.open()
+        }
+    }
 }
