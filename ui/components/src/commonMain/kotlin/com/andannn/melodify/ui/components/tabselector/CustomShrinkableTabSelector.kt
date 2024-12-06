@@ -26,11 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.ui.common.util.getCategoryResource
-import melodify.ui.common.generated.resources.Res
-import melodify.ui.common.generated.resources.audio_page_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -47,28 +45,10 @@ fun CustomTabSelector(
     LazyColumn(
         modifier = modifier.fillMaxHeight(),
     ) {
-        item {
-            val selected by rememberUpdatedState(state.currentTabs.contains(CustomTab.AllMusic))
-            SelectableNavigationDrawerItem(
-                label = stringResource(Res.string.audio_page_title),
-                selected = selected,
-                onClick = {
-                    stateHolder.onEvent(
-                        UiEvent.OnSelectedChange(
-                            CustomTab.AllMusic,
-                            !selected
-                        )
-                    )
-                }
-            )
-        }
-
         state.allAvailableTabSectors.forEach { sector ->
             val expand = expandState.value[sector] ?: false
             stickyHeader {
-                Surface(
-                    color = MaterialTheme.colorScheme.background,
-                ) {
+                Surface {
                     NavigationDrawerItem(
                         icon = {
                             Icon(
@@ -76,7 +56,12 @@ fun CustomTabSelector(
                                 contentDescription = ""
                             )
                         },
-                        label = { Text(stringResource(sector.sectorTitle)) },
+                        label = {
+                            Text(
+                                stringResource(sector.sectorTitle),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                        },
                         onClick = {
                             expandState.value = expandState.value.toMutableMap().apply {
                                 this[sector] = !(this[sector] ?: false)
@@ -135,6 +120,8 @@ private fun SelectableNavigationDrawerItem(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     modifier = Modifier.weight(1f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     text = label
                 )
                 if (selected) {

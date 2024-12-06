@@ -7,8 +7,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardControlKey
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -21,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.common.util.getCategoryResource
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReactiveTab(
     modifier: Modifier = Modifier,
@@ -34,28 +40,11 @@ fun ReactiveTab(
         modifier = modifier
     ) {
         if (tabs.isNotEmpty()) {
-            ScrollableTabRow(
+            SecondaryScrollableTabRow(
                 modifier = Modifier.fillMaxWidth(),
                 selectedTabIndex = selectedIndex,
-                indicator =
-                @Composable { tabPositions ->
-                    TabRowDefaults.SecondaryIndicator(
-                        Modifier.tabIndicatorOffset(tabPositions.getOrElse(selectedIndex) { tabPositions.last() })
-                    )
-                },
             ) {
                 tabs.forEachIndexed { index, item ->
-//                    CustomTab(
-//                        modifier = Modifier,
-//                        label = getCategoryResource(item),
-//                        isSelected = index == selectedIndex,
-//                        onClick = {
-//                            stateHolder.onClickTab(index)
-//                        },
-//                        onLongClick = {
-//                            stateHolder.onShowTabOption(item)
-//                        }
-//                    )
                     Tab(
                         modifier = Modifier,
                         selected = index == selectedIndex,
@@ -67,39 +56,15 @@ fun ReactiveTab(
                             )
                         },
                         onClick = {
-                            stateHolder.onClickTab(index)
+                            if (index != selectedIndex) {
+                                stateHolder.onClickTab(index)
+                            } else {
+                                stateHolder.onShowTabOption(item)
+                            }
                         },
                     )
                 }
             }
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun CustomTab(
-    modifier: Modifier = Modifier,
-    label: String,
-    isSelected: Boolean,
-    onClick: () -> Unit = {},
-    onLongClick: () -> Unit = {},
-) {
-    Column(
-        modifier = modifier
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            )
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Row {
-            Text(
-                text = label,
-                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-            )
         }
     }
 }

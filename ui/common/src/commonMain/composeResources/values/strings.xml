@@ -37,4 +37,5 @@
     <string name="new_playlist_dialog_input_hint">Title</string>
     <string name="remove_playlist">Delete playlist</string>
     <string name="library_title">Library</string>
+    <string name="delete_this_tab">Delete this tab</string>
 </resources>

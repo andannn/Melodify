@@ -113,6 +113,7 @@ sealed interface DialogId {
             OptionItem.PLAY_NEXT,
             OptionItem.ADD_TO_PLAYLIST,
             OptionItem.DELETE_PLAYLIST,
+            OptionItem.DELETE_TAB,
         ),
     )
 
@@ -123,6 +124,7 @@ sealed interface DialogId {
                 OptionItem.ADD_TO_QUEUE,
                 OptionItem.PLAY_NEXT,
                 OptionItem.ADD_TO_PLAYLIST,
+                OptionItem.DELETE_TAB,
             ),
         )
 
@@ -132,6 +134,7 @@ sealed interface DialogId {
             OptionItem.ADD_TO_QUEUE,
             OptionItem.PLAY_NEXT,
             OptionItem.ADD_TO_PLAYLIST,
+            OptionItem.DELETE_TAB,
         )
     )
 
@@ -141,6 +144,7 @@ sealed interface DialogId {
             OptionItem.ADD_TO_QUEUE,
             OptionItem.PLAY_NEXT,
             OptionItem.ADD_TO_PLAYLIST,
+            OptionItem.DELETE_TAB,
         ),
     )
 
@@ -150,6 +154,7 @@ sealed interface DialogId {
             OptionItem.ADD_TO_QUEUE,
             OptionItem.PLAY_NEXT,
             OptionItem.ADD_TO_PLAYLIST,
+            OptionItem.DELETE_TAB,
         ),
     )
 }

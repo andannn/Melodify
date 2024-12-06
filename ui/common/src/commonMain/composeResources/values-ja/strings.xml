@@ -36,4 +36,5 @@
     <string name="new_playlist_dialog_title">新しいプレイリストを作成</string>
     <string name="new_playlist_dialog_input_hint">タイトル</string>
     <string name="remove_playlist">プレイリストを削除</string>
+    <string name="delete_this_tab">このタブを削除</string>
 </resources>

@@ -13,7 +13,7 @@ import com.andannn.melodify.navigation.routes.navigateToCustomTabSetting
 fun MelodifyNavHost(
     navHostController: NavHostController,
     modifier: Modifier = Modifier,
-    onBackPressed: () -> Unit,
+    onOpenDrawer: () -> Unit,
 ) {
     NavHost(
         navController = navHostController,
@@ -21,10 +21,11 @@ fun MelodifyNavHost(
         modifier = modifier,
     ) {
         homeScreen(
-            onNavigateCustomTabSetting = navHostController::navigateToCustomTabSetting
+            onNavigateCustomTabSetting = navHostController::navigateToCustomTabSetting,
+            onOpenDrawer = onOpenDrawer
         )
         customTabSetting(
-            onBackPressed = onBackPressed
+            onBackPressed = navHostController::popBackStack
         )
     }
 }

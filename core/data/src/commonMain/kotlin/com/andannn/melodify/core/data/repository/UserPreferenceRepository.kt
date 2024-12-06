@@ -10,4 +10,8 @@ interface UserPreferenceRepository {
     val currentCustomTabsFlow: Flow<List<CustomTab>>
 
     suspend fun updateCurrentCustomTabs(currentCustomTabs: List<CustomTab>)
+
+    suspend fun addNewCustomTab(tab: CustomTab)
+
+    suspend fun deleteCustomTab(tab: CustomTab)
 }

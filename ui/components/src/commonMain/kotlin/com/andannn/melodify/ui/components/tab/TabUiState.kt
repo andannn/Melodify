@@ -12,7 +12,9 @@ import com.andannn.melodify.ui.common.util.getUiRetainedScope
 import com.andannn.melodify.ui.components.popup.DialogAction
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
+import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.popup.onMediaOptionClick
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 
+private const val TAG = "TabUiState"
 
 @Composable
 fun rememberTabUiStateHolder(
@@ -78,6 +81,7 @@ class TabUiStateHolder(
                     pre.second to next
                 }
                 .collect { (pre, next) ->
+                    Napier.d(tag = TAG) { "tab changed pre: $pre, next: $next" }
                     if (pre == null || next == null) {
                         return@collect
                     }
@@ -123,11 +127,15 @@ class TabUiStateHolder(
             val result = popupController.showDialog(DialogId.MediaOption.fromMediaModel(model))
 
             if (result is DialogAction.MediaOptionDialog.ClickItem) {
-                repository.onMediaOptionClick(
-                    optionItem = result.optionItem,
-                    dialog = result.dialog,
-                    popupController = popupController
-                )
+                if (result.optionItem == OptionItem.DELETE_TAB) {
+                    repository.userPreferenceRepository.deleteCustomTab(tab)
+                } else {
+                    repository.onMediaOptionClick(
+                        optionItem = result.optionItem,
+                        dialog = result.dialog,
+                        popupController = popupController
+                    )
+                }
             }
         }
     }

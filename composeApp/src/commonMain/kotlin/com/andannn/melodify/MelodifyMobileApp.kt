@@ -44,7 +44,9 @@ fun MelodifyMobileApp(
             MelodifyNavHost(
                 navHostController = navController,
                 modifier = Modifier.fillMaxWidth(),
-                onBackPressed = navController::popBackStack,
+                onOpenDrawer = {
+                    appState.openDrawer()
+                }
             )
 
             PlayerAreaView()
