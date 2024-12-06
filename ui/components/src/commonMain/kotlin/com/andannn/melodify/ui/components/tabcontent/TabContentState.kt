@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
@@ -75,7 +76,13 @@ class TabContentStateHolder(
                     .let { idToContentsMap ->
                         idToContentsMap
                             .mapKeys { (id, _) ->
-                                repository.mediaContentRepository.getAlbumByAlbumId(id)!!
+                                repository.mediaContentRepository.getAlbumByAlbumId(id)
+                                    ?: AlbumItemModel(
+                                        id = "unknown",
+                                        name = "unknown",
+                                        trackCount = 0,
+                                        artWorkUri = "",
+                                    )
                             }
                             .mapValues {
                                 it.value.sortedBy { audio ->
