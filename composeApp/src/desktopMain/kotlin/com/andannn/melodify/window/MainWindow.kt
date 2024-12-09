@@ -1,4 +1,4 @@
-package com.andannn.melodify.routes
+package com.andannn.melodify.window
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -6,14 +6,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,27 +23,61 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import com.andannn.melodify.ui.common.util.getCategoryResource
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.rememberWindowState
+import com.andannn.melodify.MelodifyDesktopAppState
+import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.ui.components.lyrics.LyricsView
 import com.andannn.melodify.ui.components.playcontrol.Player
+import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.components.queue.PlayQueue
 import com.andannn.melodify.ui.components.tab.ReactiveTab
 import com.andannn.melodify.ui.components.tab.rememberTabUiStateHolder
 import com.andannn.melodify.ui.components.tabcontent.TabContent
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentStateHolder
 import com.andannn.melodify.ui.components.tabselector.CustomTabSelector
+import org.koin.java.KoinJavaComponent.getKoin
+import java.awt.Dimension
+import java.awt.GraphicsEnvironment
 
-internal const val MAIN_ROUTE = "main_route"
-fun NavGraphBuilder.mainRoute() {
-    composable(route = MAIN_ROUTE) {
-        MainRoute()
+@Composable
+fun MainWindow(
+    appState: MelodifyDesktopAppState,
+    onCloseRequest: () -> Unit,
+) {
+    val graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
+    val dimension: Dimension = graphicsEnvironment.maximumWindowBounds.size
+    val ratio = 0.8f
+    val state = rememberWindowState(
+        size = DpSize(dimension.width.times(ratio).dp, dimension.height.times(ratio).dp),
+    )
+    Window(
+        state = state,
+        onCloseRequest = onCloseRequest,
+        title = "Melodify",
+    ) {
+        LaunchedEffect(Unit) {
+            getKoin().get<MediaLibrarySyncer>().syncMediaLibrary()
+        }
+
+        CustomMenuBar(appState)
+
+        Scaffold(
+            snackbarHost = {
+                SnackbarHost(appState.snackBarHostState)
+            }
+        ) {
+            MainWindowContent()
+        }
+
+        ActionDialogContainer()
     }
 }
 
 @Composable
-fun MainRoute(
+fun MainWindowContent(
     modifier: Modifier = Modifier,
 ) {
     Column(

@@ -105,7 +105,7 @@ fun CustomTabSelector(
 }
 
 @Composable
-private fun SelectableNavigationDrawerItem(
+fun SelectableNavigationDrawerItem(
     modifier: Modifier = Modifier,
     label: String,
     selected: Boolean,

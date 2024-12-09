@@ -3,8 +3,11 @@ package com.andannn.melodify
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.andannn.melodify.ui.common.util.getUiRetainedScope
@@ -20,17 +23,14 @@ private const val TAG = "MelodifyDesktopAppState"
 @Composable
 fun rememberMelodifyDesktopAppState(
     scope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = rememberNavController(),
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     popupController: PopupController = getUiRetainedScope()?.get() ?: getKoin().get(),
 ) = remember(
     scope,
-    navController,
     snackBarHostState,
 ) {
     MelodifyDesktopAppState(
         scope = scope,
-        navController = navController,
         snackBarHostState = snackBarHostState,
         popupController = popupController
     )
@@ -38,10 +38,15 @@ fun rememberMelodifyDesktopAppState(
 
 class MelodifyDesktopAppState(
     scope: CoroutineScope,
-    val navController: NavHostController,
     val snackBarHostState: SnackbarHostState,
     private val popupController: PopupController
 ) {
+    var showPreferenceWindow by mutableStateOf(false)
+
+    fun closePreferenceWindow() {
+        showPreferenceWindow = false
+    }
+
     init {
         scope.launch {
             for (message in popupController.snackBarMessageChannel) {
