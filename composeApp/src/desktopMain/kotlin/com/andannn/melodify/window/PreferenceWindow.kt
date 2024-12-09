@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import com.andannn.melodify.MelodifyDesktopAppState
+import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.components.tabselector.SelectableNavigationDrawerItem
 
 @Composable
@@ -37,6 +38,8 @@ fun PreferenceWindow(
         CustomMenuBar(appState)
 
         PreferencesWindowContent()
+
+        ActionDialogContainer()
     }
 }
 
