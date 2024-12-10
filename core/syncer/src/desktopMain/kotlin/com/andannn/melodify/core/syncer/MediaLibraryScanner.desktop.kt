@@ -38,11 +38,7 @@ class MediaLibraryScannerImpl(
         val allMediaEntity = mediaLibraryDao.getAllMediaFlow().first()
         val mediaInDb = allMediaEntity.associateBy { it.id }
 
-// TODO Get Path from DataStore after implement library path setting feature.
-//        val libraryPathSet = userSettingPreferences.userDate.first().libraryPath
-        val libraryPathSet = setOf(
-            "/Users/jiangqn/Documents/Music",
-        )
+        val libraryPathSet = userSettingPreferences.userDate.first().libraryPath
 
 // TODO: Scan file in worker thread.
         val audioFileWithLastModifyDateList = scanAllLibraryAudioFile(libraryPathSet)
