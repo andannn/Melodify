@@ -4,6 +4,7 @@ import com.andannn.melodify.core.syncer.model.AudioData
 import io.github.aakira.napier.Napier
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.tag.FieldKey
+import org.jaudiotagger.tag.Tag
 import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.Path
@@ -25,24 +26,32 @@ fun extractTagFromAudioFile(filePath: String): AudioData? {
             artistId = -1, // assign id later.
             genreId = -1,  // assign id later.
             sourceUri = convertAbsoluteFilePathToFileUri(filePath),
-            title = tag.getFirst(FieldKey.TITLE),
+            title = tag.tryGetFirst(FieldKey.TITLE) ?: "",
             duration = audioFile.audioHeader.trackLength,
             modifiedDate = file.lastModified(),
             size = file.length().toInt(),
             mimeType = audioFile.audioHeader.format,
-            album = tag.getFirst(FieldKey.ALBUM),
-            artist = tag.getFirst(FieldKey.ARTIST),
-            cdTrackNumber = tag.getFirst(FieldKey.TRACK).toInt(),
-            discNumber = tag.getFirst(FieldKey.DISC_NO).toInt(),
-            numTracks = tag.getFirst(FieldKey.TRACK_TOTAL).toInt(),
+            album = tag.tryGetFirst(FieldKey.ALBUM),
+            artist = tag.tryGetFirst(FieldKey.ARTIST),
+            cdTrackNumber = tag.tryGetFirst(FieldKey.TRACK)?.toInt(),
+            discNumber = tag.tryGetFirst(FieldKey.DISC_NO)?.toInt(),
+            numTracks = tag.tryGetFirst(FieldKey.TRACK_TOTAL)?.toInt(),
             bitrate = audioFile.audioHeader.bitRateAsNumber.toInt(),
-            genre = tag.getFirst(FieldKey.GENRE),
-            year = tag.getFirst(FieldKey.YEAR),
-            composer = tag.getFirst(FieldKey.COMPOSER),
+            genre = tag.tryGetFirst(FieldKey.GENRE),
+            year = tag.tryGetFirst(FieldKey.YEAR),
+            composer = tag.tryGetFirst(FieldKey.COMPOSER),
             cover = getCoverFileInFolder(filePath),
         )
     } catch (e: Exception) {
         Napier.e("extractTagFromAudioFIle failed", e)
+        null
+    }
+}
+
+private fun Tag.tryGetFirst(key: FieldKey): String? {
+    return try {
+        getFirst(key)
+    } catch (e: Exception) {
         null
     }
 }
