@@ -12,7 +12,8 @@ actual val DialogId.dialogIdType: DialogType
         is DialogId.AddToPlayListDialog -> DialogType.ModalBottomSheet
 
         DialogId.NewPlayListDialog,
-        is DialogId.AlertDialog -> DialogType.AlertDialog
+        is DialogId.AlertDialog,
+        DialogId.AddLibraryPathDialog -> DialogType.AlertDialog
     }
 
 @Composable

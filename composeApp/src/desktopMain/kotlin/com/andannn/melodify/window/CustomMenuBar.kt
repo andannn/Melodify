@@ -3,11 +3,11 @@ package com.andannn.melodify.window
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
-import com.andannn.melodify.MelodifyDesktopAppState
+import com.andannn.melodify.app.MelodifyDeskTopAppState
 
 @Composable
-fun FrameWindowScope.CustomMenuBar(
-    appState: MelodifyDesktopAppState
+internal fun FrameWindowScope.CustomMenuBar(
+    appState: MelodifyDeskTopAppState
 ) {
     MenuBar {
         Menu("Preferences") {

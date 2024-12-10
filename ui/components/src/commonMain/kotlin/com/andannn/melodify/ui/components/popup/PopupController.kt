@@ -2,6 +2,8 @@ package com.andannn.melodify.ui.components.popup
 
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SnackbarVisuals
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,12 +13,14 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.ui.components.popup.dialog.DialogAction
+import com.andannn.melodify.ui.components.popup.dialog.DialogData
+import com.andannn.melodify.ui.components.popup.dialog.DialogDataImpl
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.popup.dialog.SleepTimerOption
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.snackbar.SnackBarMessage
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
@@ -24,81 +28,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlin.coroutines.resume
 
-private const val TAG = "DrawerController"
+val LocalPopupController: ProvidableCompositionLocal<PopupController> =
+    compositionLocalOf { error("no popup controller") }
 
-sealed interface DialogAction {
-    data object Dismissed : DialogAction
-
-    interface AlertDialog : DialogAction {
-        data object Accept : AlertDialog
-
-        data object Decline : AlertDialog
-    }
-
-    interface NewPlaylistDialog : DialogAction {
-        data class Accept(val playlistName: String) : NewPlaylistDialog
-
-        object Decline : NewPlaylistDialog
-    }
-
-    interface MediaOptionDialog : DialogAction {
-        data class ClickItem(val optionItem: OptionItem, val dialog: DialogId.MediaOption) :
-            MediaOptionDialog
-    }
-
-    interface AddToPlayListDialog : DialogAction {
-        data class OnAddToPlayList(
-            val playList: PlayListItemModel,
-            val audios: List<AudioItemModel>
-        ) :
-            AddToPlayListDialog
-
-        object OnCreateNewPlayList : AddToPlayListDialog
-    }
-
-    interface SleepTimerOptionDialog : DialogAction {
-        data class OnOptionClick(val option: SleepTimerOption) : SleepTimerOptionDialog
-    }
-
-    interface SleepTimerCountingDialog : DialogAction {
-        data object OnCancelTimer : SleepTimerCountingDialog
-    }
-}
-
-interface DialogData {
-    val dialogId: DialogId
-
-    fun performAction(action: DialogAction)
-}
-
-class DialogDataImpl(
-    override val dialogId: DialogId,
-    private val continuation: CancellableContinuation<DialogAction>,
-) : DialogData {
-    override fun performAction(action: DialogAction) {
-        if (continuation.isActive) continuation.resume(action)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as DialogDataImpl
-
-        if (dialogId != other.dialogId) return false
-        if (continuation != other.continuation) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = dialogId.hashCode()
-        result = 31 * result + continuation.hashCode()
-        return result
-    }
-}
+private const val TAG = "PopupController"
 
 interface PopupController {
     val currentDialog: DialogData?
@@ -266,8 +200,8 @@ private suspend fun Repository.onCreateNewPlayList(
 ) {
     val result = popupController.showDialog(DialogId.NewPlayListDialog)
     Napier.d(tag = TAG) { "result. name = $result" }
-    if (result is DialogAction.NewPlaylistDialog.Accept) {
-        val name = result.playlistName
+    if (result is DialogAction.InputDialog.Accept) {
+        val name = result.input
         Napier.d(tag = TAG) { "create new playlist start. name = $name" }
         val playListId = playListRepository.createNewPlayList(name)
 

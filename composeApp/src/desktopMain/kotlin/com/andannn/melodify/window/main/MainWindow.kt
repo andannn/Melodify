@@ -1,4 +1,4 @@
-package com.andannn.melodify.window
+package com.andannn.melodify.window.main
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +9,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -27,7 +26,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
-import com.andannn.melodify.MelodifyDesktopAppState
+import com.andannn.melodify.app.MelodifyDeskTopAppState
 import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.ui.components.lyrics.LyricsView
 import com.andannn.melodify.ui.components.playcontrol.Player
@@ -38,13 +37,15 @@ import com.andannn.melodify.ui.components.tab.rememberTabUiStateHolder
 import com.andannn.melodify.ui.components.tabcontent.TabContent
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentStateHolder
 import com.andannn.melodify.ui.components.tabselector.CustomTabSelector
+import com.andannn.melodify.window.CustomMenuBar
+import com.andannn.melodify.window.rememberCommonWindowState
 import org.koin.java.KoinJavaComponent.getKoin
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
 
 @Composable
-fun MainWindow(
-    appState: MelodifyDesktopAppState,
+internal fun MainWindow(
+    appState: MelodifyDeskTopAppState,
     onCloseRequest: () -> Unit,
 ) {
     val graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -58,6 +59,8 @@ fun MainWindow(
         onCloseRequest = onCloseRequest,
         title = "Melodify",
     ) {
+        val windowState = rememberCommonWindowState()
+
         LaunchedEffect(Unit) {
             getKoin().get<MediaLibrarySyncer>().syncMediaLibrary()
         }
@@ -66,7 +69,7 @@ fun MainWindow(
 
         Scaffold(
             snackbarHost = {
-                SnackbarHost(appState.snackBarHostState)
+                SnackbarHost(windowState.snackBarHostState)
             }
         ) {
             MainWindowContent()

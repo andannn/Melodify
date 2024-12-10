@@ -8,9 +8,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.ui.common.util.getUiRetainedScope
-import com.andannn.melodify.ui.components.popup.DialogAction
+import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
+import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.popup.onMediaOptionClick
@@ -28,7 +28,7 @@ private const val TAG = "TabUiState"
 fun rememberTabUiStateHolder(
     scope: CoroutineScope = rememberCoroutineScope(),
     repository: Repository = getKoin().get(),
-    popupController: PopupController = getUiRetainedScope()?.get() ?: getKoin().get(),
+    popupController: PopupController = LocalPopupController.current,
 ) = remember(
     scope,
     repository,

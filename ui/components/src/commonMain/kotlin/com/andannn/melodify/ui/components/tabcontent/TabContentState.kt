@@ -11,9 +11,9 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.ui.common.util.getUiRetainedScope
-import com.andannn.melodify.ui.components.popup.DialogAction
+import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
+import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.onMediaOptionClick
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import io.github.aakira.napier.Napier
@@ -31,8 +31,7 @@ fun rememberTabContentStateHolder(
     selectedTab: CustomTab?,
     repository: Repository = getKoin().get(),
     scope: CoroutineScope = rememberCoroutineScope(),
-    popupController: PopupController = getUiRetainedScope()?.get<PopupController>()
-        ?: getKoin().get<PopupController>(),
+    popupController: PopupController = LocalPopupController.current,
 ) = remember(
     selectedTab,
     repository,
