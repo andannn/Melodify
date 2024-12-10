@@ -1,6 +1,5 @@
 package com.andannn.melodify.core.data.repository
 
-import com.andannn.melodify.core.data.model.CurrentCustomTabs
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaPreviewMode
 import com.andannn.melodify.core.data.model.UserSetting
@@ -14,12 +13,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-val DefaultCustomTabs = CurrentCustomTabs(
-    listOf(
-        CustomTab.AllMusic,
-    )
-)
-
 class UserPreferenceRepositoryImpl(
     private val preferences: UserSettingPreferences,
     private val userDataDao: UserDataDao
@@ -27,6 +20,7 @@ class UserPreferenceRepositoryImpl(
     override val userSettingFlow: Flow<UserSetting> = preferences.userDate.map {
         UserSetting(
             mediaPreviewMode = it.mediaPreviewMode.toMediaPreviewMode(),
+            libraryPath = it.libraryPath
         )
     }
 
@@ -57,7 +51,28 @@ class UserPreferenceRepositoryImpl(
 
         userDataDao.deleteCustomTab(type = type, externalId = id)
     }
+
+    override suspend fun addLibraryPath(path: String): Boolean {
+        if (!isPathValid(path)) return false
+
+        val currentPaths = preferences.userDate.first().libraryPath
+        preferences.setLibraryPath(currentPaths + path)
+
+        return true
+    }
+
+    override suspend fun deleteLibraryPath(path: String): Boolean {
+        val currentPaths = preferences.userDate.first().libraryPath
+        if (currentPaths.contains(path).not()) {
+            return false
+        }
+
+        preferences.setLibraryPath(currentPaths - path)
+        return true
+    }
 }
+
+expect fun isPathValid(path: String): Boolean
 
 private fun MediaPreviewMode.toIntValue(): Int = when (this) {
     MediaPreviewMode.LIST_PREVIEW -> PreviewModeValues.LIST_PREVIEW_VALUE

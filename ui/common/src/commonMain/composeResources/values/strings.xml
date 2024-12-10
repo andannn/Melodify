@@ -38,4 +38,6 @@
     <string name="remove_playlist">Delete playlist</string>
     <string name="library_title">Library</string>
     <string name="delete_this_tab">Delete this tab</string>
+    <string name="add_library_path_dialog_title">Add new path</string>
+    <string name="invalid_path_alert_dialog_content">Invalid path</string>
 </resources>

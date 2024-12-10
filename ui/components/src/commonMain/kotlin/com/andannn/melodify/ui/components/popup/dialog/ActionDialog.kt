@@ -10,17 +10,15 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
-import com.andannn.melodify.ui.common.util.getUiRetainedScope
-import com.andannn.melodify.ui.components.popup.DialogAction
-import com.andannn.melodify.ui.components.popup.DialogData
+import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
+import com.andannn.melodify.ui.components.popup.dialog.content.AddLibraryPathDialog
 import com.andannn.melodify.ui.components.popup.dialog.content.AddToPlayListDialogContent
 import com.andannn.melodify.ui.components.popup.dialog.content.AlertMessageDialogContent
 import com.andannn.melodify.ui.components.popup.dialog.content.MediaOptionContent
 import com.andannn.melodify.ui.components.popup.dialog.content.NewPlayListDialogContent
 import com.andannn.melodify.ui.components.popup.dialog.content.SleepTimerCountingContent
 import com.andannn.melodify.ui.components.popup.dialog.content.SleepTimerOptionDialogContent
-import org.koin.mp.KoinPlatform.getKoin
 
 enum class DialogType {
     AlertDialog,
@@ -31,7 +29,7 @@ enum class DialogType {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActionDialogContainer(
-    popupController: PopupController = getUiRetainedScope()?.get() ?: getKoin().get(),
+    popupController: PopupController = LocalPopupController.current,
 ) {
     val data = popupController.currentDialog
     val id = data?.dialogId
@@ -77,6 +75,12 @@ fun DialogContent(
     when (val dialog = data.dialogId) {
         is DialogId.AlertDialog -> AlertMessageDialogContent(
             dialogId = dialog,
+            onAction = {
+                data.performAction(it)
+            }
+        )
+
+        DialogId.AddLibraryPathDialog -> AddLibraryPathDialog(
             onAction = {
                 data.performAction(it)
             }

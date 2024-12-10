@@ -12,7 +12,8 @@ actual val DialogId.dialogIdType: DialogType
         DialogId.NewPlayListDialog,
         DialogId.SleepCountingDialog,
         is DialogId.AddToPlayListDialog,
-        is DialogId.AlertDialog -> DialogType.AlertDialog
+        is DialogId.AlertDialog,
+        DialogId.AddLibraryPathDialog -> DialogType.AlertDialog
     }
 
 @Composable

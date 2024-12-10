@@ -12,15 +12,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.common.icons.SmpIcon
-import com.andannn.melodify.ui.components.popup.DialogAction
-import com.andannn.melodify.ui.components.popup.dialog.OptionItem
+import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
+import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

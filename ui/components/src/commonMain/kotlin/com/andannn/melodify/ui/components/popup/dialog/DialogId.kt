@@ -11,6 +11,7 @@ import melodify.ui.common.generated.resources.confirm_delete_playlist_item
 import melodify.ui.common.generated.resources.decline
 import melodify.ui.common.generated.resources.duplicated_alert_dialog_title
 import melodify.ui.common.generated.resources.having_registered_track_in_playlist
+import melodify.ui.common.generated.resources.invalid_path_alert_dialog_content
 import melodify.ui.common.generated.resources.new_playlist_dialog_input_hint
 import melodify.ui.common.generated.resources.new_playlist_dialog_title
 import melodify.ui.common.generated.resources.ok
@@ -31,6 +32,11 @@ sealed interface DialogId {
         negative = Res.string.decline
     )
 
+    data object InvalidPathAlert : AlertDialog(
+        message = Res.string.invalid_path_alert_dialog_content,
+        positive = Res.string.ok,
+    )
+
     data object DuplicatedAlert : AlertDialog(
         title = Res.string.duplicated_alert_dialog_title,
         message = Res.string.having_registered_track_in_playlist,
@@ -40,6 +46,12 @@ sealed interface DialogId {
     data object NewPlayListDialog : DialogId {
         val title = Res.string.new_playlist_dialog_title
         val playListNameInputHint = Res.string.new_playlist_dialog_input_hint
+        val positive = Res.string.ok
+        val negative = Res.string.decline
+    }
+
+    data object AddLibraryPathDialog : DialogId {
+        val title = Res.string.new_playlist_dialog_title
         val positive = Res.string.ok
         val negative = Res.string.decline
     }

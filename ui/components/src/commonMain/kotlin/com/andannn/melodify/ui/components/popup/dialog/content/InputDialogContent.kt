@@ -23,13 +23,40 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.ui.components.popup.DialogAction
+import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
+fun AddLibraryPathDialog(
+    modifier: Modifier = Modifier,
+    onAction: (DialogAction) -> Unit = {}
+) {
+    SimpleInputDialogContent(
+        modifier = modifier,
+        title = stringResource(DialogId.AddLibraryPathDialog.title),
+        onAction = onAction
+    )
+}
+
+@Composable
 fun NewPlayListDialogContent(
     modifier: Modifier = Modifier,
+    onAction: (DialogAction) -> Unit = {}
+) {
+    SimpleInputDialogContent(
+        modifier = modifier,
+        title = stringResource(DialogId.NewPlayListDialog.title),
+        inputHint = stringResource(DialogId.NewPlayListDialog.playListNameInputHint),
+        onAction = onAction
+    )
+}
+
+@Composable
+private fun SimpleInputDialogContent(
+    modifier: Modifier = Modifier,
+    title: String = "",
+    inputHint: String = "",
     onAction: (DialogAction) -> Unit = {}
 ) {
     Surface(
@@ -37,7 +64,6 @@ fun NewPlayListDialogContent(
         shape = AlertDialogDefaults.shape,
         tonalElevation = AlertDialogDefaults.TonalElevation
     ) {
-
         var inputName by rememberSaveable {
             mutableStateOf("")
         }
@@ -50,7 +76,7 @@ fun NewPlayListDialogContent(
 
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = stringResource(DialogId.NewPlayListDialog.title),
+                text = title,
                 style = MaterialTheme.typography.titleSmall
             )
 
@@ -62,7 +88,7 @@ fun NewPlayListDialogContent(
                 onValueChange = {
                     inputName = it
                 },
-                label = { Text(stringResource(DialogId.NewPlayListDialog.playListNameInputHint)) },
+                label = { Text(inputHint) },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -71,7 +97,7 @@ fun NewPlayListDialogContent(
                 Spacer(modifier = Modifier.weight(1f))
                 TextButton(
                     onClick = {
-                        onAction(DialogAction.NewPlaylistDialog.Decline)
+                        onAction(DialogAction.InputDialog.Decline)
                     },
                 ) {
                     Text(stringResource(DialogId.NewPlayListDialog.negative))
@@ -80,7 +106,7 @@ fun NewPlayListDialogContent(
                 TextButton(
                     enabled = acceptButtonEnabled,
                     onClick = {
-                        onAction(DialogAction.NewPlaylistDialog.Accept(playlistName = inputName))
+                        onAction(DialogAction.InputDialog.Accept(input = inputName))
                     },
                 ) {
                     Text(stringResource(DialogId.NewPlayListDialog.positive))

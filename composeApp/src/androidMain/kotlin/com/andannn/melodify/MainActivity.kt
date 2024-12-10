@@ -2,6 +2,7 @@ package com.andannn.melodify
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,6 +13,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,21 +24,17 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.andannn.melodify.ui.common.dialog.ConnectFailedAlertDialog
-import com.andannn.melodify.ui.common.theme.MelodifyTheme
-import android.graphics.Color
 import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.core.syncer.SyncJobService
-import com.andannn.melodify.ui.components.popup.PopupController
+import com.andannn.melodify.ui.common.dialog.ConnectFailedAlertDialog
+import com.andannn.melodify.ui.common.theme.MelodifyTheme
+import com.andannn.melodify.ui.components.popup.LocalPopupController
+import com.andannn.melodify.ui.components.popup.PopupControllerImpl
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.getKoin
-import org.koin.android.scope.AndroidScopeComponent
-import org.koin.androidx.scope.activityRetainedScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
-import org.koin.core.scope.Scope
 
 private const val TAG = "MainActivity"
 
@@ -47,13 +45,8 @@ private val runTimePermissions =
         listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
-class MainActivity : ComponentActivity(), AndroidScopeComponent {
-
-    override val scope: Scope by activityRetainedScope()
-
-    private val mainViewModel: MainActivityViewModel by viewModel {
-        parametersOf(scope.get<PopupController>())
-    }
+class MainActivity : ComponentActivity() {
+    private val mainViewModel: MainActivityViewModel by viewModel()
 
     private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
 
@@ -62,9 +55,6 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
         super.onCreate(savedInstanceState)
 
         SyncJobService.scheduleSyncLibraryJob(this)
-
-        // initialize koin activity retained scope.
-        checkNotNull(scope)
 
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(
@@ -137,21 +127,25 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
                 }
             }
 
-            MelodifyTheme(darkTheme = true, isDynamicColor = true) {
-                when (uiState) {
-                    is MainUiState.Error -> {
-                        ConnectFailedAlertDialog(
-                            onDismiss = { finish() }
-                        )
-                    }
-
-                    MainUiState.Ready -> {
-                        if (permissionGranted) {
-                            MelodifyMobileApp()
+            CompositionLocalProvider(
+                LocalPopupController provides remember { PopupControllerImpl() },
+            ) {
+                MelodifyTheme(darkTheme = true, isDynamicColor = true) {
+                    when (uiState) {
+                        is MainUiState.Error -> {
+                            ConnectFailedAlertDialog(
+                                onDismiss = { finish() }
+                            )
                         }
-                    }
 
-                    MainUiState.Init -> {}
+                        MainUiState.Ready -> {
+                            if (permissionGranted) {
+                                MelodifyMobileApp()
+                            }
+                        }
+
+                        MainUiState.Init -> {}
+                    }
                 }
             }
         }
