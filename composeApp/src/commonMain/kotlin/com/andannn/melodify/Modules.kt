@@ -5,11 +5,7 @@ import com.andannn.melodify.core.platform.platformModule
 import com.andannn.melodify.core.syncer.di.syncerModule
 import org.koin.core.module.Module
 
-expect val uiScopedModule: Module
-
 val modules: List<Module> = listOf(
-    uiScopedModule,
-
     dataModule,
     syncerModule,
     platformModule,

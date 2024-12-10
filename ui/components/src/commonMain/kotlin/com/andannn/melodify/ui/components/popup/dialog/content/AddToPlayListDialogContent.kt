@@ -44,7 +44,7 @@ import com.andannn.melodify.ui.common.widgets.ActionType
 import com.andannn.melodify.ui.common.widgets.LargePreviewCard
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
 import com.andannn.melodify.ui.common.widgets.SmpTextButton
-import com.andannn.melodify.ui.components.popup.DialogAction
+import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch

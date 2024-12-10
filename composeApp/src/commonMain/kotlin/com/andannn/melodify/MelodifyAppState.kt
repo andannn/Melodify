@@ -10,12 +10,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.andannn.melodify.ui.common.util.getUiRetainedScope
+import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.koin.compose.getKoin
 import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
@@ -23,7 +22,7 @@ fun rememberAppState(
     navController: NavHostController = rememberNavController(),
     scope: CoroutineScope = rememberCoroutineScope(),
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    popupController: PopupController = getUiRetainedScope()?.get() ?: getKoin().get(),
+    popupController: PopupController = LocalPopupController.current,
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
 ) = remember(
     navController,

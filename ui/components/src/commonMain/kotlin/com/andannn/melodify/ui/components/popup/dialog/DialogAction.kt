@@ -1,0 +1,43 @@
+package com.andannn.melodify.ui.components.popup.dialog
+
+import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.PlayListItemModel
+
+sealed interface DialogAction {
+    data object Dismissed : DialogAction
+
+    interface AlertDialog : DialogAction {
+        data object Accept : AlertDialog
+
+        data object Decline : AlertDialog
+    }
+
+    interface InputDialog : DialogAction {
+        data class Accept(val input: String) : InputDialog
+
+        object Decline : InputDialog
+    }
+
+    interface MediaOptionDialog : DialogAction {
+        data class ClickItem(val optionItem: OptionItem, val dialog: DialogId.MediaOption) :
+            MediaOptionDialog
+    }
+
+    interface AddToPlayListDialog : DialogAction {
+        data class OnAddToPlayList(
+            val playList: PlayListItemModel,
+            val audios: List<AudioItemModel>
+        ) :
+            AddToPlayListDialog
+
+        object OnCreateNewPlayList : AddToPlayListDialog
+    }
+
+    interface SleepTimerOptionDialog : DialogAction {
+        data class OnOptionClick(val option: SleepTimerOption) : SleepTimerOptionDialog
+    }
+
+    interface SleepTimerCountingDialog : DialogAction {
+        data object OnCancelTimer : SleepTimerCountingDialog
+    }
+}
