@@ -101,6 +101,19 @@ interface MediaLibraryDao {
     suspend fun deleteMediaByUri(uris: List<String>)
 
     @Transaction
+    suspend fun upsertMedia(
+        albums: List<AlbumEntity>,
+        artists: List<ArtistEntity>,
+        genres: List<GenreEntity>,
+        audios: List<MediaEntity>
+    ) {
+        insertAlbums(albums)
+        insertArtists(artists)
+        insertGenres(genres)
+        insertMedias(audios)
+    }
+
+    @Transaction
     suspend fun clearAndInsertLibrary(
         albums: List<AlbumEntity>,
         artists: List<ArtistEntity>,

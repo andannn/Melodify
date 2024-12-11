@@ -16,10 +16,6 @@ import org.koin.java.KoinJavaComponent.getKoin
 internal fun ApplicationScope.MelodifyDeskTopApp(
     appState: MelodifyDeskTopAppState = rememberMelodifyDeskTopAppState()
 ) {
-    LaunchedEffect(Unit) {
-        getKoin().get<MediaLibrarySyncer>().syncAllMediaLibrary()
-    }
-
     CompositionLocalProvider(
         LocalPopupController provides remember { PopupControllerImpl() },
     ) {

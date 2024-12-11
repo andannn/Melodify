@@ -2,7 +2,9 @@ package com.andannn.melodify.core.syncer.util
 
 import com.andannn.melodify.core.syncer.model.AudioData
 import io.github.aakira.napier.Napier
+import org.jaudiotagger.audio.AudioFile
 import org.jaudiotagger.audio.AudioFileIO
+import org.jaudiotagger.audio.exceptions.CannotReadException
 import org.jaudiotagger.tag.FieldKey
 import org.jaudiotagger.tag.Tag
 import java.io.File
@@ -16,8 +18,14 @@ import kotlin.io.path.nameWithoutExtension
 fun extractTagFromAudioFile(filePath: Path): AudioData? {
     return try {
         val file = File(filePath.toString())
+        val audioFile: AudioFile
+        try {
+            audioFile = AudioFileIO.read(file)
+        } catch (e: CannotReadException) {
+            Napier.e("extractTagFromAudioFIle failed", e)
+            return null
+        }
 
-        val audioFile = AudioFileIO.read(file)
         val tag = audioFile.tag
 // TODO: cache error and set default for method getFirst
         AudioData(

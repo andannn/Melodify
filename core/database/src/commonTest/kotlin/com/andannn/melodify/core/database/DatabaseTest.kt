@@ -5,6 +5,8 @@ import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.entity.AlbumEntity
+import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
@@ -265,7 +267,10 @@ class DatabaseTest {
             )
         )
         val mediaStoreId = "1"
-        assertEquals(false, playListDao.getIsMediaInPlayListFlow(res.first().toString(), mediaStoreId).first())
+        assertEquals(
+            false,
+            playListDao.getIsMediaInPlayListFlow(res.first().toString(), mediaStoreId).first()
+        )
 
         playListDao.insertPlayListWithMediaCrossRef(
             crossRefs = listOf(
@@ -278,7 +283,10 @@ class DatabaseTest {
                 ),
             )
         )
-        assertEquals(true, playListDao.getIsMediaInPlayListFlow(res.first().toString(), mediaStoreId).first())
+        assertEquals(
+            true,
+            playListDao.getIsMediaInPlayListFlow(res.first().toString(), mediaStoreId).first()
+        )
     }
 
     @Test
@@ -404,6 +412,8 @@ class DatabaseTest {
                 MediaEntity(
                     id = 1,
                     albumId = 2,
+                    genreId = 3,
+                    artistId = 4,
                     title = "title 1",
                 )
             )
@@ -416,8 +426,83 @@ class DatabaseTest {
                 )
             )
         )
-        assertEquals(1, libraryDao.getAllAlbumFlow().first().size)
+        libraryDao.insertGenres(
+            genres = listOf(
+                GenreEntity(
+                    genreId = 3,
+                    name = "genre 3"
+                )
+            )
+        )
+        libraryDao.insertArtists(
+            artists = listOf(
+                ArtistEntity(
+                    artistId = 4,
+                    name = "artist 4"
+                )
+            )
+        )
+
+        assertEquals(
+            1, libraryDao.getAllAlbumFlow().first().size
+        )
         libraryDao.deleteAllMedias()
-        assertEquals(1, libraryDao.getAllAlbumFlow().first().size)
+        assertEquals(0, libraryDao.getAllAlbumFlow().first().size)
+        assertEquals(0, libraryDao.getAllGenreFlow().first().size)
+        assertEquals(0, libraryDao.getAllArtistFlow().first().size)
+    }
+
+    @Test
+    fun update_artist_count_test() = testScope.runTest {
+        libraryDao.insertArtists(
+            artists = listOf(
+                ArtistEntity(
+                    artistId = 4,
+                    name = "artist 4"
+                )
+            )
+        )
+        assertEquals(0, libraryDao.getArtistByArtistId("4")?.trackCount)
+        libraryDao.insertMedias(
+            audios = listOf(
+                MediaEntity(
+                    id = 1,
+                    albumId = 2,
+                    genreId = 3,
+                    artistId = 4,
+                    title = "title 1",
+                ),
+            )
+        )
+        assertEquals(1, libraryDao.getArtistByArtistId("4")?.trackCount)
+        libraryDao.deleteAllMedias()
+        assertEquals(null, libraryDao.getArtistByArtistId("4"))
+    }
+
+    @Test
+    fun update_album_count_test() = testScope.runTest {
+        libraryDao.insertAlbums(
+            albums = listOf(
+                AlbumEntity(
+                    albumId = 2,
+                    title = "album 2"
+                )
+            )
+        )
+        assertEquals(0, libraryDao.getAlbumByAlbumId("2")?.trackCount)
+        libraryDao.insertMedias(
+            audios = listOf(
+                MediaEntity(
+                    id = 1,
+                    albumId = 2,
+                    genreId = 3,
+                    artistId = 4,
+                    title = "title 1",
+                )
+            )
+        )
+        assertEquals(1, libraryDao.getAlbumByAlbumId("2")?.trackCount)
+        libraryDao.deleteAllMedias()
+        assertEquals(null, libraryDao.getAlbumByAlbumId("2"))
     }
 }

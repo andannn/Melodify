@@ -39,7 +39,6 @@ import com.andannn.melodify.ui.components.tabcontent.rememberTabContentStateHold
 import com.andannn.melodify.ui.components.tabselector.CustomTabSelector
 import com.andannn.melodify.window.CustomMenuBar
 import com.andannn.melodify.window.rememberCommonWindowState
-import org.koin.java.KoinJavaComponent.getKoin
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
 
@@ -60,10 +59,6 @@ internal fun MainWindow(
         title = "Melodify",
     ) {
         val windowState = rememberCommonWindowState()
-
-        LaunchedEffect(Unit) {
-            getKoin().get<MediaLibrarySyncer>().syncAllMediaLibrary()
-        }
 
         CustomMenuBar(appState)
 

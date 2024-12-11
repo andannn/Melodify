@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "d64342c71de5b1e69a4e0e2b54a1fd84",
+    "identityHash": "fafc34e2507346f9ec92e1c8c130954c",
     "entities": [
       {
         "tableName": "lyric_table",
@@ -216,7 +216,7 @@
       },
       {
         "tableName": "library_album_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`album_id` INTEGER NOT NULL, `album_title` TEXT NOT NULL, `album_track_count` INTEGER, `album_number_of_songs_for_artist` INTEGER, `album_cover_uri` TEXT, PRIMARY KEY(`album_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`album_id` INTEGER NOT NULL, `album_title` TEXT NOT NULL, `album_track_count` INTEGER NOT NULL, `album_number_of_songs_for_artist` INTEGER, `album_cover_uri` TEXT, PRIMARY KEY(`album_id`))",
         "fields": [
           {
             "fieldPath": "albumId",
@@ -233,7 +233,8 @@
           {
             "fieldPath": "trackCount",
             "columnName": "album_track_count",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "numberOfSongsForArtist",
@@ -255,7 +256,7 @@
       },
       {
         "tableName": "library_artist_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`artist_id` INTEGER NOT NULL, `artist_name` TEXT NOT NULL, `artist_cover_uri` TEXT, `artist_track_count` INTEGER, PRIMARY KEY(`artist_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`artist_id` INTEGER NOT NULL, `artist_name` TEXT NOT NULL, `artist_cover_uri` TEXT, `artist_track_count` INTEGER NOT NULL, PRIMARY KEY(`artist_id`))",
         "fields": [
           {
             "fieldPath": "artistId",
@@ -277,7 +278,8 @@
           {
             "fieldPath": "trackCount",
             "columnName": "artist_track_count",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -464,7 +466,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd64342c71de5b1e69a4e0e2b54a1fd84')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fafc34e2507346f9ec92e1c8c130954c')"
     ]
   }
 }

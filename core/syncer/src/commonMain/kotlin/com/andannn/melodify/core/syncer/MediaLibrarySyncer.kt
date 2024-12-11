@@ -48,7 +48,14 @@ internal class MediaLibrarySyncerWrapper(
                 when (type) {
                     FileChangeType.CREATE,
                     FileChangeType.MODIFY -> {
-                        mediaLibraryScanner.scanMediaByUri(events.map { it.fileUri })
+                        val mediaData = mediaLibraryScanner.scanMediaByUri(events.map { it.fileUri })
+
+                        mediaLibraryDao.upsertMedia(
+                            mediaData.albumData.toAlbumEntity(),
+                            mediaData.artistData.toArtistEntity(),
+                            mediaData.genreData.toGenreEntity(),
+                            mediaData.audioData.toMediaEntity(),
+                        )
                     }
 
                     FileChangeType.DELETE -> {

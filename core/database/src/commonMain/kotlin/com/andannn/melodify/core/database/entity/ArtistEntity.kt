@@ -25,5 +25,5 @@ data class ArtistEntity(
     val artistCoverUri: String? = null,
 
     @ColumnInfo(name = ArtistColumns.TRACK_COUNT)
-    val trackCount: Int? = null,
+    val trackCount: Int = 0,
 )
