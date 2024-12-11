@@ -9,21 +9,29 @@ import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
+import androidx.sqlite.use
 import com.andannn.melodify.core.database.dao.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.dao.UserDataDao
+import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
+import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.CustomTabColumns
 import com.andannn.melodify.core.database.entity.CustomTabEntity
+import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.LyricWithAudioCrossRef
+import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 
 internal object Tables {
     const val LYRIC = "lyric_table"
@@ -52,8 +60,9 @@ internal object Tables {
     autoMigrations = [
         AutoMigration(from = 3, to = 4),
         AutoMigration(from = 4, to = 5, AutoMigration4To5Spec::class),
+        AutoMigration(from = 5, to = 6, AutoMigration5To6Spec::class),
     ],
-    version = 5,
+    version = 6,
 )
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class MelodifyDataBase : RoomDatabase() {
@@ -67,6 +76,21 @@ abstract class MelodifyDataBase : RoomDatabase() {
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object MelodifyDataBaseConstructor : RoomDatabaseConstructor<MelodifyDataBase> {
     override fun initialize(): MelodifyDataBase
+}
+
+fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() = apply {
+    setQueryCoroutineContext(Dispatchers.IO)
+    addCallback(addTriggerCallback)
+    addCallback(addFavoritePlayListCallback)
+    addCallback(addInitialCustomTabsCallback)
+}
+
+internal val addTriggerCallback = object : RoomDatabase.Callback() {
+    override fun onCreate(connection: SQLiteConnection) {
+        super.onOpen(connection)
+
+        createTrigger(connection)
+    }
 }
 
 internal val addFavoritePlayListCallback = object : RoomDatabase.Callback() {
@@ -91,54 +115,6 @@ internal val addInitialCustomTabsCallback = object : RoomDatabase.Callback() {
     }
 }
 
-internal val MIGRATION_1_2 = object : Migration(1, 2) {
-    override fun migrate(connection: SQLiteConnection) {
-        connection.execSQL(
-            """
-            CREATE TABLE IF NOT EXISTS play_list_table (
-                play_list_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                play_list_created_date INTEGER NOT NULL,
-                play_list_name TEXT NOT NULL,
-                play_list_artwork_uri TEXT
-            );
-        """.trimIndent()
-        )
-
-        connection.execSQL(
-            """
-            CREATE TABLE IF NOT EXISTS play_list_with_media_cross_ref_table (
-                play_list_with_media_cross_ref_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                play_list_with_media_cross_ref_play_list_id INTEGER NOT NULL,
-                play_list_with_media_cross_ref_media_store_id TEXT NOT NULL,
-                play_list_with_media_cross_ref_added_date INTEGER NOT NULL
-            );
-        """.trimIndent()
-        )
-
-        connection.execSQL(
-            """
-            CREATE UNIQUE INDEX IF NOT EXISTS index_play_list_with_media_cross_ref_table_play_list_with_media_cross_ref_play_list_id_play_list_with_media_cross_ref_media_store_id ON play_list_with_media_cross_ref_table (play_list_with_media_cross_ref_play_list_id, play_list_with_media_cross_ref_media_store_id);
-        """.trimIndent()
-        )
-    }
-}
-
-internal val MIGRATION_2_3 = object : Migration(2, 3) {
-    override fun migrate(connection: SQLiteConnection) {
-        connection.execSQL(
-            """
-            ALTER TABLE play_list_with_media_cross_ref_table ADD COLUMN play_list_with_media_cross_ref_song_artist TEXT NOT NULL DEFAULT '';          
-        """.trimIndent()
-        )
-
-        connection.execSQL(
-            """
-            ALTER TABLE play_list_with_media_cross_ref_table ADD COLUMN play_list_with_media_cross_ref_song_title TEXT NOT NULL DEFAULT '';          
-        """.trimIndent()
-        )
-    }
-}
-
 class AutoMigration4To5Spec : AutoMigrationSpec {
     override fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL(
@@ -147,4 +123,25 @@ class AutoMigration4To5Spec : AutoMigrationSpec {
          """.trimIndent()
         )
     }
+}
+
+class AutoMigration5To6Spec : AutoMigrationSpec {
+    override fun onPostMigrate(connection: SQLiteConnection) {
+        createTrigger(connection)
+    }
+}
+
+
+private fun createTrigger(connection: SQLiteConnection) {
+    connection.execSQL(
+        """
+            CREATE TRIGGER IF NOT EXISTS delete_invalid_albums_artists_genres
+            AFTER DELETE ON ${Tables.LIBRARY_MEDIA}
+            BEGIN
+                DELETE FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} NOT IN (SELECT DISTINCT ${MediaColumns.ALBUM_ID} FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ALBUM_ID} IS NOT NULL);
+                DELETE FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} NOT IN (SELECT DISTINCT ${MediaColumns.ARTIST_ID} FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ARTIST_ID} IS NOT NULL);
+                DELETE FROM ${Tables.LIBRARY_GENRE} WHERE ${GenreColumns.ID} NOT IN (SELECT DISTINCT ${MediaColumns.GENRE_ID} FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.GENRE_ID} IS NOT NULL);
+            END;
+        """.trimIndent()
+    )
 }

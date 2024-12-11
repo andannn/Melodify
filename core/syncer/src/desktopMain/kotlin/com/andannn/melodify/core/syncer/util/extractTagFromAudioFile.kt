@@ -7,15 +7,15 @@ import org.jaudiotagger.tag.FieldKey
 import org.jaudiotagger.tag.Tag
 import java.io.File
 import java.nio.file.Files
-import kotlin.io.path.Path
+import java.nio.file.Path
 import kotlin.io.path.nameWithoutExtension
 
 /**
  * Extract tag from audio file
  */
-fun extractTagFromAudioFile(filePath: String): AudioData? {
+fun extractTagFromAudioFile(filePath: Path): AudioData? {
     return try {
-        val file = File(filePath)
+        val file = File(filePath.toString())
 
         val audioFile = AudioFileIO.read(file)
         val tag = audioFile.tag
@@ -25,7 +25,7 @@ fun extractTagFromAudioFile(filePath: String): AudioData? {
             albumId = -1, // assign id later.
             artistId = -1, // assign id later.
             genreId = -1,  // assign id later.
-            sourceUri = convertAbsoluteFilePathToFileUri(filePath),
+            sourceUri = filePath.toUri().toString(),
             title = tag.tryGetFirst(FieldKey.TITLE) ?: "",
             duration = audioFile.audioHeader.trackLength,
             modifiedDate = file.lastModified(),
@@ -60,8 +60,8 @@ private fun String.toInt(): Int? {
     return toIntOrNull() ?: split("/").firstOrNull()?.toIntOrNull()
 }
 
-private fun getCoverFileInFolder(filePath: String): String? {
-    return Path(filePath).parent
+private fun getCoverFileInFolder(filePath: Path): String? {
+    return filePath.parent
         ?.let { folder ->
             val imageFiles = Files.walk(folder)
                 .filter {

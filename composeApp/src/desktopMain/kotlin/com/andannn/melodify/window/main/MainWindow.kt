@@ -62,7 +62,7 @@ internal fun MainWindow(
         val windowState = rememberCommonWindowState()
 
         LaunchedEffect(Unit) {
-            getKoin().get<MediaLibrarySyncer>().syncMediaLibrary()
+            getKoin().get<MediaLibrarySyncer>().syncAllMediaLibrary()
         }
 
         CustomMenuBar(appState)

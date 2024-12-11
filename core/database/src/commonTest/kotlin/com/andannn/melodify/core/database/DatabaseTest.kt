@@ -1,8 +1,12 @@
 package com.andannn.melodify.core.database
 
+import androidx.room.RoomDatabase
 import com.andannn.melodify.core.database.dao.LyricDao
+import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
+import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
+import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import kotlinx.coroutines.flow.first
@@ -14,7 +18,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal expect fun createInMemoryDatabase(): MelodifyDataBase
+internal expect fun inMemoryDatabaseBuilder(): RoomDatabase.Builder<MelodifyDataBase>
 
 class DatabaseTest {
     private val dispatcher = StandardTestDispatcher()
@@ -24,6 +28,7 @@ class DatabaseTest {
     private val database get() = _database!!
     private val lyricDao: LyricDao get() = database.getLyricDao()
     private val playListDao: PlayListDao get() = database.getPlayListDao()
+    private val libraryDao: MediaLibraryDao get() = database.getMediaLibraryDao()
 
     private val dummyLyricEntities = listOf(
         LyricEntity(
@@ -52,7 +57,7 @@ class DatabaseTest {
 
     @BeforeTest
     fun openDatabase() {
-        _database = createInMemoryDatabase()
+        _database = inMemoryDatabaseBuilder().setUpDatabase().build()
     }
 
     @AfterTest
@@ -390,5 +395,29 @@ class DatabaseTest {
         val playLists = playListDao.getAllPlayListFlow().first()
         assertEquals(2, playLists.size)
         assertEquals(listOf(1L, 3L), playLists.map { it.playListEntity.id })
+    }
+
+    @Test
+    fun cascade_delete_test() = testScope.runTest {
+        libraryDao.insertMedias(
+            audios = listOf(
+                MediaEntity(
+                    id = 1,
+                    albumId = 2,
+                    title = "title 1",
+                )
+            )
+        )
+        libraryDao.insertAlbums(
+            albums = listOf(
+                AlbumEntity(
+                    albumId = 2,
+                    title = "album 2"
+                )
+            )
+        )
+        assertEquals(1, libraryDao.getAllAlbumFlow().first().size)
+        libraryDao.deleteAllMedias()
+        assertEquals(1, libraryDao.getAllAlbumFlow().first().size)
     }
 }

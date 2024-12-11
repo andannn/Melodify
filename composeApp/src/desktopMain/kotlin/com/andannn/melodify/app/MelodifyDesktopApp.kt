@@ -17,7 +17,7 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
     appState: MelodifyDeskTopAppState = rememberMelodifyDeskTopAppState()
 ) {
     LaunchedEffect(Unit) {
-        getKoin().get<MediaLibrarySyncer>().syncMediaLibrary()
+        getKoin().get<MediaLibrarySyncer>().syncAllMediaLibrary()
     }
 
     CompositionLocalProvider(

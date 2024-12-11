@@ -9,13 +9,16 @@ import com.andannn.melodify.core.syncer.model.AudioData
 import com.andannn.melodify.core.syncer.model.GenreData
 import com.andannn.melodify.core.syncer.model.MediaDataModel
 import com.andannn.melodify.core.syncer.util.extractTagFromAudioFile
-import com.andannn.melodify.core.syncer.util.scanAllLibraryAudioFile
+import com.andannn.melodify.core.syncer.util.generateHashKey
+import com.andannn.melodify.core.syncer.util.scanAllAudioFile
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
+import java.net.URI
+import kotlin.io.path.toPath
 
 private const val TAG = "MediaLibraryScanner"
 
@@ -23,7 +26,8 @@ class MediaLibraryScannerImpl(
     private val mediaLibraryDao: MediaLibraryDao,
     private val userSettingPreferences: UserSettingPreferences,
 ) : MediaLibraryScanner {
-    override suspend fun scanMediaDataAndSyncDatabase() {
+
+    override suspend fun scanAllMedia() {
 
         // 1: Get All media from database
         // 2: Scan all files in library path and generated Key (generate hash from file path and last modify date).
@@ -41,20 +45,21 @@ class MediaLibraryScannerImpl(
         val libraryPathSet = userSettingPreferences.userDate.first().libraryPath
 
 // TODO: Scan file in worker thread.
-        val audioFileWithLastModifyDateList = scanAllLibraryAudioFile(libraryPathSet)
+        val audioFiles = scanAllAudioFile(libraryPathSet)
 
-        Napier.d(tag = TAG) { "scanMediaData: ${audioFileWithLastModifyDateList.size} files found" }
+        Napier.d(tag = TAG) { "scanMediaData: ${audioFiles.size} files found" }
         val audioData = coroutineScope {
-            val tasksDeferredOrResult = audioFileWithLastModifyDateList.map { fileWithKey ->
-                if (mediaInDb.containsKey(fileWithKey.key)) {
-                    Napier.d(tag = TAG) { "skip extract tag from audio file: ${fileWithKey.path}" }
+            val tasksDeferredOrResult = audioFiles.map { filePath ->
+                val id = generateHashKey(filePath)
+                if (mediaInDb.containsKey(id)) {
+                    Napier.d(tag = TAG) { "skip extract tag from audio file: $filePath" }
 
-                    mediaInDb[fileWithKey.key]!!.toAudioData()
+                    mediaInDb[id]!!.toAudioData()
                 } else {
                     async(Dispatchers.IO) {
-                        Napier.d(tag = TAG) { "extract tag from audio file E: ${fileWithKey.path}, ${Thread.currentThread().name}" }
-                        val result = extractTagFromAudioFile(fileWithKey.path)?.copy(
-                            id = fileWithKey.key
+                        Napier.d(tag = TAG) { "extract tag from audio file E: ${filePath}, ${Thread.currentThread().name}" }
+                        val result = extractTagFromAudioFile(filePath)?.copy(
+                            id = id
                         )
                         Napier.d(tag = TAG) { "extract tag from audio file X: ${result}, ${Thread.currentThread().name}" }
                         result
@@ -131,6 +136,12 @@ class MediaLibraryScannerImpl(
             mediaData.genreData.toGenreEntity(),
             mediaData.audioData.toMediaEntity(),
         )
+    }
+
+    override suspend fun scanMediaByUri(uris: List<String>) {
+        uris.map {
+            URI.create(it).toPath()
+        }
     }
 }
 

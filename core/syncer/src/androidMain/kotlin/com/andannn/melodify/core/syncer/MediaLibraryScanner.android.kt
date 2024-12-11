@@ -19,7 +19,7 @@ class MediaLibraryScannerImpl(
     private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaLibraryScanner {
 
-    override suspend fun scanMediaDataAndSyncDatabase(): Unit = coroutineScope {
+    override suspend fun scanAllMedia(): Unit = coroutineScope {
         val musicDataDeferred = async { getAllMusicData() }
         val albumDataDeferred = async { getAllAlbumData() }
         val artistDataDeferred = async { getAllArtistData() }
