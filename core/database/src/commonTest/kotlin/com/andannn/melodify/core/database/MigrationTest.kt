@@ -1,17 +1,15 @@
 package com.andannn.melodify.core.database
 
-import kotlin.test.Test
 import androidx.room.testing.MigrationTestHelper
-import androidx.sqlite.execSQL
 import androidx.sqlite.use
 import com.andannn.melodify.core.database.entity.CustomTabType.ALL_MUSIC
 import okio.FileSystem
-import okio.Path
 import okio.Path.Companion.toPath
 import okio.SYSTEM
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -60,6 +58,19 @@ class MigrationTest {
             assertTrue { stmt.step() }
             assertEquals(ALL_MUSIC, stmt.getText(1))
         }
+        migratedConnection.close()
+    }
+
+    @Test
+    fun migrate5To6() {
+        val migrationTestHelper = getMigrationTestHelper(
+            tempFile.toString()
+        )
+        val newConnection = migrationTestHelper.createDatabase(5)
+        newConnection.close()
+
+        val migratedConnection =
+            migrationTestHelper.runMigrationsAndValidate(6)
         migratedConnection.close()
     }
 }

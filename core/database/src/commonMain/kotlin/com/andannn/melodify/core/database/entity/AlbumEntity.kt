@@ -23,7 +23,7 @@ class AlbumEntity(
     val title: String,
 
     @ColumnInfo(name = AlbumColumns.TRACK_COUNT)
-    val trackCount: Int? = null,
+    val trackCount: Int = 0,
 
     @ColumnInfo(name = AlbumColumns.NUMBER_OF_SONGS_FOR_ARTIST)
     val numberOfSongsForArtist: Int? = null,

@@ -123,7 +123,7 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(permissionGranted) {
                 if (permissionGranted && savedInstanceState == null) {
                     Napier.d(tag = TAG) { "scheduling first sync job" }
-                    getKoin().get<MediaLibrarySyncer>().syncMediaLibrary()
+                    getKoin().get<MediaLibrarySyncer>().syncAllMediaLibrary()
                 }
             }
 
