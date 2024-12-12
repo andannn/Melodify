@@ -27,7 +27,7 @@ class SyncJobService : JobService(), CoroutineScope {
         Napier.d(tag = TAG) { "onStartJob: $params" }
 
         launch {
-            syncer.syncMediaLibrary()
+            syncer.syncAllMediaLibrary()
 
             Napier.d(tag = TAG) { "sync finished" }
 

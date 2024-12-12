@@ -97,6 +97,22 @@ interface MediaLibraryDao {
     @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ID} IN (:mediaIds)")
     fun getMediaByMediaIdsFlow(mediaIds: List<String>): Flow<List<MediaEntity>>
 
+    @Query("DELETE FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.SOURCE_URI} IN (:uris)")
+    suspend fun deleteMediaByUri(uris: List<String>)
+
+    @Transaction
+    suspend fun upsertMedia(
+        albums: List<AlbumEntity>,
+        artists: List<ArtistEntity>,
+        genres: List<GenreEntity>,
+        audios: List<MediaEntity>
+    ) {
+        insertAlbums(albums)
+        insertArtists(artists)
+        insertGenres(genres)
+        insertMedias(audios)
+    }
+
     @Transaction
     suspend fun clearAndInsertLibrary(
         albums: List<AlbumEntity>,

@@ -9,13 +9,19 @@ import com.andannn.melodify.core.syncer.model.AudioData
 import com.andannn.melodify.core.syncer.model.GenreData
 import com.andannn.melodify.core.syncer.model.MediaDataModel
 import com.andannn.melodify.core.syncer.util.extractTagFromAudioFile
-import com.andannn.melodify.core.syncer.util.scanAllLibraryAudioFile
+import com.andannn.melodify.core.syncer.util.generateHashKey
+import com.andannn.melodify.core.syncer.util.scanAllAudioFile
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
+import java.net.URI
+import java.nio.file.Path
+import kotlin.io.path.toPath
 
 private const val TAG = "MediaLibraryScanner"
 
@@ -23,7 +29,8 @@ class MediaLibraryScannerImpl(
     private val mediaLibraryDao: MediaLibraryDao,
     private val userSettingPreferences: UserSettingPreferences,
 ) : MediaLibraryScanner {
-    override suspend fun scanMediaDataAndSyncDatabase() {
+
+    override suspend fun scanAllMedia() {
 
         // 1: Get All media from database
         // 2: Scan all files in library path and generated Key (generate hash from file path and last modify date).
@@ -38,31 +45,21 @@ class MediaLibraryScannerImpl(
         val allMediaEntity = mediaLibraryDao.getAllMediaFlow().first()
         val mediaInDb = allMediaEntity.associateBy { it.id }
 
-// TODO Get Path from DataStore after implement library path setting feature.
-//        val libraryPathSet = userSettingPreferences.userDate.first().libraryPath
-        val libraryPathSet = setOf(
-            "/Users/jiangqn/Documents/Music",
-        )
+        val libraryPathSet = userSettingPreferences.userDate.first().libraryPath
 
 // TODO: Scan file in worker thread.
-        val audioFileWithLastModifyDateList = scanAllLibraryAudioFile(libraryPathSet)
+        val audioFiles = scanAllAudioFile(libraryPathSet)
 
-        Napier.d(tag = TAG) { "scanMediaData: ${audioFileWithLastModifyDateList.size} files found" }
+        Napier.d(tag = TAG) { "scanMediaData: ${audioFiles.size} files found" }
         val audioData = coroutineScope {
-            val tasksDeferredOrResult = audioFileWithLastModifyDateList.map { fileWithKey ->
-                if (mediaInDb.containsKey(fileWithKey.key)) {
-                    Napier.d(tag = TAG) { "skip extract tag from audio file: ${fileWithKey.path}" }
+            val tasksDeferredOrResult = audioFiles.map { filePath ->
+                val id = generateHashKey(filePath)
+                if (mediaInDb.containsKey(id)) {
+                    Napier.d(tag = TAG) { "skip extract tag from audio file: $filePath" }
 
-                    mediaInDb[fileWithKey.key]!!.toAudioData()
+                    mediaInDb[id]!!.toAudioData()
                 } else {
-                    async(Dispatchers.IO) {
-                        Napier.d(tag = TAG) { "extract tag from audio file E: ${fileWithKey.path}, ${Thread.currentThread().name}" }
-                        val result = extractTagFromAudioFile(fileWithKey.path)?.copy(
-                            id = fileWithKey.key
-                        )
-                        Napier.d(tag = TAG) { "extract tag from audio file X: ${result}, ${Thread.currentThread().name}" }
-                        result
-                    }
+                    asyncTaskForExtractTag(filePath)
                 }
             }
 
@@ -76,57 +73,7 @@ class MediaLibraryScannerImpl(
                 }
             }
         }
-
-        val albumMap = audioData.groupBy { it.album }
-
-        val albumDataList = albumMap.map { (album, audioDataList) ->
-            val title = album ?: ""
-            AlbumData(
-                albumId = title.hashCode().toLong(),
-                title = title,
-                trackCount = audioDataList.size,
-                coverUri = audioDataList.firstOrNull()?.cover,
-            )
-        }
-
-
-        val artistMap = audioData.groupBy { it.artist }
-
-        val artistDataList = artistMap.map { (artist, audioDataList) ->
-            val title = artist ?: ""
-            ArtistData(
-                artistId = title.hashCode().toLong(),
-                name = title,
-                trackCount = audioDataList.size,
-                artistCoverUri = audioDataList.firstOrNull()?.cover,
-            )
-        }
-
-        val genreMap = audioData.groupBy { it.genre }
-
-        val genreDataList = genreMap.map { (genre, _) ->
-            val title = genre ?: ""
-
-            GenreData(
-                genreId = title.hashCode().toLong(),
-                name = title,
-            )
-        }
-
-        val audioDataListWitId = audioData.map { audio ->
-            audio.copy(
-                albumId = albumDataList.firstOrNull { it.title == audio.album }?.albumId ?: -1,
-                artistId = artistDataList.firstOrNull { it.name == audio.artist }?.artistId ?: -1,
-                genreId = genreDataList.firstOrNull { it.name == audio.genre }?.genreId ?: -1,
-            )
-        }
-
-        val mediaData = MediaDataModel(
-            audioData = audioDataListWitId,
-            albumData = albumDataList,
-            artistData = artistDataList,
-            genreData = genreDataList,
-        )
+        val mediaData = audioData.mapToMediaData()
 
 // TODO: Incremental comparison and insertion into the database, deleting outdated data.
         mediaLibraryDao.clearAndInsertLibrary(
@@ -136,6 +83,80 @@ class MediaLibraryScannerImpl(
             mediaData.audioData.toMediaEntity(),
         )
     }
+
+    override suspend fun scanMediaByUri(uris: List<String>): MediaDataModel {
+        val audios = coroutineScope {
+            val deferredList = uris.map { uri ->
+                asyncTaskForExtractTag(URI.create(uri).toPath())
+            }
+            deferredList.awaitAll().filterNotNull()
+        }
+
+        return audios.mapToMediaData()
+    }
+}
+
+private fun CoroutineScope.asyncTaskForExtractTag(filePath: Path) = async(Dispatchers.IO) {
+    Napier.d(tag = TAG) { "extract tag from audio file E: ${filePath}, ${Thread.currentThread().name}" }
+    val result = extractTagFromAudioFile(filePath)?.copy(
+        id = generateHashKey(filePath)
+    )
+    Napier.d(tag = TAG) { "extract tag from audio file X: ${result}, ${Thread.currentThread().name}" }
+    result
+}
+
+private fun List<AudioData>.mapToMediaData(): MediaDataModel {
+    val audioData = this
+    val albumMap = audioData.groupBy { it.album }
+
+    val albumDataList = albumMap.map { (album, audioDataList) ->
+        val title = album ?: ""
+        AlbumData(
+            albumId = title.hashCode().toLong(),
+            title = title,
+            trackCount = audioDataList.size,
+            coverUri = audioDataList.firstOrNull()?.cover,
+        )
+    }
+
+
+    val artistMap = audioData.groupBy { it.artist }
+
+    val artistDataList = artistMap.map { (artist, audioDataList) ->
+        val title = artist ?: "Unknown Artist"
+        ArtistData(
+            artistId = title.hashCode().toLong(),
+            name = title,
+            trackCount = audioDataList.size,
+            artistCoverUri = audioDataList.firstOrNull()?.cover,
+        )
+    }
+
+    val genreMap = audioData.groupBy { it.genre }
+
+    val genreDataList = genreMap.map { (genre, _) ->
+        val title = genre ?: "Unknown Genre"
+
+        GenreData(
+            genreId = title.hashCode().toLong(),
+            name = title,
+        )
+    }
+
+    val audioDataListWitId = audioData.map { audio ->
+        audio.copy(
+            albumId = albumDataList.firstOrNull { it.title == audio.album }?.albumId ?: -1,
+            artistId = artistDataList.firstOrNull { it.name == audio.artist }?.artistId ?: -1,
+            genreId = genreDataList.firstOrNull { it.name == audio.genre }?.genreId ?: -1,
+        )
+    }
+
+    return MediaDataModel(
+        audioData = audioDataListWitId,
+        albumData = albumDataList,
+        artistData = artistDataList,
+        genreData = genreDataList,
+    )
 }
 
 private fun MediaEntity.toAudioData() = AudioData(
