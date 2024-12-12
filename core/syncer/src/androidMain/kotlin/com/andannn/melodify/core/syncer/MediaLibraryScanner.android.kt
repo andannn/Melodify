@@ -40,6 +40,10 @@ class MediaLibraryScannerImpl(
         )
     }
 
+    override suspend fun scanMediaByUri(uris: List<String>): MediaDataModel {
+        TODO("Not yet implemented")
+    }
+
     private suspend fun getAllMusicData() =
         app.contentResolver.query2(
             uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
