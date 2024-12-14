@@ -13,7 +13,6 @@ sealed interface RefreshType {
  * File change type.
  */
 enum class FileChangeType {
-    CREATE,
     DELETE,
     MODIFY
 }

@@ -30,7 +30,7 @@ class MediaLibraryScannerImpl(
     private val userSettingPreferences: UserSettingPreferences,
 ) : MediaLibraryScanner {
 
-    override suspend fun scanAllMedia() {
+    override suspend fun scanAllMedia(): MediaDataModel {
 
         // 1: Get All media from database
         // 2: Scan all files in library path and generated Key (generate hash from file path and last modify date).
@@ -73,15 +73,7 @@ class MediaLibraryScannerImpl(
                 }
             }
         }
-        val mediaData = audioData.mapToMediaData()
-
-// TODO: Incremental comparison and insertion into the database, deleting outdated data.
-        mediaLibraryDao.clearAndInsertLibrary(
-            mediaData.albumData.toAlbumEntity(),
-            mediaData.artistData.toArtistEntity(),
-            mediaData.genreData.toGenreEntity(),
-            mediaData.audioData.toMediaEntity(),
-        )
+        return audioData.mapToMediaData()
     }
 
     override suspend fun scanMediaByUri(uris: List<String>): MediaDataModel {
