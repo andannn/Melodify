@@ -46,7 +46,6 @@ internal class MediaLibrarySyncerWrapper(
             .forEach { (type, events) ->
                 Napier.d(tag = TAG) { "Processing ${events.size} events of type $type" }
                 when (type) {
-                    FileChangeType.CREATE,
                     FileChangeType.MODIFY -> {
                         val mediaData = mediaLibraryScanner.scanMediaByUri(events.map { it.fileUri })
 
@@ -69,7 +68,15 @@ internal class MediaLibrarySyncerWrapper(
 
     private suspend fun syncMediaLibraryInternal(): Boolean {
         try {
-            mediaLibraryScanner.scanAllMedia()
+            val mediaData = mediaLibraryScanner.scanAllMedia()
+
+// TODO: Incremental comparison and insertion into the database, deleting outdated data.
+            mediaLibraryDao.clearAndInsertLibrary(
+                albums = mediaData.albumData.toAlbumEntity(),
+                artists = mediaData.artistData.toArtistEntity(),
+                genres = mediaData.genreData.toGenreEntity(),
+                audios = mediaData.audioData.toMediaEntity(),
+            )
             return true
         } catch (e: Exception) {
             Napier.d(tag = TAG) { "Failed to sync media library: $e" }

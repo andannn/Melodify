@@ -70,10 +70,11 @@ fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType> {
                         val changedFilePath = watchKeyMap[key]!!.resolve(event.context() as Path)
                         Napier.d(tag = TAG) { "changedFilePath $changedFilePath, kind $kind" }
                         when (kind) {
-                            StandardWatchEventKinds.ENTRY_CREATE -> {
+                            StandardWatchEventKinds.ENTRY_CREATE,
+                            StandardWatchEventKinds.ENTRY_MODIFY -> {
                                 FileChangeEvent(
                                     changedFilePath.toUri().toString(),
-                                    FileChangeType.CREATE
+                                    FileChangeType.MODIFY
                                 )
                             }
 
@@ -81,13 +82,6 @@ fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType> {
                                 FileChangeEvent(
                                     changedFilePath.toUri().toString(),
                                     FileChangeType.DELETE
-                                )
-                            }
-
-                            StandardWatchEventKinds.ENTRY_MODIFY -> {
-                                FileChangeEvent(
-                                    changedFilePath.toUri().toString(),
-                                    FileChangeType.MODIFY
                                 )
                             }
 
@@ -103,10 +97,11 @@ fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType> {
 
                 // Handle folder modify or create.
                 dictionaryEvents
-                    .filter { it.fileChangeType == FileChangeType.MODIFY || it.fileChangeType == FileChangeType.CREATE }
+                    .filter { it.fileChangeType == FileChangeType.MODIFY }
                     .forEach {
                         // Register new created folder
-                        Paths.get(URI.create(it.fileUri)).registerAllChange(watchService, watchKeyMap)
+                        Paths.get(URI.create(it.fileUri))
+                            .registerAllChange(watchService, watchKeyMap)
                     }
 
                 if (dictionaryEvents.isNotEmpty()) {

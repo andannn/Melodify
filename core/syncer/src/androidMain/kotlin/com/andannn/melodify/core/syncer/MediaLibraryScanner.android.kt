@@ -19,30 +19,75 @@ class MediaLibraryScannerImpl(
     private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaLibraryScanner {
 
-    override suspend fun scanAllMedia(): Unit = coroutineScope {
+    override suspend fun scanAllMedia(): MediaDataModel = coroutineScope {
         val musicDataDeferred = async { getAllMusicData() }
         val albumDataDeferred = async { getAllAlbumData() }
         val artistDataDeferred = async { getAllArtistData() }
         val genreDataDeferred = async { getAllGenreData() }
 
-        val mediaData = MediaDataModel(
+        return@coroutineScope MediaDataModel(
             audioData = musicDataDeferred.await(),
             albumData = albumDataDeferred.await(),
             artistData = artistDataDeferred.await(),
             genreData = genreDataDeferred.await(),
         )
-
-        mediaLibraryDao.clearAndInsertLibrary(
-            mediaData.albumData.toAlbumEntity(),
-            mediaData.artistData.toArtistEntity(),
-            mediaData.genreData.toGenreEntity(),
-            mediaData.audioData.toMediaEntity(),
-        )
     }
 
     override suspend fun scanMediaByUri(uris: List<String>): MediaDataModel {
-        TODO("Not yet implemented")
+        val ids = uris.mapNotNull { Uri.parse(it).lastPathSegment?.toLongOrNull() }
+        val audioData = getMusicDataByIds(ids)
+        val albumIds = audioData.mapNotNull { it.albumId }.distinct()
+        val artistIds = audioData.mapNotNull { it.artistId }.distinct()
+        val genreIds = audioData.mapNotNull { it.genreId }.distinct()
+
+        return coroutineScope {
+            val albumDataDeferred = async { getAlbumDataByIds(albumIds) }
+            val artistDataDeferred = async { getArtistDataByIds(artistIds) }
+            val genreDataDeferred = async { getGenreDataByIds(genreIds) }
+            MediaDataModel(
+                audioData = audioData,
+                albumData = albumDataDeferred.await(),
+                artistData = artistDataDeferred.await(),
+                genreData = genreDataDeferred.await(),
+            )
+        }
     }
+
+    private suspend fun getMusicDataByIds(ids: List<Long>) =
+        app.contentResolver.query2(
+            uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            selection = "${MediaStore.Audio.Media._ID} IN (${ids.joinToString(",") { "?" }})",
+            selectionArgs = ids.map { it.toString() }.toTypedArray(),
+        )?.use { cursor ->
+            parseMusicInfoCursor(cursor)
+        } ?: emptyList()
+
+    private suspend fun getAlbumDataByIds(ids: List<Long>) =
+        app.contentResolver.query2(
+            uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+            selection = "${MediaStore.Audio.Albums._ID} IN (${ids.joinToString(",") { "?" }})",
+            selectionArgs = ids.map { it.toString() }.toTypedArray(),
+        )?.use { cursor ->
+            parseAlbumInfoCursor(cursor)
+        } ?: emptyList()
+
+    private suspend fun getArtistDataByIds(ids: List<Long>) =
+        app.contentResolver.query2(
+            uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+            selection = "${MediaStore.Audio.Artists._ID} IN (${ids.joinToString(",") { "?" }})",
+            selectionArgs = ids.map { it.toString() }.toTypedArray(),
+        )?.use { cursor ->
+            parseArtistInfoCursor(cursor)
+        } ?: emptyList()
+
+    private suspend fun getGenreDataByIds(ids: List<Long>) =
+        app.contentResolver.query2(
+            uri = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+            selection = "${MediaStore.Audio.Genres._ID} IN (${ids.joinToString(",") { "?" }})",
+            selectionArgs = ids.map { it.toString() }.toTypedArray(),
+        )?.use { cursor ->
+            parseGenreInfoCursor(cursor)
+        } ?: emptyList()
 
     private suspend fun getAllMusicData() =
         app.contentResolver.query2(
@@ -211,7 +256,7 @@ suspend fun ContentResolver.query2(
     offset: Int = 0,
     limit: Int = Int.MAX_VALUE,
 ): Cursor? {
-    return withContext(Dispatchers.Default) {
+    return withContext(Dispatchers.IO) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val args2 =
                 Bundle().apply {
