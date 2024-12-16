@@ -17,7 +17,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.getKoin
+import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 private const val TAG = "SyncJobService"
@@ -133,23 +135,29 @@ private suspend fun Array<Uri>.mapToChangeEvent(contentResolver: ContentResolver
     return emptyList()
 }
 
-private suspend fun ContentResolver.filterValidMediaFromIds(ids: List<Long>): List<Long> {
-    return query2(
-        uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-        projection = arrayOf(MediaStore.Audio.Media._ID, MediaStore.Audio.AudioColumns.DATA),
-        selection = "${MediaStore.Audio.Media._ID} IN (${ids.joinToString(",") { "?" }})",
-        selectionArgs = ids.map { it.toString() }.toTypedArray(),
-    )?.use { cursor ->
-        val validIds = mutableListOf<Long>()
-        while (cursor.moveToNext()) {
-            val id = cursor.getLong(0)
-            val path = cursor.getString(1)
-            Napier.d(tag = TAG) { "id: $id, path: $path" }
-            validIds.add(id)
-        }
-        validIds
-    } ?: emptyList()
-}
+private suspend fun ContentResolver.filterValidMediaFromIds(ids: List<Long>) =
+    withContext(Dispatchers.IO) {
+        query2(
+            uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            projection = arrayOf(MediaStore.Audio.Media._ID, MediaStore.Audio.AudioColumns.DATA),
+            selection = "${MediaStore.Audio.Media._ID} IN (${ids.joinToString(",") { "?" }})",
+            selectionArgs = ids.map { it.toString() }.toTypedArray(),
+        )?.use { cursor ->
+            val validIds = mutableListOf<Long>()
+            while (cursor.moveToNext()) {
+                val id = cursor.getLong(0)
+                val path = cursor.getString(1)
+                Napier.d(tag = TAG) { "id: $id, path: $path" }
+
+                if (path == null || !File(path).exists()) {
+                    continue
+                }
+
+                validIds.add(id)
+            }
+            validIds
+        } ?: emptyList()
+    }
 
 private val EXTERNAL_PATH_SEGMENTS = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.pathSegments
 
