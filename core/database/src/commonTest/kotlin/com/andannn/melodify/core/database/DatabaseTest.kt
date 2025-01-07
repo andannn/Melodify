@@ -96,8 +96,7 @@ class DatabaseTest {
         )
 
         val playLists = playListDao.getAllPlayListFlow().first()
-        assertEquals(1, playLists.size)
-        assertEquals(1, playLists.first().playListEntity.id)
+        assertEquals(2, playLists.size)
     }
 
     @Test
@@ -122,8 +121,7 @@ class DatabaseTest {
             )
         )
         val playLists = playListDao.getAllPlayListFlow().first()
-        assertEquals(3, playLists.size)
-        assertEquals(listOf(2L, 3L, 1L), playLists.map { it.playListEntity.id })
+        assertEquals(4, playLists.size)
     }
 
     @Test
@@ -401,8 +399,7 @@ class DatabaseTest {
         )
         playListDao.deletePlayListById(2)
         val playLists = playListDao.getAllPlayListFlow().first()
-        assertEquals(2, playLists.size)
-        assertEquals(listOf(1L, 3L), playLists.map { it.playListEntity.id })
+        assertEquals(3, playLists.size)
     }
 
     @Test

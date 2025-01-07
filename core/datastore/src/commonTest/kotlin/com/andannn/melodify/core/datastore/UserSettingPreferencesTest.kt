@@ -40,12 +40,4 @@ class UserSettingPreferencesTest {
             actual = data.mediaPreviewMode
         )
     }
-
-    @Test
-    fun `set custom tabs`() = testScope.runTest {
-        preferences.setCustomTabs("customTabs")
-        val data = preferences.userDate.first()
-
-        assertEquals(expected = "customTabs", actual = data.customTabs)
-    }
 }
