@@ -95,9 +95,14 @@ compose.desktop {
         mainClass = "com.andannn.melodify.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Dmg)
             packageName = "com.andannn.melodify"
             packageVersion = "1.0.0"
+        }
+
+        buildTypes.release.proguard {
+            version.set("7.4.0")
+            configurationFiles.from(project.file("compose-desktop.pro"))
         }
     }
 }
