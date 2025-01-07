@@ -98,6 +98,10 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg)
             packageName = "com.andannn.melodify"
             packageVersion = "1.0.0"
+
+            modules(
+                "jdk.unsupported",
+            )
         }
 
         buildTypes.release.proguard {
