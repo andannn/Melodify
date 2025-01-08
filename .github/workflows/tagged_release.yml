@@ -13,10 +13,13 @@ on:
 jobs:
   tagged-release:
     name: 'Tagged Release'
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Install create-dmg
+        run: brew install create-dmg
 
       # Set Current Date As Env Variable
       - name: Set current date as env variable
@@ -30,7 +33,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu' # See 'Supported distributions' for available options
-          java-version: '17'
+          java-version: '21'
           cache: 'gradle'
 
       - name: Change wrapper permissions
@@ -43,14 +46,25 @@ jobs:
           fileName: 'keystore/keystore.jks'
           encodedString: ${{ secrets.KEYSTORE }}
 
-      - run: ./gradlew assembleRelease
+      - name: Build macos app
+        run: ./gradlew createReleaseDistributable
+
+      - name: Create .dmg
+        run: |
+          create-dmg composeApp/build/compose/binaries/main-release/app/Melodify.dmg composeApp/build/compose/binaries/main-release/app/Melodify.app
+
+      - name: Build android apk
+        run: ./gradlew assembleRelease
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
 
-      - uses: "marvinpinto/action-automatic-releases@latest"
+      - name: Upload Release
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          files: "composeApp/build/outputs/apk/release/*"
+          files: |
+            composeApp/build/outputs/apk/release/composeApp-release.apk
+            composeApp/build/compose/binaries/main-release/app/Melodify.dmg
           repo_token: "${{ secrets.TOKEN }}"
           prerelease: true
