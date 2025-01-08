@@ -54,7 +54,7 @@ android {
     defaultConfig {
         applicationId = "com.andannn.melodify"
         versionCode = 27
-        versionName = "0.2.11"
+        versionName = "1.0.0"
 
         signingConfig = signingConfigs.getByName("debug")
     }
@@ -95,9 +95,18 @@ compose.desktop {
         mainClass = "com.andannn.melodify.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.andannn.melodify"
+            targetFormats(TargetFormat.Dmg)
+            packageName = "Melodify"
             packageVersion = "1.0.0"
+
+            modules(
+                "jdk.unsupported",
+            )
+        }
+
+        buildTypes.release.proguard {
+            version.set("7.4.0")
+            configurationFiles.from(project.file("compose-desktop.pro"))
         }
     }
 }

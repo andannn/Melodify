@@ -31,12 +31,12 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu' # See 'Supported distributions' for available options
-          java-version: '17'
+          java-version: '21'
           cache: 'gradle'
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
-#      # Run Tests Build
-#      - name: Run gradle tests
-#        run: ./gradlew testDebugUnitTest
+      # Run Tests Build
+      - name: Run desktop tests
+        run: ./gradlew desktopTest

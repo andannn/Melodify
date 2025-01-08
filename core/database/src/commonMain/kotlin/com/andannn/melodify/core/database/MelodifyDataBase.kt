@@ -87,7 +87,7 @@ fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() = apply {
 
 internal val addTriggerCallback = object : RoomDatabase.Callback() {
     override fun onCreate(connection: SQLiteConnection) {
-        super.onOpen(connection)
+        super.onCreate(connection)
 
         createTrigger(connection)
     }
