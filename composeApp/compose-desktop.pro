@@ -19,3 +19,4 @@
 -keep class ** extends com.sun.jna.Structure { *; }
 -keep class ** extends com.sun.jna.Library { *; }
 -keep class com.sun.jna.** { *; }
+-keep class org.jaudiotagger.tag.reference.Tagger { *; }
