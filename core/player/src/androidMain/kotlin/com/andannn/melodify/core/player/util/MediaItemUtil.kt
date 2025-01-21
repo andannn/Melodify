@@ -32,7 +32,11 @@ fun buildMediaItem(
             .setGenre(genre)
             .setIsBrowsable(isBrowsable)
             .setIsPlayable(isPlayable)
-            .setArtworkUri(imageUri)
+// ISSUE: https://github.com/andannn/Melodify/issues/243
+// Setting the album URI will cause a system UI issue when playing music.
+// The AndroidX Media3 library automatically handles the notification artwork URI.
+// A crash occurred when querying the album URI from MediaStore. This line is commented out for now.
+//          .setArtworkUri(imageUri)
             .setMediaType(mediaType)
             .setTotalTrackCount(totalTrackCount)
             .setTrackNumber(trackNumber)
