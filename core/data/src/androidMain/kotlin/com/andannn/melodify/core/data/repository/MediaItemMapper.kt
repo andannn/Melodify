@@ -6,6 +6,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.player.util.EXTRA_ALBUM_COVER_ART_KEY
 import com.andannn.melodify.core.player.util.UNIQUE_ID_KEY
 import com.andannn.melodify.core.player.util.buildMediaItem
 
@@ -19,7 +20,9 @@ fun MediaItem.toAppItem(): MediaItemModel = AudioItemModel(
     artistId = "0",
     cdTrackNumber = mediaMetadata.trackNumber ?: 0,
     discNumber = 0,
-    artWorkUri = mediaMetadata.artworkUri.toString(),
+    artWorkUri = mediaMetadata.artworkUri?.toString() ?: mediaMetadata.extras?.getString(
+        EXTRA_ALBUM_COVER_ART_KEY
+    ) ?: "",
     extraUniqueId = mediaMetadata.extras?.getString(UNIQUE_ID_KEY),
     source = Uri.withAppendedPath(
         MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,

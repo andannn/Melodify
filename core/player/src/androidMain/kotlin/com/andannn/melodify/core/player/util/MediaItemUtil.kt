@@ -7,6 +7,7 @@ import androidx.media3.common.MediaItem.RequestMetadata
 import androidx.media3.common.MediaMetadata
 
 const val UNIQUE_ID_KEY = "unique_id"
+const val EXTRA_ALBUM_COVER_ART_KEY = "extra_album_cover_art_key"
 
 fun buildMediaItem(
     title: String,
@@ -43,6 +44,7 @@ fun buildMediaItem(
             .setExtras(
                 Bundle().apply {
                     uniqueId?.let { putString(UNIQUE_ID_KEY, it) }
+                    imageUri?.let { putString(EXTRA_ALBUM_COVER_ART_KEY, it.toString()) }
                 }
             )
             .build()
