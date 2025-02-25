@@ -100,6 +100,15 @@ interface MediaLibraryDao {
     @Query("DELETE FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.SOURCE_URI} IN (:uris)")
     suspend fun deleteMediaByUri(uris: List<String>)
 
+    @Query("""
+        SELECT * FROM ${Tables.LIBRARY_ALBUM} 
+        WHERE ${AlbumColumns.ID} IN (
+            SELECT rowid FROM ${Tables.LIBRARY_FTS_ALBUM} 
+            WHERE ${Tables.LIBRARY_FTS_ALBUM} MATCH :keyword
+        )
+    """)
+    suspend fun searchAlbum(keyword: String): List<AlbumEntity>
+
     @Transaction
     suspend fun upsertMedia(
         albums: List<AlbumEntity>,

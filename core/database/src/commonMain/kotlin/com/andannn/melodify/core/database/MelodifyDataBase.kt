@@ -29,6 +29,7 @@ import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
+import com.andannn.melodify.core.database.entity.fts.AlbumFtsEntity
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -40,6 +41,7 @@ internal object Tables {
     const val PLAY_LIST_WITH_MEDIA_CROSS_REF = "play_list_with_media_cross_ref_table"
     const val LIBRARY_MEDIA = "library_media_table"
     const val LIBRARY_ALBUM = "library_album_table"
+    const val LIBRARY_FTS_ALBUM = "library_fts_album"
     const val LIBRARY_ARTIST = "library_artist_table"
     const val LIBRARY_GENRE = "library_genre_table"
     const val CUSTOM_TAB = "custom_tab_table"
@@ -55,7 +57,8 @@ internal object Tables {
         ArtistEntity::class,
         GenreEntity::class,
         MediaEntity::class,
-        CustomTabEntity::class
+        CustomTabEntity::class,
+        AlbumFtsEntity::class,
     ],
     autoMigrations = [
         AutoMigration(from = 3, to = 4),

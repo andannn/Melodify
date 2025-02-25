@@ -502,4 +502,9 @@ class DatabaseTest {
         libraryDao.deleteAllMedias()
         assertEquals(null, libraryDao.getAlbumByAlbumId("2"))
     }
+
+    @Test
+    fun search_album_test() = testScope.runTest {
+
+    }
 }
