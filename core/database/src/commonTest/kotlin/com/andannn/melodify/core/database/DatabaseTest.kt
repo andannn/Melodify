@@ -1,13 +1,19 @@
 package com.andannn.melodify.core.database
 
 import androidx.room.RoomDatabase
+import androidx.room.execSQL
+import androidx.room.useReaderConnection
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
+import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
+import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
+import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
@@ -504,7 +510,119 @@ class DatabaseTest {
     }
 
     @Test
-    fun search_album_test() = testScope.runTest {
+    fun fts_table_sync_test() = testScope.runTest {
+        libraryDao.insertDummyData()
+        database.verifyFtsTableSync(
+            tableName = Tables.LIBRARY_ALBUM,
+            ftsTableName = Tables.LIBRARY_FTS_ALBUM,
+            matchContentName = AlbumColumns.TITLE
+        )
+        database.verifyFtsTableSync(
+            tableName = Tables.LIBRARY_ARTIST,
+            ftsTableName = Tables.LIBRARY_FTS_ARTIST,
+            matchContentName = ArtistColumns.NAME
+        )
+        database.verifyFtsTableSync(
+            tableName = Tables.LIBRARY_MEDIA,
+            ftsTableName = Tables.LIBRARY_FTS_MEDIA,
+            matchContentName = MediaColumns.TITLE
+        )
+    }
 
+    @Test
+    fun match_keyword_test() = testScope.runTest {
+        libraryDao.insertDummyData()
+        assertEquals(1, libraryDao.searchAlbum("title 1").size)
+        assertEquals(1, libraryDao.searchAlbum("title 1").first().albumId)
+
+        assertEquals(1, libraryDao.searchArtist("title 1").size)
+        assertEquals(1, libraryDao.searchArtist("title 1").first().artistId)
+
+        assertEquals(1, libraryDao.searchMedia("title 1").size)
+        assertEquals(1, libraryDao.searchMedia("title 1").first().id)
+    }
+}
+
+private suspend fun MediaLibraryDao.insertDummyData() {
+    upsertMedia(
+        audios = listOf(
+            MediaEntity(
+                id = 1,
+                albumId = 2,
+                genreId = 3,
+                artistId = 4,
+                title = "title 1",
+            ),
+            MediaEntity(
+                id = 2,
+                albumId = 2,
+                genreId = 3,
+                artistId = 4,
+                title = "title 2",
+            )
+        ),
+        albums = listOf(
+            AlbumEntity(
+                albumId = 1,
+                title = "title 1"
+            ),
+            AlbumEntity(
+                albumId = 2,
+                title = "title 2"
+            )
+        ),
+        genres = listOf(
+            GenreEntity(
+                genreId = 1,
+                name = "title 1"
+            ),
+            GenreEntity(
+                genreId = 2,
+                name = "title 2"
+            )
+        ),
+        artists = listOf(
+            ArtistEntity(
+                artistId = 1,
+                name = "title 1"
+            ),
+            ArtistEntity(
+                artistId = 2,
+                name = "title 2"
+            ),
+        ),
+    )
+}
+
+private suspend fun MelodifyDataBase.verifyFtsTableSync(
+    tableName: String,
+    ftsTableName: String,
+    matchContentName: String
+) {
+    useReaderConnection {
+        // Verify insert sync
+        it.usePrepared("SELECT rowid, * FROM $ftsTableName") { stmt ->
+            stmt.step()
+            assertEquals(1, stmt.getLong(0))
+            stmt.step()
+            assertEquals(2, stmt.getLong(0))
+        }
+
+        it.execSQL("UPDATE $tableName SET $matchContentName = 'title changed' WHERE rowid = 1")
+
+        // Verify update sync
+        it.usePrepared("SELECT rowid, * FROM $ftsTableName") { stmt ->
+            stmt.step()
+            assertEquals(1, stmt.getLong(0))
+            assertEquals("title changed", stmt.getText(1))
+        }
+
+        it.execSQL("DELETE FROM $tableName WHERE rowid = 1")
+
+        // Verify delete sync
+        it.usePrepared("SELECT rowid, * FROM $ftsTableName") { stmt ->
+            stmt.step()
+            assertEquals(2, stmt.getLong(0))
+        }
     }
 }
