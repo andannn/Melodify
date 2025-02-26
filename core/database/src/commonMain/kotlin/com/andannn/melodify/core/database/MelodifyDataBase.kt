@@ -66,8 +66,9 @@ internal object Tables {
         AutoMigration(from = 3, to = 4),
         AutoMigration(from = 4, to = 5, AutoMigration4To5Spec::class),
         AutoMigration(from = 5, to = 6, AutoMigration5To6Spec::class),
+        AutoMigration(from = 6, to = 7),
     ],
-    version = 6,
+    version = 7,
 )
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class MelodifyDataBase : RoomDatabase() {
@@ -95,7 +96,6 @@ internal val addTriggerCallback = object : RoomDatabase.Callback() {
         super.onCreate(connection)
 
         createUpdateTrackCountTrigger(connection)
-        createUpdateFtsTableTrigger(connection)
     }
 }
 
@@ -136,7 +136,6 @@ class AutoMigration5To6Spec : AutoMigrationSpec {
         createUpdateTrackCountTrigger(connection)
     }
 }
-
 
 private fun createUpdateTrackCountTrigger(connection: SQLiteConnection) {
     // delete invalid albums, artists, genres when delete media.
@@ -211,73 +210,97 @@ private fun createUpdateTrackCountTrigger(connection: SQLiteConnection) {
     )
 }
 
-private fun createUpdateFtsTableTrigger(connection: SQLiteConnection) {
-    connection.createFtsTableTrigger(
-        tableName = Tables.LIBRARY_ALBUM,
-        ftsTableName = Tables.LIBRARY_FTS_ALBUM,
-        deleteRowString = {
-            "DELETE FROM ${Tables.LIBRARY_FTS_ALBUM} WHERE rowid=old.${AlbumColumns.ID};"
-        },
-        insertRowString = {
-            "INSERT INTO ${Tables.LIBRARY_FTS_ALBUM}(rowid, ${AlbumColumns.TITLE}) VALUES (new.${AlbumColumns.ID}, new.${AlbumColumns.TITLE});"
-        }
-    )
-    connection.createFtsTableTrigger(
-        tableName = Tables.LIBRARY_ARTIST,
-        ftsTableName = Tables.LIBRARY_FTS_ARTIST,
-        deleteRowString = {
-            "DELETE FROM ${Tables.LIBRARY_FTS_ARTIST} WHERE rowid=old.${ArtistColumns.ID};"
-        },
-        insertRowString = {
-            "INSERT INTO ${Tables.LIBRARY_FTS_ARTIST}(rowid, ${ArtistColumns.NAME}) VALUES (new.${ArtistColumns.ID}, new.${ArtistColumns.NAME});"
-        }
-    )
-    connection.createFtsTableTrigger(
-        tableName = Tables.LIBRARY_MEDIA,
-        ftsTableName = Tables.LIBRARY_FTS_MEDIA,
-        deleteRowString = {
-            "DELETE FROM ${Tables.LIBRARY_FTS_MEDIA} WHERE rowid=old.${MediaColumns.ID};"
-            },
-        insertRowString = {
-            "INSERT INTO ${Tables.LIBRARY_FTS_MEDIA}(rowid, ${MediaColumns.TITLE}) VALUES (new.${MediaColumns.ID}, new.${MediaColumns.TITLE});"
-        }
-    )
-}
-
-private fun SQLiteConnection.createFtsTableTrigger(
-    tableName: String,
-    ftsTableName: String,
-    deleteRowString: () -> String,
-    insertRowString: () -> String
-) {
-    execSQL(
-        """
-            CREATE TRIGGER IF NOT EXISTS delete_${ftsTableName}_before_insert BEFORE UPDATE ON $tableName BEGIN
-              ${deleteRowString()}
-            END;
-        """.trimIndent().also {
-            println(it)
-        }
-    )
-    execSQL(
-        """
-            CREATE TRIGGER IF NOT EXISTS insert_${ftsTableName}_after_update AFTER UPDATE ON $tableName BEGIN
-              ${insertRowString()}
-            END;
-        """.trimIndent()
-    )
-    execSQL(
-        """
-            CREATE TRIGGER IF NOT EXISTS delete_${ftsTableName}_before_delete BEFORE DELETE ON $tableName BEGIN
-              ${deleteRowString()}
-            END;
-        """.trimIndent()
-    )
-    execSQL(
-        """
-            CREATE TRIGGER IF NOT EXISTS insert_${ftsTableName}_after_insert AFTER INSERT ON $tableName BEGIN
-              ${insertRowString()}
-            END;
-        """.trimIndent()
-    )
-}
+// Trigger is created by Room Automatically.
+//class AutoMigration6To7Spec : AutoMigrationSpec {
+//    override fun onPostMigrate(connection: SQLiteConnection) {
+////        createUpdateFtsTableTrigger(connection)
+//
+//        // Sync library to FTS table.
+////        syncLibraryData(connection)
+//    }
+//
+//    private fun syncLibraryData(connection: SQLiteConnection) {
+//        connection.execSQL(
+//            """
+//            INSERT INTO ${Tables.LIBRARY_FTS_MEDIA}(rowid, ${MediaColumns.TITLE})
+//            SELECT ${MediaColumns.ID}, ${MediaColumns.TITLE} FROM ${Tables.LIBRARY_MEDIA}
+//        """.trimIndent()
+//        )
+//
+//        connection.execSQL(
+//            """
+//            INSERT INTO ${Tables.LIBRARY_FTS_ALBUM}(rowid, ${AlbumColumns.TITLE})
+//            SELECT ${AlbumColumns.ID}, ${AlbumColumns.TITLE} FROM ${Tables.LIBRARY_ALBUM}
+//        """.trimIndent()
+//        )
+//    }
+//}
+//
+//private fun createUpdateFtsTableTrigger(connection: SQLiteConnection) {
+//    connection.createFtsTableTrigger(
+//        tableName = Tables.LIBRARY_ALBUM,
+//        ftsTableName = Tables.LIBRARY_FTS_ALBUM,
+//        deleteRowString = {
+//            "DELETE FROM ${Tables.LIBRARY_FTS_ALBUM} WHERE rowid=old.${AlbumColumns.ID};"
+//        },
+//        insertRowString = {
+//            "INSERT INTO ${Tables.LIBRARY_FTS_ALBUM}(rowid, ${AlbumColumns.TITLE}) VALUES (new.${AlbumColumns.ID}, new.${AlbumColumns.TITLE});"
+//        }
+//    )
+//    connection.createFtsTableTrigger(
+//        tableName = Tables.LIBRARY_ARTIST,
+//        ftsTableName = Tables.LIBRARY_FTS_ARTIST,
+//        deleteRowString = {
+//            "DELETE FROM ${Tables.LIBRARY_FTS_ARTIST} WHERE rowid=old.${ArtistColumns.ID};"
+//        },
+//        insertRowString = {
+//            "INSERT INTO ${Tables.LIBRARY_FTS_ARTIST}(rowid, ${ArtistColumns.NAME}) VALUES (new.${ArtistColumns.ID}, new.${ArtistColumns.NAME});"
+//        }
+//    )
+//    connection.createFtsTableTrigger(
+//        tableName = Tables.LIBRARY_MEDIA,
+//        ftsTableName = Tables.LIBRARY_FTS_MEDIA,
+//        deleteRowString = {
+//            "DELETE FROM ${Tables.LIBRARY_FTS_MEDIA} WHERE rowid=old.${MediaColumns.ID};"
+//        },
+//        insertRowString = {
+//            "INSERT INTO ${Tables.LIBRARY_FTS_MEDIA}(rowid, ${MediaColumns.TITLE}) VALUES (new.${MediaColumns.ID}, new.${MediaColumns.TITLE});"
+//        }
+//    )
+//}
+//
+//private fun SQLiteConnection.createFtsTableTrigger(
+//    tableName: String,
+//    ftsTableName: String,
+//    deleteRowString: () -> String,
+//    insertRowString: () -> String
+//) {
+//    execSQL(
+//        """
+//            CREATE TRIGGER IF NOT EXISTS delete_${ftsTableName}_before_insert BEFORE UPDATE ON $tableName BEGIN
+//              ${deleteRowString()}
+//            END;
+//        """.trimIndent()
+//    )
+//    execSQL(
+//        """
+//            CREATE TRIGGER IF NOT EXISTS insert_${ftsTableName}_after_update AFTER UPDATE ON $tableName BEGIN
+//              ${insertRowString()}
+//            END;
+//        """.trimIndent()
+//    )
+//    execSQL(
+//        """
+//            CREATE TRIGGER IF NOT EXISTS delete_${ftsTableName}_before_delete BEFORE DELETE ON $tableName BEGIN
+//              ${deleteRowString()}
+//            END;
+//        """.trimIndent()
+//    )
+//    execSQL(
+//        """
+//            CREATE TRIGGER IF NOT EXISTS insert_${ftsTableName}_after_insert AFTER INSERT ON $tableName BEGIN
+//              ${insertRowString()}
+//            END;
+//        """.trimIndent()
+//    )
+//}

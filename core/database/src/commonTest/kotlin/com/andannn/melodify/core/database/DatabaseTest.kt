@@ -10,7 +10,6 @@ import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
-import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaColumns

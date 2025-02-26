@@ -1,0 +1,577 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 7,
+    "identityHash": "60490c49b4e58c6765b170083a371171",
+    "entities": [
+      {
+        "tableName": "lyric_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lyric_id` INTEGER NOT NULL, `lyric_name` TEXT NOT NULL, `lyric_track_name` TEXT NOT NULL, `lyric_artist_name` TEXT NOT NULL, `lyric_album_name` TEXT NOT NULL, `lyric_duration_name` REAL NOT NULL, `lyric_instrumental` INTEGER NOT NULL, `lyric_plain_lyrics` TEXT NOT NULL, `lyric_synced_lyrics` TEXT NOT NULL, PRIMARY KEY(`lyric_id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "lyric_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "lyric_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trackName",
+            "columnName": "lyric_track_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "artistName",
+            "columnName": "lyric_artist_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "albumName",
+            "columnName": "lyric_album_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "lyric_duration_name",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "instrumental",
+            "columnName": "lyric_instrumental",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plainLyrics",
+            "columnName": "lyric_plain_lyrics",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "syncedLyrics",
+            "columnName": "lyric_synced_lyrics",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "lyric_id"
+          ]
+        }
+      },
+      {
+        "tableName": "lyric_with_audio_cross_ref_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lyric_with_audio_cross_ref_media_store_id` TEXT NOT NULL, `lyric_with_audio_cross_ref_lyric_id` INTEGER NOT NULL, PRIMARY KEY(`lyric_with_audio_cross_ref_media_store_id`, `lyric_with_audio_cross_ref_lyric_id`), FOREIGN KEY(`lyric_with_audio_cross_ref_lyric_id`) REFERENCES `lyric_table`(`lyric_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "mediaStoreId",
+            "columnName": "lyric_with_audio_cross_ref_media_store_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lyricId",
+            "columnName": "lyric_with_audio_cross_ref_lyric_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "lyric_with_audio_cross_ref_media_store_id",
+            "lyric_with_audio_cross_ref_lyric_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_lyric_with_audio_cross_ref_table_lyric_with_audio_cross_ref_lyric_id",
+            "unique": false,
+            "columnNames": [
+              "lyric_with_audio_cross_ref_lyric_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_lyric_with_audio_cross_ref_table_lyric_with_audio_cross_ref_lyric_id` ON `${TABLE_NAME}` (`lyric_with_audio_cross_ref_lyric_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "lyric_table",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "lyric_with_audio_cross_ref_lyric_id"
+            ],
+            "referencedColumns": [
+              "lyric_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "play_list_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`play_list_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `play_list_created_date` INTEGER NOT NULL, `play_list_name` TEXT NOT NULL, `play_list_artwork_uri` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "play_list_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdDate",
+            "columnName": "play_list_created_date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "play_list_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "artworkUri",
+            "columnName": "play_list_artwork_uri",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "play_list_id"
+          ]
+        }
+      },
+      {
+        "tableName": "play_list_with_media_cross_ref_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`play_list_with_media_cross_ref_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `play_list_with_media_cross_ref_play_list_id` INTEGER NOT NULL, `play_list_with_media_cross_ref_media_store_id` TEXT NOT NULL, `play_list_with_media_cross_ref_added_date` INTEGER NOT NULL, `play_list_with_media_cross_ref_song_artist` TEXT NOT NULL, `play_list_with_media_cross_ref_song_title` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "play_list_with_media_cross_ref_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "playListId",
+            "columnName": "play_list_with_media_cross_ref_play_list_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaStoreId",
+            "columnName": "play_list_with_media_cross_ref_media_store_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addedDate",
+            "columnName": "play_list_with_media_cross_ref_added_date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "artist",
+            "columnName": "play_list_with_media_cross_ref_song_artist",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "play_list_with_media_cross_ref_song_title",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "play_list_with_media_cross_ref_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_play_list_with_media_cross_ref_table_play_list_with_media_cross_ref_play_list_id_play_list_with_media_cross_ref_media_store_id",
+            "unique": true,
+            "columnNames": [
+              "play_list_with_media_cross_ref_play_list_id",
+              "play_list_with_media_cross_ref_media_store_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_play_list_with_media_cross_ref_table_play_list_with_media_cross_ref_play_list_id_play_list_with_media_cross_ref_media_store_id` ON `${TABLE_NAME}` (`play_list_with_media_cross_ref_play_list_id`, `play_list_with_media_cross_ref_media_store_id`)"
+          }
+        ]
+      },
+      {
+        "tableName": "library_album_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`album_id` INTEGER NOT NULL, `album_title` TEXT NOT NULL, `album_track_count` INTEGER NOT NULL, `album_number_of_songs_for_artist` INTEGER, `album_cover_uri` TEXT, PRIMARY KEY(`album_id`))",
+        "fields": [
+          {
+            "fieldPath": "albumId",
+            "columnName": "album_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "album_title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trackCount",
+            "columnName": "album_track_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numberOfSongsForArtist",
+            "columnName": "album_number_of_songs_for_artist",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "coverUri",
+            "columnName": "album_cover_uri",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "album_id"
+          ]
+        }
+      },
+      {
+        "tableName": "library_artist_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`artist_id` INTEGER NOT NULL, `artist_name` TEXT NOT NULL, `artist_cover_uri` TEXT, `artist_track_count` INTEGER NOT NULL, PRIMARY KEY(`artist_id`))",
+        "fields": [
+          {
+            "fieldPath": "artistId",
+            "columnName": "artist_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "artist_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "artistCoverUri",
+            "columnName": "artist_cover_uri",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "trackCount",
+            "columnName": "artist_track_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "artist_id"
+          ]
+        }
+      },
+      {
+        "tableName": "library_genre_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`genre_id` INTEGER, `genre_name` TEXT, PRIMARY KEY(`genre_id`))",
+        "fields": [
+          {
+            "fieldPath": "genreId",
+            "columnName": "genre_id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "genre_name",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "genre_id"
+          ]
+        }
+      },
+      {
+        "tableName": "library_media_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`media_id` INTEGER NOT NULL, `source_uri` TEXT, `media_title` TEXT, `media_duration` INTEGER, `media_modified_date` INTEGER, `media_size` INTEGER, `media_mime_type` TEXT, `media_album` TEXT, `media_album_id` INTEGER, `media_artist` TEXT, `media_artist_id` INTEGER, `media_cd_track_number` INTEGER, `media_disc_number` INTEGER, `media_num_tracks` INTEGER, `media_bitrate` INTEGER, `media_genre` TEXT, `media_genre_id` INTEGER, `media_year` TEXT, `media_track` TEXT, `media_composer` TEXT, `media_cover` TEXT, PRIMARY KEY(`media_id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "media_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceUri",
+            "columnName": "source_uri",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "media_title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "media_duration",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "modifiedDate",
+            "columnName": "media_modified_date",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "size",
+            "columnName": "media_size",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "mimeType",
+            "columnName": "media_mime_type",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "album",
+            "columnName": "media_album",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "albumId",
+            "columnName": "media_album_id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "artist",
+            "columnName": "media_artist",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "artistId",
+            "columnName": "media_artist_id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "cdTrackNumber",
+            "columnName": "media_cd_track_number",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "discNumber",
+            "columnName": "media_disc_number",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "numTracks",
+            "columnName": "media_num_tracks",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "bitrate",
+            "columnName": "media_bitrate",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "genre",
+            "columnName": "media_genre",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "genreId",
+            "columnName": "media_genre_id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "year",
+            "columnName": "media_year",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "track",
+            "columnName": "media_track",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "composer",
+            "columnName": "media_composer",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cover",
+            "columnName": "media_cover",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "media_id"
+          ]
+        }
+      },
+      {
+        "tableName": "custom_tab_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`custom_tab_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `custom_tab_type` TEXT NOT NULL, `custom_tab_name` TEXT, `custom_tab_external_id` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "custom_tab_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "custom_tab_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "custom_tab_name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "externalId",
+            "columnName": "custom_tab_external_id",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "custom_tab_id"
+          ]
+        }
+      },
+      {
+        "tableName": "library_fts_album_table",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`album_title` TEXT NOT NULL, content=`library_album_table`)",
+        "fields": [
+          {
+            "fieldPath": "title",
+            "columnName": "album_title",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "rowid"
+          ]
+        },
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "library_album_table",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_album_table_BEFORE_UPDATE BEFORE UPDATE ON `library_album_table` BEGIN DELETE FROM `library_fts_album_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_album_table_BEFORE_DELETE BEFORE DELETE ON `library_album_table` BEGIN DELETE FROM `library_fts_album_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_album_table_AFTER_UPDATE AFTER UPDATE ON `library_album_table` BEGIN INSERT INTO `library_fts_album_table`(`docid`, `album_title`) VALUES (NEW.`rowid`, NEW.`album_title`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_album_table_AFTER_INSERT AFTER INSERT ON `library_album_table` BEGIN INSERT INTO `library_fts_album_table`(`docid`, `album_title`) VALUES (NEW.`rowid`, NEW.`album_title`); END"
+        ]
+      },
+      {
+        "tableName": "library_fts_artist_table",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`artist_name` TEXT NOT NULL, content=`library_artist_table`)",
+        "fields": [
+          {
+            "fieldPath": "title",
+            "columnName": "artist_name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "rowid"
+          ]
+        },
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "library_artist_table",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_BEFORE_UPDATE BEFORE UPDATE ON `library_artist_table` BEGIN DELETE FROM `library_fts_artist_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_BEFORE_DELETE BEFORE DELETE ON `library_artist_table` BEGIN DELETE FROM `library_fts_artist_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_AFTER_UPDATE AFTER UPDATE ON `library_artist_table` BEGIN INSERT INTO `library_fts_artist_table`(`docid`, `artist_name`) VALUES (NEW.`rowid`, NEW.`artist_name`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_AFTER_INSERT AFTER INSERT ON `library_artist_table` BEGIN INSERT INTO `library_fts_artist_table`(`docid`, `artist_name`) VALUES (NEW.`rowid`, NEW.`artist_name`); END"
+        ]
+      },
+      {
+        "tableName": "library_fts_media_table",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`media_title` TEXT NOT NULL, content=`library_media_table`)",
+        "fields": [
+          {
+            "fieldPath": "title",
+            "columnName": "media_title",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "rowid"
+          ]
+        },
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "library_media_table",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_media_table_BEFORE_UPDATE BEFORE UPDATE ON `library_media_table` BEGIN DELETE FROM `library_fts_media_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_media_table_BEFORE_DELETE BEFORE DELETE ON `library_media_table` BEGIN DELETE FROM `library_fts_media_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_media_table_AFTER_UPDATE AFTER UPDATE ON `library_media_table` BEGIN INSERT INTO `library_fts_media_table`(`docid`, `media_title`) VALUES (NEW.`rowid`, NEW.`media_title`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_media_table_AFTER_INSERT AFTER INSERT ON `library_media_table` BEGIN INSERT INTO `library_fts_media_table`(`docid`, `media_title`) VALUES (NEW.`rowid`, NEW.`media_title`); END"
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '60490c49b4e58c6765b170083a371171')"
+    ]
+  }
+}

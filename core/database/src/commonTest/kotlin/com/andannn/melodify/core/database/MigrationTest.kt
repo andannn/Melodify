@@ -1,8 +1,12 @@
 package com.andannn.melodify.core.database
 
 import androidx.room.testing.MigrationTestHelper
+import androidx.sqlite.execSQL
 import androidx.sqlite.use
+import com.andannn.melodify.core.database.entity.AlbumColumns
+import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.CustomTabType.ALL_MUSIC
+import com.andannn.melodify.core.database.entity.MediaColumns
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import okio.SYSTEM
@@ -17,7 +21,8 @@ expect fun getMigrationTestHelper(fileName: String): MigrationTestHelper
 
 class MigrationTest {
 
-    private val tempFile = FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("test-${Random.nextInt()}.db")
+    private val tempFile =
+        FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("test-${Random.nextInt()}.db")
 
     @BeforeTest
     fun before() {
@@ -71,6 +76,108 @@ class MigrationTest {
 
         val migratedConnection =
             migrationTestHelper.runMigrationsAndValidate(6)
+        migratedConnection.close()
+    }
+
+    @Test
+    fun migrate6To7SyncMediaTableTest() {
+        val migrationTestHelper = getMigrationTestHelper(
+            tempFile.toString()
+        )
+        val newConnection = migrationTestHelper.createDatabase(6)
+        newConnection.execSQL(
+            """
+                INSERT INTO ${Tables.LIBRARY_MEDIA}(${MediaColumns.ID}, ${MediaColumns.TITLE}) VALUES (1, 'row 1');
+            """.trimIndent()
+        )
+        newConnection.execSQL(
+            """
+                INSERT INTO ${Tables.LIBRARY_MEDIA}(${MediaColumns.ID}, ${MediaColumns.TITLE}) VALUES (2, 'row 2');
+            """.trimIndent()
+        )
+        newConnection.close()
+
+        val migratedConnection =
+            migrationTestHelper.runMigrationsAndValidate(7)
+
+        migratedConnection.prepare("SELECT rowid, * FROM ${Tables.LIBRARY_FTS_MEDIA}").use { stm ->
+            stm.step()
+            assertEquals(1, stm.getLong(0))
+            assertEquals("row 1", stm.getText(1))
+            stm.step()
+            assertEquals(2, stm.getLong(0))
+            assertEquals("row 2", stm.getText(1))
+        }
+
+
+        migratedConnection.close()
+    }
+
+    @Test
+    fun migrate6To7SyncAlbumTableTest() {
+        val migrationTestHelper = getMigrationTestHelper(
+            tempFile.toString()
+        )
+        val newConnection = migrationTestHelper.createDatabase(6)
+        newConnection.execSQL(
+            """
+                INSERT INTO ${Tables.LIBRARY_ALBUM}(${AlbumColumns.ID}, ${AlbumColumns.TITLE}, ${AlbumColumns.TRACK_COUNT}) VALUES (1, 'row 1', 10);
+            """.trimIndent()
+        )
+        newConnection.execSQL(
+            """
+                INSERT INTO ${Tables.LIBRARY_ALBUM}(${AlbumColumns.ID}, ${AlbumColumns.TITLE}, ${AlbumColumns.TRACK_COUNT}) VALUES (2, 'row 2', 12);
+            """.trimIndent()
+        )
+        newConnection.close()
+
+        val migratedConnection =
+            migrationTestHelper.runMigrationsAndValidate(7)
+
+        migratedConnection.prepare("SELECT rowid, * FROM ${Tables.LIBRARY_FTS_ALBUM}").use { stm ->
+            stm.step()
+            assertEquals(1, stm.getLong(0))
+            assertEquals("row 1", stm.getText(1))
+            stm.step()
+            assertEquals(2, stm.getLong(0))
+            assertEquals("row 2", stm.getText(1))
+        }
+
+
+        migratedConnection.close()
+    }
+
+    @Test
+    fun migrate6To7SyncArtistTableTest() {
+        val migrationTestHelper = getMigrationTestHelper(
+            tempFile.toString()
+        )
+        val newConnection = migrationTestHelper.createDatabase(6)
+        newConnection.execSQL(
+            """
+                INSERT INTO ${Tables.LIBRARY_ARTIST}(${ArtistColumns.ID}, ${ArtistColumns.NAME}, ${ArtistColumns.TRACK_COUNT}) VALUES (1, 'row 1', 10);
+            """.trimIndent()
+        )
+        newConnection.execSQL(
+            """
+                INSERT INTO ${Tables.LIBRARY_ARTIST}(${ArtistColumns.ID}, ${ArtistColumns.NAME}, ${ArtistColumns.TRACK_COUNT}) VALUES (2, 'row 2', 12);
+            """.trimIndent()
+        )
+        newConnection.close()
+
+        val migratedConnection =
+            migrationTestHelper.runMigrationsAndValidate(7)
+
+        migratedConnection.prepare("SELECT rowid, * FROM ${Tables.LIBRARY_FTS_ARTIST}").use { stm ->
+            stm.step()
+            assertEquals(1, stm.getLong(0))
+            assertEquals("row 1", stm.getText(1))
+            stm.step()
+            assertEquals(2, stm.getLong(0))
+            assertEquals("row 2", stm.getText(1))
+        }
+
+
         migratedConnection.close()
     }
 }
