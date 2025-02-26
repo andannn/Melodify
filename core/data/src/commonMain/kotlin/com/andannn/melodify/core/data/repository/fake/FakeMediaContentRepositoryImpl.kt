@@ -4,6 +4,7 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.repository.MediaContentRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -131,6 +132,10 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
 
     override suspend fun getGenreByGenreId(genreId: String): GenreItemModel? {
         return getAllGenres().find { it.id == genreId }
+    }
+
+    override suspend fun searchContent(keyword: String): List<MediaItemModel> {
+        return emptyList()
     }
 
     private fun getAllAlbums(): List<AlbumItemModel> {
