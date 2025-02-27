@@ -1,43 +1,32 @@
 package com.andannn.melodify.ui.components.search
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
+
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
 import com.andannn.melodify.ui.components.search.suggestion.SuggestionsView
 import kotlinx.collections.immutable.ImmutableList
@@ -78,14 +67,8 @@ internal fun SearchViewContent(
             var expanded by rememberSaveable { mutableStateOf(true) }
             var text by rememberSaveable { mutableStateOf("") }
 
-            LaunchedEffect(expanded) {
-                if (!expanded && text.isEmpty()) {
-                    // close search page if search bar shrink with no input
-                    onBackKeyPressed()
-                }
-            }
-
             SearchBar(
+                modifier = Modifier.fillMaxWidth(),
                 inputField = {
                     SearchBarDefaults.InputField(
                         query = text,
@@ -96,7 +79,6 @@ internal fun SearchViewContent(
                         onExpandedChange = {
                             expanded = it
                         },
-                        modifier = Modifier,
                         onSearch = {
                             if (text.isNotEmpty()) {
                                 onConfirmSearch(text)
@@ -126,9 +108,12 @@ internal fun SearchViewContent(
                 },
             ) {
                 SuggestionsView(
-                    modifier = Modifier.padding(horizontal = 16.dp),
                     query = text,
-                    onConfirmSearch = onConfirmSearch,
+                    onConfirmSearch = {
+                        text = it
+                        expanded = false
+                        onConfirmSearch(it)
+                    },
                     onClickBestMatchedItem = {
 
                     }

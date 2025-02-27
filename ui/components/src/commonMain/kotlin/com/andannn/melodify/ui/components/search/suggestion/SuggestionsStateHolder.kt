@@ -55,11 +55,11 @@ internal class SuggestionsStateHolder(
                     _state.value = SuggestionsState.NoSuggestion
                 } else {
                     // TODO: use string similarity to find best matched items
-                    val (bestMatchedItems, suggestions) = result.partition {
+                    val bestMatchedItems = result.filter {
                         it.name == query
                     }
                     _state.value = SuggestionsState.SuggestionLoaded(
-                        suggestions = suggestions.map { it.name },
+                        suggestions = result.map { it.name },
                         bestMatchedItems = bestMatchedItems
                     )
                 }
@@ -73,18 +73,18 @@ internal sealed interface SuggestionsState {
     /**
      * When query string is empty, show history search suggestions.
      */
-    abstract class History : SuggestionsState
+    sealed class History : SuggestionsState
 
     data object LoadingHistory : History()
 
     data class HistoryLoaded(
-        val historySearch: List<String> = emptyList(),
+        val searchWordList: List<String> = emptyList(),
     ) : History()
 
     /**
      * When query string is not empty, show search suggestions.
      */
-    abstract class Suggestion : SuggestionsState
+    sealed class Suggestion : SuggestionsState
 
     /**
      * Loading search suggestions.

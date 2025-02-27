@@ -7,6 +7,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.repository.MediaContentRepository
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,8 @@ fun rememberSearchUiState(
         repository.mediaContentRepository
     )
 }
+
+private const val TAG = "SearchUiState"
 
 class SearchUiStateHolder(
     scope: CoroutineScope,
@@ -57,6 +60,7 @@ class SearchUiStateHolder(
     private fun isValid(text: String) = text.isNotBlank()
 
     fun onConfirmSearch(text: String) {
+        Napier.d(tag = TAG) { "onConfirmSearch: $text" }
         searchTextFlow.value = "$text*"
     }
 }
