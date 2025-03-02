@@ -59,7 +59,7 @@ internal class SuggestionsStateHolder(
                         it.name == query
                     }
                     _state.value = SuggestionsState.SuggestionLoaded(
-                        suggestions = result.map { it.name },
+                        suggestions = result.map { it.name }.distinct(),
                         bestMatchedItems = bestMatchedItems
                     )
                 }

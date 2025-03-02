@@ -37,4 +37,5 @@
     <string name="new_playlist_dialog_input_hint">Titel</string>
     <string name="remove_playlist">Playlist löschen</string>
     <string name="delete_this_tab">Diesen Tab löschen</string>
+    <string name="add_to_home_tab">Zur Startseite hinzufügen</string>
 </resources>

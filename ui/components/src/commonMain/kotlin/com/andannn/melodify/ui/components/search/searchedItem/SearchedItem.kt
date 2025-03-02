@@ -46,7 +46,8 @@ internal fun SearchedItem(
             cover = mediaItemModel.artWorkUri,
             onOptionButtonClick = {
                 scope.launch {
-                    val result = popupController.showDialog(DialogId.AlbumOption(mediaItemModel))
+                    val result =
+                        popupController.showDialog(DialogId.SearchedAlbumOption(mediaItemModel))
                     onHandleResult(result)
                 }
             },
@@ -62,7 +63,8 @@ internal fun SearchedItem(
             cover = mediaItemModel.artWorkUri,
             onOptionButtonClick = {
                 scope.launch {
-                    val result = popupController.showDialog(DialogId.ArtistOption(mediaItemModel))
+                    val result =
+                        popupController.showDialog(DialogId.SearchedArtistOption(mediaItemModel))
                     onHandleResult(result)
                 }
             },

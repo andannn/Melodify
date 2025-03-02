@@ -37,4 +37,5 @@
     <string name="new_playlist_dialog_input_hint">제목</string>
     <string name="remove_playlist">플레이리스트 삭제</string>
     <string name="delete_this_tab">이 탭 삭제</string>
+    <string name="add_to_home_tab">홈 탭에 추가</string>
 </resources>

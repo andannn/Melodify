@@ -34,6 +34,7 @@ object SimpleMusicIcons {
     val DeleteSweep = SmpIcon.ImageVectorIcon(Icons.Rounded.DeleteSweep)
     val Timer = SmpIcon.ImageVectorIcon(Icons.Rounded.Timer)
     val PlayListRemove = SmpIcon.ImageVectorIcon(Icons.Rounded.PlaylistRemove)
+    val AddToHomeTab = SmpIcon.ImageVectorIcon(Icons.Filled.Home)
 }
 
 sealed class SmpIcon {

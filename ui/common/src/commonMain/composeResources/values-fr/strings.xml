@@ -37,4 +37,5 @@
     <string name="new_playlist_dialog_input_hint">Titre</string>
     <string name="remove_playlist">Supprimer la playlist</string>
     <string name="delete_this_tab">Supprimer cet onglet</string>
+    <string name="add_to_home_tab">Ajouter à l'onglet d'accueil</string>
 </resources>

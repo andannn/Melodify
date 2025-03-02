@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowOutward
 import androidx.compose.material.icons.rounded.History
@@ -25,8 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.ui.common.widgets.ListTileItemView
 import com.andannn.melodify.ui.components.search.searchedItem.SearchedItem
 
 /**
@@ -39,14 +36,12 @@ import com.andannn.melodify.ui.components.search.searchedItem.SearchedItem
  * @param modifier Modifier to apply to the content.
  * @param query The current query text.
  * @param onConfirmSearch Called when the user submits the query.
- * @param onClickBestMatchedItem Called when the best matched item is clicked.
  */
 @Composable
 internal fun SuggestionsView(
     query: String,
     modifier: Modifier = Modifier,
     onConfirmSearch: (String) -> Unit = {},
-    onClickBestMatchedItem: (MediaItemModel) -> Unit = {},
 ) {
     val state by rememberSuggestionsStateHolder(query = query).state.collectAsState()
 
