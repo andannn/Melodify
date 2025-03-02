@@ -16,6 +16,7 @@ import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
+import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -539,6 +540,59 @@ class DatabaseTest {
 
         assertEquals(1, libraryDao.searchMedia("title 1").size)
         assertEquals(1, libraryDao.searchMedia("title 1").first().id)
+    }
+
+    @Test
+    fun upsert_search_history_test() = testScope.runTest {
+        val searchHistoryDao = database.getUserDataDao()
+        searchHistoryDao.upsertSearchHistory(
+            listOf(
+                SearchHistoryEntity(
+                    searchDate = 1,
+                    searchText = "test"
+                )
+            )
+        )
+
+        assertEquals(1, searchHistoryDao.getSearchHistories(limit = 10).size)
+        assertEquals("test", searchHistoryDao.getSearchHistories(limit = 10).first().searchText)
+
+        searchHistoryDao.upsertSearchHistory(
+            listOf(
+                SearchHistoryEntity(
+                    searchDate = 2,
+                    searchText = "test"
+                )
+            )
+        )
+
+        assertEquals(1, searchHistoryDao.getSearchHistories(limit = 10).size)
+        assertEquals(2, searchHistoryDao.getSearchHistories(limit = 10).first().searchDate)
+        assertEquals("test", searchHistoryDao.getSearchHistories(limit = 10).first().searchText)
+    }
+
+    @Test
+    fun get_search_histories_order_test() = testScope.runTest {
+        val searchHistoryDao = database.getUserDataDao()
+        searchHistoryDao.upsertSearchHistory(
+            listOf(
+                SearchHistoryEntity(
+                    searchDate = 2,
+                    searchText = "C"
+                ),
+                SearchHistoryEntity(
+                    searchDate = 3,
+                    searchText = "A"
+                ),
+                SearchHistoryEntity(
+                    searchDate = 1,
+                    searchText = "B"
+                ),
+            )
+        )
+
+        assertEquals(3, searchHistoryDao.getSearchHistories(limit = 10).size)
+        assertEquals("A", searchHistoryDao.getSearchHistories(limit = 10).first().searchText)
     }
 }
 

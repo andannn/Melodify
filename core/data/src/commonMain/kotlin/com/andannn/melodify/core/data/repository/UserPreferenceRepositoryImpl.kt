@@ -7,11 +7,13 @@ import com.andannn.melodify.core.data.util.mapToCustomTabModel
 import com.andannn.melodify.core.data.util.toEntity
 import com.andannn.melodify.core.database.dao.UserDataDao
 import com.andannn.melodify.core.database.entity.CustomTabType
+import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.datastore.UserSettingPreferences
 import com.andannn.melodify.core.datastore.model.PreviewModeValues
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Clock
 
 class UserPreferenceRepositoryImpl(
     private val preferences: UserSettingPreferences,
@@ -69,6 +71,21 @@ class UserPreferenceRepositoryImpl(
 
         preferences.setLibraryPath(currentPaths - path)
         return true
+    }
+
+    override suspend fun addSearchHistory(searchHistory: String) {
+        userDataDao.upsertSearchHistory(
+            listOf(
+                SearchHistoryEntity(
+                    searchDate = Clock.System.now().toEpochMilliseconds(),
+                    searchText = searchHistory
+                )
+            )
+        )
+    }
+
+    override suspend fun getAllSearchHistory(limit: Int): List<String> {
+        return userDataDao.getSearchHistories(limit).map { it.searchText }
     }
 }
 

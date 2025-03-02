@@ -26,6 +26,7 @@ import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
+import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.fts.AlbumFtsEntity
 import com.andannn.melodify.core.database.entity.fts.ArtistFtsEntity
 import com.andannn.melodify.core.database.entity.fts.MediaFtsEntity
@@ -45,6 +46,7 @@ internal object Tables {
     const val LIBRARY_FTS_ARTIST = "library_fts_artist_table"
     const val LIBRARY_GENRE = "library_genre_table"
     const val CUSTOM_TAB = "custom_tab_table"
+    const val SEARCH_HISTORY = "search_history_table"
 }
 
 @Database(
@@ -61,6 +63,7 @@ internal object Tables {
         AlbumFtsEntity::class,
         ArtistFtsEntity::class,
         MediaFtsEntity::class,
+        SearchHistoryEntity::class,
     ],
     autoMigrations = [
         AutoMigration(from = 3, to = 4),

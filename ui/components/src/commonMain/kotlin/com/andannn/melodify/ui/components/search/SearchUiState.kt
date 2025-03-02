@@ -10,6 +10,7 @@ import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.repository.MediaContentRepository
+import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,15 +35,17 @@ fun rememberSearchUiState(
 ) {
     SearchUiStateHolder(
         scope,
-        repository.mediaContentRepository
+        repository.mediaContentRepository,
+        repository.userPreferenceRepository
     )
 }
 
 private const val TAG = "SearchUiState"
 
 class SearchUiStateHolder(
-    scope: CoroutineScope,
-    private val contentLibrary: MediaContentRepository
+    private val scope: CoroutineScope,
+    private val contentLibrary: MediaContentRepository,
+    private val userPreferenceRepository: UserPreferenceRepository
 ) {
     private val searchTextFlow = MutableStateFlow("")
 
@@ -66,6 +69,10 @@ class SearchUiStateHolder(
     fun onConfirmSearch(text: String) {
         Napier.d(tag = TAG) { "onConfirmSearch: $text" }
         searchTextFlow.value = "$text*"
+
+        scope.launch {
+            userPreferenceRepository.addSearchHistory(text)
+        }
     }
 
     private fun isValid(text: String) = text.isNotBlank()

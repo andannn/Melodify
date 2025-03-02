@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 7,
-    "identityHash": "60490c49b4e58c6765b170083a371171",
+    "identityHash": "43dafa753ffae8849aa55ab3a0d8a633",
     "entities": [
       {
         "tableName": "lyric_table",
@@ -567,11 +567,52 @@
           "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_media_table_AFTER_UPDATE AFTER UPDATE ON `library_media_table` BEGIN INSERT INTO `library_fts_media_table`(`docid`, `media_title`) VALUES (NEW.`rowid`, NEW.`media_title`); END",
           "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_media_table_AFTER_INSERT AFTER INSERT ON `library_media_table` BEGIN INSERT INTO `library_fts_media_table`(`docid`, `media_title`) VALUES (NEW.`rowid`, NEW.`media_title`); END"
         ]
+      },
+      {
+        "tableName": "search_history_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`search_history_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `search_date` INTEGER NOT NULL, `search_text` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "search_history_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchDate",
+            "columnName": "search_date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchText",
+            "columnName": "search_text",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "search_history_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_search_history_table_search_text",
+            "unique": true,
+            "columnNames": [
+              "search_text"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_search_history_table_search_text` ON `${TABLE_NAME}` (`search_text`)"
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '60490c49b4e58c6765b170083a371171')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '43dafa753ffae8849aa55ab3a0d8a633')"
     ]
   }
 }

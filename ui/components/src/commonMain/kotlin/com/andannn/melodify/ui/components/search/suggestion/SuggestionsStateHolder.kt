@@ -6,6 +6,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.repository.MediaContentRepository
+import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +26,7 @@ internal fun rememberSuggestionsStateHolder(
     SuggestionsStateHolder(
         query = query,
         repository = repository.mediaContentRepository,
+        userPreferenceRepository = repository.userPreferenceRepository,
         scope = scope
     )
 }
@@ -32,6 +34,7 @@ internal fun rememberSuggestionsStateHolder(
 internal class SuggestionsStateHolder(
     query: String,
     repository: MediaContentRepository,
+    userPreferenceRepository: UserPreferenceRepository,
     scope: CoroutineScope,
 ) {
     private val _state: MutableStateFlow<SuggestionsState>
@@ -45,8 +48,9 @@ internal class SuggestionsStateHolder(
 
         if (initialState is SuggestionsState.LoadingHistory) {
             scope.launch {
-                // TODO load history search suggestion
-                _state.value = SuggestionsState.HistoryLoaded(listOf("A", "B", "C"))
+                _state.value = SuggestionsState.HistoryLoaded(
+                    userPreferenceRepository.getAllSearchHistory()
+                )
             }
         } else {
             scope.launch {
