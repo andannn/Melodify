@@ -4,6 +4,7 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import kotlinx.coroutines.flow.Flow
 
 interface MediaContentRepository {
@@ -86,4 +87,9 @@ interface MediaContentRepository {
      * Return genre by genreId
      */
     suspend fun getGenreByGenreId(genreId: String): GenreItemModel?
+
+    /**
+     * Search content by keyword
+     */
+    suspend fun searchContent(keyword: String): List<MediaItemModel>
 }

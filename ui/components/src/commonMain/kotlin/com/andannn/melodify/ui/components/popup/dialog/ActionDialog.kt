@@ -8,6 +8,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import com.andannn.melodify.ui.components.popup.LocalPopupController
@@ -26,16 +27,41 @@ enum class DialogType {
     DropDownDialog,
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActionDialogContainer(
     popupController: PopupController = LocalPopupController.current,
+    data: DialogData? =  popupController.currentDialog
 ) {
-    val data = popupController.currentDialog
-    val id = data?.dialogId
-    when (id?.dialogIdType) {
+// TODO: onRequestDismiss lambda is not updated when data changed. use state by *rememberUpdatedState*
+//    if (data != null) {
+//        ActionDialogContent(
+//            data = data,
+//            onRequestDismiss = {
+//                data.performAction(DialogAction.Dismissed)
+//            }
+//        )
+//    }
+
+    val dataState = rememberUpdatedState(data)
+    if (dataState.value != null) {
+        ActionDialogContent(
+            data = dataState.value!!,
+            onRequestDismiss = {
+                dataState.value?.performAction(DialogAction.Dismissed)
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ActionDialogContent(
+    data: DialogData,
+    onRequestDismiss: () -> Unit
+) {
+    when (data.dialogId.dialogIdType) {
         DialogType.AlertDialog -> Dialog(
-            onDismissRequest = { data.performAction(DialogAction.Dismissed) },
+            onDismissRequest = onRequestDismiss,
             content = {
                 Surface(
                     modifier = Modifier.wrapContentSize(),
@@ -48,7 +74,7 @@ fun ActionDialogContainer(
         )
 
         DialogType.DropDownDialog -> DropDownOptionMenu(
-            onRequestDismiss = { data.performAction(DialogAction.Dismissed) },
+            onRequestDismiss = onRequestDismiss,
             content = {
                 DialogContent(data)
             }
@@ -56,15 +82,11 @@ fun ActionDialogContainer(
 
         DialogType.ModalBottomSheet -> ModalBottomSheet(
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            onDismissRequest = { data.performAction(DialogAction.Dismissed) },
+            onDismissRequest = onRequestDismiss,
             content = {
                 DialogContent(data)
             }
         )
-
-        null -> {
-            // Do nothing
-        }
     }
 }
 

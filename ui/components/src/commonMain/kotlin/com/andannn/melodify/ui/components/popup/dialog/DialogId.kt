@@ -160,6 +160,26 @@ sealed interface DialogId {
         ),
     )
 
+    data class SearchedAlbumOption(override val source: AlbumItemModel) : MediaOption(
+        source = source,
+        options = listOf(
+            OptionItem.ADD_TO_QUEUE,
+            OptionItem.PLAY_NEXT,
+            OptionItem.ADD_TO_HOME_TAB,
+            OptionItem.ADD_TO_PLAYLIST,
+        )
+    )
+
+    data class SearchedArtistOption(override val source: ArtistItemModel) : MediaOption(
+        source = source,
+        options = listOf(
+            OptionItem.ADD_TO_QUEUE,
+            OptionItem.PLAY_NEXT,
+            OptionItem.ADD_TO_HOME_TAB,
+            OptionItem.ADD_TO_PLAYLIST,
+        )
+    )
+
     data class ArtistOption(override val source: ArtistItemModel) : MediaOption(
         source = source,
         options = listOf(

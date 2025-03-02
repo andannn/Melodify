@@ -37,4 +37,5 @@
     <string name="new_playlist_dialog_input_hint">Название</string>
     <string name="remove_playlist">Удалить плейлист</string>
     <string name="delete_this_tab">Удалить эту вкладку</string>
+    <string name="add_to_home_tab">Добавить на вкладку «Главная»</string>
 </resources>

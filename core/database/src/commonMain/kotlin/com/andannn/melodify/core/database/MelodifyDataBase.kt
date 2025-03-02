@@ -6,10 +6,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.migration.AutoMigrationSpec
-import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
-import androidx.sqlite.use
 import com.andannn.melodify.core.database.dao.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
@@ -19,7 +17,6 @@ import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
-import com.andannn.melodify.core.database.entity.CustomTabColumns
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
@@ -29,7 +26,10 @@ import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
-import io.github.aakira.napier.Napier
+import com.andannn.melodify.core.database.entity.SearchHistoryEntity
+import com.andannn.melodify.core.database.entity.fts.AlbumFtsEntity
+import com.andannn.melodify.core.database.entity.fts.ArtistFtsEntity
+import com.andannn.melodify.core.database.entity.fts.MediaFtsEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
@@ -39,10 +39,14 @@ internal object Tables {
     const val PLAY_LIST = "play_list_table"
     const val PLAY_LIST_WITH_MEDIA_CROSS_REF = "play_list_with_media_cross_ref_table"
     const val LIBRARY_MEDIA = "library_media_table"
+    const val LIBRARY_FTS_MEDIA = "library_fts_media_table"
     const val LIBRARY_ALBUM = "library_album_table"
+    const val LIBRARY_FTS_ALBUM = "library_fts_album_table"
     const val LIBRARY_ARTIST = "library_artist_table"
+    const val LIBRARY_FTS_ARTIST = "library_fts_artist_table"
     const val LIBRARY_GENRE = "library_genre_table"
     const val CUSTOM_TAB = "custom_tab_table"
+    const val SEARCH_HISTORY = "search_history_table"
 }
 
 @Database(
@@ -55,14 +59,19 @@ internal object Tables {
         ArtistEntity::class,
         GenreEntity::class,
         MediaEntity::class,
-        CustomTabEntity::class
+        CustomTabEntity::class,
+        AlbumFtsEntity::class,
+        ArtistFtsEntity::class,
+        MediaFtsEntity::class,
+        SearchHistoryEntity::class,
     ],
     autoMigrations = [
         AutoMigration(from = 3, to = 4),
         AutoMigration(from = 4, to = 5, AutoMigration4To5Spec::class),
         AutoMigration(from = 5, to = 6, AutoMigration5To6Spec::class),
+        AutoMigration(from = 6, to = 7),
     ],
-    version = 6,
+    version = 7,
 )
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class MelodifyDataBase : RoomDatabase() {
@@ -89,7 +98,7 @@ internal val addTriggerCallback = object : RoomDatabase.Callback() {
     override fun onCreate(connection: SQLiteConnection) {
         super.onCreate(connection)
 
-        createTrigger(connection)
+        createUpdateTrackCountTrigger(connection)
     }
 }
 
@@ -127,12 +136,11 @@ class AutoMigration4To5Spec : AutoMigrationSpec {
 
 class AutoMigration5To6Spec : AutoMigrationSpec {
     override fun onPostMigrate(connection: SQLiteConnection) {
-        createTrigger(connection)
+        createUpdateTrackCountTrigger(connection)
     }
 }
 
-
-private fun createTrigger(connection: SQLiteConnection) {
+private fun createUpdateTrackCountTrigger(connection: SQLiteConnection) {
     // delete invalid albums, artists, genres when delete media.
     connection.execSQL(
         """
@@ -204,3 +212,98 @@ private fun createTrigger(connection: SQLiteConnection) {
         """.trimIndent()
     )
 }
+
+// Trigger is created by Room Automatically.
+//class AutoMigration6To7Spec : AutoMigrationSpec {
+//    override fun onPostMigrate(connection: SQLiteConnection) {
+////        createUpdateFtsTableTrigger(connection)
+//
+//        // Sync library to FTS table.
+////        syncLibraryData(connection)
+//    }
+//
+//    private fun syncLibraryData(connection: SQLiteConnection) {
+//        connection.execSQL(
+//            """
+//            INSERT INTO ${Tables.LIBRARY_FTS_MEDIA}(rowid, ${MediaColumns.TITLE})
+//            SELECT ${MediaColumns.ID}, ${MediaColumns.TITLE} FROM ${Tables.LIBRARY_MEDIA}
+//        """.trimIndent()
+//        )
+//
+//        connection.execSQL(
+//            """
+//            INSERT INTO ${Tables.LIBRARY_FTS_ALBUM}(rowid, ${AlbumColumns.TITLE})
+//            SELECT ${AlbumColumns.ID}, ${AlbumColumns.TITLE} FROM ${Tables.LIBRARY_ALBUM}
+//        """.trimIndent()
+//        )
+//    }
+//}
+//
+//private fun createUpdateFtsTableTrigger(connection: SQLiteConnection) {
+//    connection.createFtsTableTrigger(
+//        tableName = Tables.LIBRARY_ALBUM,
+//        ftsTableName = Tables.LIBRARY_FTS_ALBUM,
+//        deleteRowString = {
+//            "DELETE FROM ${Tables.LIBRARY_FTS_ALBUM} WHERE rowid=old.${AlbumColumns.ID};"
+//        },
+//        insertRowString = {
+//            "INSERT INTO ${Tables.LIBRARY_FTS_ALBUM}(rowid, ${AlbumColumns.TITLE}) VALUES (new.${AlbumColumns.ID}, new.${AlbumColumns.TITLE});"
+//        }
+//    )
+//    connection.createFtsTableTrigger(
+//        tableName = Tables.LIBRARY_ARTIST,
+//        ftsTableName = Tables.LIBRARY_FTS_ARTIST,
+//        deleteRowString = {
+//            "DELETE FROM ${Tables.LIBRARY_FTS_ARTIST} WHERE rowid=old.${ArtistColumns.ID};"
+//        },
+//        insertRowString = {
+//            "INSERT INTO ${Tables.LIBRARY_FTS_ARTIST}(rowid, ${ArtistColumns.NAME}) VALUES (new.${ArtistColumns.ID}, new.${ArtistColumns.NAME});"
+//        }
+//    )
+//    connection.createFtsTableTrigger(
+//        tableName = Tables.LIBRARY_MEDIA,
+//        ftsTableName = Tables.LIBRARY_FTS_MEDIA,
+//        deleteRowString = {
+//            "DELETE FROM ${Tables.LIBRARY_FTS_MEDIA} WHERE rowid=old.${MediaColumns.ID};"
+//        },
+//        insertRowString = {
+//            "INSERT INTO ${Tables.LIBRARY_FTS_MEDIA}(rowid, ${MediaColumns.TITLE}) VALUES (new.${MediaColumns.ID}, new.${MediaColumns.TITLE});"
+//        }
+//    )
+//}
+//
+//private fun SQLiteConnection.createFtsTableTrigger(
+//    tableName: String,
+//    ftsTableName: String,
+//    deleteRowString: () -> String,
+//    insertRowString: () -> String
+//) {
+//    execSQL(
+//        """
+//            CREATE TRIGGER IF NOT EXISTS delete_${ftsTableName}_before_insert BEFORE UPDATE ON $tableName BEGIN
+//              ${deleteRowString()}
+//            END;
+//        """.trimIndent()
+//    )
+//    execSQL(
+//        """
+//            CREATE TRIGGER IF NOT EXISTS insert_${ftsTableName}_after_update AFTER UPDATE ON $tableName BEGIN
+//              ${insertRowString()}
+//            END;
+//        """.trimIndent()
+//    )
+//    execSQL(
+//        """
+//            CREATE TRIGGER IF NOT EXISTS delete_${ftsTableName}_before_delete BEFORE DELETE ON $tableName BEGIN
+//              ${deleteRowString()}
+//            END;
+//        """.trimIndent()
+//    )
+//    execSQL(
+//        """
+//            CREATE TRIGGER IF NOT EXISTS insert_${ftsTableName}_after_insert AFTER INSERT ON $tableName BEGIN
+//              ${insertRowString()}
+//            END;
+//        """.trimIndent()
+//    )
+//}

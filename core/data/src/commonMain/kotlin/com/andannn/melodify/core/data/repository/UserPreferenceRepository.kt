@@ -52,4 +52,18 @@ interface UserPreferenceRepository {
      * @return true if delete success, false otherwise
      */
     suspend fun deleteLibraryPath(path: String): Boolean
+
+    /**
+     * add search history
+     *
+     * @param searchHistory search history to add
+     */
+    suspend fun addSearchHistory(searchHistory: String)
+
+    /**
+     * get all search history
+     *
+     * @return all search history
+     */
+    suspend fun getAllSearchHistory(limit: Int = 10): List<String>
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,11 +30,13 @@ const val HOME_ROUTE = "home_route"
 
 fun NavGraphBuilder.homeScreen(
     onNavigateCustomTabSetting: () -> Unit,
+    onNavigateSearchPage: () -> Unit,
     onOpenDrawer: () -> Unit
 ) {
     composable(route = HOME_ROUTE) {
         HomeScreen(
             onSettingButtonClick = onNavigateCustomTabSetting,
+            onSearchButtonClick = onNavigateSearchPage,
             onOpenDrawer = onOpenDrawer
         )
     }
@@ -44,6 +47,7 @@ fun NavGraphBuilder.homeScreen(
 private fun HomeScreen(
     modifier: Modifier = Modifier,
     onSettingButtonClick: () -> Unit = {},
+    onSearchButtonClick: () -> Unit = {},
     onOpenDrawer: () -> Unit = {},
 ) {
     val scrollBehavior = enterAlwaysScrollBehavior()
@@ -76,6 +80,12 @@ private fun HomeScreen(
                     )
                 },
                 actions = {
+                    IconButton(
+                        onClick = onSearchButtonClick,
+                        content = {
+                            Icon(Icons.Rounded.Search, contentDescription = "")
+                        }
+                    )
                     IconButton(
                         onClick = onSettingButtonClick,
                         content = {

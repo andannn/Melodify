@@ -9,10 +9,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.getAudios
+import com.andannn.melodify.core.data.model.AlbumItemModel
+import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogData
 import com.andannn.melodify.ui.components.popup.dialog.DialogDataImpl
@@ -77,11 +81,13 @@ class PopupControllerImpl : PopupController {
      * Dialog show at most one snackbar at a time.
      */
     override suspend fun showDialog(dialogId: DialogId): DialogAction = mutex.withLock {
+        Napier.d(tag = TAG) { "show dialog. dialogId = $dialogId" }
         try {
             return suspendCancellableCoroutine { continuation ->
                 _currentDialog = DialogDataImpl(dialogId, continuation)
             }
         } finally {
+            Napier.d(tag = TAG) { "currentDialog closed = $dialogId" }
             _currentDialog = null
         }
     }
@@ -103,8 +109,20 @@ suspend fun Repository.onMediaOptionClick(
 
         OptionItem.ADD_TO_PLAYLIST -> onAddToPlaylistOptionClick(popupController, dialog.source)
         OptionItem.DELETE_PLAYLIST -> onDeletePlayList(dialog.source as PlayListItemModel)
+        OptionItem.ADD_TO_HOME_TAB -> onAddToHomeTab(dialog.source)
         OptionItem.DELETE_TAB -> error("never")
     }
+}
+
+private suspend fun Repository.onAddToHomeTab(source: MediaItemModel) {
+    val tab = when (source) {
+        is AlbumItemModel -> CustomTab.AlbumDetail(source.id, source.name)
+        is ArtistItemModel -> CustomTab.ArtistDetail(source.id, source.name)
+        is GenreItemModel -> CustomTab.GenreDetail(source.id, source.name)
+        is PlayListItemModel -> CustomTab.PlayListDetail(source.id, source.name)
+        is AudioItemModel -> error("invalid")
+    }
+    userPreferenceRepository.addNewCustomTab(tab)
 }
 
 private suspend fun Repository.onPlayNextClick(source: MediaItemModel) {

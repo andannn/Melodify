@@ -3,6 +3,7 @@ package com.andannn.melodify.ui.components.popup.dialog
 import com.andannn.melodify.ui.common.icons.SimpleMusicIcons
 import com.andannn.melodify.ui.common.icons.SmpIcon
 import melodify.ui.common.generated.resources.Res
+import melodify.ui.common.generated.resources.add_to_home_tab
 import melodify.ui.common.generated.resources.add_to_playlist
 import melodify.ui.common.generated.resources.add_to_queue
 import melodify.ui.common.generated.resources.delete
@@ -47,6 +48,10 @@ enum class OptionItem(
         smpIcon = SimpleMusicIcons.DeleteSweep,
         text = Res.string.delete_this_tab,
     ),
+    ADD_TO_HOME_TAB(
+        smpIcon = SimpleMusicIcons.AddToHomeTab,
+        text = Res.string.add_to_home_tab,
+    )
 }
 
 enum class SleepTimerOption(

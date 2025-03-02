@@ -37,4 +37,5 @@
     <string name="new_playlist_dialog_input_hint">タイトル</string>
     <string name="remove_playlist">プレイリストを削除</string>
     <string name="delete_this_tab">このタブを削除</string>
+    <string name="add_to_home_tab">ホームタブに追加</string>
 </resources>

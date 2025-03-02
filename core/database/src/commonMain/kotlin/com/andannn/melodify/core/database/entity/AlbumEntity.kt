@@ -14,7 +14,7 @@ internal object AlbumColumns {
 }
 
 @Entity(tableName = Tables.LIBRARY_ALBUM)
-class AlbumEntity(
+data class AlbumEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = AlbumColumns.ID)
     val albumId: Long,

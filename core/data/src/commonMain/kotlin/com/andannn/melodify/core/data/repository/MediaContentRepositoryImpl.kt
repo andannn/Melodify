@@ -1,12 +1,15 @@
 package com.andannn.melodify.core.data.repository
 
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.util.mapToAlbumItemModel
 import com.andannn.melodify.core.data.util.mapToArtistItemModel
 import com.andannn.melodify.core.data.util.mapToAudioItemModel
 import com.andannn.melodify.core.data.util.mapToGenreItemModel
 import com.andannn.melodify.core.data.util.toAppItem
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.map
+import kotlin.coroutines.coroutineContext
 
 internal class MediaContentRepositoryImpl(
     private val mediaLibraryDao: MediaLibraryDao
@@ -75,4 +78,14 @@ internal class MediaContentRepositoryImpl(
 
     override suspend fun getGenreByGenreId(genreId: String) =
         mediaLibraryDao.getGenreByGenreId(genreId)?.toAppItem()
+
+    override suspend fun searchContent(keyword: String): List<MediaItemModel> {
+        val matchedAudios = mediaLibraryDao.searchMedia(keyword).map { it.toAppItem() }
+        coroutineContext.ensureActive()
+        val matchedAlbums = mediaLibraryDao.searchAlbum(keyword).map { it.toAppItem() }
+        coroutineContext.ensureActive()
+        val matchedArtists = mediaLibraryDao.searchArtist(keyword).map { it.toAppItem() }
+
+        return matchedAudios + matchedAlbums + matchedArtists
+    }
 }
