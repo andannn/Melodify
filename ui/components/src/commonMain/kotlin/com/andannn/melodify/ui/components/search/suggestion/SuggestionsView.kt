@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
+import com.andannn.melodify.ui.components.search.searchedItem.SearchedItem
 
 /**
  * Content of the search bar when expanded.
@@ -111,11 +112,9 @@ private fun SuggestionsContent(
                 }
 
                 state.bestMatchedItems.forEach {
-                    ListTileItemView(
-                        defaultColor = Color.Transparent,
-                        title = it.name,
-                        albumArtUri = it.artWorkUri,
-                        onOptionButtonClick = {}
+                    SearchedItem(
+                        modifier = Modifier,
+                        mediaItemModel = it
                     )
                 }
             }
