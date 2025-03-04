@@ -47,7 +47,6 @@ internal fun SearchViewContent(
     onConfirmSearch: (String) -> Unit = {},
     onBackKeyPressed: () -> Unit = {}
 ) {
-
     Scaffold(
         modifier = modifier
     ) {

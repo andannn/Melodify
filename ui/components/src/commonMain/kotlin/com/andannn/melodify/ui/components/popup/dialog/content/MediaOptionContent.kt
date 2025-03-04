@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.common.icons.SmpIcon
+import com.andannn.melodify.ui.common.widgets.SmpIcon
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
@@ -67,11 +68,3 @@ internal fun SheetItem(
     }
 }
 
-@Composable
-private fun SmpIcon(item: SmpIcon) {
-    when (item) {
-        is SmpIcon.ImageVectorIcon -> {
-            Icon(imageVector = item.imageVector, contentDescription = "")
-        }
-    }
-}

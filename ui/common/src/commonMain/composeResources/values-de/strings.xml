@@ -38,4 +38,5 @@
     <string name="remove_playlist">Playlist löschen</string>
     <string name="delete_this_tab">Diesen Tab löschen</string>
     <string name="add_to_home_tab">Zur Startseite hinzufügen</string>
+    <string name="favorite">Favoriten</string>
 </resources>

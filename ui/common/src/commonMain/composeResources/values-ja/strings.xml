@@ -38,4 +38,5 @@
     <string name="remove_playlist">プレイリストを削除</string>
     <string name="delete_this_tab">このタブを削除</string>
     <string name="add_to_home_tab">ホームタブに追加</string>
+    <string name="favorite">お気に入り</string>
 </resources>
