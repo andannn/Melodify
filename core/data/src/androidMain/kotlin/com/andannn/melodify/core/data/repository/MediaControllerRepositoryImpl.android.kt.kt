@@ -20,6 +20,7 @@ internal class MediaControllerRepositoryImpl(
     }
 
     override fun playMediaList(mediaList: List<AudioItemModel>, index: Int) {
+        Log.d(TAG, "playMediaList: ")
         with(mediaBrowser) {
             setMediaItems(
                 mediaList.map { it.toMediaItem(generateUniqueId = true) },

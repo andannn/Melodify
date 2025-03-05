@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.google.service)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.dependency.graph.generator)
+    alias(libs.plugins.serialization)
 }
 
 kotlin {
@@ -25,6 +26,7 @@ kotlin {
 
             implementation(libs.navigation.compose)
             implementation(libs.reorderable)
+            implementation(libs.kotlinx.serialization.json)
         }
 
         androidMain.dependencies {

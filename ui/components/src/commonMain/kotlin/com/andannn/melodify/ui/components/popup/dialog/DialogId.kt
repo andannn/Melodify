@@ -129,6 +129,16 @@ sealed interface DialogId {
         ),
     )
 
+    data class SearchedPlayListOption(override val source: PlayListItemModel) : MediaOption(
+        source = source,
+        options = listOf(
+            OptionItem.ADD_TO_QUEUE,
+            OptionItem.PLAY_NEXT,
+            OptionItem.ADD_TO_PLAYLIST,
+            OptionItem.ADD_TO_HOME_TAB
+        ),
+    )
+
     data class FavoritePlayListOption(override val source: PlayListItemModel) :
         MediaOption(
             source = source,
@@ -147,6 +157,16 @@ sealed interface DialogId {
             OptionItem.PLAY_NEXT,
             OptionItem.ADD_TO_PLAYLIST,
             OptionItem.DELETE_TAB,
+        )
+    )
+
+    data class SearchedGenreOption(override val source: GenreItemModel) : MediaOption(
+        source = source,
+        options = listOf(
+            OptionItem.ADD_TO_QUEUE,
+            OptionItem.PLAY_NEXT,
+            OptionItem.ADD_TO_HOME_TAB,
+            OptionItem.ADD_TO_PLAYLIST,
         )
     )
 
