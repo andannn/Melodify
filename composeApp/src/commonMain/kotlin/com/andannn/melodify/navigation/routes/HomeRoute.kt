@@ -31,13 +31,13 @@ const val HOME_ROUTE = "home_route"
 fun NavGraphBuilder.homeScreen(
     onNavigateCustomTabSetting: () -> Unit,
     onNavigateSearchPage: () -> Unit,
-    onOpenDrawer: () -> Unit
+    onNavigateToLibrary: () -> Unit
 ) {
     composable(route = HOME_ROUTE) {
         HomeScreen(
             onSettingButtonClick = onNavigateCustomTabSetting,
             onSearchButtonClick = onNavigateSearchPage,
-            onOpenDrawer = onOpenDrawer
+            onLibraryButtonClick = onNavigateToLibrary,
         )
     }
 }
@@ -48,7 +48,7 @@ private fun HomeScreen(
     modifier: Modifier = Modifier,
     onSettingButtonClick: () -> Unit = {},
     onSearchButtonClick: () -> Unit = {},
-    onOpenDrawer: () -> Unit = {},
+    onLibraryButtonClick: () -> Unit = {},
 ) {
     val scrollBehavior = enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
@@ -73,7 +73,7 @@ private fun HomeScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = onOpenDrawer,
+                        onClick = onLibraryButtonClick,
                         content = {
                             Icon(Icons.Rounded.Menu, contentDescription = "")
                         }

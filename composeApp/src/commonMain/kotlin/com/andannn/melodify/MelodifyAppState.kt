@@ -1,10 +1,7 @@
 package com.andannn.melodify
 
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -23,19 +20,16 @@ fun rememberAppState(
     scope: CoroutineScope = rememberCoroutineScope(),
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     popupController: PopupController = LocalPopupController.current,
-    drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
 ) = remember(
     navController,
     scope,
     snackBarHostState,
-    drawerState
 ) {
     MelodifyAppState(
         scope = scope,
         navController = navController,
         snackBarHostState = snackBarHostState,
         popupController = popupController,
-        drawerState = drawerState,
     )
 }
 
@@ -46,7 +40,6 @@ class MelodifyAppState(
     val navController: NavHostController,
     val snackBarHostState: SnackbarHostState,
     val popupController: PopupController,
-    val drawerState: DrawerState
 ) {
     init {
         scope.launch {
@@ -63,12 +56,6 @@ class MelodifyAppState(
                     Napier.d(tag = TAG) { "show snackbar dismiss $result" }
                 }
             }
-        }
-    }
-
-    fun openDrawer() {
-        scope.launch {
-            drawerState.open()
         }
     }
 }
