@@ -55,8 +55,8 @@ android {
 
     defaultConfig {
         applicationId = "com.andannn.melodify"
-        versionCode = 30
-        versionName = "1.0.6"
+        versionCode = 31
+        versionName = "1.0.7"
 
         signingConfig = signingConfigs.getByName("debug")
     }
@@ -99,7 +99,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg)
             packageName = "Melodify"
-            packageVersion = "1.0.6"
+            packageVersion = "1.0.7"
 
             modules(
                 "jdk.unsupported",
