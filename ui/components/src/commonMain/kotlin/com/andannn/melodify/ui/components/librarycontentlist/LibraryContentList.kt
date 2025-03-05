@@ -18,11 +18,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.browsable
 import com.andannn.melodify.core.data.repository.PlayListRepository.Companion.FAVORITE_PLAY_LIST_ID
 import com.andannn.melodify.ui.components.library.util.asDataSource
-import com.andannn.melodify.ui.components.search.searchedItem.MediaItemWithOptionAction
+import com.andannn.melodify.ui.components.common.MediaItemWithOptionAction
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -45,6 +46,7 @@ fun LibraryContentListView(
             if (it.browsable) {
                 onNavigateToLibraryContentList(it.asDataSource())
             } else {
+                stateHolder.playMusic(it as AudioItemModel)
             }
         }
     )
@@ -79,7 +81,7 @@ fun LibraryContentList(
     ) {
         LazyColumn(
             modifier = Modifier.padding(it),
-            contentPadding = PaddingValues(horizontal = 8.dp),
+            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, bottom = 128.dp),
         ) {
             items(
                 items = contentList,

@@ -4,9 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.AudioItemModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
@@ -40,7 +39,7 @@ internal fun rememberLibraryContentListState(
 internal class LibraryContentListStateHolder(
     scope: CoroutineScope,
     private val repository: Repository,
-    private val  dataSource: LibraryDataSource,
+    private val dataSource: LibraryDataSource,
 ) {
     val contentList = with(dataSource) {
         repository.content()
@@ -61,5 +60,14 @@ internal class LibraryContentListStateHolder(
         is LibraryDataSource.ArtistDetail -> repository.mediaContentRepository.getArtistByArtistId(id)?.name ?: ""
         is LibraryDataSource.GenreDetail -> repository.mediaContentRepository.getGenreByGenreId(id)?.name ?: ""
         is LibraryDataSource.PlayListDetail -> repository.playListRepository.getPlayListById(id.toLong())?.name ?: ""
+    }
+
+    fun playMusic(audioItemModel: AudioItemModel) {
+        val mediaItems = contentList.value.filterIsInstance<AudioItemModel>()
+
+       repository.mediaControllerRepository.playMediaList(
+            mediaItems.toList(),
+            mediaItems.indexOf(audioItemModel)
+        )
     }
 }

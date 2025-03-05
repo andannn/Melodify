@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.components.search.SearchState
-import com.andannn.melodify.ui.components.search.searchedItem.MediaItemWithOptionAction
+import com.andannn.melodify.ui.components.common.MediaItemWithOptionAction
 
 @Composable
 internal fun SearchPageView(

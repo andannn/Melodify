@@ -1,4 +1,4 @@
-package com.andannn.melodify.ui.components.search.searchedItem
+package com.andannn.melodify.ui.components.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -92,7 +92,7 @@ internal fun MediaItemWithOptionAction(
             onItemClick = onItemClick,
             onOptionButtonClick = {
                 scope.launch {
-                    val result = popupController.showDialog(DialogId.GenreOption(mediaItemModel))
+                    val result = popupController.showDialog(DialogId.SearchedGenreOption(mediaItemModel))
                     onHandleResult(result)
                 }
             },
@@ -104,7 +104,7 @@ internal fun MediaItemWithOptionAction(
             onItemClick = onItemClick,
             onOptionButtonClick = {
                 scope.launch {
-                    val result = popupController.showDialog(DialogId.PlayListOption(mediaItemModel))
+                    val result = popupController.showDialog(DialogId.SearchedPlayListOption(mediaItemModel))
                     onHandleResult(result)
                 }
             },
