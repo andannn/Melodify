@@ -6,6 +6,9 @@ import com.andannn.melodify.core.database.dao.PlayListDao
 import kotlinx.coroutines.flow.Flow
 
 interface PlayListRepository {
+    companion object {
+        const val FAVORITE_PLAY_LIST_ID = PlayListDao.FAVORITE_PLAY_LIST_ID
+    }
     /**
      * Return flow of all playLists
      */

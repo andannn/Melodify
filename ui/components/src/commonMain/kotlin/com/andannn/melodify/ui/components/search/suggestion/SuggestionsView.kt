@@ -24,7 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.ui.components.search.searchedItem.SearchedItem
+import com.andannn.melodify.ui.components.search.searchedItem.MediaItemWithOptionAction
 
 /**
  * Content of the search bar when expanded.
@@ -107,9 +107,10 @@ private fun SuggestionsContent(
                 }
 
                 state.bestMatchedItems.forEach {
-                    SearchedItem(
+                    MediaItemWithOptionAction(
                         modifier = Modifier,
-                        mediaItemModel = it
+                        mediaItemModel = it,
+                        onItemClick = {}
                     )
                 }
             }

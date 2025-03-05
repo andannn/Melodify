@@ -1,7 +1,6 @@
 package com.andannn.melodify.ui.components.library
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +11,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.automirrored.rounded.SendAndArchive
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,19 +24,37 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.ui.common.icons.SimpleMusicIcons
+import com.andannn.melodify.ui.common.icons.SmpIcon
 import com.andannn.melodify.ui.common.widgets.SmpIcon
+import com.andannn.melodify.ui.components.library.util.toDataSource
+import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
+import melodify.ui.common.generated.resources.Res
+import melodify.ui.common.generated.resources.album_page_title
+import melodify.ui.common.generated.resources.artist_page_title
+import melodify.ui.common.generated.resources.audio_page_title
+import melodify.ui.common.generated.resources.favorite
+import melodify.ui.common.generated.resources.genre_title
+import melodify.ui.common.generated.resources.playlist_page_title
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun LibraryView(
     modifier: Modifier = Modifier,
     onBackKeyPressed: () -> Unit = {},
-    navigateToSearch: () -> Unit = {}
+    navigateToSearch: () -> Unit = {},
+    navigateToLibraryContentList: (LibraryDataSource) -> Unit = {},
 ) {
     LibraryContent(
         modifier = modifier,
         onBackKeyPressed = onBackKeyPressed,
         navigateToSearch = navigateToSearch,
+        onShortcutItemClick = { item ->
+            navigateToLibraryContentList(
+                item.toDataSource()
+            )
+        }
     )
 }
 
@@ -48,6 +64,7 @@ private fun LibraryContent(
     modifier: Modifier = Modifier,
     onBackKeyPressed: () -> Unit,
     navigateToSearch: () -> Unit = {},
+    onShortcutItemClick: (ShortcutItem) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -87,7 +104,9 @@ private fun LibraryContent(
             ) { item ->
                 ShortcutItem(
                     shortcutItem = item,
-                    onClick = {},
+                    onClick = {
+                        onShortcutItemClick(item)
+                    },
                 )
             }
         }
@@ -123,4 +142,40 @@ private fun ShortcutItem(
             Spacer(modifier = Modifier.width(5.dp))
         }
     }
+}
+
+
+internal enum class ShortcutItem(
+    val iconRes: SmpIcon,
+    val textRes: StringResource,
+) {
+    ALL_SONG(
+        iconRes = SimpleMusicIcons.Music,
+        textRes = Res.string.audio_page_title,
+    ),
+
+    ALBUM(
+        iconRes = SimpleMusicIcons.Album,
+        textRes = Res.string.album_page_title,
+    ),
+
+    ARTIST(
+        iconRes = SimpleMusicIcons.Artist,
+        textRes = Res.string.artist_page_title,
+    ),
+
+    GENRE(
+        iconRes = SimpleMusicIcons.Genre,
+        textRes = Res.string.genre_title,
+    ),
+
+    FAVORITE(
+        iconRes = SimpleMusicIcons.AddFavorite,
+        textRes = Res.string.favorite,
+    ),
+
+    PLAYLIST(
+        iconRes = SimpleMusicIcons.PlayList,
+        textRes = Res.string.playlist_page_title,
+    )
 }

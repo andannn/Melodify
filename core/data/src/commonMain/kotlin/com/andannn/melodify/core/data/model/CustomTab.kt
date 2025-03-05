@@ -34,8 +34,3 @@ sealed interface CustomTab {
             playListRepository.getAudiosOfPlayListFlow(playListId.toLong())
     }
 }
-
-@Serializable
-data class CurrentCustomTabs(
-    val customTabs: List<CustomTab>
-)

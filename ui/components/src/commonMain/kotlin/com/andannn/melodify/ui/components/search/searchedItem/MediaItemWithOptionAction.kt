@@ -21,11 +21,12 @@ import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-internal fun SearchedItem(
+internal fun MediaItemWithOptionAction(
     modifier: Modifier = Modifier,
     mediaItemModel: MediaItemModel,
     popupController: PopupController = LocalPopupController.current,
-    repository: Repository = getKoin().get()
+    repository: Repository = getKoin().get(),
+    onItemClick: () -> Unit,
 ) {
     suspend fun onHandleResult(result: DialogAction) {
         if (result is DialogAction.MediaOptionDialog.ClickItem) {
@@ -51,9 +52,7 @@ internal fun SearchedItem(
                     onHandleResult(result)
                 }
             },
-            onItemClick = {
-                // TODO: navigate to album
-            }
+            onItemClick = onItemClick
         )
 
         is ArtistItemModel -> Item(
@@ -68,9 +67,7 @@ internal fun SearchedItem(
                     onHandleResult(result)
                 }
             },
-            onItemClick = {
-                // TODO: navigate to artist
-            }
+            onItemClick = onItemClick
         )
 
         is AudioItemModel -> Item(
@@ -78,9 +75,7 @@ internal fun SearchedItem(
             title = mediaItemModel.name,
             cover = mediaItemModel.artWorkUri,
             subTitle = "Song",
-            onItemClick = {
-                // TODO: play this song and navigate to player page
-            },
+            onItemClick = onItemClick,
             onOptionButtonClick = {
                 scope.launch {
                     val result = popupController.showDialog(DialogId.AudioOption(mediaItemModel))
@@ -89,8 +84,31 @@ internal fun SearchedItem(
             },
         )
 
-        is GenreItemModel,
-        is PlayListItemModel -> error("Not supported as searched result")
+        is GenreItemModel -> Item(
+            modifier = modifier,
+            title = mediaItemModel.name,
+            cover = mediaItemModel.artWorkUri,
+            subTitle = "Genre",
+            onItemClick = onItemClick,
+            onOptionButtonClick = {
+                scope.launch {
+                    val result = popupController.showDialog(DialogId.GenreOption(mediaItemModel))
+                    onHandleResult(result)
+                }
+            },
+        )
+        is PlayListItemModel -> Item(
+            modifier = modifier,
+            title = mediaItemModel.name,
+            cover = mediaItemModel.artWorkUri,
+            onItemClick = onItemClick,
+            onOptionButtonClick = {
+                scope.launch {
+                    val result = popupController.showDialog(DialogId.PlayListOption(mediaItemModel))
+                    onHandleResult(result)
+                }
+            },
+        )
     }
 }
 

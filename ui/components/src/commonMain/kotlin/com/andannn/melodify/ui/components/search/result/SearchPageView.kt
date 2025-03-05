@@ -7,14 +7,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.components.search.SearchState
-import com.andannn.melodify.ui.components.search.searchedItem.SearchedItem
+import com.andannn.melodify.ui.components.search.searchedItem.MediaItemWithOptionAction
 
 @Composable
 internal fun SearchPageView(
@@ -61,8 +60,9 @@ private fun SearchPageContent(
                 items = result.albums,
                 key = { it.id }
             ) {
-                SearchedItem(
-                    mediaItemModel = it
+                MediaItemWithOptionAction(
+                    mediaItemModel = it,
+                    onItemClick = {}
                 )
             }
         }
@@ -80,8 +80,9 @@ private fun SearchPageContent(
                 items = result.audios,
                 key = { it.id }
             ) {
-                SearchedItem(
-                    mediaItemModel = it
+                MediaItemWithOptionAction(
+                    mediaItemModel = it,
+                    onItemClick = {}
                 )
             }
         }
@@ -99,8 +100,9 @@ private fun SearchPageContent(
                 items = result.artists,
                 key = { it.id }
             ) {
-                SearchedItem(
-                    mediaItemModel = it
+                MediaItemWithOptionAction(
+                    mediaItemModel = it,
+                    onItemClick = {}
                 )
             }
         }
