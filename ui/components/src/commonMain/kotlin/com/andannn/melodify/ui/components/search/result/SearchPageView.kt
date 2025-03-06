@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.components.search.SearchState
 import com.andannn.melodify.ui.components.common.MediaItemWithOptionAction
 
@@ -19,6 +20,7 @@ import com.andannn.melodify.ui.components.common.MediaItemWithOptionAction
 internal fun SearchPageView(
     modifier: Modifier = Modifier,
     searchedResult: SearchState,
+    onResultItemClick: (MediaItemModel) -> Unit = {}
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         when (searchedResult) {
@@ -33,7 +35,8 @@ internal fun SearchPageView(
 
             is SearchState.Result -> SearchPageContent(
                 modifier = Modifier,
-                result = searchedResult
+                result = searchedResult,
+                onResultItemClick = onResultItemClick
             )
         }
     }
@@ -43,6 +46,7 @@ internal fun SearchPageView(
 private fun SearchPageContent(
     modifier: Modifier = Modifier,
     result: SearchState.Result,
+    onResultItemClick: (MediaItemModel) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
@@ -62,7 +66,9 @@ private fun SearchPageContent(
             ) {
                 MediaItemWithOptionAction(
                     mediaItemModel = it,
-                    onItemClick = {}
+                    onItemClick = {
+                        onResultItemClick(it)
+                    }
                 )
             }
         }
@@ -82,7 +88,9 @@ private fun SearchPageContent(
             ) {
                 MediaItemWithOptionAction(
                     mediaItemModel = it,
-                    onItemClick = {}
+                    onItemClick = {
+                        onResultItemClick(it)
+                    }
                 )
             }
         }
@@ -102,7 +110,9 @@ private fun SearchPageContent(
             ) {
                 MediaItemWithOptionAction(
                     mediaItemModel = it,
-                    onItemClick = {}
+                    onItemClick = {
+                        onResultItemClick(it)
+                    }
                 )
             }
         }

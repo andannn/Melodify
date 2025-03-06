@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.components.common.MediaItemWithOptionAction
 
 /**
@@ -42,6 +43,7 @@ internal fun SuggestionsView(
     query: String,
     modifier: Modifier = Modifier,
     onConfirmSearch: (String) -> Unit = {},
+    onBestMatchedItemClicked: (MediaItemModel) -> Unit = {},
 ) {
     val state by rememberSuggestionsStateHolder(query = query).state.collectAsState()
 
@@ -51,6 +53,7 @@ internal fun SuggestionsView(
         SuggestionsContent(
             state = state,
             onConfirmSearch = onConfirmSearch,
+            onBestMatchedItemClicked = onBestMatchedItemClicked,
         )
     }
 }
@@ -60,6 +63,7 @@ private fun SuggestionsContent(
     state: SuggestionsState,
     modifier: Modifier = Modifier,
     onConfirmSearch: (String) -> Unit = {},
+    onBestMatchedItemClicked: (MediaItemModel) -> Unit = {},
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
         when (state) {
@@ -110,7 +114,9 @@ private fun SuggestionsContent(
                     MediaItemWithOptionAction(
                         modifier = Modifier,
                         mediaItemModel = it,
-                        onItemClick = {}
+                        onItemClick = {
+                            onBestMatchedItemClicked(it)
+                        }
                     )
                 }
             }

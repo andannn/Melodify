@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
+import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
+import com.andannn.melodify.ui.components.playcontrol.PlayerUiEventConsumer
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.BottomSheetDragAreaHeight
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.MinFadeoutWithExpandAreaPaddingTop
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.MinImagePaddingStart
@@ -38,6 +40,7 @@ internal fun rememberPlayerViewState(
     statusBarHeightPx: Int,
     density: Density,
     animaScope: CoroutineScope = rememberCoroutineScope(),
+    eventConsumer: PlayerUiEventConsumer = LocalPlayerUiController.current as PlayerUiEventConsumer,
 ) = remember(
     screenSize,
     navigationBarHeightPx,
@@ -51,6 +54,7 @@ internal fun rememberPlayerViewState(
         statusBarHeightPx = statusBarHeightPx.toFloat(),
         density = density,
         animaScope = animaScope,
+        eventConsumer = eventConsumer
     )
 }
 
@@ -63,7 +67,22 @@ PlayerViewState(
     statusBarHeightPx: Float,
     private val density: Density,
     private val animaScope: CoroutineScope,
+    eventConsumer: PlayerUiEventConsumer,
 ) {
+    init {
+        animaScope.launch {
+            for (event in eventConsumer.expandEventReceiveChannel) {
+                expandPlayerLayout()
+            }
+        }
+
+        animaScope.launch {
+            for (event in eventConsumer.shrinkEventReceiveChannel) {
+                shrinkPlayerLayout()
+            }
+        }
+    }
+
     private val shrinkPlayerHeightPx = ShrinkPlayerHeight.toPx()
     val bottomSheetHeight =
         screenSize.height - statusBarHeightPx - shrinkPlayerHeightPx
@@ -73,10 +92,10 @@ PlayerViewState(
         AnchoredDraggableState(
             initialValue = BottomSheetState.Shrink,
             anchors =
-                DraggableAnchors {
-                    BottomSheetState.Shrink at bottomSheetHeight - bottomSheetDragAreaHeightPx
-                    BottomSheetState.Expand at 0f
-                },
+            DraggableAnchors {
+                BottomSheetState.Shrink at bottomSheetHeight - bottomSheetDragAreaHeightPx
+                BottomSheetState.Expand at 0f
+            },
             positionalThreshold = { 300f },
             velocityThreshold = { 400f },
             snapAnimationSpec = spring(),
@@ -97,10 +116,10 @@ PlayerViewState(
         AnchoredDraggableState(
             initialValue = PlayerState.Shrink,
             anchors =
-                DraggableAnchors {
-                    PlayerState.Shrink at shrinkPlayerHeight
-                    PlayerState.Expand at screenSize.height
-                },
+            DraggableAnchors {
+                PlayerState.Shrink at shrinkPlayerHeight
+                PlayerState.Expand at screenSize.height
+            },
             positionalThreshold = { with(density) { 26.dp.toPx() } },
             velocityThreshold = { with(density) { 20.dp.toPx() } },
             snapAnimationSpec = spring(),
@@ -119,16 +138,16 @@ PlayerViewState(
     }
 
     val playerState: PlayerState by
-        derivedStateOf {
-            playerExpandState.currentValue
-        }
+    derivedStateOf {
+        playerExpandState.currentValue
+    }
 
     // - when bottom sheet is expanding: 0f when sheet fully expanded, 1f when sheet shrink.
     // - when player is expanding: 0f when player fully expanded, 1f when player shrink.
     val imageTransactionFactor by
-        derivedStateOf {
-            if (isBottomSheetExpanding) bottomSheetOffsetFactor else playerExpandFactor
-        }
+    derivedStateOf {
+        if (isBottomSheetExpanding) bottomSheetOffsetFactor else playerExpandFactor
+    }
 
     private val maxImageSize = screenSize.height.toDp().div(2.5f)
     private val imagePaddingTopWhenFillExpandDp = screenSize.height.toDp().div(8)
@@ -139,36 +158,36 @@ PlayerViewState(
             .div(2)
 
     val imageSizeDp: Dp by
-        derivedStateOf {
-            lerp(start = MinImageSize, stop = maxImageSize, imageTransactionFactor)
-        }
+    derivedStateOf {
+        lerp(start = MinImageSize, stop = maxImageSize, imageTransactionFactor)
+    }
 
     val imagePaddingTopDp: Dp by
-        derivedStateOf {
-            lerp(
-                start = MinImagePaddingTop + if (isBottomSheetExpanding) statusBarHeightPx.toDp() else 0.dp,
-                stop = imagePaddingTopWhenFillExpandDp,
-                imageTransactionFactor,
-            )
-        }
+    derivedStateOf {
+        lerp(
+            start = MinImagePaddingTop + if (isBottomSheetExpanding) statusBarHeightPx.toDp() else 0.dp,
+            stop = imagePaddingTopWhenFillExpandDp,
+            imageTransactionFactor,
+        )
+    }
 
     val imagePaddingStartDp: Dp by
-        derivedStateOf {
-            lerp(
-                start = MinImagePaddingStart,
-                stop = imagePaddingHorizontalWhenFillExpandDp,
-                imageTransactionFactor,
-            )
-        }
+    derivedStateOf {
+        lerp(
+            start = MinImagePaddingStart,
+            stop = imagePaddingHorizontalWhenFillExpandDp,
+            imageTransactionFactor,
+        )
+    }
 
     val miniPlayerPaddingTopDp: Dp by
-        derivedStateOf {
-            lerp(
-                start = MinFadeoutWithExpandAreaPaddingTop + if (isBottomSheetExpanding) statusBarHeightPx.toDp() else 0.dp,
-                stop = 0.dp,
-                imageTransactionFactor,
-            )
-        }
+    derivedStateOf {
+        lerp(
+            start = MinFadeoutWithExpandAreaPaddingTop + if (isBottomSheetExpanding) statusBarHeightPx.toDp() else 0.dp,
+            stop = 0.dp,
+            imageTransactionFactor,
+        )
+    }
 
     fun shrinkPlayerLayout() {
         animaScope.launch {

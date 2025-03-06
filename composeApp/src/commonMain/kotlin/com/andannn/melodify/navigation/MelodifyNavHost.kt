@@ -34,7 +34,8 @@ fun MelodifyNavHost(
             onBackPressed = navHostController::popBackStack
         )
         searchScreen(
-            onBackPressed = navHostController::popBackStack
+            onBackPressed = navHostController::popBackStack,
+            onNavigateToLibraryContentList = navHostController::navigateToLibraryContentList
         )
         libraryScreen(
             onBackPressed = navHostController::popBackStack,
