@@ -1,7 +1,6 @@
 package com.andannn.melodify.ui.components.search
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.andannn.melodify.core.data.Repository
@@ -10,17 +9,16 @@ import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.repository.MediaContentRepository
+import com.andannn.melodify.core.data.repository.MediaControllerRepository
+import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
@@ -36,7 +34,9 @@ fun rememberSearchUiState(
     SearchUiStateHolder(
         scope,
         repository.mediaContentRepository,
-        repository.userPreferenceRepository
+        repository.userPreferenceRepository,
+        repository.mediaControllerRepository,
+        repository.playerStateMonitoryRepository,
     )
 }
 
@@ -45,7 +45,9 @@ private const val TAG = "SearchUiState"
 class SearchUiStateHolder(
     private val scope: CoroutineScope,
     private val contentLibrary: MediaContentRepository,
-    private val userPreferenceRepository: UserPreferenceRepository
+    private val userPreferenceRepository: UserPreferenceRepository,
+    private val mediaControllerRepository: MediaControllerRepository,
+    private val playerStateMonitoryRepository: PlayerStateMonitoryRepository
 ) {
     private val searchTextFlow = MutableStateFlow("")
 
@@ -66,6 +68,23 @@ class SearchUiStateHolder(
         }
     }.stateIn(scope, Eagerly, SearchState.Init)
 
+    fun onPlayAudio(audioItemModel: AudioItemModel) {
+        scope.launch {
+            val isQueueEmpty = playerStateMonitoryRepository.getPlayListQueue().isEmpty()
+            if (!isQueueEmpty) {
+                // add audio item to queue and play this audio item
+                val currentIndex = playerStateMonitoryRepository.getPlayingIndexInQueue()
+                val newToPlayIndex = currentIndex + 1
+                mediaControllerRepository.addMediaItems(newToPlayIndex, listOf(audioItemModel))
+                mediaControllerRepository.seekMediaItem(newToPlayIndex)
+                mediaControllerRepository.play()
+            } else {
+                // play audio item
+                mediaControllerRepository.playMediaList(listOf(audioItemModel))
+            }
+        }
+    }
+
     fun onConfirmSearch(text: String) {
         Napier.d(tag = TAG) { "onConfirmSearch: $text" }
         searchTextFlow.value = "$text*"
@@ -85,15 +104,15 @@ class SearchUiStateHolder(
 }
 
 sealed interface SearchState {
-    data object Init: SearchState
+    data object Init : SearchState
 
-    data object Searching: SearchState
+    data object Searching : SearchState
 
     data class Result(
         val albums: List<AlbumItemModel> = emptyList(),
         val artists: List<ArtistItemModel> = emptyList(),
         val audios: List<AudioItemModel> = emptyList(),
-    ): SearchState
+    ) : SearchState
 
-    data object NoObject: SearchState
+    data object NoObject : SearchState
 }

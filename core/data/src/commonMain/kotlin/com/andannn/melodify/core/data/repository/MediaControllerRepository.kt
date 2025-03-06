@@ -6,7 +6,7 @@ import com.andannn.melodify.core.data.model.PlayMode
 interface MediaControllerRepository {
     fun getCurrentPlayingItemDuration() : Long?
 
-    fun playMediaList(mediaList: List<AudioItemModel>, index: Int)
+    fun playMediaList(mediaList: List<AudioItemModel>, index: Int = 0)
 
     fun seekToNext()
 

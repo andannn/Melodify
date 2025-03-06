@@ -20,6 +20,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.browsable
+import com.andannn.melodify.ui.components.library.util.asDataSource
+import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
 import com.andannn.melodify.ui.components.search.result.SearchPageView
 import com.andannn.melodify.ui.components.search.suggestion.SuggestionsView
 
@@ -27,7 +32,8 @@ import com.andannn.melodify.ui.components.search.suggestion.SuggestionsView
 fun SearchView(
     modifier: Modifier = Modifier,
     stateHolder: SearchUiStateHolder = rememberSearchUiState(),
-    onBackKeyPressed: () -> Unit = {}
+    onBackKeyPressed: () -> Unit = {},
+    onNavigateToLibraryContentList: (LibraryDataSource) -> Unit = {},
 ) {
     val searchedResult = stateHolder.resultListFlow.collectAsState()
 
@@ -35,7 +41,9 @@ fun SearchView(
         modifier = modifier,
         searchedResult = searchedResult.value,
         onConfirmSearch = stateHolder::onConfirmSearch,
-        onBackKeyPressed = onBackKeyPressed
+        onPlayAudio = stateHolder::onPlayAudio,
+        onBackKeyPressed = onBackKeyPressed,
+        onNavigateToLibraryContentList = onNavigateToLibraryContentList,
     )
 }
 
@@ -45,8 +53,19 @@ internal fun SearchViewContent(
     modifier: Modifier = Modifier,
     searchedResult: SearchState,
     onConfirmSearch: (String) -> Unit = {},
-    onBackKeyPressed: () -> Unit = {}
+    onBackKeyPressed: () -> Unit = {},
+    onNavigateToLibraryContentList: (LibraryDataSource) -> Unit = {},
+    onPlayAudio: (AudioItemModel) -> Unit = {}
 ) {
+    fun onResultItemClick(item: MediaItemModel) {
+        if (item.browsable) {
+            onNavigateToLibraryContentList(item.asDataSource())
+        } else {
+            // open player and play this audio item.
+            onPlayAudio(item as AudioItemModel)
+        }
+    }
+
     Scaffold(
         modifier = modifier
     ) {
@@ -96,6 +115,12 @@ internal fun SearchViewContent(
             ) {
                 SuggestionsView(
                     query = text,
+                    onBestMatchedItemClicked = { item ->
+                        expanded = false
+                        if (item.browsable) {
+                            onNavigateToLibraryContentList(item.asDataSource())
+                        }
+                    },
                     onConfirmSearch = {
                         text = it
                         expanded = false
@@ -106,7 +131,11 @@ internal fun SearchViewContent(
 
             SearchPageView(
                 modifier = Modifier,
-                searchedResult = searchedResult
+                searchedResult = searchedResult,
+                onResultItemClick = {
+                    expanded = false
+                    onResultItemClick(it)
+                }
             )
         }
     }
