@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -28,6 +29,8 @@ import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.ui.common.dialog.ConnectFailedAlertDialog
 import com.andannn.melodify.ui.common.theme.MelodifyTheme
+import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
+import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupControllerImpl
 import io.github.aakira.napier.Napier
@@ -91,6 +94,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+            val coroutineScope = rememberCoroutineScope()
             var permissionGranted by remember {
                 mutableStateOf(isPermissionGranted())
             }
@@ -129,6 +133,7 @@ class MainActivity : ComponentActivity() {
 
             CompositionLocalProvider(
                 LocalPopupController provides remember { PopupControllerImpl() },
+                LocalPlayerUiController provides remember { PlayerUiController(coroutineScope) },
             ) {
                 MelodifyTheme(darkTheme = true, isDynamicColor = true) {
                     when (uiState) {

@@ -12,6 +12,10 @@ import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
+import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
+import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
+import com.andannn.melodify.ui.components.popup.LocalPopupController
+import com.andannn.melodify.ui.components.popup.PopupController
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,12 +31,15 @@ import org.koin.mp.KoinPlatform.getKoin
 fun rememberSearchUiState(
     scope: CoroutineScope = rememberCoroutineScope(),
     repository: Repository = getKoin().get(),
+    playerUiController: PlayerUiController = LocalPlayerUiController.current,
 ) = remember(
     scope,
     repository,
+    playerUiController,
 ) {
     SearchUiStateHolder(
         scope,
+        playerUiController,
         repository.mediaContentRepository,
         repository.userPreferenceRepository,
         repository.mediaControllerRepository,
@@ -44,6 +51,7 @@ private const val TAG = "SearchUiState"
 
 class SearchUiStateHolder(
     private val scope: CoroutineScope,
+    private val playerUiController: PlayerUiController,
     private val contentLibrary: MediaContentRepository,
     private val userPreferenceRepository: UserPreferenceRepository,
     private val mediaControllerRepository: MediaControllerRepository,
@@ -82,6 +90,8 @@ class SearchUiStateHolder(
                 // play audio item
                 mediaControllerRepository.playMediaList(listOf(audioItemModel))
             }
+
+            playerUiController.expandPlayer()
         }
     }
 
