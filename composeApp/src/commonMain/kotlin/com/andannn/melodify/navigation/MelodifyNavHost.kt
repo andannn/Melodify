@@ -7,11 +7,7 @@ import androidx.navigation.compose.NavHost
 import com.andannn.melodify.navigation.routes.HOME_ROUTE
 import com.andannn.melodify.navigation.routes.customTabSetting
 import com.andannn.melodify.navigation.routes.libraryContentListScreen
-import com.andannn.melodify.navigation.routes.libraryScreen
-import com.andannn.melodify.navigation.routes.navigateToCustomTabSetting
-import com.andannn.melodify.navigation.routes.navigateToLibrary
 import com.andannn.melodify.navigation.routes.navigateToLibraryContentList
-import com.andannn.melodify.navigation.routes.navigateToSearch
 import com.andannn.melodify.navigation.routes.searchScreen
 
 @Composable
@@ -36,11 +32,11 @@ fun MelodifyNavHost(
             onBackPressed = navHostController::popBackStack,
             onNavigateToLibraryContentList = navHostController::navigateToLibraryContentList
         )
-        libraryScreen(
-            onBackPressed = navHostController::popBackStack,
-            onNavigateSearchPage = navHostController::navigateToSearch,
-            onNavigateToLibraryContentList = navHostController::navigateToLibraryContentList
-        )
+//        libraryScreen(
+//            onBackPressed = navHostController::popBackStack,
+//            onNavigateSearchPage = navHostController::navigateToSearch,
+//            onNavigateToLibraryContentList = navHostController::navigateToLibraryContentList
+//        )
         libraryContentListScreen(
             onNavigateToLibraryContentList = navHostController::navigateToLibraryContentList,
             onBackPressed = navHostController::popBackStack

@@ -21,6 +21,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,8 @@ import com.andannn.melodify.ui.common.icons.SmpIcon
 import com.andannn.melodify.ui.common.widgets.SmpIcon
 import com.andannn.melodify.ui.components.library.util.toDataSource
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
+import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.presenter.Presenter
 import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.album_page_title
 import melodify.ui.common.generated.resources.artist_page_title
@@ -39,8 +42,22 @@ import melodify.ui.common.generated.resources.playlist_page_title
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
+class LibraryPresenter : Presenter<LibraryState> {
+    @Composable
+    override fun present(): LibraryState {
+        return LibraryState()
+    }
+}
+
+@Stable
+data class LibraryState(
+    // temp
+    val title: String = "Library",
+) : CircuitUiState
+
 @Composable
-fun LibraryView(
+fun LibraryScreen(
+    state: LibraryState = LibraryState(),
     modifier: Modifier = Modifier,
     onBackKeyPressed: () -> Unit = {},
     navigateToSearch: () -> Unit = {},

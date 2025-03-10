@@ -40,10 +40,7 @@ object HomeUiFactory : Ui.Factory {
     override fun create(screen: Screen, context: CircuitContext): Ui<*>? {
         return when (screen) {
             is HomeScreen -> ui<HomeState> { state, modifier ->
-                HomeUiScreen(
-                    state,
-                    modifier
-                )
+                HomeUiScreen(state, modifier)
             }
 
             else -> null
@@ -64,7 +61,10 @@ object HomePresenterFactory : Presenter.Factory {
     }
 }
 
-private class HomePresenter(navigator: Navigator, context: CircuitContext) : Presenter<HomeState> {
+private class HomePresenter(
+    private val navigator: Navigator, context: CircuitContext
+) :
+    Presenter<HomeState> {
     @Composable
     override fun present(): HomeState {
         val tabUiPresenter = remember {
@@ -77,23 +77,33 @@ private class HomePresenter(navigator: Navigator, context: CircuitContext) : Pre
         return HomeState(
             tabUiState = tabUiState,
             tabContentState = tabContentPresenter.present()
-        )
+        ) { eventSink ->
+            when (eventSink) {
+                HomeUiEvent.LibraryButtonClick -> navigator.goTo(LibraryScreen)
+                HomeUiEvent.SearchButtonClick -> TODO()
+                HomeUiEvent.SettingButtonClick -> TODO()
+            }
+        }
     }
 }
 
 private data class HomeState(
     val tabUiState: TabUiState,
     val tabContentState: TabContentState,
+    val eventSink: (HomeUiEvent) -> Unit = {},
 ) : CircuitUiState
+
+private sealed interface HomeUiEvent {
+    data object SettingButtonClick : HomeUiEvent
+    data object SearchButtonClick : HomeUiEvent
+    data object LibraryButtonClick : HomeUiEvent
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeUiScreen(
     homeState: HomeState,
     modifier: Modifier = Modifier,
-    onSettingButtonClick: () -> Unit = {},
-    onSearchButtonClick: () -> Unit = {},
-    onLibraryButtonClick: () -> Unit = {},
 ) {
     val scrollBehavior = enterAlwaysScrollBehavior()
 
@@ -110,7 +120,7 @@ private fun HomeUiScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = onLibraryButtonClick,
+                        onClick = { homeState.eventSink.invoke(HomeUiEvent.LibraryButtonClick) },
                         content = {
                             Icon(Icons.Rounded.Menu, contentDescription = "")
                         }
@@ -118,13 +128,13 @@ private fun HomeUiScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = onSearchButtonClick,
+                        onClick = { homeState.eventSink.invoke(HomeUiEvent.SearchButtonClick) },
                         content = {
                             Icon(Icons.Rounded.Search, contentDescription = "")
                         }
                     )
                     IconButton(
-                        onClick = onSettingButtonClick,
+                        onClick = { homeState.eventSink.invoke(HomeUiEvent.SettingButtonClick) },
                         content = {
                             Icon(Icons.Rounded.Settings, contentDescription = "")
                         }

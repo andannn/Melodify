@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import com.andannn.melodify.navigation.routes.HomePresenterFactory
 import com.andannn.melodify.navigation.routes.HomeScreen
 import com.andannn.melodify.navigation.routes.HomeUiFactory
+import com.andannn.melodify.navigation.routes.LibraryPresenterFactory
+import com.andannn.melodify.navigation.routes.LibraryUiFactory
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -48,9 +50,11 @@ fun MelodifyMobileApp(
 private fun buildCircuitMobile() = buildCircuit(
     presenterFactory = listOf(
         HomePresenterFactory,
+        LibraryPresenterFactory,
     ),
     uiFactory = listOf(
         HomeUiFactory,
+        LibraryUiFactory
     )
 )
 private fun buildCircuit(
