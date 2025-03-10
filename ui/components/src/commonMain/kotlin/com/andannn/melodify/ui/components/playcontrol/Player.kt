@@ -5,6 +5,6 @@ import androidx.compose.ui.Modifier
 
 @Composable
 expect fun Player(
-    modifier: Modifier = Modifier,
-    stateHolder: PlayStateHolder = rememberPlayStateHolder()
+    state: PlayerUiState,
+    modifier: Modifier = Modifier
 )

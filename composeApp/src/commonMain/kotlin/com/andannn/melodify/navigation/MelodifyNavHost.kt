@@ -6,8 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.andannn.melodify.navigation.routes.HOME_ROUTE
 import com.andannn.melodify.navigation.routes.customTabSetting
-import com.andannn.melodify.navigation.routes.libraryContentListScreen
-import com.andannn.melodify.navigation.routes.navigateToLibraryContentList
 import com.andannn.melodify.navigation.routes.searchScreen
 
 @Composable
@@ -28,18 +26,18 @@ fun MelodifyNavHost(
         customTabSetting(
             onBackPressed = navHostController::popBackStack
         )
-        searchScreen(
-            onBackPressed = navHostController::popBackStack,
-            onNavigateToLibraryContentList = navHostController::navigateToLibraryContentList
-        )
+//        searchScreen(
+//            onBackPressed = navHostController::popBackStack,
+//            onNavigateToLibraryContentList = navHostController::navigateToLibraryContentList
+//        )
 //        libraryScreen(
 //            onBackPressed = navHostController::popBackStack,
 //            onNavigateSearchPage = navHostController::navigateToSearch,
 //            onNavigateToLibraryContentList = navHostController::navigateToLibraryContentList
 //        )
-        libraryContentListScreen(
-            onNavigateToLibraryContentList = navHostController::navigateToLibraryContentList,
-            onBackPressed = navHostController::popBackStack
-        )
+//        libraryContentListScreen(
+//            onNavigateToLibraryContentList = navHostController::navigateToLibraryContentList,
+//            onBackPressed = navHostController::popBackStack
+//        )
     }
 }

@@ -19,7 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import com.andannn.melodify.ui.components.tab.ReactiveTab
+import com.andannn.melodify.ui.components.common.HomeScreen
+import com.andannn.melodify.ui.components.common.LibraryScreen
+import com.andannn.melodify.ui.components.popup.LocalPopupController
+import com.andannn.melodify.ui.components.tab.TabUi
 import com.andannn.melodify.ui.components.tab.TabUiPresenter
 import com.andannn.melodify.ui.components.tab.TabUiState
 import com.andannn.melodify.ui.components.tabcontent.TabContent
@@ -55,24 +58,29 @@ object HomePresenterFactory : Presenter.Factory {
         context: CircuitContext
     ): Presenter<*>? {
         return when (screen) {
-            is HomeScreen -> HomePresenter(navigator, context)
+            is HomeScreen -> HomePresenter(navigator)
             else -> null
         }
     }
 }
 
 private class HomePresenter(
-    private val navigator: Navigator, context: CircuitContext
-) :
-    Presenter<HomeState> {
+    private val navigator: Navigator
+) : Presenter<HomeState> {
+
     @Composable
     override fun present(): HomeState {
+        val popupController = LocalPopupController.current
         val tabUiPresenter = remember {
-            TabUiPresenter(getKoin().get(), null)
+            TabUiPresenter(getKoin().get(), popupController)
         }
         val tabUiState = tabUiPresenter.present()
         val tabContentPresenter = remember(tabUiState.selectedTab) {
-            TabContentPresenter(tabUiState.selectedTab, getKoin().get(), null)
+            TabContentPresenter(
+                tabUiState.selectedTab,
+                getKoin().get(),
+                popupController
+            )
         }
         return HomeState(
             tabUiState = tabUiState,
@@ -149,7 +157,7 @@ private fun HomeUiScreen(
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .fillMaxSize()
         ) {
-            ReactiveTab(homeState.tabUiState)
+            TabUi(homeState.tabUiState)
 
             TabContent(homeState.tabContentState)
         }

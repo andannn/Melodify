@@ -13,7 +13,7 @@ import com.andannn.melodify.ui.common.util.getCategoryResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReactiveTab(
+fun TabUi(
     state: TabUiState,
     modifier: Modifier = Modifier,
 ) {

@@ -38,8 +38,8 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 actual fun Player(
-    modifier: Modifier,
-    stateHolder: PlayStateHolder
+    state: PlayerUiState,
+    modifier: Modifier = Modifier
 ) {
     when (val uiState = stateHolder.state) {
         is PlayerUiState.Active -> PlayStateBar(

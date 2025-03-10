@@ -28,16 +28,22 @@ private const val TAG = "PlayQueueView"
 
 @Composable
 fun PlayQueue(
+    state: PlayQueueState,
     modifier: Modifier = Modifier,
-    stateHolder: PlayQueueStateHolder = rememberPlayQueueStateHolder(),
 ) {
     PlayQueueContent(
         modifier = modifier,
-        onItemClick = stateHolder::onItemClick,
-        onSwapFinished = stateHolder::onSwapFinished,
-        onDeleteFinished = stateHolder::onDeleteFinished,
-        playListQueue = stateHolder.playListQueue.toImmutableList(),
-        activeMediaItem = stateHolder.interactingMusicItem,
+        onItemClick = {
+            state.eventSink.invoke(PlayQueueEvent.OnItemClick(it))
+        },
+        onSwapFinished = { from, to ->
+            state.eventSink.invoke(PlayQueueEvent.OnSwapFinished(from = from, to = to))
+        },
+        onDeleteFinished = {
+            state.eventSink.invoke(PlayQueueEvent.OnDeleteFinished(it))
+        },
+        playListQueue = state.playListQueue.toImmutableList(),
+        activeMediaItem = state.interactingMusicItem,
     )
 }
 

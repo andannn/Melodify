@@ -41,6 +41,7 @@ import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
 import com.andannn.melodify.ui.components.lyrics.LyricsView
 import com.andannn.melodify.ui.components.queue.PlayQueue
 import com.andannn.melodify.ui.components.playcontrol.ui.BottomSheetState
+import com.andannn.melodify.ui.components.queue.PlayQueuePresenter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -49,6 +50,7 @@ import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.lyrics
 import melodify.ui.common.generated.resources.play_queue
 import org.jetbrains.compose.resources.stringResource
+import org.koin.mp.KoinPlatform.getKoin
 import kotlin.math.roundToInt
 
 private const val TAG = "PlayQueueView"
@@ -134,7 +136,10 @@ internal fun PlayerBottomSheetView(
                 ) {
                     when (sheetState.selectedTab) {
                         SheetTab.NEXT_SONG -> {
-                            PlayQueue()
+                            val presenter = remember {
+                                PlayQueuePresenter(repository = getKoin().get())
+                            }
+                            PlayQueue(presenter.present())
                         }
 
                         SheetTab.LYRICS -> {

@@ -1,7 +1,8 @@
 package com.andannn.melodify.navigation.routes
 
+import com.andannn.melodify.ui.components.common.LibraryScreen
+import com.andannn.melodify.ui.components.library.Library
 import com.andannn.melodify.ui.components.library.LibraryPresenter
-import com.andannn.melodify.ui.components.library.LibraryScreen
 import com.andannn.melodify.ui.components.library.LibraryState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -17,7 +18,7 @@ object LibraryPresenterFactory : Presenter.Factory {
         context: CircuitContext
     ): Presenter<*>? {
         return when (screen) {
-            is LibraryScreen -> LibraryPresenter()
+            is LibraryScreen -> LibraryPresenter(navigator)
             else -> null
         }
     }
@@ -27,7 +28,7 @@ object LibraryUiFactory : Ui.Factory {
     override fun create(screen: Screen, context: CircuitContext): Ui<*>? {
         return when (screen) {
             is LibraryScreen -> ui<LibraryState> { state, modifier ->
-                LibraryScreen(state, modifier)
+                Library(state, modifier)
             }
 
             else -> null

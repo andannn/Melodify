@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
@@ -23,8 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,55 +33,40 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.platform.formatTime
-import io.github.aakira.napier.Napier
-import kotlin.math.roundToInt
+import org.koin.mp.KoinPlatform.getKoin
 import kotlin.time.Duration.Companion.milliseconds
-
-private const val TAG = "SyncedLyricsView"
 
 @Composable
 fun SyncedLyrics(
     modifier: Modifier = Modifier,
     syncedLyric: String,
 ) {
+    val lazyListState = rememberLazyListState()
+    val presenter = remember {
+        SyncedLyricsPresenter(
+            syncedLyrics = syncedLyric,
+            lazyListState = lazyListState,
+            repository = getKoin().get(),
+        )
+    }
     SyncedLyricsContent(
         modifier = modifier,
-        state = rememberSyncedLyricsState(syncedLyrics = syncedLyric),
+        lazyListState = lazyListState,
+        state = presenter.present(),
     )
 }
 
 @Composable
 private fun SyncedLyricsContent(
-    modifier: Modifier = Modifier,
     state: SyncedLyricsState,
+    lazyListState: LazyListState,
+    modifier: Modifier = Modifier,
 ) {
-    val activeIndex by remember {
-        derivedStateOf {
-            when (val lyricsState = state.lyricsState) {
-                LyricsState.AutoScrolling -> -1
-                is LyricsState.Seeking -> lyricsState.currentSeekIndex
-                is LyricsState.WaitingSeekingResult -> -1
-            }
-        }
-    }
-
-    LaunchedEffect(state.lazyListState, state.currentPlayingIndex, state.lyricsState) {
-        if (state.lyricsState !is LyricsState.AutoScrolling) {
-            return@LaunchedEffect
-        }
-
-        val info = state.lazyListState.layoutInfo.visibleItemsInfo.firstOrNull {
-            it.index == state.currentPlayingIndex
-        }
-        Napier.d(tag = TAG)
-        { "SyncedLyricsView: scroll to ${state.currentPlayingIndex} with info ${info.toString()}" }
-        if (info != null) {
-            state.lazyListState.animateScrollToItem(
-                state.currentPlayingIndex,
-                scrollOffset = info.size.div(2f).roundToInt()
-            )
-        } else {
-            state.lazyListState.animateScrollToItem(state.currentPlayingIndex)
+    val activeIndex = remember(state) {
+        when (val lyricsState = state.lyricsState) {
+            LyricsState.AutoScrolling -> -1
+            is LyricsState.Seeking -> lyricsState.currentSeekIndex
+            is LyricsState.WaitingSeekingResult -> -1
         }
     }
 
@@ -90,7 +75,7 @@ private fun SyncedLyricsContent(
     ) {
         val maxHeight = maxHeight
         LazyColumn(
-            state = state.lazyListState,
+            state = lazyListState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(vertical = maxHeight / 2)
         ) {
@@ -103,7 +88,7 @@ private fun SyncedLyricsContent(
                     isPlaying = state.currentPlayingIndex == index,
                     isActive = activeIndex == index,
                     onSeekTimeClick = {
-                        state.onSeekTimeClick(item.startTimeMs)
+                        state.eventSink.invoke(SyncedLyricsEvent.SeekToTime(item.startTimeMs))
                     }
                 )
             }

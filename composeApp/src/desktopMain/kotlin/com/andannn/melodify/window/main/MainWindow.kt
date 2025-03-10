@@ -14,7 +14,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,12 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import com.andannn.melodify.app.MelodifyDeskTopAppState
-import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.ui.components.lyrics.LyricsView
 import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.components.queue.PlayQueue
-import com.andannn.melodify.ui.components.tab.ReactiveTab
+import com.andannn.melodify.ui.components.tab.TabUi
 import com.andannn.melodify.ui.components.tab.rememberTabUiStateHolder
 import com.andannn.melodify.ui.components.tabcontent.TabContent
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentStateHolder
@@ -102,6 +100,7 @@ fun MainWindowContent(
         HorizontalDivider()
 
         Player(
+            ,
             modifier = Modifier
         )
     }
@@ -125,7 +124,7 @@ private fun TabWithContentSector(
         Column(
             modifier = Modifier,
         ) {
-            ReactiveTab(
+            TabUi(
                 stateHolder = tabUiStateHolder
             )
 

@@ -26,22 +26,21 @@ import com.andannn.melodify.ui.common.dynamic_theming.DynamicThemePrimaryColorsF
 import com.andannn.melodify.ui.common.dynamic_theming.rememberDominantColorState
 import com.andannn.melodify.ui.common.theme.MinContrastOfPrimaryVsSurface
 import com.andannn.melodify.ui.common.util.contrastAgainst
-import com.andannn.melodify.ui.components.playcontrol.PlayStateHolder
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.FlexiblePlayerLayout
-import com.andannn.melodify.ui.components.playcontrol.rememberPlayStateHolder
 
 @Composable
 fun PlayerAreaView(
+    state: PlayerUiState,
     modifier: Modifier = Modifier,
-    stateHolder: PlayStateHolder = rememberPlayStateHolder()
 ) {
-    val state =  stateHolder.state
     if (state is PlayerUiState.Active) {
         PlayerViewContent(
             state = state,
-            onEvent = stateHolder::onEvent,
+            onEvent = {
+                state.eventSink.invoke(it)
+            },
             modifier = modifier
         )
     }
