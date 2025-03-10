@@ -1,7 +1,6 @@
 package com.andannn.melodify.ui.components.lyrics
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -10,38 +9,19 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun LyricsView(
+fun Lyrics(
+    presenter: LyricPresenter = remember { LyricPresenter(getKoin().get()) },
     modifier: Modifier = Modifier,
 ) {
-    val source: AudioItemModel? by getKoin().get<PlayerStateMonitoryRepository>()
-        .getPlayingMediaStateFlow().collectAsState(null)
-
-    if (source != null) {
-        val lyricStateHolder: LyricStateHolder = rememberLyricStateHolder(source)
-
-        LyricsViewContent(
-            modifier = modifier,
-            lyricState = lyricStateHolder.state,
-        )
-    } else {
-        Box(modifier = modifier.fillMaxHeight()) {
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = "Nothing playing",
-                style = MaterialTheme.typography.headlineSmall,
-            )
-        }
-    }
+    val state = presenter.present()
+    LyricsViewContent(modifier = modifier.fillMaxSize(), lyricState = state)
 }
 
 @Composable
@@ -78,6 +58,16 @@ private fun LyricsViewContent(
         LyricState.Loading -> {
             Box(modifier = modifier) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+
+        LyricState.NoPlaying -> {
+            Box(modifier = modifier.fillMaxSize()) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "Nothing playing",
+                    style = MaterialTheme.typography.headlineSmall,
+                )
             }
         }
     }

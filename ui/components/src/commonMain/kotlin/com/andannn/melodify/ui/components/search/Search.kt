@@ -14,7 +14,6 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -26,24 +25,28 @@ import com.andannn.melodify.core.data.model.browsable
 import com.andannn.melodify.ui.components.library.util.asDataSource
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
 import com.andannn.melodify.ui.components.search.result.SearchPageView
-import com.andannn.melodify.ui.components.search.suggestion.SuggestionsView
+import com.andannn.melodify.ui.components.search.suggestion.Suggestions
 
 @Composable
-fun SearchView(
+fun Search(
+    state: SearchUiState,
     modifier: Modifier = Modifier,
-    stateHolder: SearchUiStateHolder = rememberSearchUiState(),
-    onBackKeyPressed: () -> Unit = {},
-    onNavigateToLibraryContentList: (LibraryDataSource) -> Unit = {},
 ) {
-    val searchedResult = stateHolder.resultListFlow.collectAsState()
-
     SearchViewContent(
         modifier = modifier,
-        searchedResult = searchedResult.value,
-        onConfirmSearch = stateHolder::onConfirmSearch,
-        onPlayAudio = stateHolder::onPlayAudio,
-        onBackKeyPressed = onBackKeyPressed,
-        onNavigateToLibraryContentList = onNavigateToLibraryContentList,
+        searchedResult = state.searchState,
+        onConfirmSearch = {
+            state.eventSink.invoke(SearchUiEvent.OnConfirmSearch(it))
+        },
+        onPlayAudio = {
+            state.eventSink.invoke(SearchUiEvent.OnPlayAudio(it))
+        },
+        onBackKeyPressed = {
+            state.eventSink.invoke(SearchUiEvent.Back)
+        },
+        onNavigateToLibraryContentList = {
+            state.eventSink.invoke(SearchUiEvent.OnNavigateToLibraryContentList(it))
+        },
     )
 }
 
@@ -113,14 +116,9 @@ internal fun SearchViewContent(
                     expanded = it
                 },
             ) {
-                SuggestionsView(
+                Suggestions(
                     query = text,
-                    onBestMatchedItemClicked = { item ->
-                        expanded = false
-                        if (item.browsable) {
-                            onNavigateToLibraryContentList(item.asDataSource())
-                        }
-                    },
+
                     onConfirmSearch = {
                         text = it
                         expanded = false

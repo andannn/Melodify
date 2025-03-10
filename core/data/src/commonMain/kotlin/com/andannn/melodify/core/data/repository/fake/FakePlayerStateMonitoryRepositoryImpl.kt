@@ -7,11 +7,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 
 internal class FakePlayerStateMonitoryRepositoryImpl(
 ) : PlayerStateMonitoryRepository {
     override fun getCurrentPositionMs(): Long {
         return 0L
+    }
+
+    override fun observeCurrentPositionMs(): Flow<Long> {
+        return flowOf(0L)
     }
 
     override fun getPlayingIndexInQueue(): Int {

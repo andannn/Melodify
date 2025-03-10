@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 interface PlayerStateMonitoryRepository {
     fun getCurrentPositionMs(): Long
 
+    fun observeCurrentPositionMs(): Flow<Long>
+
     fun getPlayingIndexInQueue(): Int
 
     suspend fun getPlayListQueue(): List<AudioItemModel>

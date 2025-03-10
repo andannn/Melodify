@@ -1,8 +1,13 @@
 package com.andannn.melodify.ui.components.search
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
@@ -12,33 +17,28 @@ import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
+import com.andannn.melodify.ui.components.common.newLibraryContentListScreen
+import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
 import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
-import com.andannn.melodify.ui.components.popup.LocalPopupController
-import com.andannn.melodify.ui.components.popup.PopupController
-import io.github.aakira.napier.Napier
+import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberSearchUiState(
-    scope: CoroutineScope = rememberCoroutineScope(),
+fun rememberSearchUiPresenter(
+    navigator: Navigator,
     repository: Repository = getKoin().get(),
     playerUiController: PlayerUiController = LocalPlayerUiController.current,
 ) = remember(
-    scope,
     repository,
     playerUiController,
 ) {
-    SearchUiStateHolder(
-        scope,
+    SearchUiPresenter(
+        navigator,
         playerUiController,
         repository.mediaContentRepository,
         repository.userPreferenceRepository,
@@ -47,36 +47,66 @@ fun rememberSearchUiState(
     )
 }
 
-private const val TAG = "SearchUiState"
-
-class SearchUiStateHolder(
-    private val scope: CoroutineScope,
+class SearchUiPresenter(
+    private val navigator: Navigator,
     private val playerUiController: PlayerUiController,
     private val contentLibrary: MediaContentRepository,
     private val userPreferenceRepository: UserPreferenceRepository,
     private val mediaControllerRepository: MediaControllerRepository,
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository
-) {
-    private val searchTextFlow = MutableStateFlow("")
+) : Presenter<SearchUiState> {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val resultListFlow = searchTextFlow.flatMapLatest { text ->
-        flow {
-            emit(SearchState.Searching)
-            if (isValid(text)) {
-                val result = contentLibrary.searchContent(text)
+    @Composable
+    override fun present(): SearchUiState {
+        val scope = rememberCoroutineScope()
+
+        var searchText by rememberSaveable {
+            mutableStateOf("")
+        }
+
+        var searchResult by remember {
+            mutableStateOf<SearchState>(SearchState.Init)
+        }
+
+        LaunchedEffect(searchText) {
+            searchResult = SearchState.Searching
+
+            searchResult = if (isValid(searchText)) {
+                val result = contentLibrary.searchContent(searchText)
                 if (result.isEmpty()) {
-                    emit(SearchState.NoObject)
+                    SearchState.NoObject
                 } else {
-                    emit(toResult(result))
+                    toResult(result)
                 }
             } else {
-                emit(SearchState.Result(emptyList()))
+                SearchState.Result(emptyList())
             }
         }
-    }.stateIn(scope, Eagerly, SearchState.Init)
 
-    fun onPlayAudio(audioItemModel: AudioItemModel) {
+        return SearchUiState(
+            searchState = searchResult
+        ) { eventSink ->
+            when (eventSink) {
+                is SearchUiEvent.OnConfirmSearch -> {
+                    val text = eventSink.text
+                    searchText = "$text*"
+
+                    scope.launch {
+                        userPreferenceRepository.addSearchHistory(text)
+                    }
+
+                }
+
+                is SearchUiEvent.OnPlayAudio -> onPlayAudio(scope, eventSink.audioItemModel)
+                SearchUiEvent.Back -> navigator.pop()
+                is SearchUiEvent.OnNavigateToLibraryContentList -> navigator.goTo(
+                    newLibraryContentListScreen(eventSink.source)
+                )
+            }
+        }
+    }
+
+    private fun onPlayAudio(scope: CoroutineScope, audioItemModel: AudioItemModel) {
         scope.launch {
             val isQueueEmpty = playerStateMonitoryRepository.getPlayListQueue().isEmpty()
             if (!isQueueEmpty) {
@@ -95,15 +125,6 @@ class SearchUiStateHolder(
         }
     }
 
-    fun onConfirmSearch(text: String) {
-        Napier.d(tag = TAG) { "onConfirmSearch: $text" }
-        searchTextFlow.value = "$text*"
-
-        scope.launch {
-            userPreferenceRepository.addSearchHistory(text)
-        }
-    }
-
     private fun isValid(text: String) = text.isNotBlank()
 
     private fun toResult(result: List<MediaItemModel>) = SearchState.Result(
@@ -111,6 +132,21 @@ class SearchUiStateHolder(
         artists = result.filterIsInstance<ArtistItemModel>(),
         audios = result.filterIsInstance<AudioItemModel>()
     )
+}
+
+data class SearchUiState(
+    val searchState: SearchState = SearchState.Init,
+    val eventSink: (SearchUiEvent) -> Unit = {}
+) : CircuitUiState
+
+sealed interface SearchUiEvent {
+    data class OnPlayAudio(val audioItemModel: AudioItemModel) : SearchUiEvent
+
+    data class OnConfirmSearch(val text: String) : SearchUiEvent
+
+    data class OnNavigateToLibraryContentList(val source: LibraryDataSource) : SearchUiEvent
+
+    data object Back : SearchUiEvent
 }
 
 sealed interface SearchState {

@@ -28,7 +28,6 @@ import com.andannn.melodify.ui.common.icons.SimpleMusicIcons
 import com.andannn.melodify.ui.common.icons.SmpIcon
 import com.andannn.melodify.ui.common.widgets.SmpIcon
 import com.andannn.melodify.ui.components.library.util.toDataSource
-import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
 import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.album_page_title
 import melodify.ui.common.generated.resources.artist_page_title
@@ -40,19 +39,21 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun LibraryView(
+fun Library(
+    state: LibraryState,
     modifier: Modifier = Modifier,
-    onBackKeyPressed: () -> Unit = {},
-    navigateToSearch: () -> Unit = {},
-    navigateToLibraryContentList: (LibraryDataSource) -> Unit = {},
 ) {
     LibraryContent(
         modifier = modifier,
-        onBackKeyPressed = onBackKeyPressed,
-        navigateToSearch = navigateToSearch,
+        onBackKeyPressed = {
+            state.evenSink.invoke(LibraryUiEvent.Back)
+        },
+        navigateToSearch = {
+            state.evenSink.invoke(LibraryUiEvent.OnNavigateToSearch)
+        },
         onShortcutItemClick = { item ->
-            navigateToLibraryContentList(
-                item.toDataSource()
+            state.evenSink.invoke(
+                LibraryUiEvent.OnNavigateToLibraryContentList(item.toDataSource())
             )
         }
     )
@@ -85,7 +86,7 @@ private fun LibraryContent(
                     IconButton(onClick = navigateToSearch) {
                         Icon(
                             imageVector = Icons.Rounded.Search,
-                            contentDescription = "Search",
+                            contentDescription = "SearchScreen",
                         )
                     }
                 }
