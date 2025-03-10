@@ -41,3 +41,6 @@ actual data class LibraryContentListScreen(
 actual fun newLibraryContentListScreen(datasource: LibraryDataSource): LibraryContentListScreen {
     return LibraryContentListScreen(datasource)
 }
+
+@Parcelize
+actual object SearchScreen : Screen

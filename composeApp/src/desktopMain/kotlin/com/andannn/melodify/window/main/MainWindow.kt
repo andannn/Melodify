@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import com.andannn.melodify.app.MelodifyDeskTopAppState
-import com.andannn.melodify.ui.components.lyrics.LyricsView
+import com.andannn.melodify.ui.components.lyrics.Lyrics
 import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.components.queue.PlayQueue
@@ -100,7 +100,6 @@ fun MainWindowContent(
         HorizontalDivider()
 
         Player(
-            ,
             modifier = Modifier
         )
     }
@@ -186,7 +185,7 @@ private fun RightPaneSector(
         }
 
         when (selectedTab) {
-            RightPageTab.Lyrics -> LyricsView()
+            RightPageTab.Lyrics -> Lyrics()
 
             RightPageTab.PlayQueue -> PlayQueue()
         }

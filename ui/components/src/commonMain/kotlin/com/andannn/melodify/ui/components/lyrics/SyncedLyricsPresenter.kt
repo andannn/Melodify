@@ -2,12 +2,14 @@ package com.andannn.melodify.ui.components.lyrics
 
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import com.andannn.melodify.core.data.Repository
@@ -17,25 +19,25 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.mp.KoinPlatform.getKoin
 import kotlin.math.roundToInt
 
-data class SyncedLyricsLine(
-    val startTimeMs: Long,
-    val endTimeMs: Long = 0L,
-    val lyrics: String,
-)
-
-private const val TAG = "SyncedLyricsState"
-
-sealed interface LyricsState {
-    data object AutoScrolling : LyricsState
-    data class Seeking(val currentSeekIndex: Int) : LyricsState
-    data class WaitingSeekingResult(val requestTimeMs: Long) : LyricsState
+@Composable
+fun rememberSyncedLyricsPresenter(
+    syncedLyric: String,
+    lazyListState: LazyListState= rememberLazyListState(),
+    repository: Repository = getKoin().get(),
+): SyncedLyricsPresenter = remember(syncedLyric, lazyListState, repository) {
+    SyncedLyricsPresenter(
+        syncedLyrics = syncedLyric,
+        lazyListState = lazyListState,
+        repository = repository,
+    )
 }
 
 class SyncedLyricsPresenter(
     private val syncedLyrics: String,
-    private val lazyListState: LazyListState,
+    val lazyListState: LazyListState,
     repository: Repository,
 ) : Presenter<SyncedLyricsState> {
     private val playControlRepository = repository.mediaControllerRepository
@@ -44,13 +46,13 @@ class SyncedLyricsPresenter(
 
     @Composable
     override fun present(): SyncedLyricsState {
-        val syncedLyricsLines by remember {
+        val syncedLyricsLines by rememberSaveable {
             mutableStateOf(parseSyncedLyrics(syncedLyrics))
         }
         var lyricsState by remember {
             mutableStateOf<LyricsState>(LyricsState.AutoScrolling)
         }
-        var currentPlayingIndex by remember {
+        var currentPlayingIndex by rememberSaveable {
             mutableIntStateOf(0)
         }
         Napier.d(tag = TAG) { "JQN: lyricsState $lyricsState" }
@@ -193,4 +195,18 @@ data class SyncedLyricsState(
 
 sealed interface SyncedLyricsEvent {
     data class SeekToTime(val time: Long) : SyncedLyricsEvent
+}
+
+data class SyncedLyricsLine(
+    val startTimeMs: Long,
+    val endTimeMs: Long = 0L,
+    val lyrics: String,
+)
+
+private const val TAG = "SyncedLyricsState"
+
+sealed interface LyricsState {
+    data object AutoScrolling : LyricsState
+    data class Seeking(val currentSeekIndex: Int) : LyricsState
+    data class WaitingSeekingResult(val requestTimeMs: Long) : LyricsState
 }

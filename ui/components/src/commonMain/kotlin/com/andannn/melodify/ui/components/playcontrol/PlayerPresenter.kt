@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -17,6 +18,7 @@ import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.SleepTimerRepository
+import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
@@ -27,29 +29,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import org.koin.mp.KoinPlatform.getKoin
 
-sealed interface PlayerUiEvent {
-    data object OnFavoriteButtonClick : PlayerUiEvent
-
-    data class OnOptionIconClick(
-        val mediaItem: AudioItemModel,
-    ) : PlayerUiEvent
-
-    data object OnPlayButtonClick : PlayerUiEvent
-
-    data object OnNextButtonClick : PlayerUiEvent
-
-    data object OnPlayModeButtonClick : PlayerUiEvent
-
-    data object OnPreviousButtonClick : PlayerUiEvent
-
-    data object OnShuffleButtonClick : PlayerUiEvent
-
-    data class OnProgressChange(
-        val progress: Float,
-    ) : PlayerUiEvent
-
-    data object OnTimerIconClick : PlayerUiEvent
+@Composable
+fun rememberPlayerPresenter(
+    repository: Repository = getKoin().get(),
+    popupController: PopupController = LocalPopupController.current,
+): PlayerPresenter = remember(
+    repository,
+    popupController
+) {
+    PlayerPresenter(repository, popupController)
 }
 
 class PlayerPresenter(
@@ -210,4 +200,28 @@ sealed class PlayerUiState(
         val isCounting: Boolean,
         override val eventSink: (PlayerUiEvent) -> Unit
     ) : PlayerUiState(eventSink)
+}
+
+sealed interface PlayerUiEvent {
+    data object OnFavoriteButtonClick : PlayerUiEvent
+
+    data class OnOptionIconClick(
+        val mediaItem: AudioItemModel,
+    ) : PlayerUiEvent
+
+    data object OnPlayButtonClick : PlayerUiEvent
+
+    data object OnNextButtonClick : PlayerUiEvent
+
+    data object OnPlayModeButtonClick : PlayerUiEvent
+
+    data object OnPreviousButtonClick : PlayerUiEvent
+
+    data object OnShuffleButtonClick : PlayerUiEvent
+
+    data class OnProgressChange(
+        val progress: Float,
+    ) : PlayerUiEvent
+
+    data object OnTimerIconClick : PlayerUiEvent
 }

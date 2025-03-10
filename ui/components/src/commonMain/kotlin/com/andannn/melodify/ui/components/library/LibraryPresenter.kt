@@ -2,6 +2,7 @@ package com.andannn.melodify.ui.components.library
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import com.andannn.melodify.ui.components.common.SearchScreen
 import com.andannn.melodify.ui.components.common.newLibraryContentListScreen
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
 import com.slack.circuit.runtime.CircuitUiState
@@ -20,6 +21,7 @@ class LibraryPresenter(
                 )
 
                 LibraryUiEvent.Back -> navigator.pop()
+                LibraryUiEvent.OnNavigateToSearch -> navigator.goTo(SearchScreen)
             }
         }
     }
@@ -34,4 +36,5 @@ data class LibraryState(
 sealed interface LibraryUiEvent {
     data class OnNavigateToLibraryContentList(val source: LibraryDataSource) : LibraryUiEvent
     data object Back : LibraryUiEvent
+    data object OnNavigateToSearch : LibraryUiEvent
 }

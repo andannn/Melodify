@@ -33,25 +33,17 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.platform.formatTime
-import org.koin.mp.KoinPlatform.getKoin
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun SyncedLyrics(
     modifier: Modifier = Modifier,
     syncedLyric: String,
+    presenter: SyncedLyricsPresenter = rememberSyncedLyricsPresenter(syncedLyric)
 ) {
-    val lazyListState = rememberLazyListState()
-    val presenter = remember {
-        SyncedLyricsPresenter(
-            syncedLyrics = syncedLyric,
-            lazyListState = lazyListState,
-            repository = getKoin().get(),
-        )
-    }
     SyncedLyricsContent(
         modifier = modifier,
-        lazyListState = lazyListState,
+        lazyListState = presenter.lazyListState,
         state = presenter.present(),
     )
 }

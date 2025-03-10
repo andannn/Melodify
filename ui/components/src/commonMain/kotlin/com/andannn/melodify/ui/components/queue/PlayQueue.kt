@@ -21,6 +21,7 @@ import com.andannn.melodify.ui.common.widgets.ListTileItemView
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import org.koin.mp.KoinPlatform.getKoin
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
 
@@ -28,8 +29,20 @@ private const val TAG = "PlayQueueView"
 
 @Composable
 fun PlayQueue(
-    state: PlayQueueState,
+    presenter: PlayQueuePresenter = remember { PlayQueuePresenter(getKoin().get()) },
     modifier: Modifier = Modifier,
+) {
+    val state = presenter.present()
+    PlayQueueUi(
+        state = state,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun PlayQueueUi(
+    state: PlayQueueState,
+    modifier: Modifier = Modifier
 ) {
     PlayQueueContent(
         modifier = modifier,
@@ -74,7 +87,7 @@ private fun PlayQueueContent(
 
     LazyColumn(
         modifier =
-            modifier.fillMaxWidth(),
+        modifier.fillMaxWidth(),
         state = playQueueState.lazyListState,
     ) {
         items(
@@ -135,9 +148,9 @@ private fun ReorderableCollectionItemScope.QueueItem(
         ListTileItemView(
             modifier = modifier,
             swapIconModifier =
-                Modifier.draggableHandle(
-                    onDragStopped = onSwapFinish,
-                ),
+            Modifier.draggableHandle(
+                onDragStopped = onSwapFinish,
+            ),
             isActive = isActive,
 //            defaultColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             albumArtUri = item.artWorkUri,

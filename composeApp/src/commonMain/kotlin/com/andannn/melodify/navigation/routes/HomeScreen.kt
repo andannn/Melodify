@@ -16,18 +16,17 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.andannn.melodify.ui.components.common.HomeScreen
 import com.andannn.melodify.ui.components.common.LibraryScreen
-import com.andannn.melodify.ui.components.popup.LocalPopupController
+import com.andannn.melodify.ui.components.common.SearchScreen
 import com.andannn.melodify.ui.components.tab.TabUi
-import com.andannn.melodify.ui.components.tab.TabUiPresenter
 import com.andannn.melodify.ui.components.tab.TabUiState
+import com.andannn.melodify.ui.components.tab.rememberTabUiPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContent
-import com.andannn.melodify.ui.components.tabcontent.TabContentPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContentState
+import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -35,9 +34,6 @@ import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import org.koin.mp.KoinPlatform.getKoin
-
-const val HOME_ROUTE = "home_route"
 
 object HomeUiFactory : Ui.Factory {
     override fun create(screen: Screen, context: CircuitContext): Ui<*>? {
@@ -70,26 +66,17 @@ private class HomePresenter(
 
     @Composable
     override fun present(): HomeState {
-        val popupController = LocalPopupController.current
-        val tabUiPresenter = remember {
-            TabUiPresenter(getKoin().get(), popupController)
-        }
+        val tabUiPresenter = rememberTabUiPresenter()
         val tabUiState = tabUiPresenter.present()
-        val tabContentPresenter = remember(tabUiState.selectedTab) {
-            TabContentPresenter(
-                tabUiState.selectedTab,
-                getKoin().get(),
-                popupController
-            )
-        }
+        val tabContentPresenter = rememberTabContentPresenter(tabUiState.selectedTab)
         return HomeState(
             tabUiState = tabUiState,
             tabContentState = tabContentPresenter.present()
         ) { eventSink ->
             when (eventSink) {
                 HomeUiEvent.LibraryButtonClick -> navigator.goTo(LibraryScreen)
-                HomeUiEvent.SearchButtonClick -> TODO()
-                HomeUiEvent.SettingButtonClick -> TODO()
+                HomeUiEvent.SearchButtonClick ->  navigator.goTo(SearchScreen)
+                HomeUiEvent.SettingButtonClick -> {}
             }
         }
     }

@@ -5,11 +5,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
@@ -20,12 +22,19 @@ import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
+import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "TabUiState"
 
+@Composable
+fun rememberTabUiPresenter(
+    repository: Repository = getKoin().get(),
+    popupController: PopupController = LocalPopupController.current,
+) = remember(repository, popupController) { TabUiPresenter(repository, popupController) }
+
 class TabUiPresenter(
     private val repository: Repository,
-    private val popupController: PopupController?,
+    private val popupController: PopupController,
 ) : Presenter<TabUiState> {
     private val userPreferenceRepository = repository.userPreferenceRepository
     private val mediaContentRepository = repository.mediaContentRepository
@@ -91,7 +100,7 @@ class TabUiPresenter(
         if (model == null) {
             return
         }
-        val result = popupController?.showDialog(DialogId.MediaOption.fromMediaModel(model))
+        val result = popupController.showDialog(DialogId.MediaOption.fromMediaModel(model))
 
         if (result is DialogAction.MediaOptionDialog.ClickItem) {
             if (result.optionItem == OptionItem.DELETE_TAB) {

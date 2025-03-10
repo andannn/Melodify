@@ -42,14 +42,15 @@ import org.jetbrains.compose.resources.stringResource
 fun Library(
     state: LibraryState,
     modifier: Modifier = Modifier,
-    navigateToSearch: () -> Unit = {},
 ) {
     LibraryContent(
         modifier = modifier,
         onBackKeyPressed = {
             state.evenSink.invoke(LibraryUiEvent.Back)
         },
-        navigateToSearch = navigateToSearch,
+        navigateToSearch = {
+            state.evenSink.invoke(LibraryUiEvent.OnNavigateToSearch)
+        },
         onShortcutItemClick = { item ->
             state.evenSink.invoke(
                 LibraryUiEvent.OnNavigateToLibraryContentList(item.toDataSource())
@@ -85,7 +86,7 @@ private fun LibraryContent(
                     IconButton(onClick = navigateToSearch) {
                         Icon(
                             imageVector = Icons.Rounded.Search,
-                            contentDescription = "Search",
+                            contentDescription = "SearchScreen",
                         )
                     }
                 }

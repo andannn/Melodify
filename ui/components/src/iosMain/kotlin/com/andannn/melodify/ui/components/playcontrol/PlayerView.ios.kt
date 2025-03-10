@@ -6,6 +6,6 @@ import com.andannn.melodify.ui.components.playcontrol.ui.PlayerAreaView
 
 @Composable
 actual fun Player(
-    state: PlayerUiState,
+    presenter: PlayerPresenter,
     modifier: Modifier
 )  = PlayerAreaView(modifier, stateHolder)

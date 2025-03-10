@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
-import com.andannn.melodify.ui.components.lyrics.LyricsView
+import com.andannn.melodify.ui.components.lyrics.Lyrics
 import com.andannn.melodify.ui.components.queue.PlayQueue
 import com.andannn.melodify.ui.components.playcontrol.ui.BottomSheetState
 import com.andannn.melodify.ui.components.queue.PlayQueuePresenter
@@ -136,16 +136,11 @@ internal fun PlayerBottomSheetView(
                 ) {
                     when (sheetState.selectedTab) {
                         SheetTab.NEXT_SONG -> {
-                            val presenter = remember {
-                                PlayQueuePresenter(repository = getKoin().get())
-                            }
-                            PlayQueue(presenter.present())
+                            PlayQueue()
                         }
 
                         SheetTab.LYRICS -> {
-                            LyricsView(
-                                modifier = Modifier,
-                            )
+                            Lyrics()
                         }
                     }
                 }

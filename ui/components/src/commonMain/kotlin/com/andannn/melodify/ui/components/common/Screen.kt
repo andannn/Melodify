@@ -7,6 +7,8 @@ expect object HomeScreen : Screen
 
 expect object LibraryScreen : Screen
 
+expect object SearchScreen : Screen
+
 expect class LibraryContentListScreen : Screen {
     val datasource: LibraryDataSource
 }

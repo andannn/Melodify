@@ -10,6 +10,7 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
@@ -22,13 +23,31 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
+import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "TabContentPresenter"
+
+@Composable
+fun rememberTabContentPresenter(
+    selectedTab: CustomTab?,
+    repository: Repository = getKoin().get(),
+    popupController: PopupController = LocalPopupController.current
+) = remember(
+    selectedTab,
+    repository,
+    popupController
+) {
+    TabContentPresenter(
+        selectedTab,
+        getKoin().get(),
+        popupController
+    )
+}
 
 class TabContentPresenter(
     private val selectedTab: CustomTab?,
     private val repository: Repository,
-    private val popupController: PopupController?,
+    private val popupController: PopupController,
 ) : Presenter<TabContentState> {
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val playListRepository = repository.playListRepository
@@ -116,7 +135,7 @@ class TabContentPresenter(
         } else {
             Napier.d(tag = TAG) { "invalid media item click $mediaItem" }
             val result =
-                popupController?.showDialog(DialogId.ConfirmDeletePlaylist)
+                popupController.showDialog(DialogId.ConfirmDeletePlaylist)
             Napier.d(tag = TAG) { "ConfirmDeletePlaylist result: $result" }
             if (result == DialogAction.AlertDialog.Accept) {
                 val playListId = (selectedTab as CustomTab.PlayListDetail).playListId
@@ -131,14 +150,14 @@ class TabContentPresenter(
         val currentTab = selectedTab
         val result =
             if (mediaItemModel is AudioItemModel && currentTab is CustomTab.PlayListDetail) {
-                popupController?.showDialog(
+                popupController.showDialog(
                     DialogId.AudioOptionInPlayList(
                         playListId = currentTab.playListId,
                         mediaItemModel
                     )
                 )
             } else {
-                popupController?.showDialog(
+                popupController.showDialog(
                     DialogId.MediaOption.fromMediaModel(
                         item = mediaItemModel,
                     )
