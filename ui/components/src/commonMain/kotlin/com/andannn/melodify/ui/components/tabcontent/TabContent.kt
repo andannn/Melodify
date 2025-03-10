@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.AlbumItemModel
@@ -22,18 +21,14 @@ import com.andannn.melodify.ui.common.widgets.ListTileItemView
 
 @Composable
 fun TabContent(
-    stateHolder: TabContentStateHolder
+    state: TabContentState,
+    modifier: Modifier = Modifier
 ) {
-    val listLayoutState = rememberSaveable(saver = LazyListState.Saver) {
-        LazyListState()
-    }
     LazyListContent(
-        modifier =
-        Modifier.fillMaxSize(),
-        state = listLayoutState,
-        contentMap = stateHolder.state.contentMap,
-        onMusicItemClick = stateHolder::playMusic,
-        onShowMusicItemOption = stateHolder::onShowMusicItemOption
+        modifier = modifier.fillMaxSize(),
+        contentMap = state.contentMap,
+        onMusicItemClick = { state.eventSink.invoke(TabContentEvent.OnPlayMusic(it)) },
+        onShowMusicItemOption = { state.eventSink.invoke(TabContentEvent.OnShowMusicItemOption(it)) }
     )
 }
 

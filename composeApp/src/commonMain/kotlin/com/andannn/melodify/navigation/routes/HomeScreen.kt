@@ -16,15 +16,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.andannn.melodify.ui.components.tab.ReactiveTab
 import com.andannn.melodify.ui.components.tab.TabUiPresenter
-import com.andannn.melodify.ui.components.tab.TabUiPresenterFactory
 import com.andannn.melodify.ui.components.tab.TabUiState
 import com.andannn.melodify.ui.components.tabcontent.TabContent
-import com.andannn.melodify.ui.components.tabcontent.rememberTabContentStateHolder
+import com.andannn.melodify.ui.components.tabcontent.TabContentPresenter
+import com.andannn.melodify.ui.components.tabcontent.TabContentState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -32,6 +32,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
+import org.koin.mp.KoinPlatform.getKoin
 
 const val HOME_ROUTE = "home_route"
 
@@ -57,29 +58,32 @@ object HomePresenterFactory : Presenter.Factory {
         context: CircuitContext
     ): Presenter<*>? {
         return when (screen) {
-            is HomeScreen -> HomePresenter(
-                tabUiState = TabUiPresenterFactory.create(screen, navigator, context)
-            )
-
+            is HomeScreen -> HomePresenter(navigator, context)
             else -> null
         }
-
     }
 }
 
-private class HomePresenter(
-    private val tabUiState: TabUiPresenter
-) : Presenter<HomeState> {
+private class HomePresenter(navigator: Navigator, context: CircuitContext) : Presenter<HomeState> {
     @Composable
     override fun present(): HomeState {
+        val tabUiPresenter = remember {
+            TabUiPresenter(getKoin().get(), null)
+        }
+        val tabUiState = tabUiPresenter.present()
+        val tabContentPresenter = remember(tabUiState.selectedTab) {
+            TabContentPresenter(tabUiState.selectedTab, getKoin().get(), null)
+        }
         return HomeState(
-            tabUiState = tabUiState.present()
+            tabUiState = tabUiState,
+            tabContentState = tabContentPresenter.present()
         )
     }
 }
 
 private data class HomeState(
     val tabUiState: TabUiState,
+    val tabContentState: TabContentState,
 ) : CircuitUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,11 +96,6 @@ private fun HomeUiScreen(
     onLibraryButtonClick: () -> Unit = {},
 ) {
     val scrollBehavior = enterAlwaysScrollBehavior()
-    val scope = rememberCoroutineScope()
-    val tabContentStateHolder = rememberTabContentStateHolder(
-        scope = scope,
-        selectedTab = homeState.tabUiState.selectedTab
-    )
 
     Scaffold(
         modifier = modifier,
@@ -140,13 +139,9 @@ private fun HomeUiScreen(
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .fillMaxSize()
         ) {
-            ReactiveTab(
-                homeState.tabUiState
-            )
+            ReactiveTab(homeState.tabUiState)
 
-            TabContent(
-                stateHolder = tabContentStateHolder
-            )
+            TabContent(homeState.tabContentState)
         }
     }
 }

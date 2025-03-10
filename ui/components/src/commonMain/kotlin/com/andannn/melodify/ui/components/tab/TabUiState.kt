@@ -15,30 +15,13 @@ import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.popup.onMediaOptionClick
-import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
-import com.slack.circuit.runtime.screen.Screen
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
-import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "TabUiState"
-
-object TabUiPresenterFactory : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext
-    ): TabUiPresenter {
-        return TabUiPresenter(
-            getKoin().get(),
-            null
-        )
-    }
-}
 
 class TabUiPresenter(
     private val repository: Repository,
