@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.andannn.melodify.navigation.routes.HOME_ROUTE
 import com.andannn.melodify.navigation.routes.customTabSetting
-import com.andannn.melodify.navigation.routes.homeScreen
 import com.andannn.melodify.navigation.routes.libraryContentListScreen
 import com.andannn.melodify.navigation.routes.libraryScreen
 import com.andannn.melodify.navigation.routes.navigateToCustomTabSetting
@@ -25,11 +24,11 @@ fun MelodifyNavHost(
         startDestination = HOME_ROUTE,
         modifier = modifier,
     ) {
-        homeScreen(
-            onNavigateCustomTabSetting = navHostController::navigateToCustomTabSetting,
-            onNavigateToLibrary = navHostController::navigateToLibrary,
-            onNavigateSearchPage = navHostController::navigateToSearch
-        )
+//        homeScreen(
+//            onNavigateCustomTabSetting = navHostController::navigateToCustomTabSetting,
+//            onNavigateToLibrary = navHostController::navigateToLibrary,
+//            onNavigateSearchPage = navHostController::navigateToSearch
+//        )
         customTabSetting(
             onBackPressed = navHostController::popBackStack
         )

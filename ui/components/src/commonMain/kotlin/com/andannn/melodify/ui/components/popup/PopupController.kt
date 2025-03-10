@@ -96,7 +96,7 @@ class PopupControllerImpl : PopupController {
 suspend fun Repository.onMediaOptionClick(
     optionItem: OptionItem,
     dialog: DialogId.MediaOption,
-    popupController: PopupController,
+    popupController: PopupController?,
 ) {
     when (optionItem) {
         OptionItem.PLAY_NEXT -> onPlayNextClick(dialog.source)
@@ -168,14 +168,14 @@ private suspend fun Repository.onDeletePlayList(playListItemModel: PlayListItemM
     }
 }
 
-private suspend fun Repository.onClickSleepTimer(popupController: PopupController) {
+private suspend fun Repository.onClickSleepTimer(popupController: PopupController?) {
     if (sleepTimerRepository.isCounting()) {
-        val result = popupController.showDialog(DialogId.SleepCountingDialog)
+        val result = popupController?.showDialog(DialogId.SleepCountingDialog)
         if (result is DialogAction.SleepTimerCountingDialog.OnCancelTimer) {
             sleepTimerRepository.cancelSleepTimer()
         }
     } else {
-        val result = popupController.showDialog(DialogId.SleepTimerOptionDialog)
+        val result = popupController?.showDialog(DialogId.SleepTimerOptionDialog)
         if (result is DialogAction.SleepTimerOptionDialog.OnOptionClick) {
             when (val option = result.option) {
                 SleepTimerOption.FIVE_MINUTES,
@@ -196,10 +196,10 @@ private suspend fun Repository.onClickSleepTimer(popupController: PopupControlle
 }
 
 private suspend fun Repository.onAddToPlaylistOptionClick(
-    popupController: PopupController,
+    popupController: PopupController?,
     source: MediaItemModel
 ) {
-    val result = popupController.showDialog(DialogId.AddToPlayListDialog(source))
+    val result = popupController?.showDialog(DialogId.AddToPlayListDialog(source))
 
     if (result is DialogAction.AddToPlayListDialog.OnAddToPlayList) {
         onAddToPlayList(

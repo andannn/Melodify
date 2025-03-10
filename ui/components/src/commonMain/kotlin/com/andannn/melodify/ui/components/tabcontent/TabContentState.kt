@@ -14,8 +14,9 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
-import com.andannn.melodify.ui.components.popup.onMediaOptionClick
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
+import com.andannn.melodify.ui.components.popup.onMediaOptionClick
+import com.slack.circuit.runtime.CircuitUiState
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,25 +26,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
-
-@Composable
-fun rememberTabContentStateHolder(
-    selectedTab: CustomTab?,
-    repository: Repository = getKoin().get(),
-    scope: CoroutineScope = rememberCoroutineScope(),
-    popupController: PopupController = LocalPopupController.current,
-) = remember(
-    selectedTab,
-    repository,
-    popupController,
-) {
-    TabContentStateHolder(
-        selectedTab = selectedTab,
-        repository = repository,
-        scope = scope,
-        popupController = popupController,
-    )
-}
 
 private const val TAG = "TabContentState"
 
@@ -165,7 +147,34 @@ class TabContentStateHolder(
 
 data class TabContentState(
     val contentMap: Map<MediaItemModel, List<AudioItemModel>> = emptyMap(),
-) {
+    val eventSink: (TabContentEvent) -> Unit = {},
+) : CircuitUiState {
     val allAudio: List<AudioItemModel>
         get() = contentMap.values.flatten()
+}
+
+sealed interface TabContentEvent {
+    data class OnShowMusicItemOption(val mediaItemModel: MediaItemModel) : TabContentEvent
+
+    data class OnPlayMusic(val mediaItemModel: AudioItemModel) : TabContentEvent
+}
+
+
+@Composable
+fun rememberTabContentStateHolder(
+    selectedTab: CustomTab?,
+    repository: Repository = getKoin().get(),
+    scope: CoroutineScope = rememberCoroutineScope(),
+    popupController: PopupController = LocalPopupController.current,
+) = remember(
+    selectedTab,
+    repository,
+    popupController,
+) {
+    TabContentStateHolder(
+        selectedTab = selectedTab,
+        repository = repository,
+        scope = scope,
+        popupController = popupController,
+    )
 }

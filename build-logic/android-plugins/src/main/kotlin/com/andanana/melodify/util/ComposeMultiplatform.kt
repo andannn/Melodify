@@ -34,6 +34,7 @@ fun Project.configureComposeMultiplatform(
                 implementation(compose.components.resources)
                 implementation(compose.materialIconsExtended)
                 implementation(compose.components.uiToolingPreview)
+                implementation("com.slack.circuit:circuit-foundation:0.27.0")
             }
 
             val desktopMain = getByName("desktopMain")
