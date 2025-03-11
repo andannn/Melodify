@@ -37,26 +37,36 @@ import com.andannn.melodify.ui.common.widgets.CircleBorderImage
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
-actual fun Player(
+fun DesktopPlayer(
     presenter: PlayerPresenter,
     modifier: Modifier = Modifier,
 ) {
-    when (val uiState = stateHolder.state) {
+    DesktopPlayerUi(
+        state = presenter.present(),
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun DesktopPlayerUi(
+    state: PlayerUiState,
+    modifier: Modifier = Modifier) {
+    when (state) {
         is PlayerUiState.Active -> PlayStateBar(
             modifier = modifier,
-            coverUri = uiState.mediaItem.artWorkUri,
-            playMode = uiState.playMode,
-            isShuffle = uiState.isShuffle,
-            isPlaying = uiState.isPlaying,
-            isFavorite = uiState.isFavorite,
-            title = uiState.mediaItem.name,
-            artist = uiState.mediaItem.artist,
-            progress = uiState.progress,
-            duration = uiState.duration,
-            onEvent = stateHolder::onEvent
+            coverUri = state.mediaItem.artWorkUri,
+            playMode = state.playMode,
+            isShuffle = state.isShuffle,
+            isPlaying = state.isPlaying,
+            isFavorite = state.isFavorite,
+            title = state.mediaItem.name,
+            artist = state.mediaItem.artist,
+            progress = state.progress,
+            duration = state.duration,
+            onEvent = state.eventSink
         )
 
-        PlayerUiState.Inactive -> PlayStateBar(
+        is PlayerUiState.Inactive -> PlayStateBar(
             modifier = modifier,
             coverUri = "",
             enabled = false,

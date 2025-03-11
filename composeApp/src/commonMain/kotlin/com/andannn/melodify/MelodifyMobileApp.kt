@@ -74,7 +74,7 @@ private fun buildCircuitMobile() = buildCircuit(
     )
 )
 
-private fun buildCircuit(
+internal fun buildCircuit(
     presenterFactory: List<Presenter.Factory> = emptyList(),
     uiFactory: List<Ui.Factory> = emptyList(),
 ): Circuit {

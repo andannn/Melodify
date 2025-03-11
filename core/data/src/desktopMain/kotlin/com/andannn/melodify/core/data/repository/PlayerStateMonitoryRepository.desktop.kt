@@ -24,6 +24,10 @@ internal class PlayerStateMonitoryRepositoryImpl(
         return vlcPlayer.currentPositionMs
     }
 
+    override fun observeCurrentPositionMs() = vlcPlayer.observeProgressFactor()
+        .map { vlcPlayer.currentPositionMs }
+        .distinctUntilChanged()
+
     override fun getPlayingIndexInQueue(): Int {
         return vlcPlayer.playingIndexInQueue
     }

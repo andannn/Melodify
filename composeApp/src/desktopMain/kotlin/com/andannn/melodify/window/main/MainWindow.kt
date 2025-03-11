@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -26,23 +25,80 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import com.andannn.melodify.app.MelodifyDeskTopAppState
+import com.andannn.melodify.buildCircuit
+import com.andannn.melodify.ui.components.common.MainScreen
 import com.andannn.melodify.ui.components.lyrics.Lyrics
 import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.components.queue.PlayQueue
 import com.andannn.melodify.ui.components.tab.TabUi
-import com.andannn.melodify.ui.components.tab.rememberTabUiStateHolder
+import com.andannn.melodify.ui.components.tab.TabUiState
+import com.andannn.melodify.ui.components.tab.rememberTabUiPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContent
-import com.andannn.melodify.ui.components.tabcontent.rememberTabContentStateHolder
+import com.andannn.melodify.ui.components.tabcontent.TabContentState
+import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
 import com.andannn.melodify.ui.components.tabselector.CustomTabSelector
 import com.andannn.melodify.window.CustomMenuBar
 import com.andannn.melodify.window.rememberCommonWindowState
+import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.foundation.Circuit
+import com.slack.circuit.foundation.CircuitCompositionLocals
+import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.rememberCircuitNavigator
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.presenter.presenterOf
+import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
+
+object MainScreenUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? {
+        return when (screen) {
+            is MainScreen -> ui<MainUiState> { state, modifier ->
+                MainScreen(state, modifier)
+            }
+
+            else -> null
+        }
+    }
+}
+
+object MainScreenPresenterFactory : Presenter.Factory {
+    override fun create(
+        screen: Screen,
+        navigator: Navigator,
+        context: CircuitContext
+    ): Presenter<*>? {
+        return when (screen) {
+            is MainScreen -> presenterOf {
+                val tabUiPresenter = rememberTabUiPresenter()
+                val tabState = tabUiPresenter.present()
+                val tabContentPresenter = rememberTabContentPresenter(tabState.selectedTab)
+                MainUiState(
+                    tabUiState = tabState,
+                    tabContentState = tabContentPresenter.present(),
+                )
+            }
+
+            else -> null
+        }
+    }
+}
+
+data class MainUiState(
+    val tabUiState: TabUiState,
+    val tabContentState: TabContentState,
+) : CircuitUiState
 
 @Composable
 internal fun MainWindow(
     appState: MelodifyDeskTopAppState,
+    circuit: Circuit = buildCircuitDesktop(),
     onCloseRequest: () -> Unit,
 ) {
     val graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -65,15 +121,32 @@ internal fun MainWindow(
                 SnackbarHost(windowState.snackBarHostState)
             }
         ) {
-            MainWindowContent()
+            CircuitCompositionLocals(circuit = circuit) {
+                val backStack = rememberSaveableBackStack(MainScreen)
+                val navigator = rememberCircuitNavigator(backStack) {
+                    onCloseRequest.invoke()
+                }
+
+                NavigableCircuitContent(navigator, backStack)
+            }
         }
 
         ActionDialogContainer()
     }
 }
 
+private fun buildCircuitDesktop() = buildCircuit(
+    presenterFactory = listOf(
+        MainScreenPresenterFactory
+    ),
+    uiFactory = listOf(
+        MainScreenUiFactory
+    )
+)
+
 @Composable
-fun MainWindowContent(
+fun MainScreen(
+    state: MainUiState,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -87,6 +160,8 @@ fun MainWindowContent(
             VerticalDivider()
 
             TabWithContentSector(
+                state.tabUiState,
+                state.tabContentState,
                 modifier = Modifier.weight(2f)
             )
 
@@ -107,29 +182,19 @@ fun MainWindowContent(
 
 @Composable
 private fun TabWithContentSector(
+    tabUiState: TabUiState,
+    tabContentState: TabContentState,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-    val tabUiStateHolder = rememberTabUiStateHolder(
-        scope = scope
-    )
-    val tabContentStateHolder = rememberTabContentStateHolder(
-        scope = scope,
-        selectedTab = tabUiStateHolder.state.selectedTab
-    )
     Surface(
         modifier = modifier
     ) {
         Column(
             modifier = Modifier,
         ) {
-            TabUi(
-                stateHolder = tabUiStateHolder
-            )
+            TabUi(tabUiState)
 
-            TabContent(
-                stateHolder = tabContentStateHolder
-            )
+            TabContent(tabContentState)
         }
     }
 }
