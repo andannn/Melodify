@@ -13,41 +13,27 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.browsable
 import com.andannn.melodify.core.data.repository.PlayListRepository.Companion.FAVORITE_PLAY_LIST_ID
-import com.andannn.melodify.ui.components.library.util.asDataSource
 import com.andannn.melodify.ui.components.common.MediaItemWithOptionAction
-import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun LibraryContentListView(
+fun LibraryContent(
+    state: LibraryContentState,
     modifier: Modifier = Modifier,
-    dataSource: LibraryDataSource,
-    onNavigateToLibraryContentList: (LibraryDataSource) -> Unit = {},
-    onBackPressed: () -> Unit = {},
 ) {
-    val stateHolder = rememberLibraryContentListState(dataSource = dataSource)
-    val contentList by stateHolder.contentList.collectAsState()
-    val title by stateHolder.title.collectAsState()
-
     LibraryContentList(
         modifier = modifier,
-        title = title,
-        contentList = contentList,
-        onBackPressed = onBackPressed,
+        title = state.title,
+        contentList = state.contentList,
+        onBackPressed = {
+            state.eventSink.invoke(LibraryContentUiEvent.OnBack)
+        },
         onItemClick = {
-            if (it.browsable) {
-                onNavigateToLibraryContentList(it.asDataSource())
-            } else {
-                stateHolder.playMusic(it as AudioItemModel)
-            }
+            state.eventSink.invoke(LibraryContentUiEvent.OnItemClick(it))
         }
     )
 }
@@ -99,58 +85,26 @@ fun LibraryContentList(
     }
 }
 
-sealed interface LibraryDataSource {
-    fun Repository.content(): Flow<List<MediaItemModel>>
+ sealed interface LibraryDataSource {
+    data object AllSong : LibraryDataSource
 
-    data object AllSong : LibraryDataSource {
-        override fun Repository.content(): Flow<List<MediaItemModel>> =
-            mediaContentRepository.getAllMediaItemsFlow()
-    }
+    data object AllArtist : LibraryDataSource
 
-    data object AllArtist : LibraryDataSource {
-        override fun Repository.content(): Flow<List<MediaItemModel>> =
-            mediaContentRepository.getAllArtistFlow()
-    }
+    data object AllAlbum : LibraryDataSource
 
-    data object AllAlbum : LibraryDataSource {
-        override fun Repository.content(): Flow<List<MediaItemModel>> =
-            mediaContentRepository.getAllAlbumsFlow()
-    }
+    data object AllGenre : LibraryDataSource
 
-    data object AllGenre : LibraryDataSource {
-        override fun Repository.content(): Flow<List<MediaItemModel>> =
-            mediaContentRepository.getAllGenreFlow()
-    }
+    data object AllPlaylist : LibraryDataSource
 
-    data object AllPlaylist : LibraryDataSource {
-        override fun Repository.content(): Flow<List<MediaItemModel>> =
-            playListRepository.getAllPlayListFlow()
-    }
+    data object Favorite : LibraryDataSource
 
-    data object Favorite : LibraryDataSource {
-        override fun Repository.content(): Flow<List<MediaItemModel>> =
-            playListRepository.getAudiosOfPlayListFlow(FAVORITE_PLAY_LIST_ID)
-    }
+    data class ArtistDetail(val id: String) : LibraryDataSource
 
-    data class ArtistDetail(val id: String) : LibraryDataSource {
-        override fun Repository.content(): Flow<List<MediaItemModel>> =
-            mediaContentRepository.getAudiosOfArtistFlow(id)
-    }
+    data class AlbumDetail(val id: String) : LibraryDataSource
 
-    data class AlbumDetail(val id: String) : LibraryDataSource {
-        override fun Repository.content(): Flow<List<MediaItemModel>> =
-            mediaContentRepository.getAudiosOfAlbumFlow(id)
-    }
+    data class GenreDetail(val id: String) : LibraryDataSource
 
-    data class GenreDetail(val id: String) : LibraryDataSource {
-        override fun Repository.content(): Flow<List<MediaItemModel>> =
-            mediaContentRepository.getAudiosOfGenreFlow(id)
-    }
-
-    data class PlayListDetail(val id: String) : LibraryDataSource {
-        override fun Repository.content(): Flow<List<MediaItemModel>> =
-            playListRepository.getAudiosOfPlayListFlow(id.toLong())
-    }
+    data class PlayListDetail(val id: String) : LibraryDataSource
 
     fun toStringCode() = when (this) {
         AllSong -> "AllSong"
@@ -196,4 +150,20 @@ sealed interface LibraryDataSource {
             }
         }
     }
+}
+
+fun LibraryDataSource.content(repository: Repository) = when (this) {
+    is LibraryDataSource.AlbumDetail -> repository.mediaContentRepository.getAudiosOfAlbumFlow(id)
+    LibraryDataSource.AllAlbum -> repository.mediaContentRepository.getAllAlbumsFlow()
+    LibraryDataSource.AllArtist -> repository.mediaContentRepository.getAllArtistFlow()
+    LibraryDataSource.AllGenre -> repository.mediaContentRepository.getAllGenreFlow()
+    LibraryDataSource.AllPlaylist -> repository.playListRepository.getAllPlayListFlow()
+    LibraryDataSource.AllSong -> repository.mediaContentRepository.getAllMediaItemsFlow()
+    is LibraryDataSource.ArtistDetail -> repository.mediaContentRepository.getAudiosOfArtistFlow(id)
+    LibraryDataSource.Favorite -> repository.playListRepository.getAudiosOfPlayListFlow(
+        FAVORITE_PLAY_LIST_ID
+    )
+
+    is LibraryDataSource.GenreDetail -> repository.mediaContentRepository.getAudiosOfGenreFlow(id)
+    is LibraryDataSource.PlayListDetail -> repository.playListRepository.getAudiosOfPlayListFlow(id.toLong())
 }

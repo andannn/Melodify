@@ -19,8 +19,6 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -36,22 +34,35 @@ import com.andannn.melodify.ui.components.common.MediaItemWithOptionAction
  *
  * @param modifier Modifier to apply to the content.
  * @param query The current query text.
- * @param onConfirmSearch Called when the user submits the query.
  */
 @Composable
-internal fun SuggestionsView(
+internal fun Suggestions(
     query: String,
+    presenter: SuggestionsPresenter = rememberSuggestionsPresenter(query = query),
     modifier: Modifier = Modifier,
     onConfirmSearch: (String) -> Unit = {},
     onBestMatchedItemClicked: (MediaItemModel) -> Unit = {},
 ) {
-    val state by rememberSuggestionsStateHolder(query = query).state.collectAsState()
+    SuggestionUi(
+        modifier = modifier,
+        uiState = presenter.present(),
+        onConfirmSearch = onConfirmSearch,
+        onBestMatchedItemClicked = onBestMatchedItemClicked,
+    )
+}
 
+@Composable
+internal fun SuggestionUi(
+    modifier: Modifier,
+    uiState: SuggestionsUiState,
+    onConfirmSearch: (String) -> Unit = {},
+    onBestMatchedItemClicked: (MediaItemModel) -> Unit = {},
+) {
     Box(
         modifier = modifier
     ) {
         SuggestionsContent(
-            state = state,
+            state = uiState.state,
             onConfirmSearch = onConfirmSearch,
             onBestMatchedItemClicked = onBestMatchedItemClicked,
         )
@@ -92,7 +103,7 @@ private fun SuggestionsContent(
                         trailingContent = {
                             Icon(
                                 imageVector = Icons.Rounded.ArrowOutward,
-                                contentDescription = "Search"
+                                contentDescription = "SearchScreen"
                             )
                         }
                     )
@@ -142,7 +153,7 @@ private fun SuggestionsContent(
                         trailingContent = {
                             Icon(
                                 imageVector = Icons.Rounded.ArrowOutward,
-                                contentDescription = "Search"
+                                contentDescription = "SearchScreen"
                             )
                         }
                     )

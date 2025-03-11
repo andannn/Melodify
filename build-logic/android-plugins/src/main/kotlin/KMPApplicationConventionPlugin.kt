@@ -14,6 +14,7 @@ class KMPApplicationConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("com.android.application")
                 apply("org.jetbrains.kotlin.multiplatform")
+                apply("org.jetbrains.kotlin.plugin.parcelize")
             }
 
             extensions.configure<KotlinMultiplatformExtension> {

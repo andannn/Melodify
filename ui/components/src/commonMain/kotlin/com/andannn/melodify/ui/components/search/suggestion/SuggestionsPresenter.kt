@@ -1,79 +1,79 @@
 package com.andannn.melodify.ui.components.search.suggestion
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.repository.MediaContentRepository
-import com.andannn.melodify.core.data.repository.UserPreferenceRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-internal fun rememberSuggestionsStateHolder(
+internal fun rememberSuggestionsPresenter(
     query: String,
     repository: Repository = getKoin().get(),
-    scope: CoroutineScope = rememberCoroutineScope()
 ) = remember(
     query,
     repository,
-    scope
 ) {
-    SuggestionsStateHolder(
+    SuggestionsPresenter(
         query = query,
-        repository = repository.mediaContentRepository,
-        userPreferenceRepository = repository.userPreferenceRepository,
-        scope = scope
+        repository = repository,
     )
 }
 
-internal class SuggestionsStateHolder(
-    query: String,
-    repository: MediaContentRepository,
-    userPreferenceRepository: UserPreferenceRepository,
-    scope: CoroutineScope,
-) {
-    private val _state: MutableStateFlow<SuggestionsState>
-    val state get() = _state.asStateFlow()
+internal class SuggestionsPresenter(
+    private val query: String,
+    private val repository: Repository,
+) : Presenter<SuggestionsUiState> {
+    private val userPreferenceRepository = repository.userPreferenceRepository
 
-    init {
+    @Composable
+    override fun present(): SuggestionsUiState {
+        val scope = rememberCoroutineScope()
         val initialState =
             if (query.isEmpty()) SuggestionsState.LoadingHistory else SuggestionsState.LoadingSuggestion
 
-        _state = MutableStateFlow(initialState)
-
+        var state by remember {
+            mutableStateOf(initialState)
+        }
         if (initialState is SuggestionsState.LoadingHistory) {
             scope.launch {
-                _state.value = SuggestionsState.HistoryLoaded(
+                state = SuggestionsState.HistoryLoaded(
                     userPreferenceRepository.getAllSearchHistory()
                 )
             }
         } else {
             scope.launch {
-                val result = repository.searchContent("$query*")
+                val result = repository.mediaContentRepository.searchContent("$query*")
                 if (result.isEmpty()) {
-                    _state.value = SuggestionsState.NoSuggestion
+                    state = SuggestionsState.NoSuggestion
                 } else {
                     // TODO: use string similarity to find best matched items
                     val bestMatchedItems = result.filter {
                         it.name == query
                     }
-                    _state.value = SuggestionsState.SuggestionLoaded(
+                    state = SuggestionsState.SuggestionLoaded(
                         suggestions = result.map { it.name }.distinct(),
                         bestMatchedItems = bestMatchedItems
                     )
                 }
             }
         }
-
+        return SuggestionsUiState(state)
     }
 }
 
-internal sealed interface SuggestionsState {
+data class SuggestionsUiState(
+    val state: SuggestionsState,
+) : CircuitUiState
+
+sealed interface SuggestionsState {
     /**
      * When query string is empty, show history search suggestions.
      */
