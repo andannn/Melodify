@@ -1,10 +1,10 @@
 package com.andannn.melodify.ui.components.queue
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 
@@ -15,11 +15,11 @@ class PlayQueuePresenter(
     @Composable
     override fun present(): PlayQueueState {
         val playListQueue by
-        repository.playerStateMonitoryRepository.getPlayListQueueStateFlow().collectAsState(
+        repository.playerStateMonitoryRepository.getPlayListQueueStateFlow().collectAsRetainedState(
             emptyList()
         )
         val interactingMusicItem by
-        repository.playerStateMonitoryRepository.getPlayingMediaStateFlow().collectAsState(
+        repository.playerStateMonitoryRepository.getPlayingMediaStateFlow().collectAsRetainedState(
             AudioItemModel.DEFAULT
         )
         return PlayQueueState(

@@ -15,6 +15,7 @@ import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.onMediaOptionClick
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
@@ -60,7 +61,7 @@ class TabContentPresenter(
     override fun present(): TabContentState {
         val scope = rememberCoroutineScope()
         Napier.d(tag = TAG) { "TabContentPresenter scope ${scope.hashCode()}" }
-        val contentMap = remember {
+        val contentMap = rememberRetained {
             mutableStateMapOf<MediaItemModel, List<AudioItemModel>>()
         }
 

@@ -2,10 +2,10 @@ package com.andannn.melodify.ui.components.lyrics
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.LyricModel
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 
@@ -16,7 +16,7 @@ class LyricPresenter(
     @Composable
     override fun present(): LyricState {
         val currentPlayingAudio by repository.playerStateMonitoryRepository
-            .getPlayingMediaStateFlow().collectAsState(null)
+            .getPlayingMediaStateFlow().collectAsRetainedState(null)
         if (currentPlayingAudio == null) {
             return LyricState.NoPlaying
         }
@@ -34,7 +34,7 @@ class LyricPresenter(
         }
 
         val lyric by repository.lyricRepository.getLyricByMediaIdFlow(currentPlayingAudio?.id ?: "")
-            .collectAsState(null)
+            .collectAsRetainedState(null)
         return if (lyric == null) LyricState.Loading else LyricState.Loaded(lyric)
     }
 }
