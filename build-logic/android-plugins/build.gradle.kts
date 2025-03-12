@@ -9,7 +9,6 @@ dependencies {
     compileOnly(libs.jetbrainsCompose.gradlePlugin)
     compileOnly(libs.composeCompiler.gradlePlugin)
     compileOnly(libs.composeCompiler.gradlePlugin)
-    compileOnly(libs.screenshot)
 }
 
 gradlePlugin {
