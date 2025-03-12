@@ -16,7 +16,6 @@ fun Project.configureComposeMultiplatform(
             apply("org.jetbrains.kotlin.plugin.compose")
             apply("org.jetbrains.compose")
         }
-
         val compose: ComposePlugin.Dependencies = dependencies.extensions.getByType(ComposePlugin.Dependencies::class.java)
 
         sourceSets.apply {
