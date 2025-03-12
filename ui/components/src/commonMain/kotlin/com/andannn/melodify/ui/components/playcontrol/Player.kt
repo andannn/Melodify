@@ -9,9 +9,8 @@ fun Player(
     presenter: PlayerPresenter = rememberPlayerPresenter(),
     modifier: Modifier = Modifier
 ) {
-    val state = presenter.present()
     PlayerAreaView(
-        state = state,
+        state = presenter.present(),
         modifier = modifier
     )
 }

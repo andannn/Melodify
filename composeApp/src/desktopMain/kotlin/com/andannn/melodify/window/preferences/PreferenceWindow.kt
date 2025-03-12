@@ -17,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -26,7 +25,6 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import com.andannn.melodify.app.MelodifyDeskTopAppState
 import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
-import com.andannn.melodify.ui.components.tabselector.SelectableNavigationDrawerItem
 import com.andannn.melodify.window.CustomMenuBar
 
 @Composable
@@ -54,22 +52,9 @@ private fun PreferencesWindowContent(
     Row(
         modifier = modifier
     ) {
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            SelectableNavigationDrawerItem(
-                label = "Library",
-                selected = false,
-                onClick = {}
-            )
-        }
-
-        VerticalDivider()
-
         LibraryPreference(
             modifier = Modifier.fillMaxHeight().weight(2f)
         )
-
     }
 }
 
