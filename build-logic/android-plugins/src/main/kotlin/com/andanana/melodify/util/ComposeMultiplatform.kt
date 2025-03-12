@@ -17,9 +17,6 @@ fun Project.configureComposeMultiplatform(
             apply("org.jetbrains.compose")
         }
 
-//        dependencies {
-//            debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.8")
-//        }
         val compose: ComposePlugin.Dependencies = dependencies.extensions.getByType(ComposePlugin.Dependencies::class.java)
 
         sourceSets.apply {

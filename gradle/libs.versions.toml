@@ -28,7 +28,7 @@ compose-plugin = "1.7.3"
 jetbrainsNavigation = "2.8.0-alpha12"
 napierVersion = "2.7.1"
 sqliteBundled = "2.5.0-alpha12"
-uiTooling = "1.7.7"
+uiTooling = "1.7.8"
 coreKtx = "1.6.1"
 kotlinxDatetime = "0.6.2"
 junit = "4.13.2"
@@ -40,6 +40,7 @@ dependencyGraphGenerator = "0.8.0"
 uiDesktop = "1.7.0"
 vlcj = "4.10.1"
 circuit = "0.27.0"
+screenshot = "0.0.1-alpha09"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -111,6 +112,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", version.ref = "uiDesktop" }
 vlcj = { module = "uk.co.caprica:vlcj", version.ref = "vlcj" }
+screenshot = { group = "com.android.compose.screenshot", name = "com.android.compose.screenshot.gradle.plugin", version.ref = "screenshot" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -126,3 +128,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "androidxRoom" }
 dependency-graph_generator = { id = "com.vanniktech.dependency.graph.generator", version.ref = "dependencyGraphGenerator" }
 parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot"}

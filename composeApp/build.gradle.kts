@@ -168,3 +168,16 @@ dependencyGraphGenerator {
         }
     }
 }
+
+dependencies {
+    screenshotTestImplementation(libs.androidx.ui.tooling)
+    screenshotTestImplementation(libs.circuit.foundation)
+    screenshotTestImplementation(compose.foundation)
+    screenshotTestImplementation(compose.material3)
+    screenshotTestImplementation(compose.components.resources)
+    screenshotTestImplementation(compose.ui)
+    screenshotTestImplementation(project(":core:data"))
+    screenshotTestImplementation(project(":ui:common"))
+    screenshotTestImplementation(project(":ui:components"))
+    screenshotTestImplementation(libs.androidx.ui.tooling)
+}

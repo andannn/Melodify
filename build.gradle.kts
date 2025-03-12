@@ -17,5 +17,6 @@ plugins {
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.room) apply false
+    alias(libs.plugins.screenshot) apply false
     alias(libs.plugins.dependency.graph.generator)
 }
