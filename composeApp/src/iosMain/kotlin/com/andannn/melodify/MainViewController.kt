@@ -1,11 +1,17 @@
 package com.andannn.melodify
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.ComposeUIViewController
+import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
+import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
+import com.andannn.melodify.ui.components.popup.LocalPopupController
+import com.andannn.melodify.ui.components.popup.PopupControllerImpl
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.core.context.startKoin
@@ -36,7 +42,13 @@ fun MainViewController() = ComposeUIViewController(
 
     Napier.d("Permission granted: $permissionGranted")
     if (permissionGranted) {
-        MelodifyMobileApp()
+        val coroutineScope = rememberCoroutineScope()
+        CompositionLocalProvider(
+            LocalPopupController provides remember { PopupControllerImpl() },
+            LocalPlayerUiController provides remember { PlayerUiController(coroutineScope) },
+        ) {
+            MelodifyMobileApp()
+        }
     }
 }
 
