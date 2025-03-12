@@ -17,7 +17,7 @@ expect fun getColorScheme(darkTheme: Boolean, isDynamicColor: Boolean): ColorSch
 @Composable
 fun MelodifyTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    isDynamicColor: Boolean = false,
+    isDynamicColor: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = getColorScheme(darkTheme, isDynamicColor)

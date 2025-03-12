@@ -6,10 +6,6 @@ plugins {
 
 android {
     namespace = "com.andannn.melodify.ui.database"
-
-    defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
 }
 
 room {

@@ -39,6 +39,7 @@ material = "1.12.0"
 dependencyGraphGenerator = "0.8.0"
 uiDesktop = "1.7.0"
 vlcj = "4.10.1"
+circuit = "0.27.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -89,9 +90,13 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "jetbrainsNavigation" }
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napierVersion" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtx" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinxCoroutines" }
+circuit-foundation = { group = "com.slack.circuit", name = "circuit-foundation", version.ref = "circuit" }
+circuit-test = { group = "com.slack.circuit", name = "circuit-test", version.ref = "circuit" }
+ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTooling" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "uiTooling" }
 
 # dependecy in build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

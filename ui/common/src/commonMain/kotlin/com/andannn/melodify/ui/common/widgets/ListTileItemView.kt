@@ -30,10 +30,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.andannn.melodify.ui.common.theme.MelodifyTheme
 import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 enum class ActionType {
     NONE,

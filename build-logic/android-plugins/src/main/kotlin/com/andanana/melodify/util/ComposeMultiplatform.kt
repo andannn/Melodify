@@ -16,14 +16,13 @@ fun Project.configureComposeMultiplatform(
             apply("org.jetbrains.kotlin.plugin.compose")
             apply("org.jetbrains.compose")
         }
+
+//        dependencies {
+//            debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.8")
+//        }
         val compose: ComposePlugin.Dependencies = dependencies.extensions.getByType(ComposePlugin.Dependencies::class.java)
 
         sourceSets.apply {
-            androidMain.dependencies {
-                implementation(compose.preview)
-                implementation(libs.findLibrary("androidx.ui.tooling").get())
-            }
-
             commonMain.dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
@@ -34,13 +33,34 @@ fun Project.configureComposeMultiplatform(
                 implementation(compose.components.resources)
                 implementation(compose.materialIconsExtended)
                 implementation(compose.components.uiToolingPreview)
-                implementation("com.slack.circuit:circuit-foundation:0.27.0")
+                implementation(libs.findLibrary("circuit.foundation").get())
+            }
+
+            commonTest.dependencies {
+                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+                implementation(compose.uiTest)
+                implementation(libs.findLibrary("circuit.test").get())
+            }
+
+            androidMain.dependencies {
+                implementation(compose.preview)
+                implementation(libs.findLibrary("androidx.ui.tooling").get())
+            }
+
+            androidInstrumentedTest.dependencies {
+                implementation(libs.findLibrary("ui.test.manifest").get())
+                implementation(libs.findLibrary("ui.test.junit4.android").get())
             }
 
             val desktopMain = getByName("desktopMain")
             desktopMain.dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(compose.desktop.common)
+            }
+
+            val desktopTest = getByName("desktopTest")
+            desktopTest.dependencies {
+                implementation(compose.desktop.currentOs)
             }
         }
     }
