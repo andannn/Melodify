@@ -8,7 +8,6 @@ dependencies {
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.jetbrainsCompose.gradlePlugin)
     compileOnly(libs.composeCompiler.gradlePlugin)
-    compileOnly(libs.composeCompiler.gradlePlugin)
 }
 
 gradlePlugin {
