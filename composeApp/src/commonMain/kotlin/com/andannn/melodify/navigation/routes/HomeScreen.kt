@@ -128,12 +128,6 @@ private fun HomeUiScreen(
                             Icon(Icons.Rounded.Search, contentDescription = "")
                         }
                     )
-                    IconButton(
-                        onClick = { homeState.eventSink.invoke(HomeUiEvent.SettingButtonClick) },
-                        content = {
-                            Icon(Icons.Rounded.Settings, contentDescription = "")
-                        }
-                    )
                 },
                 scrollBehavior = scrollBehavior,
             )

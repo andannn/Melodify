@@ -37,7 +37,6 @@ import com.andannn.melodify.ui.components.tab.rememberTabUiPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContent
 import com.andannn.melodify.ui.components.tabcontent.TabContentState
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
-import com.andannn.melodify.ui.components.tabselector.CustomTabSelector
 import com.andannn.melodify.window.CustomMenuBar
 import com.andannn.melodify.window.rememberCommonWindowState
 import com.slack.circuit.backstack.rememberSaveableBackStack
@@ -153,12 +152,6 @@ fun MainScreen(
         modifier = Modifier.fillMaxSize(),
     ) {
         Row(modifier = modifier.weight(1f)) {
-            LeftSidePaneSector(
-                modifier = Modifier.weight(1f)
-            )
-
-            VerticalDivider()
-
             TabWithContentSector(
                 state.tabUiState,
                 state.tabContentState,
@@ -196,17 +189,6 @@ private fun TabWithContentSector(
 
             TabContent(tabContentState)
         }
-    }
-}
-
-@Composable
-private fun LeftSidePaneSector(
-    modifier: Modifier = Modifier,
-) {
-    Surface(modifier = modifier) {
-        CustomTabSelector(
-            modifier = Modifier
-        )
     }
 }
 
