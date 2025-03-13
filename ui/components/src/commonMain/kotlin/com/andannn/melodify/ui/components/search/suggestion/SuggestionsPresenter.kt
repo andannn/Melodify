@@ -8,15 +8,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.ui.components.common.LocalRepository
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
-import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 internal fun rememberSuggestionsPresenter(
     query: String,
-    repository: Repository = getKoin().get(),
+    repository: Repository = LocalRepository.current,
 ) = remember(
     query,
     repository,

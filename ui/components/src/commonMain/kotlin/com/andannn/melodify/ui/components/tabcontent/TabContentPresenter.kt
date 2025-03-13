@@ -10,6 +10,7 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
@@ -30,7 +31,7 @@ private const val TAG = "TabContentPresenter"
 @Composable
 fun rememberTabContentPresenter(
     selectedTab: CustomTab?,
-    repository: Repository = getKoin().get(),
+    repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current
 ) = remember(
     selectedTab,
@@ -39,7 +40,7 @@ fun rememberTabContentPresenter(
 ) {
     TabContentPresenter(
         selectedTab,
-        getKoin().get(),
+        repository,
         popupController
     )
 }

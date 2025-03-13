@@ -6,7 +6,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.navigation.routes.HomePresenterFactory
 import com.andannn.melodify.navigation.routes.HomeUiFactory
 import com.andannn.melodify.navigation.routes.LibraryContentPresenterFactory
@@ -17,6 +22,7 @@ import com.andannn.melodify.navigation.routes.SearchPresenterFactory
 import com.andannn.melodify.navigation.routes.SearchUiFactory
 import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
 import com.andannn.melodify.ui.components.common.HomeScreen
+import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
 import com.slack.circuit.backstack.rememberSaveableBackStack
@@ -26,6 +32,7 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
+import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun MelodifyMobileApp(
@@ -33,32 +40,35 @@ fun MelodifyMobileApp(
     circuit: Circuit = buildCircuitMobile(),
     appState: MelodifyAppState = rememberAppState(),
 ) {
-    Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface),
-        snackbarHost = {
-            SnackbarHost(appState.snackBarHostState)
-        },
-    ) {
-        CircuitCompositionLocals(circuit = circuit) {
-            val backStack = rememberSaveableBackStack(HomeScreen)
-            val navigator = rememberCircuitNavigator(backStack) {
+    CompositionLocalProvider(LocalRepository provides remember { getKoin().get() }) {
+        Scaffold(
+            modifier = modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface),
+            snackbarHost = {
+                SnackbarHost(appState.snackBarHostState)
+            },
+        ) {
+            CircuitCompositionLocals(circuit = circuit) {
+                val backStack = rememberSaveableBackStack(HomeScreen)
+                val navigator = rememberCircuitNavigator(backStack) {
 
+                }
+
+                AndroidBackHandler(enabled = backStack.size > 1) {
+                    navigator.pop()
+                }
+
+                NavigableCircuitContent(navigator, backStack)
             }
 
-            AndroidBackHandler(enabled = backStack.size > 1) {
-                navigator.pop()
-            }
+            Player()
 
-            NavigableCircuitContent(navigator, backStack)
+            ActionDialogContainer()
         }
-
-        Player()
-
-        ActionDialogContainer()
     }
 }
+
 private fun buildCircuitMobile() = buildCircuit(
     presenterFactory = listOf(
         HomePresenterFactory,

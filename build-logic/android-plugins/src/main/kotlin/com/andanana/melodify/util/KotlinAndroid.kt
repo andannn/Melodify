@@ -29,12 +29,6 @@ internal fun Project.configureKotlinAndroid(
 ) {
     // android extensions
     commonExtension.apply {
-        with(pluginManager) {
-            apply("com.android.compose.screenshot")
-        }
-
-        dependencies.add("screenshotTestImplementation", libs.findLibrary("androidx.ui.tooling").get())
-
         defaultConfig.apply {
             minSdk = 24
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -46,7 +40,5 @@ internal fun Project.configureKotlinAndroid(
             sourceCompatibility = JavaVersion.VERSION_17
             targetCompatibility = JavaVersion.VERSION_17
         }
-
-        experimentalProperties["android.experimental.enableScreenshotTest"] = true
     }
 }

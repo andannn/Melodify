@@ -4,9 +4,11 @@ import com.andannn.melodify.ui.components.common.LibraryContentListScreen
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryContentPresenter
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryContent
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryContentState
+import com.andannn.melodify.ui.components.librarycontentlist.rememberLibraryContentPresenter
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.presenter.presenterOf
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
@@ -19,11 +21,12 @@ object LibraryContentPresenterFactory : Presenter.Factory {
         context: CircuitContext
     ): Presenter<*>? {
         return when (screen) {
-            is LibraryContentListScreen -> LibraryContentPresenter(
-                getKoin().get(),
-                navigator,
-                screen.datasource
-            )
+            is LibraryContentListScreen -> presenterOf {
+                rememberLibraryContentPresenter(
+                    dataSource = screen.datasource,
+                    navigator = navigator,
+                ).present()
+            }
             else -> null
         }
     }

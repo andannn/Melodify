@@ -4,10 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.browsable
+import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.common.newLibraryContentListScreen
 import com.andannn.melodify.ui.components.library.util.asDataSource
 import com.slack.circuit.runtime.CircuitUiState
@@ -21,6 +23,15 @@ import melodify.ui.common.generated.resources.favorite
 import melodify.ui.common.generated.resources.genre_title
 import melodify.ui.common.generated.resources.playlist_page_title
 import org.jetbrains.compose.resources.getString
+
+@Composable
+fun rememberLibraryContentPresenter(
+    dataSource: LibraryDataSource,
+    navigator: Navigator,
+    repository: Repository = LocalRepository.current,
+) = remember(repository, navigator, dataSource) {
+    LibraryContentPresenter(repository, navigator, dataSource)
+}
 
 class LibraryContentPresenter(
     private val repository: Repository,
@@ -68,10 +79,17 @@ private suspend fun LibraryDataSource.getTitle(repository: Repository) = when (t
     LibraryDataSource.AllPlaylist -> getString(Res.string.playlist_page_title)
     LibraryDataSource.AllSong -> getString(Res.string.audio_page_title)
     LibraryDataSource.Favorite -> getString(Res.string.favorite)
-    is LibraryDataSource.AlbumDetail -> repository.mediaContentRepository.getAlbumByAlbumId(id)?.name ?: ""
-    is LibraryDataSource.ArtistDetail -> repository.mediaContentRepository.getArtistByArtistId(id)?.name ?: ""
-    is LibraryDataSource.GenreDetail -> repository.mediaContentRepository.getGenreByGenreId(id)?.name ?: ""
-    is LibraryDataSource.PlayListDetail -> repository.playListRepository.getPlayListById(id.toLong())?.name ?: ""
+    is LibraryDataSource.AlbumDetail -> repository.mediaContentRepository.getAlbumByAlbumId(id)?.name
+        ?: ""
+
+    is LibraryDataSource.ArtistDetail -> repository.mediaContentRepository.getArtistByArtistId(id)?.name
+        ?: ""
+
+    is LibraryDataSource.GenreDetail -> repository.mediaContentRepository.getGenreByGenreId(id)?.name
+        ?: ""
+
+    is LibraryDataSource.PlayListDetail -> repository.playListRepository.getPlayListById(id.toLong())?.name
+        ?: ""
 }
 
 
