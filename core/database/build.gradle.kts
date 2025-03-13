@@ -27,6 +27,7 @@ kotlin {
         androidInstrumentedTest.dependencies {
             implementation(libs.androidx.test.runner)
             implementation(libs.androidx.test.core.ktx)
+            implementation(libs.room.runtime)
         }
 
         commonTest.dependencies {
