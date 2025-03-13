@@ -13,20 +13,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.ui.components.common.LocalRepository
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.mp.KoinPlatform.getKoin
 import kotlin.math.roundToInt
 
 @Composable
 fun rememberSyncedLyricsPresenter(
     syncedLyric: String,
     lazyListState: LazyListState= rememberLazyListState(),
-    repository: Repository = getKoin().get(),
+    repository: Repository = LocalRepository.current,
 ): SyncedLyricsPresenter = remember(syncedLyric, lazyListState, repository) {
     SyncedLyricsPresenter(
         syncedLyrics = syncedLyric,

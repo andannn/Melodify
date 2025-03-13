@@ -14,10 +14,6 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
@@ -34,6 +30,8 @@ fun Search(
 ) {
     SearchViewContent(
         modifier = modifier,
+        inputText = state.inputText,
+        isExpand = state.isExpand,
         searchedResult = state.searchState,
         onConfirmSearch = {
             state.eventSink.invoke(SearchUiEvent.OnConfirmSearch(it))
@@ -47,18 +45,28 @@ fun Search(
         onNavigateToLibraryContentList = {
             state.eventSink.invoke(SearchUiEvent.OnNavigateToLibraryContentList(it))
         },
+        onInputTextChange = {
+            state.eventSink.invoke(SearchUiEvent.OnInputTextChange(it))
+        },
+        onExpandChange = {
+            state.eventSink.invoke(SearchUiEvent.OnExpandChange(it))
+        },
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SearchViewContent(
-    modifier: Modifier = Modifier,
+    inputText: String,
+    isExpand: Boolean,
     searchedResult: SearchState,
+    modifier: Modifier = Modifier,
     onConfirmSearch: (String) -> Unit = {},
     onBackKeyPressed: () -> Unit = {},
     onNavigateToLibraryContentList: (LibraryDataSource) -> Unit = {},
-    onPlayAudio: (AudioItemModel) -> Unit = {}
+    onPlayAudio: (AudioItemModel) -> Unit = {},
+    onInputTextChange: (String) -> Unit = {},
+    onExpandChange: (Boolean) -> Unit = {},
 ) {
     fun onResultItemClick(item: MediaItemModel) {
         if (item.browsable) {
@@ -73,27 +81,15 @@ internal fun SearchViewContent(
         modifier = modifier
     ) {
         Column {
-            var expanded by rememberSaveable { mutableStateOf(true) }
-            var text by rememberSaveable { mutableStateOf("") }
-
             SearchBar(
                 modifier = Modifier.fillMaxWidth(),
                 inputField = {
                     SearchBarDefaults.InputField(
-                        query = text,
-                        onQueryChange = {
-                            text = it
-                        },
-                        expanded = expanded,
-                        onExpandedChange = {
-                            expanded = it
-                        },
-                        onSearch = {
-                            if (text.isNotEmpty()) {
-                                onConfirmSearch(text)
-                                expanded = false
-                            }
-                        },
+                        query = inputText,
+                        onQueryChange = onInputTextChange,
+                        expanded = isExpand,
+                        onExpandedChange = onExpandChange,
+                        onSearch = onConfirmSearch,
                         placeholder = {
                             Text(
                                 "Song, Artist, Album",
@@ -111,19 +107,12 @@ internal fun SearchViewContent(
                         },
                     )
                 },
-                expanded = expanded,
-                onExpandedChange = {
-                    expanded = it
-                },
+                expanded = isExpand,
+                onExpandedChange = onExpandChange,
             ) {
                 Suggestions(
-                    query = text,
-
-                    onConfirmSearch = {
-                        text = it
-                        expanded = false
-                        onConfirmSearch(it)
-                    },
+                    query = inputText,
+                    onConfirmSearch = onConfirmSearch,
                 )
             }
 
@@ -131,7 +120,6 @@ internal fun SearchViewContent(
                 modifier = Modifier,
                 searchedResult = searchedResult,
                 onResultItemClick = {
-                    expanded = false
                     onResultItemClick(it)
                 }
             )

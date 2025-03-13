@@ -61,11 +61,11 @@ fun Library(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LibraryContent(
+internal fun LibraryContent(
     modifier: Modifier = Modifier,
-    onBackKeyPressed: () -> Unit,
+    onBackKeyPressed: () -> Unit = {},
     navigateToSearch: () -> Unit = {},
-    onShortcutItemClick: (ShortcutItem) -> Unit,
+    onShortcutItemClick: (ShortcutItem) -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier,

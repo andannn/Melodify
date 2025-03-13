@@ -18,6 +18,7 @@ import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.SleepTimerRepository
+import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
@@ -29,11 +30,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberPlayerPresenter(
-    repository: Repository = getKoin().get(),
+    repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
 ): PlayerPresenter = remember(
     repository,

@@ -11,6 +11,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
@@ -22,13 +23,12 @@ import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
-import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "TabUiState"
 
 @Composable
 fun rememberTabUiPresenter(
-    repository: Repository = getKoin().get(),
+    repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
 ) = remember(repository, popupController) { TabUiPresenter(repository, popupController) }
 

@@ -28,7 +28,9 @@ import com.andannn.melodify.app.MelodifyDeskTopAppState
 import com.andannn.melodify.buildCircuit
 import com.andannn.melodify.ui.components.common.MainScreen
 import com.andannn.melodify.ui.components.lyrics.Lyrics
-import com.andannn.melodify.ui.components.playcontrol.Player
+import com.andannn.melodify.ui.components.playcontrol.DesktopPlayerUi
+import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
+import com.andannn.melodify.ui.components.playcontrol.rememberPlayerPresenter
 import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.components.queue.PlayQueue
 import com.andannn.melodify.ui.components.tab.TabUi
@@ -78,9 +80,11 @@ object MainScreenPresenterFactory : Presenter.Factory {
                 val tabUiPresenter = rememberTabUiPresenter()
                 val tabState = tabUiPresenter.present()
                 val tabContentPresenter = rememberTabContentPresenter(tabState.selectedTab)
+                val playerPresenter = rememberPlayerPresenter()
                 MainUiState(
                     tabUiState = tabState,
                     tabContentState = tabContentPresenter.present(),
+                    playerUiState = playerPresenter.present()
                 )
             }
 
@@ -91,6 +95,7 @@ object MainScreenPresenterFactory : Presenter.Factory {
 
 data class MainUiState(
     val tabUiState: TabUiState,
+    val playerUiState: PlayerUiState,
     val tabContentState: TabContentState,
 ) : CircuitUiState
 
@@ -167,7 +172,8 @@ fun MainScreen(
 
         HorizontalDivider()
 
-        Player(
+        DesktopPlayerUi(
+            state = state.playerUiState,
             modifier = Modifier
         )
     }

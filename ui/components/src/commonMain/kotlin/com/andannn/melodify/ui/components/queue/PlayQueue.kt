@@ -21,7 +21,6 @@ import com.andannn.melodify.ui.common.widgets.ListTileItemView
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import org.koin.mp.KoinPlatform.getKoin
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
 
@@ -29,7 +28,7 @@ private const val TAG = "PlayQueueView"
 
 @Composable
 fun PlayQueue(
-    presenter: PlayQueuePresenter = remember { PlayQueuePresenter(getKoin().get()) },
+    presenter: PlayQueuePresenter = rememberPlayQueuePresenter(),
     modifier: Modifier = Modifier,
 ) {
     val state = presenter.present()

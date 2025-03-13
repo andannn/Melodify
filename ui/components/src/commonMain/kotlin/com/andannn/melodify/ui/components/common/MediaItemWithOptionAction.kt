@@ -25,7 +25,7 @@ internal fun MediaItemWithOptionAction(
     modifier: Modifier = Modifier,
     mediaItemModel: MediaItemModel,
     popupController: PopupController = LocalPopupController.current,
-    repository: Repository = getKoin().get(),
+    repository: Repository = LocalRepository.current,
     onItemClick: () -> Unit,
 ) {
     suspend fun onHandleResult(result: DialogAction) {

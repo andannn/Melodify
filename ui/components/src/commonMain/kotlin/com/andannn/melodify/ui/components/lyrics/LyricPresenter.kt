@@ -4,10 +4,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.LyricModel
+import com.andannn.melodify.ui.components.common.LocalRepository
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
+
+@Composable
+fun rememberLyricPresenter(
+    repository: Repository = LocalRepository.current,
+) = remember(repository) {
+    LyricPresenter(repository)
+}
 
 class LyricPresenter(
     private val repository: Repository,

@@ -5,6 +5,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     id("melodify.kmp.application")
     id("melodify.compose.multiplatform.application")
+    alias(libs.plugins.paparazzi)
     alias(libs.plugins.google.service)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.dependency.graph.generator)
@@ -44,6 +45,10 @@ kotlin {
 
         desktopMain.dependencies {
             implementation(libs.kotlinx.coroutines.swing)
+        }
+
+        androidUnitTest.dependencies {
+            implementation(libs.paparazzi)
         }
     }
 }

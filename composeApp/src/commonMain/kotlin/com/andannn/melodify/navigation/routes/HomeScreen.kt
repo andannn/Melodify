@@ -82,13 +82,13 @@ private class HomePresenter(
     }
 }
 
-private data class HomeState(
+internal data class HomeState(
     val tabUiState: TabUiState,
     val tabContentState: TabContentState,
     val eventSink: (HomeUiEvent) -> Unit = {},
 ) : CircuitUiState
 
-private sealed interface HomeUiEvent {
+internal sealed interface HomeUiEvent {
     data object SettingButtonClick : HomeUiEvent
     data object SearchButtonClick : HomeUiEvent
     data object LibraryButtonClick : HomeUiEvent
@@ -96,7 +96,7 @@ private sealed interface HomeUiEvent {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeUiScreen(
+internal fun HomeUiScreen(
     homeState: HomeState,
     modifier: Modifier = Modifier,
 ) {

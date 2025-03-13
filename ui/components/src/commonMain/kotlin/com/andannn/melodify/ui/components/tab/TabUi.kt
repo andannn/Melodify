@@ -2,6 +2,7 @@ package com.andannn.melodify.ui.components.tab
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryScrollableTabRow
@@ -9,6 +10,8 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.common.util.getCategoryResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,7 +39,10 @@ fun TabUi(
                         unselectedContentColor = MaterialTheme.colorScheme.onSurface,
                         text = @Composable {
                             Text(
+                                modifier = Modifier.widthIn(max = 80.dp),
                                 text = getCategoryResource(item),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                             )
                         },
                         onClick = {

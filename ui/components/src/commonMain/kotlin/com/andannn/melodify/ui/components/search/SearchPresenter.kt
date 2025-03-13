@@ -17,6 +17,7 @@ import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
+import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.common.newLibraryContentListScreen
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
 import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
@@ -26,12 +27,11 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberSearchUiPresenter(
     navigator: Navigator,
-    repository: Repository = getKoin().get(),
+    repository: Repository = LocalRepository.current,
     playerUiController: PlayerUiController = LocalPlayerUiController.current,
 ) = remember(
     repository,
@@ -68,6 +68,8 @@ class SearchUiPresenter(
             mutableStateOf<SearchState>(SearchState.Init)
         }
 
+        var expanded by rememberSaveable { mutableStateOf(true) }
+
         LaunchedEffect(searchText) {
             searchResult = SearchState.Searching
 
@@ -84,24 +86,33 @@ class SearchUiPresenter(
         }
 
         return SearchUiState(
-            searchState = searchResult
+            searchState = searchResult,
+            isExpand = expanded,
+            inputText = searchText,
         ) { eventSink ->
             when (eventSink) {
                 is SearchUiEvent.OnConfirmSearch -> {
-                    val text = eventSink.text
-                    searchText = "$text*"
-
+                    searchText = eventSink.text
+                    expanded = false
                     scope.launch {
-                        userPreferenceRepository.addSearchHistory(text)
+                        userPreferenceRepository.addSearchHistory(eventSink.text + "*")
                     }
-
                 }
 
                 is SearchUiEvent.OnPlayAudio -> onPlayAudio(scope, eventSink.audioItemModel)
+
                 SearchUiEvent.Back -> navigator.pop()
+
                 is SearchUiEvent.OnNavigateToLibraryContentList -> navigator.goTo(
                     newLibraryContentListScreen(eventSink.source)
                 )
+
+                is SearchUiEvent.OnExpandChange -> {
+                    expanded = eventSink.isExpand
+                }
+                is SearchUiEvent.OnInputTextChange -> {
+                    searchText = eventSink.inputText
+                }
             }
         }
     }
@@ -135,6 +146,8 @@ class SearchUiPresenter(
 }
 
 data class SearchUiState(
+    val inputText: String = "",
+    val isExpand: Boolean = true,
     val searchState: SearchState = SearchState.Init,
     val eventSink: (SearchUiEvent) -> Unit = {}
 ) : CircuitUiState
@@ -147,6 +160,10 @@ sealed interface SearchUiEvent {
     data class OnNavigateToLibraryContentList(val source: LibraryDataSource) : SearchUiEvent
 
     data object Back : SearchUiEvent
+
+    data class OnInputTextChange(val inputText: String) : SearchUiEvent
+
+    data class OnExpandChange(val isExpand: Boolean) : SearchUiEvent
 }
 
 sealed interface SearchState {

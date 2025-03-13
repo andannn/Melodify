@@ -19,6 +19,7 @@ package com.andanana.melodify.util
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
 
 /**
  * Configure base Kotlin with Android options
@@ -30,6 +31,7 @@ internal fun Project.configureKotlinAndroid(
     commonExtension.apply {
         defaultConfig.apply {
             minSdk = 24
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
 
         compileSdk = 35

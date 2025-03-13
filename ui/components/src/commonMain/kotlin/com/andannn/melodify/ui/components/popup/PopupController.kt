@@ -53,6 +53,29 @@ interface PopupController {
     suspend fun showDialog(dialogId: DialogId): DialogAction
 }
 
+class NoOpPopupController : PopupController {
+    override val currentDialog: DialogData = object : DialogData {
+        override val dialogId: DialogId
+            get() = DialogId.SleepCountingDialog
+
+        override fun performAction(action: DialogAction) {
+        }
+    }
+
+    override val snackBarMessageChannel: ReceiveChannel<SnackbarVisuals> = Channel()
+    override val snackBarResultChannel: SendChannel<SnackbarResult> = Channel()
+    override suspend fun showSnackBar(
+        message: SnackBarMessage,
+        messageFormatArgs: List<Any>
+    ): SnackbarResult {
+        return SnackbarResult.Dismissed
+    }
+
+    override suspend fun showDialog(dialogId: DialogId): DialogAction {
+        return DialogAction.Dismissed
+    }
+}
+
 class PopupControllerImpl : PopupController {
     private val mutex = Mutex()
 
