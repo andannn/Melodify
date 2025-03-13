@@ -38,7 +38,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun DesktopPlayer(
-    presenter: PlayerPresenter,
+    presenter: PlayerPresenter = rememberPlayerPresenter(),
     modifier: Modifier = Modifier,
 ) {
     DesktopPlayerUi(
@@ -48,7 +48,7 @@ fun DesktopPlayer(
 }
 
 @Composable
-private fun DesktopPlayerUi(
+fun DesktopPlayerUi(
     state: PlayerUiState,
     modifier: Modifier = Modifier) {
     when (state) {
