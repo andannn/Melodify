@@ -1,12 +1,15 @@
 package com.andannn.melodify.glance
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
+import com.andannn.melodify.MainActivity
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.glance.PlayerGlance
@@ -27,7 +30,16 @@ class PlayerGlanceAppWidget : GlanceAppWidget() {
                 LocalPopupController provides remember { NoOpPopupController() },
                 LocalRepository provides remember { getKoin().get<Repository>() }
             ) {
-                PlayerGlance()
+                PlayerGlance(
+                    onLaunchMainActivity = {
+                        actionStartActivity(
+                            Intent(
+                                context,
+                                MainActivity::class.java
+                            )
+                        )
+                    }
+                )
             }
         }
 

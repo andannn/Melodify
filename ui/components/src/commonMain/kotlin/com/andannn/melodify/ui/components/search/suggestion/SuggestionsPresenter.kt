@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.components.common.LocalRepository
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ internal class SuggestionsPresenter(
         val initialState =
             if (query.isEmpty()) SuggestionsState.LoadingHistory else SuggestionsState.LoadingSuggestion
 
-        var state by remember {
+        var state by rememberRetained {
             mutableStateOf(initialState)
         }
         if (initialState is SuggestionsState.LoadingHistory) {

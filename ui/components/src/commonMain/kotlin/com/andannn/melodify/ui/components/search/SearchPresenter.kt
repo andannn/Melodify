@@ -22,6 +22,7 @@ import com.andannn.melodify.ui.components.common.newLibraryContentListScreen
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
 import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -64,7 +65,7 @@ class SearchUiPresenter(
             mutableStateOf("")
         }
 
-        var searchResult by remember {
+        var searchResult by rememberRetained {
             mutableStateOf<SearchState>(SearchState.Init)
         }
 

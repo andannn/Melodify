@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -16,6 +17,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
@@ -50,7 +52,9 @@ import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
 import com.andannn.melodify.ui.components.playcontrol.rememberPlayerPresenter
 
 @Composable
-fun PlayerGlance() {
+fun PlayerGlance(
+    onLaunchMainActivity: () -> Action,
+) {
     GlanceTheme(
         colors = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             GlanceTheme.colors
@@ -64,10 +68,11 @@ fun PlayerGlance() {
         val presenter = rememberPlayerPresenter()
         PlayerGlanceContent(
             state = presenter.present(),
+            onClickContainer = onLaunchMainActivity,
             modifier = GlanceModifier
                 .background(GlanceTheme.colors.surface)
                 .size(width = 180.dp, height = 60.dp)
-                .cornerRadius(16.dp)
+                .cornerRadius(16.dp),
         )
     }
 }
@@ -75,26 +80,35 @@ fun PlayerGlance() {
 @Composable
 fun PlayerGlanceContent(
     state: PlayerUiState,
-    modifier: GlanceModifier = GlanceModifier
+    onClickContainer: () -> Action,
+    modifier: GlanceModifier = GlanceModifier,
 ) {
-    val title = when (state) {
-        is PlayerUiState.Active -> state.mediaItem.name
-        is PlayerUiState.Inactive -> "Nothing Playing"
-    }
-    val isPlaying = when (state) {
-        is PlayerUiState.Active -> state.isPlaying
-        is PlayerUiState.Inactive -> false
-    }
-    val coverRes = when (state) {
-        is PlayerUiState.Active -> state.mediaItem.artWorkUri
-        is PlayerUiState.Inactive -> null
-    }
-    val isFavorite = when (state) {
-        is PlayerUiState.Active -> state.isFavorite
-        is PlayerUiState.Inactive -> false
-    }
+    val title by rememberUpdatedState(
+        when (state) {
+            is PlayerUiState.Active -> state.mediaItem.name
+            is PlayerUiState.Inactive -> "Nothing Playing"
+        }
+    )
+    val isPlaying by rememberUpdatedState(
+        when (state) {
+            is PlayerUiState.Active -> state.isPlaying
+            is PlayerUiState.Inactive -> false
+        }
+    )
+    val coverRes by rememberUpdatedState(
+        when (state) {
+            is PlayerUiState.Active -> state.mediaItem.artWorkUri
+            is PlayerUiState.Inactive -> null
+        }
+    )
+    val isFavorite by rememberUpdatedState(
+        when (state) {
+            is PlayerUiState.Active -> state.isFavorite
+            is PlayerUiState.Inactive -> false
+        }
+    )
     Row(
-        modifier = modifier.fillMaxWidth().height(80.dp),
+        modifier = modifier.fillMaxWidth().height(80.dp).clickable(onClickContainer()),
     ) {
         AlbumColver(
             modifier = GlanceModifier

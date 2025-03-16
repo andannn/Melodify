@@ -2,7 +2,6 @@ package com.andannn.melodify.ui.components.playcontrol
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +23,7 @@ import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.onMediaOptionClick
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.CoroutineScope
@@ -59,18 +59,18 @@ class PlayerPresenter(
         val scope = rememberCoroutineScope()
 
         val interactingMusicItem by
-            playerStateMonitoryRepository.getPlayingMediaStateFlow().collectAsState(null)
+            playerStateMonitoryRepository.getPlayingMediaStateFlow().collectAsRetainedState(null)
         val isPlaying by
-            playerStateMonitoryRepository.observeIsPlaying().collectAsState(false)
+            playerStateMonitoryRepository.observeIsPlaying().collectAsRetainedState(false)
         val progressFactor by
-            playerStateMonitoryRepository.observeProgressFactor().collectAsState(0f)
+            playerStateMonitoryRepository.observeProgressFactor().collectAsRetainedState(0f)
         val playMode by
-            playerStateMonitoryRepository.observePlayMode().collectAsState(PlayMode.REPEAT_ALL)
+            playerStateMonitoryRepository.observePlayMode().collectAsRetainedState(PlayMode.REPEAT_ALL)
         val isShuffle by
-            playerStateMonitoryRepository.observeIsShuffle().collectAsState(false)
+            playerStateMonitoryRepository.observeIsShuffle().collectAsRetainedState(false)
         val duration by
-            playerStateMonitoryRepository.observeCurrentPositionMs().collectAsState(0L)
-        val isSleepTimerCounting by sleepTimerRepository.observeIsCounting().collectAsState(false)
+            playerStateMonitoryRepository.observeCurrentPositionMs().collectAsRetainedState(0L)
+        val isSleepTimerCounting by sleepTimerRepository.observeIsCounting().collectAsRetainedState(false)
         var isFavorite by rememberSaveable {
             mutableStateOf(false)
         }
