@@ -15,6 +15,8 @@ class MelodifyApplication : Application() {
             Napier.base(DebugAntilog())
         }
 
+        Napier.d { "Application onCreate" }
+
         startKoin {
             androidContext(this@MelodifyApplication)
             modules(

@@ -27,6 +27,10 @@ compose.resources {
 }
 
 android {
+    sourceSets["main"].resources {
+        srcDirs("src/androidMain/res")
+    }
+
     namespace = "com.andannn.melodify.common"
 }
 

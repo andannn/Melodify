@@ -5,4 +5,4 @@ import androidx.compose.runtime.compositionLocalOf
 import com.andannn.melodify.core.data.Repository
 
 val LocalRepository: ProvidableCompositionLocal<Repository> =
-    compositionLocalOf { error("no popup controller") }
+    compositionLocalOf { error("no local repository") }

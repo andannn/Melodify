@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(
                 scrim = Color.TRANSPARENT,
-            ),
+            )
         )
 
         intentSenderLauncher = registerForActivityResult(

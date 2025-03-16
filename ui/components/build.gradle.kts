@@ -13,6 +13,12 @@ kotlin {
             implementation(libs.coil3.compose)
             implementation(libs.reorderable)
         }
+
+        androidMain.dependencies {
+            implementation(libs.androidx.glance.appwidget)
+            implementation(libs.androidx.glance.material3)
+            implementation(libs.coil3.compose)
+        }
     }
 }
 

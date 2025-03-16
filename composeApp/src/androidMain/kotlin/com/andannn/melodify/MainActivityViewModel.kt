@@ -31,9 +31,9 @@ class MainActivityViewModel(
             }
         }
     }
-
     override fun onCleared() {
-        mediaBrowserManager.disConnect()
+// TODO : disconnect player service when activity is destroyed and glance widget is not used
+//        mediaBrowserManager.disConnect()
     }
 }
 
