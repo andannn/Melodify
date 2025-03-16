@@ -2,7 +2,6 @@ package com.andannn.melodify.ui.components.tab
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,6 +17,7 @@ import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.popup.onMediaOptionClick
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
@@ -44,7 +44,7 @@ class TabUiPresenter(
     override fun present(): TabUiState {
         val scope = rememberCoroutineScope()
         var selectedIndex by rememberSaveable { mutableStateOf(0) }
-        val currentTabList by userPreferenceRepository.currentCustomTabsFlow.collectAsState(
+        val currentTabList by userPreferenceRepository.currentCustomTabsFlow.collectAsRetainedState(
             emptyList()
         )
 

@@ -33,6 +33,8 @@ kotlin {
         androidMain.dependencies {
             implementation(project(":core:player"))
 
+            implementation(libs.androidx.glance.appwidget)
+
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.androidx.activity.compose)

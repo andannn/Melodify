@@ -1,9 +1,7 @@
 package com.andannn.melodify.ui.components.librarycontentlist
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -12,6 +10,8 @@ import com.andannn.melodify.core.data.model.browsable
 import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.common.newLibraryContentListScreen
 import com.andannn.melodify.ui.components.library.util.asDataSource
+import com.slack.circuit.retained.collectAsRetainedState
+import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -40,8 +40,8 @@ class LibraryContentPresenter(
 ) : Presenter<LibraryContentState> {
     @Composable
     override fun present(): LibraryContentState {
-        val contentList by dataSource.content(repository).collectAsState(emptyList())
-        val title by produceState("") {
+        val contentList by dataSource.content(repository).collectAsRetainedState(emptyList())
+        val title by produceRetainedState("") {
             value = dataSource.getTitle(repository)
         }
         return LibraryContentState(

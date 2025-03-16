@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.ui.components.common.LocalRepository
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
@@ -49,7 +50,7 @@ class SyncedLyricsPresenter(
         val syncedLyricsLines by rememberSaveable {
             mutableStateOf(parseSyncedLyrics(syncedLyrics))
         }
-        var lyricsState by remember {
+        var lyricsState by rememberRetained {
             mutableStateOf<LyricsState>(LyricsState.AutoScrolling)
         }
         var currentPlayingIndex by rememberSaveable {
