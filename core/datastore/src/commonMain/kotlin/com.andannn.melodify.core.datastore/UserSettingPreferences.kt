@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.andannn.melodify.core.datastore.model.PlatModeValues
 import com.andannn.melodify.core.datastore.model.PreferencesKeyName
@@ -30,7 +31,9 @@ class UserSettingPreferences(
                         ?: PreviewModeValues.LIST_PREVIEW_VALUE,
                     libraryPath =
                     preferences[stringSetPreferencesKey(PreferencesKeyName.LIBRARY_PATH_KEY_NAME)]
-                        ?: emptySet()
+                        ?: emptySet(),
+                    lastSuccessfulSyncTime =
+                    preferences[longPreferencesKey(PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME)],
                 )
             }
 
@@ -45,6 +48,13 @@ class UserSettingPreferences(
         preferences.edit { preferences ->
             preferences[stringSetPreferencesKey(PreferencesKeyName.LIBRARY_PATH_KEY_NAME)] =
                 libraryPathList
+        }
+    }
+
+    suspend fun setLastSuccessfulSyncTime(lastSuccessfulSyncTime: Long) {
+        preferences.edit { preferences ->
+            preferences[longPreferencesKey(PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME)] =
+                lastSuccessfulSyncTime
         }
     }
 }

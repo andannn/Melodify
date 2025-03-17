@@ -25,8 +25,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.andannn.melodify.core.syncer.MediaLibrarySyncer
+import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import com.andannn.melodify.core.syncer.SyncJobService
+import com.andannn.melodify.core.syncer.SyncWorkHelper
 import com.andannn.melodify.ui.common.dialog.ConnectFailedAlertDialog
 import com.andannn.melodify.ui.common.theme.MelodifyTheme
 import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
@@ -36,7 +37,7 @@ import com.andannn.melodify.ui.components.popup.PopupControllerImpl
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val TAG = "MainActivity"
@@ -50,6 +51,7 @@ private val runTimePermissions =
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainActivityViewModel by viewModel()
+    private val userPreferenceRepository: UserPreferenceRepository by inject()
 
     private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
 
@@ -58,6 +60,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         SyncJobService.scheduleSyncLibraryJob(this)
+        SyncWorkHelper.registerPeriodicSyncWork(this)
 
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(
@@ -126,8 +129,11 @@ class MainActivity : ComponentActivity() {
 
             LaunchedEffect(permissionGranted) {
                 if (permissionGranted && savedInstanceState == null) {
-                    Napier.d(tag = TAG) { "scheduling first sync job" }
-                    getKoin().get<MediaLibrarySyncer>().syncAllMediaLibrary()
+                    val notSynced = userPreferenceRepository.getLastSuccessfulSyncTime() == null
+                    Napier.d(tag = TAG) { "permission granted. notSynced: $notSynced" }
+                    if (notSynced) {
+                        SyncWorkHelper.doOneTimeSyncWork(this@MainActivity)
+                    }
                 }
             }
 

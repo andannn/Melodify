@@ -66,4 +66,9 @@ interface UserPreferenceRepository {
      * @return all search history
      */
     suspend fun getAllSearchHistory(limit: Int = 10): List<String>
+
+    /**
+     * get last successful sync time
+     */
+    suspend fun getLastSuccessfulSyncTime(): Long?
 }

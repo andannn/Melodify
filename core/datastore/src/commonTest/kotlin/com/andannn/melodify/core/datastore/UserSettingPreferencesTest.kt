@@ -20,12 +20,15 @@ class UserSettingPreferencesTest {
 
     private lateinit var preferences: UserSettingPreferences
 
+    private val randomInt
+        get() = (0..1000).random()
+
     @BeforeTest
     fun setUp() {
         val dataStore = PreferenceDataStoreFactory.createWithPath(
             scope = datastoreScope,
         ) {
-            "${FileSystem.SYSTEM_TEMPORARY_DIRECTORY}/$dataStoreFileName".toPath()
+            "${FileSystem.SYSTEM_TEMPORARY_DIRECTORY}/${randomInt}_${dataStoreFileName}".toPath()
         }
         preferences = UserSettingPreferences(dataStore)
     }
@@ -38,6 +41,25 @@ class UserSettingPreferencesTest {
         assertEquals(
             expected = PreviewModeValues.GRID_PREVIEW_VALUE,
             actual = data.mediaPreviewMode
+        )
+    }
+
+    @Test
+    fun `set last successful sync`() = testScope.runTest {
+        preferences.setLastSuccessfulSyncTime(123456789)
+        val data = preferences.userDate.first()
+        assertEquals(
+            expected = 123456789,
+            actual = data.lastSuccessfulSyncTime
+        )
+    }
+
+    @Test
+    fun `get last successful when not set`() = testScope.runTest {
+        val data = preferences.userDate.first()
+        assertEquals(
+            expected = null,
+            actual = data.lastSuccessfulSyncTime
         )
     }
 }
