@@ -42,11 +42,13 @@ class TabUiPresenter(
 
     @Composable
     override fun present(): TabUiState {
+        Napier.d(tag = TAG) { "TabUiPresenter present" }
         val scope = rememberCoroutineScope()
         var selectedIndex by rememberSaveable { mutableStateOf(0) }
         val currentTabList by userPreferenceRepository.currentCustomTabsFlow.collectAsRetainedState(
             emptyList()
         )
+        Napier.d(tag = TAG) { "TabUiPresenter currentTabList $currentTabList" }
 
         LaunchedEffect(Unit) {
             userPreferenceRepository.currentCustomTabsFlow

@@ -2,11 +2,11 @@ package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
@@ -16,14 +16,13 @@ import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.onMediaOptionClick
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 
 private const val TAG = "TabContentPresenter"
@@ -61,17 +60,18 @@ class TabContentPresenter(
     override fun present(): TabContentState {
         val scope = rememberCoroutineScope()
         Napier.d(tag = TAG) { "TabContentPresenter scope ${scope.hashCode()}" }
-        val contentMap = rememberRetained {
-            mutableStateMapOf<MediaItemModel, List<AudioItemModel>>()
+
+        val groupType by rememberRetained {
+            mutableStateOf(GroupType.ALBUM)
+        }
+        val audioList by getContentFlow().collectAsRetainedState(emptyList())
+
+        Napier.d(tag = TAG) { "TabContentPresenter audioList ${audioList.size}" }
+        val contentMap = rememberRetained(groupType, audioList) {
+            audioList.toMap(groupType)
         }
 
-        scope.launch {
-            getContentFlow().collect {
-                Napier.d(tag = TAG) { "TabContentPresenter update" }
-                contentMap.clear()
-                contentMap.putAll(it)
-            }
-        }
+        Napier.d(tag = TAG) { "TabContentPresenter contentMap ${contentMap.size}" }
 
         DisposableEffect(Unit) {
             onDispose {
@@ -81,7 +81,13 @@ class TabContentPresenter(
 
         return TabContentState(contentMap) { eventSink ->
             when (eventSink) {
-                is TabContentEvent.OnPlayMusic -> scope.launch { playMusic(eventSink.mediaItemModel, allAudios = contentMap.values.flatten()) }
+                is TabContentEvent.OnPlayMusic -> scope.launch {
+                    playMusic(
+                        eventSink.mediaItemModel,
+                        allAudios = contentMap.values.flatten()
+                    )
+                }
+
                 is TabContentEvent.OnShowMusicItemOption -> scope.launch {
                     onShowMusicItemOption(
                         eventSink.mediaItemModel
@@ -92,38 +98,12 @@ class TabContentPresenter(
     }
 
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getContentFlow(): Flow<Map<MediaItemModel, List<AudioItemModel>>> {
+    private fun getContentFlow(): Flow<List<AudioItemModel>> {
         if (selectedTab == null) {
-            return flow { emit(emptyMap()) }
+            return flow { emit(emptyList()) }
         }
-        val contentsFlow = with(selectedTab) {
+        return with(selectedTab) {
             repository.contentFlow()
-        }
-        return contentsFlow.mapLatest { contents ->
-            contents
-                .groupBy(
-                    keySelector = {
-                        it.albumId
-                    },
-                )
-                .let { idToContentsMap ->
-                    idToContentsMap
-                        .mapKeys { (id, _) ->
-                            repository.mediaContentRepository.getAlbumByAlbumId(id)
-                                ?: AlbumItemModel(
-                                    id = "unknown",
-                                    name = "unknown",
-                                    trackCount = 0,
-                                    artWorkUri = "",
-                                )
-                        }
-                        .mapValues {
-                            it.value.sortedBy { audio ->
-                                audio.cdTrackNumber
-                            }
-                        }
-                }
         }
     }
 
@@ -174,8 +154,13 @@ class TabContentPresenter(
     }
 }
 
+data class HeaderKey(
+    val groupType: GroupType,
+    val headerId: String?
+)
+
 data class TabContentState(
-    val contentMap: Map<MediaItemModel, List<AudioItemModel>> = emptyMap(),
+    val contentMap: Map<HeaderKey, List<AudioItemModel>> = emptyMap(),
     val eventSink: (TabContentEvent) -> Unit = {},
 ) : CircuitUiState
 
@@ -184,3 +169,30 @@ sealed interface TabContentEvent {
 
     data class OnPlayMusic(val mediaItemModel: AudioItemModel) : TabContentEvent
 }
+
+enum class GroupType {
+    ARTIST,
+    ALBUM,
+    NONE,
+}
+
+private fun List<AudioItemModel>.toMap(groupType: GroupType): Map<HeaderKey, List<AudioItemModel>> {
+    return this.groupBy {
+        it.keyOf(groupType)
+    }.mapValues {
+        it.value.sortBy(groupType)
+    }
+}
+
+fun AudioItemModel.keyOf(groupType: GroupType) = when (groupType) {
+    GroupType.ARTIST -> HeaderKey(groupType, artistId)
+    GroupType.ALBUM -> HeaderKey(groupType, albumId)
+    GroupType.NONE -> HeaderKey(groupType, null)
+}
+
+fun List<AudioItemModel>.sortBy(groupType: GroupType) = when (groupType) {
+    GroupType.ARTIST -> sortedBy { it.name }
+    GroupType.ALBUM -> sortedBy { it.cdTrackNumber }
+    GroupType.NONE -> this
+}
+

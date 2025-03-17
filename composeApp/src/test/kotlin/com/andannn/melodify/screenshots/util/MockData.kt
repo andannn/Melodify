@@ -17,6 +17,11 @@ val album2 = AlbumItemModel.DEFAULT.copy(
     trackCount = 2
 )
 
+val albumList = listOf(
+    album1,
+    album2
+)
+
 val audioList1 = listOf(
     AudioItemModel.DEFAULT.copy(
         id = "1000008185",

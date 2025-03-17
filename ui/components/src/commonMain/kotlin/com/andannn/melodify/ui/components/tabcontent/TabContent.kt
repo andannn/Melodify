@@ -18,6 +18,8 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.browsableOrPlayable
 import com.andannn.melodify.ui.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
+import com.andannn.melodify.ui.components.tabcontent.header.GroupHeader
+import com.andannn.melodify.ui.components.tabcontent.header.rememberGroupHeaderPresenter
 
 @Composable
 fun TabContent(
@@ -35,7 +37,7 @@ fun TabContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyListContent(
-    contentMap: Map<MediaItemModel, List<AudioItemModel>>,
+    contentMap: Map<HeaderKey, List<AudioItemModel>>,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     onMusicItemClick: (AudioItemModel) -> Unit = {},
@@ -46,13 +48,14 @@ private fun LazyListContent(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 5.dp),
     ) {
-        contentMap.forEach { (header, mediaItems) ->
-            stickyHeader(header.id) {
-                AlbumInfo(
-                    coverArtUri = header.artWorkUri,
-                    title = header.name,
-                    trackCount = mediaItems.size,
-                )
+        contentMap.forEach { (headerKey, mediaItems) ->
+            if (headerKey.groupType != GroupType.NONE) {
+                stickyHeader(headerKey.headerId) {
+                    val presenter = rememberGroupHeaderPresenter(headerKey)
+                    GroupHeader(
+                        state = presenter.present()
+                    )
+                }
             }
 
             items(
@@ -66,7 +69,7 @@ private fun LazyListContent(
                     isActive = false,
                     albumArtUri = item.artWorkUri,
                     title = item.name,
-                    showTrackNum = header is AlbumItemModel,
+                    showTrackNum = headerKey.groupType == GroupType.ALBUM,
                     trackNum = item.cdTrackNumber,
                     onMusicItemClick = {
                         onMusicItemClick.invoke(item)
