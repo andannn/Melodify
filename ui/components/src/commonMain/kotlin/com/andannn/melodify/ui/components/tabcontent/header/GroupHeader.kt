@@ -1,5 +1,7 @@
-package com.andannn.melodify.ui.components.tabcontent
+package com.andannn.melodify.ui.components.tabcontent.header
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -12,9 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,8 +24,22 @@ import melodify.ui.common.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
+
 @Composable
-fun AlbumInfo(
+fun GroupHeader(
+    state: GroupHeaderState,
+    modifier: Modifier = Modifier
+) {
+    HeaderInfo(
+        modifier = modifier,
+        coverArtUri = state.cover,
+        title = state.title,
+        trackCount = state.trackCount
+    )
+}
+
+@Composable
+private fun HeaderInfo(
     modifier: Modifier = Modifier,
     coverArtUri: String = "",
     defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,

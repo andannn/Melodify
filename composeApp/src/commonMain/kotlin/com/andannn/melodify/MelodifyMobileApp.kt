@@ -32,7 +32,10 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
+import io.github.aakira.napier.Napier
 import org.koin.mp.KoinPlatform.getKoin
+
+private const val TAG = "MelodifyMobileApp"
 
 @Composable
 fun MelodifyMobileApp(
@@ -40,6 +43,7 @@ fun MelodifyMobileApp(
     circuit: Circuit = buildCircuitMobile(),
     appState: MelodifyAppState = rememberAppState(),
 ) {
+    Napier.d(tag = TAG) { "Show app" }
     CompositionLocalProvider(LocalRepository provides remember { getKoin().get() }) {
         Scaffold(
             modifier = modifier

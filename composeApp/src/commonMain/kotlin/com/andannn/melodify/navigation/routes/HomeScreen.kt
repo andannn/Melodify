@@ -34,6 +34,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
+import io.github.aakira.napier.Napier
 
 object HomeUiFactory : Ui.Factory {
     override fun create(screen: Screen, context: CircuitContext): Ui<*>? {
@@ -66,6 +67,7 @@ private class HomePresenter(
 
     @Composable
     override fun present(): HomeState {
+        Napier.d(tag = "HomePresenter") { "HomePresenter present" }
         val tabUiPresenter = rememberTabUiPresenter()
         val tabUiState = tabUiPresenter.present()
         val tabContentPresenter = rememberTabContentPresenter(tabUiState.selectedTab)
