@@ -22,7 +22,8 @@ class UserPreferenceRepositoryImpl(
     override val userSettingFlow: Flow<UserSetting> = preferences.userDate.map {
         UserSetting(
             mediaPreviewMode = it.mediaPreviewMode.toMediaPreviewMode(),
-            libraryPath = it.libraryPath
+            libraryPath = it.libraryPath,
+            lastSuccessfulSyncTime = it.lastSuccessfulSyncTime
         )
     }
 
@@ -86,6 +87,10 @@ class UserPreferenceRepositoryImpl(
 
     override suspend fun getAllSearchHistory(limit: Int): List<String> {
         return userDataDao.getSearchHistories(limit).map { it.searchText }
+    }
+
+    override suspend fun getLastSuccessfulSyncTime(): Long? {
+        return preferences.userDate.first().lastSuccessfulSyncTime
     }
 }
 

@@ -23,4 +23,6 @@ open class NoOpUserPreferenceRepository : UserPreferenceRepository {
     override suspend fun addSearchHistory(searchHistory: String) {}
 
     override suspend fun getAllSearchHistory(limit: Int): List<String> = emptyList()
+
+    override suspend fun getLastSuccessfulSyncTime(): Long? = null
 }

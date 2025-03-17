@@ -34,4 +34,12 @@ data class UserSettingPref(
      * Value: [Set<String>]
      */
     val libraryPath: Set<String>,
+
+    /**
+     * last successful sync time
+     *
+     * key: [PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME]
+     * Value: [Long]
+     */
+    val lastSuccessfulSyncTime: Long?,
 )
