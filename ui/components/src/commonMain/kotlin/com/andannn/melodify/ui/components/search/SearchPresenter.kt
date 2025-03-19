@@ -1,7 +1,6 @@
 package com.andannn.melodify.ui.components.search
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,21 +70,6 @@ class SearchUiPresenter(
 
         var expanded by rememberSaveable { mutableStateOf(true) }
 
-        LaunchedEffect(searchText) {
-            searchResult = SearchState.Searching
-
-            searchResult = if (isValid(searchText)) {
-                val result = contentLibrary.searchContent(searchText)
-                if (result.isEmpty()) {
-                    SearchState.NoObject
-                } else {
-                    toResult(result)
-                }
-            } else {
-                SearchState.Result(emptyList())
-            }
-        }
-
         return SearchUiState(
             searchState = searchResult,
             isExpand = expanded,
@@ -95,8 +79,26 @@ class SearchUiPresenter(
                 is SearchUiEvent.OnConfirmSearch -> {
                     searchText = eventSink.text
                     expanded = false
+
                     scope.launch {
-                        userPreferenceRepository.addSearchHistory(eventSink.text + "*")
+                        if (searchText.isEmpty()) return@launch
+
+                        searchResult = SearchState.Searching
+
+                        searchResult = if (isValid(searchText)) {
+                            val result = contentLibrary.searchContent(searchText)
+                            if (result.isEmpty()) {
+                                SearchState.NoObject
+                            } else {
+                                toResult(result)
+                            }
+                        } else {
+                            SearchState.Result(emptyList())
+                        }
+                    }
+
+                    scope.launch {
+                        userPreferenceRepository.addSearchHistory(eventSink.text)
                     }
                 }
 
@@ -109,6 +111,12 @@ class SearchUiPresenter(
                 )
 
                 is SearchUiEvent.OnExpandChange -> {
+                    if (!eventSink.isExpand && searchResult is SearchState.Init) {
+                        // If no search action triggered when request shrink, just close the search page.
+                        navigator.pop()
+                        return@SearchUiState
+                    }
+
                     expanded = eventSink.isExpand
                 }
                 is SearchUiEvent.OnInputTextChange -> {
