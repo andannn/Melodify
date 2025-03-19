@@ -14,7 +14,12 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.browsable
@@ -77,6 +82,12 @@ internal fun SearchViewContent(
         }
     }
 
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     Scaffold(
         modifier = modifier
     ) {
@@ -85,6 +96,7 @@ internal fun SearchViewContent(
                 modifier = Modifier.fillMaxWidth(),
                 inputField = {
                     SearchBarDefaults.InputField(
+                        modifier = Modifier.focusRequester(focusRequester),
                         query = inputText,
                         onQueryChange = onInputTextChange,
                         expanded = isExpand,
@@ -97,7 +109,10 @@ internal fun SearchViewContent(
                             )
                         },
                         leadingIcon = {
-                            IconButton(onClick = onBackKeyPressed) {
+                            IconButton(onClick = {
+                                focusManager.clearFocus()
+                                onBackKeyPressed.invoke()
+                            }) {
                                 Icon(
                                     Icons.AutoMirrored.Default.ArrowBack,
                                     tint = MaterialTheme.colorScheme.onSurface,
