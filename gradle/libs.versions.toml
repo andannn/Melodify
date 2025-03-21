@@ -1,6 +1,6 @@
 [versions]
 composeLintChecks = "1.4.1"
-firebaseBom = "33.10.0"
+firebaseBom = "33.11.0"
 jaudiotagger = "2.0.3"
 kotlinxCollectionsImmutable = "0.3.8"
 ksp = "2.1.10-1.0.31"
