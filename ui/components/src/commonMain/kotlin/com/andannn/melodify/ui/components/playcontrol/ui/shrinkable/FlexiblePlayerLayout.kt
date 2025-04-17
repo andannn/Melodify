@@ -195,7 +195,6 @@ internal fun FlexiblePlayerLayout(
                 PlayerBottomSheetView(
                     modifier = Modifier.height(with(LocalDensity.current) { layoutState.bottomSheetHeight.toDp() }),
                     state = layoutState.bottomSheetState,
-                    activeMediaItem = activeMediaItem,
                     onRequestExpandSheet = {
                         layoutState.expandBottomSheet()
                     },

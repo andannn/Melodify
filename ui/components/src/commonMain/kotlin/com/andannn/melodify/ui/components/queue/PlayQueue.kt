@@ -3,7 +3,9 @@ package com.andannn.melodify.ui.components.queue
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
@@ -31,9 +33,8 @@ fun PlayQueue(
     presenter: PlayQueuePresenter = rememberPlayQueuePresenter(),
     modifier: Modifier = Modifier,
 ) {
-    val state = presenter.present()
     PlayQueueUi(
-        state = state,
+        state = presenter.present(),
         modifier = modifier
     )
 }
@@ -43,20 +44,22 @@ fun PlayQueueUi(
     state: PlayQueueState,
     modifier: Modifier = Modifier
 ) {
-    PlayQueueContent(
-        modifier = modifier,
-        onItemClick = {
-            state.eventSink.invoke(PlayQueueEvent.OnItemClick(it))
-        },
-        onSwapFinished = { from, to ->
-            state.eventSink.invoke(PlayQueueEvent.OnSwapFinished(from = from, to = to))
-        },
-        onDeleteFinished = {
-            state.eventSink.invoke(PlayQueueEvent.OnDeleteFinished(it))
-        },
-        playListQueue = state.playListQueue.toImmutableList(),
-        activeMediaItem = state.interactingMusicItem,
-    )
+    if (state.playListQueue.isNotEmpty()) {
+        PlayQueueContent(
+            modifier = modifier,
+            onItemClick = {
+                state.eventSink.invoke(PlayQueueEvent.OnItemClick(it))
+            },
+            onSwapFinished = { from, to ->
+                state.eventSink.invoke(PlayQueueEvent.OnSwapFinished(from = from, to = to))
+            },
+            onDeleteFinished = {
+                state.eventSink.invoke(PlayQueueEvent.OnDeleteFinished(it))
+            },
+            playListQueue = state.playListQueue.toImmutableList(),
+            activeMediaItem = state.interactingMusicItem,
+        )
+    }
 }
 
 @Composable
@@ -68,8 +71,13 @@ private fun PlayQueueContent(
     activeMediaItem: AudioItemModel,
     modifier: Modifier = Modifier,
 ) {
+    val playingIndex = playListQueue.indexOfFirst { it == activeMediaItem }
+    Napier.d(tag = TAG) { "playingIndex $playingIndex" }
+    val listState: LazyListState =
+        rememberLazyListState(if (playingIndex == -1) 0 else playingIndex)
     val playQueueState =
         rememberSwapListState<AudioItemModel>(
+            lazyListState = listState,
             onSwapFinished = { from, to, _ ->
                 Napier.d(tag = TAG) { "PlayQueueView: drag stopped from $from to $to" }
                 onSwapFinished(from, to)
@@ -85,9 +93,8 @@ private fun PlayQueueContent(
     }
 
     LazyColumn(
-        modifier =
-        modifier.fillMaxWidth(),
-        state = playQueueState.lazyListState,
+        modifier = modifier.fillMaxWidth(),
+        state = listState,
     ) {
         items(
             items = playQueueState.itemList,
@@ -147,9 +154,9 @@ private fun ReorderableCollectionItemScope.QueueItem(
         ListTileItemView(
             modifier = modifier,
             swapIconModifier =
-            Modifier.draggableHandle(
-                onDragStopped = onSwapFinish,
-            ),
+                Modifier.draggableHandle(
+                    onDragStopped = onSwapFinish,
+                ),
             isActive = isActive,
 //            defaultColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             albumArtUri = item.artWorkUri,
