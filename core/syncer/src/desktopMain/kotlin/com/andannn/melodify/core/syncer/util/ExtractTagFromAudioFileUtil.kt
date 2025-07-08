@@ -33,10 +33,14 @@ fun extractTagFromAudioFile(filePath: Path): AudioData? {
         val tag = audioFile.tag
 // TODO: cache error and set default for method getFirst
         AudioData(
-            id = -1, // assign id later.
-            albumId = -1, // assign id later.
-            artistId = -1, // assign id later.
-            genreId = -1, // assign id later.
+            // assign id later.
+            id = -1,
+            // assign id later.
+            albumId = -1,
+            // assign id later.
+            artistId = -1,
+            // assign id later.
+            genreId = -1,
             sourceUri = filePath.toUri().toString(),
             title = tag.tryGetFirst(FieldKey.TITLE) ?: "",
             duration = audioFile.audioHeader.trackLength,
@@ -60,30 +64,26 @@ fun extractTagFromAudioFile(filePath: Path): AudioData? {
     }
 }
 
-private fun Tag.tryGetFirst(key: FieldKey): String? {
-    return try {
+private fun Tag.tryGetFirst(key: FieldKey): String? =
+    try {
         getFirst(key)
     } catch (e: Exception) {
         null
     }
-}
 
-private fun String.toInt(): Int? {
-    return toIntOrNull() ?: split("/").firstOrNull()?.toIntOrNull()
-}
+private fun String.toInt(): Int? = toIntOrNull() ?: split("/").firstOrNull()?.toIntOrNull()
 
 private fun getCoverFileInFolder(filePath: Path): String? {
     return filePath.parent
         ?.let { folder ->
             val imageFiles =
-                Files.walk(folder)
+                Files
+                    .walk(folder)
                     .filter {
                         Files.isRegularFile(it)
-                    }
-                    .filter {
+                    }.filter {
                         isImageFile(it.toString())
-                    }
-                    .toList()
+                    }.toList()
 
             return imageFiles
                 .find { it.nameWithoutExtension.matchAlbumCover() }

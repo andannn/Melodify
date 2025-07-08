@@ -9,4 +9,4 @@ package com.andannn.melodify.ui.common.theme
  * surface color. These values are defined within the WCAG AA guidelines, and we use a value of
  * 3:1 which is the minimum for user-interface components.
  */
-const val MinContrastOfPrimaryVsSurface = 3f
+const val MIN_CONTRAST_OF_PRIMARY_VS_SURFACE = 3f
