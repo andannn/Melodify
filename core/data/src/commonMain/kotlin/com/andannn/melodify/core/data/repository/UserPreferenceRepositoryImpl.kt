@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.CustomTab
@@ -17,15 +21,16 @@ import kotlinx.datetime.Clock
 
 class UserPreferenceRepositoryImpl(
     private val preferences: UserSettingPreferences,
-    private val userDataDao: UserDataDao
+    private val userDataDao: UserDataDao,
 ) : UserPreferenceRepository {
-    override val userSettingFlow: Flow<UserSetting> = preferences.userDate.map {
-        UserSetting(
-            mediaPreviewMode = it.mediaPreviewMode.toMediaPreviewMode(),
-            libraryPath = it.libraryPath,
-            lastSuccessfulSyncTime = it.lastSuccessfulSyncTime
-        )
-    }
+    override val userSettingFlow: Flow<UserSetting> =
+        preferences.userDate.map {
+            UserSetting(
+                mediaPreviewMode = it.mediaPreviewMode.toMediaPreviewMode(),
+                libraryPath = it.libraryPath,
+                lastSuccessfulSyncTime = it.lastSuccessfulSyncTime,
+            )
+        }
 
     override val currentCustomTabsFlow: Flow<List<CustomTab>> =
         userDataDao
@@ -34,7 +39,7 @@ class UserPreferenceRepositoryImpl(
 
     override suspend fun updateCurrentCustomTabs(currentCustomTabs: List<CustomTab>) {
         userDataDao.clearAndInsertCustomTabs(
-            currentCustomTabs.map { it.toEntity() }
+            currentCustomTabs.map { it.toEntity() },
         )
     }
 
@@ -44,13 +49,14 @@ class UserPreferenceRepositoryImpl(
     }
 
     override suspend fun deleteCustomTab(tab: CustomTab) {
-        val (type, id) = when (tab) {
-            is CustomTab.AlbumDetail -> CustomTabType.ALBUM_DETAIL to tab.albumId
-            CustomTab.AllMusic -> CustomTabType.ALL_MUSIC to null
-            is CustomTab.ArtistDetail -> CustomTabType.ARTIST_DETAIL to tab.artistId
-            is CustomTab.GenreDetail -> CustomTabType.GENRE_DETAIL to tab.genreId
-            is CustomTab.PlayListDetail -> CustomTabType.PLAYLIST_DETAIL to tab.playListId
-        }
+        val (type, id) =
+            when (tab) {
+                is CustomTab.AlbumDetail -> CustomTabType.ALBUM_DETAIL to tab.albumId
+                CustomTab.AllMusic -> CustomTabType.ALL_MUSIC to null
+                is CustomTab.ArtistDetail -> CustomTabType.ARTIST_DETAIL to tab.artistId
+                is CustomTab.GenreDetail -> CustomTabType.GENRE_DETAIL to tab.genreId
+                is CustomTab.PlayListDetail -> CustomTabType.PLAYLIST_DETAIL to tab.playListId
+            }
 
         userDataDao.deleteCustomTab(type = type, externalId = id)
     }
@@ -79,9 +85,9 @@ class UserPreferenceRepositoryImpl(
             listOf(
                 SearchHistoryEntity(
                     searchDate = Clock.System.now().toEpochMilliseconds(),
-                    searchText = searchHistory
-                )
-            )
+                    searchText = searchHistory,
+                ),
+            ),
         )
     }
 
@@ -96,16 +102,17 @@ class UserPreferenceRepositoryImpl(
 
 expect fun isPathValid(path: String): Boolean
 
-private fun MediaPreviewMode.toIntValue(): Int = when (this) {
-    MediaPreviewMode.LIST_PREVIEW -> PreviewModeValues.LIST_PREVIEW_VALUE
-    MediaPreviewMode.GRID_PREVIEW -> PreviewModeValues.GRID_PREVIEW_VALUE
-}
+private fun MediaPreviewMode.toIntValue(): Int =
+    when (this) {
+        MediaPreviewMode.LIST_PREVIEW -> PreviewModeValues.LIST_PREVIEW_VALUE
+        MediaPreviewMode.GRID_PREVIEW -> PreviewModeValues.GRID_PREVIEW_VALUE
+    }
 
-private fun Int.toMediaPreviewMode(): MediaPreviewMode = when (this) {
-    PreviewModeValues.LIST_PREVIEW_VALUE -> MediaPreviewMode.LIST_PREVIEW
-    PreviewModeValues.GRID_PREVIEW_VALUE -> MediaPreviewMode.GRID_PREVIEW
+private fun Int.toMediaPreviewMode(): MediaPreviewMode =
+    when (this) {
+        PreviewModeValues.LIST_PREVIEW_VALUE -> MediaPreviewMode.LIST_PREVIEW
+        PreviewModeValues.GRID_PREVIEW_VALUE -> MediaPreviewMode.GRID_PREVIEW
 
-    // Default
-    else -> MediaPreviewMode.GRID_PREVIEW
-}
-
+        // Default
+        else -> MediaPreviewMode.GRID_PREVIEW
+    }

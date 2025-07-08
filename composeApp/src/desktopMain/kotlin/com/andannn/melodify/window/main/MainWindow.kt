@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.window.main
 
 import androidx.compose.foundation.layout.Column
@@ -58,11 +62,15 @@ import java.awt.Dimension
 import java.awt.GraphicsEnvironment
 
 object MainScreenUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? {
+    override fun create(
+        screen: Screen,
+        context: CircuitContext,
+    ): Ui<*>? {
         return when (screen) {
-            is MainScreen -> ui<MainUiState> { state, modifier ->
-                MainScreen(state, modifier)
-            }
+            is MainScreen ->
+                ui<MainUiState> { state, modifier ->
+                    MainScreen(state, modifier)
+                }
 
             else -> null
         }
@@ -73,20 +81,21 @@ object MainScreenPresenterFactory : Presenter.Factory {
     override fun create(
         screen: Screen,
         navigator: Navigator,
-        context: CircuitContext
+        context: CircuitContext,
     ): Presenter<*>? {
         return when (screen) {
-            is MainScreen -> presenterOf {
-                val tabUiPresenter = rememberTabUiPresenter()
-                val tabState = tabUiPresenter.present()
-                val tabContentPresenter = rememberTabContentPresenter(tabState.selectedTab)
-                val playerPresenter = rememberPlayerPresenter()
-                MainUiState(
-                    tabUiState = tabState,
-                    tabContentState = tabContentPresenter.present(),
-                    playerUiState = playerPresenter.present()
-                )
-            }
+            is MainScreen ->
+                presenterOf {
+                    val tabUiPresenter = rememberTabUiPresenter()
+                    val tabState = tabUiPresenter.present()
+                    val tabContentPresenter = rememberTabContentPresenter(tabState.selectedTab)
+                    val playerPresenter = rememberPlayerPresenter()
+                    MainUiState(
+                        tabUiState = tabState,
+                        tabContentState = tabContentPresenter.present(),
+                        playerUiState = playerPresenter.present(),
+                    )
+                }
 
             else -> null
         }
@@ -108,9 +117,10 @@ internal fun MainWindow(
     val graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
     val dimension: Dimension = graphicsEnvironment.maximumWindowBounds.size
     val ratio = 0.8f
-    val state = rememberWindowState(
-        size = DpSize(dimension.width.times(ratio).dp, dimension.height.times(ratio).dp),
-    )
+    val state =
+        rememberWindowState(
+            size = DpSize(dimension.width.times(ratio).dp, dimension.height.times(ratio).dp),
+        )
     Window(
         state = state,
         onCloseRequest = onCloseRequest,
@@ -123,13 +133,14 @@ internal fun MainWindow(
         Scaffold(
             snackbarHost = {
                 SnackbarHost(windowState.snackBarHostState)
-            }
+            },
         ) {
             CircuitCompositionLocals(circuit = circuit) {
                 val backStack = rememberSaveableBackStack(MainScreen)
-                val navigator = rememberCircuitNavigator(backStack) {
-                    onCloseRequest.invoke()
-                }
+                val navigator =
+                    rememberCircuitNavigator(backStack) {
+                        onCloseRequest.invoke()
+                    }
 
                 NavigableCircuitContent(navigator, backStack)
             }
@@ -139,14 +150,17 @@ internal fun MainWindow(
     }
 }
 
-private fun buildCircuitDesktop() = buildCircuit(
-    presenterFactory = listOf(
-        MainScreenPresenterFactory
-    ),
-    uiFactory = listOf(
-        MainScreenUiFactory
+private fun buildCircuitDesktop() =
+    buildCircuit(
+        presenterFactory =
+            listOf(
+                MainScreenPresenterFactory,
+            ),
+        uiFactory =
+            listOf(
+                MainScreenUiFactory,
+            ),
     )
-)
 
 @Composable
 fun MainScreen(
@@ -160,13 +174,13 @@ fun MainScreen(
             TabWithContentSector(
                 state.tabUiState,
                 state.tabContentState,
-                modifier = Modifier.weight(2f)
+                modifier = Modifier.weight(2f),
             )
 
             VerticalDivider()
 
             RightPaneSector(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
 
@@ -174,7 +188,7 @@ fun MainScreen(
 
         DesktopPlayerUi(
             state = state.playerUiState,
-            modifier = Modifier
+            modifier = Modifier,
         )
     }
 }
@@ -186,7 +200,7 @@ private fun TabWithContentSector(
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column(
             modifier = Modifier,
@@ -200,18 +214,16 @@ private fun TabWithContentSector(
 
 enum class RightPageTab {
     Lyrics,
-    PlayQueue
+    PlayQueue,
 }
 
 @Composable
-private fun RightPaneSector(
-    modifier: Modifier
-) {
+private fun RightPaneSector(modifier: Modifier) {
     var selectedTab by remember {
         mutableStateOf(RightPageTab.Lyrics)
     }
     val selectedIndex by rememberUpdatedState(
-        RightPageTab.entries.indexOf(selectedTab)
+        RightPageTab.entries.indexOf(selectedTab),
     )
 
     Column(modifier = modifier) {

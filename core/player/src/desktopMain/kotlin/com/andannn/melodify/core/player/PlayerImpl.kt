@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.player
 
 import io.github.aakira.napier.Napier
@@ -18,8 +22,9 @@ import java.util.concurrent.Executors
 
 private const val TAG = "PlayerImpl"
 
-internal class PlayerImpl : VlcPlayer, CoroutineScope {
-
+internal class PlayerImpl :
+    VlcPlayer,
+    CoroutineScope {
     private val nativeApiDispatcher = Executors.newFixedThreadPool(1).asCoroutineDispatcher()
     override val coroutineContext = nativeApiDispatcher + Job()
 
@@ -43,93 +48,118 @@ internal class PlayerImpl : VlcPlayer, CoroutineScope {
     private val listEventApi: uk.co.caprica.vlcj.medialist.EventApi
         get() = mediaPlayerComponent.mediaListPlayer().list().events()
 
-    private val _playerStateFlow = MutableStateFlow<PlayerState>(PlayerState.Idle)
-    private val _currentPositionFlow = MutableStateFlow(0F)
-    private val _playingDurationFlow = MutableStateFlow(0L)
-    private val _playingMrlFlow = MutableStateFlow<String?>(null)
-    private val _playListFlow = MutableStateFlow<List<String>>(emptyList())
+    private val playerStateFlow = MutableStateFlow<PlayerState>(PlayerState.Idle)
+    private val currentPositionFlow = MutableStateFlow(0F)
+    private val playingDurationFlow = MutableStateFlow(0L)
+    private val playingMrlFlow = MutableStateFlow<String?>(null)
+    private val playListFlow = MutableStateFlow<List<String>>(emptyList())
 
     private val currentPosition: Long
-        get() = (_currentPositionFlow.value * _playingDurationFlow.value).toLong()
+        get() = (currentPositionFlow.value * playingDurationFlow.value).toLong()
 
-    private val playerEventLister = object : MediaPlayerEventAdapter() {
-        override fun mediaChanged(mediaPlayer: MediaPlayer, media: MediaRef) {
-            launch {
-                val newMedia = media.newMedia().info()
-                _playingMrlFlow.value = newMedia.mrl()
-                Napier.d(tag = TAG) { "media changed duration: ${newMedia.duration()}. thread ${Thread.currentThread()}" }
+    private val playerEventLister =
+        object : MediaPlayerEventAdapter() {
+            override fun mediaChanged(
+                mediaPlayer: MediaPlayer,
+                media: MediaRef,
+            ) {
+                launch {
+                    val newMedia = media.newMedia().info()
+                    playingMrlFlow.value = newMedia.mrl()
+                    Napier.d(tag = TAG) { "media changed duration: ${newMedia.duration()}. thread ${Thread.currentThread()}" }
+                }
             }
-        }
 
-        override fun lengthChanged(mediaPlayer: MediaPlayer?, newLength: Long) {
-            launch {
-                Napier.d(tag = TAG) { "lengthChanged duration: ${newLength}. thread ${Thread.currentThread()}" }
-                _playingDurationFlow.value = newLength
+            override fun lengthChanged(
+                mediaPlayer: MediaPlayer?,
+                newLength: Long,
+            ) {
+                launch {
+                    Napier.d(tag = TAG) { "lengthChanged duration: $newLength. thread ${Thread.currentThread()}" }
+                    playingDurationFlow.value = newLength
+                }
             }
-        }
 
-        override fun paused(mediaPlayer: MediaPlayer?) {
-            Napier.d(tag = TAG) { "paused. thread ${Thread.currentThread()}" }
+            override fun paused(mediaPlayer: MediaPlayer?) {
+                Napier.d(tag = TAG) { "paused. thread ${Thread.currentThread()}" }
 
-            _playerStateFlow.value = PlayerState.Paused(currentPosition)
-        }
+                playerStateFlow.value = PlayerState.Paused(currentPosition)
+            }
 
-        override fun playing(mediaPlayer: MediaPlayer?) {
-            Napier.d(tag = TAG) { "playing. thread ${Thread.currentThread()}" }
+            override fun playing(mediaPlayer: MediaPlayer?) {
+                Napier.d(tag = TAG) { "playing. thread ${Thread.currentThread()}" }
 
-            _playerStateFlow.value = PlayerState.Playing(currentPosition)
-        }
+                playerStateFlow.value = PlayerState.Playing(currentPosition)
+            }
 
-        override fun buffering(mediaPlayer: MediaPlayer?, newCache: Float) {
+            override fun buffering(
+                mediaPlayer: MediaPlayer?,
+                newCache: Float,
+            ) {
 //            _playerStateFlow.value = PlayerState.Buffering(currentPosition)
-        }
+            }
 
-        override fun finished(mediaPlayer: MediaPlayer?) {
-            Napier.d(tag = TAG) { "finished. thread ${Thread.currentThread()}" }
-        }
+            override fun finished(mediaPlayer: MediaPlayer?) {
+                Napier.d(tag = TAG) { "finished. thread ${Thread.currentThread()}" }
+            }
 
-        override fun positionChanged(mediaPlayer: MediaPlayer?, newPosition: Float) {
-            Napier.d(tag = TAG) { "positionChanged $newPosition. thread ${Thread.currentThread()}" }
-            _currentPositionFlow.value = newPosition
+            override fun positionChanged(
+                mediaPlayer: MediaPlayer?,
+                newPosition: Float,
+            ) {
+                Napier.d(tag = TAG) { "positionChanged $newPosition. thread ${Thread.currentThread()}" }
+                currentPositionFlow.value = newPosition
 
-            _playerStateFlow.getAndUpdate { old ->
-                when (old) {
-                    is PlayerState.Error,
-                    is PlayerState.PlayBackEnd,
-                    PlayerState.Idle -> old
+                playerStateFlow.getAndUpdate { old ->
+                    when (old) {
+                        is PlayerState.Error,
+                        is PlayerState.PlayBackEnd,
+                        PlayerState.Idle,
+                        -> old
 
-                    is PlayerState.Buffering -> PlayerState.Paused(currentPosition)
-                    is PlayerState.Paused -> PlayerState.Paused(currentPosition)
-                    is PlayerState.Playing -> PlayerState.Playing(currentPosition)
+                        is PlayerState.Buffering -> PlayerState.Paused(currentPosition)
+                        is PlayerState.Paused -> PlayerState.Paused(currentPosition)
+                        is PlayerState.Playing -> PlayerState.Playing(currentPosition)
+                    }
                 }
             }
         }
-    }
 
-    private val mediaListEvent = object : MediaListEventAdapter() {
-        override fun mediaListItemAdded(mediaList: MediaList, item: MediaRef, index: Int) {
-            Napier.d(tag = TAG) { "mediaListItemAdded index $index. thread ${Thread.currentThread()}" }
+    private val mediaListEvent =
+        object : MediaListEventAdapter() {
+            override fun mediaListItemAdded(
+                mediaList: MediaList,
+                item: MediaRef,
+                index: Int,
+            ) {
+                Napier.d(tag = TAG) { "mediaListItemAdded index $index. thread ${Thread.currentThread()}" }
 
-            launch {
-                _playListFlow.value = mediaList.media().mrls()
+                launch {
+                    playListFlow.value = mediaList.media().mrls()
+                }
+            }
+
+            override fun mediaListItemDeleted(
+                mediaList: MediaList,
+                item: MediaRef,
+                index: Int,
+            ) {
+                Napier.d(tag = TAG) { "mediaListItemDeleted index $index. thread ${Thread.currentThread()}" }
+                launch {
+                    playListFlow.value = mediaList.media().mrls()
+                }
             }
         }
-
-        override fun mediaListItemDeleted(mediaList: MediaList, item: MediaRef, index: Int) {
-            Napier.d(tag = TAG) { "mediaListItemDeleted index $index. thread ${Thread.currentThread()}" }
-            launch {
-                _playListFlow.value = mediaList.media().mrls()
-            }
-        }
-    }
-
 
     init {
         playEventApi.addMediaPlayerEventListener(playerEventLister)
         listEventApi.addMediaListEventListener(mediaListEvent)
     }
 
-    override fun playMediaList(mediaList: List<String>, index: Int) {
+    override fun playMediaList(
+        mediaList: List<String>,
+        index: Int,
+    ) {
         launch {
             mediaListApi.clear()
             mediaList.toSet().forEach {
@@ -140,17 +170,17 @@ internal class PlayerImpl : VlcPlayer, CoroutineScope {
         }
     }
 
-    override fun observePlayerState() = _playerStateFlow
+    override fun observePlayerState() = playerStateFlow
 
     override val currentPositionMs: Long get() = currentPosition
 
-    override val currentDurationMs: Long get() = _playingDurationFlow.value
+    override val currentDurationMs: Long get() = playingDurationFlow.value
 
     override val playingIndexInQueue: Int
-        get() = _playListFlow.value.indexOf(_playingMrlFlow.value)
+        get() = playListFlow.value.indexOf(playingMrlFlow.value)
 
     override val playList: List<String>
-        get() = _playListFlow.value
+        get() = playListFlow.value
 
     override fun seekToNext() {
         launch {
@@ -164,7 +194,10 @@ internal class PlayerImpl : VlcPlayer, CoroutineScope {
         }
     }
 
-    override fun seekMediaItem(mediaItemIndex: Int, positionMs: Long) {
+    override fun seekMediaItem(
+        mediaItemIndex: Int,
+        positionMs: Long,
+    ) {
         launch {
             listControlsApi.play(mediaItemIndex)
             playControlsApi.setPosition(positionMs.toFloat().div(currentDurationMs))
@@ -195,10 +228,13 @@ internal class PlayerImpl : VlcPlayer, CoroutineScope {
         }
     }
 
-    override fun addMediaItems(index: Int, mrls: List<String>) {
+    override fun addMediaItems(
+        index: Int,
+        mrls: List<String>,
+    ) {
         launch {
             val currentMrls = mediaListApi.mrls()
-            Napier.d(tag = TAG) { "addMediaItems, currentMrls: ${currentMrls}, mrls: inserted ${mrls}. thread ${Thread.currentThread()}" }
+            Napier.d(tag = TAG) { "addMediaItems, currentMrls: $currentMrls, mrls: inserted $mrls. thread ${Thread.currentThread()}" }
             mrls
                 .filter { currentMrls.contains(it).not() }
                 .forEachIndexed { i, mrl ->
@@ -207,9 +243,12 @@ internal class PlayerImpl : VlcPlayer, CoroutineScope {
         }
     }
 
-    override fun moveMediaItem(from: Int, to: Int) {
+    override fun moveMediaItem(
+        from: Int,
+        to: Int,
+    ) {
         launch {
-            Napier.d(tag = TAG) { "moveMediaItem: from ${from}, to ${to}. thread ${Thread.currentThread()}" }
+            Napier.d(tag = TAG) { "moveMediaItem: from $from, to $to. thread ${Thread.currentThread()}" }
             val fromMrl = mediaListApi.mrl(from)
             mediaListApi.remove(from)
             mediaListApi.insert(to, fromMrl)
@@ -222,11 +261,11 @@ internal class PlayerImpl : VlcPlayer, CoroutineScope {
         }
     }
 
-    override fun observePlayListQueue() = _playListFlow
+    override fun observePlayListQueue() = playListFlow
 
-    override fun observePlayingMediaMrl() = _playingMrlFlow
+    override fun observePlayingMediaMrl() = playingMrlFlow
 
-    override fun observeProgressFactor() = _currentPositionFlow
+    override fun observeProgressFactor() = currentPositionFlow
 
     override fun release() {
         nativeApiDispatcher.close()

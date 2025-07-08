@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.popup.dialog.content
 
 import androidx.compose.foundation.layout.Column
@@ -30,25 +34,25 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun AddLibraryPathDialog(
     modifier: Modifier = Modifier,
-    onAction: (DialogAction) -> Unit = {}
+    onAction: (DialogAction) -> Unit = {},
 ) {
     SimpleInputDialogContent(
         modifier = modifier,
         title = stringResource(DialogId.AddLibraryPathDialog.title),
-        onAction = onAction
+        onAction = onAction,
     )
 }
 
 @Composable
 fun NewPlayListDialogContent(
     modifier: Modifier = Modifier,
-    onAction: (DialogAction) -> Unit = {}
+    onAction: (DialogAction) -> Unit = {},
 ) {
     SimpleInputDialogContent(
         modifier = modifier,
         title = stringResource(DialogId.NewPlayListDialog.title),
         inputHint = stringResource(DialogId.NewPlayListDialog.playListNameInputHint),
-        onAction = onAction
+        onAction = onAction,
     )
 }
 
@@ -57,12 +61,12 @@ private fun SimpleInputDialogContent(
     modifier: Modifier = Modifier,
     title: String = "",
     inputHint: String = "",
-    onAction: (DialogAction) -> Unit = {}
+    onAction: (DialogAction) -> Unit = {},
 ) {
     Surface(
         modifier = modifier.wrapContentSize(),
         shape = AlertDialogDefaults.shape,
-        tonalElevation = AlertDialogDefaults.TonalElevation
+        tonalElevation = AlertDialogDefaults.TonalElevation,
     ) {
         var inputName by rememberSaveable {
             mutableStateOf("")
@@ -77,7 +81,7 @@ private fun SimpleInputDialogContent(
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleSmall,
             )
 
             Spacer(modifier = Modifier.height(16.dp))

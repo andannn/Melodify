@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.database.entity
 
 import androidx.room.ColumnInfo
@@ -26,16 +30,13 @@ data class CustomTabEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = CustomTabColumns.ID)
     val id: Long = 0,
-
     /**
      *  values of [CustomTabType]
      */
     @ColumnInfo(name = CustomTabColumns.TYPE)
     val type: String,
-
     @ColumnInfo(name = CustomTabColumns.NAME)
     val name: String? = null,
-
     @ColumnInfo(name = CustomTabColumns.EXTERNAL_ID)
     val externalId: String? = null,
 )

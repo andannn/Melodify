@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.screenshots.util
 
 import androidx.compose.runtime.Composable
@@ -14,22 +18,26 @@ import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.NoOpPopupController
 import org.junit.Rule
 
-class ScreenShotMediaContentRepository: NoOpMediaContentRepository() {
+class ScreenShotMediaContentRepository : NoOpMediaContentRepository() {
     override suspend fun getAlbumByAlbumId(albumId: String): AlbumItemModel? {
-        return  albumList.firstOrNull { it.id == albumId }
+        return albumList.firstOrNull { it.id == albumId }
     }
 }
 
-fun Paparazzi.snapshotWithOption(name: String, composable: @Composable (isDark: Boolean) -> Unit) {
+fun Paparazzi.snapshotWithOption(
+    name: String,
+    composable: @Composable (isDark: Boolean) -> Unit,
+) {
     @Composable
     fun provideDummyDependency(content: @Composable () -> Unit) {
         CompositionLocalProvider(
             LocalInspectionMode provides true,
-            LocalRepository provides remember {
-                Repository(
-                    mediaContentRepository = ScreenShotMediaContentRepository()
-                )
-            },
+            LocalRepository provides
+                remember {
+                    Repository(
+                        mediaContentRepository = ScreenShotMediaContentRepository(),
+                    )
+                },
             LocalPopupController provides remember { NoOpPopupController() },
         ) {
             content()
@@ -50,7 +58,8 @@ fun Paparazzi.snapshotWithOption(name: String, composable: @Composable (isDark: 
 
 abstract class ScreenShotsTest {
     @get:Rule
-    val paparazzi = Paparazzi(
-        deviceConfig = PIXEL_5,
-    )
+    val paparazzi =
+        Paparazzi(
+            deviceConfig = PIXEL_5,
+        )
 }

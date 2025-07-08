@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.database.dao
 
 import androidx.room.Dao
@@ -8,7 +12,6 @@ import androidx.room.Transaction
 import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
 import com.andannn.melodify.core.database.entity.MediaColumns
-import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListAndMedias
 import com.andannn.melodify.core.database.entity.PlayListColumns
 import com.andannn.melodify.core.database.entity.PlayListEntity
@@ -31,7 +34,7 @@ interface PlayListDao {
             on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
         group by ${PlayListColumns.ID}
         order by ${PlayListColumns.CREATED_DATE} desc
-    """
+    """,
     )
     fun getAllPlayListFlow(): Flow<List<PlayListWithMediaCount>>
 
@@ -47,11 +50,11 @@ interface PlayListDao {
         from ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
         where ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID} = :playListId and
             ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} in (:mediaIdList)
-    """
+    """,
     )
     suspend fun getDuplicateMediaInPlayList(
         playListId: Long,
-        mediaIdList: List<String>
+        mediaIdList: List<String>,
     ): List<String>
 
     @Query(
@@ -59,15 +62,18 @@ interface PlayListDao {
             delete from ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
             where ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID} = :playListId and
                 ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} in (:mediaIdList)
-    """
+    """,
     )
-    suspend fun deleteMediaFromPlayList(playListId: Long, mediaIdList: List<String>)
+    suspend fun deleteMediaFromPlayList(
+        playListId: Long,
+        mediaIdList: List<String>,
+    )
 
     @Query(
         """
         select * from ${Tables.PLAY_LIST}
         where ${PlayListColumns.ID} = :playListId
-    """
+    """,
     )
     @Transaction
     fun getPlayListFlowById(playListId: Long): Flow<PlayListAndMedias?>
@@ -76,7 +82,7 @@ interface PlayListDao {
         """
         select * from ${Tables.PLAY_LIST}
         where ${PlayListColumns.ID} = :playListId
-    """
+    """,
     )
     @Transaction
     suspend fun getPlayList(playListId: Long): PlayListAndMedias?
@@ -85,7 +91,7 @@ interface PlayListDao {
         """
         select * from ${Tables.PLAY_LIST}
         where ${PlayListColumns.ID} = :playListId
-    """
+    """,
     )
     @Transaction
     fun getPlayListFlow(playListId: Long): Flow<PlayListAndMedias?>
@@ -97,9 +103,12 @@ interface PlayListDao {
             where ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID} = :playList and
                 ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = :mediaStoreId
         )
-    """
+    """,
     )
-    fun getIsMediaInPlayListFlow(playList: String, mediaStoreId: String): Flow<Boolean>
+    fun getIsMediaInPlayListFlow(
+        playList: String,
+        mediaStoreId: String,
+    ): Flow<Boolean>
 
     @Insert(entity = PlayListEntity::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun inertPlayLists(entities: List<PlayListEntity>): List<Long>
@@ -108,7 +117,7 @@ interface PlayListDao {
         """
         delete from ${Tables.PLAY_LIST}
         where ${PlayListColumns.ID} = :playListId
-    """
+    """,
     )
     suspend fun deletePlayListById(playListId: Long)
 
@@ -119,7 +128,7 @@ interface PlayListDao {
             left join ${Tables.LIBRARY_MEDIA} on ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${MediaColumns.ID}
             where ${PlayListColumns.ID} = :playListId
             order by ${MediaColumns.MODIFIED_DATE} desc
-        """
+        """,
     )
     fun getMediasInPlayListFlow(playListId: Long): Flow<List<CrossRefWithMediaRelation>>
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.window
 
 import androidx.compose.material3.SnackbarHostState
@@ -26,14 +30,14 @@ fun rememberCommonWindowState(
     CommonWindowState(
         scope = scope,
         snackBarHostState = snackBarHostState,
-        popupController = popupController
+        popupController = popupController,
     )
 }
 
 class CommonWindowState(
     scope: CoroutineScope,
     val snackBarHostState: SnackbarHostState,
-    private val popupController: PopupController
+    private val popupController: PopupController,
 ) {
     init {
         scope.launch {

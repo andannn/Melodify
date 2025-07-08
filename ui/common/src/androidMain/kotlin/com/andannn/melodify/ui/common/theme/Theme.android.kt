@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.common.theme
 
 import android.os.Build
@@ -10,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 actual fun getColorScheme(
     darkTheme: Boolean,
-    isDynamicColor: Boolean
+    isDynamicColor: Boolean,
 ): ColorScheme {
     val dynamicColor = isDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     return when {

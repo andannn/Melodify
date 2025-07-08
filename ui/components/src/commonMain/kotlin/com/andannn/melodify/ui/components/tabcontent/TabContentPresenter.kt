@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.runtime.Composable
@@ -31,16 +35,16 @@ private const val TAG = "TabContentPresenter"
 fun rememberTabContentPresenter(
     selectedTab: CustomTab?,
     repository: Repository = LocalRepository.current,
-    popupController: PopupController = LocalPopupController.current
+    popupController: PopupController = LocalPopupController.current,
 ) = remember(
     selectedTab,
     repository,
-    popupController
+    popupController,
 ) {
     TabContentPresenter(
         selectedTab,
         repository,
-        popupController
+        popupController,
     )
 }
 
@@ -67,9 +71,10 @@ class TabContentPresenter(
         val audioList by getContentFlow().collectAsRetainedState(emptyList())
 
         Napier.d(tag = TAG) { "TabContentPresenter audioList ${audioList.size}" }
-        val contentMap = rememberRetained(groupType, audioList) {
-            audioList.toMap(groupType)
-        }
+        val contentMap =
+            rememberRetained(groupType, audioList) {
+                audioList.toMap(groupType)
+            }
 
         Napier.d(tag = TAG) { "TabContentPresenter contentMap ${contentMap.size}" }
 
@@ -81,22 +86,23 @@ class TabContentPresenter(
 
         return TabContentState(contentMap) { eventSink ->
             when (eventSink) {
-                is TabContentEvent.OnPlayMusic -> scope.launch {
-                    playMusic(
-                        eventSink.mediaItemModel,
-                        allAudios = contentMap.values.flatten()
-                    )
-                }
+                is TabContentEvent.OnPlayMusic ->
+                    scope.launch {
+                        playMusic(
+                            eventSink.mediaItemModel,
+                            allAudios = contentMap.values.flatten(),
+                        )
+                    }
 
-                is TabContentEvent.OnShowMusicItemOption -> scope.launch {
-                    onShowMusicItemOption(
-                        eventSink.mediaItemModel
-                    )
-                }
+                is TabContentEvent.OnShowMusicItemOption ->
+                    scope.launch {
+                        onShowMusicItemOption(
+                            eventSink.mediaItemModel,
+                        )
+                    }
             }
         }
     }
-
 
     private fun getContentFlow(): Flow<List<AudioItemModel>> {
         if (selectedTab == null) {
@@ -107,11 +113,14 @@ class TabContentPresenter(
         }
     }
 
-    private suspend fun playMusic(mediaItem: AudioItemModel, allAudios: List<AudioItemModel>) {
+    private suspend fun playMusic(
+        mediaItem: AudioItemModel,
+        allAudios: List<AudioItemModel>,
+    ) {
         if (mediaItem.isValid()) {
             mediaControllerRepository.playMediaList(
                 allAudios.toList(),
-                allAudios.indexOf(mediaItem)
+                allAudios.indexOf(mediaItem),
             )
         } else {
             Napier.d(tag = TAG) { "invalid media item click $mediaItem" }
@@ -134,21 +143,21 @@ class TabContentPresenter(
                 popupController.showDialog(
                     DialogId.AudioOptionInPlayList(
                         playListId = currentTab.playListId,
-                        mediaItemModel
-                    )
+                        mediaItemModel,
+                    ),
                 )
             } else {
                 popupController.showDialog(
                     DialogId.MediaOption.fromMediaModel(
                         item = mediaItemModel,
-                    )
+                    ),
                 )
             }
         if (result is DialogAction.MediaOptionDialog.ClickItem) {
             repository.onMediaOptionClick(
                 optionItem = result.optionItem,
                 dialog = result.dialog,
-                popupController = popupController
+                popupController = popupController,
             )
         }
     }
@@ -156,7 +165,7 @@ class TabContentPresenter(
 
 data class HeaderKey(
     val groupType: GroupType,
-    val headerId: String?
+    val headerId: String?,
 )
 
 data class TabContentState(
@@ -184,15 +193,16 @@ private fun List<AudioItemModel>.toMap(groupType: GroupType): Map<HeaderKey, Lis
     }
 }
 
-fun AudioItemModel.keyOf(groupType: GroupType) = when (groupType) {
-    GroupType.ARTIST -> HeaderKey(groupType, artistId)
-    GroupType.ALBUM -> HeaderKey(groupType, albumId)
-    GroupType.NONE -> HeaderKey(groupType, null)
-}
+fun AudioItemModel.keyOf(groupType: GroupType) =
+    when (groupType) {
+        GroupType.ARTIST -> HeaderKey(groupType, artistId)
+        GroupType.ALBUM -> HeaderKey(groupType, albumId)
+        GroupType.NONE -> HeaderKey(groupType, null)
+    }
 
-fun List<AudioItemModel>.sortBy(groupType: GroupType) = when (groupType) {
-    GroupType.ARTIST -> sortedBy { it.name }
-    GroupType.ALBUM -> sortedBy { it.cdTrackNumber }
-    GroupType.NONE -> this
-}
-
+fun List<AudioItemModel>.sortBy(groupType: GroupType) =
+    when (groupType) {
+        GroupType.ARTIST -> sortedBy { it.name }
+        GroupType.ALBUM -> sortedBy { it.cdTrackNumber }
+        GroupType.NONE -> this
+    }

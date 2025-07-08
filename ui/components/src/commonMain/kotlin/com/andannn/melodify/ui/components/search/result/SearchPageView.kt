@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.search.result
 
 import androidx.compose.foundation.layout.Box
@@ -13,31 +17,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.ui.components.search.SearchState
 import com.andannn.melodify.ui.components.common.MediaItemWithOptionAction
+import com.andannn.melodify.ui.components.search.SearchState
 
 @Composable
 internal fun SearchPageView(
     modifier: Modifier = Modifier,
     searchedResult: SearchState,
-    onResultItemClick: (MediaItemModel) -> Unit = {}
+    onResultItemClick: (MediaItemModel) -> Unit = {},
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         when (searchedResult) {
             SearchState.Init,
-            SearchState.NoObject -> {
-
+            SearchState.NoObject,
+            -> {
             }
 
             SearchState.Searching -> {
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
             }
 
-            is SearchState.Result -> SearchPageContent(
-                modifier = Modifier,
-                result = searchedResult,
-                onResultItemClick = onResultItemClick
-            )
+            is SearchState.Result ->
+                SearchPageContent(
+                    modifier = Modifier,
+                    result = searchedResult,
+                    onResultItemClick = onResultItemClick,
+                )
         }
     }
 }
@@ -46,29 +51,29 @@ internal fun SearchPageView(
 private fun SearchPageContent(
     modifier: Modifier = Modifier,
     result: SearchState.Result,
-    onResultItemClick: (MediaItemModel) -> Unit = {}
+    onResultItemClick: (MediaItemModel) -> Unit = {},
 ) {
     LazyColumn(
-        modifier = modifier
+        modifier = modifier,
     ) {
         if (result.albums.isNotEmpty()) {
             item {
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
                     text = "Album",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
                 )
             }
 
             items(
                 items = result.albums,
-                key = { it.id }
+                key = { it.id },
             ) {
                 MediaItemWithOptionAction(
                     mediaItemModel = it,
                     onItemClick = {
                         onResultItemClick(it)
-                    }
+                    },
                 )
             }
         }
@@ -78,19 +83,19 @@ private fun SearchPageContent(
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
                     text = "Audios",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
                 )
             }
 
             items(
                 items = result.audios,
-                key = { it.id }
+                key = { it.id },
             ) {
                 MediaItemWithOptionAction(
                     mediaItemModel = it,
                     onItemClick = {
                         onResultItemClick(it)
-                    }
+                    },
                 )
             }
         }
@@ -100,22 +105,21 @@ private fun SearchPageContent(
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
                     text = "Artists",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
                 )
             }
 
             items(
                 items = result.artists,
-                key = { it.id }
+                key = { it.id },
             ) {
                 MediaItemWithOptionAction(
                     mediaItemModel = it,
                     onItemClick = {
                         onResultItemClick(it)
-                    }
+                    },
                 )
             }
         }
     }
 }
-

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify
 
 import android.app.Application
@@ -23,12 +27,13 @@ class MelodifyApplication : Application() {
                 listOf(
                     activityViewModelModule,
                     *modules.toTypedArray(),
-                )
+                ),
             )
         }
     }
 }
 
-private val activityViewModelModule = module {
-    viewModelOf(::MainActivityViewModel)
-}
+private val activityViewModelModule =
+    module {
+        viewModelOf(::MainActivityViewModel)
+    }

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.data.repository
 
 import android.util.Log
@@ -11,7 +15,6 @@ private const val TAG = "MediaControllerRepository"
 internal class MediaControllerRepositoryImpl(
     private val mediaBrowserManager: MediaBrowserManager,
 ) : MediaControllerRepository {
-
     private val mediaBrowser
         get() = mediaBrowserManager.mediaBrowser
 
@@ -19,7 +22,10 @@ internal class MediaControllerRepositoryImpl(
         return mediaBrowser.duration
     }
 
-    override fun playMediaList(mediaList: List<AudioItemModel>, index: Int) {
+    override fun playMediaList(
+        mediaList: List<AudioItemModel>,
+        index: Int,
+    ) {
         Log.d(TAG, "playMediaList: ")
         with(mediaBrowser) {
             setMediaItems(
@@ -40,7 +46,10 @@ internal class MediaControllerRepositoryImpl(
         mediaBrowser.seekToPrevious()
     }
 
-    override fun seekMediaItem(mediaItemIndex: Int, positionMs: Long) {
+    override fun seekMediaItem(
+        mediaItemIndex: Int,
+        positionMs: Long,
+    ) {
         mediaBrowser.seekTo(mediaItemIndex, positionMs)
     }
 
@@ -64,15 +73,23 @@ internal class MediaControllerRepositoryImpl(
         mediaBrowser.pause()
     }
 
-    override fun addMediaItems(index: Int, mediaItems: List<AudioItemModel>) {
+    override fun addMediaItems(
+        index: Int,
+        mediaItems: List<AudioItemModel>,
+    ) {
         Log.d(TAG, "addMediaItems: index $index, mediaItems $mediaItems")
         mediaBrowser.addMediaItems(
-            /* index = */ index,
-            /* mediaItems = */ mediaItems.map { it.toMediaItem(generateUniqueId = true) }
+            // index =
+            index,
+            // mediaItems =
+            mediaItems.map { it.toMediaItem(generateUniqueId = true) },
         )
     }
 
-    override fun moveMediaItem(from: Int, to: Int) {
+    override fun moveMediaItem(
+        from: Int,
+        to: Int,
+    ) {
         mediaBrowser.moveMediaItem(from, to)
     }
 

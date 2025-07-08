@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.popup.dialog
 
 import com.andannn.melodify.ui.common.icons.SimpleMusicIcons
@@ -6,7 +10,6 @@ import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.add_to_home_tab
 import melodify.ui.common.generated.resources.add_to_playlist
 import melodify.ui.common.generated.resources.add_to_queue
-import melodify.ui.common.generated.resources.delete
 import melodify.ui.common.generated.resources.delete_from_playlist
 import melodify.ui.common.generated.resources.delete_this_tab
 import melodify.ui.common.generated.resources.play_next
@@ -51,7 +54,7 @@ enum class OptionItem(
     ADD_TO_HOME_TAB(
         smpIcon = SimpleMusicIcons.AddToHomeTab,
         text = Res.string.add_to_home_tab,
-    )
+    ),
 }
 
 enum class SleepTimerOption(
@@ -63,4 +66,3 @@ enum class SleepTimerOption(
     SIXTY_MINUTES(60.minutes),
     SONG_FINISH(null),
 }
-

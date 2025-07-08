@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.data.model
 
 import com.andannn.melodify.core.database.dao.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
@@ -82,23 +86,27 @@ data class PlayListItemModel(
  * enable state for ui item
  */
 val MediaItemModel.browsableOrPlayable
-    get() = when (this) {
-        is AlbumItemModel,
-        is ArtistItemModel,
-        is GenreItemModel,
-        is PlayListItemModel -> true
+    get() =
+        when (this) {
+            is AlbumItemModel,
+            is ArtistItemModel,
+            is GenreItemModel,
+            is PlayListItemModel,
+            -> true
 
-        is AudioItemModel -> {
-            this.isValid()
+            is AudioItemModel -> {
+                this.isValid()
+            }
         }
-    }
 
 val MediaItemModel.browsable
-    get() = when (this) {
-        is AlbumItemModel,
-        is ArtistItemModel,
-        is GenreItemModel,
-        is PlayListItemModel -> true
+    get() =
+        when (this) {
+            is AlbumItemModel,
+            is ArtistItemModel,
+            is GenreItemModel,
+            is PlayListItemModel,
+            -> true
 
-        is AudioItemModel -> false
-    }
+            is AudioItemModel -> false
+        }

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.popup.dialog.content
 
 import androidx.compose.foundation.layout.Column
@@ -25,7 +29,7 @@ fun AlertMessageDialogContent(
         dialogId.title?.let {
             Text(
                 text = stringResource(dialogId.title),
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleSmall,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -34,7 +38,7 @@ fun AlertMessageDialogContent(
         dialogId.message?.let {
             Text(
                 text = stringResource(dialogId.message),
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -62,5 +66,4 @@ fun AlertMessageDialogContent(
             Spacer(modifier = Modifier.width(8.dp))
         }
     }
-
 }

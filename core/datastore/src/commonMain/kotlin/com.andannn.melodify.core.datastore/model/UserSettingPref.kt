@@ -1,7 +1,10 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.datastore.model
 
 data class UserSettingPref(
-
     /**
      * play mode of player
      *
@@ -9,7 +12,6 @@ data class UserSettingPref(
      * Values: [PlatModeValues]
      */
     val playMode: Int,
-
     /**
      * shuffle mode of player
      *
@@ -17,7 +19,6 @@ data class UserSettingPref(
      * Values: [Boolean]
      */
     val isShuffle: Boolean,
-
     /**
      * media preview mode of player
      *
@@ -25,8 +26,6 @@ data class UserSettingPref(
      * Values: [PreviewModeValues]
      */
     val mediaPreviewMode: Int,
-
-
     /**
      * library path of player
      *
@@ -34,7 +33,6 @@ data class UserSettingPref(
      * Value: [Set<String>]
      */
     val libraryPath: Set<String>,
-
     /**
      * last successful sync time
      *

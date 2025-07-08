@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.platform
 
 internal const val DATABASE_FILE_NAME = "melodify_database.db"
@@ -7,9 +11,9 @@ sealed interface Platform
 data object Desktop : Platform
 
 interface Mobile : Platform {
-    data object Android: Mobile
+    data object Android : Mobile
 
-    data object IOS: Mobile
+    data object IOS : Mobile
 }
 
 interface PlatformInfo {

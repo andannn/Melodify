@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.playcontrol
 
 import androidx.compose.foundation.layout.Arrangement
@@ -43,34 +47,37 @@ fun DesktopPlayer(
 ) {
     DesktopPlayerUi(
         state = presenter.present(),
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
 @Composable
 fun DesktopPlayerUi(
     state: PlayerUiState,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier,
+) {
     when (state) {
-        is PlayerUiState.Active -> PlayStateBar(
-            modifier = modifier,
-            coverUri = state.mediaItem.artWorkUri,
-            playMode = state.playMode,
-            isShuffle = state.isShuffle,
-            isPlaying = state.isPlaying,
-            isFavorite = state.isFavorite,
-            title = state.mediaItem.name,
-            artist = state.mediaItem.artist,
-            progress = state.progress,
-            duration = state.duration,
-            onEvent = state.eventSink
-        )
+        is PlayerUiState.Active ->
+            PlayStateBar(
+                modifier = modifier,
+                coverUri = state.mediaItem.artWorkUri,
+                playMode = state.playMode,
+                isShuffle = state.isShuffle,
+                isPlaying = state.isPlaying,
+                isFavorite = state.isFavorite,
+                title = state.mediaItem.name,
+                artist = state.mediaItem.artist,
+                progress = state.progress,
+                duration = state.duration,
+                onEvent = state.eventSink,
+            )
 
-        is PlayerUiState.Inactive -> PlayStateBar(
-            modifier = modifier,
-            coverUri = "",
-            enabled = false,
-        )
+        is PlayerUiState.Inactive ->
+            PlayStateBar(
+                modifier = modifier,
+                coverUri = "",
+                enabled = false,
+            )
     }
 }
 
@@ -101,7 +108,7 @@ private fun PlayStateBar(
                     modifier = Modifier.weight(1f),
                     coverUri = coverUri,
                     title = title,
-                    artist = artist
+                    artist = artist,
                 )
 
                 PlayControlBar(
@@ -116,7 +123,6 @@ private fun PlayStateBar(
                 Spacer(modifier = Modifier.weight(1f))
             }
 
-
             ProgressBar(
                 modifier = Modifier.height(24.dp),
                 enabled = enabled,
@@ -124,7 +130,7 @@ private fun PlayStateBar(
                 duration = duration,
                 onValueChange = {
                     onEvent(PlayerUiEvent.OnProgressChange(it))
-                }
+                },
             )
         }
     }
@@ -212,18 +218,19 @@ private fun PlayInfoWithAlbumCover(
     modifier: Modifier,
     coverUri: String,
     title: String,
-    artist: String
+    artist: String,
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (coverUri.isNotEmpty()) {
             CircleBorderImage(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1f),
-                model = coverUri
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .aspectRatio(1f),
+                model = coverUri,
             )
 
             Spacer(modifier = Modifier.width(10.dp))
@@ -260,23 +267,24 @@ private fun ProgressBar(
     val durationString by rememberUpdatedState(
         duration.milliseconds.toComponents { minutes, seconds, _ ->
             formatTime(minutes, seconds)
-        }
+        },
     )
 
     val progressString by rememberUpdatedState(
         (duration * progress).toLong().milliseconds.toComponents { minutes, seconds, _ ->
             formatTime(minutes, seconds)
-        }
+        },
     )
 
     Row(
         modifier = modifier.padding(start = 8.dp, end = 8.dp, bottom = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            modifier = Modifier.graphicsLayer {
-                alpha = if (enabled) 1f else 0.5f
-            },
+            modifier =
+                Modifier.graphicsLayer {
+                    alpha = if (enabled) 1f else 0.5f
+                },
             text = progressString,
             style = MaterialTheme.typography.bodySmall,
         )
@@ -289,9 +297,10 @@ private fun ProgressBar(
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            modifier = Modifier.graphicsLayer {
-                alpha = if (enabled) 1f else 0.5f
-            },
+            modifier =
+                Modifier.graphicsLayer {
+                    alpha = if (enabled) 1f else 0.5f
+                },
             text = durationString,
             style = MaterialTheme.typography.bodySmall,
         )

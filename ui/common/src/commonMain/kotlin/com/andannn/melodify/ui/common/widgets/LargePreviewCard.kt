@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.common.widgets
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -42,21 +46,25 @@ fun LargePreviewCard(
     onLongClick: (() -> Unit)? = null,
 ) {
     Surface(
-        modifier = if (onClick == null) modifier
-        else modifier.combinedClickable(
-            onClick = onClick,
-            onLongClick = onLongClick,
-        ),
+        modifier =
+            if (onClick == null) {
+                modifier
+            } else {
+                modifier.combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onLongClick,
+                )
+            },
         color = backGroundColor,
         shape = MaterialTheme.shapes.medium,
     ) {
         Column {
             AsyncImage(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .then(imageModifier),
+                    Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .then(imageModifier),
                 placeholder = painterResource(defaultImagePlaceholderRes),
                 error = painterResource(defaultImagePlaceholderRes),
                 model = artCoverUri,
@@ -92,13 +100,19 @@ private fun AlbumCardPreview() {
         Surface {
             LargePreviewCard(
                 imageModifier =
-                Modifier
-                    .clip(shape = CircleShape)
-                    .alpha(0.3f)
-                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)),
+                    Modifier
+                        .clip(shape = CircleShape)
+                        .alpha(0.3f)
+                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)),
                 artCoverUri = "",
-                title = "TitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitltleTitleTitleTitleTitleTitltleTitleTitleTitleTitleTitltleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitle",
-                subTitle = "Sub title Sub title Sub title Sub title Sub title Sub title Sub title Sub title Sub title Sub title Sub title Sub title Sub title Sub title Sub title Sub title "
+                title =
+                    "TitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitltleTitleTitleT" +
+                        "itleTitleTitltleTitleTitleTitleTitleTitltleTitleTitleTitleTitleTitle" +
+                        "TitleTitleTitleTitleTitleTitleTitleTitleTitleTitle",
+                subTitle =
+                    "Sub title Sub title Sub title Sub title Sub title Sub title Sub title" +
+                        " Sub title Sub title Sub title Sub title Sub title Sub title Sub title" +
+                        " Sub title Sub title ",
             )
         }
     }

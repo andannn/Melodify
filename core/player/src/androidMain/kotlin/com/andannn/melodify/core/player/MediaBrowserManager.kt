@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.player
 
 import android.app.Application
@@ -34,9 +38,10 @@ class MediaBrowserManagerImpl(
 
     override suspend fun connect() {
         Napier.d(tag = TAG) { "connect: start" }
-        _mediaBrowser = withTimeout(5000) {
-            providerMediaBrowser(application).await()
-        }
+        _mediaBrowser =
+            withTimeout(5000) {
+                providerMediaBrowser(application).await()
+            }
         Napier.d(tag = TAG) { "connect: finish" }
     }
 

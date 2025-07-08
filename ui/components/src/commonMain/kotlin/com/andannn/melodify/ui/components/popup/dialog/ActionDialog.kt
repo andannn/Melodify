@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.popup.dialog
 
 import androidx.compose.foundation.layout.ColumnScope
@@ -30,7 +34,7 @@ enum class DialogType {
 @Composable
 fun ActionDialogContainer(
     popupController: PopupController = LocalPopupController.current,
-    data: DialogData? =  popupController.currentDialog
+    data: DialogData? = popupController.currentDialog,
 ) {
 // TODO: onRequestDismiss lambda is not updated when data changed. use state by *rememberUpdatedState*
 //    if (data != null) {
@@ -48,7 +52,7 @@ fun ActionDialogContainer(
             data = dataState.value!!,
             onRequestDismiss = {
                 dataState.value?.performAction(DialogAction.Dismissed)
-            }
+            },
         )
     }
 }
@@ -57,88 +61,96 @@ fun ActionDialogContainer(
 @Composable
 fun ActionDialogContent(
     data: DialogData,
-    onRequestDismiss: () -> Unit
+    onRequestDismiss: () -> Unit,
 ) {
     when (data.dialogId.dialogIdType) {
-        DialogType.AlertDialog -> Dialog(
-            onDismissRequest = onRequestDismiss,
-            content = {
-                Surface(
-                    modifier = Modifier.wrapContentSize(),
-                    shape = AlertDialogDefaults.shape,
-                    tonalElevation = AlertDialogDefaults.TonalElevation
-                ) {
+        DialogType.AlertDialog ->
+            Dialog(
+                onDismissRequest = onRequestDismiss,
+                content = {
+                    Surface(
+                        modifier = Modifier.wrapContentSize(),
+                        shape = AlertDialogDefaults.shape,
+                        tonalElevation = AlertDialogDefaults.TonalElevation,
+                    ) {
+                        DialogContent(data)
+                    }
+                },
+            )
+
+        DialogType.DropDownDialog ->
+            DropDownOptionMenu(
+                onRequestDismiss = onRequestDismiss,
+                content = {
                     DialogContent(data)
-                }
-            }
-        )
+                },
+            )
 
-        DialogType.DropDownDialog -> DropDownOptionMenu(
-            onRequestDismiss = onRequestDismiss,
-            content = {
-                DialogContent(data)
-            }
-        )
-
-        DialogType.ModalBottomSheet -> ModalBottomSheet(
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            onDismissRequest = onRequestDismiss,
-            content = {
-                DialogContent(data)
-            }
-        )
+        DialogType.ModalBottomSheet ->
+            ModalBottomSheet(
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                onDismissRequest = onRequestDismiss,
+                content = {
+                    DialogContent(data)
+                },
+            )
     }
 }
 
 @Composable
-fun DialogContent(
-    data: DialogData
-) {
+fun DialogContent(data: DialogData) {
     when (val dialog = data.dialogId) {
-        is DialogId.AlertDialog -> AlertMessageDialogContent(
-            dialogId = dialog,
-            onAction = {
-                data.performAction(it)
-            }
-        )
+        is DialogId.AlertDialog ->
+            AlertMessageDialogContent(
+                dialogId = dialog,
+                onAction = {
+                    data.performAction(it)
+                },
+            )
 
-        DialogId.AddLibraryPathDialog -> AddLibraryPathDialog(
-            onAction = {
-                data.performAction(it)
-            }
-        )
+        DialogId.AddLibraryPathDialog ->
+            AddLibraryPathDialog(
+                onAction = {
+                    data.performAction(it)
+                },
+            )
 
-        DialogId.NewPlayListDialog -> NewPlayListDialogContent(
-            onAction = {
-                data.performAction(it)
-            }
-        )
+        DialogId.NewPlayListDialog ->
+            NewPlayListDialogContent(
+                onAction = {
+                    data.performAction(it)
+                },
+            )
 
-        is DialogId.MediaOption -> MediaOptionContent(
-            dialogId = dialog,
-            onAction = {
-                data.performAction(it)
-            }
-        )
+        is DialogId.MediaOption ->
+            MediaOptionContent(
+                dialogId = dialog,
+                onAction = {
+                    data.performAction(it)
+                },
+            )
 
-        is DialogId.AddToPlayListDialog -> AddToPlayListDialogContent(
-            source = dialog.source,
-            onAction = {
-                data.performAction(it)
-            }
-        )
+        is DialogId.AddToPlayListDialog ->
+            AddToPlayListDialogContent(
+                source = dialog.source,
+                onAction = {
+                    data.performAction(it)
+                },
+            )
 
-        is DialogId.SleepTimerOptionDialog -> SleepTimerOptionDialogContent(
-            onAction = {
-                data.performAction(it)
-            }
-        )
+        is DialogId.SleepTimerOptionDialog ->
+            SleepTimerOptionDialogContent(
+                onAction = {
+                    data.performAction(it)
+                },
+            )
 
-        DialogId.SleepCountingDialog -> SleepTimerCountingContent(
-            onAction = {
-                data.performAction(it)
-            }
-        )
+        DialogId.SleepCountingDialog ->
+            SleepTimerCountingContent(
+                onAction = {
+                    data.performAction(it)
+                },
+            )
     }
 }
 

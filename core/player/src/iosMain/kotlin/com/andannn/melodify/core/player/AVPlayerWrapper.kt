@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.player
 
 import io.github.aakira.napier.Napier
@@ -8,15 +12,22 @@ import platform.Foundation.NSURL
 private const val TAG = "AVPlayerWrapper"
 
 interface AVPlayerWrapper {
-    fun playMediaList(mediaList: List<String>, index: Int)
+    fun playMediaList(
+        mediaList: List<String>,
+        index: Int,
+    )
 }
 
-class AVPlayerWrapperWrapperImpl: AVPlayerWrapper {
-    override fun playMediaList(mediaList: List<String>, index: Int) {
+class AVPlayerWrapperWrapperImpl : AVPlayerWrapper {
+    override fun playMediaList(
+        mediaList: List<String>,
+        index: Int,
+    ) {
         Napier.d(tag = TAG) { "playMediaList mediaList $mediaList, index: $index" }
-        val player = AVPlayer(
-            NSURL(string = mediaList[index])
-        )
+        val player =
+            AVPlayer(
+                NSURL(string = mediaList[index]),
+            )
         player.play()
     }
 }

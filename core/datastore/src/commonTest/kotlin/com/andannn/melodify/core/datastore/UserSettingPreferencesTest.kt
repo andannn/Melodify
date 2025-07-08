@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.datastore
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
@@ -13,7 +17,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class UserSettingPreferencesTest {
-
     private val dispatcher = StandardTestDispatcher()
     private val testScope = TestScope(dispatcher)
     private val datastoreScope = testScope.backgroundScope
@@ -25,41 +28,45 @@ class UserSettingPreferencesTest {
 
     @BeforeTest
     fun setUp() {
-        val dataStore = PreferenceDataStoreFactory.createWithPath(
-            scope = datastoreScope,
-        ) {
-            "${FileSystem.SYSTEM_TEMPORARY_DIRECTORY}/${randomInt}_${dataStoreFileName}".toPath()
-        }
+        val dataStore =
+            PreferenceDataStoreFactory.createWithPath(
+                scope = datastoreScope,
+            ) {
+                "${FileSystem.SYSTEM_TEMPORARY_DIRECTORY}/${randomInt}_$DATA_STORE_FILENAME".toPath()
+            }
         preferences = UserSettingPreferences(dataStore)
     }
 
     @Test
-    fun `set media preview mode`() = testScope.runTest {
-        preferences.setMediaPreviewMode(PreviewModeValues.GRID_PREVIEW_VALUE)
-        val data = preferences.userDate.first()
+    fun `set media preview mode`() =
+        testScope.runTest {
+            preferences.setMediaPreviewMode(PreviewModeValues.GRID_PREVIEW_VALUE)
+            val data = preferences.userDate.first()
 
-        assertEquals(
-            expected = PreviewModeValues.GRID_PREVIEW_VALUE,
-            actual = data.mediaPreviewMode
-        )
-    }
-
-    @Test
-    fun `set last successful sync`() = testScope.runTest {
-        preferences.setLastSuccessfulSyncTime(123456789)
-        val data = preferences.userDate.first()
-        assertEquals(
-            expected = 123456789,
-            actual = data.lastSuccessfulSyncTime
-        )
-    }
+            assertEquals(
+                expected = PreviewModeValues.GRID_PREVIEW_VALUE,
+                actual = data.mediaPreviewMode,
+            )
+        }
 
     @Test
-    fun `get last successful when not set`() = testScope.runTest {
-        val data = preferences.userDate.first()
-        assertEquals(
-            expected = null,
-            actual = data.lastSuccessfulSyncTime
-        )
-    }
+    fun `set last successful sync`() =
+        testScope.runTest {
+            preferences.setLastSuccessfulSyncTime(123456789)
+            val data = preferences.userDate.first()
+            assertEquals(
+                expected = 123456789,
+                actual = data.lastSuccessfulSyncTime,
+            )
+        }
+
+    @Test
+    fun `get last successful when not set`() =
+        testScope.runTest {
+            val data = preferences.userDate.first()
+            assertEquals(
+                expected = null,
+                actual = data.lastSuccessfulSyncTime,
+            )
+        }
 }

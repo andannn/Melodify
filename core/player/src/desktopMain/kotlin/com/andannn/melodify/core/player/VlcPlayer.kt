@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.player
 
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +14,10 @@ interface VlcPlayer {
 
     val playingIndexInQueue: Int
 
-    fun playMediaList(mediaList: List<String>, index: Int)
+    fun playMediaList(
+        mediaList: List<String>,
+        index: Int,
+    )
 
     fun observePlayerState(): StateFlow<PlayerState>
 
@@ -26,7 +33,10 @@ interface VlcPlayer {
 
     fun seekToPrevious()
 
-    fun seekMediaItem(mediaItemIndex: Int, positionMs: Long = 0)
+    fun seekMediaItem(
+        mediaItemIndex: Int,
+        positionMs: Long = 0,
+    )
 
     fun seekToTime(time: Long)
 
@@ -36,12 +46,17 @@ interface VlcPlayer {
 
     fun pause()
 
-    fun addMediaItems(index: Int, mrls: List<String>)
+    fun addMediaItems(
+        index: Int,
+        mrls: List<String>,
+    )
 
-    fun moveMediaItem(from: Int, to: Int)
+    fun moveMediaItem(
+        from: Int,
+        to: Int,
+    )
 
     fun removeMediaItem(index: Int)
 
     fun release()
 }
-

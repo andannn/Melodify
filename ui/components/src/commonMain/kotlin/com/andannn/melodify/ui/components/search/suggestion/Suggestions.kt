@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.search.suggestion
 
 import androidx.compose.foundation.clickable
@@ -59,7 +63,7 @@ internal fun SuggestionUi(
     onBestMatchedItemClicked: (MediaItemModel) -> Unit = {},
 ) {
     Box(
-        modifier = modifier
+        modifier = modifier,
     ) {
         SuggestionsContent(
             state = uiState.state,
@@ -80,32 +84,35 @@ private fun SuggestionsContent(
         when (state) {
             is SuggestionsState.LoadingHistory,
             is SuggestionsState.NoSuggestion,
-            is SuggestionsState.LoadingSuggestion -> Spacer(modifier = Modifier)
+            is SuggestionsState.LoadingSuggestion,
+            -> Spacer(modifier = Modifier)
 
             is SuggestionsState.SuggestionLoaded -> {
                 state.suggestions.forEach {
                     ListItem(
-                        colors = ListItemDefaults.colors(
-                            containerColor = Color.Transparent
-                        ),
-                        modifier = Modifier.clickable {
-                            onConfirmSearch(it)
-                        },
+                        colors =
+                            ListItemDefaults.colors(
+                                containerColor = Color.Transparent,
+                            ),
+                        modifier =
+                            Modifier.clickable {
+                                onConfirmSearch(it)
+                            },
                         headlineContent = {
                             Text(it)
                         },
                         leadingContent = {
                             Icon(
                                 imageVector = Icons.Rounded.Search,
-                                contentDescription = "History"
+                                contentDescription = "History",
                             )
                         },
                         trailingContent = {
                             Icon(
                                 imageVector = Icons.Rounded.ArrowOutward,
-                                contentDescription = "SearchScreen"
+                                contentDescription = "SearchScreen",
                             )
-                        }
+                        },
                     )
                 }
 
@@ -117,7 +124,7 @@ private fun SuggestionsContent(
                         modifier = Modifier.padding(start = 12.dp),
                         text = "Quick result",
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
 
@@ -127,7 +134,7 @@ private fun SuggestionsContent(
                         mediaItemModel = it,
                         onItemClick = {
                             onBestMatchedItemClicked(it)
-                        }
+                        },
                     )
                 }
             }
@@ -135,27 +142,29 @@ private fun SuggestionsContent(
             is SuggestionsState.HistoryLoaded -> {
                 state.searchWordList.forEach {
                     ListItem(
-                        colors = ListItemDefaults.colors(
-                            containerColor = Color.Transparent
-                        ),
-                        modifier = Modifier.clickable {
-                            onConfirmSearch(it)
-                        },
+                        colors =
+                            ListItemDefaults.colors(
+                                containerColor = Color.Transparent,
+                            ),
+                        modifier =
+                            Modifier.clickable {
+                                onConfirmSearch(it)
+                            },
                         headlineContent = {
                             Text(it)
                         },
                         leadingContent = {
                             Icon(
                                 imageVector = Icons.Rounded.History,
-                                contentDescription = "History"
+                                contentDescription = "History",
                             )
                         },
                         trailingContent = {
                             Icon(
                                 imageVector = Icons.Rounded.ArrowOutward,
-                                contentDescription = "SearchScreen"
+                                contentDescription = "SearchScreen",
                             )
-                        }
+                        },
                     )
                 }
             }

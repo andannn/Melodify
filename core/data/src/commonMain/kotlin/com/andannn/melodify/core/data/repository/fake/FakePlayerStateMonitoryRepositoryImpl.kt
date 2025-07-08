@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.data.repository.fake
 
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -9,8 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
-internal class FakePlayerStateMonitoryRepositoryImpl(
-) : PlayerStateMonitoryRepository {
+internal class FakePlayerStateMonitoryRepositoryImpl() : PlayerStateMonitoryRepository {
     override fun getCurrentPositionMs(): Long {
         return 0L
     }
@@ -27,13 +30,15 @@ internal class FakePlayerStateMonitoryRepositoryImpl(
         return emptyList()
     }
 
-    override fun getPlayingMediaStateFlow() = flow {
-        emit(null)
-    }
+    override fun getPlayingMediaStateFlow() =
+        flow {
+            emit(null)
+        }
 
-    override fun getPlayListQueueStateFlow(): Flow<List<AudioItemModel>> = flow {
-        emit(emptyList())
-    }
+    override fun getPlayListQueueStateFlow(): Flow<List<AudioItemModel>> =
+        flow {
+            emit(emptyList())
+        }
 
     override fun getCurrentPlayMode(): PlayMode {
         return PlayMode.REPEAT_ALL
@@ -41,15 +46,18 @@ internal class FakePlayerStateMonitoryRepositoryImpl(
 
     override fun observeIsShuffle(): StateFlow<Boolean> = MutableStateFlow(false)
 
-    override fun observePlayMode(): Flow<PlayMode> = flow {
-        emit(PlayMode.REPEAT_ALL)
-    }
+    override fun observePlayMode(): Flow<PlayMode> =
+        flow {
+            emit(PlayMode.REPEAT_ALL)
+        }
 
-    override fun observeIsPlaying(): Flow<Boolean> = flow {
-        emit(false)
-    }
+    override fun observeIsPlaying(): Flow<Boolean> =
+        flow {
+            emit(false)
+        }
 
-    override fun observeProgressFactor(): Flow<Float> = flow {
-        emit(0f)
-    }
+    override fun observeProgressFactor(): Flow<Float> =
+        flow {
+            emit(0f)
+        }
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.glance
 
 import android.os.Build
@@ -52,27 +56,27 @@ import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
 import com.andannn.melodify.ui.components.playcontrol.rememberPlayerPresenter
 
 @Composable
-fun PlayerGlance(
-    onLaunchMainActivity: () -> Action,
-) {
+fun PlayerGlance(onLaunchMainActivity: () -> Action) {
     GlanceTheme(
-        colors = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            GlanceTheme.colors
-        } else {
-            ColorProviders(
-                light = LightColorPalette,
-                dark = DarkColorPalette
-            )
-        }
+        colors =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                GlanceTheme.colors
+            } else {
+                ColorProviders(
+                    light = LightColorPalette,
+                    dark = DarkColorPalette,
+                )
+            },
     ) {
         val presenter = rememberPlayerPresenter()
         PlayerGlanceContent(
             state = presenter.present(),
             onClickContainer = onLaunchMainActivity,
-            modifier = GlanceModifier
-                .background(GlanceTheme.colors.surface)
-                .size(width = 180.dp, height = 60.dp)
-                .cornerRadius(16.dp),
+            modifier =
+                GlanceModifier
+                    .background(GlanceTheme.colors.surface)
+                    .size(width = 180.dp, height = 60.dp)
+                    .cornerRadius(16.dp),
         )
     }
 }
@@ -87,33 +91,34 @@ fun PlayerGlanceContent(
         when (state) {
             is PlayerUiState.Active -> state.mediaItem.name
             is PlayerUiState.Inactive -> "Nothing Playing"
-        }
+        },
     )
     val isPlaying by rememberUpdatedState(
         when (state) {
             is PlayerUiState.Active -> state.isPlaying
             is PlayerUiState.Inactive -> false
-        }
+        },
     )
     val coverRes by rememberUpdatedState(
         when (state) {
             is PlayerUiState.Active -> state.mediaItem.artWorkUri
             is PlayerUiState.Inactive -> null
-        }
+        },
     )
     val isFavorite by rememberUpdatedState(
         when (state) {
             is PlayerUiState.Active -> state.isFavorite
             is PlayerUiState.Inactive -> false
-        }
+        },
     )
     Row(
         modifier = modifier.fillMaxWidth().height(80.dp).clickable(onClickContainer()),
     ) {
         AlbumColver(
-            modifier = GlanceModifier
-                .width(80.dp).fillMaxHeight(),
-            contentUrl = coverRes
+            modifier =
+                GlanceModifier
+                    .width(80.dp).fillMaxHeight(),
+            contentUrl = coverRes,
         )
         Column(
             modifier = GlanceModifier.fillMaxSize(),
@@ -138,17 +143,18 @@ fun PlayerGlanceContent(
 @Composable
 fun Title(
     title: String,
-    modifier: GlanceModifier = GlanceModifier
+    modifier: GlanceModifier = GlanceModifier,
 ) {
     Text(
         modifier = modifier,
         text = title,
         maxLines = 1,
-        style = TextStyle(
-            color = GlanceTheme.colors.secondary,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
-        )
+        style =
+            TextStyle(
+                color = GlanceTheme.colors.secondary,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+            ),
     )
 }
 
@@ -161,25 +167,25 @@ fun PlayControlArea(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         GlanceIcon(
             resource = R.drawable.skip_previous,
             onClick = {
                 eventSink.invoke(PlayerUiEvent.OnPreviousButtonClick)
-            }
+            },
         )
         GlanceIcon(
             resource = if (isPlaying) R.drawable.pause else R.drawable.play_arrow,
             onClick = {
                 eventSink.invoke(PlayerUiEvent.OnPlayButtonClick)
-            }
+            },
         )
         GlanceIcon(
             resource = R.drawable.skip_next,
             onClick = {
                 eventSink.invoke(PlayerUiEvent.OnNextButtonClick)
-            }
+            },
         )
     }
 }
@@ -194,7 +200,7 @@ fun GlanceIcon(
         modifier = modifier.size(36.dp).padding(3.dp).clickable(onClick),
         provider = ImageProvider(resource),
         contentDescription = "",
-        colorFilter = ColorFilter.tint(GlanceTheme.colors.secondary)
+        colorFilter = ColorFilter.tint(GlanceTheme.colors.secondary),
     )
 }
 
@@ -208,12 +214,13 @@ fun AlbumColver(
     }
     val context = LocalContext.current
     LaunchedEffect(contentUrl) {
-        val request = ImageRequest.Builder(context)
-            .data(contentUrl)
-            .size(128).scale(Scale.FILL)
-            .allowHardware(false)
-            .memoryCacheKey("$contentUrl.glance.cover")
-            .build()
+        val request =
+            ImageRequest.Builder(context)
+                .data(contentUrl)
+                .size(128).scale(Scale.FILL)
+                .allowHardware(false)
+                .memoryCacheKey("$contentUrl.glance.cover")
+                .build()
 
         bitmap =
             when (val result = context.imageLoader.execute(request)) {
@@ -227,17 +234,18 @@ fun AlbumColver(
     if (bitmap != null) {
         Image(
             modifier = modifier,
-            provider = ImageProvider(
-                bitmap!!
-            ),
-            contentDescription = "Cover"
+            provider =
+                ImageProvider(
+                    bitmap!!,
+                ),
+            contentDescription = "Cover",
         )
     } else {
         Image(
             modifier = modifier.background(GlanceTheme.colors.surfaceVariant).padding(20.dp),
             provider = ImageProvider(R.drawable.album),
             colorFilter = ColorFilter.tint(GlanceTheme.colors.secondary),
-            contentDescription = "Cover"
+            contentDescription = "Cover",
         )
     }
 }

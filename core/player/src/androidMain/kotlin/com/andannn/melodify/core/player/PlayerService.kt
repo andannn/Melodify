@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.player
 
 import android.app.PendingIntent
@@ -16,7 +20,9 @@ import kotlin.coroutines.CoroutineContext
 
 private const val TAG = "PlayerService"
 
-class PlayerService : MediaSessionService(), CoroutineScope {
+class PlayerService :
+    MediaSessionService(),
+    CoroutineScope {
     private val playerWrapper: PlayerWrapper by inject()
 
     private val sleepCounterController: SleepTimerController by inject()
@@ -28,20 +34,23 @@ class PlayerService : MediaSessionService(), CoroutineScope {
     override val coroutineContext: CoroutineContext = Dispatchers.Main + job
 
     companion object {
-        private const val immutableFlag = PendingIntent.FLAG_IMMUTABLE
+        private const val IMMUTABLE_FLAG = PendingIntent.FLAG_IMMUTABLE
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        val player = ExoPlayer.Builder(application)
-            .setAudioAttributes(AudioAttributes.DEFAULT, true)
-            .setHandleAudioBecomingNoisy(true)
-            .build()
+        val player =
+            ExoPlayer
+                .Builder(application)
+                .setAudioAttributes(AudioAttributes.DEFAULT, true)
+                .setHandleAudioBecomingNoisy(true)
+                .build()
 
         playerWrapper.setUpPlayer(player)
         session =
-            MediaSession.Builder(this, player)
+            MediaSession
+                .Builder(this, player)
                 .setSessionActivity(getSingleTopActivity())
                 .build()
 
@@ -66,12 +75,11 @@ class PlayerService : MediaSessionService(), CoroutineScope {
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = session
 
-    private fun getSingleTopActivity(): PendingIntent {
-        return PendingIntent.getActivity(
+    private fun getSingleTopActivity(): PendingIntent =
+        PendingIntent.getActivity(
             this,
             0,
             Intent(this, Class.forName("com.andannn.melodify.MainActivity")),
-            immutableFlag or PendingIntent.FLAG_UPDATE_CURRENT,
+            IMMUTABLE_FLAG or PendingIntent.FLAG_UPDATE_CURRENT,
         )
-    }
 }

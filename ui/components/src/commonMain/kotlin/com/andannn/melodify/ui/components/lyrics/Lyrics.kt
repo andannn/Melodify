@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.lyrics
 
 import androidx.compose.foundation.layout.Box
@@ -78,9 +82,9 @@ private fun PlainLyricsView(
 ) {
     Text(
         modifier =
-        modifier
-            .verticalScroll(rememberScrollState())
-            .padding(8.dp),
+            modifier
+                .verticalScroll(rememberScrollState())
+                .padding(8.dp),
         text = lyric,
     )
 }

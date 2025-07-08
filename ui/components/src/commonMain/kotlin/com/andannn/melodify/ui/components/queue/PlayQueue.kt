@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.queue
 
 import androidx.compose.foundation.layout.Spacer
@@ -34,14 +38,14 @@ fun PlayQueue(
     val state = presenter.present()
     PlayQueueUi(
         state = state,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
 @Composable
 fun PlayQueueUi(
     state: PlayQueueState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     PlayQueueContent(
         modifier = modifier,
@@ -86,7 +90,7 @@ private fun PlayQueueContent(
 
     LazyColumn(
         modifier =
-        modifier.fillMaxWidth(),
+            modifier.fillMaxWidth(),
         state = playQueueState.lazyListState,
     ) {
         items(
@@ -147,9 +151,9 @@ private fun ReorderableCollectionItemScope.QueueItem(
         ListTileItemView(
             modifier = modifier,
             swapIconModifier =
-            Modifier.draggableHandle(
-                onDragStopped = onSwapFinish,
-            ),
+                Modifier.draggableHandle(
+                    onDragStopped = onSwapFinish,
+                ),
             isActive = isActive,
 //            defaultColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             albumArtUri = item.artWorkUri,

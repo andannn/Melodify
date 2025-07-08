@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.database.entity.fts
 
 import androidx.room.ColumnInfo
@@ -9,7 +13,7 @@ import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
 
 @Fts4(
-    contentEntity = AlbumEntity::class
+    contentEntity = AlbumEntity::class,
 )
 @Entity(tableName = LIBRARY_FTS_ALBUM)
 data class AlbumFtsEntity(

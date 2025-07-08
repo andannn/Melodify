@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.screenshots
 
 import androidx.compose.runtime.Composable
@@ -12,12 +16,12 @@ import org.junit.Test
 fun LibraryScreenShots(isDark: Boolean) {
     MelodifyTheme(isDark) {
         Library(
-            state = LibraryState()
+            state = LibraryState(),
         )
     }
 }
 
-class LibraryScreenShots: ScreenShotsTest() {
+class LibraryScreenShots : ScreenShotsTest() {
     @Test
     fun takeScreenShot() {
         paparazzi.snapshotWithOption("LibraryScreenShots") { isDark ->

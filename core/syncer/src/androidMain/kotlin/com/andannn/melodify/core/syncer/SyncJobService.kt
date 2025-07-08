@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.syncer
 
 import android.app.job.JobInfo
@@ -56,7 +60,7 @@ class SyncJobService : JobService(), CoroutineScope {
                 syncer.syncAllMediaLibrary()
             } else {
                 syncer.syncMediaByChanges(
-                    triggeredContentUris.mapToChangeEvent(contentResolver)
+                    triggeredContentUris.mapToChangeEvent(contentResolver),
                 )
             }
         }
@@ -79,19 +83,20 @@ class SyncJobService : JobService(), CoroutineScope {
             val jobScheduler =
                 context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
 
-            val jobInfo = JobInfo.Builder(
-                JOB_ID,
-                ComponentName(context, SyncJobService::class.java)
-            )
-                .addTriggerContentUri(
-                    JobInfo.TriggerContentUri(
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        JobInfo.TriggerContentUri.FLAG_NOTIFY_FOR_DESCENDANTS
-                    )
+            val jobInfo =
+                JobInfo.Builder(
+                    JOB_ID,
+                    ComponentName(context, SyncJobService::class.java),
                 )
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPersisted(false)
-                .build()
+                    .addTriggerContentUri(
+                        JobInfo.TriggerContentUri(
+                            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                            JobInfo.TriggerContentUri.FLAG_NOTIFY_FOR_DESCENDANTS,
+                        ),
+                    )
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setPersisted(false)
+                    .build()
 
             jobScheduler.schedule(jobInfo)
         }
@@ -106,27 +111,30 @@ class SyncJobService : JobService(), CoroutineScope {
 }
 
 private suspend fun Array<Uri>.mapToChangeEvent(contentResolver: ContentResolver): List<FileChangeEvent> {
-    val ids = mapNotNull {
-        it.lastPathSegment?.toLongOrNull()
-    }
+    val ids =
+        mapNotNull {
+            it.lastPathSegment?.toLongOrNull()
+        }
     if (ids.isNotEmpty()) {
         val validIds = contentResolver.filterValidMediaFromIds(ids)
         return ids.map { id ->
             if (validIds.contains(id)) {
                 FileChangeEvent(
-                    fileUri = Uri.withAppendedPath(
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        id.toString()
-                    ).toString(),
-                    fileChangeType = FileChangeType.MODIFY
+                    fileUri =
+                        Uri.withAppendedPath(
+                            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                            id.toString(),
+                        ).toString(),
+                    fileChangeType = FileChangeType.MODIFY,
                 )
             } else {
                 FileChangeEvent(
-                    fileUri = Uri.withAppendedPath(
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        id.toString()
-                    ).toString(),
-                    fileChangeType = FileChangeType.DELETE
+                    fileUri =
+                        Uri.withAppendedPath(
+                            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                            id.toString(),
+                        ).toString(),
+                    fileChangeType = FileChangeType.DELETE,
                 )
             }
         }
