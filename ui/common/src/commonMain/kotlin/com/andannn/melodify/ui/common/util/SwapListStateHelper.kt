@@ -42,7 +42,6 @@ fun <T> rememberSwapListState(
 
     return remember {
         SwapListStateHolder(
-            lazyListState = lazyListState,
             swapListState = playQueueState,
             reorderableLazyListState = reorderableLazyListState,
         )
@@ -50,7 +49,6 @@ fun <T> rememberSwapListState(
 }
 
 class SwapListStateHolder<T>(
-    val lazyListState: LazyListState,
     private val swapListState: SwapListStateImpl<T>,
     val reorderableLazyListState: ReorderableLazyListState,
 ) : SwapListState<T> by swapListState

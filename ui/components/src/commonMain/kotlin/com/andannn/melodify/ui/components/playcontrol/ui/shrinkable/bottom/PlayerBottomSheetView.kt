@@ -40,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
 import com.andannn.melodify.ui.components.lyrics.Lyrics
 import com.andannn.melodify.ui.components.playcontrol.ui.BottomSheetState
@@ -61,7 +60,6 @@ private const val TAG = "PlayQueueView"
 @Composable
 internal fun PlayerBottomSheetView(
     state: AnchoredDraggableState<BottomSheetState>,
-    activeMediaItem: AudioItemModel,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
     onRequestExpandSheet: () -> Unit = {},

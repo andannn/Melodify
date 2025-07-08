@@ -73,8 +73,8 @@ sealed interface DialogId {
         open val options: List<OptionItem>,
     ) : DialogId {
         companion object {
-            fun fromMediaModel(item: MediaItemModel): MediaOption {
-                return when (item) {
+            fun fromMediaModel(item: MediaItemModel): MediaOption =
+                when (item) {
                     is AlbumItemModel -> AlbumOption(item)
                     is ArtistItemModel -> ArtistOption(item)
                     is AudioItemModel -> AudioOption(item)
@@ -87,7 +87,6 @@ sealed interface DialogId {
                         }
                     }
                 }
-            }
         }
     }
 
@@ -117,41 +116,48 @@ sealed interface DialogId {
                 ),
         )
 
-    data class PlayerOption(override val source: AudioItemModel) : MediaOption(
-        source = source,
-        options =
-            listOf(
-                OptionItem.ADD_TO_QUEUE,
-                OptionItem.PLAY_NEXT,
-                OptionItem.SLEEP_TIMER,
-            ),
-    )
+    data class PlayerOption(
+        override val source: AudioItemModel,
+    ) : MediaOption(
+            source = source,
+            options =
+                listOf(
+                    OptionItem.ADD_TO_QUEUE,
+                    OptionItem.PLAY_NEXT,
+                    OptionItem.SLEEP_TIMER,
+                ),
+        )
 
-    data class PlayListOption(override val source: PlayListItemModel) : MediaOption(
-        source = source,
-        options =
-            listOf(
-                OptionItem.ADD_TO_QUEUE,
-                OptionItem.PLAY_NEXT,
-                OptionItem.ADD_TO_PLAYLIST,
-                OptionItem.DELETE_PLAYLIST,
-                OptionItem.DELETE_TAB,
-            ),
-    )
+    data class PlayListOption(
+        override val source: PlayListItemModel,
+    ) : MediaOption(
+            source = source,
+            options =
+                listOf(
+                    OptionItem.ADD_TO_QUEUE,
+                    OptionItem.PLAY_NEXT,
+                    OptionItem.ADD_TO_PLAYLIST,
+                    OptionItem.DELETE_PLAYLIST,
+                    OptionItem.DELETE_TAB,
+                ),
+        )
 
-    data class SearchedPlayListOption(override val source: PlayListItemModel) : MediaOption(
-        source = source,
-        options =
-            listOf(
-                OptionItem.ADD_TO_QUEUE,
-                OptionItem.PLAY_NEXT,
-                OptionItem.ADD_TO_PLAYLIST,
-                OptionItem.ADD_TO_HOME_TAB,
-            ),
-    )
+    data class SearchedPlayListOption(
+        override val source: PlayListItemModel,
+    ) : MediaOption(
+            source = source,
+            options =
+                listOf(
+                    OptionItem.ADD_TO_QUEUE,
+                    OptionItem.PLAY_NEXT,
+                    OptionItem.ADD_TO_PLAYLIST,
+                    OptionItem.ADD_TO_HOME_TAB,
+                ),
+        )
 
-    data class FavoritePlayListOption(override val source: PlayListItemModel) :
-        MediaOption(
+    data class FavoritePlayListOption(
+        override val source: PlayListItemModel,
+    ) : MediaOption(
             source = source,
             options =
                 listOf(
@@ -162,69 +168,81 @@ sealed interface DialogId {
                 ),
         )
 
-    data class GenreOption(override val source: GenreItemModel) : MediaOption(
-        source = source,
-        options =
-            listOf(
-                OptionItem.ADD_TO_QUEUE,
-                OptionItem.PLAY_NEXT,
-                OptionItem.ADD_TO_PLAYLIST,
-                OptionItem.DELETE_TAB,
-            ),
-    )
+    data class GenreOption(
+        override val source: GenreItemModel,
+    ) : MediaOption(
+            source = source,
+            options =
+                listOf(
+                    OptionItem.ADD_TO_QUEUE,
+                    OptionItem.PLAY_NEXT,
+                    OptionItem.ADD_TO_PLAYLIST,
+                    OptionItem.DELETE_TAB,
+                ),
+        )
 
-    data class SearchedGenreOption(override val source: GenreItemModel) : MediaOption(
-        source = source,
-        options =
-            listOf(
-                OptionItem.ADD_TO_QUEUE,
-                OptionItem.PLAY_NEXT,
-                OptionItem.ADD_TO_HOME_TAB,
-                OptionItem.ADD_TO_PLAYLIST,
-            ),
-    )
+    data class SearchedGenreOption(
+        override val source: GenreItemModel,
+    ) : MediaOption(
+            source = source,
+            options =
+                listOf(
+                    OptionItem.ADD_TO_QUEUE,
+                    OptionItem.PLAY_NEXT,
+                    OptionItem.ADD_TO_HOME_TAB,
+                    OptionItem.ADD_TO_PLAYLIST,
+                ),
+        )
 
-    data class AlbumOption(override val source: AlbumItemModel) : MediaOption(
-        source = source,
-        options =
-            listOf(
-                OptionItem.ADD_TO_QUEUE,
-                OptionItem.PLAY_NEXT,
-                OptionItem.ADD_TO_PLAYLIST,
-                OptionItem.DELETE_TAB,
-            ),
-    )
+    data class AlbumOption(
+        override val source: AlbumItemModel,
+    ) : MediaOption(
+            source = source,
+            options =
+                listOf(
+                    OptionItem.ADD_TO_QUEUE,
+                    OptionItem.PLAY_NEXT,
+                    OptionItem.ADD_TO_PLAYLIST,
+                    OptionItem.DELETE_TAB,
+                ),
+        )
 
-    data class SearchedAlbumOption(override val source: AlbumItemModel) : MediaOption(
-        source = source,
-        options =
-            listOf(
-                OptionItem.ADD_TO_QUEUE,
-                OptionItem.PLAY_NEXT,
-                OptionItem.ADD_TO_HOME_TAB,
-                OptionItem.ADD_TO_PLAYLIST,
-            ),
-    )
+    data class SearchedAlbumOption(
+        override val source: AlbumItemModel,
+    ) : MediaOption(
+            source = source,
+            options =
+                listOf(
+                    OptionItem.ADD_TO_QUEUE,
+                    OptionItem.PLAY_NEXT,
+                    OptionItem.ADD_TO_HOME_TAB,
+                    OptionItem.ADD_TO_PLAYLIST,
+                ),
+        )
 
-    data class SearchedArtistOption(override val source: ArtistItemModel) : MediaOption(
-        source = source,
-        options =
-            listOf(
-                OptionItem.ADD_TO_QUEUE,
-                OptionItem.PLAY_NEXT,
-                OptionItem.ADD_TO_HOME_TAB,
-                OptionItem.ADD_TO_PLAYLIST,
-            ),
-    )
+    data class SearchedArtistOption(
+        override val source: ArtistItemModel,
+    ) : MediaOption(
+            source = source,
+            options =
+                listOf(
+                    OptionItem.ADD_TO_QUEUE,
+                    OptionItem.PLAY_NEXT,
+                    OptionItem.ADD_TO_HOME_TAB,
+                    OptionItem.ADD_TO_PLAYLIST,
+                ),
+        )
 
-    data class ArtistOption(override val source: ArtistItemModel) : MediaOption(
-        source = source,
-        options =
-            listOf(
-                OptionItem.ADD_TO_QUEUE,
-                OptionItem.PLAY_NEXT,
-                OptionItem.ADD_TO_PLAYLIST,
-                OptionItem.DELETE_TAB,
-            ),
-    )
+    data class ArtistOption(
+        override val source: ArtistItemModel,
+    ) : MediaOption(
+            source = source,
+            options =
+                listOf(
+                    OptionItem.ADD_TO_QUEUE,
+                    OptionItem.PLAY_NEXT,
+                    OptionItem.ADD_TO_PLAYLIST,
+                    OptionItem.DELETE_TAB,
+                ),
+        )
 }

@@ -28,7 +28,9 @@ import kotlin.coroutines.CoroutineContext
 
 private const val TAG = "SyncJobService"
 
-class SyncJobService : JobService(), CoroutineScope {
+class SyncJobService :
+    JobService(),
+    CoroutineScope {
     private val syncer: MediaLibrarySyncer = getKoin().get<MediaLibrarySyncer>()
 
     override val coroutineContext: CoroutineContext = Dispatchers.Default + Job()
@@ -84,17 +86,16 @@ class SyncJobService : JobService(), CoroutineScope {
                 context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
 
             val jobInfo =
-                JobInfo.Builder(
-                    JOB_ID,
-                    ComponentName(context, SyncJobService::class.java),
-                )
-                    .addTriggerContentUri(
+                JobInfo
+                    .Builder(
+                        JOB_ID,
+                        ComponentName(context, SyncJobService::class.java),
+                    ).addTriggerContentUri(
                         JobInfo.TriggerContentUri(
                             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                             JobInfo.TriggerContentUri.FLAG_NOTIFY_FOR_DESCENDANTS,
                         ),
-                    )
-                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    ).setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setPersisted(false)
                     .build()
 
@@ -121,19 +122,21 @@ private suspend fun Array<Uri>.mapToChangeEvent(contentResolver: ContentResolver
             if (validIds.contains(id)) {
                 FileChangeEvent(
                     fileUri =
-                        Uri.withAppendedPath(
-                            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                            id.toString(),
-                        ).toString(),
+                        Uri
+                            .withAppendedPath(
+                                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                                id.toString(),
+                            ).toString(),
                     fileChangeType = FileChangeType.MODIFY,
                 )
             } else {
                 FileChangeEvent(
                     fileUri =
-                        Uri.withAppendedPath(
-                            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                            id.toString(),
-                        ).toString(),
+                        Uri
+                            .withAppendedPath(
+                                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                                id.toString(),
+                            ).toString(),
                     fileChangeType = FileChangeType.DELETE,
                 )
             }
@@ -169,6 +172,4 @@ private suspend fun ContentResolver.filterValidMediaFromIds(ids: List<Long>) =
 
 private val EXTERNAL_PATH_SEGMENTS = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.pathSegments
 
-private fun Uri.isSpecificFile(): Boolean {
-    return pathSegments.size == EXTERNAL_PATH_SEGMENTS.size + 1
-}
+private fun Uri.isSpecificFile(): Boolean = pathSegments.size == EXTERNAL_PATH_SEGMENTS.size + 1
