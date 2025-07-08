@@ -19,12 +19,12 @@ internal object LyricWithAudioCrossRefColumns {
             entity = LyricEntity::class,
             parentColumns = [LyricColumns.ID],
             childColumns = [LyricWithAudioCrossRefColumns.LYRIC_ID],
-            onDelete = ForeignKey.NO_ACTION
+            onDelete = ForeignKey.NO_ACTION,
         ),
     ],
     indices = [
         Index(value = [LyricWithAudioCrossRefColumns.LYRIC_ID]),
-    ]
+    ],
 )
 data class LyricWithAudioCrossRef(
     @ColumnInfo(name = LyricWithAudioCrossRefColumns.MEDIA_STORE_ID)

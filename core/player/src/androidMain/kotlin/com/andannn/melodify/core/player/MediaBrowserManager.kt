@@ -34,9 +34,10 @@ class MediaBrowserManagerImpl(
 
     override suspend fun connect() {
         Napier.d(tag = TAG) { "connect: start" }
-        _mediaBrowser = withTimeout(5000) {
-            providerMediaBrowser(application).await()
-        }
+        _mediaBrowser =
+            withTimeout(5000) {
+                providerMediaBrowser(application).await()
+            }
         Napier.d(tag = TAG) { "connect: finish" }
     }
 

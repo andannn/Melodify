@@ -8,15 +8,22 @@ import platform.Foundation.NSURL
 private const val TAG = "AVPlayerWrapper"
 
 interface AVPlayerWrapper {
-    fun playMediaList(mediaList: List<String>, index: Int)
+    fun playMediaList(
+        mediaList: List<String>,
+        index: Int,
+    )
 }
 
-class AVPlayerWrapperWrapperImpl: AVPlayerWrapper {
-    override fun playMediaList(mediaList: List<String>, index: Int) {
+class AVPlayerWrapperWrapperImpl : AVPlayerWrapper {
+    override fun playMediaList(
+        mediaList: List<String>,
+        index: Int,
+    ) {
         Napier.d(tag = TAG) { "playMediaList mediaList $mediaList, index: $index" }
-        val player = AVPlayer(
-            NSURL(string = mediaList[index])
-        )
+        val player =
+            AVPlayer(
+                NSURL(string = mediaList[index]),
+            )
         player.play()
     }
 }

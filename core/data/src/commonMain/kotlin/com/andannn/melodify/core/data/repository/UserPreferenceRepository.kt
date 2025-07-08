@@ -36,7 +36,6 @@ interface UserPreferenceRepository {
      */
     suspend fun deleteCustomTab(tab: CustomTab)
 
-
     /**
      * add library path
      *

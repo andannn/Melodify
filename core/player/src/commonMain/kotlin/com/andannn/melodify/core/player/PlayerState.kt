@@ -1,7 +1,7 @@
 package com.andannn.melodify.core.player
 
 sealed class PlayerState(
-    open val currentPositionMs: Long
+    open val currentPositionMs: Long,
 ) {
     data object Idle : PlayerState(0)
 

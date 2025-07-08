@@ -17,7 +17,7 @@ private const val TAG = "SyncLibraryService"
 
 class SyncLibraryService(
     private val userSettingPreferences: UserSettingPreferences,
-    private val syncer: MediaLibrarySyncer
+    private val syncer: MediaLibrarySyncer,
 ) {
     /**
      * Start watching the library for changes.

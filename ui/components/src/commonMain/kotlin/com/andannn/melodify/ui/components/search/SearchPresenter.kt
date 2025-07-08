@@ -53,9 +53,8 @@ class SearchUiPresenter(
     private val contentLibrary: MediaContentRepository,
     private val userPreferenceRepository: UserPreferenceRepository,
     private val mediaControllerRepository: MediaControllerRepository,
-    private val playerStateMonitoryRepository: PlayerStateMonitoryRepository
+    private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
 ) : Presenter<SearchUiState> {
-
     @Composable
     override fun present(): SearchUiState {
         val scope = rememberCoroutineScope()
@@ -85,16 +84,17 @@ class SearchUiPresenter(
 
                         searchResult = SearchState.Searching
 
-                        searchResult = if (isValid(searchText)) {
-                            val result = contentLibrary.searchContent(searchText)
-                            if (result.isEmpty()) {
-                                SearchState.NoObject
+                        searchResult =
+                            if (isValid(searchText)) {
+                                val result = contentLibrary.searchContent(searchText)
+                                if (result.isEmpty()) {
+                                    SearchState.NoObject
+                                } else {
+                                    toResult(result)
+                                }
                             } else {
-                                toResult(result)
+                                SearchState.Result(emptyList())
                             }
-                        } else {
-                            SearchState.Result(emptyList())
-                        }
                     }
 
                     scope.launch {
@@ -106,9 +106,10 @@ class SearchUiPresenter(
 
                 SearchUiEvent.Back -> navigator.pop()
 
-                is SearchUiEvent.OnNavigateToLibraryContentList -> navigator.goTo(
-                    newLibraryContentListScreen(eventSink.source)
-                )
+                is SearchUiEvent.OnNavigateToLibraryContentList ->
+                    navigator.goTo(
+                        newLibraryContentListScreen(eventSink.source),
+                    )
 
                 is SearchUiEvent.OnExpandChange -> {
                     if (!eventSink.isExpand && searchResult is SearchState.Init) {
@@ -126,7 +127,10 @@ class SearchUiPresenter(
         }
     }
 
-    private fun onPlayAudio(scope: CoroutineScope, audioItemModel: AudioItemModel) {
+    private fun onPlayAudio(
+        scope: CoroutineScope,
+        audioItemModel: AudioItemModel,
+    ) {
         scope.launch {
             val isQueueEmpty = playerStateMonitoryRepository.getPlayListQueue().isEmpty()
             if (!isQueueEmpty) {
@@ -147,18 +151,19 @@ class SearchUiPresenter(
 
     private fun isValid(text: String) = text.isNotBlank()
 
-    private fun toResult(result: List<MediaItemModel>) = SearchState.Result(
-        albums = result.filterIsInstance<AlbumItemModel>(),
-        artists = result.filterIsInstance<ArtistItemModel>(),
-        audios = result.filterIsInstance<AudioItemModel>()
-    )
+    private fun toResult(result: List<MediaItemModel>) =
+        SearchState.Result(
+            albums = result.filterIsInstance<AlbumItemModel>(),
+            artists = result.filterIsInstance<ArtistItemModel>(),
+            audios = result.filterIsInstance<AudioItemModel>(),
+        )
 }
 
 data class SearchUiState(
     val inputText: String = "",
     val isExpand: Boolean = true,
     val searchState: SearchState = SearchState.Init,
-    val eventSink: (SearchUiEvent) -> Unit = {}
+    val eventSink: (SearchUiEvent) -> Unit = {},
 ) : CircuitUiState
 
 sealed interface SearchUiEvent {

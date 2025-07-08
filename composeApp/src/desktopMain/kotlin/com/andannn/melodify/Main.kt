@@ -9,17 +9,18 @@ import io.github.aakira.napier.Napier
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.mp.KoinPlatform.getKoin
 
-fun main() = application {
-    Napier.base(DebugAntilog())
+fun main() =
+    application {
+        Napier.base(DebugAntilog())
 
-    startKoin {
-        modules(modules)
+        startKoin {
+            modules(modules)
+        }
+
+        // start watching library changes
+        LaunchedEffect(Unit) {
+            getKoin().get<SyncLibraryService>().startWatchingLibrary()
+        }
+
+        MelodifyDeskTopApp()
     }
-
-    // start watching library changes
-    LaunchedEffect(Unit) {
-        getKoin().get<SyncLibraryService>().startWatchingLibrary()
-    }
-
-    MelodifyDeskTopApp()
-}

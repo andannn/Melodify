@@ -3,7 +3,6 @@ package com.andannn.melodify.core.data.repository
 import androidx.media3.common.Player
 import com.andannn.melodify.core.data.model.PlayMode
 
-
 fun fromRepeatMode(
     @Player.RepeatMode repeatMode: Int,
 ) = when (repeatMode) {

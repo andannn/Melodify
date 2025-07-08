@@ -15,15 +15,18 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LyricDao {
     @Transaction
-    suspend fun insertLyricOfMedia(mediaStoreId: String, lyric: LyricEntity) {
+    suspend fun insertLyricOfMedia(
+        mediaStoreId: String,
+        lyric: LyricEntity,
+    ) {
         insertLyricEntities(listOf(lyric))
         insertLyricWithMediaCrossRef(
             listOf(
                 LyricWithAudioCrossRef(
                     mediaStoreId = mediaStoreId,
-                    lyricId = lyric.id
-                )
-            )
+                    lyricId = lyric.id,
+                ),
+            ),
         )
     }
 
@@ -39,7 +42,7 @@ interface LyricDao {
         left join ${Tables.LYRIC} 
             on ${LyricColumns.ID} = ${LyricWithAudioCrossRefColumns.LYRIC_ID}
         where :mediaStoreId = ${LyricWithAudioCrossRefColumns.MEDIA_STORE_ID}
-    """
+    """,
     )
     fun getLyricByMediaIdFlow(mediaStoreId: String): Flow<LyricEntity?>
 }

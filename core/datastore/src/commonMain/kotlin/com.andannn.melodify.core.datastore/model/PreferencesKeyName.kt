@@ -1,6 +1,5 @@
 package com.andannn.melodify.core.datastore.model
 
-
 object PreferencesKeyName {
     const val PLAY_MODE_KEY_NAME = "play_mode"
     const val IS_SHUFFLE_KEY_NAME = "is_shuffle"

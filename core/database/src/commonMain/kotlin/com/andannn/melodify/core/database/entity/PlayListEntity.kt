@@ -16,7 +16,7 @@ internal object PlayListColumns {
 data class PlayListEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = PlayListColumns.ID)
-    val id: Long = 0, // do not set id in constructor
+    val id: Long = 0,
     @ColumnInfo(name = PlayListColumns.CREATED_DATE)
     val createdDate: Long,
     @ColumnInfo(name = PlayListColumns.NAME)

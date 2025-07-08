@@ -4,15 +4,21 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 
 interface MediaControllerRepository {
-    fun getCurrentPlayingItemDuration() : Long?
+    fun getCurrentPlayingItemDuration(): Long?
 
-    fun playMediaList(mediaList: List<AudioItemModel>, index: Int = 0)
+    fun playMediaList(
+        mediaList: List<AudioItemModel>,
+        index: Int = 0,
+    )
 
     fun seekToNext()
 
     fun seekToPrevious()
 
-    fun seekMediaItem(mediaItemIndex: Int, positionMs: Long = 0)
+    fun seekMediaItem(
+        mediaItemIndex: Int,
+        positionMs: Long = 0,
+    )
 
     fun seekToTime(time: Long)
 
@@ -24,9 +30,15 @@ interface MediaControllerRepository {
 
     fun pause()
 
-    fun addMediaItems(index: Int, mediaItems: List<AudioItemModel>)
+    fun addMediaItems(
+        index: Int,
+        mediaItems: List<AudioItemModel>,
+    )
 
-    fun moveMediaItem(from: Int, to: Int)
+    fun moveMediaItem(
+        from: Int,
+        to: Int,
+    )
 
     fun removeMediaItem(index: Int)
 }

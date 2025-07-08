@@ -8,7 +8,7 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-open class NoOpMediaContentRepository: MediaContentRepository {
+open class NoOpMediaContentRepository : MediaContentRepository {
     override fun getAllMediaItemsFlow(): Flow<List<AudioItemModel>> = flowOf()
 
     override fun getAllAlbumsFlow(): Flow<List<AlbumItemModel>> = flowOf()

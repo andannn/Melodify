@@ -9,7 +9,8 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-actual val syncerModule: Module = module {
-    singleOf(::MediaLibrarySyncerWrapper).bind(MediaLibrarySyncer::class)
-    singleOf(::MediaLibraryScannerImpl).bind(MediaLibraryScanner::class)
-}
+actual val syncerModule: Module =
+    module {
+        singleOf(::MediaLibrarySyncerWrapper).bind(MediaLibrarySyncer::class)
+        singleOf(::MediaLibraryScannerImpl).bind(MediaLibraryScanner::class)
+    }

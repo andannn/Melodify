@@ -63,16 +63,18 @@ class MainActivity : ComponentActivity() {
         SyncWorkHelper.registerPeriodicSyncWork(this)
 
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(
-                scrim = Color.TRANSPARENT,
-            )
+            statusBarStyle =
+                SystemBarStyle.dark(
+                    scrim = Color.TRANSPARENT,
+                ),
         )
 
-        intentSenderLauncher = registerForActivityResult(
-            contract = ActivityResultContracts.StartIntentSenderForResult(),
-        ) { result ->
-            Napier.d(tag = TAG) { "activity result: $result" }
-        }
+        intentSenderLauncher =
+            registerForActivityResult(
+                contract = ActivityResultContracts.StartIntentSenderForResult(),
+            ) { result ->
+                Napier.d(tag = TAG) { "activity result: $result" }
+            }
 
         var uiState by mutableStateOf<MainUiState>(MainUiState.Init)
 
@@ -84,7 +86,6 @@ class MainActivity : ComponentActivity() {
                     .collect {}
             }
         }
-
 
         // Keep the splash screen on-screen until the UI state is loaded. This condition is
         // evaluated each time the app needs to be redrawn so it should be fast to avoid blocking
@@ -118,8 +119,10 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(Unit) {
                     runTimePermissions.filter {
                         ContextCompat.checkSelfPermission(
-                            /* context = */ this@MainActivity,
-                            /* permission = */ it,
+                            // context =
+                            this@MainActivity,
+                            // permission =
+                            it,
                         ) == PackageManager.PERMISSION_DENIED
                     }.let {
                         launcher.launch(it.toTypedArray())
@@ -145,7 +148,7 @@ class MainActivity : ComponentActivity() {
                     when (uiState) {
                         is MainUiState.Error -> {
                             ConnectFailedAlertDialog(
-                                onDismiss = { finish() }
+                                onDismiss = { finish() },
                             )
                         }
 

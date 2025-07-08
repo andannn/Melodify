@@ -2,7 +2,8 @@ package com.andannn.melodify.core.data.repository.fake
 
 val fakeDataProvider = { mediaItems }
 
-private val mediaItems = """
+private val mediaItems =
+    """
     {
       "media": [
         {
@@ -597,4 +598,4 @@ private val mediaItems = """
         }
       ]
     }
-""".trimIndent()
+    """.trimIndent()

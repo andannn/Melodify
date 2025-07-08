@@ -24,7 +24,7 @@ fun TabUi(
     val selectedIndex = state.selectedIndex
 
     Column(
-        modifier = modifier
+        modifier = modifier,
     ) {
         if (tabs.isNotEmpty()) {
             SecondaryScrollableTabRow(

@@ -12,12 +12,12 @@ import org.junit.Test
 fun LibraryScreenShots(isDark: Boolean) {
     MelodifyTheme(isDark) {
         Library(
-            state = LibraryState()
+            state = LibraryState(),
         )
     }
 }
 
-class LibraryScreenShots: ScreenShotsTest() {
+class LibraryScreenShots : ScreenShotsTest() {
     @Test
     fun takeScreenShot() {
         paparazzi.snapshotWithOption("LibraryScreenShots") { isDark ->

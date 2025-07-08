@@ -4,5 +4,5 @@ import androidx.room.Embedded
 
 data class CrossRefWithMediaRelation(
     @Embedded val playListWithMediaCrossRef: PlayListWithMediaCrossRef,
-    @Embedded val media: MediaEntity
+    @Embedded val media: MediaEntity,
 )

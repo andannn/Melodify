@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlin.time.Duration
 
-open class NoOpSleepTimerRepository: SleepTimerRepository {
+open class NoOpSleepTimerRepository : SleepTimerRepository {
     override fun isCounting(): Boolean = false
 
     override fun observeIsCounting(): Flow<Boolean> = flowOf(false)

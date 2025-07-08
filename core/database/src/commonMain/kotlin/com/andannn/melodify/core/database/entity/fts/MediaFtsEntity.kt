@@ -9,7 +9,7 @@ import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 
 @Fts4(
-    contentEntity = MediaEntity::class
+    contentEntity = MediaEntity::class,
 )
 @Entity(tableName = LIBRARY_FTS_MEDIA)
 data class MediaFtsEntity(

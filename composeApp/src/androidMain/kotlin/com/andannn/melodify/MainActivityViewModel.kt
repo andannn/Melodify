@@ -14,7 +14,6 @@ private const val TAG = "MainActivityViewModel"
 class MainActivityViewModel(
     private val mediaBrowserManager: MediaBrowserManager,
 ) : ViewModel() {
-
     private val _state = MutableStateFlow<MainUiState>(MainUiState.Init)
 
     val state: StateFlow<MainUiState>
@@ -31,6 +30,7 @@ class MainActivityViewModel(
             }
         }
     }
+
     override fun onCleared() {
 // TODO : disconnect player service when activity is destroyed and glance widget is not used
 //        mediaBrowserManager.disConnect()
@@ -44,4 +44,3 @@ sealed class MainUiState {
 
     data object Init : MainUiState()
 }
-

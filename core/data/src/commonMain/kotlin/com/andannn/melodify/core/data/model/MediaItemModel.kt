@@ -82,23 +82,27 @@ data class PlayListItemModel(
  * enable state for ui item
  */
 val MediaItemModel.browsableOrPlayable
-    get() = when (this) {
-        is AlbumItemModel,
-        is ArtistItemModel,
-        is GenreItemModel,
-        is PlayListItemModel -> true
+    get() =
+        when (this) {
+            is AlbumItemModel,
+            is ArtistItemModel,
+            is GenreItemModel,
+            is PlayListItemModel,
+            -> true
 
-        is AudioItemModel -> {
-            this.isValid()
+            is AudioItemModel -> {
+                this.isValid()
+            }
         }
-    }
 
 val MediaItemModel.browsable
-    get() = when (this) {
-        is AlbumItemModel,
-        is ArtistItemModel,
-        is GenreItemModel,
-        is PlayListItemModel -> true
+    get() =
+        when (this) {
+            is AlbumItemModel,
+            is ArtistItemModel,
+            is GenreItemModel,
+            is PlayListItemModel,
+            -> true
 
-        is AudioItemModel -> false
-    }
+            is AudioItemModel -> false
+        }

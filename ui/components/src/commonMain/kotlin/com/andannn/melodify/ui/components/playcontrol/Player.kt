@@ -7,11 +7,11 @@ import com.andannn.melodify.ui.components.playcontrol.ui.PlayerViewContent
 @Composable
 fun Player(
     presenter: PlayerPresenter = rememberPlayerPresenter(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     PlayerAreaView(
         state = presenter.present(),
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -26,7 +26,7 @@ fun PlayerAreaView(
             onEvent = {
                 state.eventSink.invoke(it)
             },
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }

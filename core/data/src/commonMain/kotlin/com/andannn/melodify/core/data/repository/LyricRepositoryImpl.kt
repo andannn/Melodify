@@ -12,7 +12,7 @@ private const val TAG = "LyricRepository"
 
 class LyricRepositoryImpl(
     private val lyricDao: LyricDao,
-    private val lyricLocalDataSource: LrclibService
+    private val lyricLocalDataSource: LrclibService,
 ) : LyricRepository {
     override suspend fun tryGetLyricOrIgnore(
         mediaId: String,
@@ -25,15 +25,16 @@ class LyricRepositoryImpl(
         if (lyric != null) return
 
         try {
-            val lyricData = lyricLocalDataSource.getLyric(
-                trackName = trackName,
-                artistName = artistName,
-                albumName = albumName,
-                duration = duration
-            )
+            val lyricData =
+                lyricLocalDataSource.getLyric(
+                    trackName = trackName,
+                    artistName = artistName,
+                    albumName = albumName,
+                    duration = duration,
+                )
             lyricDao.insertLyricOfMedia(
                 mediaStoreId = mediaId,
-                lyric = lyricData.toLyricEntity()
+                lyric = lyricData.toLyricEntity(),
             )
         } catch (e: Exception) {
             Napier.d(tag = TAG) { "Error getting lyric: ${e.message}" }

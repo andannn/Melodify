@@ -1,4 +1,4 @@
-package com.andannn.melodify.ui.common.dynamic_theming
+package com.andannn.melodify.ui.common.dynamictheming
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
@@ -56,7 +56,7 @@ actual fun createThemeFromSeed(
     surfaceContainerHigh: Color?,
     surfaceContainerHighest: Color?,
     surfaceContainerLow: Color?,
-    surfaceContainerLowest: Color?
+    surfaceContainerLowest: Color?,
 ): ColorScheme {
     val scheme: DynamicScheme =
         buildDynamicScheme(isDark, seedColor, dynamicSchemeVariant, contrastLevel)
@@ -105,62 +105,71 @@ fun buildDynamicScheme(
     isDark: Boolean,
     seedColor: Color,
     schemeVariant: DynamicSchemeVariant,
-    contrastLevel: Double
+    contrastLevel: Double,
 ): DynamicScheme {
     val sourceColorHct: Hct = Hct.fromInt(seedColor.toArgb())
     return when (schemeVariant) {
-        DynamicSchemeVariant.TONAL_SPOT -> SchemeTonalSpot(
-            sourceColorHct,
-            isDark,
-            contrastLevel
-        )
+        DynamicSchemeVariant.TONAL_SPOT ->
+            SchemeTonalSpot(
+                sourceColorHct,
+                isDark,
+                contrastLevel,
+            )
 
-        DynamicSchemeVariant.FIDELITY -> SchemeFidelity(
-            sourceColorHct,
-            isDark,
-            contrastLevel
-        )
+        DynamicSchemeVariant.FIDELITY ->
+            SchemeFidelity(
+                sourceColorHct,
+                isDark,
+                contrastLevel,
+            )
 
-        DynamicSchemeVariant.CONTENT -> SchemeContent(
-            sourceColorHct,
-            isDark,
-            contrastLevel
-        )
+        DynamicSchemeVariant.CONTENT ->
+            SchemeContent(
+                sourceColorHct,
+                isDark,
+                contrastLevel,
+            )
 
-        DynamicSchemeVariant.MONOCHROME -> SchemeMonochrome(
-            sourceColorHct,
-            isDark,
-            contrastLevel
-        )
+        DynamicSchemeVariant.MONOCHROME ->
+            SchemeMonochrome(
+                sourceColorHct,
+                isDark,
+                contrastLevel,
+            )
 
-        DynamicSchemeVariant.NEUTRAL -> SchemeNeutral(
-            sourceColorHct,
-            isDark,
-            contrastLevel
-        )
+        DynamicSchemeVariant.NEUTRAL ->
+            SchemeNeutral(
+                sourceColorHct,
+                isDark,
+                contrastLevel,
+            )
 
-        DynamicSchemeVariant.VIBRANT -> SchemeVibrant(
-            sourceColorHct,
-            isDark,
-            contrastLevel
-        )
+        DynamicSchemeVariant.VIBRANT ->
+            SchemeVibrant(
+                sourceColorHct,
+                isDark,
+                contrastLevel,
+            )
 
-        DynamicSchemeVariant.EXPRESSIVE -> SchemeExpressive(
-            sourceColorHct,
-            isDark,
-            contrastLevel
-        )
+        DynamicSchemeVariant.EXPRESSIVE ->
+            SchemeExpressive(
+                sourceColorHct,
+                isDark,
+                contrastLevel,
+            )
 
-        DynamicSchemeVariant.RAINBOW -> SchemeRainbow(
-            sourceColorHct,
-            isDark,
-            contrastLevel
-        )
+        DynamicSchemeVariant.RAINBOW ->
+            SchemeRainbow(
+                sourceColorHct,
+                isDark,
+                contrastLevel,
+            )
 
-        DynamicSchemeVariant.FRUIT_SALAD -> SchemeFruitSalad(
-            sourceColorHct,
-            isDark,
-            contrastLevel
-        )
+        DynamicSchemeVariant.FRUIT_SALAD ->
+            SchemeFruitSalad(
+                sourceColorHct,
+                isDark,
+                contrastLevel,
+            )
     }
 }

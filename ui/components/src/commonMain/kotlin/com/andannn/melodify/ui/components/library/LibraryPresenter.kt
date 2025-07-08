@@ -10,15 +10,16 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 
 class LibraryPresenter(
-    private val navigator: Navigator
+    private val navigator: Navigator,
 ) : Presenter<LibraryState> {
     @Composable
     override fun present(): LibraryState {
         return LibraryState { eventSink ->
             when (eventSink) {
-                is LibraryUiEvent.OnNavigateToLibraryContentList -> navigator.goTo(
-                    newLibraryContentListScreen(eventSink.source)
-                )
+                is LibraryUiEvent.OnNavigateToLibraryContentList ->
+                    navigator.goTo(
+                        newLibraryContentListScreen(eventSink.source),
+                    )
 
                 LibraryUiEvent.Back -> navigator.pop()
                 LibraryUiEvent.OnNavigateToSearch -> navigator.goTo(SearchScreen)
@@ -27,7 +28,6 @@ class LibraryPresenter(
     }
 }
 
-
 @Stable
 data class LibraryState(
     val evenSink: (LibraryUiEvent) -> Unit = {},
@@ -35,6 +35,8 @@ data class LibraryState(
 
 sealed interface LibraryUiEvent {
     data class OnNavigateToLibraryContentList(val source: LibraryDataSource) : LibraryUiEvent
+
     data object Back : LibraryUiEvent
+
     data object OnNavigateToSearch : LibraryUiEvent
 }

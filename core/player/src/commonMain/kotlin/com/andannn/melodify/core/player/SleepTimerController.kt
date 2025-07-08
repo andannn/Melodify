@@ -15,7 +15,9 @@ import kotlin.time.Duration.Companion.seconds
 sealed interface SleepTimeCounterState {
     data object Idle : SleepTimeCounterState
 
-    data class Counting(val remain: Duration) : SleepTimeCounterState
+    data class Counting(
+        val remain: Duration,
+    ) : SleepTimeCounterState
 
     data object Finish : SleepTimeCounterState
 }
@@ -34,10 +36,12 @@ interface SleepTimerController : SleepTimeCounterProvider {
     fun cancelTimer()
 }
 
-class SleepTimerControllerImpl : SleepTimerController, CoroutineScope {
+class SleepTimerControllerImpl :
+    SleepTimerController,
+    CoroutineScope {
     private val _counterState = MutableStateFlow<SleepTimeCounterState>(SleepTimeCounterState.Idle)
 
-    private var _countingJob: Job? = null
+    private var countingJob: Job? = null
 
     override val counterState: SleepTimeCounterState
         get() = _counterState.value
@@ -45,28 +49,29 @@ class SleepTimerControllerImpl : SleepTimerController, CoroutineScope {
     override fun getCounterStateFlow() = _counterState
 
     override fun startTimer(duration: Duration) {
-        _countingJob = launch {
-            var currentRemainTime = duration
+        countingJob =
+            launch {
+                var currentRemainTime = duration
 
-            while (true) {
-                _counterState.value = SleepTimeCounterState.Counting(currentRemainTime)
+                while (true) {
+                    _counterState.value = SleepTimeCounterState.Counting(currentRemainTime)
 
-                Napier.d(tag = TAG) { "_counterState ${_counterState.value}" }
-
-                delay(1000)
-                currentRemainTime = currentRemainTime.minus(1.seconds)
-
-                if (currentRemainTime.isNegative()) {
-                    _counterState.value = SleepTimeCounterState.Finish
                     Napier.d(tag = TAG) { "_counterState ${_counterState.value}" }
-                    break
+
+                    delay(1000)
+                    currentRemainTime = currentRemainTime.minus(1.seconds)
+
+                    if (currentRemainTime.isNegative()) {
+                        _counterState.value = SleepTimeCounterState.Finish
+                        Napier.d(tag = TAG) { "_counterState ${_counterState.value}" }
+                        break
+                    }
                 }
             }
-        }
     }
 
     override fun cancelTimer() {
-        _countingJob?.cancel()
+        countingJob?.cancel()
         _counterState.value = SleepTimeCounterState.Idle
         Napier.d(tag = TAG) { "_counterState ${_counterState.value}" }
     }

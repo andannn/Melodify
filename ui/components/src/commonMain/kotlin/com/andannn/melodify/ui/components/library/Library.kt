@@ -18,8 +18,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,9 +53,9 @@ fun Library(
         },
         onShortcutItemClick = { item ->
             state.evenSink.invoke(
-                LibraryUiEvent.OnNavigateToLibraryContentList(item.toDataSource())
+                LibraryUiEvent.OnNavigateToLibraryContentList(item.toDataSource()),
             )
-        }
+        },
     )
 }
 
@@ -89,7 +89,7 @@ internal fun LibraryContent(
                             contentDescription = "SearchScreen",
                         )
                     }
-                }
+                },
             )
         },
     ) {
@@ -97,11 +97,11 @@ internal fun LibraryContent(
             modifier = Modifier.padding(it).padding(4.dp),
             columns = GridCells.Adaptive(minSize = 180.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(
                 items = ShortcutItem.entries.toTypedArray(),
-                key = { it }
+                key = { it },
             ) { item ->
                 ShortcutItem(
                     shortcutItem = item,
@@ -118,16 +118,16 @@ internal fun LibraryContent(
 private fun ShortcutItem(
     modifier: Modifier = Modifier,
     shortcutItem: ShortcutItem,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
         modifier = modifier,
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
-        onClick = onClick
+        onClick = onClick,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             SmpIcon(
                 shortcutItem.iconRes,
@@ -138,13 +138,12 @@ private fun ShortcutItem(
             Text(
                 text = stringResource(shortcutItem.textRes),
                 maxLines = 1,
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.labelLarge,
             )
             Spacer(modifier = Modifier.width(5.dp))
         }
     }
 }
-
 
 internal enum class ShortcutItem(
     val iconRes: SmpIcon,
@@ -178,5 +177,5 @@ internal enum class ShortcutItem(
     PLAYLIST(
         iconRes = SimpleMusicIcons.PlayList,
         textRes = Res.string.playlist_page_title,
-    )
+    ),
 }

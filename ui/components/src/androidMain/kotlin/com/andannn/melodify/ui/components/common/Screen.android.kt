@@ -13,13 +13,16 @@ actual data object HomeScreen : Screen
 actual data object LibraryScreen : Screen
 
 actual data class LibraryContentListScreen(
-    actual val datasource: LibraryDataSource
+    actual val datasource: LibraryDataSource,
 ) : Screen {
     constructor(parcel: Parcel) : this(
-        LibraryDataSource.parseFromString(parcel.readString()!!)
+        LibraryDataSource.parseFromString(parcel.readString()!!),
     )
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
+    override fun writeToParcel(
+        parcel: Parcel,
+        flags: Int,
+    ) {
         parcel.writeString(datasource.toStringCode())
     }
 

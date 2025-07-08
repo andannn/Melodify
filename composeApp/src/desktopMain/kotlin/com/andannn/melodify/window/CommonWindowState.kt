@@ -26,14 +26,14 @@ fun rememberCommonWindowState(
     CommonWindowState(
         scope = scope,
         snackBarHostState = snackBarHostState,
-        popupController = popupController
+        popupController = popupController,
     )
 }
 
 class CommonWindowState(
     scope: CoroutineScope,
     val snackBarHostState: SnackbarHostState,
-    private val popupController: PopupController
+    private val popupController: PopupController,
 ) {
     init {
         scope.launch {

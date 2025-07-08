@@ -2,7 +2,9 @@ package com.andannn.melodify.core.platform
 
 import android.content.Context
 
-class PlatformInfoImpl(private val context: Context) : PlatformInfo {
+class PlatformInfoImpl(
+    private val context: Context,
+) : PlatformInfo {
     override val fileDir: String
         get() = context.filesDir.toString()
     override val cacheDir: String

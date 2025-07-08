@@ -16,7 +16,6 @@ import kotlinx.datetime.Clock
 internal class PlayListRepositoryImpl(
     private val playListDao: PlayListDao,
 ) : PlayListRepository {
-
     override fun getAllPlayListFlow(): Flow<List<PlayListItemModel>> =
         playListDao
             .getAllPlayListFlow()
@@ -28,7 +27,7 @@ internal class PlayListRepositoryImpl(
                 id = it.playList.id.toString(),
                 name = it.playList.name,
                 artWorkUri = it.playList.artworkUri ?: "",
-                trackCount = it.medias.size
+                trackCount = it.medias.size,
             )
         }
 
@@ -40,25 +39,27 @@ internal class PlayListRepositoryImpl(
                     id = it.playList.id.toString(),
                     name = it.playList.name,
                     artWorkUri = it.playList.artworkUri ?: "",
-                    trackCount = it.medias.size
+                    trackCount = it.medias.size,
                 )
             }
 
     override suspend fun addMusicToPlayList(
         playListId: Long,
-        musics: List<AudioItemModel>
+        musics: List<AudioItemModel>,
     ): List<Long> {
-        val insertedIndexList = playListDao.insertPlayListWithMediaCrossRef(
-            crossRefs = musics.map {
-                PlayListWithMediaCrossRef(
-                    playListId = playListId,
-                    mediaStoreId = it.id,
-                    artist = it.artist,
-                    title = it.name,
-                    addedDate = Clock.System.now().toEpochMilliseconds(),
-                )
-            }
-        )
+        val insertedIndexList =
+            playListDao.insertPlayListWithMediaCrossRef(
+                crossRefs =
+                    musics.map {
+                        PlayListWithMediaCrossRef(
+                            playListId = playListId,
+                            mediaStoreId = it.id,
+                            artist = it.artist,
+                            title = it.name,
+                            addedDate = Clock.System.now().toEpochMilliseconds(),
+                        )
+                    },
+            )
 
         return insertedIndexList
             .mapIndexed { index, insertedIndex ->
@@ -70,7 +71,7 @@ internal class PlayListRepositoryImpl(
 
     override suspend fun getDuplicatedMediaInPlayList(
         playListId: Long,
-        musics: List<AudioItemModel>
+        musics: List<AudioItemModel>,
     ): List<String> {
         return playListDao.getDuplicateMediaInPlayList(playListId, musics.map { it.id })
     }
@@ -78,14 +79,15 @@ internal class PlayListRepositoryImpl(
     override fun isMediaInFavoritePlayListFlow(mediaStoreId: String) =
         playListDao.getIsMediaInPlayListFlow(
             PlayListDao.FAVORITE_PLAY_LIST_ID.toString(),
-            mediaStoreId
+            mediaStoreId,
         )
 
     override suspend fun toggleFavoriteMedia(audio: AudioItemModel) {
-        val isFavorite = playListDao.getIsMediaInPlayListFlow(
-            PlayListDao.FAVORITE_PLAY_LIST_ID.toString(),
-            audio.id
-        ).first()
+        val isFavorite =
+            playListDao.getIsMediaInPlayListFlow(
+                PlayListDao.FAVORITE_PLAY_LIST_ID.toString(),
+                audio.id,
+            ).first()
         if (isFavorite) {
             removeMusicFromFavoritePlayList(listOf(audio.id))
         } else {
@@ -93,19 +95,22 @@ internal class PlayListRepositoryImpl(
         }
     }
 
-    override suspend fun removeMusicFromPlayList(playListId: Long, mediaIdList: List<String>) =
-        playListDao.deleteMediaFromPlayList(playListId, mediaIdList)
+    override suspend fun removeMusicFromPlayList(
+        playListId: Long,
+        mediaIdList: List<String>,
+    ) = playListDao.deleteMediaFromPlayList(playListId, mediaIdList)
 
     override suspend fun createNewPlayList(name: String): Long {
-        val ids = playListDao.insertPlayListEntities(
-            listOf(
-                PlayListEntity(
-                    name = name,
-                    createdDate = Clock.System.now().toEpochMilliseconds(),
-                    artworkUri = null
-                )
+        val ids =
+            playListDao.insertPlayListEntities(
+                listOf(
+                    PlayListEntity(
+                        name = name,
+                        createdDate = Clock.System.now().toEpochMilliseconds(),
+                        artworkUri = null,
+                    ),
+                ),
             )
-        )
         return ids.first()
     }
 
@@ -117,9 +122,7 @@ internal class PlayListRepositoryImpl(
         playListDao.getMediasInPlayListFlow(playListId)
             .map { it.mapToAppItemList() }
 
-    override suspend fun getAudiosOfPlayList(playListId: Long) =
-        getAudiosOfPlayListFlow(playListId).first()
+    override suspend fun getAudiosOfPlayList(playListId: Long) = getAudiosOfPlayListFlow(playListId).first()
 
-    private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>) =
-        list.map { it.toAppItem() }
+    private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>) = list.map { it.toAppItem() }
 }

@@ -21,8 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
-import com.andannn.melodify.ui.common.dynamic_theming.DynamicThemePrimaryColorsFromImage
-import com.andannn.melodify.ui.common.dynamic_theming.rememberDominantColorState
+import com.andannn.melodify.ui.common.dynamictheming.DynamicThemePrimaryColorsFromImage
+import com.andannn.melodify.ui.common.dynamictheming.rememberDominantColorState
 import com.andannn.melodify.ui.common.theme.MinContrastOfPrimaryVsSurface
 import com.andannn.melodify.ui.common.util.contrastAgainst
 import com.andannn.melodify.ui.common.widgets.AndroidBackHandler

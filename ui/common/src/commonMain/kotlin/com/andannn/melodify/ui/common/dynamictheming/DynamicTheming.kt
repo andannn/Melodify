@@ -1,4 +1,4 @@
-package com.andannn.melodify.ui.common.dynamic_theming
+package com.andannn.melodify.ui.common.dynamictheming
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -22,7 +22,6 @@ expect fun rememberDominantColorState(
     isColorValid: (Color) -> Boolean = { true },
 ): DominantColorState
 
-
 /**
  * A composable which allows dynamic theming of the primary
  * color from an image.
@@ -35,14 +34,14 @@ fun DynamicThemePrimaryColorsFromImage(
     val defaultScheme = MaterialTheme.colorScheme
     var scheme: ColorScheme by remember { mutableStateOf(defaultScheme) }
     val seedColor by
-    animateColorAsState(
-        dominantColorStateImpl.color,
-        spring(stiffness = Spring.StiffnessLow),
-        finishedListener = {
-            scheme = createThemeFromSeed(it, isDark = true)
-        },
-        label = "domain color",
-    )
+        animateColorAsState(
+            dominantColorStateImpl.color,
+            spring(stiffness = Spring.StiffnessLow),
+            finishedListener = {
+                scheme = createThemeFromSeed(it, isDark = true)
+            },
+            label = "domain color",
+        )
 
     var debounceCounter by remember {
         mutableIntStateOf(0)
@@ -57,7 +56,7 @@ fun DynamicThemePrimaryColorsFromImage(
 
     MaterialTheme(
         colorScheme = scheme,
-        content = content
+        content = content,
     )
 }
 

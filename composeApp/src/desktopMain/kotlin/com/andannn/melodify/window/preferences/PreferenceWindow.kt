@@ -30,7 +30,7 @@ import com.andannn.melodify.window.CustomMenuBar
 @Composable
 internal fun PreferenceWindow(
     appState: MelodifyDeskTopAppState,
-    onCloseRequest: () -> Unit
+    onCloseRequest: () -> Unit,
 ) {
     Window(
         state = rememberWindowState(),
@@ -46,14 +46,12 @@ internal fun PreferenceWindow(
 }
 
 @Composable
-private fun PreferencesWindowContent(
-    modifier: Modifier = Modifier,
-) {
+private fun PreferencesWindowContent(modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier
+        modifier = modifier,
     ) {
         LibraryPreference(
-            modifier = Modifier.fillMaxHeight().weight(2f)
+            modifier = Modifier.fillMaxHeight().weight(2f),
         )
     }
 }
@@ -64,27 +62,27 @@ fun LibraryPreference(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
+        modifier = modifier,
     ) {
         Spacer(Modifier.width(8.dp))
 
         Row(
-            verticalAlignment = CenterVertically
+            verticalAlignment = CenterVertically,
         ) {
             Spacer(Modifier.width(16.dp))
             Text(
                 "Library path",
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             IconButton(
-                onClick = state::onAddLibraryButtonClick
+                onClick = state::onAddLibraryButtonClick,
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
-                    contentDescription = "Edit"
+                    contentDescription = "Edit",
                 )
             }
 
@@ -92,16 +90,17 @@ fun LibraryPreference(
         }
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
         ) {
             state.libraryPath.forEach {
                 LibraryPathItem(
                     path = it,
-                    onDelete = { state.onDeleteLibraryPath(it) }
+                    onDelete = { state.onDeleteLibraryPath(it) },
                 )
                 HorizontalDivider(modifier.padding(horizontal = 4.dp))
             }
@@ -113,20 +112,20 @@ fun LibraryPreference(
 fun LibraryPathItem(
     modifier: Modifier = Modifier,
     path: String,
-    onDelete: () -> Unit = {}
+    onDelete: () -> Unit = {},
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = CenterVertically
+        verticalAlignment = CenterVertically,
     ) {
         Text(path)
         Spacer(modifier = Modifier.weight(1f))
         IconButton(
-            onClick = onDelete
+            onClick = onDelete,
         ) {
             Icon(
                 imageVector = Icons.Rounded.Delete,
-                contentDescription = "Edit"
+                contentDescription = "Edit",
             )
         }
     }

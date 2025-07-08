@@ -1,40 +1,40 @@
-package com.andannn.melodify.ui.common.dynamic_theming
+package com.andannn.melodify.ui.common.dynamictheming
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 
 enum class DynamicSchemeVariant {
-    /// Default for Material theme colors. Builds pastel palettes with a low chroma.
+    // / Default for Material theme colors. Builds pastel palettes with a low chroma.
     TONAL_SPOT,
 
-    /// The resulting color palettes match seed color, even if the seed color
-    /// is very bright (high chroma).
+    // / The resulting color palettes match seed color, even if the seed color
+    // / is very bright (high chroma).
     FIDELITY,
 
-    /// All colors are grayscale, no chroma.
+    // / All colors are grayscale, no chroma.
     MONOCHROME,
 
-    /// Close to grayscale, a hint of chroma.
+    // / Close to grayscale, a hint of chroma.
     NEUTRAL,
 
-    /// Pastel colors, high chroma palettes. The primary palette's chroma is at
-    /// maximum. Use `fidelity` instead if tokens should alter their tone to match
-    /// the palette vibrancy.
+    // / Pastel colors, high chroma palettes. The primary palette's chroma is at
+    // / maximum. Use `fidelity` instead if tokens should alter their tone to match
+    // / the palette vibrancy.
     VIBRANT,
 
-    /// Pastel colors, medium chroma palettes. The primary palette's hue is
-    /// different from the seed color, for variety.
+    // / Pastel colors, medium chroma palettes. The primary palette's hue is
+    // / different from the seed color, for variety.
     EXPRESSIVE,
 
-    /// Almost identical to `fidelity`. Tokens and palettes match the seed color.
-    /// [ColorScheme.primaryContainer] is the seed color, adjusted to ensure
-    /// contrast with surfaces. The tertiary palette is analogue of the seed color.
+    // / Almost identical to `fidelity`. Tokens and palettes match the seed color.
+    // / [ColorScheme.primaryContainer] is the seed color, adjusted to ensure
+    // / contrast with surfaces. The tertiary palette is analogue of the seed color.
     CONTENT,
 
-    /// A playful theme - the seed color's hue does not appear in the theme.
+    // / A playful theme - the seed color's hue does not appear in the theme.
     RAINBOW,
 
-    /// A playful theme - the seed color's hue does not appear in the theme.
+    // / A playful theme - the seed color's hue does not appear in the theme.
     FRUIT_SALAD,
 }
 

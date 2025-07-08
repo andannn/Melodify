@@ -78,9 +78,9 @@ private fun PlainLyricsView(
 ) {
     Text(
         modifier =
-        modifier
-            .verticalScroll(rememberScrollState())
-            .padding(8.dp),
+            modifier
+                .verticalScroll(rememberScrollState())
+                .padding(8.dp),
         text = lyric,
     )
 }

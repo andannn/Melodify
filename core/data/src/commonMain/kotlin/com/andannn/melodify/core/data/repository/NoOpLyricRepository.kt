@@ -4,7 +4,7 @@ import com.andannn.melodify.core.data.model.LyricModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-open class NoOpLyricRepository: LyricRepository {
+open class NoOpLyricRepository : LyricRepository {
     override suspend fun tryGetLyricOrIgnore(
         mediaId: String,
         trackName: String,

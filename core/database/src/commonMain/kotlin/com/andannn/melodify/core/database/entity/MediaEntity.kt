@@ -2,7 +2,6 @@ package com.andannn.melodify.core.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.andannn.melodify.core.database.Tables
 
@@ -37,64 +36,44 @@ data class MediaEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = MediaColumns.ID)
     val id: Long = 0,
-
     @ColumnInfo(name = MediaColumns.SOURCE_URI)
     val sourceUri: String? = null,
-
     @ColumnInfo(name = MediaColumns.TITLE)
     val title: String? = null,
-
     @ColumnInfo(name = MediaColumns.DURATION)
     val duration: Int? = null,
-
     @ColumnInfo(name = MediaColumns.MODIFIED_DATE)
     val modifiedDate: Long? = null,
-
     @ColumnInfo(name = MediaColumns.SIZE)
     val size: Int? = null,
-
     @ColumnInfo(name = MediaColumns.MIME_TYPE)
     val mimeType: String? = null,
-
     @ColumnInfo(name = MediaColumns.ALBUM)
     val album: String? = null,
-
     @ColumnInfo(name = MediaColumns.ALBUM_ID)
     val albumId: Long? = null,
-
     @ColumnInfo(name = MediaColumns.ARTIST)
     val artist: String? = null,
-
     @ColumnInfo(name = MediaColumns.ARTIST_ID)
     val artistId: Long? = null,
-
     @ColumnInfo(name = MediaColumns.CD_TRACK_NUMBER)
     val cdTrackNumber: Int? = null,
-
     @ColumnInfo(name = MediaColumns.DISC_NUMBER)
     val discNumber: Int? = null,
-
     @ColumnInfo(name = MediaColumns.NUM_TRACKS)
     val numTracks: Int? = null,
-
     @ColumnInfo(name = MediaColumns.BITRATE)
     val bitrate: Int? = null,
-
     @ColumnInfo(name = MediaColumns.GENRE)
     val genre: String? = null,
-
     @ColumnInfo(name = MediaColumns.GENRE_ID)
     val genreId: Long? = null,
-
     @ColumnInfo(name = MediaColumns.YEAR)
     val year: String? = null,
-
     @ColumnInfo(name = MediaColumns.TRACK)
     val track: String? = null,
-
     @ColumnInfo(name = MediaColumns.COMPOSER)
     val composer: String? = null,
-
     @ColumnInfo(name = MediaColumns.COVER)
     val cover: String? = null,
 )

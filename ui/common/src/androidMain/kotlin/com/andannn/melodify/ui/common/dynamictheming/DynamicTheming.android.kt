@@ -1,4 +1,6 @@
-package com.andannn.melodify.ui.common.dynamic_theming
+@file:Suppress("ktlint:standard:filename")
+
+package com.andannn.melodify.ui.common.dynamictheming
 
 import android.content.Context
 import androidx.collection.LruCache
@@ -10,7 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.palette.graphics.Palette
-import coil3.annotation.ExperimentalCoilApi
 import coil3.imageLoader
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
@@ -25,14 +26,13 @@ actual fun rememberDominantColorState(
     defaultColor: Color,
     defaultOnColor: Color,
     cacheSize: Int,
-    isColorValid: (Color) -> Boolean
+    isColorValid: (Color) -> Boolean,
 ): DominantColorState {
     val context = LocalContext.current
     return remember {
         DominantColorState(context, defaultColor, defaultOnColor, cacheSize, isColorValid)
     }
 }
-
 
 /**
  * A class which stores and caches the result of any calculated dominant colors
@@ -73,11 +73,12 @@ actual class DominantColorState(
         val result = calculateDominantColor(url)
         colorFromImage = result?.color ?: defaultColor
 
-        _color.value = if (dynamicThemeEnable) {
-            colorFromImage
-        } else {
-            defaultColor
-        }
+        _color.value =
+            if (dynamicThemeEnable) {
+                colorFromImage
+            } else {
+                defaultColor
+            }
     }
 
     private suspend fun calculateDominantColor(url: String): DominantColors? {
@@ -107,16 +108,20 @@ actual class DominantColorState(
     actual fun setDynamicThemeEnable(enable: Boolean) {
         dynamicThemeEnable = enable
 
-        _color.value = if (dynamicThemeEnable) {
-            colorFromImage
-        } else {
-            defaultColor
-        }
+        _color.value =
+            if (dynamicThemeEnable) {
+                colorFromImage
+            } else {
+                defaultColor
+            }
     }
 }
 
 @Immutable
-private data class DominantColors(val color: Color, val onColor: Color)
+private data class DominantColors(
+    val color: Color,
+    val onColor: Color,
+)
 
 /**
  * Fetches the given [imageUrl] with Coil, then uses [Palette] to calculate the dominant color.
@@ -126,10 +131,12 @@ private suspend fun calculateSwatchesInImage(
     imageUrl: String,
 ): List<Palette.Swatch> {
     val request =
-        ImageRequest.Builder(context)
+        ImageRequest
+            .Builder(context)
             .data(imageUrl)
             // We scale the image to cover 128px x 128px (i.e. min dimension == 128px)
-            .size(128).scale(Scale.FILL)
+            .size(128)
+            .scale(Scale.FILL)
             // Disable hardware bitmaps, since Palette uses Bitmap.getPixels()
             .allowHardware(false)
             // Set a custom memory cache key to avoid overwriting the displayed image in the cache
@@ -145,7 +152,8 @@ private suspend fun calculateSwatchesInImage(
     return bitmap?.let {
         withContext(Dispatchers.Default) {
             val palette =
-                Palette.Builder(bitmap)
+                Palette
+                    .Builder(bitmap)
                     // Disable any bitmap resizing in Palette. We've already loaded an appropriately
                     // sized bitmap through Coil
                     .resizeBitmapArea(0)

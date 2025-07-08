@@ -20,12 +20,13 @@ class CoroutineTimer(
             return
         }
 
-        jobTracker = launch {
-            while (true) {
-                action()
-                delay(delayMs)
+        jobTracker =
+            launch {
+                while (true) {
+                    action()
+                    delay(delayMs)
+                }
             }
-        }
     }
 
     fun stopTicker() {

@@ -10,15 +10,17 @@ import com.andannn.melodify.ui.common.theme.MelodifyTheme
 internal fun TabUiPreview() {
     MelodifyTheme {
         TabUi(
-            state = TabUiState(
-                selectedIndex = 0,
-                customTabList = listOf(
-                    CustomTab.AllMusic,
-                    CustomTab.AlbumDetail(albumId = "1", label = "Long Long Long Long Long Long Long Long Long Long"),
-                    CustomTab.ArtistDetail(artistId = "1", label = "Artist1"),
-                    CustomTab.GenreDetail(genreId = "1", label = "Genre1"),
-                )
-            )
+            state =
+                TabUiState(
+                    selectedIndex = 0,
+                    customTabList =
+                        listOf(
+                            CustomTab.AllMusic,
+                            CustomTab.AlbumDetail(albumId = "1", label = "Long Long Long Long Long Long Long Long Long Long"),
+                            CustomTab.ArtistDetail(artistId = "1", label = "Artist1"),
+                            CustomTab.GenreDetail(genreId = "1", label = "Genre1"),
+                        ),
+                ),
         )
     }
 }

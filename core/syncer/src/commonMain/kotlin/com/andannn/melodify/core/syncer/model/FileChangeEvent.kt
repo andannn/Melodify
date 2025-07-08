@@ -14,7 +14,7 @@ sealed interface RefreshType {
  */
 enum class FileChangeType {
     DELETE,
-    MODIFY
+    MODIFY,
 }
 
 /**
@@ -25,5 +25,5 @@ enum class FileChangeType {
  */
 data class FileChangeEvent(
     val fileUri: String,
-    val fileChangeType: FileChangeType
+    val fileChangeType: FileChangeType,
 )

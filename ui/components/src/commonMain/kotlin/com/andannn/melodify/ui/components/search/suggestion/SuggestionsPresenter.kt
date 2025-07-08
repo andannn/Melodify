@@ -45,9 +45,10 @@ internal class SuggestionsPresenter(
         }
         if (initialState is SuggestionsState.LoadingHistory) {
             scope.launch {
-                state = SuggestionsState.HistoryLoaded(
-                    userPreferenceRepository.getAllSearchHistory()
-                )
+                state =
+                    SuggestionsState.HistoryLoaded(
+                        userPreferenceRepository.getAllSearchHistory(),
+                    )
             }
         } else {
             scope.launch {
@@ -56,13 +57,15 @@ internal class SuggestionsPresenter(
                     state = SuggestionsState.NoSuggestion
                 } else {
                     // TODO: use string similarity to find best matched items
-                    val bestMatchedItems = result.filter {
-                        it.name == query
-                    }
-                    state = SuggestionsState.SuggestionLoaded(
-                        suggestions = result.map { it.name }.distinct(),
-                        bestMatchedItems = bestMatchedItems
-                    )
+                    val bestMatchedItems =
+                        result.filter {
+                            it.name == query
+                        }
+                    state =
+                        SuggestionsState.SuggestionLoaded(
+                            suggestions = result.map { it.name }.distinct(),
+                            bestMatchedItems = bestMatchedItems,
+                        )
                 }
             }
         }
@@ -106,6 +109,6 @@ sealed interface SuggestionsState {
      */
     data class SuggestionLoaded(
         val suggestions: List<String>,
-        val bestMatchedItems: List<MediaItemModel>
+        val bestMatchedItems: List<MediaItemModel>,
     ) : Suggestion()
 }

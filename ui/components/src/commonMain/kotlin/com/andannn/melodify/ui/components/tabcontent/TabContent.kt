@@ -12,9 +12,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.browsableOrPlayable
 import com.andannn.melodify.ui.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
@@ -24,13 +22,13 @@ import com.andannn.melodify.ui.components.tabcontent.header.rememberGroupHeaderP
 @Composable
 fun TabContent(
     state: TabContentState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyListContent(
         modifier = modifier.fillMaxSize(),
         contentMap = state.contentMap,
         onMusicItemClick = { state.eventSink.invoke(TabContentEvent.OnPlayMusic(it)) },
-        onShowMusicItemOption = { state.eventSink.invoke(TabContentEvent.OnShowMusicItemOption(it)) }
+        onShowMusicItemOption = { state.eventSink.invoke(TabContentEvent.OnShowMusicItemOption(it)) },
     )
 }
 
@@ -53,7 +51,7 @@ private fun LazyListContent(
                 stickyHeader(headerKey.headerId) {
                     val presenter = rememberGroupHeaderPresenter(headerKey)
                     GroupHeader(
-                        state = presenter.present()
+                        state = presenter.present(),
                     )
                 }
             }
@@ -64,7 +62,7 @@ private fun LazyListContent(
             ) { item ->
                 ListTileItemView(
                     modifier =
-                    Modifier.animateItem(),
+                        Modifier.animateItem(),
                     playable = item.browsableOrPlayable,
                     isActive = false,
                     albumArtUri = item.artWorkUri,

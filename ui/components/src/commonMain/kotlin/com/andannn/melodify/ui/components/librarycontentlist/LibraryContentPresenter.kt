@@ -62,36 +62,43 @@ class LibraryContentPresenter(
         }
     }
 
-    private fun playMusic(audioItemModel: AudioItemModel, contentList: List<MediaItemModel>) {
+    private fun playMusic(
+        audioItemModel: AudioItemModel,
+        contentList: List<MediaItemModel>,
+    ) {
         val mediaItems = contentList.filterIsInstance<AudioItemModel>()
 
         repository.mediaControllerRepository.playMediaList(
             mediaItems.toList(),
-            mediaItems.indexOf(audioItemModel)
+            mediaItems.indexOf(audioItemModel),
         )
     }
 }
 
-private suspend fun LibraryDataSource.getTitle(repository: Repository) = when (this) {
-    LibraryDataSource.AllAlbum -> getString(Res.string.album_page_title)
-    LibraryDataSource.AllArtist -> getString(Res.string.artist_page_title)
-    LibraryDataSource.AllGenre -> getString(Res.string.genre_title)
-    LibraryDataSource.AllPlaylist -> getString(Res.string.playlist_page_title)
-    LibraryDataSource.AllSong -> getString(Res.string.audio_page_title)
-    LibraryDataSource.Favorite -> getString(Res.string.favorite)
-    is LibraryDataSource.AlbumDetail -> repository.mediaContentRepository.getAlbumByAlbumId(id)?.name
-        ?: ""
+private suspend fun LibraryDataSource.getTitle(repository: Repository) =
+    when (this) {
+        LibraryDataSource.AllAlbum -> getString(Res.string.album_page_title)
+        LibraryDataSource.AllArtist -> getString(Res.string.artist_page_title)
+        LibraryDataSource.AllGenre -> getString(Res.string.genre_title)
+        LibraryDataSource.AllPlaylist -> getString(Res.string.playlist_page_title)
+        LibraryDataSource.AllSong -> getString(Res.string.audio_page_title)
+        LibraryDataSource.Favorite -> getString(Res.string.favorite)
+        is LibraryDataSource.AlbumDetail ->
+            repository.mediaContentRepository.getAlbumByAlbumId(id)?.name
+                ?: ""
 
-    is LibraryDataSource.ArtistDetail -> repository.mediaContentRepository.getArtistByArtistId(id)?.name
-        ?: ""
+        is LibraryDataSource.ArtistDetail ->
+            repository.mediaContentRepository.getArtistByArtistId(id)?.name
+                ?: ""
 
-    is LibraryDataSource.GenreDetail -> repository.mediaContentRepository.getGenreByGenreId(id)?.name
-        ?: ""
+        is LibraryDataSource.GenreDetail ->
+            repository.mediaContentRepository.getGenreByGenreId(id)?.name
+                ?: ""
 
-    is LibraryDataSource.PlayListDetail -> repository.playListRepository.getPlayListById(id.toLong())?.name
-        ?: ""
-}
-
+        is LibraryDataSource.PlayListDetail ->
+            repository.playListRepository.getPlayListById(id.toLong())?.name
+                ?: ""
+    }
 
 data class LibraryContentState(
     val contentList: List<MediaItemModel> = emptyList(),

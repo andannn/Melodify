@@ -1,15 +1,10 @@
-package com.andannn.melodify.ui.common.dynamic_theming
+package com.andannn.melodify.ui.common.dynamictheming
 
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 import com.andannn.melodify.ui.common.theme.DarkColorPalette
 import com.andannn.melodify.ui.common.theme.LightColorPalette
 
-/**
- * Not support dynamic color in desktop app.
- */
 actual fun createThemeFromSeed(
     seedColor: Color,
     isDark: Boolean,
@@ -50,7 +45,7 @@ actual fun createThemeFromSeed(
     surfaceContainerHigh: Color?,
     surfaceContainerHighest: Color?,
     surfaceContainerLow: Color?,
-    surfaceContainerLowest: Color?
+    surfaceContainerLowest: Color?,
 ): ColorScheme {
     return if (isDark) DarkColorPalette else LightColorPalette
 }

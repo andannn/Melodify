@@ -10,9 +10,11 @@ class PlatformInfoImpl : PlatformInfo {
         get() = System.getProperty("user.home") + "/.melodify/cache/"
 
     override val databasePath: String
-        get() = File(System.getProperty("user.home") + "/.melodify/database/").resolve(
-            DATABASE_FILE_NAME
-        ).toString()
+        get() =
+            File(System.getProperty("user.home") + "/.melodify/database/")
+                .resolve(
+                    DATABASE_FILE_NAME,
+                ).toString()
     override val platform: Platform
         get() = Desktop
 }

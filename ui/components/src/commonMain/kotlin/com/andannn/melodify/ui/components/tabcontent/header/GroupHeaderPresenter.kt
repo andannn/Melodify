@@ -18,21 +18,21 @@ private const val TAG = "GroupHeaderPresenter"
 @Composable
 fun rememberGroupHeaderPresenter(
     headerKey: HeaderKey,
-    repository: Repository = LocalRepository.current
+    repository: Repository = LocalRepository.current,
 ) = remember(
     headerKey,
-    repository
+    repository,
 ) {
     GroupHeaderPresenter(
         headerKey,
-        repository
+        repository,
     )
 }
 
 class GroupHeaderPresenter(
     private val headerKey: HeaderKey,
-    repository: Repository
-): Presenter<GroupHeaderState> {
+    repository: Repository,
+) : Presenter<GroupHeaderState> {
     private val groupType = headerKey.groupType
     private val headerId = headerKey.headerId
     private val mediaContentRepository = repository.mediaContentRepository
@@ -41,17 +41,18 @@ class GroupHeaderPresenter(
     override fun present(): GroupHeaderState {
         Napier.d(tag = TAG) { "GroupHeaderPresenter present $headerKey" }
         val mediaItem by produceRetainedState<MediaItemModel?>(null) {
-            value = when (groupType) {
-                GroupType.ARTIST -> mediaContentRepository.getArtistByArtistId(headerId!!)
-                GroupType.ALBUM -> mediaContentRepository.getAlbumByAlbumId(headerId!!)
-                GroupType.NONE -> error("invalid group type")
-            }
+            value =
+                when (groupType) {
+                    GroupType.ARTIST -> mediaContentRepository.getArtistByArtistId(headerId!!)
+                    GroupType.ALBUM -> mediaContentRepository.getAlbumByAlbumId(headerId!!)
+                    GroupType.NONE -> error("invalid group type")
+                }
         }
 
         return GroupHeaderState(
             title = mediaItem?.name ?: "",
             cover = mediaItem?.artWorkUri ?: "",
-            trackCount = mediaItem?.trackCount ?: 0
+            trackCount = mediaItem?.trackCount ?: 0,
         )
     }
 }

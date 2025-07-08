@@ -35,12 +35,13 @@ import kotlinx.coroutines.launch
 fun rememberPlayerPresenter(
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-): PlayerPresenter = remember(
-    repository,
-    popupController
-) {
-    PlayerPresenter(repository, popupController)
-}
+): PlayerPresenter =
+    remember(
+        repository,
+        popupController,
+    ) {
+        PlayerPresenter(repository, popupController)
+    }
 
 class PlayerPresenter(
     private val repository: Repository,
@@ -83,10 +84,11 @@ class PlayerPresenter(
 
         val eventSink: (PlayerUiEvent) -> Unit by rememberUpdatedState {
             when (it) {
-                PlayerUiEvent.OnFavoriteButtonClick -> onFavoriteButtonClick(
-                    scope,
-                    interactingMusicItem
-                )
+                PlayerUiEvent.OnFavoriteButtonClick ->
+                    onFavoriteButtonClick(
+                        scope,
+                        interactingMusicItem,
+                    )
 
                 PlayerUiEvent.OnNextButtonClick -> next()
                 PlayerUiEvent.OnPreviousButtonClick -> previous()
@@ -95,11 +97,12 @@ class PlayerPresenter(
                     mediaControllerRepository.setShuffleModeEnabled(!isShuffle)
                 }
 
-                PlayerUiEvent.OnTimerIconClick -> scope.launch {
-                    popupController.showDialog(
-                        DialogId.SleepCountingDialog
-                    )
-                }
+                PlayerUiEvent.OnTimerIconClick ->
+                    scope.launch {
+                        popupController.showDialog(
+                            DialogId.SleepCountingDialog,
+                        )
+                    }
 
                 is PlayerUiEvent.OnOptionIconClick -> onOptionIconClick(scope, it.mediaItem)
                 PlayerUiEvent.OnPlayModeButtonClick -> {
@@ -125,21 +128,25 @@ class PlayerPresenter(
                 isPlaying = isPlaying,
                 progress = progressFactor,
                 isCounting = isSleepTimerCounting,
-                eventSink = eventSink
+                eventSink = eventSink,
             )
         }
     }
 
-    private fun onOptionIconClick(scope: CoroutineScope, mediaItem: AudioItemModel) {
+    private fun onOptionIconClick(
+        scope: CoroutineScope,
+        mediaItem: AudioItemModel,
+    ) {
         scope.launch {
-            val result = popupController.showDialog(
-                DialogId.PlayerOption(mediaItem)
-            )
+            val result =
+                popupController.showDialog(
+                    DialogId.PlayerOption(mediaItem),
+                )
             if (result is DialogAction.MediaOptionDialog.ClickItem) {
                 repository.onMediaOptionClick(
                     optionItem = result.optionItem,
                     dialog = result.dialog,
-                    popupController = popupController
+                    popupController = popupController,
                 )
             }
         }
@@ -153,7 +160,10 @@ class PlayerPresenter(
         }
     }
 
-    private fun onFavoriteButtonClick(scope: CoroutineScope, current: AudioItemModel?) {
+    private fun onFavoriteButtonClick(
+        scope: CoroutineScope,
+        current: AudioItemModel?,
+    ) {
         if (current == null) return
 
         scope.launch {
@@ -183,10 +193,10 @@ class PlayerPresenter(
 }
 
 sealed class PlayerUiState(
-    open val eventSink: (PlayerUiEvent) -> Unit
+    open val eventSink: (PlayerUiEvent) -> Unit,
 ) : CircuitUiState {
     data class Inactive(
-        override val eventSink: (PlayerUiEvent) -> Unit
+        override val eventSink: (PlayerUiEvent) -> Unit,
     ) : PlayerUiState(eventSink)
 
     data class Active(
@@ -198,7 +208,7 @@ sealed class PlayerUiState(
         val progress: Float,
         val isPlaying: Boolean,
         val isCounting: Boolean,
-        override val eventSink: (PlayerUiEvent) -> Unit
+        override val eventSink: (PlayerUiEvent) -> Unit,
     ) : PlayerUiState(eventSink)
 }
 

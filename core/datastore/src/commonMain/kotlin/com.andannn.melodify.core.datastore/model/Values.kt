@@ -22,6 +22,7 @@ object PreviewModeValues {
      * `LIST_PREVIEW = 0;`
      */
     const val LIST_PREVIEW_VALUE: Int = 0
+
     /**
      * `GRID_PREVIEW = 1;`
      */

@@ -17,48 +17,49 @@ import io.github.aakira.napier.Napier
 import org.koin.core.context.startKoin
 import platform.MediaPlayer.MPMediaLibrary
 
-fun MainViewController() = ComposeUIViewController(
-    configure = {
+@Suppress("ktlint:standard:function-naming")
+fun MainViewController() =
+    ComposeUIViewController(
+        configure = {
 // TODO: Check debug build
-        Napier.base(DebugAntilog())
+            Napier.base(DebugAntilog())
 
-        startKoin {
-            modules(
-                modules
-            )
+            startKoin {
+                modules(
+                    modules,
+                )
+            }
+        },
+    ) {
+        var permissionGranted by remember {
+            mutableStateOf(haveMediaPermission())
         }
-    }
-) {
-    var permissionGranted by remember {
-        mutableStateOf(haveMediaPermission())
-    }
-    if (!permissionGranted) {
-        LaunchedEffect(Unit) {
-            MPMediaLibrary.requestAuthorization { status ->
-                permissionGranted = haveMediaPermission()
+        if (!permissionGranted) {
+            LaunchedEffect(Unit) {
+                MPMediaLibrary.requestAuthorization { status ->
+                    permissionGranted = haveMediaPermission()
+                }
+            }
+        }
+
+        Napier.d("Permission granted: $permissionGranted")
+        if (permissionGranted) {
+            val coroutineScope = rememberCoroutineScope()
+            CompositionLocalProvider(
+                LocalPopupController provides remember { PopupControllerImpl() },
+                LocalPlayerUiController provides remember { PlayerUiController(coroutineScope) },
+            ) {
+                MelodifyMobileApp()
             }
         }
     }
 
-    Napier.d("Permission granted: $permissionGranted")
-    if (permissionGranted) {
-        val coroutineScope = rememberCoroutineScope()
-        CompositionLocalProvider(
-            LocalPopupController provides remember { PopupControllerImpl() },
-            LocalPlayerUiController provides remember { PlayerUiController(coroutineScope) },
-        ) {
-            MelodifyMobileApp()
-        }
-    }
-}
-
-private fun haveMediaPermission(): Boolean {
-    return MPMediaLibrary.authorizationStatus() == MPMediaLibraryAuthorizationStatus.authorized.ordinal.toLong()
-}
+private fun haveMediaPermission(): Boolean =
+    MPMediaLibrary.authorizationStatus() == MPMediaLibraryAuthorizationStatus.AUTHORIZED.ordinal.toLong()
 
 private enum class MPMediaLibraryAuthorizationStatus {
-    notDetermined,
-    restricted,
-    denied,
-    authorized
+    NOT_DETERMINED,
+    RESTRICTED,
+    DENIED,
+    AUTHORIZED,
 }

@@ -12,16 +12,14 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 
 @Composable
-fun rememberLyricPresenter(
-    repository: Repository = LocalRepository.current,
-) = remember(repository) {
-    LyricPresenter(repository)
-}
+fun rememberLyricPresenter(repository: Repository = LocalRepository.current) =
+    remember(repository) {
+        LyricPresenter(repository)
+    }
 
 class LyricPresenter(
     private val repository: Repository,
 ) : Presenter<LyricState> {
-
     @Composable
     override fun present(): LyricState {
         val currentPlayingAudio by repository.playerStateMonitoryRepository
@@ -55,4 +53,3 @@ sealed class LyricState : CircuitUiState {
 
     data class Loaded(val lyric: LyricModel?) : LyricState()
 }
-

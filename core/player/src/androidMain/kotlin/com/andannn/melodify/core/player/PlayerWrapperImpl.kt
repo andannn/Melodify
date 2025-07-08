@@ -14,47 +14,49 @@ import kotlinx.coroutines.flow.onStart
 private const val TAG = "PlayerWrapper"
 
 internal class PlayerWrapperImpl : PlayerWrapper {
-    private var _player: Player? = null
+    private var player: Player? = null
 
-    private val _playerStateFlow = MutableStateFlow<PlayerState>(PlayerState.Idle)
+    private val playerStateFlow = MutableStateFlow<PlayerState>(PlayerState.Idle)
 
-    private val _playerModeFlow = MutableStateFlow(Player.REPEAT_MODE_ALL)
-    private val _isShuffleFlow = MutableStateFlow(false)
+    private val playerModeFlow = MutableStateFlow(Player.REPEAT_MODE_ALL)
+    private val isShuffleFlow = MutableStateFlow(false)
 
-    private val _playingMediaItemStateFlow = MutableSharedFlow<MediaItem?>(1)
-    private val _playingIndexInQueueFlow = MutableStateFlow<Int?>(null)
+    private val playingMediaItemStateFlow = MutableSharedFlow<MediaItem?>(1)
+    private val playingIndexInQueueFlow = MutableStateFlow<Int?>(null)
 
-    private val _playListFlow = MutableSharedFlow<List<MediaItem>>(1)
+    private val playListFlow = MutableSharedFlow<List<MediaItem>>(1)
 
-    private val playerProgressUpdater: CoroutineTimer = CoroutineTimer(delayMs = 1000 / 30L) {
-        _playerStateFlow.getAndUpdate { old ->
-            if (_player == null) {
-                return@getAndUpdate old
-            }
+    private val playerProgressUpdater: CoroutineTimer =
+        CoroutineTimer(delayMs = 1000 / 30L) {
+            playerStateFlow.getAndUpdate { old ->
+                if (player == null) {
+                    return@getAndUpdate old
+                }
 
-            when (old) {
-                is PlayerState.Error,
-                is PlayerState.PlayBackEnd,
-                PlayerState.Idle -> old
+                when (old) {
+                    is PlayerState.Error,
+                    is PlayerState.PlayBackEnd,
+                    PlayerState.Idle,
+                    -> old
 
-                is PlayerState.Buffering -> PlayerState.Paused(_player!!.currentPosition)
-                is PlayerState.Paused -> PlayerState.Paused(_player!!.currentPosition)
-                is PlayerState.Playing -> PlayerState.Playing(_player!!.currentPosition)
+                    is PlayerState.Buffering -> PlayerState.Paused(player!!.currentPosition)
+                    is PlayerState.Paused -> PlayerState.Paused(player!!.currentPosition)
+                    is PlayerState.Playing -> PlayerState.Playing(player!!.currentPosition)
+                }
             }
         }
-    }
 
     private val playerListener =
         object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
-                _playerStateFlow.getAndUpdate { old ->
+                playerStateFlow.getAndUpdate { old ->
                     val position = old.currentPositionMs
 
                     when (playbackState) {
                         Player.STATE_IDLE -> PlayerState.Idle
                         Player.STATE_BUFFERING -> PlayerState.Buffering(position)
                         Player.STATE_READY -> {
-                            if (_player!!.isPlaying) {
+                            if (player!!.isPlaying) {
                                 PlayerState.Playing(position)
                             } else {
                                 PlayerState.Paused(position)
@@ -76,15 +78,15 @@ internal class PlayerWrapperImpl : PlayerWrapper {
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 Napier.d(tag = TAG) { "onIsPlayingChanged: $isPlaying" }
-                with(_player!!) {
+                with(player!!) {
                     if (isPlaying) {
-                        _playerStateFlow.value = PlayerState.Playing(currentPosition)
+                        playerStateFlow.value = PlayerState.Playing(currentPosition)
                     } else {
                         val suppressed =
                             playbackSuppressionReason != Player.PLAYBACK_SUPPRESSION_REASON_NONE
                         val playerError = playerError != null
                         if (playbackState == Player.STATE_READY && !suppressed && !playerError) {
-                            _playerStateFlow.value = PlayerState.Paused(currentPosition)
+                            playerStateFlow.value = PlayerState.Paused(currentPosition)
                         }
                     }
                 }
@@ -92,10 +94,11 @@ internal class PlayerWrapperImpl : PlayerWrapper {
 
             override fun onPlayerError(error: PlaybackException) {
 // TODO: Define exception type and send back.
-                _playerStateFlow.value = PlayerState.Error(
-                    throwable = error,
-                    currentPositionMs = _player!!.currentPosition
-                )
+                playerStateFlow.value =
+                    PlayerState.Error(
+                        throwable = error,
+                        currentPositionMs = player!!.currentPosition,
+                    )
             }
 
             override fun onMediaItemTransition(
@@ -103,8 +106,8 @@ internal class PlayerWrapperImpl : PlayerWrapper {
                 reason: Int,
             ) {
                 Napier.d(tag = TAG) { "onMediaItemTransition: $mediaItem" }
-                _playingIndexInQueueFlow.value = _player!!.currentMediaItemIndex
-                _playingMediaItemStateFlow.tryEmit(mediaItem)
+                playingIndexInQueueFlow.value = player!!.currentMediaItemIndex
+                playingMediaItemStateFlow.tryEmit(mediaItem)
             }
 
             override fun onPositionDiscontinuity(
@@ -112,7 +115,7 @@ internal class PlayerWrapperImpl : PlayerWrapper {
                 newPosition: Player.PositionInfo,
                 reason: Int,
             ) {
-                _playerStateFlow.getAndUpdate { state ->
+                playerStateFlow.getAndUpdate { state ->
                     when (state) {
                         is PlayerState.Playing -> {
                             state.copy(currentPositionMs = newPosition.contentPositionMs)
@@ -136,18 +139,18 @@ internal class PlayerWrapperImpl : PlayerWrapper {
                 MutableList(timeline.windowCount) { index ->
                     timeline.getWindow(index, Timeline.Window()).mediaItem
                 }.also { mediaItems ->
-                    _playListFlow.tryEmit(mediaItems.toList())
+                    playListFlow.tryEmit(mediaItems.toList())
                 }
             }
 
             override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
                 Napier.d(tag = TAG) { "onShuffleModeEnabledChanged: $shuffleModeEnabled" }
-                _isShuffleFlow.value = shuffleModeEnabled
+                isShuffleFlow.value = shuffleModeEnabled
             }
 
             override fun onRepeatModeChanged(repeatMode: Int) {
                 Napier.d(tag = TAG) { "onRepeatModeChanged: $repeatMode" }
-                _playerModeFlow.value = repeatMode
+                playerModeFlow.value = repeatMode
             }
         }
 
@@ -158,47 +161,49 @@ internal class PlayerWrapperImpl : PlayerWrapper {
         player.repeatMode = Player.REPEAT_MODE_ALL
         playerProgressUpdater.startTicker()
 
-        _player = player
+        this.player = player
     }
 
     override fun release() {
         Napier.d(tag = TAG) { "release" }
-        _playerStateFlow.value = PlayerState.Idle
-        _playerModeFlow.value = Player.REPEAT_MODE_ALL
-        _isShuffleFlow.value = false
-        _playingIndexInQueueFlow.value = null
+        playerStateFlow.value = PlayerState.Idle
+        playerModeFlow.value = Player.REPEAT_MODE_ALL
+        isShuffleFlow.value = false
+        playingIndexInQueueFlow.value = null
         playerProgressUpdater.stopTicker()
 
-        _player?.release()
-        _player = null
+        player?.release()
+        player = null
     }
 
     override val currentPositionMs: Long
-        get() = _player?.currentPosition ?: 0
+        get() = player?.currentPosition ?: 0
     override val currentDurationMs: Long
-        get() = _player?.duration ?: 0
+        get() = player?.duration ?: 0
 
     override val playerState: PlayerState
-        get() = _playerStateFlow.value
+        get() = playerStateFlow.value
 
     override val playingIndexInQueue: Int
-        get() = _playingIndexInQueueFlow.value!!
+        get() = playingIndexInQueueFlow.value!!
 
-    override fun observePlayerState(): StateFlow<PlayerState> = _playerStateFlow
+    override fun observePlayerState(): StateFlow<PlayerState> = playerStateFlow
+
     override val playList: List<MediaItem>
         get() {
-            val timeline = _player?.currentTimeline ?: return emptyList()
+            val timeline = player?.currentTimeline ?: return emptyList()
             return MutableList(timeline.windowCount) { index ->
                 timeline.getWindow(index, Timeline.Window()).mediaItem
             }
         }
 
-    override fun observePlayListQueue() = _playListFlow
-        .onStart { playList }
+    override fun observePlayListQueue() =
+        playListFlow
+            .onStart { playList }
 
-    override fun observePlayingMedia() = _playingMediaItemStateFlow.onStart { emit(null) }
+    override fun observePlayingMedia() = playingMediaItemStateFlow.onStart { emit(null) }
 
-    override fun observeIsShuffle() = _isShuffleFlow
+    override fun observeIsShuffle() = isShuffleFlow
 
-    override fun observePlayMode() = _playerModeFlow
+    override fun observePlayMode() = playerModeFlow
 }

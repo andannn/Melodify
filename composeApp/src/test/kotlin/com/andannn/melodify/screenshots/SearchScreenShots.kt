@@ -1,8 +1,6 @@
 package com.andannn.melodify.screenshots
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.screenshots.util.ScreenShotsTest
 import com.andannn.melodify.screenshots.util.album1
 import com.andannn.melodify.screenshots.util.audioList1
@@ -17,20 +15,21 @@ import kotlin.test.Test
 fun SearchScreenShots(isDark: Boolean) {
     MelodifyTheme(isDark) {
         Search(
-            state = SearchUiState(
-                isExpand = false,
-                inputText = "keyword",
-                searchState = SearchState.Result(
-                    albums = listOf(album1),
-                    audios = audioList1
-                )
-            )
+            state =
+                SearchUiState(
+                    isExpand = false,
+                    inputText = "keyword",
+                    searchState =
+                        SearchState.Result(
+                            albums = listOf(album1),
+                            audios = audioList1,
+                        ),
+                ),
         )
     }
 }
 
-
-class SearchScreenShots: ScreenShotsTest() {
+class SearchScreenShots : ScreenShotsTest() {
     @Test
     fun takeScreenShot() {
         paparazzi.snapshotWithOption("SearchScreenShots") { isDark ->

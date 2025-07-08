@@ -1,7 +1,5 @@
 package com.andannn.melodify.ui.components.tabcontent.header
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -14,7 +12,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,17 +24,16 @@ import melodify.ui.common.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
-
 @Composable
 fun GroupHeader(
     state: GroupHeaderState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HeaderInfo(
         modifier = modifier,
         coverArtUri = state.cover,
         title = state.title,
-        trackCount = state.trackCount
+        trackCount = state.trackCount,
     )
 }
 
@@ -48,21 +47,21 @@ private fun HeaderInfo(
 ) {
     Surface(
         modifier =
-        modifier.fillMaxWidth(),
+            modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
     ) {
         Row(
             modifier =
-            Modifier
-                .padding(5.dp)
-                .height(IntrinsicSize.Max),
+                Modifier
+                    .padding(5.dp)
+                    .height(IntrinsicSize.Max),
         ) {
             AsyncImage(
                 modifier =
-                Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(100.dp)
-                    .clip(MaterialTheme.shapes.extraSmall),
+                    Modifier
+                        .align(Alignment.CenterVertically)
+                        .size(100.dp)
+                        .clip(MaterialTheme.shapes.extraSmall),
                 model = coverArtUri,
                 placeholder = painterResource(defaultImagePlaceholderRes),
                 error = painterResource(defaultImagePlaceholderRes),
@@ -71,7 +70,7 @@ private fun HeaderInfo(
             Spacer(modifier = Modifier.width(10.dp))
             Column(
                 modifier =
-                Modifier.weight(1f),
+                    Modifier.weight(1f),
             ) {
                 Text(
                     text = title,

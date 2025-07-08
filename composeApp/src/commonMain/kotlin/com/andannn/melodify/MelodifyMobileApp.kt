@@ -7,11 +7,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.ProvidableCompositionLocal
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.navigation.routes.HomePresenterFactory
 import com.andannn.melodify.navigation.routes.HomeUiFactory
 import com.andannn.melodify.navigation.routes.LibraryContentPresenterFactory
@@ -46,18 +43,19 @@ fun MelodifyMobileApp(
     Napier.d(tag = TAG) { "Show app" }
     CompositionLocalProvider(LocalRepository provides remember { getKoin().get() }) {
         Scaffold(
-            modifier = modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface),
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface),
             snackbarHost = {
                 SnackbarHost(appState.snackBarHostState)
             },
         ) {
             CircuitCompositionLocals(circuit = circuit) {
                 val backStack = rememberSaveableBackStack(HomeScreen)
-                val navigator = rememberCircuitNavigator(backStack) {
-
-                }
+                val navigator =
+                    rememberCircuitNavigator(backStack) {
+                    }
 
                 AndroidBackHandler(enabled = backStack.size > 1) {
                     navigator.pop()
@@ -73,20 +71,23 @@ fun MelodifyMobileApp(
     }
 }
 
-private fun buildCircuitMobile() = buildCircuit(
-    presenterFactory = listOf(
-        HomePresenterFactory,
-        LibraryPresenterFactory,
-        LibraryContentPresenterFactory,
-        SearchPresenterFactory,
-    ),
-    uiFactory = listOf(
-        HomeUiFactory,
-        LibraryUiFactory,
-        LibraryContentUiFactory,
-        SearchUiFactory
+private fun buildCircuitMobile() =
+    buildCircuit(
+        presenterFactory =
+            listOf(
+                HomePresenterFactory,
+                LibraryPresenterFactory,
+                LibraryContentPresenterFactory,
+                SearchPresenterFactory,
+            ),
+        uiFactory =
+            listOf(
+                HomeUiFactory,
+                LibraryUiFactory,
+                LibraryContentUiFactory,
+                SearchUiFactory,
+            ),
     )
-)
 
 internal fun buildCircuit(
     presenterFactory: List<Presenter.Factory> = emptyList(),

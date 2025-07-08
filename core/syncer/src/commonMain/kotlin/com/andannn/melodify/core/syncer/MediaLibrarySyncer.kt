@@ -19,9 +19,7 @@ interface MediaLibrarySyncer {
      */
     suspend fun syncAllMediaLibrary(): Boolean
 
-    suspend fun syncMediaByChanges(
-        changes: List<FileChangeEvent>
-    ): Boolean
+    suspend fun syncMediaByChanges(changes: List<FileChangeEvent>): Boolean
 }
 
 internal class MediaLibrarySyncerWrapper(
@@ -32,9 +30,10 @@ internal class MediaLibrarySyncerWrapper(
         Napier.d(tag = TAG) { "Syncing media library" }
 
         var result: Boolean
-        val consumedTime = measureTime {
-            result = syncMediaLibraryInternal()
-        }
+        val consumedTime =
+            measureTime {
+                result = syncMediaLibraryInternal()
+            }
 
         Napier.d(tag = TAG) { "Media library sync completed in success: $result, time: $consumedTime" }
         return result

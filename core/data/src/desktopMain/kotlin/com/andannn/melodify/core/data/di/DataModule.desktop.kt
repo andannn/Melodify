@@ -9,11 +9,12 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-internal actual val platformDataModule: Module = module {
-    singleOf(::MediaControllerRepositoryImpl).bind(
-        MediaControllerRepository::class
-    )
-    singleOf(::PlayerStateMonitoryRepositoryImpl).bind(
-        PlayerStateMonitoryRepository::class
-    )
-}
+internal actual val platformDataModule: Module =
+    module {
+        singleOf(::MediaControllerRepositoryImpl).bind(
+            MediaControllerRepository::class,
+        )
+        singleOf(::PlayerStateMonitoryRepositoryImpl).bind(
+            PlayerStateMonitoryRepository::class,
+        )
+    }

@@ -26,16 +26,13 @@ data class CustomTabEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = CustomTabColumns.ID)
     val id: Long = 0,
-
     /**
      *  values of [CustomTabType]
      */
     @ColumnInfo(name = CustomTabColumns.TYPE)
     val type: String,
-
     @ColumnInfo(name = CustomTabColumns.NAME)
     val name: String? = null,
-
     @ColumnInfo(name = CustomTabColumns.EXTERNAL_ID)
     val externalId: String? = null,
 )

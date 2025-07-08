@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,11 +36,15 @@ import com.slack.circuit.runtime.ui.ui
 import io.github.aakira.napier.Napier
 
 object HomeUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? {
+    override fun create(
+        screen: Screen,
+        context: CircuitContext,
+    ): Ui<*>? {
         return when (screen) {
-            is HomeScreen -> ui<HomeState> { state, modifier ->
-                HomeUiScreen(state, modifier)
-            }
+            is HomeScreen ->
+                ui<HomeState> { state, modifier ->
+                    HomeUiScreen(state, modifier)
+                }
 
             else -> null
         }
@@ -52,7 +55,7 @@ object HomePresenterFactory : Presenter.Factory {
     override fun create(
         screen: Screen,
         navigator: Navigator,
-        context: CircuitContext
+        context: CircuitContext,
     ): Presenter<*>? {
         return when (screen) {
             is HomeScreen -> HomePresenter(navigator)
@@ -62,9 +65,8 @@ object HomePresenterFactory : Presenter.Factory {
 }
 
 private class HomePresenter(
-    private val navigator: Navigator
+    private val navigator: Navigator,
 ) : Presenter<HomeState> {
-
     @Composable
     override fun present(): HomeState {
         Napier.d(tag = "HomePresenter") { "HomePresenter present" }
@@ -73,11 +75,11 @@ private class HomePresenter(
         val tabContentPresenter = rememberTabContentPresenter(tabUiState.selectedTab)
         return HomeState(
             tabUiState = tabUiState,
-            tabContentState = tabContentPresenter.present()
+            tabContentState = tabContentPresenter.present(),
         ) { eventSink ->
             when (eventSink) {
                 HomeUiEvent.LibraryButtonClick -> navigator.goTo(LibraryScreen)
-                HomeUiEvent.SearchButtonClick ->  navigator.goTo(SearchScreen)
+                HomeUiEvent.SearchButtonClick -> navigator.goTo(SearchScreen)
                 HomeUiEvent.SettingButtonClick -> {}
             }
         }
@@ -92,7 +94,9 @@ internal data class HomeState(
 
 internal sealed interface HomeUiEvent {
     data object SettingButtonClick : HomeUiEvent
+
     data object SearchButtonClick : HomeUiEvent
+
     data object LibraryButtonClick : HomeUiEvent
 }
 
@@ -109,9 +113,9 @@ internal fun HomeUiScreen(
         topBar = {
             TopAppBar(
                 colors =
-                TopAppBarDefaults.centerAlignedTopAppBarColors().run {
-                    copy(scrolledContainerColor = containerColor)
-                },
+                    TopAppBarDefaults.centerAlignedTopAppBarColors().run {
+                        copy(scrolledContainerColor = containerColor)
+                    },
                 title = {
                     Text(text = "Melodify")
                 },
@@ -120,7 +124,7 @@ internal fun HomeUiScreen(
                         onClick = { homeState.eventSink.invoke(HomeUiEvent.LibraryButtonClick) },
                         content = {
                             Icon(Icons.Rounded.Menu, contentDescription = "")
-                        }
+                        },
                     )
                 },
                 actions = {
@@ -128,7 +132,7 @@ internal fun HomeUiScreen(
                         onClick = { homeState.eventSink.invoke(HomeUiEvent.SearchButtonClick) },
                         content = {
                             Icon(Icons.Rounded.Search, contentDescription = "")
-                        }
+                        },
                     )
                 },
                 scrollBehavior = scrollBehavior,
@@ -136,9 +140,10 @@ internal fun HomeUiScreen(
         },
     ) { padding ->
         Column(
-            modifier = Modifier.padding(padding)
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .fillMaxSize()
+            modifier =
+                Modifier.padding(padding)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .fillMaxSize(),
         ) {
             TabUi(homeState.tabUiState)
 

@@ -11,22 +11,23 @@ import okio.Path.Companion.toPath
 internal fun createDataStore(producePath: () -> String): DataStore<Preferences> =
     PreferenceDataStoreFactory.createWithPath(
         produceFile = { producePath().toPath() },
-        migrations = listOf(
-            CustomTabsMigration()
-        )
+        migrations =
+            listOf(
+                CustomTabsMigration(),
+            ),
     )
 
-internal const val dataStoreFileName = "dice.preferences_pb"
+internal const val DATA_STORE_FILENAME = "dice.preferences_pb"
 
 internal class CustomTabsMigration : DataMigration<Preferences> {
-    override suspend fun shouldMigrate(currentData: Preferences): Boolean {
-        return currentData[stringPreferencesKey(PreferencesKeyName.CUSTOM_TABS_KEY_NAME)] != null
-    }
+    override suspend fun shouldMigrate(currentData: Preferences): Boolean =
+        currentData[stringPreferencesKey(PreferencesKeyName.CUSTOM_TABS_KEY_NAME)] != null
 
     override suspend fun migrate(currentData: Preferences): Preferences {
-        val newPref = currentData.toMutablePreferences().apply {
-            remove(stringPreferencesKey(PreferencesKeyName.CUSTOM_TABS_KEY_NAME))
-        }
+        val newPref =
+            currentData.toMutablePreferences().apply {
+                remove(stringPreferencesKey(PreferencesKeyName.CUSTOM_TABS_KEY_NAME))
+            }
         return newPref
     }
 

@@ -13,27 +13,32 @@ import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 
 object SearchUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? {
+    override fun create(
+        screen: Screen,
+        context: CircuitContext,
+    ): Ui<*>? {
         return when (screen) {
-            is SearchScreen -> ui<SearchUiState> { state, modifier ->
-                Search(state, modifier)
-            }
+            is SearchScreen ->
+                ui<SearchUiState> { state, modifier ->
+                    Search(state, modifier)
+                }
 
             else -> null
         }
     }
 }
 
-object SearchPresenterFactory: Presenter.Factory {
+object SearchPresenterFactory : Presenter.Factory {
     override fun create(
         screen: Screen,
         navigator: Navigator,
-        context: CircuitContext
+        context: CircuitContext,
     ): Presenter<*>? {
         return when (screen) {
-            is SearchScreen -> presenterOf {
-                rememberSearchUiPresenter(navigator).present()
-            }
+            is SearchScreen ->
+                presenterOf {
+                    rememberSearchUiPresenter(navigator).present()
+                }
 
             else -> null
         }

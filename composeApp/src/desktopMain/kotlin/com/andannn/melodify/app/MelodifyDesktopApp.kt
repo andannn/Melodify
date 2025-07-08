@@ -16,9 +16,7 @@ import com.andannn.melodify.window.preferences.PreferenceWindow
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-internal fun ApplicationScope.MelodifyDeskTopApp(
-    appState: MelodifyDeskTopAppState = rememberMelodifyDeskTopAppState()
-) {
+internal fun ApplicationScope.MelodifyDeskTopApp(appState: MelodifyDeskTopAppState = rememberMelodifyDeskTopAppState()) {
     MelodifyTheme(darkTheme = false) {
         val scope = rememberCoroutineScope()
         CompositionLocalProvider(
@@ -28,16 +26,15 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
         ) {
             MainWindow(
                 appState = appState,
-                onCloseRequest = ::exitApplication
+                onCloseRequest = ::exitApplication,
             )
 
             if (appState.showPreferenceWindow) {
                 PreferenceWindow(
                     appState = appState,
-                    onCloseRequest = appState::closePreferenceWindow
+                    onCloseRequest = appState::closePreferenceWindow,
                 )
             }
         }
     }
 }
-

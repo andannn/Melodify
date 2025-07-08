@@ -1,7 +1,6 @@
 package com.andannn.melodify.core.database.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -107,7 +106,7 @@ interface MediaLibraryDao {
             SELECT rowid FROM ${Tables.LIBRARY_FTS_ALBUM} 
             WHERE ${Tables.LIBRARY_FTS_ALBUM} MATCH :keyword
         )
-    """
+    """,
     )
     suspend fun searchAlbum(keyword: String): List<AlbumEntity>
 
@@ -118,7 +117,7 @@ interface MediaLibraryDao {
             SELECT rowid FROM ${Tables.LIBRARY_FTS_MEDIA} 
             WHERE ${Tables.LIBRARY_FTS_MEDIA} MATCH :keyword
         )
-    """
+    """,
     )
     suspend fun searchMedia(keyword: String): List<MediaEntity>
 
@@ -129,7 +128,7 @@ interface MediaLibraryDao {
             SELECT rowid FROM ${Tables.LIBRARY_FTS_ARTIST} 
             WHERE ${Tables.LIBRARY_FTS_ARTIST} MATCH :keyword
         )
-    """
+    """,
     )
     suspend fun searchArtist(keyword: String): List<ArtistEntity>
 
@@ -138,7 +137,7 @@ interface MediaLibraryDao {
         albums: List<AlbumEntity>,
         artists: List<ArtistEntity>,
         genres: List<GenreEntity>,
-        audios: List<MediaEntity>
+        audios: List<MediaEntity>,
     ) {
         insertAlbums(albums)
         insertArtists(artists)
@@ -151,7 +150,7 @@ interface MediaLibraryDao {
         albums: List<AlbumEntity>,
         artists: List<ArtistEntity>,
         genres: List<GenreEntity>,
-        audios: List<MediaEntity>
+        audios: List<MediaEntity>,
     ) {
         deleteAllAlbums()
         deleteAllArtists()

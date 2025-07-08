@@ -1,4 +1,6 @@
-package com.andannn.melodify.ui.common.dynamic_theming
+@file:Suppress("ktlint:standard:filename")
+
+package com.andannn.melodify.ui.common.dynamictheming
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -8,7 +10,7 @@ actual fun rememberDominantColorState(
     defaultColor: Color,
     defaultOnColor: Color,
     cacheSize: Int,
-    isColorValid: (Color) -> Boolean
+    isColorValid: (Color) -> Boolean,
 ): DominantColorState {
     error("")
 }

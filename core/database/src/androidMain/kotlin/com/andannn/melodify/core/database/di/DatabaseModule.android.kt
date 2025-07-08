@@ -9,13 +9,14 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-internal actual val databaseBuilder: Module = module {
-    single<RoomDatabase.Builder<MelodifyDataBase>> {
-        val appContext = androidContext().applicationContext
-        Room.databaseBuilder<MelodifyDataBase>(
-            context = appContext,
-            name = get<PlatformInfo>().databasePath
-        )
-            .setDriver(AndroidSQLiteDriver())
+internal actual val databaseBuilder: Module =
+    module {
+        single<RoomDatabase.Builder<MelodifyDataBase>> {
+            val appContext = androidContext().applicationContext
+            Room.databaseBuilder<MelodifyDataBase>(
+                context = appContext,
+                name = get<PlatformInfo>().databasePath,
+            )
+                .setDriver(AndroidSQLiteDriver())
+        }
     }
-}

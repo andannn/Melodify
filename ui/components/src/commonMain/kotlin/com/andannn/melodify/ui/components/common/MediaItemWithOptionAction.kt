@@ -18,7 +18,6 @@ import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.onMediaOptionClick
 import kotlinx.coroutines.launch
-import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 internal fun MediaItemWithOptionAction(
@@ -33,82 +32,87 @@ internal fun MediaItemWithOptionAction(
             repository.onMediaOptionClick(
                 optionItem = result.optionItem,
                 dialog = result.dialog,
-                popupController = popupController
+                popupController = popupController,
             )
         }
     }
 
     val scope = rememberCoroutineScope()
     when (mediaItemModel) {
-        is AlbumItemModel -> Item(
-            modifier = modifier,
-            title = mediaItemModel.name,
-            subTitle = "Album",
-            cover = mediaItemModel.artWorkUri,
-            onOptionButtonClick = {
-                scope.launch {
-                    val result =
-                        popupController.showDialog(DialogId.SearchedAlbumOption(mediaItemModel))
-                    onHandleResult(result)
-                }
-            },
-            onItemClick = onItemClick
-        )
+        is AlbumItemModel ->
+            Item(
+                modifier = modifier,
+                title = mediaItemModel.name,
+                subTitle = "Album",
+                cover = mediaItemModel.artWorkUri,
+                onOptionButtonClick = {
+                    scope.launch {
+                        val result =
+                            popupController.showDialog(DialogId.SearchedAlbumOption(mediaItemModel))
+                        onHandleResult(result)
+                    }
+                },
+                onItemClick = onItemClick,
+            )
 
-        is ArtistItemModel -> Item(
-            modifier = modifier,
-            title = mediaItemModel.name,
-            subTitle = "Artist",
-            cover = mediaItemModel.artWorkUri,
-            onOptionButtonClick = {
-                scope.launch {
-                    val result =
-                        popupController.showDialog(DialogId.SearchedArtistOption(mediaItemModel))
-                    onHandleResult(result)
-                }
-            },
-            onItemClick = onItemClick
-        )
+        is ArtistItemModel ->
+            Item(
+                modifier = modifier,
+                title = mediaItemModel.name,
+                subTitle = "Artist",
+                cover = mediaItemModel.artWorkUri,
+                onOptionButtonClick = {
+                    scope.launch {
+                        val result =
+                            popupController.showDialog(DialogId.SearchedArtistOption(mediaItemModel))
+                        onHandleResult(result)
+                    }
+                },
+                onItemClick = onItemClick,
+            )
 
-        is AudioItemModel -> Item(
-            modifier = modifier,
-            title = mediaItemModel.name,
-            cover = mediaItemModel.artWorkUri,
-            subTitle = "Song",
-            onItemClick = onItemClick,
-            onOptionButtonClick = {
-                scope.launch {
-                    val result = popupController.showDialog(DialogId.AudioOption(mediaItemModel))
-                    onHandleResult(result)
-                }
-            },
-        )
+        is AudioItemModel ->
+            Item(
+                modifier = modifier,
+                title = mediaItemModel.name,
+                cover = mediaItemModel.artWorkUri,
+                subTitle = "Song",
+                onItemClick = onItemClick,
+                onOptionButtonClick = {
+                    scope.launch {
+                        val result = popupController.showDialog(DialogId.AudioOption(mediaItemModel))
+                        onHandleResult(result)
+                    }
+                },
+            )
 
-        is GenreItemModel -> Item(
-            modifier = modifier,
-            title = mediaItemModel.name,
-            cover = mediaItemModel.artWorkUri,
-            subTitle = "Genre",
-            onItemClick = onItemClick,
-            onOptionButtonClick = {
-                scope.launch {
-                    val result = popupController.showDialog(DialogId.SearchedGenreOption(mediaItemModel))
-                    onHandleResult(result)
-                }
-            },
-        )
-        is PlayListItemModel -> Item(
-            modifier = modifier,
-            title = mediaItemModel.name,
-            cover = mediaItemModel.artWorkUri,
-            onItemClick = onItemClick,
-            onOptionButtonClick = {
-                scope.launch {
-                    val result = popupController.showDialog(DialogId.SearchedPlayListOption(mediaItemModel))
-                    onHandleResult(result)
-                }
-            },
-        )
+        is GenreItemModel ->
+            Item(
+                modifier = modifier,
+                title = mediaItemModel.name,
+                cover = mediaItemModel.artWorkUri,
+                subTitle = "Genre",
+                onItemClick = onItemClick,
+                onOptionButtonClick = {
+                    scope.launch {
+                        val result = popupController.showDialog(DialogId.SearchedGenreOption(mediaItemModel))
+                        onHandleResult(result)
+                    }
+                },
+            )
+        is PlayListItemModel ->
+            Item(
+                modifier = modifier,
+                title = mediaItemModel.name,
+                cover = mediaItemModel.artWorkUri,
+                onItemClick = onItemClick,
+                onOptionButtonClick = {
+                    scope.launch {
+                        val result = popupController.showDialog(DialogId.SearchedPlayListOption(mediaItemModel))
+                        onHandleResult(result)
+                    }
+                },
+            )
     }
 }
 
@@ -128,6 +132,6 @@ private fun Item(
         subTitle = subTitle,
         defaultColor = Color.Transparent,
         onOptionButtonClick = onOptionButtonClick,
-        onMusicItemClick = onItemClick
+        onMusicItemClick = onItemClick,
     )
 }

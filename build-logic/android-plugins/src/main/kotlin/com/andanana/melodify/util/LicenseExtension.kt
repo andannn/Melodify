@@ -17,7 +17,6 @@ fun Project.configureLicense() {
         allowUrl("https://developer.android.com/studio/terms.html")
     }
 
-
     tasks.register(
         "updateLicense",
     ) {

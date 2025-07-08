@@ -5,13 +5,14 @@ import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.player.AVPlayerWrapper
 
 class MediaControllerRepositoryImpl(
-    private val avPlayerWrapper: AVPlayerWrapper
-): MediaControllerRepository {
-    override fun getCurrentPlayingItemDuration(): Long? {
-        return 0L
-    }
+    private val avPlayerWrapper: AVPlayerWrapper,
+) : MediaControllerRepository {
+    override fun getCurrentPlayingItemDuration(): Long? = 0L
 
-    override fun playMediaList(mediaList: List<AudioItemModel>, index: Int) {
+    override fun playMediaList(
+        mediaList: List<AudioItemModel>,
+        index: Int,
+    ) {
         avPlayerWrapper.playMediaList(mediaList.map { it.source }, index)
     }
 
@@ -21,7 +22,10 @@ class MediaControllerRepositoryImpl(
     override fun seekToPrevious() {
     }
 
-    override fun seekMediaItem(mediaItemIndex: Int, positionMs: Long) {
+    override fun seekMediaItem(
+        mediaItemIndex: Int,
+        positionMs: Long,
+    ) {
     }
 
     override fun seekToTime(time: Long) {
@@ -39,10 +43,16 @@ class MediaControllerRepositoryImpl(
     override fun pause() {
     }
 
-    override fun addMediaItems(index: Int, mediaItems: List<AudioItemModel>) {
+    override fun addMediaItems(
+        index: Int,
+        mediaItems: List<AudioItemModel>,
+    ) {
     }
 
-    override fun moveMediaItem(from: Int, to: Int) {
+    override fun moveMediaItem(
+        from: Int,
+        to: Int,
+    ) {
     }
 
     override fun removeMediaItem(index: Int) {

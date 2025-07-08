@@ -6,15 +6,14 @@ import androidx.compose.ui.window.MenuBar
 import com.andannn.melodify.app.MelodifyDeskTopAppState
 
 @Composable
-internal fun FrameWindowScope.CustomMenuBar(
-    appState: MelodifyDeskTopAppState
-) {
+internal fun FrameWindowScope.CustomMenuBar(appState: MelodifyDeskTopAppState) {
     MenuBar {
         Menu("Preferences") {
-            Item("Configure",
+            Item(
+                "Configure",
                 onClick = {
                     appState.showPreferenceWindow = true
-                }
+                },
             )
         }
     }

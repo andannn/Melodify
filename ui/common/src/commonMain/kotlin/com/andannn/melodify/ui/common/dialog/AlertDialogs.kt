@@ -20,35 +20,33 @@ import androidx.compose.ui.window.DialogProperties
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConnectFailedAlertDialog(
-    onDismiss: () -> Unit
-) {
+fun ConnectFailedAlertDialog(onDismiss: () -> Unit) {
     BasicAlertDialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false,
-        ),
+        properties =
+            DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
+            ),
     ) {
         Surface(
             modifier = Modifier.wrapContentWidth().wrapContentHeight(),
             shape = AlertDialogDefaults.shape,
-            tonalElevation = AlertDialogDefaults.TonalElevation
+            tonalElevation = AlertDialogDefaults.TonalElevation,
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = "Failed to connect MediaBrowser.")
                 Spacer(
                     modifier =
-                    Modifier.height(24.dp)
+                        Modifier.height(24.dp),
                 )
                 TextButton(
                     onClick = onDismiss,
-                    modifier = Modifier.align(Alignment.End)
+                    modifier = Modifier.align(Alignment.End),
                 ) {
                     Text("Finish")
                 }
             }
         }
     }
-
 }

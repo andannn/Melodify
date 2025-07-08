@@ -27,26 +27,29 @@ internal interface PlayerUiEventConsumer {
 }
 
 internal class PlayerUiControllerImpl(
-    private val scope: CoroutineScope
-) : PlayerUiController, PlayerUiEventConsumer {
-    private val _expandChannel = Channel<Unit>()
-    private val _shrinkChannel = Channel<Unit>()
+    private val scope: CoroutineScope,
+) : PlayerUiController,
+    PlayerUiEventConsumer {
+    private val expandChannel = Channel<Unit>()
+    private val shrinkChannel = Channel<Unit>()
     private val mutex = Mutex()
 
     override val expandEventReceiveChannel
-        get() = _expandChannel
+        get() = expandChannel
     override val shrinkEventReceiveChannel
-        get() = _shrinkChannel
+        get() = shrinkChannel
 
-    override suspend fun expandPlayer(): Unit = mutex.withLock {
-        scope.launch {
-            _expandChannel.send(Unit)
+    override suspend fun expandPlayer(): Unit =
+        mutex.withLock {
+            scope.launch {
+                expandChannel.send(Unit)
+            }
         }
-    }
 
-    override suspend fun shrinkPlayer(): Unit = mutex.withLock {
-        scope.launch {
-            _shrinkChannel.send(Unit)
+    override suspend fun shrinkPlayer(): Unit =
+        mutex.withLock {
+            scope.launch {
+                shrinkChannel.send(Unit)
+            }
         }
-    }
 }

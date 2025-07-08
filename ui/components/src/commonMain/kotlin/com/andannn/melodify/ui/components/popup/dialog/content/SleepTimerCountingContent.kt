@@ -39,7 +39,7 @@ internal fun SleepTimerCountingContent(
         remain = remainTime,
         onClickCancel = {
             onAction(DialogAction.SleepTimerCountingDialog.OnCancelTimer)
-        }
+        },
     )
 }
 
@@ -47,14 +47,15 @@ internal fun SleepTimerCountingContent(
 private fun SleepTimerCounterSheetContent(
     remain: Duration,
     modifier: Modifier = Modifier,
-    onClickCancel: () -> Unit = {}
+    onClickCancel: () -> Unit = {},
 ) {
     Surface(modifier = modifier) {
         Column {
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                 text = stringResource(Res.string.sleep_timer),
                 style = MaterialTheme.typography.titleLarge,
             )
@@ -62,22 +63,24 @@ private fun SleepTimerCounterSheetContent(
             Spacer(modifier = Modifier.height(32.dp))
 
             Surface(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterHorizontally),
             ) {
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                     text = durationString(duration = remain),
                     style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedButton(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterHorizontally),
                 onClick = onClickCancel,
             ) {
                 Text(
@@ -92,13 +95,12 @@ private fun SleepTimerCounterSheetContent(
     }
 }
 
-
 @Preview
 @Composable
 private fun SleepTimerCounterSheetContentPreview() {
     MelodifyTheme {
         SleepTimerCounterSheetContent(
-            remain = 121234.seconds
+            remain = 121234.seconds,
         )
     }
 }

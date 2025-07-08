@@ -7,9 +7,10 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val playerModule : Module = module {
-    includes(platformPlayerModule)
-    singleOf(::SleepTimerControllerImpl).bind(SleepTimerController::class)
-}
+val playerModule: Module =
+    module {
+        includes(platformPlayerModule)
+        singleOf(::SleepTimerControllerImpl).bind(SleepTimerController::class)
+    }
 
-internal expect val platformPlayerModule : Module
+internal expect val platformPlayerModule: Module

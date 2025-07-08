@@ -16,7 +16,7 @@ internal object SearchHistoryColumns {
     tableName = Tables.SEARCH_HISTORY,
     indices = [
         Index(value = [SearchHistoryColumns.SEARCH_TEXT], unique = true),
-    ]
+    ],
 )
 data class SearchHistoryEntity(
     @PrimaryKey(autoGenerate = true)

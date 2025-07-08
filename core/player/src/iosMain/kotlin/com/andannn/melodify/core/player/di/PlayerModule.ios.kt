@@ -7,7 +7,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-internal actual val platformPlayerModule: Module = module {
-    singleOf(::AVPlayerWrapperWrapperImpl).bind(AVPlayerWrapper::class)
-}
-
+internal actual val platformPlayerModule: Module =
+    module {
+        singleOf(::AVPlayerWrapperWrapperImpl).bind(AVPlayerWrapper::class)
+    }

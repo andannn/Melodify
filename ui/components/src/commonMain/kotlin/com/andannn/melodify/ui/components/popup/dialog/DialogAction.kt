@@ -26,7 +26,7 @@ sealed interface DialogAction {
     interface AddToPlayListDialog : DialogAction {
         data class OnAddToPlayList(
             val playList: PlayListItemModel,
-            val audios: List<AudioItemModel>
+            val audios: List<AudioItemModel>,
         ) :
             AddToPlayListDialog
 

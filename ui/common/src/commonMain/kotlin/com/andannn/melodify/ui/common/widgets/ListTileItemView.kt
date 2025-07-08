@@ -30,12 +30,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.andannn.melodify.ui.common.theme.MelodifyTheme
 import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 enum class ActionType {
     NONE,
@@ -58,12 +56,12 @@ fun ListTileItemView(
     trackNum: Int = 0,
     showTrackNum: Boolean = false,
     onMusicItemClick: (() -> Unit)? = null,
-    onOptionButtonClick: (() -> Unit)? = null
+    onOptionButtonClick: (() -> Unit)? = null,
 ) {
     @Composable
     fun CustomContainer(
         modifier: Modifier = Modifier,
-        content: @Composable () -> Unit
+        content: @Composable () -> Unit,
     ) {
         if (onMusicItemClick != null) {
             Surface(
@@ -82,28 +80,29 @@ fun ListTileItemView(
     }
 
     CustomContainer(
-        modifier = modifier
-            .fillMaxWidth()
-            .alpha(if (playable) 1f else 0.5f),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .alpha(if (playable) 1f else 0.5f),
     ) {
         Row(
             modifier =
-            Modifier
-                .padding(horizontal = 10.dp, vertical = 4.dp)
-                .height(IntrinsicSize.Min),
+                Modifier
+                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(modifier = Modifier) {
                 if (showTrackNum) {
                     Text(
                         modifier =
-                        Modifier
-                            .background(
-                                color = MaterialTheme.colorScheme.surface,
-                                shape = MaterialTheme.shapes.extraSmall,
-                            )
-                            .align(Alignment.Center)
-                            .width(30.dp),
+                            Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.surface,
+                                    shape = MaterialTheme.shapes.extraSmall,
+                                )
+                                .align(Alignment.Center)
+                                .width(30.dp),
                         text = trackNum.toString(),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyMedium,
@@ -111,9 +110,9 @@ fun ListTileItemView(
                 } else {
                     AsyncImage(
                         modifier =
-                        Modifier
-                            .size(50.dp)
-                            .clip(MaterialTheme.shapes.extraSmall),
+                            Modifier
+                                .size(50.dp)
+                                .clip(MaterialTheme.shapes.extraSmall),
                         placeholder = painterResource(defaultImagePlaceholderRes),
                         error = painterResource(defaultImagePlaceholderRes),
                         model = albumArtUri,
@@ -126,7 +125,7 @@ fun ListTileItemView(
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.SpaceEvenly
+                verticalArrangement = Arrangement.SpaceEvenly,
             ) {
                 Text(
                     text = title,
@@ -147,19 +146,21 @@ fun ListTileItemView(
 
             when (actionType) {
                 ActionType.NONE -> Spacer(Modifier)
-                ActionType.OPTION -> IconButton(
-                    enabled = playable,
-                    onClick = onOptionButtonClick!!,
-                ) {
-                    Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "menu")
-                }
+                ActionType.OPTION ->
+                    IconButton(
+                        enabled = playable,
+                        onClick = onOptionButtonClick!!,
+                    ) {
+                        Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "menu")
+                    }
 
-                ActionType.SWAP -> Icon(
-                    modifier = Modifier.padding(12.dp).then(swapIconModifier!!),
-                    imageVector = Icons.Filled.Menu, contentDescription = "swap"
-                )
+                ActionType.SWAP ->
+                    Icon(
+                        modifier = Modifier.padding(12.dp).then(swapIconModifier!!),
+                        imageVector = Icons.Filled.Menu,
+                        contentDescription = "swap",
+                    )
             }
-
         }
     }
 }

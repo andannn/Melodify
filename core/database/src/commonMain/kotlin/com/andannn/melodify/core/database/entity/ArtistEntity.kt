@@ -17,13 +17,10 @@ data class ArtistEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = ArtistColumns.ID)
     val artistId: Long,
-
     @ColumnInfo(name = ArtistColumns.NAME)
     val name: String,
-
     @ColumnInfo(name = ArtistColumns.COVER_URI)
     val artistCoverUri: String? = null,
-
     @ColumnInfo(name = ArtistColumns.TRACK_COUNT)
     val trackCount: Int = 0,
 )

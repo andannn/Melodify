@@ -5,5 +5,5 @@ import androidx.room.Embedded
 data class PlayListWithMediaCount(
     @Embedded
     val playListEntity: PlayListEntity,
-    val mediaCount: Int
+    val mediaCount: Int,
 )

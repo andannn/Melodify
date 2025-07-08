@@ -7,9 +7,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
 @Composable
-internal fun rememberMelodifyDeskTopAppState() = remember {
-    MelodifyDeskTopAppState()
-}
+internal fun rememberMelodifyDeskTopAppState() =
+    remember {
+        MelodifyDeskTopAppState()
+    }
 
 internal class MelodifyDeskTopAppState {
     var showPreferenceWindow by mutableStateOf(false)

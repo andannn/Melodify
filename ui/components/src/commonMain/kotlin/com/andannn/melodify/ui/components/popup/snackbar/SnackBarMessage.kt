@@ -12,7 +12,7 @@ sealed class SnackBarMessage(
     private val duration: SnackbarDuration = SnackbarDuration.Short,
     private val message: StringResource,
     private val actionLabel: StringResource? = null,
-    private val withDismissAction: Boolean = false
+    private val withDismissAction: Boolean = false,
 ) {
     data object AddPlayListSuccess : SnackBarMessage(
         message = Res.string.add_to_playlist_success_message,

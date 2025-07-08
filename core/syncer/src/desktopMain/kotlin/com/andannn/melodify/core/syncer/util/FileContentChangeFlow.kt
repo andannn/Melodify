@@ -22,7 +22,6 @@ import kotlin.io.path.isDirectory
 
 private const val TAG = "FileContentChangeFlow"
 
-
 /**
  * Get the flow of file content change.
  *
@@ -33,22 +32,24 @@ fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType> {
     Napier.d(tag = TAG) { "getDirectoryChangeFlow: $dictionaries" }
     return callbackFlow {
         withContext(Dispatchers.IO) {
-            val watchService = try {
-                FileSystems.getDefault().newWatchService()
-            } catch (e: IOException) {
-                Napier.d(tag = TAG) { "failed to open watch service: ${e.message}" }
-                throw e
-            }
+            val watchService =
+                try {
+                    FileSystems.getDefault().newWatchService()
+                } catch (e: IOException) {
+                    Napier.d(tag = TAG) { "failed to open watch service: ${e.message}" }
+                    throw e
+                }
 
             val watchKeyMap = mutableMapOf<WatchKey, Path>()
 
             dictionaries
                 .fold(emptyList<Path>()) { acc, dictionary ->
-                    acc + Files.walk(dictionary)
-                        .filter {
-                            Files.isDirectory(it)
-                        }
-                        .toList()
+                    acc +
+                        Files.walk(dictionary)
+                            .filter {
+                                Files.isDirectory(it)
+                            }
+                            .toList()
                 }.forEach { path ->
                     Napier.d(tag = TAG) { "register path: $path" }
                     path.registerAllChange(watchService, watchKeyMap)
@@ -64,36 +65,39 @@ fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType> {
                     continue
                 }
 
-                val events = key.pollEvents()
-                    .mapNotNull { event ->
-                        val kind = event.kind()
-                        val changedFilePath = watchKeyMap[key]!!.resolve(event.context() as Path)
-                        Napier.d(tag = TAG) { "changedFilePath $changedFilePath, kind $kind" }
-                        when (kind) {
-                            StandardWatchEventKinds.ENTRY_CREATE,
-                            StandardWatchEventKinds.ENTRY_MODIFY -> {
-                                FileChangeEvent(
-                                    changedFilePath.toUri().toString(),
-                                    FileChangeType.MODIFY
-                                )
-                            }
+                val events =
+                    key.pollEvents()
+                        .mapNotNull { event ->
+                            val kind = event.kind()
+                            val changedFilePath = watchKeyMap[key]!!.resolve(event.context() as Path)
+                            Napier.d(tag = TAG) { "changedFilePath $changedFilePath, kind $kind" }
+                            when (kind) {
+                                StandardWatchEventKinds.ENTRY_CREATE,
+                                StandardWatchEventKinds.ENTRY_MODIFY,
+                                -> {
+                                    FileChangeEvent(
+                                        changedFilePath.toUri().toString(),
+                                        FileChangeType.MODIFY,
+                                    )
+                                }
 
-                            StandardWatchEventKinds.ENTRY_DELETE -> {
-                                FileChangeEvent(
-                                    changedFilePath.toUri().toString(),
-                                    FileChangeType.DELETE
-                                )
-                            }
+                                StandardWatchEventKinds.ENTRY_DELETE -> {
+                                    FileChangeEvent(
+                                        changedFilePath.toUri().toString(),
+                                        FileChangeType.DELETE,
+                                    )
+                                }
 
-                            else -> {
-                                null
+                                else -> {
+                                    null
+                                }
                             }
                         }
-                    }
-                    .toSet()
+                        .toSet()
 
-                val dictionaryEvents = events
-                    .filter { Paths.get(URI.create(it.fileUri)).isDirectory() }
+                val dictionaryEvents =
+                    events
+                        .filter { Paths.get(URI.create(it.fileUri)).isDirectory() }
 
                 // Handle folder modify or create.
                 dictionaryEvents
@@ -130,13 +134,14 @@ fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType> {
 
 private fun Path.registerAllChange(
     watchService: WatchService,
-    watchKeyMap: MutableMap<WatchKey, Path>
+    watchKeyMap: MutableMap<WatchKey, Path>,
 ) {
-    val key = register(
-        watchService,
-        StandardWatchEventKinds.ENTRY_CREATE,
-        StandardWatchEventKinds.ENTRY_DELETE,
-        StandardWatchEventKinds.ENTRY_MODIFY
-    )
+    val key =
+        register(
+            watchService,
+            StandardWatchEventKinds.ENTRY_CREATE,
+            StandardWatchEventKinds.ENTRY_DELETE,
+            StandardWatchEventKinds.ENTRY_MODIFY,
+        )
     watchKeyMap[key] = this
 }

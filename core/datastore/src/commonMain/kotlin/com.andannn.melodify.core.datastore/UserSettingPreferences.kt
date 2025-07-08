@@ -21,19 +21,19 @@ class UserSettingPreferences(
             .map { preferences ->
                 UserSettingPref(
                     playMode =
-                    preferences[intPreferencesKey(PreferencesKeyName.PLAY_MODE_KEY_NAME)]
-                        ?: PlatModeValues.PLAT_MODE_REPEAT_ONE_VALUE,
+                        preferences[intPreferencesKey(PreferencesKeyName.PLAY_MODE_KEY_NAME)]
+                            ?: PlatModeValues.PLAT_MODE_REPEAT_ONE_VALUE,
                     isShuffle =
-                    preferences[booleanPreferencesKey(PreferencesKeyName.IS_SHUFFLE_KEY_NAME)]
-                        ?: false,
+                        preferences[booleanPreferencesKey(PreferencesKeyName.IS_SHUFFLE_KEY_NAME)]
+                            ?: false,
                     mediaPreviewMode =
-                    preferences[intPreferencesKey(PreferencesKeyName.MEDIA_PREVIEW_MODE_KEY_NAME)]
-                        ?: PreviewModeValues.LIST_PREVIEW_VALUE,
+                        preferences[intPreferencesKey(PreferencesKeyName.MEDIA_PREVIEW_MODE_KEY_NAME)]
+                            ?: PreviewModeValues.LIST_PREVIEW_VALUE,
                     libraryPath =
-                    preferences[stringSetPreferencesKey(PreferencesKeyName.LIBRARY_PATH_KEY_NAME)]
-                        ?: emptySet(),
+                        preferences[stringSetPreferencesKey(PreferencesKeyName.LIBRARY_PATH_KEY_NAME)]
+                            ?: emptySet(),
                     lastSuccessfulSyncTime =
-                    preferences[longPreferencesKey(PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME)],
+                        preferences[longPreferencesKey(PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME)],
                 )
             }
 

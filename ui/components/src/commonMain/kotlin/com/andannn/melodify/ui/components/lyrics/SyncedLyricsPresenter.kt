@@ -26,15 +26,16 @@ import kotlin.math.roundToInt
 @Composable
 fun rememberSyncedLyricsPresenter(
     syncedLyric: String,
-    lazyListState: LazyListState= rememberLazyListState(),
+    lazyListState: LazyListState = rememberLazyListState(),
     repository: Repository = LocalRepository.current,
-): SyncedLyricsPresenter = remember(syncedLyric, lazyListState, repository) {
-    SyncedLyricsPresenter(
-        syncedLyrics = syncedLyric,
-        lazyListState = lazyListState,
-        repository = repository,
-    )
-}
+): SyncedLyricsPresenter =
+    remember(syncedLyric, lazyListState, repository) {
+        SyncedLyricsPresenter(
+            syncedLyrics = syncedLyric,
+            lazyListState = lazyListState,
+            repository = repository,
+        )
+    }
 
 class SyncedLyricsPresenter(
     private val syncedLyrics: String,
@@ -69,11 +70,12 @@ class SyncedLyricsPresenter(
                     lyricsState = LyricsState.AutoScrolling
                 }
 
-                currentPlayingIndex = syncedLyricsLines
-                    .indexOfFirst {
-                        currentPositionMs >= it.startTimeMs && currentPositionMs < it.endTimeMs
-                    }
-                    .coerceAtLeast(0)
+                currentPlayingIndex =
+                    syncedLyricsLines
+                        .indexOfFirst {
+                            currentPositionMs >= it.startTimeMs && currentPositionMs < it.endTimeMs
+                        }
+                        .coerceAtLeast(0)
 
                 Napier.d(tag = TAG) { "onPositionChanged: $currentPositionMs, currentIndex $currentPlayingIndex" }
             }
@@ -87,18 +89,20 @@ class SyncedLyricsPresenter(
             fun onDragStop() {
                 Napier.d(tag = TAG) { "onDragStop" }
 
-                waitingToCancelSeekJob = launch {
-                    delay(5 * 1000)
-                    lyricsState = LyricsState.AutoScrolling
-                }
+                waitingToCancelSeekJob =
+                    launch {
+                        delay(5 * 1000)
+                        lyricsState = LyricsState.AutoScrolling
+                    }
             }
 
             fun onDragStart() {
                 Napier.d(tag = TAG) { "onDragStart" }
                 waitingToCancelSeekJob?.cancel()
-                lyricsState = LyricsState.Seeking(
-                    lazyListState.firstVisibleItemIndex,
-                )
+                lyricsState =
+                    LyricsState.Seeking(
+                        lazyListState.firstVisibleItemIndex,
+                    )
             }
 
             lazyListState.interactionSource.interactions.collect {
@@ -120,9 +124,10 @@ class SyncedLyricsPresenter(
             }.collect { firstVisibleIndex ->
                 Napier.d(tag = TAG) { "First visible item index: $firstVisibleIndex" }
                 if (lyricsState is LyricsState.Seeking) {
-                    lyricsState = LyricsState.Seeking(
-                        currentSeekIndex = firstVisibleIndex,
-                    )
+                    lyricsState =
+                        LyricsState.Seeking(
+                            currentSeekIndex = firstVisibleIndex,
+                        )
                 }
             }
         }
@@ -132,14 +137,15 @@ class SyncedLyricsPresenter(
                 return@LaunchedEffect
             }
 
-            val info = lazyListState.layoutInfo.visibleItemsInfo.firstOrNull {
-                it.index == currentPlayingIndex
-            }
-            Napier.d(tag = TAG) { "SyncedLyricsView: scroll to $currentPlayingIndex with info ${info.toString()}" }
+            val info =
+                lazyListState.layoutInfo.visibleItemsInfo.firstOrNull {
+                    it.index == currentPlayingIndex
+                }
+            Napier.d(tag = TAG) { "SyncedLyricsView: scroll to $currentPlayingIndex with info $info" }
             if (info != null) {
                 lazyListState.animateScrollToItem(
                     currentPlayingIndex,
-                    scrollOffset = info.size.div(2f).roundToInt()
+                    scrollOffset = info.size.div(2f).roundToInt(),
                 )
             } else {
                 lazyListState.animateScrollToItem(currentPlayingIndex)
@@ -167,19 +173,21 @@ fun parseSyncedLyrics(plainLyrics: String): List<SyncedLyricsLine> {
     val regex = Regex("""\[(\d{2}):(\d{2})\.(\d{2})\] (.*)""")
     val matches = regex.findAll(plainLyrics)
 
-    val listWithoutEndTime = matches
-        .map { match ->
-            val (minutesString, secondsString, millisecondsString, lyrics) = match.destructured
-            val minutes = minutesString.toIntOrNull() ?: 0
-            val seconds = secondsString.toIntOrNull() ?: 0
-            val milliSeconds = millisecondsString.toIntOrNull() ?: 0
-            val timeMs = minutes.times(60 * 1000)
-                .plus(seconds * 1000)
-                .plus(milliSeconds)
-                .toLong()
-            SyncedLyricsLine(startTimeMs = timeMs, lyrics = lyrics)
-        }
-        .toList()
+    val listWithoutEndTime =
+        matches
+            .map { match ->
+                val (minutesString, secondsString, millisecondsString, lyrics) = match.destructured
+                val minutes = minutesString.toIntOrNull() ?: 0
+                val seconds = secondsString.toIntOrNull() ?: 0
+                val milliSeconds = millisecondsString.toIntOrNull() ?: 0
+                val timeMs =
+                    minutes.times(60 * 1000)
+                        .plus(seconds * 1000)
+                        .plus(milliSeconds)
+                        .toLong()
+                SyncedLyricsLine(startTimeMs = timeMs, lyrics = lyrics)
+            }
+            .toList()
 
     return listWithoutEndTime.mapIndexed { index, item ->
         val nextStartTime = listWithoutEndTime.getOrNull(index + 1)?.startTimeMs ?: Long.MAX_VALUE
@@ -208,6 +216,8 @@ private const val TAG = "SyncedLyricsState"
 
 sealed interface LyricsState {
     data object AutoScrolling : LyricsState
+
     data class Seeking(val currentSeekIndex: Int) : LyricsState
+
     data class WaitingSeekingResult(val requestTimeMs: Long) : LyricsState
 }

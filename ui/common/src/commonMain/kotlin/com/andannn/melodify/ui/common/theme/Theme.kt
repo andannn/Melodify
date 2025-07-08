@@ -12,7 +12,10 @@ val DarkColorPalette = darkColorScheme()
 val LightColorPalette = lightColorScheme()
 
 @Composable
-expect fun getColorScheme(darkTheme: Boolean, isDynamicColor: Boolean): ColorScheme
+expect fun getColorScheme(
+    darkTheme: Boolean,
+    isDynamicColor: Boolean,
+): ColorScheme
 
 @Composable
 fun MelodifyTheme(

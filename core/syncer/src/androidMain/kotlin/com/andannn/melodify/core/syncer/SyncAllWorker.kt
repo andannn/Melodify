@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -33,7 +32,7 @@ object SyncWorkHelper {
         workManager.enqueueUniquePeriodicWork(
             PERIODIC_SYNC_WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
-            periodicWorkRequest
+            periodicWorkRequest,
         )
     }
 
@@ -44,7 +43,7 @@ object SyncWorkHelper {
         WorkManager.getInstance(context).enqueueUniqueWork(
             ONE_TIME_SYNC_WORK_NAME,
             ExistingWorkPolicy.KEEP,
-            oneTimeWorkRequest
+            oneTimeWorkRequest,
         )
     }
 }
@@ -78,11 +77,12 @@ internal class SyncAllMediaWorker(
     }
 
     private fun haveMediaPermission(): Boolean {
-        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.READ_MEDIA_AUDIO
-        } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        }
+        val permission =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                Manifest.permission.READ_MEDIA_AUDIO
+            } else {
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            }
         return when (ContextCompat.checkSelfPermission(appContext, permission)) {
             PackageManager.PERMISSION_DENIED -> false
             else -> true
@@ -91,7 +91,7 @@ internal class SyncAllMediaWorker(
 
     private suspend fun logSuccessSyncTimestamp() {
         userPreferenceRepository.setLastSuccessfulSyncTime(
-            System.currentTimeMillis()
+            System.currentTimeMillis(),
         )
     }
 }

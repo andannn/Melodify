@@ -30,7 +30,6 @@ sealed interface CustomTab {
 
     @Serializable
     data class PlayListDetail(val playListId: String, val label: String) : CustomTab {
-        override fun Repository.contentFlow() =
-            playListRepository.getAudiosOfPlayListFlow(playListId.toLong())
+        override fun Repository.contentFlow() = playListRepository.getAudiosOfPlayListFlow(playListId.toLong())
     }
 }

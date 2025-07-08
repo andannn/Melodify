@@ -18,32 +18,36 @@ import org.junit.Test
 @Composable
 fun HomeScreenShot(isDark: Boolean) {
     MelodifyTheme(
-        darkTheme = isDark
+        darkTheme = isDark,
     ) {
         HomeUiScreen(
-            homeState = HomeState(
-                tabUiState = TabUiState(
-                    selectedIndex = 0,
-                    customTabList = listOf(
-                        CustomTab.AllMusic,
-                        CustomTab.AlbumDetail(albumId = "a", label = "TAG 1"),
-                        CustomTab.AlbumDetail(albumId = "b", label = "TAG 2"),
-                        CustomTab.AlbumDetail(albumId = "c", label = "TAG 3"),
-                    )
+            homeState =
+                HomeState(
+                    tabUiState =
+                        TabUiState(
+                            selectedIndex = 0,
+                            customTabList =
+                                listOf(
+                                    CustomTab.AllMusic,
+                                    CustomTab.AlbumDetail(albumId = "a", label = "TAG 1"),
+                                    CustomTab.AlbumDetail(albumId = "b", label = "TAG 2"),
+                                    CustomTab.AlbumDetail(albumId = "c", label = "TAG 3"),
+                                ),
+                        ),
+                    tabContentState =
+                        TabContentState(
+                            contentMap =
+                                mapOf(
+                                    HeaderKey(GroupType.ALBUM, "7466598606566714508") to audioList1,
+                                    HeaderKey(GroupType.ALBUM, "570547186712440806") to audioList2,
+                                ),
+                        ),
                 ),
-                tabContentState = TabContentState(
-                    contentMap = mapOf(
-                        HeaderKey(GroupType.ALBUM, "7466598606566714508") to audioList1,
-                        HeaderKey(GroupType.ALBUM, "570547186712440806") to audioList2
-                    )
-                )
-            )
         )
     }
 }
 
 class HomeUiScreenShotsTest : ScreenShotsTest() {
-
     @Test
     fun takeScreenShot() {
         paparazzi.snapshotWithOption("HomeScreenShot") { isDark ->
@@ -51,4 +55,3 @@ class HomeUiScreenShotsTest : ScreenShotsTest() {
         }
     }
 }
-

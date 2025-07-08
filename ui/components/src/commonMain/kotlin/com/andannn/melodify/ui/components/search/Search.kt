@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -89,7 +88,7 @@ internal fun SearchViewContent(
     }
 
     Scaffold(
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column {
             SearchBar(
@@ -105,7 +104,7 @@ internal fun SearchViewContent(
                         placeholder = {
                             Text(
                                 "Song, Artist, Album",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         },
                         leadingIcon = {
@@ -116,7 +115,7 @@ internal fun SearchViewContent(
                                 Icon(
                                     Icons.AutoMirrored.Default.ArrowBack,
                                     tint = MaterialTheme.colorScheme.onSurface,
-                                    contentDescription = "Back"
+                                    contentDescription = "Back",
                                 )
                             }
                         },
@@ -136,10 +135,8 @@ internal fun SearchViewContent(
                 searchedResult = searchedResult,
                 onResultItemClick = {
                     onResultItemClick(it)
-                }
+                },
             )
         }
     }
 }
-
-

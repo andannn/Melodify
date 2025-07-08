@@ -13,10 +13,11 @@ import org.junit.Test
 fun LibraryContentScreenShots(isDark: Boolean) {
     MelodifyTheme(isDark) {
         LibraryContent(
-            state = LibraryContentState(
-                title = "Content List title",
-                contentList = audioList1
-            )
+            state =
+                LibraryContentState(
+                    title = "Content List title",
+                    contentList = audioList1,
+                ),
         )
     }
 }

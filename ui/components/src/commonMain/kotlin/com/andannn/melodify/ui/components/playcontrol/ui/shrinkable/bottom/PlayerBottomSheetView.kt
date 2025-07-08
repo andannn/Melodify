@@ -39,9 +39,8 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
 import com.andannn.melodify.ui.components.lyrics.Lyrics
-import com.andannn.melodify.ui.components.queue.PlayQueue
 import com.andannn.melodify.ui.components.playcontrol.ui.BottomSheetState
-import com.andannn.melodify.ui.components.queue.PlayQueuePresenter
+import com.andannn.melodify.ui.components.queue.PlayQueue
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -50,7 +49,6 @@ import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.lyrics
 import melodify.ui.common.generated.resources.play_queue
 import org.jetbrains.compose.resources.stringResource
-import org.koin.mp.KoinPlatform.getKoin
 import kotlin.math.roundToInt
 
 private const val TAG = "PlayQueueView"
@@ -216,7 +214,8 @@ private fun TabBar(
     }
 }
 
-private fun SheetTab.getLabel() = when(this) {
-    SheetTab.NEXT_SONG -> Res.string.play_queue
-    SheetTab.LYRICS -> Res.string.lyrics
-}
+private fun SheetTab.getLabel() =
+    when (this) {
+        SheetTab.NEXT_SONG -> Res.string.play_queue
+        SheetTab.LYRICS -> Res.string.lyrics
+    }

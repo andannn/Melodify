@@ -14,8 +14,7 @@ internal object GenreColumns {
 class GenreEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = GenreColumns.ID)
-    val genreId: Long ? = null,
-
+    val genreId: Long? = null,
     @ColumnInfo(name = GenreColumns.NAME)
     val name: String? = null,
 )

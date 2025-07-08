@@ -23,13 +23,11 @@ import melodify.ui.common.generated.resources.sleep_timer
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-internal fun SleepTimerOptionDialogContent(
-    onAction: (DialogAction) -> Unit = {},
-) {
+internal fun SleepTimerOptionDialogContent(onAction: (DialogAction) -> Unit = {}) {
     SleepTimerOptionSheetContent(
         onSelectOption = {
             onAction(DialogAction.SleepTimerOptionDialog.OnOptionClick(it))
-        }
+        },
     )
 }
 
@@ -40,12 +38,13 @@ private fun SleepTimerOptionSheetContent(
 ) {
     Surface(modifier = modifier) {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                 text = stringResource(Res.string.sleep_timer),
                 style = MaterialTheme.typography.titleLarge,
             )
@@ -54,11 +53,12 @@ private fun SleepTimerOptionSheetContent(
 
             SleepTimerOption.entries.forEach {
                 OptionItem(
-                    text = if (it != SleepTimerOption.SONG_FINISH) {
-                        durationString(it.timeMinutes!!)
-                    } else {
-                        stringResource(Res.string.end_of_song)
-                    },
+                    text =
+                        if (it != SleepTimerOption.SONG_FINISH) {
+                            durationString(it.timeMinutes!!)
+                        } else {
+                            stringResource(Res.string.end_of_song)
+                        },
                     onClick = {
                         onSelectOption.invoke(it)
                     },
@@ -85,7 +85,7 @@ private fun OptionItem(
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
         )
     }
 }

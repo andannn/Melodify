@@ -23,12 +23,13 @@ class MelodifyApplication : Application() {
                 listOf(
                     activityViewModelModule,
                     *modules.toTypedArray(),
-                )
+                ),
             )
         }
     }
 }
 
-private val activityViewModelModule = module {
-    viewModelOf(::MainActivityViewModel)
-}
+private val activityViewModelModule =
+    module {
+        viewModelOf(::MainActivityViewModel)
+    }

@@ -10,25 +10,28 @@ import com.andannn.melodify.core.player.util.EXTRA_ALBUM_COVER_ART_KEY
 import com.andannn.melodify.core.player.util.UNIQUE_ID_KEY
 import com.andannn.melodify.core.player.util.buildMediaItem
 
-fun MediaItem.toAppItem(): MediaItemModel = AudioItemModel(
-    id = mediaId,
-    name = mediaMetadata.title.toString(),
-    modifiedDate = 0,
-    album = mediaMetadata.albumTitle.toString(),
-    albumId = "0",
-    artist = mediaMetadata.artist.toString(),
-    artistId = "0",
-    cdTrackNumber = mediaMetadata.trackNumber ?: 0,
-    discNumber = 0,
-    artWorkUri = mediaMetadata.artworkUri?.toString() ?: mediaMetadata.extras?.getString(
-        EXTRA_ALBUM_COVER_ART_KEY
-    ) ?: "",
-    extraUniqueId = mediaMetadata.extras?.getString(UNIQUE_ID_KEY),
-    source = Uri.withAppendedPath(
-        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-        mediaId
-    ).toString()
-)
+fun MediaItem.toAppItem(): MediaItemModel =
+    AudioItemModel(
+        id = mediaId,
+        name = mediaMetadata.title.toString(),
+        modifiedDate = 0,
+        album = mediaMetadata.albumTitle.toString(),
+        albumId = "0",
+        artist = mediaMetadata.artist.toString(),
+        artistId = "0",
+        cdTrackNumber = mediaMetadata.trackNumber ?: 0,
+        discNumber = 0,
+        artWorkUri =
+            mediaMetadata.artworkUri?.toString() ?: mediaMetadata.extras?.getString(
+                EXTRA_ALBUM_COVER_ART_KEY,
+            ) ?: "",
+        extraUniqueId = mediaMetadata.extras?.getString(UNIQUE_ID_KEY),
+        source =
+            Uri.withAppendedPath(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                mediaId,
+            ).toString(),
+    )
 
 private var counter = 1
 
@@ -46,6 +49,6 @@ fun AudioItemModel.toMediaItem(generateUniqueId: Boolean = false): MediaItem {
         isPlayable = true,
         isBrowsable = false,
         mediaType = MediaMetadata.MEDIA_TYPE_MUSIC,
-        uniqueId = if (generateUniqueId) uniqueId else null
+        uniqueId = if (generateUniqueId) uniqueId else null,
     )
 }
