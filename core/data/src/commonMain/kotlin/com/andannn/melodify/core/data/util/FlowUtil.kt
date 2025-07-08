@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 @file:Suppress("UNCHECKED_CAST")
 
 package com.andannn.melodify.core.data.util
