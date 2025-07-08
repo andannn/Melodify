@@ -58,68 +58,76 @@ class MediaLibraryScannerImpl(
     }
 
     private suspend fun getMusicDataByIds(ids: List<Long>) =
-        app.contentResolver.query2(
-            uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-            selection = "${MediaStore.Audio.Media._ID} IN (${ids.joinToString(",") { "?" }})",
-            selectionArgs = ids.map { it.toString() }.toTypedArray(),
-        )?.use { cursor ->
-            parseMusicInfoCursor(cursor)
-        } ?: emptyList()
+        app.contentResolver
+            .query2(
+                uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                selection = "${MediaStore.Audio.Media._ID} IN (${ids.joinToString(",") { "?" }})",
+                selectionArgs = ids.map { it.toString() }.toTypedArray(),
+            )?.use { cursor ->
+                parseMusicInfoCursor(cursor)
+            } ?: emptyList()
 
     private suspend fun getAlbumDataByIds(ids: List<Long>) =
-        app.contentResolver.query2(
-            uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-            selection = "${MediaStore.Audio.Albums._ID} IN (${ids.joinToString(",") { "?" }})",
-            selectionArgs = ids.map { it.toString() }.toTypedArray(),
-        )?.use { cursor ->
-            parseAlbumInfoCursor(cursor)
-        } ?: emptyList()
+        app.contentResolver
+            .query2(
+                uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                selection = "${MediaStore.Audio.Albums._ID} IN (${ids.joinToString(",") { "?" }})",
+                selectionArgs = ids.map { it.toString() }.toTypedArray(),
+            )?.use { cursor ->
+                parseAlbumInfoCursor(cursor)
+            } ?: emptyList()
 
     private suspend fun getArtistDataByIds(ids: List<Long>) =
-        app.contentResolver.query2(
-            uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-            selection = "${MediaStore.Audio.Artists._ID} IN (${ids.joinToString(",") { "?" }})",
-            selectionArgs = ids.map { it.toString() }.toTypedArray(),
-        )?.use { cursor ->
-            parseArtistInfoCursor(cursor)
-        } ?: emptyList()
+        app.contentResolver
+            .query2(
+                uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+                selection = "${MediaStore.Audio.Artists._ID} IN (${ids.joinToString(",") { "?" }})",
+                selectionArgs = ids.map { it.toString() }.toTypedArray(),
+            )?.use { cursor ->
+                parseArtistInfoCursor(cursor)
+            } ?: emptyList()
 
     private suspend fun getGenreDataByIds(ids: List<Long>) =
-        app.contentResolver.query2(
-            uri = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
-            selection = "${MediaStore.Audio.Genres._ID} IN (${ids.joinToString(",") { "?" }})",
-            selectionArgs = ids.map { it.toString() }.toTypedArray(),
-        )?.use { cursor ->
-            parseGenreInfoCursor(cursor)
-        } ?: emptyList()
+        app.contentResolver
+            .query2(
+                uri = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+                selection = "${MediaStore.Audio.Genres._ID} IN (${ids.joinToString(",") { "?" }})",
+                selectionArgs = ids.map { it.toString() }.toTypedArray(),
+            )?.use { cursor ->
+                parseGenreInfoCursor(cursor)
+            } ?: emptyList()
 
     private suspend fun getAllMusicData() =
-        app.contentResolver.query2(
-            uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-        )?.use { cursor ->
-            parseMusicInfoCursor(cursor)
-        } ?: emptyList()
+        app.contentResolver
+            .query2(
+                uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            )?.use { cursor ->
+                parseMusicInfoCursor(cursor)
+            } ?: emptyList()
 
     private suspend fun getAllAlbumData() =
-        app.contentResolver.query2(
-            uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-        )?.use { cursor ->
-            parseAlbumInfoCursor(cursor)
-        } ?: emptyList()
+        app.contentResolver
+            .query2(
+                uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+            )?.use { cursor ->
+                parseAlbumInfoCursor(cursor)
+            } ?: emptyList()
 
     private suspend fun getAllArtistData() =
-        app.contentResolver.query2(
-            uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-        )?.use { cursor ->
-            parseArtistInfoCursor(cursor)
-        } ?: emptyList()
+        app.contentResolver
+            .query2(
+                uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+            )?.use { cursor ->
+                parseArtistInfoCursor(cursor)
+            } ?: emptyList()
 
     private suspend fun getAllGenreData() =
-        app.contentResolver.query2(
-            uri = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
-        )?.use { cursor ->
-            parseGenreInfoCursor(cursor)
-        } ?: emptyList()
+        app.contentResolver
+            .query2(
+                uri = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+            )?.use { cursor ->
+                parseGenreInfoCursor(cursor)
+            } ?: emptyList()
 
     private fun parseGenreInfoCursor(cursor: Cursor): List<com.andannn.melodify.core.syncer.model.GenreData> {
         val itemList = mutableListOf<com.andannn.melodify.core.syncer.model.GenreData>()
@@ -176,15 +184,17 @@ class MediaLibraryScannerImpl(
                 com.andannn.melodify.core.syncer.model.AudioData(
                     id = id,
                     sourceUri =
-                        Uri.withAppendedPath(
-                            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                            id.toString(),
-                        ).toString(),
+                        Uri
+                            .withAppendedPath(
+                                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                                id.toString(),
+                            ).toString(),
                     cover =
-                        Uri.withAppendedPath(
-                            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                            albumId.toString(),
-                        ).toString(),
+                        Uri
+                            .withAppendedPath(
+                                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                                albumId.toString(),
+                            ).toString(),
                     title = cursor.getString(titleIndex),
                     duration = cursor.getInt(durationIndex),
                     modifiedDate = cursor.getLong(dateModifiedIndex),
@@ -241,10 +251,11 @@ class MediaLibraryScannerImpl(
                 com.andannn.melodify.core.syncer.model.AlbumData(
                     albumId = albumId,
                     coverUri =
-                        Uri.withAppendedPath(
-                            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                            albumId.toString(),
-                        ).toString(),
+                        Uri
+                            .withAppendedPath(
+                                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                                albumId.toString(),
+                            ).toString(),
                     title = cursor.getString(albumIndex),
                     trackCount = cursor.getInt(numberOfSongsIndex),
                     numberOfSongsForArtist = cursor.getInt(numberOfSongsForArtistIndex),
@@ -264,8 +275,8 @@ suspend fun ContentResolver.query2(
     ascending: Boolean = true,
     offset: Int = 0,
     limit: Int = Int.MAX_VALUE,
-): Cursor? {
-    return withContext(Dispatchers.IO) {
+): Cursor? =
+    withContext(Dispatchers.IO) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val args2 =
                 Bundle().apply {
@@ -297,4 +308,3 @@ suspend fun ContentResolver.query2(
             query(uri, projection, selection, selectionArgs, order2)
         }
     }
-}

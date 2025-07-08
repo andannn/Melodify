@@ -121,16 +121,17 @@ class MainActivity : ComponentActivity() {
 
             if (!permissionGranted) {
                 LaunchedEffect(Unit) {
-                    runTimePermissions.filter {
-                        ContextCompat.checkSelfPermission(
-                            // context =
-                            this@MainActivity,
-                            // permission =
-                            it,
-                        ) == PackageManager.PERMISSION_DENIED
-                    }.let {
-                        launcher.launch(it.toTypedArray())
-                    }
+                    runTimePermissions
+                        .filter {
+                            ContextCompat.checkSelfPermission(
+                                // context =
+                                this@MainActivity,
+                                // permission =
+                                it,
+                            ) == PackageManager.PERMISSION_DENIED
+                        }.let {
+                            launcher.launch(it.toTypedArray())
+                        }
                 }
             }
 

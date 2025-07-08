@@ -57,7 +57,8 @@ private const val TAG = "SyncAllWorker"
 internal class SyncAllMediaWorker(
     private val appContext: Context,
     params: WorkerParameters,
-) : CoroutineWorker(appContext, params), KoinComponent {
+) : CoroutineWorker(appContext, params),
+    KoinComponent {
     private val mediaLibrarySyncer: MediaLibrarySyncer by inject()
     private val userPreferenceRepository: UserSettingPreferences by inject()
 

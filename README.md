@@ -29,5 +29,3 @@ running `./gradlew ktLintFormat` to automatically fix lint errors.
 running `./gradlew spotlessCheck` to check copyright.
 
 running `./gradlew spotlessApply` to add copyright.
-
-

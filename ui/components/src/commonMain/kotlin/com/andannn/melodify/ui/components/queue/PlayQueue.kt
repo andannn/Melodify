@@ -97,14 +97,9 @@ private fun PlayQueueContent(
     }
 
     LazyColumn(
-<<<<<<< HEAD
-        modifier = modifier.fillMaxWidth(),
-        state = listState,
-=======
         modifier =
             modifier.fillMaxWidth(),
-        state = playQueueState.lazyListState,
->>>>>>> master
+        state = listState,
     ) {
         items(
             items = playQueueState.itemList,
