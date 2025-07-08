@@ -19,4 +19,7 @@ plugins {
     alias(libs.plugins.room) apply false
     alias(libs.plugins.paparazzi) apply false
     alias(libs.plugins.dependency.graph.generator)
+    alias(libs.plugins.spotless) apply false
+    alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.licensee) apply false
 }

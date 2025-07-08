@@ -1,5 +1,10 @@
+import java.net.URI
+
 dependencyResolutionManagement {
     repositories {
+        maven {
+            url = URI("https://plugins.gradle.org/m2/")
+        }
         google()
         mavenCentral()
     }
