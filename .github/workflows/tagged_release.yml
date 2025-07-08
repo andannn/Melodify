@@ -45,13 +45,13 @@ jobs:
         with:
           fileName: 'keystore/keystore.jks'
           encodedString: ${{ secrets.KEYSTORE }}
-
-      - name: Build macos app
-        run: ./gradlew createReleaseDistributable
-
-      - name: Create .dmg
-        run: |
-          create-dmg composeApp/build/compose/binaries/main-release/app/Melodify.dmg composeApp/build/compose/binaries/main-release/app/Melodify.app
+#
+#      - name: Build macos app
+#        run: ./gradlew createReleaseDistributable
+#
+#      - name: Create .dmg
+#        run: |
+#          create-dmg composeApp/build/compose/binaries/main-release/app/Melodify.dmg composeApp/build/compose/binaries/main-release/app/Melodify.app
 
       - name: Build android apk
         run: ./gradlew assembleRelease
@@ -65,6 +65,6 @@ jobs:
         with:
           files: |
             composeApp/build/outputs/apk/release/composeApp-release.apk
-            composeApp/build/compose/binaries/main-release/app/Melodify.dmg
+#            composeApp/build/compose/binaries/main-release/app/Melodify.dmg
           repo_token: "${{ secrets.TOKEN }}"
           prerelease: true
