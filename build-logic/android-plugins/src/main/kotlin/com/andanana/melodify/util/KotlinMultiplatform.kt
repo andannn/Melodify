@@ -7,9 +7,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 @ExperimentalKotlinGradlePluginApi
-fun Project.configureKotlinMultiplatform(
-    extension: KotlinMultiplatformExtension,
-) {
+fun Project.configureKotlinMultiplatform(extension: KotlinMultiplatformExtension) {
     with(extension) {
         compilerOptions {
             androidTarget {
@@ -37,7 +35,7 @@ fun Project.configureKotlinMultiplatform(
 
         listOf(
             iosArm64(),
-            iosSimulatorArm64()
+            iosSimulatorArm64(),
         ).forEach { iosTarget ->
             iosTarget.binaries.framework {
                 baseName = "ComposeApp"
@@ -63,6 +61,7 @@ fun Project.configureKotlinMultiplatform(
 
             commonTest.dependencies {
                 implementation(libs.findLibrary("kotlin.test").get())
+                implementation(libs.findLibrary("kotlinx.coroutines.test").get())
             }
         }
     }

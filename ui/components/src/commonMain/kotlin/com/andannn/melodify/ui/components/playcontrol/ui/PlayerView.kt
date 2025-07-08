@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.playcontrol.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -21,9 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
-import com.andannn.melodify.ui.common.dynamic_theming.DynamicThemePrimaryColorsFromImage
-import com.andannn.melodify.ui.common.dynamic_theming.rememberDominantColorState
-import com.andannn.melodify.ui.common.theme.MinContrastOfPrimaryVsSurface
+import com.andannn.melodify.ui.common.dynamictheming.DynamicThemePrimaryColorsFromImage
+import com.andannn.melodify.ui.common.dynamictheming.rememberDominantColorState
+import com.andannn.melodify.ui.common.theme.MIN_CONTRAST_OF_PRIMARY_VS_SURFACE
 import com.andannn.melodify.ui.common.util.contrastAgainst
 import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
@@ -72,7 +76,7 @@ internal fun PlayerViewContent(
         val dominantColorState =
             rememberDominantColorState { color ->
                 // We want a color which has sufficient contrast against the surface color
-                color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
+                color.contrastAgainst(surfaceColor) >= MIN_CONTRAST_OF_PRIMARY_VS_SURFACE
             }
         DynamicThemePrimaryColorsFromImage(dominantColorState) {
             val url = state.mediaItem.artWorkUri

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.popup.snackbar
 
 import androidx.compose.material3.SnackbarDuration
@@ -12,7 +16,7 @@ sealed class SnackBarMessage(
     private val duration: SnackbarDuration = SnackbarDuration.Short,
     private val message: StringResource,
     private val actionLabel: StringResource? = null,
-    private val withDismissAction: Boolean = false
+    private val withDismissAction: Boolean = false,
 ) {
     data object AddPlayListSuccess : SnackBarMessage(
         message = Res.string.add_to_playlist_success_message,

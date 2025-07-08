@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.database.entity
 
 import androidx.room.ColumnInfo
@@ -19,12 +23,12 @@ internal object LyricWithAudioCrossRefColumns {
             entity = LyricEntity::class,
             parentColumns = [LyricColumns.ID],
             childColumns = [LyricWithAudioCrossRefColumns.LYRIC_ID],
-            onDelete = ForeignKey.NO_ACTION
+            onDelete = ForeignKey.NO_ACTION,
         ),
     ],
     indices = [
         Index(value = [LyricWithAudioCrossRefColumns.LYRIC_ID]),
-    ]
+    ],
 )
 data class LyricWithAudioCrossRef(
     @ColumnInfo(name = LyricWithAudioCrossRefColumns.MEDIA_STORE_ID)

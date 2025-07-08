@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.playcontrol.ui.shrinkable
 
 import androidx.compose.foundation.layout.Arrangement
@@ -46,17 +50,17 @@ internal fun MiniPlayerLayout(
     ) {
         PlayingInfo(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .weight(1f),
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
             title = titleState.value,
-            artist = artistState.value
+            artist = artistState.value,
         )
         IconButton(
             modifier =
-            Modifier
-                .size(30.dp)
-                .scale(1.2f),
+                Modifier
+                    .size(30.dp)
+                    .scale(1.2f),
             enabled = enabled,
             onClick = {
                 onEvent(PlayerUiEvent.OnPlayButtonClick)
@@ -71,10 +75,10 @@ internal fun MiniPlayerLayout(
         Spacer(modifier = Modifier.width(10.dp))
         IconButton(
             modifier =
-            Modifier
-                .size(30.dp)
-                .scale(1.2f)
-                .rotate(180f),
+                Modifier
+                    .size(30.dp)
+                    .scale(1.2f)
+                    .rotate(180f),
             enabled = enabled,
             onClick = {
                 onEvent(PlayerUiEvent.OnNextButtonClick)
@@ -102,7 +106,7 @@ internal fun MiniPlayerLayout(
 internal fun PlayingInfo(
     modifier: Modifier = Modifier,
     title: String,
-    artist: String
+    artist: String,
 ) {
     Column(
         modifier = modifier,

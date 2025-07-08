@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.lyrics
 
 import androidx.compose.animation.animateColor
@@ -38,7 +42,7 @@ import kotlin.time.Duration.Companion.milliseconds
 fun SyncedLyrics(
     modifier: Modifier = Modifier,
     syncedLyric: String,
-    presenter: SyncedLyricsPresenter = rememberSyncedLyricsPresenter(syncedLyric)
+    presenter: SyncedLyricsPresenter = rememberSyncedLyricsPresenter(syncedLyric),
 ) {
     SyncedLyricsContent(
         modifier = modifier,
@@ -53,26 +57,27 @@ private fun SyncedLyricsContent(
     lazyListState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
-    val activeIndex = remember(state) {
-        when (val lyricsState = state.lyricsState) {
-            LyricsState.AutoScrolling -> -1
-            is LyricsState.Seeking -> lyricsState.currentSeekIndex
-            is LyricsState.WaitingSeekingResult -> -1
+    val activeIndex =
+        remember(state) {
+            when (val lyricsState = state.lyricsState) {
+                LyricsState.AutoScrolling -> -1
+                is LyricsState.Seeking -> lyricsState.currentSeekIndex
+                is LyricsState.WaitingSeekingResult -> -1
+            }
         }
-    }
 
     BoxWithConstraints(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) {
         val maxHeight = maxHeight
         LazyColumn(
             state = lazyListState,
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(vertical = maxHeight / 2)
+            contentPadding = PaddingValues(vertical = maxHeight / 2),
         ) {
             itemsIndexed(
                 items = state.syncedLyricsLines,
-                key = { _, item -> item.startTimeMs }
+                key = { _, item -> item.startTimeMs },
             ) { index, item ->
                 LyricLine(
                     lyricsLine = item,
@@ -80,7 +85,7 @@ private fun SyncedLyricsContent(
                     isActive = activeIndex == index,
                     onSeekTimeClick = {
                         state.eventSink.invoke(SyncedLyricsEvent.SeekToTime(item.startTimeMs))
-                    }
+                    },
                 )
             }
         }
@@ -93,7 +98,7 @@ private fun LyricLine(
     isActive: Boolean,
     lyricsLine: SyncedLyricsLine,
     modifier: Modifier = Modifier,
-    onSeekTimeClick: () -> Unit = {}
+    onSeekTimeClick: () -> Unit = {},
 ) {
     val transition = updateTransition(targetState = isPlaying, label = "playingState")
 
@@ -123,44 +128,49 @@ private fun LyricLine(
     }
 
     Box(
-        modifier = modifier
-            .background(backgroundColor)
-            .fillMaxWidth()
+        modifier =
+            modifier
+                .background(backgroundColor)
+                .fillMaxWidth(),
     ) {
         Text(
-            modifier = Modifier
-                .padding(vertical = 12.dp, horizontal = 16.dp)
-                .alpha(alpha),
+            modifier =
+                Modifier
+                    .padding(vertical = 12.dp, horizontal = 16.dp)
+                    .alpha(alpha),
             text = lyricsLine.lyrics,
             style = MaterialTheme.typography.headlineSmall,
-            color = fontColor
+            color = fontColor,
         )
 
         if (seekButtonAlpha != 0f) {
             Surface(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .alpha(seekButtonAlpha)
-                    .padding(horizontal = 8.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterEnd)
+                        .alpha(seekButtonAlpha)
+                        .padding(horizontal = 8.dp),
                 color = MaterialTheme.colorScheme.surfaceContainerHighest,
                 shape = RoundedCornerShape(12.dp),
-                onClick = onSeekTimeClick
+                onClick = onSeekTimeClick,
             ) {
                 Row(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(horizontal = 8.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(horizontal = 8.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Spacer(modifier = Modifier.width(4.dp))
 
                     Text(
                         modifier = Modifier,
-                        text = lyricsLine.startTimeMs.milliseconds.toComponents { minutes, seconds, _ ->
-                            formatTime(minutes, seconds)
-                        },
+                        text =
+                            lyricsLine.startTimeMs.milliseconds.toComponents { minutes, seconds, _ ->
+                                formatTime(minutes, seconds)
+                            },
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
 
                     Icon(Icons.Default.PlayArrow, contentDescription = null)

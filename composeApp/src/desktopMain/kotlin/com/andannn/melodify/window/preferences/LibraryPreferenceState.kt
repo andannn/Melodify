@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.window.preferences
 
 import androidx.compose.runtime.Composable
@@ -16,7 +20,6 @@ import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import org.koin.compose.getKoin
 
 @Composable
 internal fun rememberLibraryPreferenceState(
@@ -26,30 +29,31 @@ internal fun rememberLibraryPreferenceState(
 ) = remember(
     scope,
     popUpController,
-    repository
+    repository,
 ) {
     LibraryPreferenceState(
         scope,
         popUpController,
-        repository.userPreferenceRepository
+        repository.userPreferenceRepository,
     )
 }
 
 class LibraryPreferenceState(
     private val scope: CoroutineScope,
     private val popUpController: PopupController,
-    private val userPreferenceRepository: UserPreferenceRepository
+    private val userPreferenceRepository: UserPreferenceRepository,
 ) {
-    private val _libraryPathFlow = userPreferenceRepository.userSettingFlow.map {
-        it.libraryPath
-    }
+    private val libraryPathFlow =
+        userPreferenceRepository.userSettingFlow.map {
+            it.libraryPath
+        }
 
     var libraryPath: Set<String> by mutableStateOf(emptySet())
         private set
 
     init {
         scope.launch {
-            _libraryPathFlow.collect {
+            libraryPathFlow.collect {
                 libraryPath = it
             }
         }

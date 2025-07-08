@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.datastore.model
 
 object PlatModeValues {
@@ -22,6 +26,7 @@ object PreviewModeValues {
      * `LIST_PREVIEW = 0;`
      */
     const val LIST_PREVIEW_VALUE: Int = 0
+
     /**
      * `GRID_PREVIEW = 1;`
      */

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.common.widgets
 
 import androidx.compose.material3.MaterialTheme
@@ -19,7 +23,7 @@ fun AutoResizedText(
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
     style: TextStyle = MaterialTheme.typography.bodyLarge,
-    color: Color = style.color
+    color: Color = style.color,
 ) {
     var resizedTextStyle by remember {
         mutableStateOf(style)
@@ -33,27 +37,30 @@ fun AutoResizedText(
     Text(
         text = text,
         color = color,
-        modifier = modifier.drawWithContent {
-            if (shouldDraw) {
-                drawContent()
-            }
-        },
+        modifier =
+            modifier.drawWithContent {
+                if (shouldDraw) {
+                    drawContent()
+                }
+            },
         maxLines = maxLines,
         softWrap = false,
         style = resizedTextStyle,
         onTextLayout = { result ->
             if (result.didOverflowWidth) {
                 if (style.fontSize.isUnspecified) {
-                    resizedTextStyle = resizedTextStyle.copy(
-                        fontSize = defaultFontSize
-                    )
+                    resizedTextStyle =
+                        resizedTextStyle.copy(
+                            fontSize = defaultFontSize,
+                        )
                 }
-                resizedTextStyle = resizedTextStyle.copy(
-                    fontSize = resizedTextStyle.fontSize * 0.95
-                )
+                resizedTextStyle =
+                    resizedTextStyle.copy(
+                        fontSize = resizedTextStyle.fontSize * 0.95,
+                    )
             } else {
                 shouldDraw = true
             }
-        }
+        },
     )
 }

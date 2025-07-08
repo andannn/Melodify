@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.player
 
 import kotlinx.coroutines.CoroutineScope
@@ -20,12 +24,13 @@ class CoroutineTimer(
             return
         }
 
-        jobTracker = launch {
-            while (true) {
-                action()
-                delay(delayMs)
+        jobTracker =
+            launch {
+                while (true) {
+                    action()
+                    delay(delayMs)
+                }
             }
-        }
     }
 
     fun stopTicker() {

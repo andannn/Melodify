@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.popup.dialog.content
 
 import androidx.compose.foundation.layout.Arrangement
@@ -62,7 +66,7 @@ import org.koin.mp.KoinPlatform.getKoin
 fun AddToPlayListDialogContent(
     modifier: Modifier = Modifier,
     source: MediaItemModel,
-    onAction: (DialogAction) -> Unit
+    onAction: (DialogAction) -> Unit,
 ) {
     val state = rememberAddToPlayListSheetState(source)
     AddToPlayListRequestSheetContent(
@@ -93,7 +97,7 @@ internal fun AddToPlayListRequestSheetContent(
     val itemCount by rememberUpdatedState(audioList.size)
 
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
@@ -107,7 +111,7 @@ internal fun AddToPlayListRequestSheetContent(
             Spacer(modifier = Modifier.weight(1f))
 
             IconButton(
-                onClick = onRequestDismiss
+                onClick = onRequestDismiss,
             ) {
                 Icon(Icons.Rounded.Close, contentDescription = "Close")
             }
@@ -137,7 +141,7 @@ internal fun AddToPlayListRequestSheetContent(
                     ) {
                         items(
                             items = audioList,
-                            key = { it.id }
+                            key = { it.id },
                         ) { audio ->
                             LargePreviewCard(
                                 modifier = Modifier.width(100.dp),
@@ -158,19 +162,20 @@ internal fun AddToPlayListRequestSheetContent(
 
                 item {
                     Text(
-                        modifier = Modifier.padding(
-                            top = 16.dp,
-                            start = 16.dp,
-                            end = 16.dp,
-                            bottom = 8.dp
-                        ),
+                        modifier =
+                            Modifier.padding(
+                                top = 16.dp,
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 8.dp,
+                            ),
                         text = stringResource(Res.string.all_playlists),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
                 items(
                     items = playLists,
-                    key = { it.id }
+                    key = { it.id },
                 ) { playList ->
                     ListTileItemView(
                         modifier = Modifier.padding(horizontal = 6.dp),
@@ -200,24 +205,24 @@ internal fun AddToPlayListRequestSheetContent(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun rememberAddToPlayListSheetState(
     source: MediaItemModel,
-    sheetState: SheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    ),
+    sheetState: SheetState =
+        rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+        ),
     scope: CoroutineScope = rememberCoroutineScope(),
 ) = remember(
     scope,
     source,
-    sheetState
+    sheetState,
 ) {
     AddToPlayListSheetState(
         scope = scope,
         source = source,
-        sheetState = sheetState
+        sheetState = sheetState,
     )
 }
 

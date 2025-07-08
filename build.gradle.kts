@@ -3,7 +3,7 @@ buildscript {
         google()
         mavenCentral()
     }
-}// Top-level build file where you can add configuration options common to all sub-projects/modules.
+} // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.android.application) apply false
@@ -19,4 +19,7 @@ plugins {
     alias(libs.plugins.room) apply false
     alias(libs.plugins.paparazzi) apply false
     alias(libs.plugins.dependency.graph.generator)
+    alias(libs.plugins.spotless) apply false
+    alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.licensee) apply false
 }

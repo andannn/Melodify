@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.syncer
 
 import android.app.Application
@@ -18,20 +22,20 @@ class MediaLibraryScannerImpl(
     private val app: Application,
     private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaLibraryScanner {
+    override suspend fun scanAllMedia(): MediaDataModel =
+        coroutineScope {
+            val musicDataDeferred = async { getAllMusicData() }
+            val albumDataDeferred = async { getAllAlbumData() }
+            val artistDataDeferred = async { getAllArtistData() }
+            val genreDataDeferred = async { getAllGenreData() }
 
-    override suspend fun scanAllMedia(): MediaDataModel = coroutineScope {
-        val musicDataDeferred = async { getAllMusicData() }
-        val albumDataDeferred = async { getAllAlbumData() }
-        val artistDataDeferred = async { getAllArtistData() }
-        val genreDataDeferred = async { getAllGenreData() }
-
-        return@coroutineScope MediaDataModel(
-            audioData = musicDataDeferred.await(),
-            albumData = albumDataDeferred.await(),
-            artistData = artistDataDeferred.await(),
-            genreData = genreDataDeferred.await(),
-        )
-    }
+            return@coroutineScope MediaDataModel(
+                audioData = musicDataDeferred.await(),
+                albumData = albumDataDeferred.await(),
+                artistData = artistDataDeferred.await(),
+                genreData = genreDataDeferred.await(),
+            )
+        }
 
     override suspend fun scanMediaByUri(uris: List<String>): MediaDataModel {
         val ids = uris.mapNotNull { Uri.parse(it).lastPathSegment?.toLongOrNull() }
@@ -152,16 +156,18 @@ class MediaLibraryScannerImpl(
         val bitrateIndex = cursor.getColumnIndex(MediaStore.Audio.Media.BITRATE)
         val yearIndex = cursor.getColumnIndex(MediaStore.Audio.Media.YEAR)
         val composerIndex = cursor.getColumnIndex(MediaStore.Audio.Media.COMPOSER)
-        val genreIndex = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            cursor.getColumnIndex(MediaStore.Audio.Media.GENRE)
-        } else {
-            null
-        }
-        val genreIdIndex = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            cursor.getColumnIndex(MediaStore.Audio.Media.GENRE_ID)
-        } else {
-            null
-        }
+        val genreIndex =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                cursor.getColumnIndex(MediaStore.Audio.Media.GENRE)
+            } else {
+                null
+            }
+        val genreIdIndex =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                cursor.getColumnIndex(MediaStore.Audio.Media.GENRE_ID)
+            } else {
+                null
+            }
 
         while (cursor.moveToNext()) {
             val albumId = cursor.getLong(albumIdIndex)
@@ -169,14 +175,16 @@ class MediaLibraryScannerImpl(
             itemList.add(
                 com.andannn.melodify.core.syncer.model.AudioData(
                     id = id,
-                    sourceUri = Uri.withAppendedPath(
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        id.toString()
-                    ).toString(),
-                    cover = Uri.withAppendedPath(
-                        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                        albumId.toString()
-                    ).toString(),
+                    sourceUri =
+                        Uri.withAppendedPath(
+                            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                            id.toString(),
+                        ).toString(),
+                    cover =
+                        Uri.withAppendedPath(
+                            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                            albumId.toString(),
+                        ).toString(),
                     title = cursor.getString(titleIndex),
                     duration = cursor.getInt(durationIndex),
                     modifiedDate = cursor.getLong(dateModifiedIndex),
@@ -232,10 +240,11 @@ class MediaLibraryScannerImpl(
             itemList.add(
                 com.andannn.melodify.core.syncer.model.AlbumData(
                     albumId = albumId,
-                    coverUri = Uri.withAppendedPath(
-                        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                        albumId.toString()
-                    ).toString(),
+                    coverUri =
+                        Uri.withAppendedPath(
+                            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                            albumId.toString(),
+                        ).toString(),
                     title = cursor.getString(albumIndex),
                     trackCount = cursor.getInt(numberOfSongsIndex),
                     numberOfSongsForArtist = cursor.getInt(numberOfSongsForArtistIndex),

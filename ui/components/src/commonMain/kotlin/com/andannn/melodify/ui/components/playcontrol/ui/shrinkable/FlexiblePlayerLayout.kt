@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.playcontrol.ui.shrinkable
 
 import androidx.compose.animation.AnimatedVisibility
@@ -23,26 +27,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayMode
-import com.andannn.melodify.ui.common.widgets.CircleBorderImage
-import com.andannn.melodify.ui.common.theme.MelodifyTheme
 import com.andannn.melodify.ui.common.util.verticalGradientScrim
+import com.andannn.melodify.ui.common.widgets.CircleBorderImage
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.components.playcontrol.ui.MinImageSize
 import com.andannn.melodify.ui.components.playcontrol.ui.PlayerViewState
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.bottom.PlayerBottomSheetView
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val MinImagePaddingTop = 5.dp
 

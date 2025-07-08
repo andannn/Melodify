@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.database
 
 import androidx.room.testing.MigrationTestHelper
@@ -20,27 +24,27 @@ import kotlin.test.assertTrue
 expect fun getMigrationTestHelper(fileName: String): MigrationTestHelper
 
 class MigrationTest {
-
     private val tempFile =
         FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("test-${Random.nextInt()}.db")
 
     @BeforeTest
     fun before() {
         FileSystem.SYSTEM.delete(tempFile)
-        FileSystem.SYSTEM.delete("${tempFile}.lck".toPath())
+        FileSystem.SYSTEM.delete("$tempFile.lck".toPath())
     }
 
     @AfterTest
     fun after() {
         FileSystem.SYSTEM.delete(tempFile)
-        FileSystem.SYSTEM.delete("${tempFile}.lck".toPath())
+        FileSystem.SYSTEM.delete("$tempFile.lck".toPath())
     }
 
     @Test
     fun migrate3To4() {
-        val migrationTestHelper = getMigrationTestHelper(
-            tempFile.toString()
-        )
+        val migrationTestHelper =
+            getMigrationTestHelper(
+                tempFile.toString(),
+            )
         val newConnection = migrationTestHelper.createDatabase(3)
         newConnection.close()
 
@@ -51,9 +55,10 @@ class MigrationTest {
 
     @Test
     fun migrate4To5() {
-        val migrationTestHelper = getMigrationTestHelper(
-            tempFile.toString()
-        )
+        val migrationTestHelper =
+            getMigrationTestHelper(
+                tempFile.toString(),
+            )
         val newConnection = migrationTestHelper.createDatabase(4)
         newConnection.close()
 
@@ -68,9 +73,10 @@ class MigrationTest {
 
     @Test
     fun migrate5To6() {
-        val migrationTestHelper = getMigrationTestHelper(
-            tempFile.toString()
-        )
+        val migrationTestHelper =
+            getMigrationTestHelper(
+                tempFile.toString(),
+            )
         val newConnection = migrationTestHelper.createDatabase(5)
         newConnection.close()
 
@@ -81,19 +87,20 @@ class MigrationTest {
 
     @Test
     fun migrate6To7SyncMediaTableTest() {
-        val migrationTestHelper = getMigrationTestHelper(
-            tempFile.toString()
-        )
+        val migrationTestHelper =
+            getMigrationTestHelper(
+                tempFile.toString(),
+            )
         val newConnection = migrationTestHelper.createDatabase(6)
         newConnection.execSQL(
             """
-                INSERT INTO ${Tables.LIBRARY_MEDIA}(${MediaColumns.ID}, ${MediaColumns.TITLE}) VALUES (1, 'row 1');
-            """.trimIndent()
+            INSERT INTO ${Tables.LIBRARY_MEDIA}(${MediaColumns.ID}, ${MediaColumns.TITLE}) VALUES (1, 'row 1');
+            """.trimIndent(),
         )
         newConnection.execSQL(
             """
-                INSERT INTO ${Tables.LIBRARY_MEDIA}(${MediaColumns.ID}, ${MediaColumns.TITLE}) VALUES (2, 'row 2');
-            """.trimIndent()
+            INSERT INTO ${Tables.LIBRARY_MEDIA}(${MediaColumns.ID}, ${MediaColumns.TITLE}) VALUES (2, 'row 2');
+            """.trimIndent(),
         )
         newConnection.close()
 
@@ -109,25 +116,25 @@ class MigrationTest {
             assertEquals("row 2", stm.getText(1))
         }
 
-
         migratedConnection.close()
     }
 
     @Test
     fun migrate6To7SyncAlbumTableTest() {
-        val migrationTestHelper = getMigrationTestHelper(
-            tempFile.toString()
-        )
+        val migrationTestHelper =
+            getMigrationTestHelper(
+                tempFile.toString(),
+            )
         val newConnection = migrationTestHelper.createDatabase(6)
         newConnection.execSQL(
             """
-                INSERT INTO ${Tables.LIBRARY_ALBUM}(${AlbumColumns.ID}, ${AlbumColumns.TITLE}, ${AlbumColumns.TRACK_COUNT}) VALUES (1, 'row 1', 10);
-            """.trimIndent()
+            INSERT INTO ${Tables.LIBRARY_ALBUM}(${AlbumColumns.ID}, ${AlbumColumns.TITLE}, ${AlbumColumns.TRACK_COUNT}) VALUES (1, 'row 1', 10);
+            """.trimIndent(),
         )
         newConnection.execSQL(
             """
-                INSERT INTO ${Tables.LIBRARY_ALBUM}(${AlbumColumns.ID}, ${AlbumColumns.TITLE}, ${AlbumColumns.TRACK_COUNT}) VALUES (2, 'row 2', 12);
-            """.trimIndent()
+            INSERT INTO ${Tables.LIBRARY_ALBUM}(${AlbumColumns.ID}, ${AlbumColumns.TITLE}, ${AlbumColumns.TRACK_COUNT}) VALUES (2, 'row 2', 12);
+            """.trimIndent(),
         )
         newConnection.close()
 
@@ -143,25 +150,25 @@ class MigrationTest {
             assertEquals("row 2", stm.getText(1))
         }
 
-
         migratedConnection.close()
     }
 
     @Test
     fun migrate6To7SyncArtistTableTest() {
-        val migrationTestHelper = getMigrationTestHelper(
-            tempFile.toString()
-        )
+        val migrationTestHelper =
+            getMigrationTestHelper(
+                tempFile.toString(),
+            )
         val newConnection = migrationTestHelper.createDatabase(6)
         newConnection.execSQL(
             """
-                INSERT INTO ${Tables.LIBRARY_ARTIST}(${ArtistColumns.ID}, ${ArtistColumns.NAME}, ${ArtistColumns.TRACK_COUNT}) VALUES (1, 'row 1', 10);
-            """.trimIndent()
+            INSERT INTO ${Tables.LIBRARY_ARTIST}(${ArtistColumns.ID}, ${ArtistColumns.NAME}, ${ArtistColumns.TRACK_COUNT}) VALUES (1, 'row 1', 10);
+            """.trimIndent(),
         )
         newConnection.execSQL(
             """
-                INSERT INTO ${Tables.LIBRARY_ARTIST}(${ArtistColumns.ID}, ${ArtistColumns.NAME}, ${ArtistColumns.TRACK_COUNT}) VALUES (2, 'row 2', 12);
-            """.trimIndent()
+            INSERT INTO ${Tables.LIBRARY_ARTIST}(${ArtistColumns.ID}, ${ArtistColumns.NAME}, ${ArtistColumns.TRACK_COUNT}) VALUES (2, 'row 2', 12);
+            """.trimIndent(),
         )
         newConnection.close()
 
@@ -176,7 +183,6 @@ class MigrationTest {
             assertEquals(2, stm.getLong(0))
             assertEquals("row 2", stm.getText(1))
         }
-
 
         migratedConnection.close()
     }

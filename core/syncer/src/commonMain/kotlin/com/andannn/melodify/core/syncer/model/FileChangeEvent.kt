@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.syncer.model
 
 /**
@@ -14,7 +18,7 @@ sealed interface RefreshType {
  */
 enum class FileChangeType {
     DELETE,
-    MODIFY
+    MODIFY,
 }
 
 /**
@@ -25,5 +29,5 @@ enum class FileChangeType {
  */
 data class FileChangeEvent(
     val fileUri: String,
-    val fileChangeType: FileChangeType
+    val fileChangeType: FileChangeType,
 )

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.playcontrol.ui.shrinkable
 
 import androidx.compose.foundation.layout.Row
@@ -26,9 +30,9 @@ fun PlayerHeader(
     Row(modifier = modifier) {
         IconButton(
             modifier =
-            Modifier
-                .padding(start = 4.dp)
-                .rotate(-90f),
+                Modifier
+                    .padding(start = 4.dp)
+                    .rotate(-90f),
             onClick = onShrinkButtonClick,
         ) {
             Icon(
@@ -46,7 +50,7 @@ fun PlayerHeader(
                 Icon(
                     imageVector = Icons.Filled.Timer,
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = "Timer"
+                    contentDescription = "Timer",
                 )
             }
         }

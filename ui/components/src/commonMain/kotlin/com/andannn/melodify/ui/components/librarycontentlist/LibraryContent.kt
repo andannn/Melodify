@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.librarycontentlist
 
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,7 +38,7 @@ fun LibraryContent(
         },
         onItemClick = {
             state.eventSink.invoke(LibraryContentUiEvent.OnItemClick(it))
-        }
+        },
     )
 }
 
@@ -63,7 +67,7 @@ fun LibraryContentList(
                     Text(text = title)
                 },
             )
-        }
+        },
     ) {
         LazyColumn(
             modifier = Modifier.padding(it),
@@ -71,21 +75,21 @@ fun LibraryContentList(
         ) {
             items(
                 items = contentList,
-                key = { it.id }
+                key = { it.id },
             ) { item ->
                 MediaItemWithOptionAction(
                     modifier = Modifier.padding(vertical = 4.dp),
                     mediaItemModel = item,
                     onItemClick = {
                         onItemClick(item)
-                    }
+                    },
                 )
             }
         }
     }
 }
 
- sealed interface LibraryDataSource {
+sealed interface LibraryDataSource {
     data object AllSong : LibraryDataSource
 
     data object AllArtist : LibraryDataSource
@@ -106,18 +110,19 @@ fun LibraryContentList(
 
     data class PlayListDetail(val id: String) : LibraryDataSource
 
-    fun toStringCode() = when (this) {
-        AllSong -> "AllSong"
-        AllArtist -> "AllArtist"
-        AllAlbum -> "AllAlbum"
-        AllGenre -> "AllGenre"
-        AllPlaylist -> "AllPlaylist"
-        Favorite -> "Favorite"
-        is ArtistDetail -> "ArtistDetail($id)"
-        is AlbumDetail -> "AlbumDetail($id)"
-        is GenreDetail -> "GenreDetail($id)"
-        is PlayListDetail -> "PlayListDetail($id)"
-    }
+    fun toStringCode() =
+        when (this) {
+            AllSong -> "AllSong"
+            AllArtist -> "AllArtist"
+            AllAlbum -> "AllAlbum"
+            AllGenre -> "AllGenre"
+            AllPlaylist -> "AllPlaylist"
+            Favorite -> "Favorite"
+            is ArtistDetail -> "ArtistDetail($id)"
+            is AlbumDetail -> "AlbumDetail($id)"
+            is GenreDetail -> "GenreDetail($id)"
+            is PlayListDetail -> "PlayListDetail($id)"
+        }
 
     companion object {
         fun parseFromString(code: String): LibraryDataSource {
@@ -152,18 +157,20 @@ fun LibraryContentList(
     }
 }
 
-fun LibraryDataSource.content(repository: Repository) = when (this) {
-    is LibraryDataSource.AlbumDetail -> repository.mediaContentRepository.getAudiosOfAlbumFlow(id)
-    LibraryDataSource.AllAlbum -> repository.mediaContentRepository.getAllAlbumsFlow()
-    LibraryDataSource.AllArtist -> repository.mediaContentRepository.getAllArtistFlow()
-    LibraryDataSource.AllGenre -> repository.mediaContentRepository.getAllGenreFlow()
-    LibraryDataSource.AllPlaylist -> repository.playListRepository.getAllPlayListFlow()
-    LibraryDataSource.AllSong -> repository.mediaContentRepository.getAllMediaItemsFlow()
-    is LibraryDataSource.ArtistDetail -> repository.mediaContentRepository.getAudiosOfArtistFlow(id)
-    LibraryDataSource.Favorite -> repository.playListRepository.getAudiosOfPlayListFlow(
-        FAVORITE_PLAY_LIST_ID
-    )
+fun LibraryDataSource.content(repository: Repository) =
+    when (this) {
+        is LibraryDataSource.AlbumDetail -> repository.mediaContentRepository.getAudiosOfAlbumFlow(id)
+        LibraryDataSource.AllAlbum -> repository.mediaContentRepository.getAllAlbumsFlow()
+        LibraryDataSource.AllArtist -> repository.mediaContentRepository.getAllArtistFlow()
+        LibraryDataSource.AllGenre -> repository.mediaContentRepository.getAllGenreFlow()
+        LibraryDataSource.AllPlaylist -> repository.playListRepository.getAllPlayListFlow()
+        LibraryDataSource.AllSong -> repository.mediaContentRepository.getAllMediaItemsFlow()
+        is LibraryDataSource.ArtistDetail -> repository.mediaContentRepository.getAudiosOfArtistFlow(id)
+        LibraryDataSource.Favorite ->
+            repository.playListRepository.getAudiosOfPlayListFlow(
+                FAVORITE_PLAY_LIST_ID,
+            )
 
-    is LibraryDataSource.GenreDetail -> repository.mediaContentRepository.getAudiosOfGenreFlow(id)
-    is LibraryDataSource.PlayListDetail -> repository.playListRepository.getAudiosOfPlayListFlow(id.toLong())
-}
+        is LibraryDataSource.GenreDetail -> repository.mediaContentRepository.getAudiosOfGenreFlow(id)
+        is LibraryDataSource.PlayListDetail -> repository.playListRepository.getAudiosOfPlayListFlow(id.toLong())
+    }

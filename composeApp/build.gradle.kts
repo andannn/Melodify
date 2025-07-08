@@ -121,7 +121,9 @@ compose.desktop {
 }
 
 tasks.register("moveKeyStoreRelease") {
-    if (project.gradle.startParameter.taskNames.any { it.contains("Release") }) {
+    if (project.gradle.startParameter.taskNames
+            .any { it.contains("Release") }
+    ) {
         val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
         val allFilesFromDir = File(tmpFilePath).listFiles()
         if (allFilesFromDir != null) {
@@ -157,17 +159,17 @@ dependencyGraphGenerator {
             if (dependency.moduleGroup.contains("feature")) {
                 node.add(
                     Style.FILLED,
-                    Color.rgb("#c6f68d")
+                    Color.rgb("#c6f68d"),
                 )
             } else if (dependency.moduleName == "data" || dependency.moduleName == "syncer") {
                 node.add(
                     Style.FILLED,
-                    Color.rgb("#ffddb0")
+                    Color.rgb("#ffddb0"),
                 )
             } else if (dependency.moduleGroup.contains("core")) {
                 node.add(
                     Style.FILLED,
-                    Color.rgb("#b39afd")
+                    Color.rgb("#b39afd"),
                 )
             } else {
                 node

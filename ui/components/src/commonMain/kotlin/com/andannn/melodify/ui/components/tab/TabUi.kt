@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.tab
 
 import androidx.compose.foundation.layout.Column
@@ -24,7 +28,7 @@ fun TabUi(
     val selectedIndex = state.selectedIndex
 
     Column(
-        modifier = modifier
+        modifier = modifier,
     ) {
         if (tabs.isNotEmpty()) {
             SecondaryScrollableTabRow(

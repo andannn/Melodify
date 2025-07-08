@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.bottom
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -38,8 +42,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
 import com.andannn.melodify.ui.components.lyrics.Lyrics
-import com.andannn.melodify.ui.components.queue.PlayQueue
 import com.andannn.melodify.ui.components.playcontrol.ui.BottomSheetState
+import com.andannn.melodify.ui.components.queue.PlayQueue
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -212,7 +216,8 @@ private fun TabBar(
     }
 }
 
-private fun SheetTab.getLabel() = when(this) {
-    SheetTab.NEXT_SONG -> Res.string.play_queue
-    SheetTab.LYRICS -> Res.string.lyrics
-}
+private fun SheetTab.getLabel() =
+    when (this) {
+        SheetTab.NEXT_SONG -> Res.string.play_queue
+        SheetTab.LYRICS -> Res.string.lyrics
+    }

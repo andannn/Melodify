@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.common.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -12,7 +16,10 @@ val DarkColorPalette = darkColorScheme()
 val LightColorPalette = lightColorScheme()
 
 @Composable
-expect fun getColorScheme(darkTheme: Boolean, isDynamicColor: Boolean): ColorScheme
+expect fun getColorScheme(
+    darkTheme: Boolean,
+    isDynamicColor: Boolean,
+): ColorScheme
 
 @Composable
 fun MelodifyTheme(

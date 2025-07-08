@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.network
 
 import com.andannn.melodify.core.network.model.LyricData
@@ -41,26 +45,28 @@ internal class LrclibServiceImpl(
 //            "${appLabel}/${packageInfo.versionName} (${Build.MANUFACTURER}; ${Build.MODEL}; ${Build.VERSION.RELEASE}) // https://github.com/andannn/Melodify"
 //    }
 
-    private val httpClient = httpClient.config {
-        defaultRequest {
+    private val httpClient =
+        httpClient.config {
+            defaultRequest {
 //            header("User-Agent", userAgent)
-            url("https://lrclib.net/")
+                url("https://lrclib.net/")
+            }
         }
-    }
 
     override suspend fun getLyric(
         trackName: String,
         artistName: String,
         albumName: String?,
-        duration: Long?
-    ): LyricData = httpClient
-        .get(
-            ApiRes.Get(
-                track_name = trackName,
-                artist_name = artistName,
-                album_name = albumName,
-                duration = duration
+        duration: Long?,
+    ): LyricData =
+        httpClient
+            .get(
+                ApiRes.Get(
+                    track_name = trackName,
+                    artist_name = artistName,
+                    album_name = albumName,
+                    duration = duration,
+                ),
             )
-        )
-        .body()
+            .body()
 }

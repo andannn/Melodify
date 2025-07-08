@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.data.repository.fake
 
 import com.andannn.melodify.core.data.model.AlbumItemModel
@@ -13,7 +17,7 @@ import kotlinx.serialization.json.Json
 
 @Serializable
 private data class MediaList(
-    val media: List<MediaItem>
+    val media: List<MediaItem>,
 )
 
 @Serializable
@@ -52,22 +56,25 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
     private val mediaList: List<MediaItem> =
         json.decodeFromString<MediaList>(fakeDataProvider()).media
 
-    private val albumMaps = mediaList.groupBy {
-        it.album
-    }
+    private val albumMaps =
+        mediaList.groupBy {
+            it.album
+        }
 
-    private val artistMaps = mediaList.groupBy {
-        it.artist
-    }
+    private val artistMaps =
+        mediaList.groupBy {
+            it.artist
+        }
 
-    private val genreMaps = mediaList.groupBy {
-        it.genre
-    }
+    private val genreMaps =
+        mediaList.groupBy {
+            it.genre
+        }
 
     override fun getAllMediaItemsFlow(): Flow<List<AudioItemModel>> {
         return flow {
             emit(
-                mediaList.map { it.toModel() }
+                mediaList.map { it.toModel() },
             )
         }
     }
@@ -144,7 +151,7 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
                 id = it,
                 name = it,
                 artWorkUri = albumMaps[it]?.firstOrNull()?.image ?: "",
-                trackCount = albumMaps[it]?.size ?: 0
+                trackCount = albumMaps[it]?.size ?: 0,
             )
         }
     }
@@ -155,7 +162,7 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
                 id = it,
                 name = it,
                 artWorkUri = "",
-                trackCount = artistMaps[it]?.size ?: 0
+                trackCount = artistMaps[it]?.size ?: 0,
             )
         }
     }
@@ -166,7 +173,7 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
                 id = it,
                 name = it,
                 artWorkUri = "",
-                trackCount = genreMaps[it]?.size ?: 0
+                trackCount = genreMaps[it]?.size ?: 0,
             )
         }
     }

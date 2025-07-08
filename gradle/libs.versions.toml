@@ -44,6 +44,9 @@ screenshot = "0.0.1-alpha09"
 paparazzi = "1.3.5"
 androidx-glance = "1.1.1"
 workRuntimeKtx = "2.10.0"
+ktlint = "12.2.0"
+spotless = "7.0.4"
+licensee = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -119,6 +122,9 @@ androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", vers
 vlcj = { module = "uk.co.caprica:vlcj", version.ref = "vlcj" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidx-glance" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "androidx-glance" }
+spotless-gradlePlugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
+licensee-gradlePlugin = { group = "app.cash.licensee", name = "licensee-gradle-plugin", version.ref = "licensee" }
+ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlint" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -135,3 +141,6 @@ room = { id = "androidx.room", version.ref = "androidxRoom" }
 dependency-graph_generator = { id = "com.vanniktech.dependency.graph.generator", version.ref = "dependencyGraphGenerator" }
 parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 paparazzi = { id = "app.cash.paparazzi", version.ref = "paparazzi"}
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+licensee = { id = "app.cash.licensee", version.ref = "licensee" }

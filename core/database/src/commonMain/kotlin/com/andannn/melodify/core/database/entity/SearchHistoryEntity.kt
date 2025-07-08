@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.database.entity
 
 import androidx.room.ColumnInfo
@@ -16,7 +20,7 @@ internal object SearchHistoryColumns {
     tableName = Tables.SEARCH_HISTORY,
     indices = [
         Index(value = [SearchHistoryColumns.SEARCH_TEXT], unique = true),
-    ]
+    ],
 )
 data class SearchHistoryEntity(
     @PrimaryKey(autoGenerate = true)

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.tab
 
 import androidx.compose.runtime.Composable
@@ -46,7 +50,7 @@ class TabUiPresenter(
         val scope = rememberCoroutineScope()
         var selectedIndex by rememberSaveable { mutableStateOf(0) }
         val currentTabList by userPreferenceRepository.currentCustomTabsFlow.collectAsRetainedState(
-            emptyList()
+            emptyList(),
         )
         Napier.d(tag = TAG) { "TabUiPresenter currentTabList $currentTabList" }
 
@@ -62,18 +66,19 @@ class TabUiPresenter(
 
                     val currentIndex = selectedIndex
 
-                    val newIndex: Int = if (next.size < pre.size) {
-                        // new tab list is smaller than the previous one.
-                        // 1. select the previous tab
-                        // 2. if the current tab is removed, select the previous tab
-                        next.indexOf(pre.getOrNull(currentIndex))
-                            .takeIf { it != -1 } ?: (currentIndex - 1).coerceAtLeast(0)
-                    } else if (next.size > pre.size) {
-                        // always select the new created tab
-                        next.indexOf(next.firstOrNull { it !in pre })
-                    } else {
-                        next.indexOf(pre.getOrNull(currentIndex))
-                    }
+                    val newIndex: Int =
+                        if (next.size < pre.size) {
+                            // new tab list is smaller than the previous one.
+                            // 1. select the previous tab
+                            // 2. if the current tab is removed, select the previous tab
+                            next.indexOf(pre.getOrNull(currentIndex))
+                                .takeIf { it != -1 } ?: (currentIndex - 1).coerceAtLeast(0)
+                        } else if (next.size > pre.size) {
+                            // always select the new created tab
+                            next.indexOf(next.firstOrNull { it !in pre })
+                        } else {
+                            next.indexOf(pre.getOrNull(currentIndex))
+                        }
                     if (newIndex != -1) {
                         selectedIndex = newIndex
                     }
@@ -81,7 +86,7 @@ class TabUiPresenter(
         }
         return TabUiState(
             selectedIndex.coerceAtMost(currentTabList.size - 1),
-            currentTabList
+            currentTabList,
         ) { eventSink ->
             when (eventSink) {
                 is TabUiEvent.OnClickTab -> selectedIndex = eventSink.index
@@ -91,13 +96,14 @@ class TabUiPresenter(
     }
 
     private suspend fun onShowTabOption(tab: CustomTab) {
-        val model = when (tab) {
-            is CustomTab.AlbumDetail -> mediaContentRepository.getAlbumByAlbumId(tab.albumId)
-            is CustomTab.ArtistDetail -> mediaContentRepository.getArtistByArtistId(tab.artistId)
-            is CustomTab.GenreDetail -> mediaContentRepository.getGenreByGenreId(tab.genreId)
-            is CustomTab.PlayListDetail -> playListRepository.getPlayListById(tab.playListId.toLong())
-            CustomTab.AllMusic -> return
-        }
+        val model =
+            when (tab) {
+                is CustomTab.AlbumDetail -> mediaContentRepository.getAlbumByAlbumId(tab.albumId)
+                is CustomTab.ArtistDetail -> mediaContentRepository.getArtistByArtistId(tab.artistId)
+                is CustomTab.GenreDetail -> mediaContentRepository.getGenreByGenreId(tab.genreId)
+                is CustomTab.PlayListDetail -> playListRepository.getPlayListById(tab.playListId.toLong())
+                CustomTab.AllMusic -> return
+            }
 
         if (model == null) {
             return
@@ -111,7 +117,7 @@ class TabUiPresenter(
                 repository.onMediaOptionClick(
                     optionItem = result.optionItem,
                     dialog = result.dialog,
-                    popupController = popupController
+                    popupController = popupController,
                 )
             }
         }
@@ -121,7 +127,7 @@ class TabUiPresenter(
 data class TabUiState(
     val selectedIndex: Int = 0,
     val customTabList: List<CustomTab> = emptyList(),
-    val eventSink: (TabUiEvent) -> Unit = {}
+    val eventSink: (TabUiEvent) -> Unit = {},
 ) : CircuitUiState {
     val selectedTab: CustomTab?
         get() = customTabList.getOrNull(selectedIndex)
@@ -132,4 +138,3 @@ sealed interface TabUiEvent {
 
     data class OnShowTabOption(val tab: CustomTab) : TabUiEvent
 }
-

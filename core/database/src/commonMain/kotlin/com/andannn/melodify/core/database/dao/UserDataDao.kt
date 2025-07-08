@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.database.dao
 
 import androidx.room.Dao
@@ -13,7 +17,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDataDao {
-
     @Query("SELECT * FROM ${Tables.CUSTOM_TAB}")
     fun getCustomTabsFlow(): Flow<List<CustomTabEntity>>
 
@@ -30,7 +33,10 @@ interface UserDataDao {
     }
 
     @Query("DELETE FROM ${Tables.CUSTOM_TAB} WHERE custom_tab_external_id = :externalId AND custom_tab_type = :type")
-    suspend fun deleteCustomTab(externalId: String?, type: String)
+    suspend fun deleteCustomTab(
+        externalId: String?,
+        type: String,
+    )
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSearchHistory(searchHistories: List<SearchHistoryEntity>)

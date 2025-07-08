@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.navigation.routes
 
 import com.andannn.melodify.ui.components.common.LibraryScreen
@@ -15,7 +19,7 @@ object LibraryPresenterFactory : Presenter.Factory {
     override fun create(
         screen: Screen,
         navigator: Navigator,
-        context: CircuitContext
+        context: CircuitContext,
     ): Presenter<*>? {
         return when (screen) {
             is LibraryScreen -> LibraryPresenter(navigator)
@@ -25,11 +29,15 @@ object LibraryPresenterFactory : Presenter.Factory {
 }
 
 object LibraryUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? {
+    override fun create(
+        screen: Screen,
+        context: CircuitContext,
+    ): Ui<*>? {
         return when (screen) {
-            is LibraryScreen -> ui<LibraryState> { state, modifier ->
-                Library(state, modifier)
-            }
+            is LibraryScreen ->
+                ui<LibraryState> { state, modifier ->
+                    Library(state, modifier)
+                }
 
             else -> null
         }

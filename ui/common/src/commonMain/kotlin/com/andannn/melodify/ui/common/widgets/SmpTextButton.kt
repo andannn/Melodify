@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.common.widgets
 
 import androidx.compose.foundation.layout.Spacer
@@ -13,8 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SmpTextButton(
@@ -23,13 +27,13 @@ fun SmpTextButton(
     imageVector: ImageVector? = null,
     text: String? = null,
     enabled: Boolean = true,
-    textAlpha: Float = 1f
+    textAlpha: Float = 1f,
 ) {
     TextButton(
         modifier = modifier,
         onClick = onClick,
         enabled = enabled,
-        colors = ButtonDefaults.buttonColors()
+        colors = ButtonDefaults.buttonColors(),
     ) {
         if (imageVector != null) {
             Icon(imageVector = imageVector, contentDescription = null)
@@ -41,7 +45,7 @@ fun SmpTextButton(
                 modifier = Modifier.alpha(textAlpha),
                 text = text,
                 style = MaterialTheme.typography.bodySmall,
-                maxLines = 1
+                maxLines = 1,
             )
         }
     }
@@ -54,7 +58,7 @@ private fun SmpTextButtonPreview() {
         SmpTextButton(
             imageVector = Icons.Rounded.PlayArrow,
             text = "Test",
-            onClick = {}
+            onClick = {},
         )
     }
 }

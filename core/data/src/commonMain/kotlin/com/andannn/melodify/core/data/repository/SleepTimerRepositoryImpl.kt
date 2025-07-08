@@ -1,8 +1,11 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.player.SleepTimeCounterState
 import com.andannn.melodify.core.player.SleepTimerController
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.takeWhile
@@ -10,16 +13,16 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 internal class SleepTimerRepositoryImpl(
-    private val sleepTimerController: SleepTimerController
-): SleepTimerRepository {
-
+    private val sleepTimerController: SleepTimerController,
+) : SleepTimerRepository {
     override fun isCounting(): Boolean {
         return sleepTimerController.counterState is SleepTimeCounterState.Counting
     }
 
-    override fun observeIsCounting() = sleepTimerController.getCounterStateFlow()
-        .map { it is SleepTimeCounterState.Counting }
-        .distinctUntilChanged()
+    override fun observeIsCounting() =
+        sleepTimerController.getCounterStateFlow()
+            .map { it is SleepTimeCounterState.Counting }
+            .distinctUntilChanged()
 
     override fun observeRemainTime() =
         sleepTimerController.getCounterStateFlow()

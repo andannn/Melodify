@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.playcontrol.ui.shrinkable
 
 import androidx.compose.foundation.layout.Arrangement
@@ -24,12 +28,12 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.ui.common.widgets.AutoResizedText
-import com.andannn.melodify.ui.common.widgets.SmpMainIconButton
-import com.andannn.melodify.ui.common.widgets.SmpSubIconButton
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.ui.common.theme.MelodifyTheme
 import com.andannn.melodify.ui.common.util.getIcon
+import com.andannn.melodify.ui.common.widgets.AutoResizedText
+import com.andannn.melodify.ui.common.widgets.SmpMainIconButton
+import com.andannn.melodify.ui.common.widgets.SmpSubIconButton
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -48,7 +52,7 @@ internal fun LargePlayerControlArea(
     val titleState by rememberUpdatedState(newValue = title)
     Column(
         modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceEvenly
+        verticalArrangement = Arrangement.SpaceEvenly,
     ) {
         Column {
             AutoResizedText(
@@ -79,9 +83,9 @@ internal fun LargePlayerControlArea(
         ) {
             SmpSubIconButton(
                 modifier =
-                Modifier
-                    .weight(1f)
-                    .aspectRatio(1f),
+                    Modifier
+                        .weight(1f)
+                        .aspectRatio(1f),
                 imageVector = if (isShuffle) Icons.Rounded.ShuffleOn else Icons.Rounded.Shuffle,
                 enabled = enable,
                 onClick = {
@@ -90,9 +94,9 @@ internal fun LargePlayerControlArea(
             )
             SmpSubIconButton(
                 modifier =
-                Modifier
-                    .weight(1f)
-                    .aspectRatio(1f),
+                    Modifier
+                        .weight(1f)
+                        .aspectRatio(1f),
                 scale = 2f,
                 enabled = enable,
                 imageVector = Icons.Rounded.SkipPrevious,
@@ -103,9 +107,9 @@ internal fun LargePlayerControlArea(
 
             SmpMainIconButton(
                 modifier =
-                Modifier
-                    .weight(1f)
-                    .aspectRatio(1f),
+                    Modifier
+                        .weight(1f)
+                        .aspectRatio(1f),
                 enabled = enable,
                 imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                 onClick = {
@@ -114,10 +118,10 @@ internal fun LargePlayerControlArea(
             )
             SmpSubIconButton(
                 modifier =
-                Modifier
-                    .weight(1f)
-                    .aspectRatio(1f)
-                    .padding(10.dp),
+                    Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .padding(10.dp),
                 scale = 2f,
                 enabled = enable,
                 imageVector = Icons.Rounded.SkipNext,

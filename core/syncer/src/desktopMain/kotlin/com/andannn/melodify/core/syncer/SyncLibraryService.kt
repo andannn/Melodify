@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.syncer
 
 import com.andannn.melodify.core.datastore.UserSettingPreferences
@@ -17,7 +21,7 @@ private const val TAG = "SyncLibraryService"
 
 class SyncLibraryService(
     private val userSettingPreferences: UserSettingPreferences,
-    private val syncer: MediaLibrarySyncer
+    private val syncer: MediaLibrarySyncer,
 ) {
     /**
      * Start watching the library for changes.

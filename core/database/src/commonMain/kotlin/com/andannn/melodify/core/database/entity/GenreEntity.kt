@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.database.entity
 
 import androidx.room.ColumnInfo
@@ -14,8 +18,7 @@ internal object GenreColumns {
 class GenreEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = GenreColumns.ID)
-    val genreId: Long ? = null,
-
+    val genreId: Long? = null,
     @ColumnInfo(name = GenreColumns.NAME)
     val name: String? = null,
 )

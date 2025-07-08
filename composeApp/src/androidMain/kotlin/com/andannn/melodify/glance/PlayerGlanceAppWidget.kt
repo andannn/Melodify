@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.glance
 
 import android.content.Context
@@ -23,25 +27,27 @@ private const val TAG = "PlayerGlanceAppWidget"
 class PlayerGlanceAppWidget : GlanceAppWidget() {
     override val sizeMode: SizeMode = SizeMode.Exact
 
-    override suspend fun provideGlance(context: Context, id: GlanceId) {
+    override suspend fun provideGlance(
+        context: Context,
+        id: GlanceId,
+    ) {
         Napier.d(tag = TAG) { "provideGlance called" }
         provideContent {
             CompositionLocalProvider(
                 LocalPopupController provides remember { NoOpPopupController() },
-                LocalRepository provides remember { getKoin().get<Repository>() }
+                LocalRepository provides remember { getKoin().get<Repository>() },
             ) {
                 PlayerGlance(
                     onLaunchMainActivity = {
                         actionStartActivity(
                             Intent(
                                 context,
-                                MainActivity::class.java
-                            )
+                                MainActivity::class.java,
+                            ),
                         )
-                    }
+                    },
                 )
             }
         }
-
     }
 }

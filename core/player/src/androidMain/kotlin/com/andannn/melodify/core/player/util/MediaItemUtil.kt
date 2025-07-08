@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.player.util
 
 import android.net.Uri
@@ -45,13 +49,14 @@ fun buildMediaItem(
                 Bundle().apply {
                     uniqueId?.let { putString(UNIQUE_ID_KEY, it) }
                     imageUri?.let { putString(EXTRA_ALBUM_COVER_ART_KEY, it.toString()) }
-                }
+                },
             )
             .build()
 
-    val requestMetadata = RequestMetadata.Builder()
-        .setMediaUri(sourceUri)
-        .build()
+    val requestMetadata =
+        RequestMetadata.Builder()
+            .setMediaUri(sourceUri)
+            .build()
 
     return MediaItem.Builder()
         .setMediaId(mediaId)

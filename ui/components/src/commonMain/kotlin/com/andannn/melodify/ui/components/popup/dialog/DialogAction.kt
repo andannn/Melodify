@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.popup.dialog
 
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -26,7 +30,7 @@ sealed interface DialogAction {
     interface AddToPlayListDialog : DialogAction {
         data class OnAddToPlayList(
             val playList: PlayListItemModel,
-            val audios: List<AudioItemModel>
+            val audios: List<AudioItemModel>,
         ) :
             AddToPlayListDialog
 

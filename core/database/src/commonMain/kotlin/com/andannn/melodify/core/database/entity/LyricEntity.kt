@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.database.entity
 
 import androidx.room.ColumnInfo
@@ -22,28 +26,20 @@ data class LyricEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = LyricColumns.ID)
     val id: Long,
-
     @ColumnInfo(name = LyricColumns.NAME)
     val name: String,
-
     @ColumnInfo(name = LyricColumns.TRACK_NAME)
     val trackName: String,
-
     @ColumnInfo(name = LyricColumns.ARTIST_NAME)
     val artistName: String,
-
     @ColumnInfo(name = LyricColumns.ALBUM_NAME)
     val albumName: String,
-
     @ColumnInfo(name = LyricColumns.DURATION)
     val duration: Double,
-
     @ColumnInfo(name = LyricColumns.INSTRUMENTAL)
     val instrumental: Boolean,
-
     @ColumnInfo(name = LyricColumns.PLAIN_LYRICS)
     val plainLyrics: String,
-
     @ColumnInfo(name = LyricColumns.SYNCED_LYRICS)
     val syncedLyrics: String,
 )

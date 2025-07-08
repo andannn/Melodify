@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.MediaItemModel
@@ -12,9 +16,8 @@ import kotlinx.coroutines.flow.map
 import kotlin.coroutines.coroutineContext
 
 internal class MediaContentRepositoryImpl(
-    private val mediaLibraryDao: MediaLibraryDao
+    private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaContentRepository {
-
     override fun getAllMediaItemsFlow() =
         mediaLibraryDao.getAllMediaFlow()
             .map { it.mapToAudioItemModel() }
@@ -70,14 +73,11 @@ internal class MediaContentRepositoryImpl(
             it.toAppItem()
         }
 
-    override suspend fun getAlbumByAlbumId(albumId: String) =
-        mediaLibraryDao.getAlbumByAlbumId(albumId)?.toAppItem()
+    override suspend fun getAlbumByAlbumId(albumId: String) = mediaLibraryDao.getAlbumByAlbumId(albumId)?.toAppItem()
 
-    override suspend fun getArtistByArtistId(artistId: String) =
-        mediaLibraryDao.getArtistByArtistId(artistId)?.toAppItem()
+    override suspend fun getArtistByArtistId(artistId: String) = mediaLibraryDao.getArtistByArtistId(artistId)?.toAppItem()
 
-    override suspend fun getGenreByGenreId(genreId: String) =
-        mediaLibraryDao.getGenreByGenreId(genreId)?.toAppItem()
+    override suspend fun getGenreByGenreId(genreId: String) = mediaLibraryDao.getGenreByGenreId(genreId)?.toAppItem()
 
     override suspend fun searchContent(keyword: String): List<MediaItemModel> {
         val matchedAudios = mediaLibraryDao.searchMedia(keyword).map { it.toAppItem() }

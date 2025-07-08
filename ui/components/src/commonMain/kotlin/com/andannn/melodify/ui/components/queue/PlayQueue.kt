@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.queue
 
 import androidx.compose.foundation.layout.Spacer
@@ -35,14 +39,14 @@ fun PlayQueue(
 ) {
     PlayQueueUi(
         state = presenter.present(),
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
 @Composable
 fun PlayQueueUi(
     state: PlayQueueState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (state.playListQueue.isNotEmpty()) {
         PlayQueueContent(
@@ -93,8 +97,14 @@ private fun PlayQueueContent(
     }
 
     LazyColumn(
+<<<<<<< HEAD
         modifier = modifier.fillMaxWidth(),
         state = listState,
+=======
+        modifier =
+            modifier.fillMaxWidth(),
+        state = playQueueState.lazyListState,
+>>>>>>> master
     ) {
         items(
             items = playQueueState.itemList,

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.popup
 
 import androidx.compose.material3.SnackbarResult
@@ -16,13 +20,12 @@ import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogData
 import com.andannn.melodify.ui.components.popup.dialog.DialogDataImpl
+import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.popup.dialog.SleepTimerOption
-import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.snackbar.SnackBarMessage
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.channels.Channel
@@ -47,26 +50,28 @@ interface PopupController {
 
     suspend fun showSnackBar(
         message: SnackBarMessage,
-        messageFormatArgs: List<Any> = emptyList()
+        messageFormatArgs: List<Any> = emptyList(),
     ): SnackbarResult
 
     suspend fun showDialog(dialogId: DialogId): DialogAction
 }
 
 class NoOpPopupController : PopupController {
-    override val currentDialog: DialogData = object : DialogData {
-        override val dialogId: DialogId
-            get() = DialogId.SleepCountingDialog
+    override val currentDialog: DialogData =
+        object : DialogData {
+            override val dialogId: DialogId
+                get() = DialogId.SleepCountingDialog
 
-        override fun performAction(action: DialogAction) {
+            override fun performAction(action: DialogAction) {
+            }
         }
-    }
 
     override val snackBarMessageChannel: ReceiveChannel<SnackbarVisuals> = Channel()
     override val snackBarResultChannel: SendChannel<SnackbarResult> = Channel()
+
     override suspend fun showSnackBar(
         message: SnackBarMessage,
-        messageFormatArgs: List<Any>
+        messageFormatArgs: List<Any>,
     ): SnackbarResult {
         return SnackbarResult.Dismissed
     }
@@ -92,7 +97,7 @@ class PopupControllerImpl : PopupController {
      */
     override suspend fun showSnackBar(
         message: SnackBarMessage,
-        messageFormatArgs: List<Any>
+        messageFormatArgs: List<Any>,
     ): SnackbarResult {
         snackBarMessageChannel.send(message.toSnackbarVisuals(messageFormatArgs))
         return snackBarResultChannel.receive()
@@ -103,17 +108,18 @@ class PopupControllerImpl : PopupController {
      *
      * Dialog show at most one snackbar at a time.
      */
-    override suspend fun showDialog(dialogId: DialogId): DialogAction = mutex.withLock {
-        Napier.d(tag = TAG) { "show dialog. dialogId = $dialogId" }
-        try {
-            return suspendCancellableCoroutine { continuation ->
-                _currentDialog = DialogDataImpl(dialogId, continuation)
+    override suspend fun showDialog(dialogId: DialogId): DialogAction =
+        mutex.withLock {
+            Napier.d(tag = TAG) { "show dialog. dialogId = $dialogId" }
+            try {
+                return suspendCancellableCoroutine { continuation ->
+                    _currentDialog = DialogDataImpl(dialogId, continuation)
+                }
+            } finally {
+                Napier.d(tag = TAG) { "currentDialog closed = $dialogId" }
+                _currentDialog = null
             }
-        } finally {
-            Napier.d(tag = TAG) { "currentDialog closed = $dialogId" }
-            _currentDialog = null
         }
-    }
 }
 
 suspend fun Repository.onMediaOptionClick(
@@ -125,10 +131,11 @@ suspend fun Repository.onMediaOptionClick(
         OptionItem.PLAY_NEXT -> onPlayNextClick(dialog.source)
         OptionItem.ADD_TO_QUEUE -> onAddToQueue(dialog.source)
         OptionItem.SLEEP_TIMER -> onClickSleepTimer(popupController)
-        OptionItem.DELETE_FROM_PLAYLIST -> onDeleteItemInPlayList(
-            (dialog as DialogId.AudioOptionInPlayList).playListId,
-            dialog.source
-        )
+        OptionItem.DELETE_FROM_PLAYLIST ->
+            onDeleteItemInPlayList(
+                (dialog as DialogId.AudioOptionInPlayList).playListId,
+                dialog.source,
+            )
 
         OptionItem.ADD_TO_PLAYLIST -> onAddToPlaylistOptionClick(popupController, dialog.source)
         OptionItem.DELETE_PLAYLIST -> onDeletePlayList(dialog.source as PlayListItemModel)
@@ -138,13 +145,14 @@ suspend fun Repository.onMediaOptionClick(
 }
 
 private suspend fun Repository.onAddToHomeTab(source: MediaItemModel) {
-    val tab = when (source) {
-        is AlbumItemModel -> CustomTab.AlbumDetail(source.id, source.name)
-        is ArtistItemModel -> CustomTab.ArtistDetail(source.id, source.name)
-        is GenreItemModel -> CustomTab.GenreDetail(source.id, source.name)
-        is PlayListItemModel -> CustomTab.PlayListDetail(source.id, source.name)
-        is AudioItemModel -> error("invalid")
-    }
+    val tab =
+        when (source) {
+            is AlbumItemModel -> CustomTab.AlbumDetail(source.id, source.name)
+            is ArtistItemModel -> CustomTab.ArtistDetail(source.id, source.name)
+            is GenreItemModel -> CustomTab.GenreDetail(source.id, source.name)
+            is PlayListItemModel -> CustomTab.PlayListDetail(source.id, source.name)
+            is AudioItemModel -> error("invalid")
+        }
     userPreferenceRepository.addNewCustomTab(tab)
 }
 
@@ -154,7 +162,7 @@ private suspend fun Repository.onPlayNextClick(source: MediaItemModel) {
     if (havePlayingQueue) {
         mediaControllerRepository.addMediaItems(
             index = playerStateMonitoryRepository.getPlayingIndexInQueue() + 1,
-            mediaItems = items
+            mediaItems = items,
         )
     } else {
         mediaControllerRepository.playMediaList(items, 0)
@@ -167,14 +175,17 @@ private suspend fun Repository.onAddToQueue(source: MediaItemModel) {
     if (playListQueue.isNotEmpty()) {
         mediaControllerRepository.addMediaItems(
             index = playListQueue.size,
-            mediaItems = items
+            mediaItems = items,
         )
     } else {
         mediaControllerRepository.playMediaList(items, 0)
     }
 }
 
-private suspend fun Repository.onDeleteItemInPlayList(playListId: String, source: AudioItemModel) {
+private suspend fun Repository.onDeleteItemInPlayList(
+    playListId: String,
+    source: AudioItemModel,
+) {
     playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(source.id))
 }
 
@@ -204,7 +215,8 @@ private suspend fun Repository.onClickSleepTimer(popupController: PopupControlle
                 SleepTimerOption.FIVE_MINUTES,
                 SleepTimerOption.FIFTEEN_MINUTES,
                 SleepTimerOption.THIRTY_MINUTES,
-                SleepTimerOption.SIXTY_MINUTES -> {
+                SleepTimerOption.SIXTY_MINUTES,
+                -> {
                     sleepTimerRepository.startSleepTimer(option.timeMinutes!!)
                 }
 
@@ -220,7 +232,7 @@ private suspend fun Repository.onClickSleepTimer(popupController: PopupControlle
 
 private suspend fun Repository.onAddToPlaylistOptionClick(
     popupController: PopupController,
-    source: MediaItemModel
+    source: MediaItemModel,
 ) {
     val result = popupController.showDialog(DialogId.AddToPlayListDialog(source))
 
@@ -228,7 +240,7 @@ private suspend fun Repository.onAddToPlaylistOptionClick(
         onAddToPlayList(
             playList = result.playList,
             audioList = result.audios,
-            popupController = popupController
+            popupController = popupController,
         )
     } else if (result is DialogAction.AddToPlayListDialog.OnCreateNewPlayList) {
         onCreateNewPlayList(popupController = popupController, source = source)
@@ -237,7 +249,7 @@ private suspend fun Repository.onAddToPlaylistOptionClick(
 
 private suspend fun Repository.onCreateNewPlayList(
     source: MediaItemModel,
-    popupController: PopupController
+    popupController: PopupController,
 ) {
     val result = popupController.showDialog(DialogId.NewPlayListDialog)
     Napier.d(tag = TAG) { "result. name = $result" }
@@ -250,14 +262,14 @@ private suspend fun Repository.onCreateNewPlayList(
 
         playListRepository.addMusicToPlayList(
             playListId = playListId,
-            musics = getAudios(source)
+            musics = getAudios(source),
         )
 
         userPreferenceRepository.addNewCustomTab(
             CustomTab.PlayListDetail(
                 playListId.toString(),
-                name
-            )
+                name,
+            ),
         )
     }
 }
@@ -265,19 +277,20 @@ private suspend fun Repository.onCreateNewPlayList(
 private suspend fun Repository.onAddToPlayList(
     popupController: PopupController,
     playList: PlayListItemModel,
-    audioList: List<AudioItemModel>
+    audioList: List<AudioItemModel>,
 ) {
-    val duplicatedMedias = playListRepository.getDuplicatedMediaInPlayList(
-        playListId = playList.id.toLong(),
-        musics = audioList
-    )
+    val duplicatedMedias =
+        playListRepository.getDuplicatedMediaInPlayList(
+            playListId = playList.id.toLong(),
+            musics = audioList,
+        )
 
     Napier.d(tag = TAG) { "onAddToPlayList. duplicated Medias: $duplicatedMedias" }
     when {
         duplicatedMedias.isEmpty() -> {
             playListRepository.addMusicToPlayList(
                 playListId = playList.id.toLong(),
-                musics = audioList
+                musics = audioList,
             )
 
             popupController.showSnackBar(
@@ -299,7 +312,7 @@ private suspend fun Repository.onAddToPlayList(
             if (result is DialogAction.AlertDialog.Accept) {
                 playListRepository.addMusicToPlayList(
                     playListId = playList.id.toLong(),
-                    musics = audioList.filter { it.id !in duplicatedMedias }
+                    musics = audioList.filter { it.id !in duplicatedMedias },
                 )
             }
         }

@@ -20,3 +20,14 @@ Development is progressing at a very slow pace.
 ## iOS
 Not yet implemented.
 
+
+### Code style
+running `./gradlew ktLintCheck` to check lint issues
+
+running `./gradlew ktLintFormat` to automatically fix lint errors.
+
+running `./gradlew spotlessCheck` to check copyright.
+
+running `./gradlew spotlessApply` to add copyright.
+
+
