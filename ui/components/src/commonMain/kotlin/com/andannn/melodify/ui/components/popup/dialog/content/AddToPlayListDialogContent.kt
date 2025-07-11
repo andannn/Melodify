@@ -40,7 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.getAudios
+import com.andannn.melodify.core.data.audios
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
@@ -77,7 +77,12 @@ fun AddToPlayListDialogContent(
             onAction(DialogAction.Dismissed)
         },
         onPlayListClick = { playList ->
-            onAction(DialogAction.AddToPlayListDialog.OnAddToPlayList(playList, state.audioListState))
+            onAction(
+                DialogAction.AddToPlayListDialog.OnAddToPlayList(
+                    playList,
+                    state.audioListState,
+                ),
+            )
         },
         onCreateNewClick = {
             onAction(DialogAction.AddToPlayListDialog.OnCreateNewPlayList)
@@ -239,12 +244,13 @@ private class AddToPlayListSheetState(
 
     init {
         scope.launch {
-            val audioList = repository.getAudios(source)
+            val audioList = with(repository) { source.audios() }
             audioListState.addAll(audioList)
         }
 
         scope.launch {
-            repository.playListRepository.getAllPlayListFlow()
+            repository.playListRepository
+                .getAllPlayListFlow()
                 .distinctUntilChanged()
                 .collect {
                     playListState.clear()

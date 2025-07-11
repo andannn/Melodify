@@ -69,7 +69,7 @@ sealed interface DialogId {
     data object SleepCountingDialog : DialogId
 
     abstract class MediaOption(
-        open val source: MediaItemModel,
+        open val media: MediaItemModel,
         open val options: List<OptionItem>,
     ) : DialogId {
         companion object {
@@ -91,9 +91,9 @@ sealed interface DialogId {
     }
 
     data class AudioOption(
-        override val source: AudioItemModel,
+        override val media: AudioItemModel,
     ) : MediaOption(
-            source = source,
+            media = media,
             options =
                 listOf(
                     OptionItem.ADD_TO_QUEUE,
@@ -104,9 +104,9 @@ sealed interface DialogId {
 
     data class AudioOptionInPlayList(
         val playListId: String,
-        override val source: AudioItemModel,
+        override val media: AudioItemModel,
     ) : MediaOption(
-            source = source,
+            media = media,
             options =
                 listOf(
                     OptionItem.ADD_TO_QUEUE,
@@ -117,9 +117,9 @@ sealed interface DialogId {
         )
 
     data class PlayerOption(
-        override val source: AudioItemModel,
+        override val media: AudioItemModel,
     ) : MediaOption(
-            source = source,
+            media = media,
             options =
                 listOf(
                     OptionItem.ADD_TO_QUEUE,
@@ -129,9 +129,9 @@ sealed interface DialogId {
         )
 
     data class PlayListOption(
-        override val source: PlayListItemModel,
+        override val media: PlayListItemModel,
     ) : MediaOption(
-            source = source,
+            media = media,
             options =
                 listOf(
                     OptionItem.ADD_TO_QUEUE,
@@ -143,9 +143,9 @@ sealed interface DialogId {
         )
 
     data class SearchedPlayListOption(
-        override val source: PlayListItemModel,
+        override val media: PlayListItemModel,
     ) : MediaOption(
-            source = source,
+            media = media,
             options =
                 listOf(
                     OptionItem.ADD_TO_QUEUE,
@@ -156,9 +156,9 @@ sealed interface DialogId {
         )
 
     data class FavoritePlayListOption(
-        override val source: PlayListItemModel,
+        override val media: PlayListItemModel,
     ) : MediaOption(
-            source = source,
+            media = media,
             options =
                 listOf(
                     OptionItem.ADD_TO_QUEUE,
@@ -169,9 +169,9 @@ sealed interface DialogId {
         )
 
     data class GenreOption(
-        override val source: GenreItemModel,
+        override val media: GenreItemModel,
     ) : MediaOption(
-            source = source,
+            media = media,
             options =
                 listOf(
                     OptionItem.ADD_TO_QUEUE,
@@ -182,9 +182,9 @@ sealed interface DialogId {
         )
 
     data class SearchedGenreOption(
-        override val source: GenreItemModel,
+        override val media: GenreItemModel,
     ) : MediaOption(
-            source = source,
+            media = media,
             options =
                 listOf(
                     OptionItem.ADD_TO_QUEUE,
@@ -195,9 +195,9 @@ sealed interface DialogId {
         )
 
     data class AlbumOption(
-        override val source: AlbumItemModel,
+        override val media: AlbumItemModel,
     ) : MediaOption(
-            source = source,
+            media = media,
             options =
                 listOf(
                     OptionItem.ADD_TO_QUEUE,
@@ -208,9 +208,9 @@ sealed interface DialogId {
         )
 
     data class SearchedAlbumOption(
-        override val source: AlbumItemModel,
+        override val media: AlbumItemModel,
     ) : MediaOption(
-            source = source,
+            media = media,
             options =
                 listOf(
                     OptionItem.ADD_TO_QUEUE,
@@ -221,9 +221,9 @@ sealed interface DialogId {
         )
 
     data class SearchedArtistOption(
-        override val source: ArtistItemModel,
+        override val media: ArtistItemModel,
     ) : MediaOption(
-            source = source,
+            media = media,
             options =
                 listOf(
                     OptionItem.ADD_TO_QUEUE,
@@ -234,9 +234,9 @@ sealed interface DialogId {
         )
 
     data class ArtistOption(
-        override val source: ArtistItemModel,
+        override val media: ArtistItemModel,
     ) : MediaOption(
-            source = source,
+            media = media,
             options =
                 listOf(
                     OptionItem.ADD_TO_QUEUE,

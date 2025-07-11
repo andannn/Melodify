@@ -36,9 +36,10 @@ jobs:
 
       - name: run copyright header check
         run: ./gradlew spotlessCheck
-
-      - name: run kotlin lint check
-        run: ./gradlew ktlintCheck
+#      Uncomment the following line after this issue is resolved:
+#      https://github.com/pinterest/ktlint/issues/2953
+#      - name: run kotlin lint check
+#        run: ./gradlew ktlintCheck
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew

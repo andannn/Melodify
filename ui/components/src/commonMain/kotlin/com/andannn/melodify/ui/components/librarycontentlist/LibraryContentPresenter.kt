@@ -44,9 +44,11 @@ class LibraryContentPresenter(
 ) : Presenter<LibraryContentState> {
     @Composable
     override fun present(): LibraryContentState {
-        val contentList by dataSource.content(repository).collectAsRetainedState(emptyList())
+        val contentList by with(repository) { dataSource.content() }.collectAsRetainedState(
+            emptyList(),
+        )
         val title by produceRetainedState("") {
-            value = dataSource.getTitle(repository)
+            value = with(repository) { dataSource.getTitle() }
         }
         return LibraryContentState(
             contentList,
@@ -79,7 +81,8 @@ class LibraryContentPresenter(
     }
 }
 
-private suspend fun LibraryDataSource.getTitle(repository: Repository) =
+context(repository: Repository)
+private suspend fun LibraryDataSource.getTitle() =
     when (this) {
         LibraryDataSource.AllAlbum -> getString(Res.string.album_page_title)
         LibraryDataSource.AllArtist -> getString(Res.string.artist_page_title)
@@ -111,7 +114,9 @@ data class LibraryContentState(
 ) : CircuitUiState
 
 sealed interface LibraryContentUiEvent {
-    data class OnItemClick(val item: MediaItemModel) : LibraryContentUiEvent
+    data class OnItemClick(
+        val item: MediaItemModel,
+    ) : LibraryContentUiEvent
 
     data object OnBack : LibraryContentUiEvent
 }

@@ -12,7 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.getAudios
+import com.andannn.melodify.core.data.audios
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -20,6 +20,9 @@ import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.repository.PlayListRepository
+import com.andannn.melodify.core.data.repository.SleepTimerRepository
+import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogData
 import com.andannn.melodify.ui.components.popup.dialog.DialogDataImpl
@@ -72,13 +75,9 @@ class NoOpPopupController : PopupController {
     override suspend fun showSnackBar(
         message: SnackBarMessage,
         messageFormatArgs: List<Any>,
-    ): SnackbarResult {
-        return SnackbarResult.Dismissed
-    }
+    ): SnackbarResult = SnackbarResult.Dismissed
 
-    override suspend fun showDialog(dialogId: DialogId): DialogAction {
-        return DialogAction.Dismissed
-    }
+    override suspend fun showDialog(dialogId: DialogId): DialogAction = DialogAction.Dismissed
 }
 
 class PopupControllerImpl : PopupController {
@@ -122,87 +121,94 @@ class PopupControllerImpl : PopupController {
         }
 }
 
-suspend fun Repository.onMediaOptionClick(
+context(
+    repo: Repository,
+    popupController: PopupController,
+)
+suspend fun handleMediaOptionClick(
     optionItem: OptionItem,
     dialog: DialogId.MediaOption,
-    popupController: PopupController,
 ) {
     when (optionItem) {
-        OptionItem.PLAY_NEXT -> onPlayNextClick(dialog.source)
-        OptionItem.ADD_TO_QUEUE -> onAddToQueue(dialog.source)
-        OptionItem.SLEEP_TIMER -> onClickSleepTimer(popupController)
+        OptionItem.PLAY_NEXT -> dialog.media.addToNextPlay()
+        OptionItem.ADD_TO_QUEUE -> dialog.media.addToQueue()
+        OptionItem.SLEEP_TIMER -> handleClickSleepTimer()
         OptionItem.DELETE_FROM_PLAYLIST ->
             onDeleteItemInPlayList(
                 (dialog as DialogId.AudioOptionInPlayList).playListId,
-                dialog.source,
+                dialog.media,
             )
 
-        OptionItem.ADD_TO_PLAYLIST -> onAddToPlaylistOptionClick(popupController, dialog.source)
-        OptionItem.DELETE_PLAYLIST -> onDeletePlayList(dialog.source as PlayListItemModel)
-        OptionItem.ADD_TO_HOME_TAB -> onAddToHomeTab(dialog.source)
+        OptionItem.ADD_TO_PLAYLIST -> onAddToPlaylistOptionClick(dialog.media)
+        OptionItem.DELETE_PLAYLIST -> (dialog.media as PlayListItemModel).delete()
+        OptionItem.ADD_TO_HOME_TAB -> dialog.media.addToHomeTab()
         OptionItem.DELETE_TAB -> error("never")
     }
 }
 
-private suspend fun Repository.onAddToHomeTab(source: MediaItemModel) {
+context(userPreferenceRepository: UserPreferenceRepository)
+private suspend fun MediaItemModel.addToHomeTab() {
     val tab =
-        when (source) {
-            is AlbumItemModel -> CustomTab.AlbumDetail(source.id, source.name)
-            is ArtistItemModel -> CustomTab.ArtistDetail(source.id, source.name)
-            is GenreItemModel -> CustomTab.GenreDetail(source.id, source.name)
-            is PlayListItemModel -> CustomTab.PlayListDetail(source.id, source.name)
+        when (this) {
+            is AlbumItemModel -> CustomTab.AlbumDetail(id, name)
+            is ArtistItemModel -> CustomTab.ArtistDetail(id, name)
+            is GenreItemModel -> CustomTab.GenreDetail(id, name)
+            is PlayListItemModel -> CustomTab.PlayListDetail(id, name)
             is AudioItemModel -> error("invalid")
         }
     userPreferenceRepository.addNewCustomTab(tab)
 }
 
-private suspend fun Repository.onPlayNextClick(source: MediaItemModel) {
-    val items = getAudios(source)
-    val havePlayingQueue = playerStateMonitoryRepository.getPlayListQueue().isNotEmpty()
+context(repo: Repository)
+private suspend fun MediaItemModel.addToNextPlay() {
+    val havePlayingQueue = repo.getPlayListQueue().isNotEmpty()
     if (havePlayingQueue) {
-        mediaControllerRepository.addMediaItems(
-            index = playerStateMonitoryRepository.getPlayingIndexInQueue() + 1,
-            mediaItems = items,
+        repo.addMediaItems(
+            index = repo.getPlayingIndexInQueue() + 1,
+            mediaItems = audios(),
         )
     } else {
-        mediaControllerRepository.playMediaList(items, 0)
+        repo.playMediaList(audios(), 0)
     }
 }
 
-private suspend fun Repository.onAddToQueue(source: MediaItemModel) {
-    val items = getAudios(source)
-    val playListQueue = playerStateMonitoryRepository.getPlayListQueue()
+context(repo: Repository)
+private suspend fun MediaItemModel.addToQueue() {
+    val playListQueue = repo.getPlayListQueue()
     if (playListQueue.isNotEmpty()) {
-        mediaControllerRepository.addMediaItems(
+        repo.addMediaItems(
             index = playListQueue.size,
-            mediaItems = items,
+            mediaItems = audios(),
         )
     } else {
-        mediaControllerRepository.playMediaList(items, 0)
+        repo.playMediaList(audios(), 0)
     }
 }
 
-private suspend fun Repository.onDeleteItemInPlayList(
+context(playListRepository: PlayListRepository)
+private suspend fun onDeleteItemInPlayList(
     playListId: String,
     source: AudioItemModel,
 ) {
     playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(source.id))
 }
 
-private suspend fun Repository.onDeletePlayList(playListItemModel: PlayListItemModel) {
-    playListRepository.deletePlayList(playListItemModel.id.toLong())
+context(repo: Repository)
+private suspend fun PlayListItemModel.delete() {
+    repo.deletePlayList(id.toLong())
 
-    val currentCustomTabs = userPreferenceRepository.currentCustomTabsFlow.first()
+    val currentCustomTabs = repo.currentCustomTabsFlow.first()
     val deletedTab =
-        currentCustomTabs.firstOrNull { it is CustomTab.PlayListDetail && it.playListId == playListItemModel.id }
+        currentCustomTabs.firstOrNull { it is CustomTab.PlayListDetail && it.playListId == id }
 
     Napier.d(tag = TAG) { "deletedTab $deletedTab" }
     if (deletedTab != null) {
-        userPreferenceRepository.deleteCustomTab(deletedTab)
+        repo.deleteCustomTab(deletedTab)
     }
 }
 
-private suspend fun Repository.onClickSleepTimer(popupController: PopupController) {
+context(sleepTimerRepository: SleepTimerRepository, popupController: PopupController)
+private suspend fun handleClickSleepTimer() {
     if (sleepTimerRepository.isCounting()) {
         val result = popupController.showDialog(DialogId.SleepCountingDialog)
         if (result is DialogAction.SleepTimerCountingDialog.OnCancelTimer) {
@@ -216,7 +222,7 @@ private suspend fun Repository.onClickSleepTimer(popupController: PopupControlle
                 SleepTimerOption.FIFTEEN_MINUTES,
                 SleepTimerOption.THIRTY_MINUTES,
                 SleepTimerOption.SIXTY_MINUTES,
-                -> {
+                    -> {
                     sleepTimerRepository.startSleepTimer(option.timeMinutes!!)
                 }
 
@@ -230,42 +236,34 @@ private suspend fun Repository.onClickSleepTimer(popupController: PopupControlle
     }
 }
 
-private suspend fun Repository.onAddToPlaylistOptionClick(
-    popupController: PopupController,
-    source: MediaItemModel,
-) {
+context(repo: Repository, popupController: PopupController)
+private suspend fun onAddToPlaylistOptionClick(source: MediaItemModel) {
     val result = popupController.showDialog(DialogId.AddToPlayListDialog(source))
 
     if (result is DialogAction.AddToPlayListDialog.OnAddToPlayList) {
-        onAddToPlayList(
-            playList = result.playList,
-            audioList = result.audios,
-            popupController = popupController,
-        )
+        result.playList.addAll(audioList = result.audios)
     } else if (result is DialogAction.AddToPlayListDialog.OnCreateNewPlayList) {
-        onCreateNewPlayList(popupController = popupController, source = source)
+        createNewPlayListFromSource(source = source)
     }
 }
 
-private suspend fun Repository.onCreateNewPlayList(
-    source: MediaItemModel,
-    popupController: PopupController,
-) {
+context(repo: Repository, popupController: PopupController)
+private suspend fun createNewPlayListFromSource(source: MediaItemModel) {
     val result = popupController.showDialog(DialogId.NewPlayListDialog)
     Napier.d(tag = TAG) { "result. name = $result" }
     if (result is DialogAction.InputDialog.Accept) {
         val name = result.input
         Napier.d(tag = TAG) { "create new playlist start. name = $name" }
-        val playListId = playListRepository.createNewPlayList(name)
+        val playListId = repo.createNewPlayList(name)
 
         Napier.d(tag = TAG) { "playlist created. id = $playListId" }
 
-        playListRepository.addMusicToPlayList(
+        repo.addMusicToPlayList(
             playListId = playListId,
-            musics = getAudios(source),
+            musics = source.audios(),
         )
 
-        userPreferenceRepository.addNewCustomTab(
+        repo.addNewCustomTab(
             CustomTab.PlayListDetail(
                 playListId.toString(),
                 name,
@@ -274,14 +272,13 @@ private suspend fun Repository.onCreateNewPlayList(
     }
 }
 
-private suspend fun Repository.onAddToPlayList(
-    popupController: PopupController,
-    playList: PlayListItemModel,
+context(playListRepository: PlayListRepository, popupController: PopupController)
+private suspend fun PlayListItemModel.addAll(
     audioList: List<AudioItemModel>,
 ) {
     val duplicatedMedias =
         playListRepository.getDuplicatedMediaInPlayList(
-            playListId = playList.id.toLong(),
+            playListId = id.toLong(),
             musics = audioList,
         )
 
@@ -289,13 +286,13 @@ private suspend fun Repository.onAddToPlayList(
     when {
         duplicatedMedias.isEmpty() -> {
             playListRepository.addMusicToPlayList(
-                playListId = playList.id.toLong(),
+                playListId = id.toLong(),
                 musics = audioList,
             )
 
             popupController.showSnackBar(
                 message = SnackBarMessage.AddPlayListSuccess,
-                messageFormatArgs = listOf(playList.name),
+                messageFormatArgs = listOf(name),
             )
         }
 
@@ -311,7 +308,7 @@ private suspend fun Repository.onAddToPlayList(
 
             if (result is DialogAction.AlertDialog.Accept) {
                 playListRepository.addMusicToPlayList(
-                    playListId = playList.id.toLong(),
+                    playListId = id.toLong(),
                     musics = audioList.filter { it.id !in duplicatedMedias },
                 )
             }

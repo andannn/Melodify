@@ -26,7 +26,7 @@ import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
-import com.andannn.melodify.ui.components.popup.onMediaOptionClick
+import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -147,22 +147,24 @@ class PlayerPresenter(
                     DialogId.PlayerOption(mediaItem),
                 )
             if (result is DialogAction.MediaOptionDialog.ClickItem) {
-                repository.onMediaOptionClick(
-                    optionItem = result.optionItem,
-                    dialog = result.dialog,
-                    popupController = popupController,
-                )
+                with(repository) {
+                    with(popupController) {
+                        handleMediaOptionClick(
+                            optionItem = result.optionItem,
+                            dialog = result.dialog,
+                        )
+                    }
+                }
             }
         }
     }
 
-    private fun getIsFavoriteFlow(interactingMusicItem: AudioItemModel?): Flow<Boolean> {
-        return if (interactingMusicItem == null) {
+    private fun getIsFavoriteFlow(interactingMusicItem: AudioItemModel?): Flow<Boolean> =
+        if (interactingMusicItem == null) {
             flowOf(false)
         } else {
             playListRepository.isMediaInFavoritePlayListFlow(interactingMusicItem.id)
         }
-    }
 
     private fun onFavoriteButtonClick(
         scope: CoroutineScope,

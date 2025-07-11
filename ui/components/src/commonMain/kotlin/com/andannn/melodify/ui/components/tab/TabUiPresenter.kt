@@ -20,7 +20,7 @@ import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
-import com.andannn.melodify.ui.components.popup.onMediaOptionClick
+import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -71,7 +71,8 @@ class TabUiPresenter(
                             // new tab list is smaller than the previous one.
                             // 1. select the previous tab
                             // 2. if the current tab is removed, select the previous tab
-                            next.indexOf(pre.getOrNull(currentIndex))
+                            next
+                                .indexOf(pre.getOrNull(currentIndex))
                                 .takeIf { it != -1 } ?: (currentIndex - 1).coerceAtLeast(0)
                         } else if (next.size > pre.size) {
                             // always select the new created tab
@@ -114,11 +115,14 @@ class TabUiPresenter(
             if (result.optionItem == OptionItem.DELETE_TAB) {
                 repository.userPreferenceRepository.deleteCustomTab(tab)
             } else {
-                repository.onMediaOptionClick(
-                    optionItem = result.optionItem,
-                    dialog = result.dialog,
-                    popupController = popupController,
-                )
+                with(repository) {
+                    with(popupController) {
+                        handleMediaOptionClick(
+                            optionItem = result.optionItem,
+                            dialog = result.dialog,
+                        )
+                    }
+                }
             }
         }
     }
@@ -134,7 +138,11 @@ data class TabUiState(
 }
 
 sealed interface TabUiEvent {
-    data class OnClickTab(val index: Int) : TabUiEvent
+    data class OnClickTab(
+        val index: Int,
+    ) : TabUiEvent
 
-    data class OnShowTabOption(val tab: CustomTab) : TabUiEvent
+    data class OnShowTabOption(
+        val tab: CustomTab,
+    ) : TabUiEvent
 }

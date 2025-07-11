@@ -14,12 +14,13 @@ import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.contentFlow
 import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
-import com.andannn.melodify.ui.components.popup.onMediaOptionClick
+import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
@@ -108,8 +109,8 @@ class TabContentPresenter(
         if (selectedTab == null) {
             return flow { emit(emptyList()) }
         }
-        return with(selectedTab) {
-            repository.contentFlow()
+        return with(repository) {
+            selectedTab.contentFlow()
         }
     }
 
@@ -154,11 +155,14 @@ class TabContentPresenter(
                 )
             }
         if (result is DialogAction.MediaOptionDialog.ClickItem) {
-            repository.onMediaOptionClick(
-                optionItem = result.optionItem,
-                dialog = result.dialog,
-                popupController = popupController,
-            )
+            with(repository) {
+                with(popupController) {
+                    handleMediaOptionClick(
+                        optionItem = result.optionItem,
+                        dialog = result.dialog,
+                    )
+                }
+            }
         }
     }
 }
@@ -174,9 +178,13 @@ data class TabContentState(
 ) : CircuitUiState
 
 sealed interface TabContentEvent {
-    data class OnShowMusicItemOption(val mediaItemModel: MediaItemModel) : TabContentEvent
+    data class OnShowMusicItemOption(
+        val mediaItemModel: MediaItemModel,
+    ) : TabContentEvent
 
-    data class OnPlayMusic(val mediaItemModel: AudioItemModel) : TabContentEvent
+    data class OnPlayMusic(
+        val mediaItemModel: AudioItemModel,
+    ) : TabContentEvent
 }
 
 enum class GroupType {
@@ -185,13 +193,13 @@ enum class GroupType {
     NONE,
 }
 
-private fun List<AudioItemModel>.toMap(groupType: GroupType): Map<HeaderKey, List<AudioItemModel>> {
-    return this.groupBy {
-        it.keyOf(groupType)
-    }.mapValues {
-        it.value.sortBy(groupType)
-    }
-}
+private fun List<AudioItemModel>.toMap(groupType: GroupType): Map<HeaderKey, List<AudioItemModel>> =
+    this
+        .groupBy {
+            it.keyOf(groupType)
+        }.mapValues {
+            it.value.sortBy(groupType)
+        }
 
 fun AudioItemModel.keyOf(groupType: GroupType) =
     when (groupType) {
