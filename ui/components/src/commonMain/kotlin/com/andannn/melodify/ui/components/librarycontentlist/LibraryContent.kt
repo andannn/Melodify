@@ -102,13 +102,21 @@ sealed interface LibraryDataSource {
 
     data object Favorite : LibraryDataSource
 
-    data class ArtistDetail(val id: String) : LibraryDataSource
+    data class ArtistDetail(
+        val id: String,
+    ) : LibraryDataSource
 
-    data class AlbumDetail(val id: String) : LibraryDataSource
+    data class AlbumDetail(
+        val id: String,
+    ) : LibraryDataSource
 
-    data class GenreDetail(val id: String) : LibraryDataSource
+    data class GenreDetail(
+        val id: String,
+    ) : LibraryDataSource
 
-    data class PlayListDetail(val id: String) : LibraryDataSource
+    data class PlayListDetail(
+        val id: String,
+    ) : LibraryDataSource
 
     fun toStringCode() =
         when (this) {
@@ -125,8 +133,8 @@ sealed interface LibraryDataSource {
         }
 
     companion object {
-        fun parseFromString(code: String): LibraryDataSource {
-            return if (code == "AllSong") {
+        fun parseFromString(code: String): LibraryDataSource =
+            if (code == "AllSong") {
                 AllSong
             } else if (code == "AllArtist") {
                 AllArtist
@@ -153,24 +161,39 @@ sealed interface LibraryDataSource {
             } else {
                 throw IllegalArgumentException("Unknown code: $code")
             }
-        }
     }
 }
 
-fun LibraryDataSource.content(repository: Repository) =
+context(repository: Repository)
+fun LibraryDataSource.content() =
     when (this) {
-        is LibraryDataSource.AlbumDetail -> repository.mediaContentRepository.getAudiosOfAlbumFlow(id)
+        is LibraryDataSource.AlbumDetail ->
+            repository.mediaContentRepository.getAudiosOfAlbumFlow(
+                id,
+            )
+
         LibraryDataSource.AllAlbum -> repository.mediaContentRepository.getAllAlbumsFlow()
         LibraryDataSource.AllArtist -> repository.mediaContentRepository.getAllArtistFlow()
         LibraryDataSource.AllGenre -> repository.mediaContentRepository.getAllGenreFlow()
         LibraryDataSource.AllPlaylist -> repository.playListRepository.getAllPlayListFlow()
         LibraryDataSource.AllSong -> repository.mediaContentRepository.getAllMediaItemsFlow()
-        is LibraryDataSource.ArtistDetail -> repository.mediaContentRepository.getAudiosOfArtistFlow(id)
+        is LibraryDataSource.ArtistDetail ->
+            repository.mediaContentRepository.getAudiosOfArtistFlow(
+                id,
+            )
+
         LibraryDataSource.Favorite ->
             repository.playListRepository.getAudiosOfPlayListFlow(
                 FAVORITE_PLAY_LIST_ID,
             )
 
-        is LibraryDataSource.GenreDetail -> repository.mediaContentRepository.getAudiosOfGenreFlow(id)
-        is LibraryDataSource.PlayListDetail -> repository.playListRepository.getAudiosOfPlayListFlow(id.toLong())
+        is LibraryDataSource.GenreDetail ->
+            repository.mediaContentRepository.getAudiosOfGenreFlow(
+                id,
+            )
+
+        is LibraryDataSource.PlayListDetail ->
+            repository.playListRepository.getAudiosOfPlayListFlow(
+                id.toLong(),
+            )
     }

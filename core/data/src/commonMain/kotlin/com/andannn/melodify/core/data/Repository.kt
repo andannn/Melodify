@@ -27,4 +27,10 @@ class Repository constructor(
     val playListRepository: PlayListRepository = NoOpPlayListRepository(),
     val sleepTimerRepository: SleepTimerRepository = NoOpSleepTimerRepository(),
     val userPreferenceRepository: UserPreferenceRepository = NoOpUserPreferenceRepository(),
-)
+) : LyricRepository by lyricRepository,
+    MediaContentRepository by mediaContentRepository,
+    MediaControllerRepository by mediaControllerRepository,
+    PlayerStateMonitoryRepository by playerStateMonitoryRepository,
+    PlayListRepository by playListRepository,
+    SleepTimerRepository by sleepTimerRepository,
+    UserPreferenceRepository by userPreferenceRepository

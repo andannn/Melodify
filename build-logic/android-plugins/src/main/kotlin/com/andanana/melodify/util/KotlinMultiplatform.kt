@@ -11,7 +11,7 @@ fun Project.configureKotlinMultiplatform(extension: KotlinMultiplatformExtension
     with(extension) {
         compilerOptions {
             // https://kotlinlang.org/docs/whatsnew22.html#preview-of-context-parameters
-            // freeCompilerArgs.add("-Xcontext-parameters")
+            freeCompilerArgs.add("-Xcontext-parameters")
 
             androidTarget {
                 compilerOptions.jvmTarget.set(JvmTarget.JVM_17)

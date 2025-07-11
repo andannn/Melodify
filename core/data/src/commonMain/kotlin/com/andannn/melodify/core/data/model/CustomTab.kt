@@ -10,30 +10,47 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface CustomTab {
-    fun Repository.contentFlow(): Flow<List<AudioItemModel>>
+    @Serializable
+    data object AllMusic : CustomTab
 
     @Serializable
-    data object AllMusic : CustomTab {
-        override fun Repository.contentFlow() = mediaContentRepository.getAllMediaItemsFlow()
-    }
+    data class AlbumDetail(
+        val albumId: String,
+        val label: String,
+    ) : CustomTab
 
     @Serializable
-    data class AlbumDetail(val albumId: String, val label: String) : CustomTab {
-        override fun Repository.contentFlow() = mediaContentRepository.getAudiosOfAlbumFlow(albumId)
-    }
+    data class ArtistDetail(
+        val artistId: String,
+        val label: String,
+    ) : CustomTab
 
     @Serializable
-    data class ArtistDetail(val artistId: String, val label: String) : CustomTab {
-        override fun Repository.contentFlow() = mediaContentRepository.getAudiosOfArtistFlow(artistId)
-    }
+    data class GenreDetail(
+        val genreId: String,
+        val label: String,
+    ) : CustomTab
 
     @Serializable
-    data class GenreDetail(val genreId: String, val label: String) : CustomTab {
-        override fun Repository.contentFlow() = mediaContentRepository.getAudiosOfGenreFlow(genreId)
-    }
-
-    @Serializable
-    data class PlayListDetail(val playListId: String, val label: String) : CustomTab {
-        override fun Repository.contentFlow() = playListRepository.getAudiosOfPlayListFlow(playListId.toLong())
-    }
+    data class PlayListDetail(
+        val playListId: String,
+        val label: String,
+    ) : CustomTab
 }
+
+context(repository: Repository)
+fun CustomTab.contentFlow(): Flow<List<AudioItemModel>> =
+    when (this) {
+        is CustomTab.AllMusic -> repository.mediaContentRepository.getAllMediaItemsFlow()
+        is CustomTab.AlbumDetail -> repository.mediaContentRepository.getAudiosOfAlbumFlow(albumId)
+        is CustomTab.ArtistDetail ->
+            repository.mediaContentRepository.getAudiosOfArtistFlow(
+                artistId,
+            )
+
+        is CustomTab.GenreDetail -> repository.mediaContentRepository.getAudiosOfGenreFlow(genreId)
+        is CustomTab.PlayListDetail ->
+            repository.playListRepository.getAudiosOfPlayListFlow(
+                playListId.toLong(),
+            )
+    }

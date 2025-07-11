@@ -11,25 +11,26 @@ import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 
-suspend fun Repository.getAudios(source: MediaItemModel) =
-    when (source) {
+context(repo: Repository)
+suspend fun MediaItemModel.audios(): List<AudioItemModel> =
+    when (this) {
         is AlbumItemModel -> {
-            mediaContentRepository.getAudiosOfAlbum(source.id)
+            repo.getAudiosOfAlbum(id)
         }
 
         is ArtistItemModel -> {
-            mediaContentRepository.getAudiosOfArtist(source.id)
+            repo.getAudiosOfArtist(id)
         }
 
         is GenreItemModel -> {
-            mediaContentRepository.getAudiosOfGenre(source.id)
+            repo.getAudiosOfGenre(id)
         }
 
         is AudioItemModel -> {
-            listOf(source)
+            listOf(this)
         }
 
         is PlayListItemModel -> {
-            playListRepository.getAudiosOfPlayList(source.id.toLong())
+            repo.getAudiosOfPlayList(id.toLong())
         }
     }
