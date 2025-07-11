@@ -22,10 +22,6 @@ kotlin {
             implementation(project(":ui:common"))
             implementation(project(":ui:components"))
 
-            implementation(libs.koin.core.viewmodel)
-            implementation(libs.koin.compose.viewmodel)
-
-            implementation(libs.navigation.compose)
             implementation(libs.reorderable)
             implementation(libs.kotlinx.serialization.json)
         }
