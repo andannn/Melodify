@@ -3,9 +3,9 @@ composeLintChecks = "1.4.1"
 firebaseBom = "33.11.0"
 jaudiotagger = "2.0.3"
 kotlinxCollectionsImmutable = "0.3.8"
-ksp = "2.1.10-1.0.31"
+ksp = "2.2.0-2.0.2"
 materialColorUtilitiesAndroid = "2.1.1"
-kotlin = "2.1.10"
+kotlin = "2.2.0"
 androidx-palette = "1.0.0"
 androidxCore = "1.15.0"
 androidxCoreSplashscreen = "1.0.1"
@@ -106,6 +106,13 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", vers
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "uiTooling" }
 paparazzi = { group = "app.cash.paparazzi", name = "paparazzi", version.ref = "paparazzi" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
+vlcj = { module = "uk.co.caprica:vlcj", version.ref = "vlcj" }
+androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", version.ref = "uiDesktop" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidx-glance" }
+androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "androidx-glance" }
 
 # dependecy in build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -113,15 +120,6 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 composeCompiler-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 jetbrainsCompose-gradlePlugin = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "compose-plugin" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", version.ref = "uiDesktop" }
-vlcj = { module = "uk.co.caprica:vlcj", version.ref = "vlcj" }
-androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidx-glance" }
-androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "androidx-glance" }
 spotless-gradlePlugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 licensee-gradlePlugin = { group = "app.cash.licensee", name = "licensee-gradle-plugin", version.ref = "licensee" }
 ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlint" }

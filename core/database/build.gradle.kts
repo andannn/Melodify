@@ -8,6 +8,10 @@ android {
     namespace = "com.andannn.melodify.ui.database"
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 room {
     schemaDirectory("$projectDir/schemas")
 }
