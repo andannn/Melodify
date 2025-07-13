@@ -14,6 +14,18 @@ plugins {
 
 kotlin {
     sourceSets {
+        val mobileUiCommon by creating {
+            dependsOn(commonMain.get())
+        }
+
+        iosMain {
+            dependsOn(mobileUiCommon)
+        }
+
+        androidMain {
+            dependsOn(mobileUiCommon)
+        }
+
         commonMain.dependencies {
             implementation(project(":core:data"))
             implementation(project(":core:syncer"))

@@ -12,25 +12,25 @@ fun Project.configureKotlinMultiplatform(extension: KotlinMultiplatformExtension
         compilerOptions {
             // https://kotlinlang.org/docs/whatsnew22.html#preview-of-context-parameters
             freeCompilerArgs.add("-Xcontext-parameters")
+        }
 
-            androidTarget {
-                compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
+        androidTarget {
+            compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
 
-                // this is experimental API and will likely change in the future into more robust DSL
-                @OptIn(ExperimentalKotlinGradlePluginApi::class)
-                instrumentedTestVariant {
-                    // !!! this makes instrumented tests depends on commonTest source set.
-                    sourceSetTree.set(KotlinSourceSetTree.test)
-                }
+            // this is experimental API and will likely change in the future into more robust DSL
+            @OptIn(ExperimentalKotlinGradlePluginApi::class)
+            instrumentedTestVariant {
+                // !!! this makes instrumented tests depends on commonTest source set.
+                sourceSetTree.set(KotlinSourceSetTree.test)
             }
+        }
 
-            // share code in android and desktop
-            applyDefaultHierarchyTemplate {
-                common {
-                    group("jvm") {
-                        withJvm()
-                        withAndroidTarget()
-                    }
+        // share code in android and desktop
+        applyDefaultHierarchyTemplate {
+            common {
+                group("deskTopAndAndroid") {
+                    withJvm()
+                    withAndroidTarget()
                 }
             }
         }

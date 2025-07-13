@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "715705000594",
     "project_id": "firstfirebaseproject-56e34",
-    "storage_bucket": "firstfirebaseproject-56e34.appspot.com"
+    "storage_bucket": "firstfirebaseproject-56e34.firebasestorage.app"
   },
   "client": [
     {
@@ -12,12 +12,7 @@
           "package_name": "com.andannn.melodify"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "715705000594-p62nvo0dpvbsnv6n7qcpjcl9t1vbblcm.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyA5aLJ57jKMIDHwuHsWcJETKAJ4ZV0Kiis"
@@ -25,12 +20,26 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "715705000594-p62nvo0dpvbsnv6n7qcpjcl9t1vbblcm.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:715705000594:android:728f4933c105785b66bc4b",
+        "android_client_info": {
+          "package_name": "com.andannn.melodify.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5aLJ57jKMIDHwuHsWcJETKAJ4ZV0Kiis"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
         }
       }
     }
