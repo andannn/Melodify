@@ -29,3 +29,8 @@ running `./gradlew ktLintFormat` to automatically fix lint errors.
 running `./gradlew spotlessCheck` to check copyright.
 
 running `./gradlew spotlessApply` to add copyright.
+
+### Testing
+
+1. Run `./gradlew connectedDebugAndroidTest` to execute android instrument tests.
+2. Run `./gradlew iosSimulatorArm64Test` to execute iOS tests.

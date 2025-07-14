@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import com.andannn.melodify.app.MelodifyDeskTopAppState
-import com.andannn.melodify.buildCircuit
 import com.andannn.melodify.ui.components.common.MainScreen
 import com.andannn.melodify.ui.components.lyrics.Lyrics
 import com.andannn.melodify.ui.components.playcontrol.DesktopPlayerUi
@@ -65,8 +64,8 @@ object MainScreenUiFactory : Ui.Factory {
     override fun create(
         screen: Screen,
         context: CircuitContext,
-    ): Ui<*>? {
-        return when (screen) {
+    ): Ui<*>? =
+        when (screen) {
             is MainScreen ->
                 ui<MainUiState> { state, modifier ->
                     MainScreen(state, modifier)
@@ -74,7 +73,6 @@ object MainScreenUiFactory : Ui.Factory {
 
             else -> null
         }
-    }
 }
 
 object MainScreenPresenterFactory : Presenter.Factory {
@@ -82,8 +80,8 @@ object MainScreenPresenterFactory : Presenter.Factory {
         screen: Screen,
         navigator: Navigator,
         context: CircuitContext,
-    ): Presenter<*>? {
-        return when (screen) {
+    ): Presenter<*>? =
+        when (screen) {
             is MainScreen ->
                 presenterOf {
                     val tabUiPresenter = rememberTabUiPresenter()
@@ -99,7 +97,6 @@ object MainScreenPresenterFactory : Presenter.Factory {
 
             else -> null
         }
-    }
 }
 
 data class MainUiState(
@@ -161,6 +158,16 @@ private fun buildCircuitDesktop() =
                 MainScreenUiFactory,
             ),
     )
+
+private fun buildCircuit(
+    presenterFactory: List<Presenter.Factory> = emptyList(),
+    uiFactory: List<Ui.Factory> = emptyList(),
+): Circuit =
+    Circuit
+        .Builder()
+        .addPresenterFactories(presenterFactory)
+        .addUiFactories(uiFactory)
+        .build()
 
 @Composable
 fun MainScreen(

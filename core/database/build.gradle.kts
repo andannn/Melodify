@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
+
 plugins {
     id("melodify.kmp.library")
     id("com.google.devtools.ksp")
@@ -13,6 +16,15 @@ room {
 }
 
 kotlin {
+    androidTarget {
+        // this is experimental API and will likely change in the future into more robust DSL
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        instrumentedTestVariant {
+            // !!! this makes instrumented tests depends on commonTest source set.
+            sourceSetTree.set(KotlinSourceSetTree.test)
+        }
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:platform"))
