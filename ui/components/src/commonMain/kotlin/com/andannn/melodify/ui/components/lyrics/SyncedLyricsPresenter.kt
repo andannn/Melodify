@@ -52,7 +52,7 @@ class SyncedLyricsPresenter(
 
     @Composable
     override fun present(): SyncedLyricsState {
-        val syncedLyricsLines by rememberSaveable {
+        val syncedLyricsLines by rememberRetained {
             mutableStateOf(parseSyncedLyrics(syncedLyrics))
         }
         var lyricsState by rememberRetained {
@@ -61,7 +61,6 @@ class SyncedLyricsPresenter(
         var currentPlayingIndex by rememberSaveable {
             mutableIntStateOf(0)
         }
-        Napier.d(tag = TAG) { "JQN: lyricsState $lyricsState" }
 
         LaunchedEffect(Unit) {
             fun onPositionChanged(currentPositionMs: Long) {
@@ -78,8 +77,7 @@ class SyncedLyricsPresenter(
                     syncedLyricsLines
                         .indexOfFirst {
                             currentPositionMs >= it.startTimeMs && currentPositionMs < it.endTimeMs
-                        }
-                        .coerceAtLeast(0)
+                        }.coerceAtLeast(0)
 
                 Napier.d(tag = TAG) { "onPositionChanged: $currentPositionMs, currentIndex $currentPlayingIndex" }
             }
@@ -185,13 +183,13 @@ fun parseSyncedLyrics(plainLyrics: String): List<SyncedLyricsLine> {
                 val seconds = secondsString.toIntOrNull() ?: 0
                 val milliSeconds = millisecondsString.toIntOrNull() ?: 0
                 val timeMs =
-                    minutes.times(60 * 1000)
+                    minutes
+                        .times(60 * 1000)
                         .plus(seconds * 1000)
                         .plus(milliSeconds)
                         .toLong()
                 SyncedLyricsLine(startTimeMs = timeMs, lyrics = lyrics)
-            }
-            .toList()
+            }.toList()
 
     return listWithoutEndTime.mapIndexed { index, item ->
         val nextStartTime = listWithoutEndTime.getOrNull(index + 1)?.startTimeMs ?: Long.MAX_VALUE
@@ -207,7 +205,9 @@ data class SyncedLyricsState(
 ) : CircuitUiState
 
 sealed interface SyncedLyricsEvent {
-    data class SeekToTime(val time: Long) : SyncedLyricsEvent
+    data class SeekToTime(
+        val time: Long,
+    ) : SyncedLyricsEvent
 }
 
 data class SyncedLyricsLine(
@@ -221,7 +221,11 @@ private const val TAG = "SyncedLyricsState"
 sealed interface LyricsState {
     data object AutoScrolling : LyricsState
 
-    data class Seeking(val currentSeekIndex: Int) : LyricsState
+    data class Seeking(
+        val currentSeekIndex: Int,
+    ) : LyricsState
 
-    data class WaitingSeekingResult(val requestTimeMs: Long) : LyricsState
+    data class WaitingSeekingResult(
+        val requestTimeMs: Long,
+    ) : LyricsState
 }

@@ -6,7 +6,6 @@ package com.andannn.melodify.core.database
 
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.execSQL
-import androidx.sqlite.use
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.CustomTabType.ALL_MUSIC
@@ -40,6 +39,8 @@ class MigrationTest {
     }
 
     @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
     fun migrate3To4() {
         val migrationTestHelper =
             getMigrationTestHelper(
@@ -54,6 +55,8 @@ class MigrationTest {
     }
 
     @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
     fun migrate4To5() {
         val migrationTestHelper =
             getMigrationTestHelper(
@@ -72,6 +75,8 @@ class MigrationTest {
     }
 
     @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
     fun migrate5To6() {
         val migrationTestHelper =
             getMigrationTestHelper(
@@ -86,6 +91,8 @@ class MigrationTest {
     }
 
     @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
     fun migrate6To7SyncMediaTableTest() {
         val migrationTestHelper =
             getMigrationTestHelper(
@@ -120,6 +127,8 @@ class MigrationTest {
     }
 
     @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
     fun migrate6To7SyncAlbumTableTest() {
         val migrationTestHelper =
             getMigrationTestHelper(
@@ -154,6 +163,8 @@ class MigrationTest {
     }
 
     @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
     fun migrate6To7SyncArtistTableTest() {
         val migrationTestHelper =
             getMigrationTestHelper(

@@ -19,7 +19,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
         }
 
-        jvmMain.dependencies {
+        deskTopAndAndroidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
         }
     }
