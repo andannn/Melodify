@@ -22,12 +22,12 @@ import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.SleepTimerRepository
 import com.andannn.melodify.ui.components.common.LocalRepository
+import com.andannn.melodify.ui.components.common.collectAsRetainedStateWithLifecycle
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
-import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.CoroutineScope
@@ -64,18 +64,18 @@ class PlayerPresenter(
         val scope = rememberCoroutineScope()
 
         val interactingMusicItem by
-            playerStateMonitoryRepository.getPlayingMediaStateFlow().collectAsRetainedState(null)
+            playerStateMonitoryRepository.getPlayingMediaStateFlow().collectAsRetainedStateWithLifecycle(null)
         val isPlaying by
-            playerStateMonitoryRepository.observeIsPlaying().collectAsRetainedState(false)
+            playerStateMonitoryRepository.observeIsPlaying().collectAsRetainedStateWithLifecycle(false)
         val progressFactor by
-            playerStateMonitoryRepository.observeProgressFactor().collectAsRetainedState(0f)
+            playerStateMonitoryRepository.observeProgressFactor().collectAsRetainedStateWithLifecycle(0f)
         val playMode by
-            playerStateMonitoryRepository.observePlayMode().collectAsRetainedState(PlayMode.REPEAT_ALL)
+            playerStateMonitoryRepository.observePlayMode().collectAsRetainedStateWithLifecycle(PlayMode.REPEAT_ALL)
         val isShuffle by
-            playerStateMonitoryRepository.observeIsShuffle().collectAsRetainedState(false)
+            playerStateMonitoryRepository.observeIsShuffle().collectAsRetainedStateWithLifecycle(false)
         val duration by
-            playerStateMonitoryRepository.observeCurrentPositionMs().collectAsRetainedState(0L)
-        val isSleepTimerCounting by sleepTimerRepository.observeIsCounting().collectAsRetainedState(false)
+            playerStateMonitoryRepository.observeCurrentPositionMs().collectAsRetainedStateWithLifecycle(0L)
+        val isSleepTimerCounting by sleepTimerRepository.observeIsCounting().collectAsRetainedStateWithLifecycle(false)
         var isFavorite by rememberSaveable {
             mutableStateOf(false)
         }

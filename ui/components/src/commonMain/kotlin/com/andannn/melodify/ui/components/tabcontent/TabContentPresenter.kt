@@ -16,12 +16,12 @@ import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.contentFlow
 import com.andannn.melodify.ui.components.common.LocalRepository
+import com.andannn.melodify.ui.components.common.collectAsRetainedStateWithLifecycle
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
-import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -69,7 +69,7 @@ class TabContentPresenter(
         val groupType by rememberRetained {
             mutableStateOf(GroupType.ALBUM)
         }
-        val audioList by getContentFlow().collectAsRetainedState(emptyList())
+        val audioList by getContentFlow().collectAsRetainedStateWithLifecycle(emptyList())
 
         Napier.d(tag = TAG) { "TabContentPresenter audioList ${audioList.size}" }
         val contentMap =

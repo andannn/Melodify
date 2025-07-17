@@ -12,6 +12,7 @@ kotlin {
 
             implementation(libs.coil3.compose)
             implementation(libs.reorderable)
+            implementation(libs.lifecycle.compose)
         }
 
         androidMain.dependencies {

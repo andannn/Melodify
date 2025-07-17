@@ -12,9 +12,9 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.browsable
 import com.andannn.melodify.ui.components.common.LocalRepository
+import com.andannn.melodify.ui.components.common.collectAsRetainedStateWithLifecycle
 import com.andannn.melodify.ui.components.common.newLibraryContentListScreen
 import com.andannn.melodify.ui.components.library.util.asDataSource
-import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -44,7 +44,7 @@ class LibraryContentPresenter(
 ) : Presenter<LibraryContentState> {
     @Composable
     override fun present(): LibraryContentState {
-        val contentList by with(repository) { dataSource.content() }.collectAsRetainedState(
+        val contentList by with(repository) { dataSource.content() }.collectAsRetainedStateWithLifecycle(
             emptyList(),
         )
         val title by produceRetainedState("") {

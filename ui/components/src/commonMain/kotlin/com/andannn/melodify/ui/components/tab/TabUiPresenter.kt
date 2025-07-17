@@ -15,13 +15,13 @@ import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.ui.components.common.LocalRepository
+import com.andannn.melodify.ui.components.common.collectAsRetainedStateWithLifecycle
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
-import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
@@ -49,7 +49,7 @@ class TabUiPresenter(
         Napier.d(tag = TAG) { "TabUiPresenter present" }
         val scope = rememberCoroutineScope()
         var selectedIndex by rememberSaveable { mutableStateOf(0) }
-        val currentTabList by userPreferenceRepository.currentCustomTabsFlow.collectAsRetainedState(
+        val currentTabList by userPreferenceRepository.currentCustomTabsFlow.collectAsRetainedStateWithLifecycle(
             emptyList(),
         )
         Napier.d(tag = TAG) { "TabUiPresenter currentTabList $currentTabList" }

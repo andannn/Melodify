@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.ui.components.common.LocalRepository
-import com.slack.circuit.retained.collectAsRetainedState
+import com.andannn.melodify.ui.components.common.collectAsRetainedStateWithLifecycle
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 
@@ -26,13 +26,17 @@ class PlayQueuePresenter(
     @Composable
     override fun present(): PlayQueueState {
         val playListQueue by
-            repository.playerStateMonitoryRepository.getPlayListQueueStateFlow().collectAsRetainedState(
-                emptyList(),
-            )
+            repository.playerStateMonitoryRepository
+                .getPlayListQueueStateFlow()
+                .collectAsRetainedStateWithLifecycle(
+                    emptyList(),
+                )
         val interactingMusicItem by
-            repository.playerStateMonitoryRepository.getPlayingMediaStateFlow().collectAsRetainedState(
-                AudioItemModel.DEFAULT,
-            )
+            repository.playerStateMonitoryRepository
+                .getPlayingMediaStateFlow()
+                .collectAsRetainedStateWithLifecycle(
+                    AudioItemModel.DEFAULT,
+                )
         return PlayQueueState(
             interactingMusicItem!!,
             playListQueue,
@@ -78,9 +82,13 @@ data class PlayQueueState(
 ) : CircuitUiState
 
 sealed interface PlayQueueEvent {
-    data class OnItemClick(val item: AudioItemModel) : PlayQueueEvent
+    data class OnItemClick(
+        val item: AudioItemModel,
+    ) : PlayQueueEvent
 
-    data class OnDeleteFinished(val id: Int) : PlayQueueEvent
+    data class OnDeleteFinished(
+        val id: Int,
+    ) : PlayQueueEvent
 
     data class OnSwapFinished(
         val from: Int,
