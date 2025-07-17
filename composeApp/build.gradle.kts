@@ -14,6 +14,18 @@ plugins {
 
 kotlin {
     sourceSets {
+        val mobileUiCommon by creating {
+            dependsOn(commonMain.get())
+        }
+
+        iosMain {
+            dependsOn(mobileUiCommon)
+        }
+
+        androidMain {
+            dependsOn(mobileUiCommon)
+        }
+
         commonMain.dependencies {
             implementation(project(":core:data"))
             implementation(project(":core:syncer"))
@@ -22,10 +34,6 @@ kotlin {
             implementation(project(":ui:common"))
             implementation(project(":ui:components"))
 
-            implementation(libs.koin.core.viewmodel)
-            implementation(libs.koin.compose.viewmodel)
-
-            implementation(libs.navigation.compose)
             implementation(libs.reorderable)
             implementation(libs.kotlinx.serialization.json)
         }
