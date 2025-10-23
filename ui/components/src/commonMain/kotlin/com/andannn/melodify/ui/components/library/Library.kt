@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.common.icons.SimpleMusicIcons
 import com.andannn.melodify.ui.common.icons.SmpIcon
+import com.andannn.melodify.ui.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.common.widgets.SmpIcon
 import com.andannn.melodify.ui.components.library.util.toDataSource
 import melodify.ui.common.generated.resources.Res
@@ -113,6 +115,14 @@ internal fun LibraryContent(
                         onShortcutItemClick(item)
                     },
                 )
+            }
+
+            item(
+                span = {
+                    GridItemSpan(maxLineSpan)
+                },
+            ) {
+                ExtraPaddingBottom()
             }
         }
     }
