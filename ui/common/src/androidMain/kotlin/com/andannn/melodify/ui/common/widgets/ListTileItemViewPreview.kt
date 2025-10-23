@@ -17,7 +17,6 @@ private fun MusicCardPreview1() {
             albumArtUri = "",
             title = "Title",
             subTitle = "artist",
-            showTrackNum = true,
         )
     }
 }
@@ -32,7 +31,6 @@ private fun MusicCardPreviewActive() {
             trackNum = 9,
             subTitle = "artist",
             isActive = true,
-            showTrackNum = true,
         )
     }
 }
@@ -46,7 +44,6 @@ private fun MusicCardSwapNoSubTitle() {
             swapIconModifier = Modifier,
             title = "Title",
             subTitle = "",
-            showTrackNum = true,
         )
     }
 }

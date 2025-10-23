@@ -21,6 +21,8 @@ import com.andannn.melodify.navigation.routes.LibraryPresenterFactory
 import com.andannn.melodify.navigation.routes.LibraryUiFactory
 import com.andannn.melodify.navigation.routes.SearchPresenterFactory
 import com.andannn.melodify.navigation.routes.SearchUiFactory
+import com.andannn.melodify.navigation.routes.TabManagePresenterFactory
+import com.andannn.melodify.navigation.routes.TabManageUiFactory
 import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
 import com.andannn.melodify.ui.components.common.HomeScreen
 import com.andannn.melodify.ui.components.common.LocalRepository
@@ -83,6 +85,7 @@ private fun buildCircuitMobile() =
                 LibraryPresenterFactory,
                 LibraryContentPresenterFactory,
                 SearchPresenterFactory,
+                TabManagePresenterFactory,
             ),
         uiFactory =
             listOf(
@@ -90,15 +93,16 @@ private fun buildCircuitMobile() =
                 LibraryUiFactory,
                 LibraryContentUiFactory,
                 SearchUiFactory,
+                TabManageUiFactory,
             ),
     )
 
 internal fun buildCircuit(
     presenterFactory: List<Presenter.Factory> = emptyList(),
     uiFactory: List<Ui.Factory> = emptyList(),
-): Circuit {
-    return Circuit.Builder()
+): Circuit =
+    Circuit
+        .Builder()
         .addPresenterFactories(presenterFactory)
         .addUiFactories(uiFactory)
         .build()
-}

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -29,30 +28,35 @@ fun TabContent(
     modifier: Modifier = Modifier,
 ) {
     LazyListContent(
-        modifier = modifier.fillMaxSize(),
         contentMap = state.contentMap,
-        onMusicItemClick = { state.eventSink.invoke(TabContentEvent.OnPlayMusic(it)) },
-        onShowMusicItemOption = { state.eventSink.invoke(TabContentEvent.OnShowMusicItemOption(it)) },
+        listState = state.listState,
+        modifier = modifier.fillMaxSize(),
+        onMusicItemClick = {
+            state.eventSink.invoke(TabContentEvent.OnPlayMusic(it))
+        },
+        onShowMusicItemOption = {
+            state.eventSink.invoke(TabContentEvent.OnShowMusicItemOption(it))
+        },
     )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyListContent(
+    listState: LazyListState,
     contentMap: Map<HeaderKey, List<AudioItemModel>>,
     modifier: Modifier = Modifier,
-    state: LazyListState = rememberLazyListState(),
     onMusicItemClick: (AudioItemModel) -> Unit = {},
     onShowMusicItemOption: (AudioItemModel) -> Unit = {},
 ) {
     LazyColumn(
-        state = state,
+        state = listState,
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 5.dp),
     ) {
         contentMap.forEach { (headerKey, mediaItems) ->
             if (headerKey.groupType != GroupType.NONE) {
-                stickyHeader(headerKey.headerId) {
+                stickyHeader(headerKey.hashCode()) {
                     val presenter = rememberGroupHeaderPresenter(headerKey)
                     GroupHeader(
                         state = presenter.present(),
@@ -62,17 +66,16 @@ private fun LazyListContent(
 
             items(
                 items = mediaItems,
-                key = { it.id },
+                key = { item ->
+                    item.hashCode()
+                },
             ) { item ->
                 ListTileItemView(
-                    modifier =
-                        Modifier.animateItem(),
                     playable = item.browsableOrPlayable,
                     isActive = false,
                     albumArtUri = item.artWorkUri,
                     title = item.name,
-                    showTrackNum = headerKey.groupType == GroupType.ALBUM,
-                    trackNum = item.cdTrackNumber,
+                    trackNum = item.cdTrackNumber.takeIf { headerKey.groupType == GroupType.ALBUM },
                     onMusicItemClick = {
                         onMusicItemClick.invoke(item)
                     },

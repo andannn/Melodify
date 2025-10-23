@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.ui.components.common.LocalRepository
+import com.andannn.melodify.ui.components.common.TabManageScreen
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
@@ -23,7 +24,9 @@ import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.screen.Screen
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
@@ -32,11 +35,13 @@ private const val TAG = "TabUiState"
 
 @Composable
 fun rememberTabUiPresenter(
+    navigator: Navigator,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-) = remember(repository, popupController) { TabUiPresenter(repository, popupController) }
+) = remember(navigator, repository, popupController) { TabUiPresenter(navigator, repository, popupController) }
 
 class TabUiPresenter(
+    private val navigator: Navigator,
     private val repository: Repository,
     private val popupController: PopupController,
 ) : Presenter<TabUiState> {
@@ -92,6 +97,7 @@ class TabUiPresenter(
             when (eventSink) {
                 is TabUiEvent.OnClickTab -> selectedIndex = eventSink.index
                 is TabUiEvent.OnShowTabOption -> scope.launch { onShowTabOption(eventSink.tab) }
+                TabUiEvent.OnTabManagementClick -> navigator.goTo(TabManageScreen)
             }
         }
     }
@@ -145,4 +151,6 @@ sealed interface TabUiEvent {
     data class OnShowTabOption(
         val tab: CustomTab,
     ) : TabUiEvent
+
+    data object OnTabManagementClick : TabUiEvent
 }

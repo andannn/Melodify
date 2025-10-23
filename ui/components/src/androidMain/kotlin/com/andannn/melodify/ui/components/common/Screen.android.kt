@@ -30,24 +30,19 @@ actual data class LibraryContentListScreen(
         parcel.writeString(datasource.toStringCode())
     }
 
-    override fun describeContents(): Int {
-        return 0
-    }
+    override fun describeContents(): Int = 0
 
     companion object CREATOR : Parcelable.Creator<LibraryContentListScreen> {
-        override fun createFromParcel(parcel: Parcel): LibraryContentListScreen {
-            return LibraryContentListScreen(parcel)
-        }
+        override fun createFromParcel(parcel: Parcel): LibraryContentListScreen = LibraryContentListScreen(parcel)
 
-        override fun newArray(size: Int): Array<LibraryContentListScreen?> {
-            return arrayOfNulls(size)
-        }
+        override fun newArray(size: Int): Array<LibraryContentListScreen?> = arrayOfNulls(size)
     }
 }
 
-actual fun newLibraryContentListScreen(datasource: LibraryDataSource): LibraryContentListScreen {
-    return LibraryContentListScreen(datasource)
-}
+actual fun newLibraryContentListScreen(datasource: LibraryDataSource): LibraryContentListScreen = LibraryContentListScreen(datasource)
 
 @Parcelize
 actual object SearchScreen : Screen
+
+@Parcelize
+actual object TabManageScreen : com.slack.circuit.runtime.screen.Screen

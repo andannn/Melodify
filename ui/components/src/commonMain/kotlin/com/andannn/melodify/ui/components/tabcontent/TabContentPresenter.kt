@@ -4,9 +4,14 @@
  */
 package com.andannn.melodify.ui.components.tabcontent
 
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -66,16 +71,23 @@ class TabContentPresenter(
         val scope = rememberCoroutineScope()
         Napier.d(tag = TAG) { "TabContentPresenter scope ${scope.hashCode()}" }
 
+        val listState = rememberLazyListState()
         val groupType by rememberRetained {
             mutableStateOf(GroupType.ALBUM)
         }
-        val audioList by getContentFlow().collectAsRetainedState(emptyList())
 
-        Napier.d(tag = TAG) { "TabContentPresenter audioList ${audioList.size}" }
         val contentMap =
-            rememberRetained(groupType, audioList) {
-                audioList.toMap(groupType)
+            rememberRetained {
+                mutableStateMapOf<HeaderKey, List<AudioItemModel>>()
             }
+
+        LaunchedEffect(groupType, selectedTab) {
+            getContentFlow(selectedTab).collect { audioList ->
+                contentMap.clear()
+                contentMap.putAll(audioList.toMap(groupType))
+                listState.requestScrollToItem(0)
+            }
+        }
 
         Napier.d(tag = TAG) { "TabContentPresenter contentMap ${contentMap.size}" }
 
@@ -85,7 +97,11 @@ class TabContentPresenter(
             }
         }
 
-        return TabContentState(contentMap) { eventSink ->
+        return TabContentState(
+            selectedTab = selectedTab,
+            listState = listState,
+            contentMap = contentMap,
+        ) { eventSink ->
             when (eventSink) {
                 is TabContentEvent.OnPlayMusic ->
                     scope.launch {
@@ -105,7 +121,7 @@ class TabContentPresenter(
         }
     }
 
-    private fun getContentFlow(): Flow<List<AudioItemModel>> {
+    private fun getContentFlow(selectedTab: CustomTab?): Flow<List<AudioItemModel>> {
         if (selectedTab == null) {
             return flow { emit(emptyList()) }
         }
@@ -173,7 +189,9 @@ data class HeaderKey(
 )
 
 data class TabContentState(
+    val selectedTab: CustomTab? = null,
     val contentMap: Map<HeaderKey, List<AudioItemModel>> = emptyMap(),
+    val listState: LazyListState,
     val eventSink: (TabContentEvent) -> Unit = {},
 ) : CircuitUiState
 

@@ -43,8 +43,8 @@ object HomeUiFactory : Ui.Factory {
     override fun create(
         screen: Screen,
         context: CircuitContext,
-    ): Ui<*>? {
-        return when (screen) {
+    ): Ui<*>? =
+        when (screen) {
             is HomeScreen ->
                 ui<HomeState> { state, modifier ->
                     HomeUiScreen(state, modifier)
@@ -52,7 +52,6 @@ object HomeUiFactory : Ui.Factory {
 
             else -> null
         }
-    }
 }
 
 object HomePresenterFactory : Presenter.Factory {
@@ -60,12 +59,11 @@ object HomePresenterFactory : Presenter.Factory {
         screen: Screen,
         navigator: Navigator,
         context: CircuitContext,
-    ): Presenter<*>? {
-        return when (screen) {
+    ): Presenter<*>? =
+        when (screen) {
             is HomeScreen -> HomePresenter(navigator)
             else -> null
         }
-    }
 }
 
 private class HomePresenter(
@@ -74,7 +72,7 @@ private class HomePresenter(
     @Composable
     override fun present(): HomeState {
         Napier.d(tag = "HomePresenter") { "HomePresenter present" }
-        val tabUiPresenter = rememberTabUiPresenter()
+        val tabUiPresenter = rememberTabUiPresenter(navigator)
         val tabUiState = tabUiPresenter.present()
         val tabContentPresenter = rememberTabContentPresenter(tabUiState.selectedTab)
         return HomeState(
@@ -145,7 +143,8 @@ internal fun HomeUiScreen(
     ) { padding ->
         Column(
             modifier =
-                Modifier.padding(padding)
+                Modifier
+                    .padding(padding)
                     .nestedScroll(scrollBehavior.nestedScrollConnection)
                     .fillMaxSize(),
         ) {

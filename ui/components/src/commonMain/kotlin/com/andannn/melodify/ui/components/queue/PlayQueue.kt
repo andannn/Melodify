@@ -166,7 +166,6 @@ private fun ReorderableCollectionItemScope.QueueItem(
 //            defaultColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             albumArtUri = item.artWorkUri,
             title = item.name,
-            showTrackNum = false,
             subTitle = item.artist,
             trackNum = item.cdTrackNumber,
             actionType = ActionType.SWAP,

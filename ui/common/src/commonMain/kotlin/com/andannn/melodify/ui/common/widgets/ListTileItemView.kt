@@ -52,14 +52,13 @@ fun ListTileItemView(
     playable: Boolean = true,
     actionType: ActionType = ActionType.OPTION,
     swapIconModifier: Modifier? = null,
-    albumArtUri: String = "",
+    albumArtUri: String? = null,
     isActive: Boolean = false,
     defaultColor: Color = MaterialTheme.colorScheme.surface,
     defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
     title: String = "",
     subTitle: String = "",
-    trackNum: Int = 0,
-    showTrackNum: Boolean = false,
+    trackNum: Int? = null,
     onMusicItemClick: (() -> Unit)? = null,
     onOptionButtonClick: (() -> Unit)? = null,
 ) {
@@ -97,8 +96,8 @@ fun ListTileItemView(
                     .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(modifier = Modifier) {
-                if (showTrackNum) {
+            Box {
+                if (trackNum != null) {
                     Text(
                         modifier =
                             Modifier
@@ -111,7 +110,7 @@ fun ListTileItemView(
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                } else {
+                } else if (albumArtUri != null) {
                     AsyncImage(
                         modifier =
                             Modifier

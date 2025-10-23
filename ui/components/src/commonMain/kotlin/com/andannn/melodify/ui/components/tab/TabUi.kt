@@ -4,10 +4,13 @@
  */
 package com.andannn.melodify.ui.components.tab
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +21,9 @@ import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -32,17 +38,16 @@ fun TabUi(
     modifier: Modifier = Modifier,
     popupController: PopupController = LocalPopupController.current,
 ) {
-    fun onTabManageClick() {
-    }
-
     val tabs = state.customTabList
     val selectedIndex = state.selectedIndex
 
     Box(
         modifier = modifier.fillMaxWidth(),
     ) {
+        val scrollState = rememberScrollState()
         if (tabs.isNotEmpty()) {
             SecondaryScrollableTabRow(
+                scrollState = scrollState,
                 modifier = Modifier.fillMaxWidth(),
                 selectedTabIndex = selectedIndex,
             ) {
@@ -72,16 +77,25 @@ fun TabUi(
             }
         }
 
+        val buttonVisible by
+            remember {
+                derivedStateOf {
+                    scrollState.value == 0
+                }
+            }
+
         IconButton(
             modifier = Modifier.padding(start = 4.dp),
             onClick = {
-                onTabManageClick()
+                state.eventSink.invoke(TabUiEvent.OnTabManagementClick)
             },
         ) {
-            Icon(
-                imageVector = Icons.Rounded.FilterList,
-                contentDescription = "menu",
-            )
+            AnimatedVisibility(visible = buttonVisible) {
+                Icon(
+                    imageVector = Icons.Rounded.FilterList,
+                    contentDescription = "menu",
+                )
+            }
         }
     }
 }
