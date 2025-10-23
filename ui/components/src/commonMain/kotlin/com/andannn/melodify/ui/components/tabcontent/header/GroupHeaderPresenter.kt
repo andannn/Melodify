@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.components.common.LocalRepository
+import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.tabcontent.GroupType
 import com.andannn.melodify.ui.components.tabcontent.HeaderKey
 import com.slack.circuit.retained.produceRetainedState
@@ -54,6 +55,7 @@ class GroupHeaderPresenter(
         }
 
         return GroupHeaderState(
+            mediaItem = mediaItem,
             title = mediaItem?.name ?: "",
             cover = mediaItem?.artWorkUri ?: "",
             trackCount = mediaItem?.trackCount ?: 0,
@@ -62,6 +64,7 @@ class GroupHeaderPresenter(
 }
 
 data class GroupHeaderState(
+    val mediaItem: MediaItemModel?,
     val title: String,
     val cover: String,
     val trackCount: Int,
