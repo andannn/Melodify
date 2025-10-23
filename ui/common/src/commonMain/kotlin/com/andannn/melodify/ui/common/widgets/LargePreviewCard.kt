@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -66,6 +67,7 @@ fun LargePreviewCard(
                         .aspectRatio(1f)
                         .then(imageModifier),
                 placeholder = painterResource(defaultImagePlaceholderRes),
+                contentScale = ContentScale.Crop,
                 error = painterResource(defaultImagePlaceholderRes),
                 model = artCoverUri,
                 contentDescription = "",

@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -104,8 +105,7 @@ fun ListTileItemView(
                                 .background(
                                     color = MaterialTheme.colorScheme.surface,
                                     shape = MaterialTheme.shapes.extraSmall,
-                                )
-                                .align(Alignment.Center)
+                                ).align(Alignment.Center)
                                 .width(30.dp),
                         text = trackNum.toString(),
                         textAlign = TextAlign.Center,
@@ -119,6 +119,7 @@ fun ListTileItemView(
                                 .clip(MaterialTheme.shapes.extraSmall),
                         placeholder = painterResource(defaultImagePlaceholderRes),
                         error = painterResource(defaultImagePlaceholderRes),
+                        contentScale = ContentScale.Crop,
                         model = albumArtUri,
                         contentDescription = "",
                     )

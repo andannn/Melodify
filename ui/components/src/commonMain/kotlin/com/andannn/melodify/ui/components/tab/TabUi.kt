@@ -5,12 +5,11 @@
 package com.andannn.melodify.ui.components.tab
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FilterList
-import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,7 +39,7 @@ fun TabUi(
     val selectedIndex = state.selectedIndex
 
     Box(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
     ) {
         if (tabs.isNotEmpty()) {
             SecondaryScrollableTabRow(
@@ -74,7 +73,7 @@ fun TabUi(
         }
 
         IconButton(
-            modifier = Modifier,
+            modifier = Modifier.padding(start = 4.dp),
             onClick = {
                 onTabManageClick()
             },
