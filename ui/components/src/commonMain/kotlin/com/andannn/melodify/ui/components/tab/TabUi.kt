@@ -4,10 +4,16 @@
  */
 package com.andannn.melodify.ui.components.tab
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.FilterList
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
@@ -17,17 +23,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.common.util.getCategoryResource
+import com.andannn.melodify.ui.components.popup.LocalPopupController
+import com.andannn.melodify.ui.components.popup.PopupController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabUi(
     state: TabUiState,
     modifier: Modifier = Modifier,
+    popupController: PopupController = LocalPopupController.current,
 ) {
+    fun onTabManageClick() {
+    }
+
     val tabs = state.customTabList
     val selectedIndex = state.selectedIndex
 
-    Column(
+    Box(
         modifier = modifier,
     ) {
         if (tabs.isNotEmpty()) {
@@ -59,6 +71,18 @@ fun TabUi(
                     )
                 }
             }
+        }
+
+        IconButton(
+            modifier = Modifier,
+            onClick = {
+                onTabManageClick()
+            },
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.FilterList,
+                contentDescription = "menu",
+            )
         }
     }
 }
