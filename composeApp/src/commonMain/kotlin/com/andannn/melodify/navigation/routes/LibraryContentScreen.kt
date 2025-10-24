@@ -4,10 +4,14 @@
  */
 package com.andannn.melodify.navigation.routes
 
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import com.andannn.melodify.ui.components.common.LibraryContentListScreen
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryContent
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryContentState
 import com.andannn.melodify.ui.components.librarycontentlist.rememberLibraryContentPresenter
+import com.andannn.melodify.ui.components.popup.LocalPopupController
+import com.andannn.melodify.ui.components.popup.PopupControllerImpl
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -21,8 +25,8 @@ object LibraryContentPresenterFactory : Presenter.Factory {
         screen: Screen,
         navigator: Navigator,
         context: CircuitContext,
-    ): Presenter<*>? {
-        return when (screen) {
+    ): Presenter<*>? =
+        when (screen) {
             is LibraryContentListScreen ->
                 presenterOf {
                     rememberLibraryContentPresenter(
@@ -32,15 +36,14 @@ object LibraryContentPresenterFactory : Presenter.Factory {
                 }
             else -> null
         }
-    }
 }
 
 object LibraryContentUiFactory : Ui.Factory {
     override fun create(
         screen: Screen,
         context: CircuitContext,
-    ): Ui<*>? {
-        return when (screen) {
+    ): Ui<*>? =
+        when (screen) {
             is LibraryContentListScreen ->
                 ui<LibraryContentState> { state, modifier ->
                     LibraryContent(state, modifier)
@@ -48,5 +51,4 @@ object LibraryContentUiFactory : Ui.Factory {
 
             else -> null
         }
-    }
 }

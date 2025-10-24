@@ -15,8 +15,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -28,6 +30,10 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.browsable
 import com.andannn.melodify.ui.components.library.util.asDataSource
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
+import com.andannn.melodify.ui.components.popup.LocalPopupController
+import com.andannn.melodify.ui.components.popup.PopupControllerImpl
+import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
+import com.andannn.melodify.ui.components.popup.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.components.search.result.SearchPageView
 import com.andannn.melodify.ui.components.search.suggestion.Suggestions
 
@@ -87,12 +93,16 @@ internal fun SearchViewContent(
 
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
 
     Scaffold(
         modifier = modifier,
+        snackbarHost = {
+            SnackbarHost(rememberAndSetupSnackBarHostState())
+        },
     ) {
         Column {
             SearchBar(
@@ -143,4 +153,6 @@ internal fun SearchViewContent(
             )
         }
     }
+
+    ActionDialogContainer()
 }

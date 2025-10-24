@@ -4,12 +4,16 @@
  */
 package com.andannn.melodify.ui.components.popup
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SnackbarVisuals
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.audios
@@ -47,9 +51,7 @@ private const val TAG = "PopupController"
 interface PopupController {
     val currentDialog: DialogData?
 
-    val snackBarMessageChannel: ReceiveChannel<SnackbarVisuals>
-
-    val snackBarResultChannel: SendChannel<SnackbarResult>
+    var snackBarController: SnackbarHostState?
 
     suspend fun showSnackBar(
         message: SnackBarMessage,
@@ -57,6 +59,21 @@ interface PopupController {
     ): SnackbarResult
 
     suspend fun showDialog(dialogId: DialogId): DialogAction
+}
+
+@Composable
+fun rememberAndSetupSnackBarHostState(holder: PopupController = LocalPopupController.current): SnackbarHostState {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    DisposableEffect(snackbarHostState) {
+        holder.snackBarController = snackbarHostState
+
+        onDispose {
+            holder.snackBarController = null
+        }
+    }
+
+    return snackbarHostState
 }
 
 class NoOpPopupController : PopupController {
@@ -68,9 +85,7 @@ class NoOpPopupController : PopupController {
             override fun performAction(action: DialogAction) {
             }
         }
-
-    override val snackBarMessageChannel: ReceiveChannel<SnackbarVisuals> = Channel()
-    override val snackBarResultChannel: SendChannel<SnackbarResult> = Channel()
+    override var snackBarController: SnackbarHostState? = null
 
     override suspend fun showSnackBar(
         message: SnackBarMessage,
@@ -88,8 +103,7 @@ class PopupControllerImpl : PopupController {
     override val currentDialog: DialogData?
         get() = _currentDialog
 
-    override val snackBarMessageChannel: Channel<SnackbarVisuals> = Channel()
-    override val snackBarResultChannel: Channel<SnackbarResult> = Channel()
+    override var snackBarController: SnackbarHostState? = null
 
     /**
      * Show snackbar and wait for user interaction.
@@ -97,10 +111,9 @@ class PopupControllerImpl : PopupController {
     override suspend fun showSnackBar(
         message: SnackBarMessage,
         messageFormatArgs: List<Any>,
-    ): SnackbarResult {
-        snackBarMessageChannel.send(message.toSnackbarVisuals(messageFormatArgs))
-        return snackBarResultChannel.receive()
-    }
+    ): SnackbarResult =
+        snackBarController?.showSnackbar(message.toSnackbarVisuals(messageFormatArgs))
+            ?: error("Snackbar HostState is not setup. ")
 
     /**
      * Show dialog and wait for user interaction.

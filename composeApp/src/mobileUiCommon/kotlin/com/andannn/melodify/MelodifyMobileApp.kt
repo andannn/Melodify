@@ -4,13 +4,12 @@
  */
 package com.andannn.melodify
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.andannn.melodify.navigation.routes.HomePresenterFactory
@@ -27,7 +26,13 @@ import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
 import com.andannn.melodify.ui.components.common.HomeScreen
 import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.playcontrol.Player
+import com.andannn.melodify.ui.components.popup.LocalPopupController
+import com.andannn.melodify.ui.components.popup.PopupControllerImpl
 import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
+import com.slack.circuit.backstack.BackStack.Record
+import com.slack.circuit.backstack.BackStackRecordLocalProvider
+import com.slack.circuit.backstack.ProvidedValues
+import com.slack.circuit.backstack.providedValuesForBackStack
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -35,7 +40,8 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
-import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "MelodifyMobileApp"
@@ -44,17 +50,11 @@ private const val TAG = "MelodifyMobileApp"
 fun MelodifyMobileApp(
     modifier: Modifier = Modifier,
     circuit: Circuit = buildCircuitMobile(),
-    appState: MelodifyAppState = rememberAppState(),
 ) {
     CompositionLocalProvider(LocalRepository provides remember { getKoin().get() }) {
-        Scaffold(
-            modifier =
-                modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface),
-            snackbarHost = {
-                SnackbarHost(appState.snackBarHostState)
-            },
+        Surface(
+            modifier = modifier,
+            color = MaterialTheme.colors.background,
         ) {
             CircuitCompositionLocals(circuit = circuit) {
                 val backStack = rememberSaveableBackStack(HomeScreen)
@@ -66,14 +66,33 @@ fun MelodifyMobileApp(
                     navigator.pop()
                 }
 
-                NavigableCircuitContent(navigator, backStack)
+                NavigableCircuitContent(
+                    navigator = navigator,
+                    backStack = backStack,
+                    providedValues =
+                        providedValuesForBackStack(
+                            backStack,
+                            stackLocalProviders =
+                                persistentListOf(
+                                    PopupControllerRecordLocalProvider,
+                                ),
+                        ),
+                )
             }
-
-            Player()
-
-            ActionDialogContainer()
         }
     }
+}
+
+object PopupControllerRecordLocalProvider : BackStackRecordLocalProvider<Record> {
+    @Composable
+    override fun providedValuesFor(record: Record): ProvidedValues =
+        object : ProvidedValues {
+            @Composable
+            override fun provideValues(): ImmutableList<ProvidedValue<*>> =
+                persistentListOf(
+                    LocalPopupController provides remember { PopupControllerImpl() },
+                )
+        }
 }
 
 private fun buildCircuitMobile() =

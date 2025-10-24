@@ -18,6 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -31,6 +32,8 @@ import com.andannn.melodify.ui.common.util.getCategoryResource
 import com.andannn.melodify.ui.common.util.rememberSwapListState
 import com.andannn.melodify.ui.common.widgets.ActionType
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
+import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
+import com.andannn.melodify.ui.components.popup.rememberAndSetupSnackBarHostState
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableCollectionItemScope
@@ -69,6 +72,9 @@ private fun TabManagementContent(
 ) {
     Scaffold(
         modifier = modifier,
+        snackbarHost = {
+            SnackbarHost(rememberAndSetupSnackBarHostState())
+        },
         topBar = {
             TopAppBar(
                 title = {
@@ -130,6 +136,8 @@ private fun TabManagementContent(
             }
         }
     }
+
+    ActionDialogContainer()
 }
 
 @Composable

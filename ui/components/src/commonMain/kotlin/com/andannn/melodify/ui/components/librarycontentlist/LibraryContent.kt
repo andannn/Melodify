@@ -14,15 +14,23 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.repository.PlayListRepository.Companion.FAVORITE_PLAY_LIST_ID
 import com.andannn.melodify.ui.components.common.MediaItemWithOptionAction
+import com.andannn.melodify.ui.components.popup.LocalPopupController
+import com.andannn.melodify.ui.components.popup.PopupControllerImpl
+import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
+import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContent
+import com.andannn.melodify.ui.components.popup.rememberAndSetupSnackBarHostState
 
 @Composable
 fun LibraryContent(
@@ -53,6 +61,9 @@ fun LibraryContentList(
 ) {
     Scaffold(
         modifier = modifier,
+        snackbarHost = {
+            SnackbarHost(rememberAndSetupSnackBarHostState())
+        },
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -87,6 +98,8 @@ fun LibraryContentList(
             }
         }
     }
+
+    ActionDialogContainer()
 }
 
 sealed interface LibraryDataSource {

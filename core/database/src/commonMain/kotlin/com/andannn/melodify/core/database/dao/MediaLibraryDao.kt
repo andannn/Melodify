@@ -8,6 +8,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.room.RoomRawQuery
 import androidx.room.Transaction
 import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.entity.AlbumColumns
@@ -55,8 +57,16 @@ interface MediaLibraryDao {
     @Query("SELECT * FROM ${Tables.LIBRARY_ARTIST}")
     fun getAllArtistFlow(): Flow<List<ArtistEntity>>
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA}")
-    fun getAllMediaFlow(): Flow<List<MediaEntity>>
+    @RawQuery(observedEntities = [MediaEntity::class])
+    fun getMediaFlowRaw(rawQuery: RoomRawQuery): Flow<List<MediaEntity>>
+
+    fun getAllMediaFlow(sort: SortMethod? = null): Flow<List<MediaEntity>> = getMediaFlowRaw(buildAllMediaRawQuery(sort))
+
+    fun buildAllMediaRawQuery(sort: SortMethod?): RoomRawQuery {
+        val sort = sort?.toSortString() ?: ""
+        val sql = "SELECT * FROM ${Tables.LIBRARY_MEDIA}$sort"
+        return RoomRawQuery(sql)
+    }
 
     @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ALBUM_ID} = :albumId")
     fun getMediasByAlbumIdFlow(albumId: String): Flow<List<MediaEntity>>
@@ -166,4 +176,36 @@ interface MediaLibraryDao {
         insertGenres(genres)
         insertMedias(audios)
     }
+}
+
+data class SortMethod(
+    val sorts: List<Sort>,
+)
+
+private fun SortMethod.toSortString(): String = "ORDER BY " + sorts.joinToString(separator = ",")
+
+data class Sort(
+    val type: MediaSortType,
+    val order: SortOrder,
+) {
+    override fun toString(): String = "${type.value} ${order.value}"
+}
+
+enum class SortOrder(
+    val value: String,
+) {
+    ASCENDING("ASC"),
+    DESCENDING("DESC"),
+}
+
+sealed class MediaSortType(
+    val value: String,
+) {
+    object Title : MediaSortType(MediaColumns.TITLE)
+
+    object Artist : MediaSortType(MediaColumns.ARTIST)
+
+    object Album : MediaSortType(MediaColumns.ALBUM)
+
+    object TrackNum : MediaSortType(MediaColumns.TRACK)
 }
