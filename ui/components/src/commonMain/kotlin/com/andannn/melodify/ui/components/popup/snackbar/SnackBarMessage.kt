@@ -9,6 +9,7 @@ import androidx.compose.material3.SnackbarVisuals
 import melodify.ui.common.generated.resources.Res
 import melodify.ui.common.generated.resources.add_to_playlist_failed_message
 import melodify.ui.common.generated.resources.add_to_playlist_success_message
+import melodify.ui.common.generated.resources.tab_already_exist
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 
@@ -24,6 +25,10 @@ sealed class SnackBarMessage(
 
     data object AddPlayListFailed : SnackBarMessage(
         message = Res.string.add_to_playlist_failed_message,
+    )
+
+    data object TabAlreadyExist : SnackBarMessage(
+        message = Res.string.tab_already_exist,
     )
 
     suspend fun toSnackbarVisuals(messageFormatArgs: List<Any>): SnackbarVisuals {

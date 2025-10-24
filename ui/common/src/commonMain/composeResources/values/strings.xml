@@ -42,4 +42,5 @@
     <string name="invalid_path_alert_dialog_content">Invalid path</string>
     <string name="add_to_home_tab">Add to home tab</string>
     <string name="favorite">Favorite</string>
+    <string name="tab_already_exist">Tab already exist.</string>
 </resources>

@@ -46,7 +46,6 @@ fun MelodifyMobileApp(
     circuit: Circuit = buildCircuitMobile(),
     appState: MelodifyAppState = rememberAppState(),
 ) {
-    Napier.d(tag = TAG) { "Show app" }
     CompositionLocalProvider(LocalRepository provides remember { getKoin().get() }) {
         Scaffold(
             modifier =

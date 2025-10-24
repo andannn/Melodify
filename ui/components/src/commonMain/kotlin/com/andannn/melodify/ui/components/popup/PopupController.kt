@@ -146,7 +146,7 @@ suspend fun handleMediaOptionClick(
     }
 }
 
-context(userPreferenceRepository: UserPreferenceRepository)
+context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
 private suspend fun MediaItemModel.addToHomeTab() {
     val tab =
         when (this) {
@@ -156,7 +156,12 @@ private suspend fun MediaItemModel.addToHomeTab() {
             is PlayListItemModel -> CustomTab.PlayListDetail(id, name)
             is AudioItemModel -> error("invalid")
         }
-    userPreferenceRepository.addNewCustomTab(tab)
+    val current = userPreferenceRepository.currentCustomTabsFlow.first()
+    if (current.contains(tab)) {
+        popupController.showSnackBar(SnackBarMessage.TabAlreadyExist)
+    } else {
+        userPreferenceRepository.addNewCustomTab(tab)
+    }
 }
 
 context(repo: Repository)
@@ -222,7 +227,7 @@ private suspend fun handleClickSleepTimer() {
                 SleepTimerOption.FIFTEEN_MINUTES,
                 SleepTimerOption.THIRTY_MINUTES,
                 SleepTimerOption.SIXTY_MINUTES,
-                    -> {
+                -> {
                     sleepTimerRepository.startSleepTimer(option.timeMinutes!!)
                 }
 
@@ -273,9 +278,7 @@ private suspend fun createNewPlayListFromSource(source: MediaItemModel) {
 }
 
 context(playListRepository: PlayListRepository, popupController: PopupController)
-private suspend fun PlayListItemModel.addAll(
-    audioList: List<AudioItemModel>,
-) {
+private suspend fun PlayListItemModel.addAll(audioList: List<AudioItemModel>) {
     val duplicatedMedias =
         playListRepository.getDuplicatedMediaInPlayList(
             playListId = id.toLong(),
