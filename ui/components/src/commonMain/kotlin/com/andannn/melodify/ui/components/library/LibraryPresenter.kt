@@ -17,8 +17,8 @@ class LibraryPresenter(
     private val navigator: Navigator,
 ) : Presenter<LibraryState> {
     @Composable
-    override fun present(): LibraryState {
-        return LibraryState { eventSink ->
+    override fun present(): LibraryState =
+        LibraryState { eventSink ->
             when (eventSink) {
                 is LibraryUiEvent.OnNavigateToLibraryContentList ->
                     navigator.goTo(
@@ -29,7 +29,6 @@ class LibraryPresenter(
                 LibraryUiEvent.OnNavigateToSearch -> navigator.goTo(SearchScreen)
             }
         }
-    }
 }
 
 @Stable
@@ -38,7 +37,9 @@ data class LibraryState(
 ) : CircuitUiState
 
 sealed interface LibraryUiEvent {
-    data class OnNavigateToLibraryContentList(val source: LibraryDataSource) : LibraryUiEvent
+    data class OnNavigateToLibraryContentList(
+        val source: LibraryDataSource,
+    ) : LibraryUiEvent
 
     data object Back : LibraryUiEvent
 

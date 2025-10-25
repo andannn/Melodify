@@ -171,17 +171,27 @@ data class SearchUiState(
 ) : CircuitUiState
 
 sealed interface SearchUiEvent {
-    data class OnPlayAudio(val audioItemModel: AudioItemModel) : SearchUiEvent
+    data class OnPlayAudio(
+        val audioItemModel: AudioItemModel,
+    ) : SearchUiEvent
 
-    data class OnConfirmSearch(val text: String) : SearchUiEvent
+    data class OnConfirmSearch(
+        val text: String,
+    ) : SearchUiEvent
 
-    data class OnNavigateToLibraryContentList(val source: LibraryDataSource) : SearchUiEvent
+    data class OnNavigateToLibraryContentList(
+        val source: LibraryDataSource,
+    ) : SearchUiEvent
 
     data object Back : SearchUiEvent
 
-    data class OnInputTextChange(val inputText: String) : SearchUiEvent
+    data class OnInputTextChange(
+        val inputText: String,
+    ) : SearchUiEvent
 
-    data class OnExpandChange(val isExpand: Boolean) : SearchUiEvent
+    data class OnExpandChange(
+        val isExpand: Boolean,
+    ) : SearchUiEvent
 }
 
 sealed interface SearchState {

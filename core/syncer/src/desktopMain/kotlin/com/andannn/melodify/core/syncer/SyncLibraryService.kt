@@ -35,8 +35,7 @@ class SyncLibraryService(
                 userSettingPreferences.userDate
                     .map { userSetting ->
                         userSetting.libraryPath
-                    }
-                    .distinctUntilChanged()
+                    }.distinctUntilChanged()
                     .collect { _ ->
                         syncer.syncAllMediaLibrary()
                     }
@@ -51,8 +50,7 @@ class SyncLibraryService(
                             .map { Paths.get(it) }
                             .filter { it.isDirectory() }
                             .let { getDirectoryChangeFlow(it) }
-                    }
-                    .collect { refreshType ->
+                    }.collect { refreshType ->
                         Napier.d(tag = TAG) { "Library change detected: $refreshType" }
                         when (refreshType) {
                             RefreshType.All -> {

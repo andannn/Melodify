@@ -23,7 +23,10 @@ interface PlayListRepository {
     /**
      * Return flow of audios of playList
      */
-    fun getAudiosOfPlayListFlow(playListId: Long, sort: GroupSort): Flow<List<AudioItemModel>>
+    fun getAudiosOfPlayListFlow(
+        playListId: Long,
+        sort: GroupSort,
+    ): Flow<List<AudioItemModel>>
 
     /**
      * Return audios of playList

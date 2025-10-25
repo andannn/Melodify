@@ -11,5 +11,9 @@ fun generateHashKey(absolutePath: Path): Long {
         throw IllegalArgumentException("The path must be absolute path.")
     }
 
-    return absolutePath.toUri().toString().hashCode().toLong()
+    return absolutePath
+        .toUri()
+        .toString()
+        .hashCode()
+        .toLong()
 }

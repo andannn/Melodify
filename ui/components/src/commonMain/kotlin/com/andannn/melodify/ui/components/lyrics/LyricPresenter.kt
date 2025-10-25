@@ -27,7 +27,8 @@ class LyricPresenter(
     @Composable
     override fun present(): LyricState {
         val currentPlayingAudio by repository.playerStateMonitoryRepository
-            .getPlayingMediaStateFlow().collectAsRetainedState(null)
+            .getPlayingMediaStateFlow()
+            .collectAsRetainedState(null)
         if (currentPlayingAudio == null) {
             return LyricState.NoPlaying
         }
@@ -44,7 +45,8 @@ class LyricPresenter(
             }
         }
 
-        val lyric by repository.lyricRepository.getLyricByMediaIdFlow(currentPlayingAudio?.id ?: "")
+        val lyric by repository.lyricRepository
+            .getLyricByMediaIdFlow(currentPlayingAudio?.id ?: "")
             .collectAsRetainedState(null)
         return if (lyric == null) LyricState.Loading else LyricState.Loaded(lyric)
     }
@@ -55,5 +57,7 @@ sealed class LyricState : CircuitUiState {
 
     data object NoPlaying : LyricState()
 
-    data class Loaded(val lyric: LyricModel?) : LyricState()
+    data class Loaded(
+        val lyric: LyricModel?,
+    ) : LyricState()
 }

@@ -30,7 +30,8 @@ fun buildMediaItem(
     uniqueId: String? = null,
 ): MediaItem {
     val metadata =
-        MediaMetadata.Builder()
+        MediaMetadata
+            .Builder()
             .setAlbumTitle(album)
             .setTitle(title)
             .setArtist(artist)
@@ -50,15 +51,16 @@ fun buildMediaItem(
                     uniqueId?.let { putString(UNIQUE_ID_KEY, it) }
                     imageUri?.let { putString(EXTRA_ALBUM_COVER_ART_KEY, it.toString()) }
                 },
-            )
-            .build()
+            ).build()
 
     val requestMetadata =
-        RequestMetadata.Builder()
+        RequestMetadata
+            .Builder()
             .setMediaUri(sourceUri)
             .build()
 
-    return MediaItem.Builder()
+    return MediaItem
+        .Builder()
         .setMediaId(mediaId)
         .setSubtitleConfigurations(subtitleConfigurations)
         .setMediaMetadata(metadata)

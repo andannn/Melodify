@@ -117,7 +117,8 @@ fun PlayerGlanceContent(
         AlbumColver(
             modifier =
                 GlanceModifier
-                    .width(80.dp).fillMaxHeight(),
+                    .width(80.dp)
+                    .fillMaxHeight(),
             contentUrl = coverRes,
         )
         Column(
@@ -215,9 +216,11 @@ fun AlbumColver(
     val context = LocalContext.current
     LaunchedEffect(contentUrl) {
         val request =
-            ImageRequest.Builder(context)
+            ImageRequest
+                .Builder(context)
                 .data(contentUrl)
-                .size(128).scale(Scale.FILL)
+                .size(128)
+                .scale(Scale.FILL)
                 .allowHardware(false)
                 .memoryCacheKey("$contentUrl.glance.cover")
                 .build()

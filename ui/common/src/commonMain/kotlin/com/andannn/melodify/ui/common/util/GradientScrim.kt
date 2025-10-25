@@ -104,7 +104,8 @@ private data class VerticalGradientElement(
 @OptIn(ExperimentalComposeUiApi::class)
 private class VerticalGradientModifier(
     var onDraw: DrawScope.() -> Unit,
-) : Modifier.Node(), DrawModifierNode {
+) : Modifier.Node(),
+    DrawModifierNode {
     override fun ContentDrawScope.draw() {
         onDraw()
         drawContent()

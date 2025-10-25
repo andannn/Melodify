@@ -13,17 +13,15 @@ import java.nio.file.Paths
  *
  * @param pathSet the library path set.
  */
-fun scanAllAudioFile(pathSet: Set<String>): List<Path> {
-    return pathSet.fold(emptyList()) { acc, libraryPath ->
+fun scanAllAudioFile(pathSet: Set<String>): List<Path> =
+    pathSet.fold(emptyList()) { acc, libraryPath ->
         val data =
-            Files.walk(Paths.get(libraryPath))
+            Files
+                .walk(Paths.get(libraryPath))
                 .filter {
                     Files.isRegularFile(it)
-                }
-                .filter {
+                }.filter {
                     isAudioFile(it.toString())
-                }
-                .toList()
+                }.toList()
         data + acc
     }
-}

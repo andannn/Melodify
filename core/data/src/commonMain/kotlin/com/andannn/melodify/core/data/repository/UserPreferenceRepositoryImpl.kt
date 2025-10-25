@@ -91,13 +91,9 @@ class UserPreferenceRepositoryImpl(
         )
     }
 
-    override suspend fun getAllSearchHistory(limit: Int): List<String> {
-        return userDataDao.getSearchHistories(limit).map { it.searchText }
-    }
+    override suspend fun getAllSearchHistory(limit: Int): List<String> = userDataDao.getSearchHistories(limit).map { it.searchText }
 
-    override suspend fun getLastSuccessfulSyncTime(): Long? {
-        return preferences.userDate.first().lastSuccessfulSyncTime
-    }
+    override suspend fun getLastSuccessfulSyncTime(): Long? = preferences.userDate.first().lastSuccessfulSyncTime
 }
 
 expect fun isPathValid(path: String): Boolean

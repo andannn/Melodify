@@ -78,9 +78,13 @@ data class PlayQueueState(
 ) : CircuitUiState
 
 sealed interface PlayQueueEvent {
-    data class OnItemClick(val item: AudioItemModel) : PlayQueueEvent
+    data class OnItemClick(
+        val item: AudioItemModel,
+    ) : PlayQueueEvent
 
-    data class OnDeleteFinished(val id: Int) : PlayQueueEvent
+    data class OnDeleteFinished(
+        val id: Int,
+    ) : PlayQueueEvent
 
     data class OnSwapFinished(
         val from: Int,

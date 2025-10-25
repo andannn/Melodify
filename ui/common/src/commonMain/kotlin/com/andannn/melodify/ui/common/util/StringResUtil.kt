@@ -42,12 +42,11 @@ fun durationString(duration: Duration): String {
 }
 
 @Composable
-fun getCategoryResource(category: CustomTab): String {
-    return when (category) {
+fun getCategoryResource(category: CustomTab): String =
+    when (category) {
         CustomTab.AllMusic -> stringResource(Res.string.audio_page_title)
         is CustomTab.AlbumDetail -> category.label
         is CustomTab.ArtistDetail -> category.label
         is CustomTab.GenreDetail -> category.label
         is CustomTab.PlayListDetail -> category.label
     }
-}

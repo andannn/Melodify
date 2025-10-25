@@ -10,7 +10,7 @@ import com.andannn.melodify.core.data.repository.MediaControllerRepository
 
 private const val TAG = "MediaControllerRepository"
 
-internal class FakeMediaControllerRepositoryImpl() : MediaControllerRepository {
+internal class FakeMediaControllerRepositoryImpl : MediaControllerRepository {
     override fun getCurrentPlayingItemDuration(): Long? = 0L
 
     override fun playMediaList(

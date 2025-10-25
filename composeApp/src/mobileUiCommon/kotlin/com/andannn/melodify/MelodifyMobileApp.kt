@@ -4,7 +4,6 @@
  */
 package com.andannn.melodify
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -25,10 +24,8 @@ import com.andannn.melodify.navigation.routes.TabManageUiFactory
 import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
 import com.andannn.melodify.ui.components.common.HomeScreen
 import com.andannn.melodify.ui.components.common.LocalRepository
-import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupControllerImpl
-import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
 import com.slack.circuit.backstack.BackStack.Record
 import com.slack.circuit.backstack.BackStackRecordLocalProvider
 import com.slack.circuit.backstack.ProvidedValues

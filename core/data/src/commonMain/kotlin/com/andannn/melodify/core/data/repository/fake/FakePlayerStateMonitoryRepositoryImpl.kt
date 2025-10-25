@@ -13,22 +13,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
-internal class FakePlayerStateMonitoryRepositoryImpl() : PlayerStateMonitoryRepository {
-    override fun getCurrentPositionMs(): Long {
-        return 0L
-    }
+internal class FakePlayerStateMonitoryRepositoryImpl : PlayerStateMonitoryRepository {
+    override fun getCurrentPositionMs(): Long = 0L
 
-    override fun observeCurrentPositionMs(): Flow<Long> {
-        return flowOf(0L)
-    }
+    override fun observeCurrentPositionMs(): Flow<Long> = flowOf(0L)
 
-    override fun getPlayingIndexInQueue(): Int {
-        return 0
-    }
+    override fun getPlayingIndexInQueue(): Int = 0
 
-    override suspend fun getPlayListQueue(): List<AudioItemModel> {
-        return emptyList()
-    }
+    override suspend fun getPlayListQueue(): List<AudioItemModel> = emptyList()
 
     override fun getPlayingMediaStateFlow() =
         flow {
@@ -40,9 +32,7 @@ internal class FakePlayerStateMonitoryRepositoryImpl() : PlayerStateMonitoryRepo
             emit(emptyList())
         }
 
-    override fun getCurrentPlayMode(): PlayMode {
-        return PlayMode.REPEAT_ALL
-    }
+    override fun getCurrentPlayMode(): PlayMode = PlayMode.REPEAT_ALL
 
     override fun observeIsShuffle(): StateFlow<Boolean> = MutableStateFlow(false)
 

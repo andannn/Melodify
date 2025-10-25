@@ -15,6 +15,4 @@ import androidx.compose.runtime.Composable
 actual fun getColorScheme(
     darkTheme: Boolean,
     isDynamicColor: Boolean,
-): ColorScheme {
-    return if (darkTheme) DarkColorPalette else LightColorPalette
-}
+): ColorScheme = if (darkTheme) DarkColorPalette else LightColorPalette

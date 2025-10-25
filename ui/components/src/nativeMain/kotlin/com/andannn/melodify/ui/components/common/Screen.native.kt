@@ -17,6 +17,4 @@ actual data class LibraryContentListScreen(
     actual val datasource: LibraryDataSource,
 ) : Screen
 
-actual fun newLibraryContentListScreen(datasource: LibraryDataSource): LibraryContentListScreen {
-    return LibraryContentListScreen(datasource)
-}
+actual fun newLibraryContentListScreen(datasource: LibraryDataSource): LibraryContentListScreen = LibraryContentListScreen(datasource)

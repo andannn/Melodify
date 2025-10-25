@@ -17,10 +17,10 @@ internal actual val databaseBuilder: Module =
     module {
         single<RoomDatabase.Builder<MelodifyDataBase>> {
             val appContext = androidContext().applicationContext
-            Room.databaseBuilder<MelodifyDataBase>(
-                context = appContext,
-                name = get<PlatformInfo>().databasePath,
-            )
-                .setDriver(AndroidSQLiteDriver())
+            Room
+                .databaseBuilder<MelodifyDataBase>(
+                    context = appContext,
+                    name = get<PlatformInfo>().databasePath,
+                ).setDriver(AndroidSQLiteDriver())
         }
     }

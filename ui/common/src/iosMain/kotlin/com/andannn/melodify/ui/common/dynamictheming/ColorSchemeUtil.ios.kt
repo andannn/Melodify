@@ -50,6 +50,4 @@ actual fun createThemeFromSeed(
     surfaceContainerHighest: Color?,
     surfaceContainerLow: Color?,
     surfaceContainerLowest: Color?,
-): ColorScheme {
-    return if (isDark) DarkColorPalette else LightColorPalette
-}
+): ColorScheme = if (isDark) DarkColorPalette else LightColorPalette

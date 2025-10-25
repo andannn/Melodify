@@ -15,21 +15,20 @@ import kotlin.time.Duration.Companion.seconds
 internal class SleepTimerRepositoryImpl(
     private val sleepTimerController: SleepTimerController,
 ) : SleepTimerRepository {
-    override fun isCounting(): Boolean {
-        return sleepTimerController.counterState is SleepTimeCounterState.Counting
-    }
+    override fun isCounting(): Boolean = sleepTimerController.counterState is SleepTimeCounterState.Counting
 
     override fun observeIsCounting() =
-        sleepTimerController.getCounterStateFlow()
+        sleepTimerController
+            .getCounterStateFlow()
             .map { it is SleepTimeCounterState.Counting }
             .distinctUntilChanged()
 
     override fun observeRemainTime() =
-        sleepTimerController.getCounterStateFlow()
+        sleepTimerController
+            .getCounterStateFlow()
             .takeWhile {
                 it !is SleepTimeCounterState.Idle
-            }
-            .map {
+            }.map {
                 when (it) {
                     is SleepTimeCounterState.Counting -> it.remain
                     SleepTimeCounterState.Finish -> 0.seconds

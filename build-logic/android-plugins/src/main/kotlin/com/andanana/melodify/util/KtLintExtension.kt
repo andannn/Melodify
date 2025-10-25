@@ -5,6 +5,7 @@ import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 fun Project.configureKtLint(extension: KtlintExtension) {
     with(extension) {
+        version.set("1.7.1")
         verbose.set(true)
         debug.set(true)
         outputToConsole.set(true)

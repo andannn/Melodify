@@ -20,20 +20,19 @@ object LibraryPresenterFactory : Presenter.Factory {
         screen: Screen,
         navigator: Navigator,
         context: CircuitContext,
-    ): Presenter<*>? {
-        return when (screen) {
+    ): Presenter<*>? =
+        when (screen) {
             is LibraryScreen -> LibraryPresenter(navigator)
             else -> null
         }
-    }
 }
 
 object LibraryUiFactory : Ui.Factory {
     override fun create(
         screen: Screen,
         context: CircuitContext,
-    ): Ui<*>? {
-        return when (screen) {
+    ): Ui<*>? =
+        when (screen) {
             is LibraryScreen ->
                 ui<LibraryState> { state, modifier ->
                     Library(state, modifier)
@@ -41,5 +40,4 @@ object LibraryUiFactory : Ui.Factory {
 
             else -> null
         }
-    }
 }

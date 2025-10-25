@@ -31,18 +31,19 @@ fun MediaItem.toAppItem(): MediaItemModel =
             ) ?: "",
         extraUniqueId = mediaMetadata.extras?.getString(UNIQUE_ID_KEY),
         source =
-            Uri.withAppendedPath(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                mediaId,
-            ).toString(),
+            Uri
+                .withAppendedPath(
+                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                    mediaId,
+                ).toString(),
     )
 
 private var counter = 1
 
 private val uniqueId get() = "media_item_unique_id" + counter++
 
-fun AudioItemModel.toMediaItem(generateUniqueId: Boolean = false): MediaItem {
-    return buildMediaItem(
+fun AudioItemModel.toMediaItem(generateUniqueId: Boolean = false): MediaItem =
+    buildMediaItem(
         mediaId = id,
         title = name,
         sourceUri = Uri.parse(source),
@@ -55,4 +56,3 @@ fun AudioItemModel.toMediaItem(generateUniqueId: Boolean = false): MediaItem {
         mediaType = MediaMetadata.MEDIA_TYPE_MUSIC,
         uniqueId = if (generateUniqueId) uniqueId else null,
     )
-}

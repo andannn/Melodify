@@ -37,7 +37,9 @@ internal fun SleepTimerCountingContent(
     modifier: Modifier = Modifier,
     onAction: (DialogAction) -> Unit = {},
 ) {
-    val remainTime by getKoin().get<SleepTimerRepository>().observeRemainTime()
+    val remainTime by getKoin()
+        .get<SleepTimerRepository>()
+        .observeRemainTime()
         .collectAsState(0.seconds)
     SleepTimerCounterSheetContent(
         remain = remainTime,

@@ -19,9 +19,7 @@ import com.andannn.melodify.ui.components.popup.NoOpPopupController
 import org.junit.Rule
 
 class ScreenShotMediaContentRepository : NoOpMediaContentRepository() {
-    override suspend fun getAlbumByAlbumId(albumId: String): AlbumItemModel? {
-        return albumList.firstOrNull { it.id == albumId }
-    }
+    override suspend fun getAlbumByAlbumId(albumId: String): AlbumItemModel? = albumList.firstOrNull { it.id == albumId }
 }
 
 fun Paparazzi.snapshotWithOption(

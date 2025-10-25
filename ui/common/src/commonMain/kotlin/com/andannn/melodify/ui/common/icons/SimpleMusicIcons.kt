@@ -52,5 +52,7 @@ object SimpleMusicIcons {
 }
 
 sealed class SmpIcon {
-    data class ImageVectorIcon(val imageVector: ImageVector) : SmpIcon()
+    data class ImageVectorIcon(
+        val imageVector: ImageVector,
+    ) : SmpIcon()
 }

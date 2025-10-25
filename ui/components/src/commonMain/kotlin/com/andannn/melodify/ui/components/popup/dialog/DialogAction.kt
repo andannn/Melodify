@@ -17,28 +17,33 @@ sealed interface DialogAction {
     }
 
     interface InputDialog : DialogAction {
-        data class Accept(val input: String) : InputDialog
+        data class Accept(
+            val input: String,
+        ) : InputDialog
 
         object Decline : InputDialog
     }
 
     interface MediaOptionDialog : DialogAction {
-        data class ClickItem(val optionItem: OptionItem, val dialog: DialogId.MediaOption) :
-            MediaOptionDialog
+        data class ClickItem(
+            val optionItem: OptionItem,
+            val dialog: DialogId.MediaOption,
+        ) : MediaOptionDialog
     }
 
     interface AddToPlayListDialog : DialogAction {
         data class OnAddToPlayList(
             val playList: PlayListItemModel,
             val audios: List<AudioItemModel>,
-        ) :
-            AddToPlayListDialog
+        ) : AddToPlayListDialog
 
         object OnCreateNewPlayList : AddToPlayListDialog
     }
 
     interface SleepTimerOptionDialog : DialogAction {
-        data class OnOptionClick(val option: SleepTimerOption) : SleepTimerOptionDialog
+        data class OnOptionClick(
+            val option: SleepTimerOption,
+        ) : SleepTimerOptionDialog
     }
 
     interface SleepTimerCountingDialog : DialogAction {

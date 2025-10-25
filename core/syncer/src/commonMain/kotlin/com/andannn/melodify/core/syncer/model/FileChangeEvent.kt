@@ -10,7 +10,9 @@ package com.andannn.melodify.core.syncer.model
 sealed interface RefreshType {
     data object All : RefreshType
 
-    data class ByUri(val triggerFiles: List<FileChangeEvent>) : RefreshType
+    data class ByUri(
+        val triggerFiles: List<FileChangeEvent>,
+    ) : RefreshType
 }
 
 /**

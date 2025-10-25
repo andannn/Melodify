@@ -20,8 +20,8 @@ object SearchUiFactory : Ui.Factory {
     override fun create(
         screen: Screen,
         context: CircuitContext,
-    ): Ui<*>? {
-        return when (screen) {
+    ): Ui<*>? =
+        when (screen) {
             is SearchScreen ->
                 ui<SearchUiState> { state, modifier ->
                     Search(state, modifier)
@@ -29,7 +29,6 @@ object SearchUiFactory : Ui.Factory {
 
             else -> null
         }
-    }
 }
 
 object SearchPresenterFactory : Presenter.Factory {
@@ -37,8 +36,8 @@ object SearchPresenterFactory : Presenter.Factory {
         screen: Screen,
         navigator: Navigator,
         context: CircuitContext,
-    ): Presenter<*>? {
-        return when (screen) {
+    ): Presenter<*>? =
+        when (screen) {
             is SearchScreen ->
                 presenterOf {
                     rememberSearchUiPresenter(navigator).present()
@@ -46,5 +45,4 @@ object SearchPresenterFactory : Presenter.Factory {
 
             else -> null
         }
-    }
 }

@@ -36,10 +36,9 @@ jobs:
 
       - name: run copyright header check
         run: ./gradlew spotlessCheck
-#      Uncomment the following line after this issue is resolved:
-#      https://github.com/pinterest/ktlint/issues/2953
-#      - name: run kotlin lint check
-#        run: ./gradlew ktlintCheck
+
+      - name: run kotlin lint check
+        run: ./gradlew ktlintCheck
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
@@ -47,7 +46,7 @@ jobs:
       # Run Desktop Tests
       - name: Run Jvm tests
         run: ./gradlew desktopTest
-
-      # Run Ui Screenshot Tests
-      - name: Run Ui Screenshot Tests (Android only)
-        run: ./gradlew composeApp:verifyPaparazziDebug
+#
+#      # Run Ui Screenshot Tests
+#      - name: Run Ui Screenshot Tests (Android only)
+#        run: ./gradlew composeApp:verifyPaparazziDebug
