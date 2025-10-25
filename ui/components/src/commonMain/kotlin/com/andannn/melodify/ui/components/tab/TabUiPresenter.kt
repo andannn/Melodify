@@ -14,20 +14,27 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.model.GroupSort
+import com.andannn.melodify.core.data.model.contentFlow
 import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.common.TabManageScreen
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
+import com.andannn.melodify.ui.components.popup.addToNextPlay
+import com.andannn.melodify.ui.components.popup.addToPlaylist
+import com.andannn.melodify.ui.components.popup.addToQueue
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
 import com.slack.circuit.retained.collectAsRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
 
@@ -38,7 +45,13 @@ fun rememberTabUiPresenter(
     navigator: Navigator,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-) = remember(navigator, repository, popupController) { TabUiPresenter(navigator, repository, popupController) }
+) = remember(navigator, repository, popupController) {
+    TabUiPresenter(
+        navigator,
+        repository,
+        popupController,
+    )
+}
 
 class TabUiPresenter(
     private val navigator: Navigator,
@@ -57,7 +70,16 @@ class TabUiPresenter(
         val currentTabList by userPreferenceRepository.currentCustomTabsFlow.collectAsRetainedState(
             emptyList(),
         )
-        Napier.d(tag = TAG) { "TabUiPresenter currentTabList $currentTabList" }
+        val groupSort by rememberRetained {
+            mutableStateOf(
+//                GroupSort.Album.TrackNumber(albumAscending = true, trackNumAscending = true),
+//                GroupSort.Title(titleAscending = true),
+                GroupSort.Artist.Title(
+                    artistAscending = true,
+                    titleAscending = true,
+                ),
+            )
+        }
 
         LaunchedEffect(Unit) {
             userPreferenceRepository.currentCustomTabsFlow
@@ -96,39 +118,46 @@ class TabUiPresenter(
         ) { eventSink ->
             when (eventSink) {
                 is TabUiEvent.OnClickTab -> selectedIndex = eventSink.index
-                is TabUiEvent.OnShowTabOption -> scope.launch { onShowTabOption(eventSink.tab) }
-                TabUiEvent.OnTabManagementClick -> navigator.goTo(TabManageScreen)
-            }
-        }
-    }
+                is TabUiEvent.OnShowTabOption ->
+                    scope.launch {
+                        val tab = eventSink.tab
+                        val result =
+                            popupController.showDialog(
+                                DialogId.OptionDialog(
+                                    options =
+                                        buildList {
+                                            add(OptionItem.PLAY_NEXT)
+                                            add(OptionItem.ADD_TO_QUEUE)
+                                            add(OptionItem.ADD_TO_PLAYLIST)
 
-    private suspend fun onShowTabOption(tab: CustomTab) {
-        val model =
-            when (tab) {
-                is CustomTab.AlbumDetail -> mediaContentRepository.getAlbumByAlbumId(tab.albumId)
-                is CustomTab.ArtistDetail -> mediaContentRepository.getArtistByArtistId(tab.artistId)
-                is CustomTab.GenreDetail -> mediaContentRepository.getGenreByGenreId(tab.genreId)
-                is CustomTab.PlayListDetail -> playListRepository.getPlayListById(tab.playListId.toLong())
-                CustomTab.AllMusic -> return
-            }
+                                            if (tab !is CustomTab.AllMusic) {
+                                                add(OptionItem.DELETE_TAB)
+                                            }
+                                        },
+                                ),
+                            )
 
-        if (model == null) {
-            return
-        }
-        val result = popupController.showDialog(DialogId.MediaOption.fromMediaModel(model))
+                        if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
+                            context(repository, popupController) {
+                                val items =
+                                    currentTabList
+                                        .getOrNull(selectedIndex)
+                                        ?.contentFlow(sort = groupSort)
+                                        ?.first() ?: error("current tab is null")
+                                when (result.optionItem) {
+                                    OptionItem.DELETE_TAB ->
+                                        repository.userPreferenceRepository.deleteCustomTab(tab)
 
-        if (result is DialogAction.MediaOptionDialog.ClickItem) {
-            if (result.optionItem == OptionItem.DELETE_TAB) {
-                repository.userPreferenceRepository.deleteCustomTab(tab)
-            } else {
-                with(repository) {
-                    with(popupController) {
-                        handleMediaOptionClick(
-                            optionItem = result.optionItem,
-                            dialog = result.dialog,
-                        )
+                                    OptionItem.PLAY_NEXT -> addToNextPlay(items)
+                                    OptionItem.ADD_TO_QUEUE -> addToQueue(items)
+                                    OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items)
+                                    else -> {}
+                                }
+                            }
+                        }
                     }
-                }
+
+                TabUiEvent.OnTabManagementClick -> navigator.goTo(TabManageScreen)
             }
         }
     }

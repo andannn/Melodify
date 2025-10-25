@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.data.model
 
+import androidx.paging.PagingData
 import com.andannn.melodify.core.data.Repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
@@ -57,6 +58,30 @@ fun CustomTab.contentFlow(sort: GroupSort): Flow<List<AudioItemModel>> =
         is CustomTab.GenreDetail -> repository.mediaContentRepository.getAudiosOfGenreFlow(genreId, sort)
         is CustomTab.PlayListDetail ->
             repository.playListRepository.getAudiosOfPlayListFlow(
+                playListId.toLong(),
+                sort,
+            )
+    }
+
+context(repository: Repository)
+fun CustomTab.contentPagingDataFlow(sort: GroupSort): Flow<PagingData<AudioItemModel>> =
+    when (this) {
+        is CustomTab.AllMusic -> repository.mediaContentRepository.getAllMediaItemsPagingFlow(sort)
+        is CustomTab.AlbumDetail ->
+            repository.mediaContentRepository.getAudiosPagingFlowOfAlbum(
+                albumId,
+                sort,
+            )
+
+        is CustomTab.ArtistDetail ->
+            repository.mediaContentRepository.getAudiosPagingFlowOfArtist(
+                artistId,
+                sort,
+            )
+
+        is CustomTab.GenreDetail -> repository.mediaContentRepository.getAudiosPagingFlowOfGenre(genreId, sort)
+        is CustomTab.PlayListDetail ->
+            repository.playListRepository.getAudioPagingFlowOfPlayList(
                 playListId.toLong(),
                 sort,
             )

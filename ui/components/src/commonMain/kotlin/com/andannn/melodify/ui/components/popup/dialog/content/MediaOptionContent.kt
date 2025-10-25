@@ -28,6 +28,30 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun MediaOptionContent(
+    dialogId: DialogId.OptionDialog,
+    modifier: Modifier = Modifier,
+    onAction: (DialogAction) -> Unit = {},
+) {
+    Column(modifier.navigationBarsPadding().fillMaxWidth()) {
+        dialogId.options.mapIndexed { index, item ->
+            SheetItem(
+                item = item,
+                onClick = {
+                    onAction(DialogAction.MediaOptionDialog.ClickOptionItem(item))
+                },
+            )
+
+            if (index != dialogId.options.size - 1) {
+                HorizontalDivider()
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+internal fun MediaOptionContent(
     dialogId: DialogId.MediaOption,
     modifier: Modifier = Modifier,
     onAction: (DialogAction) -> Unit = {},

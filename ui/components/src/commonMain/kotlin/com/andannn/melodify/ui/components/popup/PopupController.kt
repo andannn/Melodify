@@ -6,7 +6,6 @@ package com.andannn.melodify.ui.components.popup
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
@@ -35,9 +34,6 @@ import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.popup.dialog.SleepTimerOption
 import com.andannn.melodify.ui.components.popup.snackbar.SnackBarMessage
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
@@ -152,7 +148,7 @@ suspend fun handleMediaOptionClick(
                 dialog.media,
             )
 
-        OptionItem.ADD_TO_PLAYLIST -> onAddToPlaylistOptionClick(dialog.media)
+        OptionItem.ADD_TO_PLAYLIST -> error("never")
         OptionItem.DELETE_PLAYLIST -> (dialog.media as PlayListItemModel).delete()
         OptionItem.ADD_TO_HOME_TAB -> dialog.media.addToHomeTab()
         OptionItem.DELETE_TAB -> error("never")
@@ -174,6 +170,19 @@ private suspend fun MediaItemModel.addToHomeTab() {
         popupController.showSnackBar(SnackBarMessage.TabAlreadyExist)
     } else {
         userPreferenceRepository.addNewCustomTab(tab)
+    }
+}
+
+context(repo: Repository)
+suspend fun addToNextPlay(items: List<AudioItemModel>) {
+    val havePlayingQueue = repo.getPlayListQueue().isNotEmpty()
+    if (havePlayingQueue) {
+        repo.addMediaItems(
+            index = repo.getPlayingIndexInQueue() + 1,
+            mediaItems = items,
+        )
+    } else {
+        repo.playMediaList(items, 0)
     }
 }
 
@@ -200,6 +209,19 @@ private suspend fun MediaItemModel.addToQueue() {
         )
     } else {
         repo.playMediaList(audios(), 0)
+    }
+}
+
+context(repo: Repository)
+suspend fun addToQueue(items: List<AudioItemModel>) {
+    val playListQueue = repo.getPlayListQueue()
+    if (playListQueue.isNotEmpty()) {
+        repo.addMediaItems(
+            index = playListQueue.size,
+            mediaItems = items,
+        )
+    } else {
+        repo.playMediaList(items, 0)
     }
 }
 
@@ -255,13 +277,41 @@ private suspend fun handleClickSleepTimer() {
 }
 
 context(repo: Repository, popupController: PopupController)
-private suspend fun onAddToPlaylistOptionClick(source: MediaItemModel) {
-    val result = popupController.showDialog(DialogId.AddToPlayListDialog(source))
+suspend fun addToPlaylist(items: List<AudioItemModel>) {
+    Napier.d(tag = TAG) { "addToPlaylist E" }
+    val result = popupController.showDialog(DialogId.AddMusicsToPlayListDialog(items))
+
+    Napier.d(tag = TAG) { "AddMusicsToPlayListDialog result: $result" }
 
     if (result is DialogAction.AddToPlayListDialog.OnAddToPlayList) {
         result.playList.addAll(audioList = result.audios)
     } else if (result is DialogAction.AddToPlayListDialog.OnCreateNewPlayList) {
-        createNewPlayListFromSource(source = source)
+        createNewPlayList(items)
+    }
+}
+
+context(repo: Repository, popupController: PopupController)
+private suspend fun createNewPlayList(items: List<AudioItemModel>) {
+    val result = popupController.showDialog(DialogId.NewPlayListDialog)
+    Napier.d(tag = TAG) { "result. name = $result" }
+    if (result is DialogAction.InputDialog.Accept) {
+        val name = result.input
+        Napier.d(tag = TAG) { "create new playlist start. name = $name" }
+        val playListId = repo.createNewPlayList(name)
+
+        Napier.d(tag = TAG) { "playlist created. id = $playListId" }
+
+        repo.addMusicToPlayList(
+            playListId = playListId,
+            musics = items,
+        )
+
+        repo.addNewCustomTab(
+            CustomTab.PlayListDetail(
+                playListId.toString(),
+                name,
+            ),
+        )
     }
 }
 

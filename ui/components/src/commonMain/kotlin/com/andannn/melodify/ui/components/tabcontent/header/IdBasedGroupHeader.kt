@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AlbumItemModel
+import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
@@ -48,38 +49,15 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun IdBasedGroupHeader(
     state: GroupHeaderState,
-    popupController: PopupController = LocalPopupController.current,
-    repository: Repository = LocalRepository.current,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
     HeaderInfo(
         modifier = modifier,
         coverArtUri = state.cover,
         title = state.title,
         trackCount = state.trackCount,
         onOptionClick = {
-            scope.launch {
-                state.mediaItem?.let { media ->
-                    when (media) {
-                        is AlbumItemModel -> {
-                            val result =
-                                popupController.showDialog(DialogId.SearchedAlbumOption(media))
-                            if (result is DialogAction.MediaOptionDialog.ClickItem) {
-                                with(repository) {
-                                    with(popupController) {
-                                        handleMediaOptionClick(
-                                            optionItem = result.optionItem,
-                                            dialog = result.dialog,
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        else -> {}
-                    }
-                }
-            }
+            state.eventSink.invoke(GroupHeaderEvent.OnOptionClick)
         },
     )
 }

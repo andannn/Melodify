@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.data.repository
 
+import androidx.paging.PagingData
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -13,6 +14,8 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import kotlinx.coroutines.flow.Flow
 
 interface MediaContentRepository {
+    fun getAllMediaItemsPagingFlow(sort: GroupSort): Flow<PagingData<AudioItemModel>>
+
     /**
      * Return flow of all media items
      */
@@ -41,6 +44,11 @@ interface MediaContentRepository {
         sort: GroupSort,
     ): Flow<List<AudioItemModel>>
 
+    fun getAudiosPagingFlowOfAlbum(
+        albumId: String,
+        sort: GroupSort,
+    ): Flow<PagingData<AudioItemModel>>
+
     /**
      * Return audios of artist
      */
@@ -54,6 +62,11 @@ interface MediaContentRepository {
         sort: GroupSort,
     ): Flow<List<AudioItemModel>>
 
+    fun getAudiosPagingFlowOfArtist(
+        artistId: String,
+        sort: GroupSort,
+    ): Flow<PagingData<AudioItemModel>>
+
     /**
      * Return audios of artist
      */
@@ -66,6 +79,11 @@ interface MediaContentRepository {
         genreId: String,
         sort: GroupSort,
     ): Flow<List<AudioItemModel>>
+
+    fun getAudiosPagingFlowOfGenre(
+        genreId: String,
+        sort: GroupSort,
+    ): Flow<PagingData<AudioItemModel>>
 
     /**
      * Return audios of genre

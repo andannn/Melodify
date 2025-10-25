@@ -60,35 +60,22 @@ sealed interface DialogId {
         val negative = Res.string.decline
     }
 
-    data class AddToPlayListDialog(
-        val source: MediaItemModel,
+    data class AddMusicsToPlayListDialog(
+        val items: List<AudioItemModel>,
     ) : DialogId
 
     data object SleepTimerOptionDialog : DialogId
 
     data object SleepCountingDialog : DialogId
 
-    abstract class MediaOption(
+    class OptionDialog(
+        val options: List<OptionItem>,
+    ) : DialogId
+
+    open class MediaOption(
         open val media: MediaItemModel,
         open val options: List<OptionItem>,
-    ) : DialogId {
-        companion object {
-            fun fromMediaModel(item: MediaItemModel): MediaOption =
-                when (item) {
-                    is AlbumItemModel -> AlbumOption(item)
-                    is ArtistItemModel -> ArtistOption(item)
-                    is AudioItemModel -> AudioOption(item)
-                    is GenreItemModel -> GenreOption(item)
-                    is PlayListItemModel -> {
-                        if (item.isFavorite) {
-                            FavoritePlayListOption(item)
-                        } else {
-                            PlayListOption(item)
-                        }
-                    }
-                }
-        }
-    }
+    ) : DialogId
 
     data class AudioOption(
         override val media: AudioItemModel,
@@ -168,19 +155,6 @@ sealed interface DialogId {
                 ),
         )
 
-    data class GenreOption(
-        override val media: GenreItemModel,
-    ) : MediaOption(
-            media = media,
-            options =
-                listOf(
-                    OptionItem.ADD_TO_QUEUE,
-                    OptionItem.PLAY_NEXT,
-                    OptionItem.ADD_TO_PLAYLIST,
-                    OptionItem.DELETE_TAB,
-                ),
-        )
-
     data class SearchedGenreOption(
         override val media: GenreItemModel,
     ) : MediaOption(
@@ -191,19 +165,6 @@ sealed interface DialogId {
                     OptionItem.PLAY_NEXT,
                     OptionItem.ADD_TO_HOME_TAB,
                     OptionItem.ADD_TO_PLAYLIST,
-                ),
-        )
-
-    data class AlbumOption(
-        override val media: AlbumItemModel,
-    ) : MediaOption(
-            media = media,
-            options =
-                listOf(
-                    OptionItem.ADD_TO_QUEUE,
-                    OptionItem.PLAY_NEXT,
-                    OptionItem.ADD_TO_PLAYLIST,
-                    OptionItem.DELETE_TAB,
                 ),
         )
 
@@ -230,19 +191,6 @@ sealed interface DialogId {
                     OptionItem.PLAY_NEXT,
                     OptionItem.ADD_TO_HOME_TAB,
                     OptionItem.ADD_TO_PLAYLIST,
-                ),
-        )
-
-    data class ArtistOption(
-        override val media: ArtistItemModel,
-    ) : MediaOption(
-            media = media,
-            options =
-                listOf(
-                    OptionItem.ADD_TO_QUEUE,
-                    OptionItem.PLAY_NEXT,
-                    OptionItem.ADD_TO_PLAYLIST,
-                    OptionItem.DELETE_TAB,
                 ),
         )
 }

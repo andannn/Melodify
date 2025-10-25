@@ -36,7 +36,6 @@ import com.andannn.melodify.ui.components.popup.PopupController
 fun TabUi(
     state: TabUiState,
     modifier: Modifier = Modifier,
-    popupController: PopupController = LocalPopupController.current,
 ) {
     val tabs = state.customTabList
     val selectedIndex = state.selectedIndex
@@ -86,6 +85,7 @@ fun TabUi(
 
         IconButton(
             modifier = Modifier.padding(start = 4.dp),
+            enabled = buttonVisible,
             onClick = {
                 state.eventSink.invoke(TabUiEvent.OnTabManagementClick)
             },

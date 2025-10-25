@@ -12,8 +12,9 @@ actual val DialogId.dialogIdType: DialogType
         when (this) {
             is DialogId.SleepTimerOptionDialog,
             DialogId.SleepCountingDialog,
+            is DialogId.OptionDialog,
             is DialogId.MediaOption,
-            is DialogId.AddToPlayListDialog,
+            is DialogId.AddMusicsToPlayListDialog,
             -> DialogType.ModalBottomSheet
 
             DialogId.NewPlayListDialog,

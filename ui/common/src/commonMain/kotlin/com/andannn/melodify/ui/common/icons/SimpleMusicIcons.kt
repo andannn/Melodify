@@ -5,6 +5,7 @@
 package com.andannn.melodify.ui.common.icons
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.QueueMusic
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.Home
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.LibraryMusic
+import androidx.compose.material.icons.outlined.QueueMusic
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DeleteSweep
@@ -28,13 +30,6 @@ import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.ui.graphics.vector.ImageVector
 
 object SimpleMusicIcons {
-    val Home = Icons.Filled.Home
-    val UnselectedHome = Icons.Outlined.Home
-    val Settings = Icons.Filled.Settings
-    val UnselectedSettings = Icons.Outlined.Settings
-    val Library = Icons.Filled.LibraryMusic
-    val UnselectedLibrary = Icons.Outlined.LibraryMusic
-    val Share = SmpIcon.ImageVectorIcon(Icons.Rounded.Share)
     val AddFavorite = SmpIcon.ImageVectorIcon(Icons.Rounded.Favorite)
     val AddPlayList = SmpIcon.ImageVectorIcon(Icons.AutoMirrored.Rounded.PlaylistAdd)
     val PlayNext = SmpIcon.ImageVectorIcon(Icons.Rounded.PlayCircle)
@@ -49,6 +44,7 @@ object SimpleMusicIcons {
     val Artist = SmpIcon.ImageVectorIcon(Icons.Filled.Person)
     val Genre = SmpIcon.ImageVectorIcon(Icons.Rounded.LibraryMusic)
     val PlayList = SmpIcon.ImageVectorIcon(Icons.Rounded.PlayCircle)
+    val QueueMusic = SmpIcon.ImageVectorIcon(Icons.AutoMirrored.Outlined.QueueMusic)
 }
 
 sealed class SmpIcon {

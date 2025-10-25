@@ -49,6 +49,7 @@ import com.andannn.melodify.ui.common.widgets.LargePreviewCard
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
 import com.andannn.melodify.ui.common.widgets.SmpTextButton
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
+import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -65,13 +66,13 @@ import org.koin.mp.KoinPlatform.getKoin
 @Composable
 fun AddToPlayListDialogContent(
     modifier: Modifier = Modifier,
-    source: MediaItemModel,
+    dialog: DialogId.AddMusicsToPlayListDialog,
     onAction: (DialogAction) -> Unit,
 ) {
-    val state = rememberAddToPlayListSheetState(source)
+    val state = rememberAddToPlayListSheetState()
     AddToPlayListRequestSheetContent(
         modifier = modifier.fillMaxWidth(),
-        audioList = state.audioListState,
+        audioList = dialog.items,
         playLists = state.playListState,
         onRequestDismiss = {
             onAction(DialogAction.Dismissed)
@@ -80,7 +81,7 @@ fun AddToPlayListDialogContent(
             onAction(
                 DialogAction.AddToPlayListDialog.OnAddToPlayList(
                     playList,
-                    state.audioListState,
+                    dialog.items,
                 ),
             )
         },
@@ -213,7 +214,6 @@ internal fun AddToPlayListRequestSheetContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun rememberAddToPlayListSheetState(
-    source: MediaItemModel,
     sheetState: SheetState =
         rememberModalBottomSheetState(
             skipPartiallyExpanded = true,
@@ -221,12 +221,10 @@ private fun rememberAddToPlayListSheetState(
     scope: CoroutineScope = rememberCoroutineScope(),
 ) = remember(
     scope,
-    source,
     sheetState,
 ) {
     AddToPlayListSheetState(
         scope = scope,
-        source = source,
         sheetState = sheetState,
     )
 }
@@ -234,20 +232,12 @@ private fun rememberAddToPlayListSheetState(
 @OptIn(ExperimentalMaterial3Api::class)
 private class AddToPlayListSheetState(
     val scope: CoroutineScope,
-    source: MediaItemModel,
     repository: Repository = getKoin().get<Repository>(),
     val sheetState: SheetState,
 ) {
-    val audioListState = mutableStateListOf<AudioItemModel>()
-
     val playListState = mutableStateListOf<PlayListItemModel>()
 
     init {
-        scope.launch {
-            val audioList = with(repository) { source.audios() }
-            audioListState.addAll(audioList)
-        }
-
         scope.launch {
             repository.playListRepository
                 .getAllPlayListFlow()

@@ -121,6 +121,13 @@ fun DialogContent(data: DialogData) {
                     data.performAction(it)
                 },
             )
+        is DialogId.OptionDialog ->
+            MediaOptionContent(
+                dialogId = dialog,
+                onAction = {
+                    data.performAction(it)
+                },
+            )
 
         is DialogId.MediaOption ->
             MediaOptionContent(
@@ -130,9 +137,9 @@ fun DialogContent(data: DialogData) {
                 },
             )
 
-        is DialogId.AddToPlayListDialog ->
+        is DialogId.AddMusicsToPlayListDialog ->
             AddToPlayListDialogContent(
-                source = dialog.source,
+                dialog = dialog,
                 onAction = {
                     data.performAction(it)
                 },

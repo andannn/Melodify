@@ -37,10 +37,10 @@
     <string name="new_playlist_dialog_input_hint">Title</string>
     <string name="remove_playlist">Delete playlist</string>
     <string name="library_title">Library</string>
-    <string name="delete_this_tab">Delete this tab</string>
+    <string name="delete_this_tab">Remove this tab</string>
     <string name="add_library_path_dialog_title">Add new path</string>
     <string name="invalid_path_alert_dialog_content">Invalid path</string>
-    <string name="add_to_home_tab">Add to home tab</string>
+    <string name="add_to_home_tab">Pin to Home</string>
     <string name="favorite">Favorite</string>
     <string name="tab_already_exist">Tab already exist.</string>
 </resources>

@@ -4,11 +4,14 @@
  */
 package com.andannn.melodify.core.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.map
+import com.andannn.melodify.core.data.MediaPagingConfig
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GroupSort
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.toSortMethod
-import com.andannn.melodify.core.data.util.mapToAppItemList
+import com.andannn.melodify.core.data.util.mapToAppItem
 import com.andannn.melodify.core.data.util.toAppItem
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.entity.PlayListEntity
@@ -128,12 +131,27 @@ internal class PlayListRepositoryImpl(
         sort: GroupSort,
     ) = playListDao
         .getMediasInPlayListFlow(playListId, sort.toSortMethod())
-        .map { it.mapToAppItemList() }
+        .map { it.map { it.mapToAppItem() } }
+
+    override fun getAudioPagingFlowOfPlayList(
+        playListId: Long,
+        sort: GroupSort,
+    ) = Pager(
+        config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
+        pagingSourceFactory = {
+            playListDao.getMediaPagingSourceInPlayList(
+                playListId = playListId,
+                sort.toSortMethod(),
+            )
+        },
+    ).flow.map { pagingData ->
+        pagingData.map { it.mapToAppItem() }
+    }
 
     override suspend fun getAudiosOfPlayList(playListId: Long) =
         playListDao
             .getMediasInPlayList(playListId)
-            .mapToAppItemList()
+            .map { it.mapToAppItem() }
 
     private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>) = list.map { it.toAppItem() }
 }

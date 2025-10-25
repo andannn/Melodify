@@ -30,6 +30,7 @@ kotlin {
             implementation(project(":core:platform"))
             implementation(libs.room.runtime)
             implementation(libs.okio)
+            implementation(libs.room.paging)
         }
 
         iosMain.dependencies {

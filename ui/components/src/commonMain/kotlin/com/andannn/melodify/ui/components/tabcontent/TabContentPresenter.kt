@@ -8,33 +8,38 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.GroupSort
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.contentFlow
+import com.andannn.melodify.core.data.model.contentPagingDataFlow
 import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
+import com.andannn.melodify.ui.components.popup.addToNextPlay
+import com.andannn.melodify.ui.components.popup.addToPlaylist
+import com.andannn.melodify.ui.components.popup.addToQueue
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
+import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 private const val TAG = "TabContentPresenter"
@@ -73,32 +78,22 @@ class TabContentPresenter(
         val scope = rememberCoroutineScope()
         Napier.d(tag = TAG) { "TabContentPresenter scope ${scope.hashCode()}" }
 
-        val listState = rememberLazyListState()
         val groupSort by rememberRetained {
             mutableStateOf(
-                GroupSort.Album.TrackNumber(albumAscending = true, trackNumAscending = true),
+//                GroupSort.Album.TrackNumber(albumAscending = true, trackNumAscending = true),
 //                GroupSort.Title(titleAscending = true),
-//                GroupSort.Artist.Title(
-//                    artistAscending = true,
-//                    titleAscending = true,
-//                ),
+                GroupSort.Artist.Title(
+                    artistAscending = true,
+                    titleAscending = true,
+                ),
             )
         }
 
-        val contentGroup =
-            rememberRetained {
-                mutableStateListOf<ContentGroup>()
+        val pagingDataFlow =
+            rememberRetained(selectedTab, groupSort) {
+                getContentPagingFlow(selectedTab, groupSort).cachedIn(scope)
             }
-
-        LaunchedEffect(groupSort, selectedTab) {
-            getContentFlow(selectedTab, groupSort).collect { audioList ->
-                contentGroup.clear()
-                contentGroup.addAll(audioList.toGroup(groupSort.toSortType()))
-                listState.requestScrollToItem(0)
-            }
-        }
-
-        Napier.d(tag = TAG) { "TabContentPresenter contentMap ${contentGroup.size}" }
+        val pagingItems: LazyPagingItems<AudioItemModel> = pagingDataFlow.collectAsLazyPagingItems()
 
         DisposableEffect(Unit) {
             onDispose {
@@ -108,15 +103,22 @@ class TabContentPresenter(
 
         return TabContentState(
             selectedTab = selectedTab,
-            listState = listState,
-            contentGroup = contentGroup.toImmutableList(),
+            groupSort = groupSort,
+            pagingItems = pagingItems,
         ) { eventSink ->
             when (eventSink) {
                 is TabContentEvent.OnPlayMusic ->
                     scope.launch {
+                        val items =
+                            with(repository) {
+                                selectedTab
+                                    ?.contentFlow(sort = groupSort)
+                                    ?.first()
+                                    ?: error("selectedTab is null")
+                            }
                         playMusic(
                             eventSink.mediaItemModel,
-                            allAudios = contentGroup.map { it.content }.flatten(),
+                            allAudios = items,
                         )
                     }
 
@@ -130,15 +132,15 @@ class TabContentPresenter(
         }
     }
 
-    private fun getContentFlow(
+    private fun getContentPagingFlow(
         selectedTab: CustomTab?,
         groupSort: GroupSort,
-    ): Flow<List<AudioItemModel>> {
+    ): Flow<PagingData<AudioItemModel>> {
         if (selectedTab == null) {
-            return flow { emit(emptyList()) }
+            return flowOf()
         }
         return with(repository) {
-            selectedTab.contentFlow(
+            selectedTab.contentPagingDataFlow(
                 sort = groupSort,
             )
         }
@@ -167,30 +169,26 @@ class TabContentPresenter(
         }
     }
 
-    private suspend fun onShowMusicItemOption(mediaItemModel: MediaItemModel) {
-        val currentTab = selectedTab
+    private suspend fun onShowMusicItemOption(item: AudioItemModel) {
+        val options =
+            listOf(
+                OptionItem.PLAY_NEXT,
+                OptionItem.ADD_TO_QUEUE,
+                OptionItem.ADD_TO_PLAYLIST,
+            )
         val result =
-            if (mediaItemModel is AudioItemModel && currentTab is CustomTab.PlayListDetail) {
-                popupController.showDialog(
-                    DialogId.AudioOptionInPlayList(
-                        playListId = currentTab.playListId,
-                        mediaItemModel,
-                    ),
-                )
-            } else {
-                popupController.showDialog(
-                    DialogId.MediaOption.fromMediaModel(
-                        item = mediaItemModel,
-                    ),
-                )
-            }
-        if (result is DialogAction.MediaOptionDialog.ClickItem) {
-            with(repository) {
-                with(popupController) {
-                    handleMediaOptionClick(
-                        optionItem = result.optionItem,
-                        dialog = result.dialog,
-                    )
+            popupController.showDialog(
+                DialogId.OptionDialog(
+                    options = options,
+                ),
+            )
+        if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
+            context(repository, popupController) {
+                when (result.optionItem) {
+                    OptionItem.PLAY_NEXT -> addToNextPlay(listOf(item))
+                    OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(item))
+                    OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item))
+                    else -> {}
                 }
             }
         }
@@ -204,88 +202,19 @@ enum class GroupType {
     NONE,
 }
 
-sealed class HeaderItem(
-    open val groupType: GroupType,
-) {
-    data class ID(
-        val id: String,
-        override val groupType: GroupType,
-    ) : HeaderItem(groupType)
-
-    data class Name(
-        val name: String,
-        override val groupType: GroupType,
-    ) : HeaderItem(groupType)
-}
-
 data class TabContentState(
     val selectedTab: CustomTab? = null,
-    val contentGroup: ImmutableList<ContentGroup> = persistentListOf(),
-    val listState: LazyListState,
+    val groupSort: GroupSort,
+    val pagingItems: LazyPagingItems<AudioItemModel>,
     val eventSink: (TabContentEvent) -> Unit = {},
 ) : CircuitUiState
 
 sealed interface TabContentEvent {
     data class OnShowMusicItemOption(
-        val mediaItemModel: MediaItemModel,
+        val mediaItemModel: AudioItemModel,
     ) : TabContentEvent
 
     data class OnPlayMusic(
         val mediaItemModel: AudioItemModel,
     ) : TabContentEvent
 }
-
-data class ContentGroup(
-    val headerItem: HeaderItem?,
-    val content: List<AudioItemModel>,
-)
-
-private fun List<AudioItemModel>.toGroup(groupType: GroupType): List<ContentGroup> =
-    this
-        .groupBy {
-            it.keyOf(groupType)
-        }.map { (key, value) ->
-            ContentGroup(
-                headerItem = groupType.toHeader(key),
-                content = value,
-            )
-        }
-
-private fun GroupType.toHeader(key: String?): HeaderItem? =
-    when (this) {
-        GroupType.ARTIST ->
-            HeaderItem.ID(
-                id = key ?: error("key is null"),
-                groupType = this,
-            )
-
-        GroupType.ALBUM ->
-            HeaderItem.ID(
-                id = key ?: error("key is null"),
-                groupType = this,
-            )
-
-        GroupType.TITLE ->
-            HeaderItem.Name(
-                name = key.toString(),
-                groupType = this,
-            )
-
-        GroupType.NONE -> null
-    }
-
-private fun AudioItemModel.keyOf(groupType: GroupType) =
-    when (groupType) {
-        GroupType.ARTIST -> artistId
-        GroupType.ALBUM -> albumId
-        GroupType.TITLE -> name[0].toString()
-        GroupType.NONE -> null
-    }
-
-private fun GroupSort.toSortType() =
-    when (this) {
-        is GroupSort.Album -> GroupType.ALBUM
-        is GroupSort.Title -> GroupType.TITLE
-        is GroupSort.Artist -> GroupType.ARTIST
-        GroupSort.NONE -> GroupType.NONE
-    }

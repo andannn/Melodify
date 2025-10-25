@@ -29,6 +29,10 @@ sealed interface DialogAction {
             val optionItem: OptionItem,
             val dialog: DialogId.MediaOption,
         ) : MediaOptionDialog
+
+        data class ClickOptionItem(
+            val optionItem: OptionItem,
+        ) : MediaOptionDialog
     }
 
     interface AddToPlayListDialog : DialogAction {

@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -135,6 +136,11 @@ interface PlayListDao {
             buildPlayListRawQuery(playListId, sortMethod),
         )
 
+    fun getMediaPagingSourceInPlayList(
+        playListId: Long,
+        sortMethod: SortMethod? = null,
+    ): PagingSource<Int, CrossRefWithMediaRelation> = getMediasInPlayListFlowPagingSource(buildPlayListRawQuery(playListId, sortMethod))
+
     private fun buildPlayListRawQuery(
         playListId: Long,
         sort: SortMethod?,
@@ -153,6 +159,9 @@ interface PlayListDao {
 
     @RawQuery(observedEntities = [MediaEntity::class, PlayListEntity::class, PlayListWithMediaCrossRef::class])
     fun getMediasInPlayListFlowRaw(rawQuery: RoomRawQuery): Flow<List<CrossRefWithMediaRelation>>
+
+    @RawQuery(observedEntities = [MediaEntity::class, PlayListEntity::class, PlayListWithMediaCrossRef::class])
+    fun getMediasInPlayListFlowPagingSource(rawQuery: RoomRawQuery): PagingSource<Int, CrossRefWithMediaRelation>
 
     @Query(
         """

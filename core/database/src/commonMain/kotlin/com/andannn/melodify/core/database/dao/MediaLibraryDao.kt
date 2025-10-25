@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -63,7 +64,13 @@ interface MediaLibraryDao {
     @RawQuery(observedEntities = [MediaEntity::class])
     fun getMediaFlowRaw(rawQuery: RoomRawQuery): Flow<List<MediaEntity>>
 
+    @RawQuery(observedEntities = [MediaEntity::class])
+    fun getMediaFlowPagingSource(rawQuery: RoomRawQuery): PagingSource<Int, MediaEntity>
+
     fun getAllMediaFlow(sort: SortMethod? = null): Flow<List<MediaEntity>> = getMediaFlowRaw(buildAllMediaRawQuery(sort))
+
+    fun getAllMediaPagingSource(sort: SortMethod? = null): PagingSource<Int, MediaEntity> =
+        getMediaFlowPagingSource(buildAllMediaRawQuery(sort))
 
     private fun buildAllMediaRawQuery(sort: SortMethod?): RoomRawQuery {
         val sort = sort?.toSortString() ?: ""
@@ -75,6 +82,11 @@ interface MediaLibraryDao {
         albumId: String,
         sort: SortMethod?,
     ): Flow<List<MediaEntity>> = getMediaFlowRaw(buildAlbumMediaRawQuery(albumId, sort))
+
+    fun getMediasPagingSourceByAlbumId(
+        albumId: String,
+        sort: SortMethod?,
+    ): PagingSource<Int, MediaEntity> = getMediaFlowPagingSource(buildAlbumMediaRawQuery(albumId, sort))
 
     private fun buildAlbumMediaRawQuery(
         albumId: String,
@@ -92,6 +104,11 @@ interface MediaLibraryDao {
         sort: SortMethod?,
     ): Flow<List<MediaEntity>> = getMediaFlowRaw(buildArtistMediaRawQuery(artistId, sort))
 
+    fun getMediasPagingSourceByArtistId(
+        artistId: String,
+        sort: SortMethod?,
+    ): PagingSource<Int, MediaEntity> = getMediaFlowPagingSource(buildArtistMediaRawQuery(artistId, sort))
+
     private fun buildArtistMediaRawQuery(
         artistId: String,
         sort: SortMethod?,
@@ -107,6 +124,11 @@ interface MediaLibraryDao {
         genreId: String,
         sort: SortMethod?,
     ): Flow<List<MediaEntity>> = getMediaFlowRaw(buildGenreMediaRawQuery(genreId, sort))
+
+    fun getMediasPagingSourceByGenreId(
+        genreId: String,
+        sort: SortMethod?,
+    ): PagingSource<Int, MediaEntity> = getMediaFlowPagingSource(buildGenreMediaRawQuery(genreId, sort))
 
     private fun buildGenreMediaRawQuery(
         genreId: String,

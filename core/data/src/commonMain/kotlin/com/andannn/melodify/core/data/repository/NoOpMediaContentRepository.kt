@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.data.repository
 
+import androidx.paging.PagingData
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -14,6 +15,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 open class NoOpMediaContentRepository : MediaContentRepository {
+    override fun getAllMediaItemsPagingFlow(sort: GroupSort): Flow<PagingData<AudioItemModel>> = flowOf()
+
     override fun getAllMediaItemsFlow(sort: GroupSort): Flow<List<AudioItemModel>> = flowOf()
 
     override fun getAllAlbumsFlow(): Flow<List<AlbumItemModel>> = flowOf()
@@ -27,6 +30,11 @@ open class NoOpMediaContentRepository : MediaContentRepository {
         sort: GroupSort,
     ): Flow<List<AudioItemModel>> = flowOf()
 
+    override fun getAudiosPagingFlowOfAlbum(
+        albumId: String,
+        sort: GroupSort,
+    ): Flow<PagingData<AudioItemModel>> = flowOf()
+
     override suspend fun getAudiosOfAlbum(albumId: String): List<AudioItemModel> = emptyList()
 
     override fun getAudiosOfArtistFlow(
@@ -34,12 +42,22 @@ open class NoOpMediaContentRepository : MediaContentRepository {
         sort: GroupSort,
     ): Flow<List<AudioItemModel>> = flowOf()
 
+    override fun getAudiosPagingFlowOfArtist(
+        artistId: String,
+        sort: GroupSort,
+    ): Flow<PagingData<AudioItemModel>> = flowOf()
+
     override suspend fun getAudiosOfArtist(artistId: String): List<AudioItemModel> = emptyList()
 
     override fun getAudiosOfGenreFlow(
         genreId: String,
         sort: GroupSort,
     ): Flow<List<AudioItemModel>> = flowOf()
+
+    override fun getAudiosPagingFlowOfGenre(
+        genreId: String,
+        sort: GroupSort,
+    ): Flow<PagingData<AudioItemModel>> = flowOf()
 
     override suspend fun getAudiosOfGenre(genreId: String): List<AudioItemModel> = emptyList()
 

@@ -40,7 +40,7 @@ enum class OptionItem(
         text = Res.string.remove_playlist,
     ),
     ADD_TO_QUEUE(
-        smpIcon = SimpleMusicIcons.Delete,
+        smpIcon = SimpleMusicIcons.QueueMusic,
         text = Res.string.add_to_queue,
     ),
     SLEEP_TIMER(
