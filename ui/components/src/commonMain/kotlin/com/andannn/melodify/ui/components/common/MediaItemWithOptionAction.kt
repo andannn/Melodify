@@ -127,7 +127,7 @@ internal fun MediaItemWithOptionAction(
 private fun Item(
     modifier: Modifier = Modifier,
     title: String,
-    cover: String = "",
+    cover: String?,
     subTitle: String = "",
     onOptionButtonClick: () -> Unit = {},
     onItemClick: () -> Unit = {},

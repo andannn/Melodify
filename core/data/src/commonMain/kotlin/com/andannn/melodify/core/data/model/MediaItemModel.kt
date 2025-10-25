@@ -9,14 +9,14 @@ import com.andannn.melodify.core.database.dao.PlayListDao.Companion.FAVORITE_PLA
 sealed interface MediaItemModel {
     val id: String
     val name: String
-    val artWorkUri: String
+    val artWorkUri: String?
     val trackCount: Int
 }
 
 data class AudioItemModel constructor(
     override val id: String,
     override val name: String,
-    override val artWorkUri: String,
+    override val artWorkUri: String?,
     val modifiedDate: Long,
     val album: String,
     val albumId: String,
@@ -41,7 +41,7 @@ data class AudioItemModel constructor(
 data class AlbumItemModel(
     override val id: String,
     override val name: String,
-    override val artWorkUri: String,
+    override val artWorkUri: String?,
     override val trackCount: Int,
 ) : MediaItemModel {
     companion object {
@@ -49,10 +49,10 @@ data class AlbumItemModel(
     }
 }
 
-data class ArtistItemModel(
+data class ArtistItemModel constructor(
     override val id: String,
     override val name: String,
-    override val artWorkUri: String,
+    override val artWorkUri: String?,
     override val trackCount: Int,
 ) : MediaItemModel {
     companion object {
@@ -63,7 +63,7 @@ data class ArtistItemModel(
 data class GenreItemModel(
     override val id: String,
     override val name: String,
-    override val artWorkUri: String,
+    override val artWorkUri: String?,
     override val trackCount: Int,
 ) : MediaItemModel {
     companion object {
@@ -75,7 +75,7 @@ data class GenreItemModel(
 data class PlayListItemModel(
     override val id: String,
     override val name: String,
-    override val artWorkUri: String,
+    override val artWorkUri: String?,
     override val trackCount: Int,
 ) : MediaItemModel {
     val isFavorite: Boolean

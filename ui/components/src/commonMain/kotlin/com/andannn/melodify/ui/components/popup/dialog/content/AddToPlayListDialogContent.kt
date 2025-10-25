@@ -152,7 +152,7 @@ internal fun AddToPlayListRequestSheetContent(
                                 modifier = Modifier.width(100.dp),
                                 title = audio.name,
                                 backGroundColor = Color.Transparent,
-                                artCoverUri = audio.artWorkUri,
+                                artCoverUri = audio.artWorkUri ?: "",
                             )
                         }
                     }

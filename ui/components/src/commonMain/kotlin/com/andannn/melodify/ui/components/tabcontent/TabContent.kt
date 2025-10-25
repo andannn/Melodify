@@ -19,8 +19,10 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.browsableOrPlayable
 import com.andannn.melodify.ui.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
-import com.andannn.melodify.ui.components.tabcontent.header.GroupHeader
+import com.andannn.melodify.ui.components.tabcontent.header.IdBasedGroupHeader
+import com.andannn.melodify.ui.components.tabcontent.header.NameBasedGroupHeader
 import com.andannn.melodify.ui.components.tabcontent.header.rememberGroupHeaderPresenter
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun TabContent(
@@ -28,7 +30,7 @@ fun TabContent(
     modifier: Modifier = Modifier,
 ) {
     LazyListContent(
-        contentMap = state.contentMap,
+        contentGroup = state.contentGroup,
         listState = state.listState,
         modifier = modifier.fillMaxSize(),
         onMusicItemClick = {
@@ -44,7 +46,7 @@ fun TabContent(
 @Composable
 private fun LazyListContent(
     listState: LazyListState,
-    contentMap: Map<HeaderKey, List<AudioItemModel>>,
+    contentGroup: ImmutableList<ContentGroup>,
     modifier: Modifier = Modifier,
     onMusicItemClick: (AudioItemModel) -> Unit = {},
     onShowMusicItemOption: (AudioItemModel) -> Unit = {},
@@ -54,13 +56,23 @@ private fun LazyListContent(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 5.dp),
     ) {
-        contentMap.forEach { (headerKey, mediaItems) ->
-            if (headerKey.groupType != GroupType.NONE) {
-                stickyHeader(headerKey.hashCode()) {
-                    val presenter = rememberGroupHeaderPresenter(headerKey)
-                    GroupHeader(
-                        state = presenter.present(),
-                    )
+        contentGroup.forEach { (headerItem, mediaItems) ->
+            if (headerItem != null) {
+                stickyHeader(headerItem.hashCode()) {
+                    when (headerItem) {
+                        is HeaderItem.ID -> {
+                            val presenter = rememberGroupHeaderPresenter(headerItem)
+                            IdBasedGroupHeader(
+                                state = presenter.present(),
+                            )
+                        }
+
+                        is HeaderItem.Name -> {
+                            NameBasedGroupHeader(
+                                item = headerItem,
+                            )
+                        }
+                    }
                 }
             }
 
@@ -75,7 +87,7 @@ private fun LazyListContent(
                     isActive = false,
                     albumArtUri = item.artWorkUri,
                     title = item.name,
-                    trackNum = item.cdTrackNumber.takeIf { headerKey.groupType == GroupType.ALBUM },
+                    trackNum = item.cdTrackNumber.takeIf { headerItem?.groupType == GroupType.ALBUM },
                     onMusicItemClick = {
                         onMusicItemClick.invoke(item)
                     },

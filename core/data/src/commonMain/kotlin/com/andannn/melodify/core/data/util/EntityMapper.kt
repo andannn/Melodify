@@ -70,7 +70,7 @@ internal fun ArtistEntity.toAppItem() =
         id = artistId.toString(),
         name = name,
         // TODO:
-        artWorkUri = "",
+        artWorkUri = null,
         trackCount = trackCount ?: 0,
     )
 

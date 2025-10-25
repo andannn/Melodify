@@ -10,9 +10,8 @@ import androidx.compose.runtime.remember
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.components.common.LocalRepository
-import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.tabcontent.GroupType
-import com.andannn.melodify.ui.components.tabcontent.HeaderKey
+import com.andannn.melodify.ui.components.tabcontent.HeaderItem
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -22,42 +21,42 @@ private const val TAG = "GroupHeaderPresenter"
 
 @Composable
 fun rememberGroupHeaderPresenter(
-    headerKey: HeaderKey,
+    headerItem: HeaderItem.ID,
     repository: Repository = LocalRepository.current,
 ) = remember(
-    headerKey,
+    headerItem,
     repository,
 ) {
     GroupHeaderPresenter(
-        headerKey,
+        headerItem,
         repository,
     )
 }
 
 class GroupHeaderPresenter(
-    private val headerKey: HeaderKey,
+    private val headerItem: HeaderItem.ID,
     repository: Repository,
 ) : Presenter<GroupHeaderState> {
-    private val groupType = headerKey.groupType
-    private val headerId = headerKey.headerId
+    private val groupType = headerItem.groupType
+    private val headerId = headerItem.id
     private val mediaContentRepository = repository.mediaContentRepository
 
     @Composable
     override fun present(): GroupHeaderState {
-        Napier.d(tag = TAG) { "GroupHeaderPresenter present $headerKey" }
+        Napier.d(tag = TAG) { "GroupHeaderPresenter present $headerItem" }
         val mediaItem by produceRetainedState<MediaItemModel?>(null) {
             value =
                 when (groupType) {
-                    GroupType.ARTIST -> mediaContentRepository.getArtistByArtistId(headerId!!)
-                    GroupType.ALBUM -> mediaContentRepository.getAlbumByAlbumId(headerId!!)
-                    GroupType.NONE -> error("invalid group type")
+                    GroupType.ARTIST -> mediaContentRepository.getArtistByArtistId(headerId)
+                    GroupType.ALBUM -> mediaContentRepository.getAlbumByAlbumId(headerId)
+                    else -> error("invalid group type")
                 }
         }
 
         return GroupHeaderState(
             mediaItem = mediaItem,
             title = mediaItem?.name ?: "",
-            cover = mediaItem?.artWorkUri ?: "",
+            cover = mediaItem?.artWorkUri,
             trackCount = mediaItem?.trackCount ?: 0,
         )
     }
@@ -66,6 +65,6 @@ class GroupHeaderPresenter(
 data class GroupHeaderState(
     val mediaItem: MediaItemModel?,
     val title: String,
-    val cover: String,
+    val cover: String?,
     val trackCount: Int,
 ) : CircuitUiState

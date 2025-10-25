@@ -11,7 +11,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,11 +26,13 @@ import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
-import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -73,24 +74,31 @@ class TabContentPresenter(
         Napier.d(tag = TAG) { "TabContentPresenter scope ${scope.hashCode()}" }
 
         val listState = rememberLazyListState()
-        val groupType by rememberRetained {
-            mutableStateOf(GroupType.ALBUM)
+        val groupSort by rememberRetained {
+            mutableStateOf(
+                GroupSort.Album.TrackNumber(albumAscending = true, trackNumAscending = true),
+//                GroupSort.Title(titleAscending = true),
+//                GroupSort.Artist.Title(
+//                    artistAscending = true,
+//                    titleAscending = true,
+//                ),
+            )
         }
 
-        val contentMap =
+        val contentGroup =
             rememberRetained {
-                mutableStateMapOf<HeaderKey, List<AudioItemModel>>()
+                mutableStateListOf<ContentGroup>()
             }
 
-        LaunchedEffect(groupType, selectedTab) {
-            getContentFlow(selectedTab).collect { audioList ->
-                contentMap.clear()
-                contentMap.putAll(audioList.toMap(groupType))
+        LaunchedEffect(groupSort, selectedTab) {
+            getContentFlow(selectedTab, groupSort).collect { audioList ->
+                contentGroup.clear()
+                contentGroup.addAll(audioList.toGroup(groupSort.toSortType()))
                 listState.requestScrollToItem(0)
             }
         }
 
-        Napier.d(tag = TAG) { "TabContentPresenter contentMap ${contentMap.size}" }
+        Napier.d(tag = TAG) { "TabContentPresenter contentMap ${contentGroup.size}" }
 
         DisposableEffect(Unit) {
             onDispose {
@@ -101,14 +109,14 @@ class TabContentPresenter(
         return TabContentState(
             selectedTab = selectedTab,
             listState = listState,
-            contentMap = contentMap,
+            contentGroup = contentGroup.toImmutableList(),
         ) { eventSink ->
             when (eventSink) {
                 is TabContentEvent.OnPlayMusic ->
                     scope.launch {
                         playMusic(
                             eventSink.mediaItemModel,
-                            allAudios = contentMap.values.flatten(),
+                            allAudios = contentGroup.map { it.content }.flatten(),
                         )
                     }
 
@@ -122,16 +130,16 @@ class TabContentPresenter(
         }
     }
 
-    private fun getContentFlow(selectedTab: CustomTab?): Flow<List<AudioItemModel>> {
+    private fun getContentFlow(
+        selectedTab: CustomTab?,
+        groupSort: GroupSort,
+    ): Flow<List<AudioItemModel>> {
         if (selectedTab == null) {
             return flow { emit(emptyList()) }
         }
         return with(repository) {
             selectedTab.contentFlow(
-                GroupSort.Album.TrackNumber(
-                    albumAscending = true,
-                    trackNumAscending = true,
-                ),
+                sort = groupSort,
             )
         }
     }
@@ -189,14 +197,30 @@ class TabContentPresenter(
     }
 }
 
-data class HeaderKey(
-    val groupType: GroupType,
-    val headerId: String?,
-)
+enum class GroupType {
+    ARTIST,
+    ALBUM,
+    TITLE,
+    NONE,
+}
+
+sealed class HeaderItem(
+    open val groupType: GroupType,
+) {
+    data class ID(
+        val id: String,
+        override val groupType: GroupType,
+    ) : HeaderItem(groupType)
+
+    data class Name(
+        val name: String,
+        override val groupType: GroupType,
+    ) : HeaderItem(groupType)
+}
 
 data class TabContentState(
     val selectedTab: CustomTab? = null,
-    val contentMap: Map<HeaderKey, List<AudioItemModel>> = emptyMap(),
+    val contentGroup: ImmutableList<ContentGroup> = persistentListOf(),
     val listState: LazyListState,
     val eventSink: (TabContentEvent) -> Unit = {},
 ) : CircuitUiState
@@ -211,28 +235,57 @@ sealed interface TabContentEvent {
     ) : TabContentEvent
 }
 
-enum class GroupType {
-    ARTIST,
-    ALBUM,
-    NONE,
-}
+data class ContentGroup(
+    val headerItem: HeaderItem?,
+    val content: List<AudioItemModel>,
+)
 
-private fun List<AudioItemModel>.toMap(groupType: GroupType): Map<HeaderKey, List<AudioItemModel>> =
+private fun List<AudioItemModel>.toGroup(groupType: GroupType): List<ContentGroup> =
     this
         .groupBy {
             it.keyOf(groupType)
+        }.map { (key, value) ->
+            ContentGroup(
+                headerItem = groupType.toHeader(key),
+                content = value,
+            )
         }
 
-fun AudioItemModel.keyOf(groupType: GroupType) =
-    when (groupType) {
-        GroupType.ARTIST -> HeaderKey(groupType, artistId)
-        GroupType.ALBUM -> HeaderKey(groupType, albumId)
-        GroupType.NONE -> HeaderKey(groupType, null)
+private fun GroupType.toHeader(key: String?): HeaderItem? =
+    when (this) {
+        GroupType.ARTIST ->
+            HeaderItem.ID(
+                id = key ?: error("key is null"),
+                groupType = this,
+            )
+
+        GroupType.ALBUM ->
+            HeaderItem.ID(
+                id = key ?: error("key is null"),
+                groupType = this,
+            )
+
+        GroupType.TITLE ->
+            HeaderItem.Name(
+                name = key.toString(),
+                groupType = this,
+            )
+
+        GroupType.NONE -> null
     }
 
-fun List<AudioItemModel>.sortBy(groupType: GroupType) =
+private fun AudioItemModel.keyOf(groupType: GroupType) =
     when (groupType) {
-        GroupType.ARTIST -> sortedBy { it.name }
-        GroupType.ALBUM -> sortedBy { it.cdTrackNumber }
-        GroupType.NONE -> this
+        GroupType.ARTIST -> artistId
+        GroupType.ALBUM -> albumId
+        GroupType.TITLE -> name[0].toString()
+        GroupType.NONE -> null
+    }
+
+private fun GroupSort.toSortType() =
+    when (this) {
+        is GroupSort.Album -> GroupType.ALBUM
+        is GroupSort.Title -> GroupType.TITLE
+        is GroupSort.Artist -> GroupType.ARTIST
+        GroupSort.NONE -> GroupType.NONE
     }

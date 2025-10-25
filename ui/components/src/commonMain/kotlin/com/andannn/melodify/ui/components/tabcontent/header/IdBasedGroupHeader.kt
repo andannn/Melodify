@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -45,7 +46,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun GroupHeader(
+fun IdBasedGroupHeader(
     state: GroupHeaderState,
     popupController: PopupController = LocalPopupController.current,
     repository: Repository = LocalRepository.current,
@@ -86,7 +87,7 @@ fun GroupHeader(
 @Composable
 private fun HeaderInfo(
     modifier: Modifier = Modifier,
-    coverArtUri: String = "",
+    coverArtUri: String?,
     defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
     title: String = "",
     trackCount: Int = 0,
@@ -103,47 +104,46 @@ private fun HeaderInfo(
                     .padding(5.dp)
                     .height(IntrinsicSize.Max),
         ) {
-            AsyncImage(
-                modifier =
-                    Modifier
-                        .align(Alignment.CenterVertically)
-                        .size(100.dp)
-                        .clip(MaterialTheme.shapes.extraSmall),
-                model = coverArtUri,
-                contentScale = ContentScale.Crop,
-                placeholder = painterResource(defaultImagePlaceholderRes),
-                error = painterResource(defaultImagePlaceholderRes),
-                contentDescription = "",
-            )
-            Spacer(modifier = Modifier.width(10.dp))
+            if (coverArtUri != null) {
+                AsyncImage(
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterVertically)
+                            .size(100.dp)
+                            .clip(MaterialTheme.shapes.extraSmall),
+                    model = coverArtUri,
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(defaultImagePlaceholderRes),
+                    error = painterResource(defaultImagePlaceholderRes),
+                    contentDescription = "",
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+            }
             Column(
                 modifier =
                     Modifier.weight(1f),
             ) {
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = title,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                )
 
-                Spacer(modifier = Modifier.weight(1f))
-
-                Row {
+                Row(
+                    Modifier.fillMaxHeight(),
+                ) {
                     Text(
-                        modifier = Modifier.align(Alignment.Bottom),
-                        text = "$trackCount tracks",
-                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.weight(1f),
+                        text = title,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     )
-                    Spacer(modifier = Modifier.weight(1f))
+
                     IconButton(
-                        modifier = Modifier.padding(end = 6.dp),
+                        modifier = Modifier.padding(end = 6.dp).align(Alignment.Bottom),
                         onClick = onOptionClick,
                     ) {
                         Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "menu")
                     }
                 }
+
                 Spacer(modifier = Modifier.height(4.dp))
             }
         }

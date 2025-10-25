@@ -9,7 +9,11 @@ import androidx.room.execSQL
 import androidx.room.useReaderConnection
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
+import com.andannn.melodify.core.database.dao.MediaSortType
 import com.andannn.melodify.core.database.dao.PlayListDao
+import com.andannn.melodify.core.database.dao.Sort
+import com.andannn.melodify.core.database.dao.SortMethod
+import com.andannn.melodify.core.database.dao.SortOrder
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistColumns
@@ -678,6 +682,95 @@ class DatabaseTest {
 
             assertEquals(3, searchHistoryDao.getSearchHistories(limit = 10).size)
             assertEquals("A", searchHistoryDao.getSearchHistories(limit = 10).first().searchText)
+        }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    fun sort_media_by_album_test() =
+        testScope.runTest {
+            val dao = database.getMediaLibraryDao()
+            dao.insertMedias(
+                audios =
+                    listOf(
+                        MediaEntity(
+                            id = 2,
+                            albumId = 2,
+                            title = "title a",
+                            album = "album a",
+                            cdTrackNumber = 1,
+                        ),
+                        MediaEntity(
+                            id = 3,
+                            title = "title c",
+                            albumId = 4,
+                            album = "album b",
+                        ),
+                        MediaEntity(
+                            id = 1,
+                            title = "title b",
+                            albumId = 2,
+                            album = "album a",
+                            cdTrackNumber = 2,
+                        ),
+                    ),
+            )
+            dao
+                .getAllMediaFlow(
+                    sort =
+                        SortMethod.buildMethod {
+                            add(Sort(MediaSortType.Album, SortOrder.DESCENDING))
+                            add(Sort(MediaSortType.TrackNum, SortOrder.DESCENDING))
+                        },
+                ).first()
+                .also { mediaList ->
+                    assertEquals(3, mediaList[0].id)
+                    assertEquals(1, mediaList[1].id)
+                    assertEquals(2, mediaList[2].id)
+                }
+        }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    fun sort_media_by_title_test() =
+        testScope.runTest {
+            val dao = database.getMediaLibraryDao()
+            dao.insertMedias(
+                audios =
+                    listOf(
+                        MediaEntity(
+                            id = 2,
+                            albumId = 2,
+                            title = "title a",
+                            album = "album a",
+                            cdTrackNumber = 1,
+                        ),
+                        MediaEntity(
+                            id = 3,
+                            title = "title c",
+                            albumId = 4,
+                            album = "album b",
+                        ),
+                        MediaEntity(
+                            id = 1,
+                            title = "title b",
+                            albumId = 2,
+                            album = "album a",
+                            cdTrackNumber = 2,
+                        ),
+                    ),
+            )
+            dao
+                .getAllMediaFlow(
+                    sort =
+                        SortMethod.buildMethod {
+                            add(Sort(MediaSortType.Title, SortOrder.ASCENDING))
+                        },
+                ).first()
+                .also { mediaList ->
+                    assertEquals(2, mediaList[0].id)
+                    assertEquals(1, mediaList[1].id)
+                    assertEquals(3, mediaList[2].id)
+                }
         }
 }
 

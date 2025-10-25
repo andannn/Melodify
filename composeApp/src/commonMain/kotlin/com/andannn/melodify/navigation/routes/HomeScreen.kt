@@ -5,10 +5,13 @@
 package com.andannn.melodify.navigation.routes
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -146,6 +149,13 @@ internal fun HomeUiScreen(
                             Icon(Icons.Rounded.Search, contentDescription = "")
                         },
                     )
+                    IconButton(
+                        onClick = { homeState.eventSink.invoke(HomeUiEvent.SearchButtonClick) },
+                        content = {
+                            Icon(Icons.Rounded.MoreVert, contentDescription = "")
+                        },
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
                 },
                 scrollBehavior = scrollBehavior,
             )

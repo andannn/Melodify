@@ -82,7 +82,9 @@ internal fun PlayerViewContent(
             val url = state.mediaItem.artWorkUri
             // When the selected image url changes, call updateColorsFromImageUrl() or reset()
             LaunchedEffect(url) {
-                dominantColorState.updateColorsFromImageUrl(url)
+                if (url != null) {
+                    dominantColorState.updateColorsFromImageUrl(url)
+                }
             }
 
             LaunchedEffect(layoutState.isPlayerExpanding) {
@@ -106,7 +108,7 @@ internal fun PlayerViewContent(
                             onClick = layoutState::expandPlayerLayout,
                         ),
                 layoutState = layoutState,
-                coverUri = state.mediaItem.artWorkUri,
+                coverUri = state.mediaItem.artWorkUri ?: "",
                 playMode = state.playMode,
                 isShuffle = state.isShuffle,
                 isPlaying = state.isPlaying,
