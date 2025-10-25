@@ -122,12 +122,6 @@ internal fun HomeUiScreen(
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = enterAlwaysScrollBehavior()
-
-    val popupController =
-        remember {
-            PopupControllerImpl()
-        }
-
     Scaffold(
         modifier = modifier,
         snackbarHost = {

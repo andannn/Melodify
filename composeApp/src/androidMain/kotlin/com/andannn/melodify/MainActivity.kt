@@ -146,7 +146,6 @@ class MainActivity : ComponentActivity() {
             }
 
             CompositionLocalProvider(
-                LocalPopupController provides remember { PopupControllerImpl() },
                 LocalPlayerUiController provides remember { PlayerUiController(coroutineScope) },
             ) {
                 MelodifyTheme(darkTheme = true, isDynamicColor = true) {

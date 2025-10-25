@@ -18,6 +18,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.model.GroupSort
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.contentFlow
 import com.andannn.melodify.ui.components.common.LocalRepository
@@ -126,7 +127,12 @@ class TabContentPresenter(
             return flow { emit(emptyList()) }
         }
         return with(repository) {
-            selectedTab.contentFlow()
+            selectedTab.contentFlow(
+                GroupSort.Album.TrackNumber(
+                    albumAscending = true,
+                    trackNumAscending = true,
+                ),
+            )
         }
     }
 
@@ -215,8 +221,6 @@ private fun List<AudioItemModel>.toMap(groupType: GroupType): Map<HeaderKey, Lis
     this
         .groupBy {
             it.keyOf(groupType)
-        }.mapValues {
-            it.value.sortBy(groupType)
         }
 
 fun AudioItemModel.keyOf(groupType: GroupType) =

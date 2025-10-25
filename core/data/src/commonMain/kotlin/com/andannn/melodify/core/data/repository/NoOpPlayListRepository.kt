@@ -5,6 +5,7 @@
 package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.GroupSort
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -12,7 +13,10 @@ import kotlinx.coroutines.flow.flowOf
 open class NoOpPlayListRepository : PlayListRepository {
     override fun getAllPlayListFlow(): Flow<List<PlayListItemModel>> = flowOf()
 
-    override fun getAudiosOfPlayListFlow(playListId: Long): Flow<List<AudioItemModel>> = flowOf()
+    override fun getAudiosOfPlayListFlow(
+        playListId: Long,
+        sort: GroupSort,
+    ): Flow<List<AudioItemModel>> = flowOf()
 
     override suspend fun getAudiosOfPlayList(playListId: Long): List<AudioItemModel> = emptyList()
 

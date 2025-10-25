@@ -27,8 +27,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -37,8 +35,6 @@ import com.andannn.melodify.ui.common.icons.SmpIcon
 import com.andannn.melodify.ui.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.common.widgets.SmpIcon
 import com.andannn.melodify.ui.components.library.util.toDataSource
-import com.andannn.melodify.ui.components.popup.LocalPopupController
-import com.andannn.melodify.ui.components.popup.PopupControllerImpl
 import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.components.popup.rememberAndSetupSnackBarHostState
 import melodify.ui.common.generated.resources.Res

@@ -8,6 +8,7 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
+import com.andannn.melodify.core.data.model.GroupSort
 import com.andannn.melodify.core.data.model.MediaItemModel
 import kotlinx.coroutines.flow.Flow
 
@@ -15,7 +16,7 @@ interface MediaContentRepository {
     /**
      * Return flow of all media items
      */
-    fun getAllMediaItemsFlow(): Flow<List<AudioItemModel>>
+    fun getAllMediaItemsFlow(sort: GroupSort): Flow<List<AudioItemModel>>
 
     /**
      * Return flow of all albums
@@ -35,7 +36,7 @@ interface MediaContentRepository {
     /**
      * Return flow of audios of album
      */
-    fun getAudiosOfAlbumFlow(albumId: String): Flow<List<AudioItemModel>>
+    fun getAudiosOfAlbumFlow(albumId: String, sort: GroupSort): Flow<List<AudioItemModel>>
 
     /**
      * Return audios of artist
@@ -45,7 +46,7 @@ interface MediaContentRepository {
     /**
      * Return flow of audios of artist
      */
-    fun getAudiosOfArtistFlow(artistId: String): Flow<List<AudioItemModel>>
+    fun getAudiosOfArtistFlow(artistId: String, sort: GroupSort): Flow<List<AudioItemModel>>
 
     /**
      * Return audios of artist
@@ -55,7 +56,7 @@ interface MediaContentRepository {
     /**
      * Return flow of audios of genre
      */
-    fun getAudiosOfGenreFlow(genreId: String): Flow<List<AudioItemModel>>
+    fun getAudiosOfGenreFlow(genreId: String, sort: GroupSort): Flow<List<AudioItemModel>>
 
     /**
      * Return audios of genre

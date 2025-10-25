@@ -5,7 +5,9 @@
 package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.GroupSort
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.model.toSortMethod
 import com.andannn.melodify.core.data.util.mapToAppItemList
 import com.andannn.melodify.core.data.util.toAppItem
 import com.andannn.melodify.core.database.dao.PlayListDao
@@ -36,7 +38,8 @@ internal class PlayListRepositoryImpl(
         }
 
     override suspend fun getPlayListFlowById(playListId: Long) =
-        playListDao.getPlayListFlow(playListId)
+        playListDao
+            .getPlayListFlow(playListId)
             .map {
                 if (it == null) return@map null
                 PlayListItemModel(
@@ -68,17 +71,14 @@ internal class PlayListRepositoryImpl(
         return insertedIndexList
             .mapIndexed { index, insertedIndex ->
                 if (insertedIndex == -1L) index.toLong() else null
-            }
-            .filterNotNull()
+            }.filterNotNull()
             .toList()
     }
 
     override suspend fun getDuplicatedMediaInPlayList(
         playListId: Long,
         musics: List<AudioItemModel>,
-    ): List<String> {
-        return playListDao.getDuplicateMediaInPlayList(playListId, musics.map { it.id })
-    }
+    ): List<String> = playListDao.getDuplicateMediaInPlayList(playListId, musics.map { it.id })
 
     override fun isMediaInFavoritePlayListFlow(mediaStoreId: String) =
         playListDao.getIsMediaInPlayListFlow(
@@ -88,10 +88,11 @@ internal class PlayListRepositoryImpl(
 
     override suspend fun toggleFavoriteMedia(audio: AudioItemModel) {
         val isFavorite =
-            playListDao.getIsMediaInPlayListFlow(
-                PlayListDao.FAVORITE_PLAY_LIST_ID.toString(),
-                audio.id,
-            ).first()
+            playListDao
+                .getIsMediaInPlayListFlow(
+                    PlayListDao.FAVORITE_PLAY_LIST_ID.toString(),
+                    audio.id,
+                ).first()
         if (isFavorite) {
             removeMusicFromFavoritePlayList(listOf(audio.id))
         } else {
@@ -122,11 +123,17 @@ internal class PlayListRepositoryImpl(
         playListDao.deletePlayListById(playListId)
     }
 
-    override fun getAudiosOfPlayListFlow(playListId: Long) =
-        playListDao.getMediasInPlayListFlow(playListId)
-            .map { it.mapToAppItemList() }
+    override fun getAudiosOfPlayListFlow(
+        playListId: Long,
+        sort: GroupSort,
+    ) = playListDao
+        .getMediasInPlayListFlow(playListId, sort.toSortMethod())
+        .map { it.mapToAppItemList() }
 
-    override suspend fun getAudiosOfPlayList(playListId: Long) = getAudiosOfPlayListFlow(playListId).first()
+    override suspend fun getAudiosOfPlayList(playListId: Long) =
+        playListDao
+            .getMediasInPlayList(playListId)
+            .mapToAppItemList()
 
     private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>) = list.map { it.toAppItem() }
 }

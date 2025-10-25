@@ -4,7 +4,9 @@
  */
 package com.andannn.melodify.core.data.repository
 
+import com.andannn.melodify.core.data.model.GroupSort
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.toSortMethod
 import com.andannn.melodify.core.data.util.mapToAlbumItemModel
 import com.andannn.melodify.core.data.util.mapToArtistItemModel
 import com.andannn.melodify.core.data.util.mapToAudioItemModel
@@ -18,44 +20,60 @@ import kotlin.coroutines.coroutineContext
 internal class MediaContentRepositoryImpl(
     private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaContentRepository {
-    override fun getAllMediaItemsFlow() =
-        mediaLibraryDao.getAllMediaFlow()
+    override fun getAllMediaItemsFlow(sort: GroupSort) =
+        mediaLibraryDao
+            .getAllMediaFlow(sort.toSortMethod())
             .map { it.mapToAudioItemModel() }
 
     override fun getAllAlbumsFlow() =
-        mediaLibraryDao.getAllAlbumFlow()
+        mediaLibraryDao
+            .getAllAlbumFlow()
             .map { it.mapToAlbumItemModel() }
 
     override fun getAllArtistFlow() =
-        mediaLibraryDao.getAllArtistFlow()
+        mediaLibraryDao
+            .getAllArtistFlow()
             .map { it.mapToArtistItemModel() }
 
     override fun getAllGenreFlow() =
-        mediaLibraryDao.getAllGenreFlow()
+        mediaLibraryDao
+            .getAllGenreFlow()
             .map { it.mapToGenreItemModel() }
 
-    override fun getAudiosOfAlbumFlow(albumId: String) =
-        mediaLibraryDao.getMediasByAlbumIdFlow(albumId)
-            .map { it.mapToAudioItemModel() }
+    override fun getAudiosOfAlbumFlow(
+        albumId: String,
+        sort: GroupSort,
+    ) = mediaLibraryDao
+        .getMediasByAlbumIdFlow(albumId, sort.toSortMethod())
+        .map { it.mapToAudioItemModel() }
 
-    override fun getAudiosOfArtistFlow(artistId: String) =
-        mediaLibraryDao.getMediasByArtistIdFlow(artistId)
-            .map { it.mapToAudioItemModel() }
+    override fun getAudiosOfArtistFlow(
+        artistId: String,
+        sort: GroupSort,
+    ) = mediaLibraryDao
+        .getMediasByArtistIdFlow(artistId, sort.toSortMethod())
+        .map { it.mapToAudioItemModel() }
 
-    override fun getAudiosOfGenreFlow(genreId: String) =
-        mediaLibraryDao.getMediasByGenreIdFlow(genreId)
-            .map { it.mapToAudioItemModel() }
+    override fun getAudiosOfGenreFlow(
+        genreId: String,
+        sort: GroupSort,
+    ) = mediaLibraryDao
+        .getMediasByGenreIdFlow(genreId, sort.toSortMethod())
+        .map { it.mapToAudioItemModel() }
 
     override fun getAlbumByAlbumIdFlow(albumId: String) =
-        mediaLibraryDao.getAlbumByAlbumIdFlow(albumId)
+        mediaLibraryDao
+            .getAlbumByAlbumIdFlow(albumId)
             .map { it?.toAppItem() }
 
     override fun getArtistByArtistIdFlow(artistId: String) =
-        mediaLibraryDao.getArtistByArtistIdFlow(artistId)
+        mediaLibraryDao
+            .getArtistByArtistIdFlow(artistId)
             .map { it?.toAppItem() }
 
     override fun getGenreByGenreIdFlow(genreId: String) =
-        mediaLibraryDao.getGenreByGenreIdFlow(genreId)
+        mediaLibraryDao
+            .getGenreByGenreIdFlow(genreId)
             .map { it?.toAppItem() }
 
     override suspend fun getAudiosOfAlbum(albumId: String) =

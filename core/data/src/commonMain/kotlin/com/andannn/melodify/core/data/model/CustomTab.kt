@@ -39,18 +39,25 @@ sealed interface CustomTab {
 }
 
 context(repository: Repository)
-fun CustomTab.contentFlow(): Flow<List<AudioItemModel>> =
+fun CustomTab.contentFlow(sort: GroupSort): Flow<List<AudioItemModel>> =
     when (this) {
-        is CustomTab.AllMusic -> repository.mediaContentRepository.getAllMediaItemsFlow()
-        is CustomTab.AlbumDetail -> repository.mediaContentRepository.getAudiosOfAlbumFlow(albumId)
+        is CustomTab.AllMusic -> repository.mediaContentRepository.getAllMediaItemsFlow(sort)
+        is CustomTab.AlbumDetail ->
+            repository.mediaContentRepository.getAudiosOfAlbumFlow(
+                albumId,
+                sort,
+            )
+
         is CustomTab.ArtistDetail ->
             repository.mediaContentRepository.getAudiosOfArtistFlow(
                 artistId,
+                sort,
             )
 
-        is CustomTab.GenreDetail -> repository.mediaContentRepository.getAudiosOfGenreFlow(genreId)
+        is CustomTab.GenreDetail -> repository.mediaContentRepository.getAudiosOfGenreFlow(genreId, sort)
         is CustomTab.PlayListDetail ->
             repository.playListRepository.getAudiosOfPlayListFlow(
                 playListId.toLong(),
+                sort,
             )
     }
