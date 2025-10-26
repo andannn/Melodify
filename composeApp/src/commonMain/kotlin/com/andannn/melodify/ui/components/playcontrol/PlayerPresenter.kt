@@ -21,7 +21,7 @@ import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.SleepTimerRepository
-import com.andannn.melodify.ui.components.common.LocalRepository
+import com.andannn.melodify.ui.common.util.LocalRepository
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction

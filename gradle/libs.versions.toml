@@ -106,7 +106,6 @@ androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", vers
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidx-glance" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "androidx-glance" }
 androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "pagingCommonVersion" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCommonVersion" }
@@ -134,9 +133,7 @@ firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "androidxRoom" }
-dependency-graph_generator = { id = "com.vanniktech.dependency.graph.generator", version.ref = "dependencyGraphGenerator" }
 parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
-paparazzi = { id = "app.cash.paparazzi", version.ref = "paparazzi"}
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 licensee = { id = "app.cash.licensee", version.ref = "licensee" }

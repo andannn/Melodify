@@ -11,7 +11,7 @@ import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.browsable
-import com.andannn.melodify.ui.components.common.LocalRepository
+import com.andannn.melodify.ui.common.util.LocalRepository
 import com.andannn.melodify.ui.components.common.newLibraryContentListScreen
 import com.andannn.melodify.ui.components.library.util.asDataSource
 import com.slack.circuit.retained.collectAsRetainedState

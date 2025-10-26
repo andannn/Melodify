@@ -20,7 +20,7 @@ import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
-import com.andannn.melodify.ui.components.common.LocalRepository
+import com.andannn.melodify.ui.common.util.LocalRepository
 import com.andannn.melodify.ui.components.common.newLibraryContentListScreen
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
 import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController

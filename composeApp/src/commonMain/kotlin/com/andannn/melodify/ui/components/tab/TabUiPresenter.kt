@@ -16,7 +16,7 @@ import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.contentFlow
-import com.andannn.melodify.ui.components.common.LocalRepository
+import com.andannn.melodify.ui.common.util.LocalRepository
 import com.andannn.melodify.ui.components.common.TabManageScreen
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController

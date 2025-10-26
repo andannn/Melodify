@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.window.ApplicationScope
 import com.andannn.melodify.ui.common.theme.MelodifyTheme
-import com.andannn.melodify.ui.components.common.LocalRepository
+import com.andannn.melodify.ui.common.util.LocalRepository
 import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
 import com.andannn.melodify.ui.components.popup.LocalPopupController
