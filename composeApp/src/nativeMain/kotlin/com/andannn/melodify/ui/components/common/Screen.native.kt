@@ -18,3 +18,5 @@ actual data class LibraryContentListScreen(
 ) : Screen
 
 actual fun newLibraryContentListScreen(datasource: LibraryDataSource): LibraryContentListScreen = LibraryContentListScreen(datasource)
+
+actual object TabManageScreen : Screen

@@ -7,5 +7,5 @@ package com.andannn.melodify.core.data
 import androidx.paging.PagingConfig
 
 object MediaPagingConfig {
-    val DEFAULT_PAGE_CONFIG = PagingConfig(pageSize = 100)
+    val DEFAULT_PAGE_CONFIG = PagingConfig(pageSize = 50)
 }

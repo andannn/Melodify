@@ -18,6 +18,7 @@ import com.andannn.melodify.ui.components.tabcontent.HeaderItem
 @Composable
 fun NameBasedGroupHeader(
     item: HeaderItem.Name,
+    isPrimary: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Surface(

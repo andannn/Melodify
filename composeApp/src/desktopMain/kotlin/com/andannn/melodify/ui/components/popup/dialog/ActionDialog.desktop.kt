@@ -16,9 +16,11 @@ actual val DialogId.dialogIdType: DialogType
             is DialogId.SleepTimerOptionDialog,
             DialogId.NewPlayListDialog,
             DialogId.SleepCountingDialog,
-            is DialogId.AddToPlayListDialog,
             is DialogId.AlertDialog,
             DialogId.AddLibraryPathDialog,
+            is DialogId.AddMusicsToPlayListDialog,
+            is DialogId.ChangeSortRuleDialog,
+            is DialogId.OptionDialog,
             -> DialogType.AlertDialog
         }
 

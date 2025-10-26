@@ -19,17 +19,25 @@ data class SortRule(
     val secondaryGroupSort: SortOption = SortOption.NONE,
     @SerialName("content_sort")
     val contentSort: SortOption = SortOption.NONE,
+    @SerialName("show_track_num")
+    val showTrackNum: Boolean = false,
 ) {
     companion object Preset {
-        val TitleASC = SortRule(SortOption.Title(true))
+        val TitleASC =
+            SortRule(
+                primaryGroupSort = SortOption.Title(true),
+                showTrackNum = false,
+            )
         val AlbumASC =
             SortRule(
                 primaryGroupSort = SortOption.Album(true),
                 contentSort = SortOption.TrackNum(true),
+                showTrackNum = true,
             )
         val ArtistASC =
             SortRule(
                 primaryGroupSort = SortOption.Artist(true),
+                showTrackNum = false,
             )
 
         val ArtistAlbumASC =
@@ -37,6 +45,7 @@ data class SortRule(
                 primaryGroupSort = SortOption.Artist(true),
                 secondaryGroupSort = SortOption.Album(true),
                 contentSort = SortOption.TrackNum(true),
+                showTrackNum = true,
             )
         val None = SortRule(SortOption.NONE)
 

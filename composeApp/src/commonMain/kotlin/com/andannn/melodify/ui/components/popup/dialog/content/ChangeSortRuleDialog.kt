@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.components.popup.dialog.content
 
 import androidx.compose.foundation.layout.Column
@@ -55,7 +59,12 @@ fun ChangeSortRuleDialog(
                 },
                 headlineContent = {
                     Text(
-                        text = rule.toString(),
+                        text = rule.headerText(),
+                    )
+                },
+                supportingContent = {
+                    Text(
+                        text = rule.subTitle(),
                     )
                 },
                 trailingContent = {
@@ -129,6 +138,22 @@ private enum class PresetSortRule(
         sortRule = SortRule.Preset.ArtistAlbumASC,
     ),
 }
+
+private fun PresetSortRule.headerText() =
+    when (this) {
+        PresetSortRule.AlbumAsc -> "Sort by Album"
+        PresetSortRule.ArtistAsc -> "Sort by Artist"
+        PresetSortRule.TitleNameAsc -> "Sort by Title"
+        PresetSortRule.ArtistAlbumASC -> "Sort by Artist, then Album"
+    }
+
+private fun PresetSortRule.subTitle() =
+    when (this) {
+        PresetSortRule.AlbumAsc -> "Group items by album and sort tracks in ascending order."
+        PresetSortRule.ArtistAsc -> "Group items by artist in ascending order."
+        PresetSortRule.TitleNameAsc -> "Group items alphabetically by title."
+        PresetSortRule.ArtistAlbumASC -> "Group items by artist and then by album, sorting tracks in ascending order."
+    }
 
 @Stable
 private data class UiState(

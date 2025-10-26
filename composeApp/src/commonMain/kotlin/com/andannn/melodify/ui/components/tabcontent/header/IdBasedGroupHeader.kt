@@ -38,13 +38,14 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun IdBasedGroupHeader(
     state: GroupHeaderState,
+    isPrimary: Boolean,
     modifier: Modifier = Modifier,
 ) {
     HeaderInfo(
         modifier = modifier,
+        isPrimary = isPrimary,
         coverArtUri = state.cover,
         title = state.title,
-        trackCount = state.trackCount,
         onOptionClick = {
             state.eventSink.invoke(GroupHeaderEvent.OnOptionClick)
         },
@@ -55,9 +56,9 @@ fun IdBasedGroupHeader(
 private fun HeaderInfo(
     modifier: Modifier = Modifier,
     coverArtUri: String?,
+    isPrimary: Boolean,
     defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
     title: String = "",
-    trackCount: Int = 0,
     onOptionClick: () -> Unit = {},
 ) {
     Surface(
@@ -69,14 +70,14 @@ private fun HeaderInfo(
             modifier =
                 Modifier
                     .padding(5.dp)
-                    .height(IntrinsicSize.Max),
+                    .height(IntrinsicSize.Min),
         ) {
             if (coverArtUri != null) {
                 AsyncImage(
                     modifier =
                         Modifier
                             .align(Alignment.CenterVertically)
-                            .size(100.dp)
+                            .size(48.dp)
                             .clip(MaterialTheme.shapes.extraSmall),
                     model = coverArtUri,
                     contentScale = ContentScale.Crop,
@@ -95,12 +96,18 @@ private fun HeaderInfo(
                 Row(
                     Modifier.fillMaxHeight(),
                 ) {
+                    val style =
+                        if (isPrimary) {
+                            MaterialTheme.typography.titleLarge
+                        } else {
+                            MaterialTheme.typography.titleMedium
+                        }
                     Text(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically),
                         text = title,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        style = style.copy(fontWeight = FontWeight.Bold),
                     )
 
                     IconButton(

@@ -6,10 +6,10 @@ package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -55,42 +55,48 @@ private fun LazyListContent(
     onShowMusicItemOption: (AudioItemModel) -> Unit = {},
 ) {
     val items = pagingItems.itemSnapshotList
-    val contentGroup =
+    val primaryGroupList =
         remember(items, sortRule) {
-            items.toGroup(sortRule)
+            items.groupByType(sortRule)
         }
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 5.dp),
     ) {
-        contentGroup.forEachIndexed { groupIndex, (primaryHeader, contents) ->
+        primaryGroupList.forEachIndexed { primaryGroupIndex, (primaryHeader, secondaryGroupList) ->
             if (primaryHeader != null) {
                 stickyHeader(primaryHeader.hashCode()) {
                     Header(isPrimary = true, headerItem = primaryHeader)
                 }
             }
 
-            contents.forEachIndexed { index, (secondaryHeader, contents) ->
+            secondaryGroupList.forEachIndexed { secondaryGroupIndex, (secondaryHeader, items) ->
                 if (secondaryHeader != null) {
                     stickyHeader((primaryHeader to secondaryHeader).hashCode()) {
-                        Header(isPrimary = false, headerItem = secondaryHeader)
+                        Header(
+                            modifier = Modifier.padding(start = 8.dp),
+                            isPrimary = false,
+                            headerItem = secondaryHeader,
+                        )
                     }
                 }
 
                 itemsIndexed(
-                    items = contents,
+                    items = items,
                     key = { index, item ->
                         item.hashCode()
                     },
                 ) { index, item ->
-//                    pagingItems[contentGroup.flattenIndex(groupIndex, index)]
+                    // trigger item read event to load more.
+                    pagingItems[primaryGroupList.flattenIndex(primaryGroupIndex, secondaryGroupIndex, index)]
 
+                    val showTrackNum = sortRule.showTrackNum
                     ListTileItemView(
+                        modifier = Modifier.padding(start = 12.dp),
                         playable = item.browsableOrPlayable,
                         isActive = false,
                         albumArtUri = item.artWorkUri,
                         title = item.name,
-                        trackNum = item.cdTrackNumber,
+                        trackNum = item.cdTrackNumber.takeIf { showTrackNum },
                         onMusicItemClick = {
                             onMusicItemClick.invoke(item)
                         },
@@ -99,9 +105,9 @@ private fun LazyListContent(
                         },
                     )
                 }
-            }
 
-            item { Spacer(modifier = Modifier.height(16.dp)) }
+                item { Spacer(modifier = Modifier.height(24.dp)) }
+            }
         }
 
         item { ExtraPaddingBottom() }
@@ -120,12 +126,14 @@ private fun Header(
                 val presenter = rememberGroupHeaderPresenter(headerItem)
                 IdBasedGroupHeader(
                     state = presenter.present(),
+                    isPrimary = isPrimary,
                 )
             }
 
             is HeaderItem.Name -> {
                 NameBasedGroupHeader(
                     item = headerItem,
+                    isPrimary = isPrimary,
                 )
             }
         }
@@ -146,37 +154,54 @@ sealed class HeaderItem(
     ) : HeaderItem(groupType)
 }
 
+private data class PrimaryGroup(
+    val headerItem: HeaderItem?,
+    val content: List<ContentGroup>,
+)
+
 private data class ContentGroup(
     val headerItem: HeaderItem?,
     val content: List<AudioItemModel>,
 )
 
-private fun List<ContentGroup>.flattenIndex(
-    groupIndex: Int,
+private fun List<PrimaryGroup>.flattenIndex(
+    primaryGroupIndex: Int,
+    secondaryGroupIndex: Int,
     itemIndex: Int,
 ): Int {
+    if (isEmpty()) return 0
+
     var ret = 0
-    for (i in 0..groupIndex) {
-        ret +=
-            if (i == groupIndex) {
-                itemIndex
-            } else {
-                this[i].content.size
-            }
+    val safePrimary = primaryGroupIndex.coerceIn(0, lastIndex)
+    for (p in 0 until safePrimary) {
+        ret += this[p].content.sumOf { it.content.size }
     }
+
+    val primary = this[safePrimary]
+    if (primary.content.isNotEmpty()) {
+        val safeSecondary = secondaryGroupIndex.coerceIn(0, primary.content.lastIndex)
+        for (s in 0 until safeSecondary) {
+            ret += primary.content[s].content.size
+        }
+    }
+
+    ret += itemIndex.coerceAtLeast(0)
     return ret
 }
 
-private fun List<AudioItemModel?>.toGroup(sortRule: SortRule) =
-    toGroup(sortRule.primaryGroupSort.toSortType())
+private fun List<AudioItemModel?>.groupByType(sortRule: SortRule): List<PrimaryGroup> =
+    groupByType(sortRule.primaryGroupSort.toSortType())
         .map { (headerItem, contentList) ->
             val primaryHeader = headerItem
-            val items = contentList.toGroup(sortRule.secondaryGroupSort.toSortType())
+            val items = contentList.groupByType(sortRule.secondaryGroupSort.toSortType())
 
-            primaryHeader to items
+            PrimaryGroup(
+                headerItem = primaryHeader,
+                content = items,
+            )
         }
 
-private fun List<AudioItemModel?>.toGroup(groupType: GroupType): List<ContentGroup> =
+private fun List<AudioItemModel?>.groupByType(groupType: GroupType): List<ContentGroup> =
     this
         .filterNotNull()
         .groupBy {
