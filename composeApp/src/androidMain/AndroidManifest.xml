@@ -51,18 +51,6 @@
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="true" />
 
-        <receiver
-            android:name=".glance.PlayerGlanceAppWidgetReceiver"
-            android:exported="false"
-            android:enabled="@bool/glance_appwidget_available">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/player_glance_appwidget_info" />
-        </receiver>
-
     </application>
     
 </manifest>

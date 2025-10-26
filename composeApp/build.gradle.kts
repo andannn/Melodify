@@ -31,21 +31,22 @@ kotlin {
             implementation(project(":core:syncer"))
             implementation(project(":core:platform"))
 
-            implementation(project(":ui:common"))
-            implementation(project(":ui:components"))
-
+            implementation(libs.coil3.compose)
             implementation(libs.reorderable)
+            implementation(libs.androidx.paging.compose)
             implementation(libs.kotlinx.serialization.json)
         }
 
         androidMain.dependencies {
             implementation(project(":core:player"))
 
-            implementation(libs.androidx.glance.appwidget)
-
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.androidx.activity.compose)
+
+            implementation(libs.androidx.palette)
+            implementation(libs.material.color.utilities.android)
+            implementation(libs.androidx.glance.material3)
 
             // Firebase
             implementation(project.dependencies.platform(libs.firebase.bom))
@@ -61,6 +62,11 @@ kotlin {
             implementation(libs.paparazzi)
         }
     }
+}
+
+compose.resources {
+    publicResClass = true
+    generateResClass = auto
 }
 
 android {

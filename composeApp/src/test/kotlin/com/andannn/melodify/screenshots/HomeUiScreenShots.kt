@@ -6,8 +6,8 @@ package com.andannn.melodify.screenshots
 
 import androidx.compose.runtime.Composable
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.navigation.routes.HomeState
-import com.andannn.melodify.navigation.routes.HomeUiScreen
+import com.andannn.melodify.navigation.HomeState
+import com.andannn.melodify.navigation.HomeUiScreen
 import com.andannn.melodify.screenshots.util.ScreenShotsTest
 import com.andannn.melodify.screenshots.util.audioList1
 import com.andannn.melodify.screenshots.util.audioList2
