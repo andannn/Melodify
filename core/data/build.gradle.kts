@@ -15,6 +15,7 @@ kotlin {
             implementation(project(":core:database"))
             implementation(project(":core:player"))
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.androidx.paging.common)
         }
     }
 }

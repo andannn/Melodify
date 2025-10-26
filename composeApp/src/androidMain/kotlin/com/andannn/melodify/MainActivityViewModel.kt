@@ -42,7 +42,9 @@ class MainActivityViewModel(
 }
 
 sealed class MainUiState {
-    data class Error(private val e: Exception) : MainUiState()
+    data class Error(
+        private val e: Exception,
+    ) : MainUiState()
 
     data object Ready : MainUiState()
 

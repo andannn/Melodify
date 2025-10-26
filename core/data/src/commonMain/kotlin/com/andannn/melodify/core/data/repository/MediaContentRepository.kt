@@ -4,18 +4,22 @@
  */
 package com.andannn.melodify.core.data.repository
 
+import androidx.paging.PagingData
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.SortRule
 import kotlinx.coroutines.flow.Flow
 
 interface MediaContentRepository {
+    fun getAllMediaItemsPagingFlow(sort: SortRule): Flow<PagingData<AudioItemModel>>
+
     /**
      * Return flow of all media items
      */
-    fun getAllMediaItemsFlow(): Flow<List<AudioItemModel>>
+    fun getAllMediaItemsFlow(sort: SortRule): Flow<List<AudioItemModel>>
 
     /**
      * Return flow of all albums
@@ -35,7 +39,15 @@ interface MediaContentRepository {
     /**
      * Return flow of audios of album
      */
-    fun getAudiosOfAlbumFlow(albumId: String): Flow<List<AudioItemModel>>
+    fun getAudiosOfAlbumFlow(
+        albumId: String,
+        sort: SortRule,
+    ): Flow<List<AudioItemModel>>
+
+    fun getAudiosPagingFlowOfAlbum(
+        albumId: String,
+        sort: SortRule,
+    ): Flow<PagingData<AudioItemModel>>
 
     /**
      * Return audios of artist
@@ -45,7 +57,15 @@ interface MediaContentRepository {
     /**
      * Return flow of audios of artist
      */
-    fun getAudiosOfArtistFlow(artistId: String): Flow<List<AudioItemModel>>
+    fun getAudiosOfArtistFlow(
+        artistId: String,
+        sort: SortRule,
+    ): Flow<List<AudioItemModel>>
+
+    fun getAudiosPagingFlowOfArtist(
+        artistId: String,
+        sort: SortRule,
+    ): Flow<PagingData<AudioItemModel>>
 
     /**
      * Return audios of artist
@@ -55,7 +75,15 @@ interface MediaContentRepository {
     /**
      * Return flow of audios of genre
      */
-    fun getAudiosOfGenreFlow(genreId: String): Flow<List<AudioItemModel>>
+    fun getAudiosOfGenreFlow(
+        genreId: String,
+        sort: SortRule,
+    ): Flow<List<AudioItemModel>>
+
+    fun getAudiosPagingFlowOfGenre(
+        genreId: String,
+        sort: SortRule,
+    ): Flow<PagingData<AudioItemModel>>
 
     /**
      * Return audios of genre

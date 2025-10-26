@@ -43,6 +43,7 @@ workRuntimeKtx = "2.10.0"
 ktlint = "12.2.0"
 spotless = "7.0.4"
 licensee = "1.12.0"
+pagingCommonVersion = "3.4.0-alpha04"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -107,6 +108,9 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidx-glance" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "androidx-glance" }
+androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "pagingCommonVersion" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCommonVersion" }
+room-paging = { group = "androidx.room", name = "room-paging", version.ref = "androidxRoom" }
 
 # dependecy in build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

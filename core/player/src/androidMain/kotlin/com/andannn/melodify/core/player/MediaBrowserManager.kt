@@ -51,13 +51,12 @@ class MediaBrowserManagerImpl(
     }
 }
 
-private fun providerMediaBrowser(application: Application): ListenableFuture<MediaBrowser> {
-    return MediaBrowser.Builder(
-        application,
-        SessionToken(
+private fun providerMediaBrowser(application: Application): ListenableFuture<MediaBrowser> =
+    MediaBrowser
+        .Builder(
             application,
-            ComponentName(application, PlayerService::class.java.name),
-        ),
-    )
-        .buildAsync()
-}
+            SessionToken(
+                application,
+                ComponentName(application, PlayerService::class.java.name),
+            ),
+        ).buildAsync()

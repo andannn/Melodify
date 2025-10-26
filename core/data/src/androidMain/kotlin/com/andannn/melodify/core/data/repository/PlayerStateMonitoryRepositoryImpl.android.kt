@@ -14,24 +14,20 @@ import kotlinx.coroutines.flow.map
 class PlayerStateMonitoryRepositoryImpl(
     private val playerWrapper: PlayerWrapper,
 ) : PlayerStateMonitoryRepository {
-    override fun getCurrentPositionMs(): Long {
-        return playerWrapper.currentPositionMs
-    }
+    override fun getCurrentPositionMs(): Long = playerWrapper.currentPositionMs
 
     override fun observeCurrentPositionMs() =
-        playerWrapper.observePlayerState()
+        playerWrapper
+            .observePlayerState()
             .map { playerWrapper.currentDurationMs }
             .distinctUntilChanged()
 
-    override fun getPlayingIndexInQueue(): Int {
-        return playerWrapper.playingIndexInQueue
-    }
+    override fun getPlayingIndexInQueue(): Int = playerWrapper.playingIndexInQueue
 
-    override suspend fun getPlayListQueue(): List<AudioItemModel> {
-        return playerWrapper.playList.map {
+    override suspend fun getPlayListQueue(): List<AudioItemModel> =
+        playerWrapper.playList.map {
             it.toAppItem() as? AudioItemModel ?: error("invalid")
         }
-    }
 
     override fun getPlayingMediaStateFlow() =
         playerWrapper.observePlayingMedia().map {
@@ -45,36 +41,38 @@ class PlayerStateMonitoryRepositoryImpl(
             }
         }
 
-    override fun getCurrentPlayMode(): PlayMode {
-        return playerWrapper.observePlayMode().value.let {
+    override fun getCurrentPlayMode(): PlayMode =
+        playerWrapper.observePlayMode().value.let {
             fromRepeatMode(it)
         }
-    }
 
     override fun observeIsShuffle() = playerWrapper.observeIsShuffle()
 
     override fun observePlayMode() =
-        playerWrapper.observePlayMode()
+        playerWrapper
+            .observePlayMode()
             .map {
                 fromRepeatMode(it)
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 
     override fun observeIsPlaying() =
-        playerWrapper.observePlayerState()
+        playerWrapper
+            .observePlayerState()
             .map {
                 it is PlayerState.Playing
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 
     override fun observeProgressFactor() =
-        playerWrapper.observePlayerState()
+        playerWrapper
+            .observePlayerState()
             .map {
                 if (getCurrentPositionMs() == 0L) {
                     return@map 0f
                 } else {
-                    it.currentPositionMs.toFloat().div(playerWrapper.currentDurationMs).coerceIn(0f, 1f)
+                    it.currentPositionMs
+                        .toFloat()
+                        .div(playerWrapper.currentDurationMs)
+                        .coerceIn(0f, 1f)
                 }
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 }

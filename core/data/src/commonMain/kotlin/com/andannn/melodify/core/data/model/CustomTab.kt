@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.data.model
 
+import androidx.paging.PagingData
 import com.andannn.melodify.core.data.Repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
@@ -39,18 +40,49 @@ sealed interface CustomTab {
 }
 
 context(repository: Repository)
-fun CustomTab.contentFlow(): Flow<List<AudioItemModel>> =
+fun CustomTab.contentFlow(sort: SortRule): Flow<List<AudioItemModel>> =
     when (this) {
-        is CustomTab.AllMusic -> repository.mediaContentRepository.getAllMediaItemsFlow()
-        is CustomTab.AlbumDetail -> repository.mediaContentRepository.getAudiosOfAlbumFlow(albumId)
+        is CustomTab.AllMusic -> repository.mediaContentRepository.getAllMediaItemsFlow(sort)
+        is CustomTab.AlbumDetail ->
+            repository.mediaContentRepository.getAudiosOfAlbumFlow(
+                albumId,
+                sort,
+            )
+
         is CustomTab.ArtistDetail ->
             repository.mediaContentRepository.getAudiosOfArtistFlow(
                 artistId,
+                sort,
             )
 
-        is CustomTab.GenreDetail -> repository.mediaContentRepository.getAudiosOfGenreFlow(genreId)
+        is CustomTab.GenreDetail -> repository.mediaContentRepository.getAudiosOfGenreFlow(genreId, sort)
         is CustomTab.PlayListDetail ->
             repository.playListRepository.getAudiosOfPlayListFlow(
                 playListId.toLong(),
+                sort,
+            )
+    }
+
+context(repository: Repository)
+fun CustomTab.contentPagingDataFlow(sort: SortRule): Flow<PagingData<AudioItemModel>> =
+    when (this) {
+        is CustomTab.AllMusic -> repository.mediaContentRepository.getAllMediaItemsPagingFlow(sort)
+        is CustomTab.AlbumDetail ->
+            repository.mediaContentRepository.getAudiosPagingFlowOfAlbum(
+                albumId,
+                sort,
+            )
+
+        is CustomTab.ArtistDetail ->
+            repository.mediaContentRepository.getAudiosPagingFlowOfArtist(
+                artistId,
+                sort,
+            )
+
+        is CustomTab.GenreDetail -> repository.mediaContentRepository.getAudiosPagingFlowOfGenre(genreId, sort)
+        is CustomTab.PlayListDetail ->
+            repository.playListRepository.getAudioPagingFlowOfPlayList(
+                playListId.toLong(),
+                sort,
             )
     }

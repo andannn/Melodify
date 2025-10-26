@@ -4,16 +4,20 @@
  */
 package com.andannn.melodify.core.data.repository
 
+import androidx.paging.PagingData
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.SortRule
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 open class NoOpMediaContentRepository : MediaContentRepository {
-    override fun getAllMediaItemsFlow(): Flow<List<AudioItemModel>> = flowOf()
+    override fun getAllMediaItemsPagingFlow(sort: SortRule): Flow<PagingData<AudioItemModel>> = flowOf()
+
+    override fun getAllMediaItemsFlow(sort: SortRule): Flow<List<AudioItemModel>> = flowOf()
 
     override fun getAllAlbumsFlow(): Flow<List<AlbumItemModel>> = flowOf()
 
@@ -21,15 +25,39 @@ open class NoOpMediaContentRepository : MediaContentRepository {
 
     override fun getAllGenreFlow(): Flow<List<GenreItemModel>> = flowOf()
 
-    override fun getAudiosOfAlbumFlow(albumId: String): Flow<List<AudioItemModel>> = flowOf()
+    override fun getAudiosOfAlbumFlow(
+        albumId: String,
+        sort: SortRule,
+    ): Flow<List<AudioItemModel>> = flowOf()
+
+    override fun getAudiosPagingFlowOfAlbum(
+        albumId: String,
+        sort: SortRule,
+    ): Flow<PagingData<AudioItemModel>> = flowOf()
 
     override suspend fun getAudiosOfAlbum(albumId: String): List<AudioItemModel> = emptyList()
 
-    override fun getAudiosOfArtistFlow(artistId: String): Flow<List<AudioItemModel>> = flowOf()
+    override fun getAudiosOfArtistFlow(
+        artistId: String,
+        sort: SortRule,
+    ): Flow<List<AudioItemModel>> = flowOf()
+
+    override fun getAudiosPagingFlowOfArtist(
+        artistId: String,
+        sort: SortRule,
+    ): Flow<PagingData<AudioItemModel>> = flowOf()
 
     override suspend fun getAudiosOfArtist(artistId: String): List<AudioItemModel> = emptyList()
 
-    override fun getAudiosOfGenreFlow(genreId: String): Flow<List<AudioItemModel>> = flowOf()
+    override fun getAudiosOfGenreFlow(
+        genreId: String,
+        sort: SortRule,
+    ): Flow<List<AudioItemModel>> = flowOf()
+
+    override fun getAudiosPagingFlowOfGenre(
+        genreId: String,
+        sort: SortRule,
+    ): Flow<PagingData<AudioItemModel>> = flowOf()
 
     override suspend fun getAudiosOfGenre(genreId: String): List<AudioItemModel> = emptyList()
 

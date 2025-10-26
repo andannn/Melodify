@@ -15,9 +15,9 @@ import org.koin.dsl.module
 internal actual val databaseBuilder: Module =
     module {
         single<RoomDatabase.Builder<MelodifyDataBase>> {
-            Room.databaseBuilder<MelodifyDataBase>(
-                name = get<PlatformInfo>().databasePath,
-            )
-                .setDriver(BundledSQLiteDriver())
+            Room
+                .databaseBuilder<MelodifyDataBase>(
+                    name = get<PlatformInfo>().databasePath,
+                ).setDriver(BundledSQLiteDriver())
         }
     }

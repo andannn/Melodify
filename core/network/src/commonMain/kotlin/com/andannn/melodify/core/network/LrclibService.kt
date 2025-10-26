@@ -67,6 +67,5 @@ internal class LrclibServiceImpl(
                     album_name = albumName,
                     duration = duration,
                 ),
-            )
-            .body()
+            ).body()
 }

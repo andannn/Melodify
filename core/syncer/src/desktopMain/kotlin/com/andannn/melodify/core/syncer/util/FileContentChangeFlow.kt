@@ -49,11 +49,11 @@ fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType> {
             dictionaries
                 .fold(emptyList<Path>()) { acc, dictionary ->
                     acc +
-                        Files.walk(dictionary)
+                        Files
+                            .walk(dictionary)
                             .filter {
                                 Files.isDirectory(it)
-                            }
-                            .toList()
+                            }.toList()
                 }.forEach { path ->
                     Napier.d(tag = TAG) { "register path: $path" }
                     path.registerAllChange(watchService, watchKeyMap)
@@ -70,7 +70,8 @@ fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType> {
                 }
 
                 val events =
-                    key.pollEvents()
+                    key
+                        .pollEvents()
                         .mapNotNull { event ->
                             val kind = event.kind()
                             val changedFilePath = watchKeyMap[key]!!.resolve(event.context() as Path)
@@ -96,8 +97,7 @@ fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType> {
                                     null
                                 }
                             }
-                        }
-                        .toSet()
+                        }.toSet()
 
                 val dictionaryEvents =
                     events
@@ -108,7 +108,8 @@ fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType> {
                     .filter { it.fileChangeType == FileChangeType.MODIFY }
                     .forEach {
                         // Register new created folder
-                        Paths.get(URI.create(it.fileUri))
+                        Paths
+                            .get(URI.create(it.fileUri))
                             .registerAllChange(watchService, watchKeyMap)
                     }
 

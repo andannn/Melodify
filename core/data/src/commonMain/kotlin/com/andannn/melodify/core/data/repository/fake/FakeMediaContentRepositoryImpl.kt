@@ -4,14 +4,17 @@
  */
 package com.andannn.melodify.core.data.repository.fake
 
+import androidx.paging.PagingData
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.repository.MediaContentRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -35,8 +38,8 @@ private data class MediaItem(
     val site: String = "",
 )
 
-private fun MediaItem.toModel(): AudioItemModel {
-    return AudioItemModel(
+private fun MediaItem.toModel(): AudioItemModel =
+    AudioItemModel(
         id = id,
         name = title,
         artWorkUri = image,
@@ -49,7 +52,6 @@ private fun MediaItem.toModel(): AudioItemModel {
         discNumber = 0,
         source = source,
     )
-}
 
 internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
     private val json = Json { ignoreUnknownKeys = true }
@@ -71,82 +73,80 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
             it.genre
         }
 
-    override fun getAllMediaItemsFlow(): Flow<List<AudioItemModel>> {
-        return flow {
+    override fun getAllMediaItemsPagingFlow(sort: SortRule): Flow<PagingData<AudioItemModel>> = flowOf()
+
+    override fun getAllMediaItemsFlow(sort: SortRule): Flow<List<AudioItemModel>> =
+        flow {
             emit(
                 mediaList.map { it.toModel() },
             )
         }
-    }
 
-    override fun getAllAlbumsFlow(): Flow<List<AlbumItemModel>> {
-        return flow { emit(getAllAlbums()) }
-    }
+    override fun getAllAlbumsFlow(): Flow<List<AlbumItemModel>> = flow { emit(getAllAlbums()) }
 
-    override fun getAllArtistFlow(): Flow<List<ArtistItemModel>> {
-        return flow { emit(getAllArtists()) }
-    }
+    override fun getAllArtistFlow(): Flow<List<ArtistItemModel>> = flow { emit(getAllArtists()) }
 
-    override fun getAllGenreFlow(): Flow<List<GenreItemModel>> {
-        return flow { emit(getAllGenres()) }
-    }
+    override fun getAllGenreFlow(): Flow<List<GenreItemModel>> = flow { emit(getAllGenres()) }
 
-    override fun getAudiosOfAlbumFlow(albumId: String): Flow<List<AudioItemModel>> {
-        return flow {
+    override fun getAudiosOfAlbumFlow(
+        albumId: String,
+        sort: SortRule,
+    ): Flow<List<AudioItemModel>> =
+        flow {
             emit(getAudiosOfAlbum(albumId))
         }
-    }
 
-    override suspend fun getAudiosOfAlbum(albumId: String): List<AudioItemModel> {
-        return albumMaps[albumId]?.map { it.toModel() } ?: emptyList()
-    }
+    override fun getAudiosPagingFlowOfAlbum(
+        albumId: String,
+        sort: SortRule,
+    ): Flow<PagingData<AudioItemModel>> = flowOf()
 
-    override fun getAudiosOfArtistFlow(artistId: String): Flow<List<AudioItemModel>> {
-        return flow { emit(getAudiosOfArtist(artistId)) }
-    }
+    override suspend fun getAudiosOfAlbum(albumId: String): List<AudioItemModel> = albumMaps[albumId]?.map { it.toModel() } ?: emptyList()
 
-    override suspend fun getAudiosOfArtist(artistId: String): List<AudioItemModel> {
-        return artistMaps[artistId]?.map { it.toModel() } ?: emptyList()
-    }
+    override fun getAudiosOfArtistFlow(
+        artistId: String,
+        sort: SortRule,
+    ): Flow<List<AudioItemModel>> =
+        flow {
+            emit(getAudiosOfArtist(artistId))
+        }
 
-    override fun getAudiosOfGenreFlow(genreId: String): Flow<List<AudioItemModel>> {
-        return flow { emit(getAudiosOfGenre(genreId)) }
-    }
+    override fun getAudiosPagingFlowOfArtist(
+        artistId: String,
+        sort: SortRule,
+    ): Flow<PagingData<AudioItemModel>> = flowOf()
 
-    override suspend fun getAudiosOfGenre(genreId: String): List<AudioItemModel> {
-        return genreMaps[genreId]?.map { it.toModel() } ?: emptyList()
-    }
+    override suspend fun getAudiosOfArtist(artistId: String): List<AudioItemModel> =
+        artistMaps[artistId]?.map { it.toModel() } ?: emptyList()
 
-    override fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumItemModel?> {
-        return flow { emit(getAlbumByAlbumId(albumId)) }
-    }
+    override fun getAudiosOfGenreFlow(
+        genreId: String,
+        sort: SortRule,
+    ): Flow<List<AudioItemModel>> = flow { emit(getAudiosOfGenre(genreId)) }
 
-    override fun getArtistByArtistIdFlow(artistId: String): Flow<ArtistItemModel?> {
-        return flow { emit(getArtistByArtistId(artistId)) }
-    }
+    override fun getAudiosPagingFlowOfGenre(
+        genreId: String,
+        sort: SortRule,
+    ): Flow<PagingData<AudioItemModel>> = flowOf()
 
-    override fun getGenreByGenreIdFlow(genreId: String): Flow<GenreItemModel?> {
-        return flow { emit(getGenreByGenreId(genreId)) }
-    }
+    override suspend fun getAudiosOfGenre(genreId: String): List<AudioItemModel> = genreMaps[genreId]?.map { it.toModel() } ?: emptyList()
 
-    override suspend fun getAlbumByAlbumId(albumId: String): AlbumItemModel? {
-        return getAllAlbums().find { it.id == albumId }
-    }
+    override fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumItemModel?> = flow { emit(getAlbumByAlbumId(albumId)) }
 
-    override suspend fun getArtistByArtistId(artistId: String): ArtistItemModel? {
-        return getAllArtists().find { it.id == artistId }
-    }
+    override fun getArtistByArtistIdFlow(artistId: String): Flow<ArtistItemModel?> = flow { emit(getArtistByArtistId(artistId)) }
 
-    override suspend fun getGenreByGenreId(genreId: String): GenreItemModel? {
-        return getAllGenres().find { it.id == genreId }
-    }
+    override fun getGenreByGenreIdFlow(genreId: String): Flow<GenreItemModel?> = flow { emit(getGenreByGenreId(genreId)) }
 
-    override suspend fun searchContent(keyword: String): List<MediaItemModel> {
-        return emptyList()
-    }
+    override suspend fun getAlbumByAlbumId(albumId: String): AlbumItemModel? = getAllAlbums().find { it.id == albumId }
 
-    private fun getAllAlbums(): List<AlbumItemModel> {
-        return albumMaps.keys.map {
+    override suspend fun getArtistByArtistId(artistId: String): ArtistItemModel? = getAllArtists().find { it.id == artistId }
+
+    override suspend fun getGenreByGenreId(genreId: String): GenreItemModel? = getAllGenres().find { it.id == genreId }
+
+    override suspend fun searchContent(keyword: String): List<MediaItemModel> = emptyList()
+
+    private fun getAllAlbums(): List<AlbumItemModel> =
+        albumMaps.keys.map {
             AlbumItemModel(
                 id = it,
                 name = it,
@@ -154,10 +154,9 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
                 trackCount = albumMaps[it]?.size ?: 0,
             )
         }
-    }
 
-    private fun getAllArtists(): List<ArtistItemModel> {
-        return artistMaps.keys.map {
+    private fun getAllArtists(): List<ArtistItemModel> =
+        artistMaps.keys.map {
             ArtistItemModel(
                 id = it,
                 name = it,
@@ -165,10 +164,9 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
                 trackCount = artistMaps[it]?.size ?: 0,
             )
         }
-    }
 
-    private fun getAllGenres(): List<GenreItemModel> {
-        return genreMaps.keys.map {
+    private fun getAllGenres(): List<GenreItemModel> =
+        genreMaps.keys.map {
             GenreItemModel(
                 id = it,
                 name = it,
@@ -176,5 +174,4 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
                 trackCount = genreMaps[it]?.size ?: 0,
             )
         }
-    }
 }

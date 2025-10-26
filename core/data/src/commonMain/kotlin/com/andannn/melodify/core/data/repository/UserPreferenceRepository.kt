@@ -5,6 +5,7 @@
 package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.UserSetting
 import kotlinx.coroutines.flow.Flow
 
@@ -74,4 +75,17 @@ interface UserPreferenceRepository {
      * get last successful sync time
      */
     suspend fun getLastSuccessfulSyncTime(): Long?
+
+    suspend fun saveDefaultSortRule(sortRule: SortRule)
+
+    suspend fun saveSortRuleForTab(
+        tab: CustomTab,
+        sortRule: SortRule,
+    )
+
+    /**
+     * get sort rule of tab.
+     * return flow of default sort rule if tab is null.
+     */
+    fun getSortRule(tab: CustomTab?): Flow<SortRule>
 }

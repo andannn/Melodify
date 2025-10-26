@@ -4,28 +4,32 @@
  */
 package com.andannn.melodify
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.andannn.melodify.navigation.routes.HomePresenterFactory
-import com.andannn.melodify.navigation.routes.HomeUiFactory
-import com.andannn.melodify.navigation.routes.LibraryContentPresenterFactory
-import com.andannn.melodify.navigation.routes.LibraryContentUiFactory
-import com.andannn.melodify.navigation.routes.LibraryPresenterFactory
-import com.andannn.melodify.navigation.routes.LibraryUiFactory
-import com.andannn.melodify.navigation.routes.SearchPresenterFactory
-import com.andannn.melodify.navigation.routes.SearchUiFactory
+import com.andannn.melodify.navigation.HomePresenterFactory
+import com.andannn.melodify.navigation.HomeUiFactory
+import com.andannn.melodify.navigation.LibraryContentPresenterFactory
+import com.andannn.melodify.navigation.LibraryContentUiFactory
+import com.andannn.melodify.navigation.LibraryPresenterFactory
+import com.andannn.melodify.navigation.LibraryUiFactory
+import com.andannn.melodify.navigation.SearchPresenterFactory
+import com.andannn.melodify.navigation.SearchUiFactory
+import com.andannn.melodify.navigation.TabManagePresenterFactory
+import com.andannn.melodify.navigation.TabManageUiFactory
 import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
 import com.andannn.melodify.ui.components.common.HomeScreen
 import com.andannn.melodify.ui.components.common.LocalRepository
-import com.andannn.melodify.ui.components.playcontrol.Player
-import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
+import com.andannn.melodify.ui.components.popup.LocalPopupController
+import com.andannn.melodify.ui.components.popup.PopupControllerImpl
+import com.slack.circuit.backstack.BackStack.Record
+import com.slack.circuit.backstack.BackStackRecordLocalProvider
+import com.slack.circuit.backstack.ProvidedValues
+import com.slack.circuit.backstack.providedValuesForBackStack
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -33,7 +37,8 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
-import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "MelodifyMobileApp"
@@ -42,18 +47,11 @@ private const val TAG = "MelodifyMobileApp"
 fun MelodifyMobileApp(
     modifier: Modifier = Modifier,
     circuit: Circuit = buildCircuitMobile(),
-    appState: MelodifyAppState = rememberAppState(),
 ) {
-    Napier.d(tag = TAG) { "Show app" }
     CompositionLocalProvider(LocalRepository provides remember { getKoin().get() }) {
-        Scaffold(
-            modifier =
-                modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface),
-            snackbarHost = {
-                SnackbarHost(appState.snackBarHostState)
-            },
+        Surface(
+            modifier = modifier,
+            color = MaterialTheme.colorScheme.background,
         ) {
             CircuitCompositionLocals(circuit = circuit) {
                 val backStack = rememberSaveableBackStack(HomeScreen)
@@ -65,14 +63,33 @@ fun MelodifyMobileApp(
                     navigator.pop()
                 }
 
-                NavigableCircuitContent(navigator, backStack)
+                NavigableCircuitContent(
+                    navigator = navigator,
+                    backStack = backStack,
+                    providedValues =
+                        providedValuesForBackStack(
+                            backStack,
+                            stackLocalProviders =
+                                persistentListOf(
+                                    PopupControllerRecordLocalProvider,
+                                ),
+                        ),
+                )
             }
-
-            Player()
-
-            ActionDialogContainer()
         }
     }
+}
+
+object PopupControllerRecordLocalProvider : BackStackRecordLocalProvider<Record> {
+    @Composable
+    override fun providedValuesFor(record: Record): ProvidedValues =
+        object : ProvidedValues {
+            @Composable
+            override fun provideValues(): ImmutableList<ProvidedValue<*>> =
+                persistentListOf(
+                    LocalPopupController provides remember { PopupControllerImpl() },
+                )
+        }
 }
 
 private fun buildCircuitMobile() =
@@ -83,6 +100,7 @@ private fun buildCircuitMobile() =
                 LibraryPresenterFactory,
                 LibraryContentPresenterFactory,
                 SearchPresenterFactory,
+                TabManagePresenterFactory,
             ),
         uiFactory =
             listOf(
@@ -90,15 +108,16 @@ private fun buildCircuitMobile() =
                 LibraryUiFactory,
                 LibraryContentUiFactory,
                 SearchUiFactory,
+                TabManageUiFactory,
             ),
     )
 
 internal fun buildCircuit(
     presenterFactory: List<Presenter.Factory> = emptyList(),
     uiFactory: List<Ui.Factory> = emptyList(),
-): Circuit {
-    return Circuit.Builder()
+): Circuit =
+    Circuit
+        .Builder()
         .addPresenterFactories(presenterFactory)
         .addUiFactories(uiFactory)
         .build()
-}

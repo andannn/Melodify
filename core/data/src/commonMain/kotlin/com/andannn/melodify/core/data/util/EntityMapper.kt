@@ -62,7 +62,7 @@ internal fun AlbumEntity.toAppItem() =
         id = albumId.toString(),
         name = title,
         artWorkUri = coverUri ?: "",
-        trackCount = trackCount ?: 0,
+        trackCount = trackCount,
     )
 
 internal fun ArtistEntity.toAppItem() =
@@ -70,8 +70,8 @@ internal fun ArtistEntity.toAppItem() =
         id = artistId.toString(),
         name = name,
         // TODO:
-        artWorkUri = "",
-        trackCount = trackCount ?: 0,
+        artWorkUri = null,
+        trackCount = trackCount,
     )
 
 internal fun GenreEntity.toAppItem() =
@@ -79,7 +79,7 @@ internal fun GenreEntity.toAppItem() =
         id = genreId.toString(),
         name = name ?: "",
         // TODO:
-        artWorkUri = "",
+        artWorkUri = null,
         trackCount = 0,
     )
 
@@ -91,27 +91,27 @@ internal fun PlayListWithMediaCount.toAppItem() =
         trackCount = mediaCount,
     )
 
-internal fun List<CrossRefWithMediaRelation>.mapToAppItemList() =
-    map { entity ->
-        val media = entity.media
-        if (media.valid) {
-            media.toAppItem()
-        } else {
-            AudioItemModel(
-                id = AudioItemModel.INVALID_ID_PREFIX + entity.playListWithMediaCrossRef.mediaStoreId,
-                name = entity.playListWithMediaCrossRef.title,
-                artist = entity.playListWithMediaCrossRef.artist,
-                modifiedDate = 0,
-                artWorkUri = "",
-                album = "",
-                albumId = "",
-                artistId = "",
-                cdTrackNumber = 0,
-                discNumber = 0,
-                source = "",
-            )
-        }
+internal fun CrossRefWithMediaRelation.mapToAppItem(): AudioItemModel {
+    val entity = this
+    val media = entity.media
+    return if (media.valid) {
+        media.toAppItem()
+    } else {
+        AudioItemModel(
+            id = AudioItemModel.INVALID_ID_PREFIX + entity.playListWithMediaCrossRef.mediaStoreId,
+            name = entity.playListWithMediaCrossRef.title,
+            artist = entity.playListWithMediaCrossRef.artist,
+            modifiedDate = 0,
+            artWorkUri = "",
+            album = "",
+            albumId = "",
+            artistId = "",
+            cdTrackNumber = 0,
+            discNumber = 0,
+            source = "",
+        )
     }
+}
 
 internal fun List<CustomTabEntity>.mapToCustomTabModel() =
     map {
@@ -145,12 +145,14 @@ internal fun CustomTab.toEntity() =
                 externalId = genreId,
                 name = label,
             )
+
         is CustomTab.PlayListDetail ->
             CustomTabEntity(
                 type = CustomTabType.PLAYLIST_DETAIL,
                 externalId = playListId,
                 name = label,
             )
+
         is CustomTab.AlbumDetail ->
             CustomTabEntity(
                 type = CustomTabType.ALBUM_DETAIL,

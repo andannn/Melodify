@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.andannn.melodify.core.datastore.model.PlatModeValues
 import com.andannn.melodify.core.datastore.model.PreferencesKeyName
@@ -38,6 +39,8 @@ class UserSettingPreferences(
                             ?: emptySet(),
                     lastSuccessfulSyncTime =
                         preferences[longPreferencesKey(PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME)],
+                    defaultSortRule =
+                        preferences[stringPreferencesKey(PreferencesKeyName.DEFAULT_SORT_RULE_KEY_NAME)],
                 )
             }
 
@@ -59,6 +62,12 @@ class UserSettingPreferences(
         preferences.edit { preferences ->
             preferences[longPreferencesKey(PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME)] =
                 lastSuccessfulSyncTime
+        }
+    }
+
+    suspend fun setDefaultSortRule(defaultSortRule: String) {
+        preferences.edit { preferences ->
+            preferences[stringPreferencesKey(PreferencesKeyName.DEFAULT_SORT_RULE_KEY_NAME)] = defaultSortRule
         }
     }
 }

@@ -6,6 +6,7 @@ package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaPreviewMode
+import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.UserSetting
 import com.andannn.melodify.core.data.util.mapToCustomTabModel
 import com.andannn.melodify.core.data.util.toEntity
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
+import kotlinx.serialization.json.Json
 
 class UserPreferenceRepositoryImpl(
     private val preferences: UserSettingPreferences,
@@ -29,6 +31,7 @@ class UserPreferenceRepositoryImpl(
                 mediaPreviewMode = it.mediaPreviewMode.toMediaPreviewMode(),
                 libraryPath = it.libraryPath,
                 lastSuccessfulSyncTime = it.lastSuccessfulSyncTime,
+                defaultSortRule = it.defaultSortRule?.let { Json.decodeFromString(it) },
             )
         }
 
@@ -91,12 +94,27 @@ class UserPreferenceRepositoryImpl(
         )
     }
 
-    override suspend fun getAllSearchHistory(limit: Int): List<String> {
-        return userDataDao.getSearchHistories(limit).map { it.searchText }
+    override suspend fun getAllSearchHistory(limit: Int): List<String> = userDataDao.getSearchHistories(limit).map { it.searchText }
+
+    override suspend fun getLastSuccessfulSyncTime(): Long? = preferences.userDate.first().lastSuccessfulSyncTime
+
+    override suspend fun saveDefaultSortRule(sortRule: SortRule) {
+        preferences.setDefaultSortRule(
+            Json.encodeToString(sortRule),
+        )
     }
 
-    override suspend fun getLastSuccessfulSyncTime(): Long? {
-        return preferences.userDate.first().lastSuccessfulSyncTime
+    override suspend fun saveSortRuleForTab(
+        tab: CustomTab,
+        sortRule: SortRule,
+    ) {
+    }
+
+    override fun getSortRule(tab: CustomTab?): Flow<SortRule> {
+        val defaultSortRuleFlow = userSettingFlow.map { it.defaultSortRule }
+        return defaultSortRuleFlow.map { default ->
+            default ?: SortRule.Preset.Default
+        }
     }
 }
 

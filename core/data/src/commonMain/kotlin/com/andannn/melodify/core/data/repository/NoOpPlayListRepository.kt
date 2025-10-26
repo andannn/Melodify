@@ -4,15 +4,25 @@
  */
 package com.andannn.melodify.core.data.repository
 
+import androidx.paging.PagingData
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.model.SortRule
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 open class NoOpPlayListRepository : PlayListRepository {
     override fun getAllPlayListFlow(): Flow<List<PlayListItemModel>> = flowOf()
 
-    override fun getAudiosOfPlayListFlow(playListId: Long): Flow<List<AudioItemModel>> = flowOf()
+    override fun getAudiosOfPlayListFlow(
+        playListId: Long,
+        sort: SortRule,
+    ): Flow<List<AudioItemModel>> = flowOf()
+
+    override fun getAudioPagingFlowOfPlayList(
+        playListId: Long,
+        sort: SortRule,
+    ): Flow<PagingData<AudioItemModel>> = flowOf()
 
     override suspend fun getAudiosOfPlayList(playListId: Long): List<AudioItemModel> = emptyList()
 

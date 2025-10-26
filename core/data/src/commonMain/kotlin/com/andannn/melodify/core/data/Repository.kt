@@ -13,7 +13,6 @@ import com.andannn.melodify.core.data.repository.NoOpMediaControllerRepository
 import com.andannn.melodify.core.data.repository.NoOpPlayListRepository
 import com.andannn.melodify.core.data.repository.NoOpPlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.NoOpSleepTimerRepository
-import com.andannn.melodify.core.data.repository.NoOpUserPreferenceRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.SleepTimerRepository
@@ -26,7 +25,7 @@ class Repository constructor(
     val playerStateMonitoryRepository: PlayerStateMonitoryRepository = NoOpPlayerStateMonitoryRepository(),
     val playListRepository: PlayListRepository = NoOpPlayListRepository(),
     val sleepTimerRepository: SleepTimerRepository = NoOpSleepTimerRepository(),
-    val userPreferenceRepository: UserPreferenceRepository = NoOpUserPreferenceRepository(),
+    val userPreferenceRepository: UserPreferenceRepository,
 ) : LyricRepository by lyricRepository,
     MediaContentRepository by mediaContentRepository,
     MediaControllerRepository by mediaControllerRepository,

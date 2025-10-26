@@ -4,21 +4,28 @@
  */
 package com.andannn.melodify.core.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.room.RoomRawQuery
 import androidx.room.Transaction
 import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
 import com.andannn.melodify.core.database.entity.MediaColumns
+import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListAndMedias
 import com.andannn.melodify.core.database.entity.PlayListColumns
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRefColumns
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
+
+private const val TAG = "PlayListDao"
 
 @Dao
 interface PlayListDao {
@@ -121,6 +128,41 @@ interface PlayListDao {
     )
     suspend fun deletePlayListById(playListId: Long)
 
+    fun getMediasInPlayListFlow(
+        playListId: Long,
+        sortMethod: SortMethod? = null,
+    ): Flow<List<CrossRefWithMediaRelation>> =
+        getMediasInPlayListFlowRaw(
+            buildPlayListRawQuery(playListId, sortMethod),
+        )
+
+    fun getMediaPagingSourceInPlayList(
+        playListId: Long,
+        sortMethod: SortMethod? = null,
+    ): PagingSource<Int, CrossRefWithMediaRelation> = getMediasInPlayListFlowPagingSource(buildPlayListRawQuery(playListId, sortMethod))
+
+    private fun buildPlayListRawQuery(
+        playListId: Long,
+        sort: SortMethod?,
+    ): RoomRawQuery {
+        val sort = sort?.toSortString() ?: ""
+        val sql = """
+            select * from ${Tables.PLAY_LIST}
+            join ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF} on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
+            left join ${Tables.LIBRARY_MEDIA} on ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${MediaColumns.ID}
+            where ${PlayListColumns.ID} = $playListId
+            $sort
+        """
+        Napier.d(tag = TAG) { "buildPlayListRawQuery: $sql" }
+        return RoomRawQuery(sql)
+    }
+
+    @RawQuery(observedEntities = [MediaEntity::class, PlayListEntity::class, PlayListWithMediaCrossRef::class])
+    fun getMediasInPlayListFlowRaw(rawQuery: RoomRawQuery): Flow<List<CrossRefWithMediaRelation>>
+
+    @RawQuery(observedEntities = [MediaEntity::class, PlayListEntity::class, PlayListWithMediaCrossRef::class])
+    fun getMediasInPlayListFlowPagingSource(rawQuery: RoomRawQuery): PagingSource<Int, CrossRefWithMediaRelation>
+
     @Query(
         """
             select * from ${Tables.PLAY_LIST}
@@ -130,5 +172,5 @@ interface PlayListDao {
             order by ${MediaColumns.MODIFIED_DATE} desc
         """,
     )
-    fun getMediasInPlayListFlow(playListId: Long): Flow<List<CrossRefWithMediaRelation>>
+    suspend fun getMediasInPlayList(playListId: Long): List<CrossRefWithMediaRelation>
 }

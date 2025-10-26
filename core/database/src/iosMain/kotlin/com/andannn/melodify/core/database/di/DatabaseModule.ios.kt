@@ -18,10 +18,10 @@ internal actual val databaseBuilder =
     module {
         single<RoomDatabase.Builder<MelodifyDataBase>> {
             val dbFilePath = documentDirectory() + "/my_room.db"
-            Room.databaseBuilder<MelodifyDataBase>(
-                name = dbFilePath,
-            )
-                .setDriver(BundledSQLiteDriver())
+            Room
+                .databaseBuilder<MelodifyDataBase>(
+                    name = dbFilePath,
+                ).setDriver(BundledSQLiteDriver())
         }
     }
 
