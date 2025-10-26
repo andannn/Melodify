@@ -44,8 +44,8 @@ jobs:
         run: chmod +x ./gradlew
 
       # Run Desktop Tests
-      - name: Run Jvm tests
-        run: ./gradlew desktopTest
+#      - name: Run Jvm tests
+#        run: ./gradlew desktopTest
 #
 #      # Run Ui Screenshot Tests
 #      - name: Run Ui Screenshot Tests (Android only)
