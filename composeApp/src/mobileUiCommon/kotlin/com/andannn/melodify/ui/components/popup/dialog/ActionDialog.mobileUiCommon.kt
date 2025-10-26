@@ -27,9 +27,6 @@ actual val DialogId.dialogIdType: DialogType
 @Composable
 actual fun DropDownOptionMenu(
     onRequestDismiss: () -> Unit,
-    content:
-        @Composable()
-        (ColumnScope.() -> Unit),
+    content: @Composable ColumnScope.() -> Unit,
 ) {
-    error("Not supported")
 }
