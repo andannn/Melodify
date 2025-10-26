@@ -5,12 +5,12 @@
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -18,14 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.GroupSort
+import com.andannn.melodify.core.data.model.SortOption
+import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.browsableOrPlayable
 import com.andannn.melodify.ui.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.common.widgets.ListTileItemView
 import com.andannn.melodify.ui.components.tabcontent.header.IdBasedGroupHeader
 import com.andannn.melodify.ui.components.tabcontent.header.NameBasedGroupHeader
 import com.andannn.melodify.ui.components.tabcontent.header.rememberGroupHeaderPresenter
-import io.github.aakira.napier.Napier
 
 @Composable
 fun TabContent(
@@ -34,7 +34,7 @@ fun TabContent(
 ) {
     LazyListContent(
         pagingItems = state.pagingItems,
-        groupSort = state.groupSort,
+        sortRule = state.groupSort,
         modifier = modifier.fillMaxSize(),
         onMusicItemClick = {
             state.eventSink.invoke(TabContentEvent.OnPlayMusic(it))
@@ -48,7 +48,7 @@ fun TabContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyListContent(
-    groupSort: GroupSort,
+    sortRule: SortRule,
     pagingItems: LazyPagingItems<AudioItemModel>,
     modifier: Modifier = Modifier,
     onMusicItemClick: (AudioItemModel) -> Unit = {},
@@ -56,61 +56,79 @@ private fun LazyListContent(
 ) {
     val items = pagingItems.itemSnapshotList
     val contentGroup =
-        remember(items, groupSort) {
-            Napier.d("JQN init: $groupSort")
-            items.toGroup(groupSort.toSortType())
+        remember(items, sortRule) {
+            items.toGroup(sortRule)
         }
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 5.dp),
     ) {
-        contentGroup.forEachIndexed { groupIndex, (headerItem, mediaItems) ->
-            if (headerItem != null) {
-                stickyHeader(headerItem.hashCode()) {
-                    when (headerItem) {
-                        is HeaderItem.ID -> {
-                            val presenter = rememberGroupHeaderPresenter(headerItem)
-                            IdBasedGroupHeader(
-                                state = presenter.present(),
-                            )
-                        }
-
-                        is HeaderItem.Name -> {
-                            NameBasedGroupHeader(
-                                item = headerItem,
-                            )
-                        }
-                    }
+        contentGroup.forEachIndexed { groupIndex, (primaryHeader, contents) ->
+            if (primaryHeader != null) {
+                stickyHeader(primaryHeader.hashCode()) {
+                    Header(isPrimary = true, headerItem = primaryHeader)
                 }
             }
 
-            itemsIndexed(
-                items = mediaItems,
-                key = { index, item ->
-                    item.hashCode()
-                },
-            ) { index, item ->
-                pagingItems[contentGroup.flattenIndex(groupIndex, index)]
+            contents.forEachIndexed { index, (secondaryHeader, contents) ->
+                if (secondaryHeader != null) {
+                    stickyHeader((primaryHeader to secondaryHeader).hashCode()) {
+                        Header(isPrimary = false, headerItem = secondaryHeader)
+                    }
+                }
 
-                ListTileItemView(
-                    playable = item.browsableOrPlayable,
-                    isActive = false,
-                    albumArtUri = item.artWorkUri,
-                    title = item.name,
-                    trackNum = item.cdTrackNumber.takeIf { headerItem?.groupType == GroupType.ALBUM },
-                    onMusicItemClick = {
-                        onMusicItemClick.invoke(item)
+                itemsIndexed(
+                    items = contents,
+                    key = { index, item ->
+                        item.hashCode()
                     },
-                    onOptionButtonClick = {
-                        onShowMusicItemOption(item)
-                    },
-                )
+                ) { index, item ->
+//                    pagingItems[contentGroup.flattenIndex(groupIndex, index)]
+
+                    ListTileItemView(
+                        playable = item.browsableOrPlayable,
+                        isActive = false,
+                        albumArtUri = item.artWorkUri,
+                        title = item.name,
+                        trackNum = item.cdTrackNumber,
+                        onMusicItemClick = {
+                            onMusicItemClick.invoke(item)
+                        },
+                        onOptionButtonClick = {
+                            onShowMusicItemOption(item)
+                        },
+                    )
+                }
             }
 
             item { Spacer(modifier = Modifier.height(16.dp)) }
         }
 
         item { ExtraPaddingBottom() }
+    }
+}
+
+@Composable
+private fun Header(
+    isPrimary: Boolean,
+    headerItem: HeaderItem,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        when (headerItem) {
+            is HeaderItem.ID -> {
+                val presenter = rememberGroupHeaderPresenter(headerItem)
+                IdBasedGroupHeader(
+                    state = presenter.present(),
+                )
+            }
+
+            is HeaderItem.Name -> {
+                NameBasedGroupHeader(
+                    item = headerItem,
+                )
+            }
+        }
     }
 }
 
@@ -139,14 +157,24 @@ private fun List<ContentGroup>.flattenIndex(
 ): Int {
     var ret = 0
     for (i in 0..groupIndex) {
-        if (i == groupIndex) {
-            ret += itemIndex
-        } else {
-            ret += this[i].content.size
-        }
+        ret +=
+            if (i == groupIndex) {
+                itemIndex
+            } else {
+                this[i].content.size
+            }
     }
     return ret
 }
+
+private fun List<AudioItemModel?>.toGroup(sortRule: SortRule) =
+    toGroup(sortRule.primaryGroupSort.toSortType())
+        .map { (headerItem, contentList) ->
+            val primaryHeader = headerItem
+            val items = contentList.toGroup(sortRule.secondaryGroupSort.toSortType())
+
+            primaryHeader to items
+        }
 
 private fun List<AudioItemModel?>.toGroup(groupType: GroupType): List<ContentGroup> =
     this
@@ -168,12 +196,13 @@ private fun AudioItemModel.keyOf(groupType: GroupType) =
         GroupType.NONE -> null
     }
 
-private fun GroupSort.toSortType() =
+private fun SortOption.toSortType() =
     when (this) {
-        is GroupSort.Album -> GroupType.ALBUM
-        is GroupSort.Title -> GroupType.TITLE
-        is GroupSort.Artist -> GroupType.ARTIST
-        GroupSort.NONE -> GroupType.NONE
+        is SortOption.Album -> GroupType.ALBUM
+        is SortOption.Title -> GroupType.TITLE
+        is SortOption.Artist -> GroupType.ARTIST
+        SortOption.NONE -> GroupType.NONE
+        is SortOption.TrackNum -> error("TrackNum is not supported")
     }
 
 private fun GroupType.toHeader(key: String?): HeaderItem? =

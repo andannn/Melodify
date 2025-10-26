@@ -9,8 +9,8 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
-import com.andannn.melodify.core.data.model.GroupSort
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.repository.MediaContentRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -73,9 +73,9 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
             it.genre
         }
 
-    override fun getAllMediaItemsPagingFlow(sort: GroupSort): Flow<PagingData<AudioItemModel>> = flowOf()
+    override fun getAllMediaItemsPagingFlow(sort: SortRule): Flow<PagingData<AudioItemModel>> = flowOf()
 
-    override fun getAllMediaItemsFlow(sort: GroupSort): Flow<List<AudioItemModel>> =
+    override fun getAllMediaItemsFlow(sort: SortRule): Flow<List<AudioItemModel>> =
         flow {
             emit(
                 mediaList.map { it.toModel() },
@@ -90,7 +90,7 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
 
     override fun getAudiosOfAlbumFlow(
         albumId: String,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<List<AudioItemModel>> =
         flow {
             emit(getAudiosOfAlbum(albumId))
@@ -98,14 +98,14 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
 
     override fun getAudiosPagingFlowOfAlbum(
         albumId: String,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<PagingData<AudioItemModel>> = flowOf()
 
     override suspend fun getAudiosOfAlbum(albumId: String): List<AudioItemModel> = albumMaps[albumId]?.map { it.toModel() } ?: emptyList()
 
     override fun getAudiosOfArtistFlow(
         artistId: String,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<List<AudioItemModel>> =
         flow {
             emit(getAudiosOfArtist(artistId))
@@ -113,7 +113,7 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
 
     override fun getAudiosPagingFlowOfArtist(
         artistId: String,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<PagingData<AudioItemModel>> = flowOf()
 
     override suspend fun getAudiosOfArtist(artistId: String): List<AudioItemModel> =
@@ -121,12 +121,12 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
 
     override fun getAudiosOfGenreFlow(
         genreId: String,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<List<AudioItemModel>> = flow { emit(getAudiosOfGenre(genreId)) }
 
     override fun getAudiosPagingFlowOfGenre(
         genreId: String,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<PagingData<AudioItemModel>> = flowOf()
 
     override suspend fun getAudiosOfGenre(genreId: String): List<AudioItemModel> = genreMaps[genreId]?.map { it.toModel() } ?: emptyList()

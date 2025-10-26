@@ -20,6 +20,7 @@ import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.content.AddLibraryPathDialog
 import com.andannn.melodify.ui.components.popup.dialog.content.AddToPlayListDialogContent
 import com.andannn.melodify.ui.components.popup.dialog.content.AlertMessageDialogContent
+import com.andannn.melodify.ui.components.popup.dialog.content.ChangeSortRuleDialog
 import com.andannn.melodify.ui.components.popup.dialog.content.MediaOptionContent
 import com.andannn.melodify.ui.components.popup.dialog.content.NewPlayListDialogContent
 import com.andannn.melodify.ui.components.popup.dialog.content.SleepTimerCountingContent
@@ -154,6 +155,14 @@ fun DialogContent(data: DialogData) {
 
         DialogId.SleepCountingDialog ->
             SleepTimerCountingContent(
+                onAction = {
+                    data.performAction(it)
+                },
+            )
+
+        is DialogId.ChangeSortRuleDialog ->
+            ChangeSortRuleDialog(
+                dialog = dialog,
                 onAction = {
                     data.performAction(it)
                 },

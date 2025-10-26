@@ -40,4 +40,11 @@ data class UserSettingPref(
      * Value: [Long]
      */
     val lastSuccessfulSyncTime: Long?,
+    /**
+     * default sort rule
+     *
+     * key: [PreferencesKeyName.DEFAULT_SORT_RULE_KEY_NAME]
+     * Value: [String]
+     */
+    val defaultSortRule: String?,
 )

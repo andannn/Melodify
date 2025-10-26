@@ -6,8 +6,8 @@ package com.andannn.melodify.core.data.repository
 
 import androidx.paging.PagingData
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.GroupSort
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.database.dao.PlayListDao
 import kotlinx.coroutines.flow.Flow
 
@@ -26,12 +26,12 @@ interface PlayListRepository {
      */
     fun getAudiosOfPlayListFlow(
         playListId: Long,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<List<AudioItemModel>>
 
     fun getAudioPagingFlowOfPlayList(
         playListId: Long,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<PagingData<AudioItemModel>>
 
     /**

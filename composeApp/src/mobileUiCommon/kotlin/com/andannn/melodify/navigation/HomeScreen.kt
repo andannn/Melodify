@@ -24,9 +24,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import com.andannn.melodify.ui.common.widgets.DropDownMenuIconButton
 import com.andannn.melodify.ui.components.common.HomeScreen
 import com.andannn.melodify.ui.components.common.LibraryScreen
@@ -34,7 +37,10 @@ import com.andannn.melodify.ui.components.common.SearchScreen
 import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
 import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
+import com.andannn.melodify.ui.components.popup.LocalPopupController
+import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
+import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.components.tab.TabUi
 import com.andannn.melodify.ui.components.tab.TabUiState
@@ -51,6 +57,7 @@ import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.launch
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.default_sort_order
 import org.jetbrains.compose.resources.StringResource
@@ -88,7 +95,7 @@ object HomePresenterFactory : Presenter.Factory {
 @Composable
 private fun rememberHomeUiPresenter(
     navigator: Navigator,
-    popController: PlayerUiController = LocalPlayerUiController.current,
+    popController: PopupController = LocalPopupController.current,
 ): HomePresenter =
     remember(
         navigator,
@@ -102,11 +109,12 @@ private fun rememberHomeUiPresenter(
 
 private class HomePresenter(
     private val navigator: Navigator,
-    private val popController: PlayerUiController,
+    private val popController: PopupController,
 ) : Presenter<HomeState> {
     @Composable
     override fun present(): HomeState {
         Napier.d(tag = "HomePresenter") { "HomePresenter present" }
+        val scope = rememberCoroutineScope()
         val tabUiPresenter = rememberTabUiPresenter(navigator)
         val tabUiState = tabUiPresenter.present()
         val tabContentPresenter = rememberTabContentPresenter(tabUiState.selectedTab)
@@ -114,19 +122,26 @@ private class HomePresenter(
             tabUiState = tabUiState,
             tabContentState = tabContentPresenter.present(),
         ) { eventSink ->
-            when (eventSink) {
-                HomeUiEvent.LibraryButtonClick -> navigator.goTo(LibraryScreen)
-                HomeUiEvent.SearchButtonClick -> navigator.goTo(SearchScreen)
-                is HomeUiEvent.OnMenuSelected -> {
-                    when (eventSink.selected) {
-                        MenuOption.DEFAULT_SORT -> {
-                            popController
+            with(popController) {
+                when (eventSink) {
+                    HomeUiEvent.LibraryButtonClick -> navigator.goTo(LibraryScreen)
+                    HomeUiEvent.SearchButtonClick -> navigator.goTo(SearchScreen)
+                    is HomeUiEvent.OnMenuSelected -> {
+                        when (eventSink.selected) {
+                            MenuOption.DEFAULT_SORT -> scope.launch { changeSortRule(null) }
                         }
                     }
                 }
             }
         }
     }
+}
+
+context(popupController: PopupController)
+private suspend fun changeSortRule(tab: CustomTab?) {
+    popupController.showDialog(
+        DialogId.ChangeSortRuleDialog(),
+    )
 }
 
 internal data class HomeState(

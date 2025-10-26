@@ -9,17 +9,17 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
-import com.andannn.melodify.core.data.model.GroupSort
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.SortRule
 import kotlinx.coroutines.flow.Flow
 
 interface MediaContentRepository {
-    fun getAllMediaItemsPagingFlow(sort: GroupSort): Flow<PagingData<AudioItemModel>>
+    fun getAllMediaItemsPagingFlow(sort: SortRule): Flow<PagingData<AudioItemModel>>
 
     /**
      * Return flow of all media items
      */
-    fun getAllMediaItemsFlow(sort: GroupSort): Flow<List<AudioItemModel>>
+    fun getAllMediaItemsFlow(sort: SortRule): Flow<List<AudioItemModel>>
 
     /**
      * Return flow of all albums
@@ -41,12 +41,12 @@ interface MediaContentRepository {
      */
     fun getAudiosOfAlbumFlow(
         albumId: String,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<List<AudioItemModel>>
 
     fun getAudiosPagingFlowOfAlbum(
         albumId: String,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<PagingData<AudioItemModel>>
 
     /**
@@ -59,12 +59,12 @@ interface MediaContentRepository {
      */
     fun getAudiosOfArtistFlow(
         artistId: String,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<List<AudioItemModel>>
 
     fun getAudiosPagingFlowOfArtist(
         artistId: String,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<PagingData<AudioItemModel>>
 
     /**
@@ -77,12 +77,12 @@ interface MediaContentRepository {
      */
     fun getAudiosOfGenreFlow(
         genreId: String,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<List<AudioItemModel>>
 
     fun getAudiosPagingFlowOfGenre(
         genreId: String,
-        sort: GroupSort,
+        sort: SortRule,
     ): Flow<PagingData<AudioItemModel>>
 
     /**

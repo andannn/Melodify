@@ -4,14 +4,14 @@
  */
 package com.andannn.melodify.ui.components.tabcontent
 
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
@@ -19,8 +19,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.model.GroupSort
-import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.contentFlow
 import com.andannn.melodify.core.data.model.contentPagingDataFlow
 import com.andannn.melodify.ui.components.common.LocalRepository
@@ -32,7 +31,6 @@ import com.andannn.melodify.ui.components.popup.addToQueue
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
-import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -68,6 +66,7 @@ class TabContentPresenter(
 ) : Presenter<TabContentState> {
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val playListRepository = repository.playListRepository
+    private val userPreferenceRepository = repository.userPreferenceRepository
 
     init {
         Napier.d(tag = TAG) { "TabContentPresenter init $selectedTab" }
@@ -78,15 +77,19 @@ class TabContentPresenter(
         val scope = rememberCoroutineScope()
         Napier.d(tag = TAG) { "TabContentPresenter scope ${scope.hashCode()}" }
 
-        val groupSort by rememberRetained {
+        var groupSort by rememberRetained(selectedTab) {
             mutableStateOf(
-//                GroupSort.Album.TrackNumber(albumAscending = true, trackNumAscending = true),
-//                GroupSort.Title(titleAscending = true),
-                GroupSort.Artist.Title(
-                    artistAscending = true,
-                    titleAscending = true,
-                ),
+                SortRule.Preset.ArtistAlbumASC,
             )
+        }
+
+        LaunchedEffect(selectedTab) {
+            val currentTab = selectedTab
+            if (currentTab == null) return@LaunchedEffect
+
+            userPreferenceRepository.getSortRule(currentTab).collect {
+                groupSort = it
+            }
         }
 
         val pagingDataFlow =
@@ -134,7 +137,7 @@ class TabContentPresenter(
 
     private fun getContentPagingFlow(
         selectedTab: CustomTab?,
-        groupSort: GroupSort,
+        groupSort: SortRule,
     ): Flow<PagingData<AudioItemModel>> {
         if (selectedTab == null) {
             return flowOf()
@@ -204,7 +207,7 @@ enum class GroupType {
 
 data class TabContentState(
     val selectedTab: CustomTab? = null,
-    val groupSort: GroupSort,
+    val groupSort: SortRule,
     val pagingItems: LazyPagingItems<AudioItemModel>,
     val eventSink: (TabContentEvent) -> Unit = {},
 ) : CircuitUiState

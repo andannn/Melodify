@@ -20,6 +20,7 @@ import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
 import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
+import com.andannn.melodify.ui.components.popup.pinToHomeTab
 import com.andannn.melodify.ui.components.tabcontent.GroupType
 import com.andannn.melodify.ui.components.tabcontent.HeaderItem
 import com.slack.circuit.retained.produceRetainedState
@@ -80,20 +81,19 @@ class GroupHeaderPresenter(
                     scope.launch {
                         val media = mediaItem ?: error("mediaItem is null")
                         val dialog =
-                            DialogId.MediaOption(
-                                media = media,
+                            DialogId.OptionDialog(
                                 options =
                                     listOf(
                                         OptionItem.ADD_TO_HOME_TAB,
                                     ),
                             )
                         val result = popupController.showDialog(dialog)
-                        if (result is DialogAction.MediaOptionDialog.ClickItem) {
+                        if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
                             context(repository, popupController) {
-                                handleMediaOptionClick(
-                                    optionItem = result.optionItem,
-                                    dialog = result.dialog,
-                                )
+                                when (result.optionItem) {
+                                    OptionItem.ADD_TO_HOME_TAB -> media.pinToHomeTab()
+                                    else -> {}
+                                }
                             }
                         }
                     }

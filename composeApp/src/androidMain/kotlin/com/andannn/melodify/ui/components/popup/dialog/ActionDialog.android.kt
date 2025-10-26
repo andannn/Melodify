@@ -15,6 +15,7 @@ actual val DialogId.dialogIdType: DialogType
             is DialogId.OptionDialog,
             is DialogId.MediaOption,
             is DialogId.AddMusicsToPlayListDialog,
+            is DialogId.ChangeSortRuleDialog,
             -> DialogType.ModalBottomSheet
 
             DialogId.NewPlayListDialog,

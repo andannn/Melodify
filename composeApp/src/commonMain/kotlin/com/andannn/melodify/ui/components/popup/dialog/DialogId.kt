@@ -7,6 +7,7 @@ package com.andannn.melodify.ui.components.popup.dialog
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
@@ -59,6 +60,15 @@ sealed interface DialogId {
         val positive = Res.string.ok
         val negative = Res.string.decline
     }
+
+    /**
+     * Change the sort rule of the tab.
+     *
+     * If [tab] is null, changes for the default Sort Rule.
+     */
+    data class ChangeSortRuleDialog(
+        val tab: CustomTab? = null,
+    ) : DialogId
 
     data class AddMusicsToPlayListDialog(
         val items: List<AudioItemModel>,
@@ -115,20 +125,6 @@ sealed interface DialogId {
                 ),
         )
 
-    data class PlayListOption(
-        override val media: PlayListItemModel,
-    ) : MediaOption(
-            media = media,
-            options =
-                listOf(
-                    OptionItem.ADD_TO_QUEUE,
-                    OptionItem.PLAY_NEXT,
-                    OptionItem.ADD_TO_PLAYLIST,
-                    OptionItem.DELETE_PLAYLIST,
-                    OptionItem.DELETE_TAB,
-                ),
-        )
-
     data class SearchedPlayListOption(
         override val media: PlayListItemModel,
     ) : MediaOption(
@@ -139,19 +135,6 @@ sealed interface DialogId {
                     OptionItem.PLAY_NEXT,
                     OptionItem.ADD_TO_PLAYLIST,
                     OptionItem.ADD_TO_HOME_TAB,
-                ),
-        )
-
-    data class FavoritePlayListOption(
-        override val media: PlayListItemModel,
-    ) : MediaOption(
-            media = media,
-            options =
-                listOf(
-                    OptionItem.ADD_TO_QUEUE,
-                    OptionItem.PLAY_NEXT,
-                    OptionItem.ADD_TO_PLAYLIST,
-                    OptionItem.DELETE_TAB,
                 ),
         )
 

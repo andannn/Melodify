@@ -150,13 +150,13 @@ suspend fun handleMediaOptionClick(
 
         OptionItem.ADD_TO_PLAYLIST -> error("never")
         OptionItem.DELETE_PLAYLIST -> (dialog.media as PlayListItemModel).delete()
-        OptionItem.ADD_TO_HOME_TAB -> dialog.media.addToHomeTab()
+        OptionItem.ADD_TO_HOME_TAB -> dialog.media.pinToHomeTab()
         OptionItem.DELETE_TAB -> error("never")
     }
 }
 
 context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
-private suspend fun MediaItemModel.addToHomeTab() {
+suspend fun MediaItemModel.pinToHomeTab() {
     val tab =
         when (this) {
             is AlbumItemModel -> CustomTab.AlbumDetail(id, name)

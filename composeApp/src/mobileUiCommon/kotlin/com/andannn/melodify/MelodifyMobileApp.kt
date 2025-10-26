@@ -4,8 +4,8 @@
  */
 package com.andannn.melodify
 
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidedValue
@@ -51,7 +51,7 @@ fun MelodifyMobileApp(
     CompositionLocalProvider(LocalRepository provides remember { getKoin().get() }) {
         Surface(
             modifier = modifier,
-            color = MaterialTheme.colors.background,
+            color = MaterialTheme.colorScheme.background,
         ) {
             CircuitCompositionLocals(circuit = circuit) {
                 val backStack = rememberSaveableBackStack(HomeScreen)

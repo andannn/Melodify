@@ -11,4 +11,5 @@ object PreferencesKeyName {
     const val CUSTOM_TABS_KEY_NAME = "custom_tabs"
     const val LIBRARY_PATH_KEY_NAME = "custom_library_path"
     const val LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME = "last_successful_sync_time"
+    const val DEFAULT_SORT_RULE_KEY_NAME = "default_sort_rule"
 }

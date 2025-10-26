@@ -14,7 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.model.GroupSort
+import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.contentFlow
 import com.andannn.melodify.ui.components.common.LocalRepository
 import com.andannn.melodify.ui.components.common.TabManageScreen
@@ -26,13 +26,11 @@ import com.andannn.melodify.ui.components.popup.addToQueue
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
-import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
-import com.slack.circuit.runtime.screen.Screen
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.scan
@@ -72,12 +70,7 @@ class TabUiPresenter(
         )
         val groupSort by rememberRetained {
             mutableStateOf(
-//                GroupSort.Album.TrackNumber(albumAscending = true, trackNumAscending = true),
-//                GroupSort.Title(titleAscending = true),
-                GroupSort.Artist.Title(
-                    artistAscending = true,
-                    titleAscending = true,
-                ),
+                SortRule.Preset.AlbumASC,
             )
         }
 

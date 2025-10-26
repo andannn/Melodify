@@ -40,7 +40,7 @@ sealed interface CustomTab {
 }
 
 context(repository: Repository)
-fun CustomTab.contentFlow(sort: GroupSort): Flow<List<AudioItemModel>> =
+fun CustomTab.contentFlow(sort: SortRule): Flow<List<AudioItemModel>> =
     when (this) {
         is CustomTab.AllMusic -> repository.mediaContentRepository.getAllMediaItemsFlow(sort)
         is CustomTab.AlbumDetail ->
@@ -64,7 +64,7 @@ fun CustomTab.contentFlow(sort: GroupSort): Flow<List<AudioItemModel>> =
     }
 
 context(repository: Repository)
-fun CustomTab.contentPagingDataFlow(sort: GroupSort): Flow<PagingData<AudioItemModel>> =
+fun CustomTab.contentPagingDataFlow(sort: SortRule): Flow<PagingData<AudioItemModel>> =
     when (this) {
         is CustomTab.AllMusic -> repository.mediaContentRepository.getAllMediaItemsPagingFlow(sort)
         is CustomTab.AlbumDetail ->

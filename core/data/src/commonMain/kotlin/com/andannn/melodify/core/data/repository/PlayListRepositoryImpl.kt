@@ -8,8 +8,8 @@ import androidx.paging.Pager
 import androidx.paging.map
 import com.andannn.melodify.core.data.MediaPagingConfig
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.GroupSort
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.toSortMethod
 import com.andannn.melodify.core.data.util.mapToAppItem
 import com.andannn.melodify.core.data.util.toAppItem
@@ -128,14 +128,14 @@ internal class PlayListRepositoryImpl(
 
     override fun getAudiosOfPlayListFlow(
         playListId: Long,
-        sort: GroupSort,
+        sort: SortRule,
     ) = playListDao
         .getMediasInPlayListFlow(playListId, sort.toSortMethod())
         .map { it.map { it.mapToAppItem() } }
 
     override fun getAudioPagingFlowOfPlayList(
         playListId: Long,
-        sort: GroupSort,
+        sort: SortRule,
     ) = Pager(
         config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
         pagingSourceFactory = {
