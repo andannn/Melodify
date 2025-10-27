@@ -10,6 +10,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.andannn.melodify.core.database.Tables
+import com.andannn.melodify.core.database.entity.CustomTabColumns
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryColumns
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
@@ -37,6 +38,17 @@ interface UserDataDao {
         externalId: String?,
         type: String,
     )
+
+    @Query("UPDATE ${Tables.CUSTOM_TAB} SET ${CustomTabColumns.DISPLAY_SETTING} = :settings WHERE custom_tab_id == :tabId")
+    suspend fun updateDisplaySettingForTab(
+        tabId: Long,
+        settings: String,
+    ): Int
+
+    @Query(
+        "SELECT ${Tables.CUSTOM_TAB}.${CustomTabColumns.DISPLAY_SETTING} FROM ${Tables.CUSTOM_TAB} WHERE ${CustomTabColumns.ID} = :tabId",
+    )
+    fun getDisplaySettingFlowOfTab(tabId: Long): Flow<String>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSearchHistory(searchHistories: List<SearchHistoryEntity>)

@@ -197,4 +197,19 @@ class MigrationTest {
 
         migratedConnection.close()
     }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
+    fun migrate7To8SyncAlbumTableTest() {
+        val migrationTestHelper =
+            getMigrationTestHelper(
+                tempFile.toString(),
+            )
+        val newConnection = migrationTestHelper.createDatabase(7)
+        newConnection.close()
+        val migratedConnection =
+            migrationTestHelper.runMigrationsAndValidate(8)
+        migratedConnection.close()
+    }
 }

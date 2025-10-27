@@ -18,6 +18,7 @@ import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaColumns
@@ -771,6 +772,37 @@ class DatabaseTest {
                     assertEquals(1, mediaList[1].id)
                     assertEquals(3, mediaList[2].id)
                 }
+        }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    fun `update displaySetting test (No custom Tab row)`() =
+        testScope.runTest {
+            val dao = database.getUserDataDao()
+            dao.updateDisplaySettingForTab(111, "sssss").let {
+                assertEquals(0, it)
+            }
+        }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    fun `update displaySetting test`() =
+        testScope.runTest {
+            val dao = database.getUserDataDao()
+            dao.insertCustomTabs(
+                listOf(
+                    CustomTabEntity(
+                        id = 10,
+                        type = "bbbbb",
+                    ),
+                ),
+            )
+            dao.updateDisplaySettingForTab(10, "sssss").let {
+                assertEquals(1, it)
+            }
+            dao.getDisplaySettingFlowOfTab(10).first().let {
+                assertEquals("sssss", it)
+            }
         }
 }
 

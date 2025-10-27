@@ -15,6 +15,7 @@ internal object CustomTabColumns {
     const val TYPE = "custom_tab_type"
     const val EXTERNAL_ID = "custom_tab_external_id"
     const val CREATED_DATE = "custom_tab_created_date"
+    const val DISPLAY_SETTING = "display_setting"
 }
 
 object CustomTabType {
@@ -39,4 +40,6 @@ data class CustomTabEntity(
     val name: String? = null,
     @ColumnInfo(name = CustomTabColumns.EXTERNAL_ID)
     val externalId: String? = null,
+    @ColumnInfo(name = CustomTabColumns.DISPLAY_SETTING)
+    val displaySettings: String? = null,
 )
