@@ -120,20 +120,21 @@ internal fun List<CustomTabEntity>.mapToCustomTabModel() =
 
 internal fun CustomTabEntity.toAppItem() =
     when (type) {
-        CustomTabType.ALL_MUSIC -> CustomTab.AllMusic
-        CustomTabType.ALBUM_DETAIL -> CustomTab.AlbumDetail(externalId!!, name!!)
-        CustomTabType.ARTIST_DETAIL -> CustomTab.ArtistDetail(externalId!!, name!!)
-        CustomTabType.GENRE_DETAIL -> CustomTab.GenreDetail(externalId!!, name!!)
-        CustomTabType.PLAYLIST_DETAIL -> CustomTab.PlayListDetail(externalId!!, name!!)
+        CustomTabType.ALL_MUSIC -> CustomTab.AllMusic(tabId = id)
+        CustomTabType.ALBUM_DETAIL -> CustomTab.AlbumDetail(tabId = id, externalId!!, name!!)
+        CustomTabType.ARTIST_DETAIL -> CustomTab.ArtistDetail(tabId = id, externalId!!, name!!)
+        CustomTabType.GENRE_DETAIL -> CustomTab.GenreDetail(tabId = id, externalId!!, name!!)
+        CustomTabType.PLAYLIST_DETAIL -> CustomTab.PlayListDetail(tabId = id, externalId!!, name!!)
 
         else -> null
     }
 
 internal fun CustomTab.toEntity() =
     when (this) {
-        CustomTab.AllMusic -> CustomTabEntity(type = CustomTabType.ALL_MUSIC, externalId = "")
+        is CustomTab.AllMusic -> CustomTabEntity(id = tabId, type = CustomTabType.ALL_MUSIC, externalId = "")
         is CustomTab.ArtistDetail ->
             CustomTabEntity(
+                id = tabId,
                 type = CustomTabType.ARTIST_DETAIL,
                 externalId = artistId,
                 name = label,
@@ -141,6 +142,7 @@ internal fun CustomTab.toEntity() =
 
         is CustomTab.GenreDetail ->
             CustomTabEntity(
+                id = tabId,
                 type = CustomTabType.GENRE_DETAIL,
                 externalId = genreId,
                 name = label,
@@ -148,6 +150,7 @@ internal fun CustomTab.toEntity() =
 
         is CustomTab.PlayListDetail ->
             CustomTabEntity(
+                id = tabId,
                 type = CustomTabType.PLAYLIST_DETAIL,
                 externalId = playListId,
                 name = label,
@@ -155,6 +158,7 @@ internal fun CustomTab.toEntity() =
 
         is CustomTab.AlbumDetail ->
             CustomTabEntity(
+                id = tabId,
                 type = CustomTabType.ALBUM_DETAIL,
                 externalId = albumId,
                 name = label,

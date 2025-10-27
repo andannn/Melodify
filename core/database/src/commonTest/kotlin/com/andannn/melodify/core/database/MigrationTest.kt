@@ -8,6 +8,7 @@ import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.execSQL
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.ArtistColumns
+import com.andannn.melodify.core.database.entity.CustomTabColumns
 import com.andannn.melodify.core.database.entity.CustomTabType.ALL_MUSIC
 import com.andannn.melodify.core.database.entity.MediaColumns
 import okio.FileSystem
@@ -207,9 +208,23 @@ class MigrationTest {
                 tempFile.toString(),
             )
         val newConnection = migrationTestHelper.createDatabase(7)
+        newConnection.execSQL(
+            """
+                         INSERT INTO ${Tables.CUSTOM_TAB} 
+            (${CustomTabColumns.ID}, ${CustomTabColumns.TYPE}, ${CustomTabColumns.NAME}, ${CustomTabColumns.EXTERNAL_ID})
+            VALUES (4, 'album_detail', 'Album1', 'A01')
+            """.trimIndent(),
+        )
         newConnection.close()
         val migratedConnection =
             migrationTestHelper.runMigrationsAndValidate(8)
+        migratedConnection
+            .prepare("SELECT ${CustomTabColumns.ID}, ${CustomTabColumns.SORT_ORDER} FROM ${Tables.CUSTOM_TAB}")
+            .use { stm ->
+                stm.step()
+                assertEquals(4, stm.getInt(0))
+                assertEquals(4, stm.getInt(1))
+            }
         migratedConnection.close()
     }
 }

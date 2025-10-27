@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 8,
-    "identityHash": "b47967ab29d7fcdb5c0e681bf780bc76",
+    "identityHash": "b575848072855774abdd05d58d5d2e1b",
     "entities": [
       {
         "tableName": "lyric_table",
@@ -431,7 +431,7 @@
       },
       {
         "tableName": "custom_tab_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`custom_tab_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `custom_tab_type` TEXT NOT NULL, `custom_tab_name` TEXT, `custom_tab_external_id` TEXT, `display_setting` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`custom_tab_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `custom_tab_type` TEXT NOT NULL, `custom_tab_name` TEXT, `custom_tab_external_id` TEXT, `display_setting` TEXT, `sort_order` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -456,9 +456,14 @@
             "affinity": "TEXT"
           },
           {
-            "fieldPath": "sortOrder",
+            "fieldPath": "displaySettings",
             "columnName": "display_setting",
             "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sort_order",
+            "affinity": "INTEGER"
           }
         ],
         "primaryKey": {
@@ -617,7 +622,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b47967ab29d7fcdb5c0e681bf780bc76')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b575848072855774abdd05d58d5d2e1b')"
     ]
   }
 }
