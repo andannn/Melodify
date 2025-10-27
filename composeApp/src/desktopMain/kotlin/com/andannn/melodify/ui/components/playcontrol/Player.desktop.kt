@@ -83,7 +83,7 @@ fun DesktopPlayerUi(
 
 @Composable
 private fun PlayStateBar(
-    coverUri: String,
+    coverUri: String?,
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
@@ -216,7 +216,7 @@ private fun PlayControlBar(
 @Composable
 private fun PlayInfoWithAlbumCover(
     modifier: Modifier,
-    coverUri: String,
+    coverUri: String?,
     title: String,
     artist: String,
 ) {
@@ -224,7 +224,7 @@ private fun PlayInfoWithAlbumCover(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (coverUri.isNotEmpty()) {
+        if (coverUri != null) {
             CircleBorderImage(
                 modifier =
                     Modifier

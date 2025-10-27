@@ -4,15 +4,24 @@
  */
 @file:Suppress("ktlint:standard:filename")
 
-package com.andannn.melodify.ui.theme.dynamictheming
+package com.andannn.melodify.ui.theme
 
 import android.content.Context
 import androidx.collection.LruCache
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.palette.graphics.Palette
@@ -22,8 +31,43 @@ import coil3.request.SuccessResult
 import coil3.request.allowHardware
 import coil3.size.Scale
 import coil3.toBitmap
+import com.andannn.melodify.ui.util.createThemeFromSeed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+
+@Composable
+actual fun DynamicThemePrimaryColorsFromImage(
+    dominantColorState: DominantColorState,
+    content: @Composable (() -> Unit),
+) {
+    val defaultScheme = MaterialTheme.colorScheme
+    var scheme: ColorScheme by remember { mutableStateOf(defaultScheme) }
+    val seedColor by
+        animateColorAsState(
+            dominantColorState.color,
+            spring(stiffness = Spring.StiffnessLow),
+            finishedListener = {
+                scheme = createThemeFromSeed(it, isDark = true)
+            },
+            label = "domain color",
+        )
+
+    var debounceCounter by remember {
+        mutableIntStateOf(0)
+    }
+
+    LaunchedEffect(seedColor) {
+        debounceCounter += 1
+        if (debounceCounter % 5 == 0) {
+            scheme = createThemeFromSeed(seedColor, isDark = true)
+        }
+    }
+
+    MaterialTheme(
+        colorScheme = scheme,
+        content = content,
+    )
+}
 
 @Composable
 actual fun rememberDominantColorState(
@@ -34,7 +78,7 @@ actual fun rememberDominantColorState(
 ): DominantColorState {
     val context = LocalContext.current
     return remember {
-        DominantColorState(
+        DominantColorStateImpl(
             context,
             defaultColor,
             defaultOnColor,
@@ -57,16 +101,16 @@ actual fun rememberDominantColorState(
  * @param isColorValid A lambda which allows filtering of the calculated image colors.
  */
 @Stable
-actual class DominantColorState(
+class DominantColorStateImpl(
     private val context: Context,
     private val defaultColor: Color,
     private val defaultOnColor: Color,
     cacheSize: Int = 12,
     private val isColorValid: (Color) -> Boolean = { true },
-) {
+) : DominantColorState {
     private val _color = mutableStateOf(defaultColor)
 
-    actual val color: Color
+    override val color: Color
         get() = _color.value
 
     private var dynamicThemeEnable: Boolean = false
@@ -79,7 +123,7 @@ actual class DominantColorState(
             else -> null
         }
 
-    actual suspend fun updateColorsFromImageUrl(url: String) {
+    override suspend fun updateColorsFromImageUrl(url: String) {
         val result = calculateDominantColor(url)
         colorFromImage = result?.color ?: defaultColor
 
@@ -115,7 +159,7 @@ actual class DominantColorState(
             ?.also { result -> cache?.put(url, result) }
     }
 
-    actual fun setDynamicThemeEnable(enable: Boolean) {
+    override fun setDynamicThemeEnable(enable: Boolean) {
         dynamicThemeEnable = enable
 
         _color.value =

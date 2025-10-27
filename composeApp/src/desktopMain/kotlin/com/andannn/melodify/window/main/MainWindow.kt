@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import com.andannn.melodify.app.MelodifyDeskTopAppState
-import com.andannn.melodify.ui.components.common.MainScreen
 import com.andannn.melodify.ui.components.lyrics.Lyrics
 import com.andannn.melodify.ui.components.playcontrol.DesktopPlayerUi
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
@@ -59,6 +58,8 @@ import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
+
+object MainScreen : Screen
 
 object MainScreenUiFactory : Ui.Factory {
     override fun create(

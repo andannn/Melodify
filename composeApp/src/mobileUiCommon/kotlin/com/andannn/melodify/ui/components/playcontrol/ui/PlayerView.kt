@@ -28,9 +28,9 @@ import androidx.compose.ui.platform.LocalDensity
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.FlexiblePlayerLayout
+import com.andannn.melodify.ui.theme.DynamicThemePrimaryColorsFromImage
 import com.andannn.melodify.ui.theme.MIN_CONTRAST_OF_PRIMARY_VS_SURFACE
-import com.andannn.melodify.ui.theme.dynamictheming.DynamicThemePrimaryColorsFromImage
-import com.andannn.melodify.ui.theme.dynamictheming.rememberDominantColorState
+import com.andannn.melodify.ui.theme.rememberDominantColorState
 import com.andannn.melodify.ui.util.contrastAgainst
 import com.slack.circuit.foundation.internal.BackHandler
 
