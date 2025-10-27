@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import com.andannn.melodify.app.MelodifyDeskTopAppState
-import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
+import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.window.CustomMenuBar
 
 @Composable

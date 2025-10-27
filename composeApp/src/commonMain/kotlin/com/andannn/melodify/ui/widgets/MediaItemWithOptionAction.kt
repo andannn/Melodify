@@ -8,6 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.andannn.melodify.LocalPopupController
+import com.andannn.melodify.LocalRepository
+import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
@@ -15,9 +18,6 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.ui.components.popup.LocalPopupController
-import com.andannn.melodify.ui.components.popup.PopupController
-import com.andannn.melodify.ui.util.LocalRepository
 import com.andannn.melodify.ui.widgets.ListTileItemView
 
 @Composable

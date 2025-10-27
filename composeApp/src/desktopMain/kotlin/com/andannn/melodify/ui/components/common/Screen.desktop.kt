@@ -4,7 +4,7 @@
  */
 package com.andannn.melodify.ui.components.common
 
-import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
+import com.andannn.melodify.ui.components.librarydetail.LibraryDataSource
 import com.slack.circuit.runtime.screen.Screen
 
 actual object HomeScreen : Screen

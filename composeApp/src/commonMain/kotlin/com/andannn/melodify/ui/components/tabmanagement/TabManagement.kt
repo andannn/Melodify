@@ -16,15 +16,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -32,8 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
-import com.andannn.melodify.ui.components.popup.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.util.getCategoryResource
 import com.andannn.melodify.ui.util.rememberSwapListState
 import com.andannn.melodify.ui.widgets.ActionType
@@ -45,12 +38,14 @@ import sh.calvin.reorderable.ReorderableItem
 
 private const val TAG = "TabManagement"
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TabManagement(
-    state: TabManagementState,
+fun TabManagementContent(
+    presenter: TabManagementPresenter = rememberTabManagementPresenter(),
     modifier: Modifier = Modifier,
 ) {
-    TabManagementContent(
+    val state = presenter.present()
+    TabManagementList(
         modifier = modifier,
         currentTabList = state.tabList,
         onSwapFinished = { from, to ->
@@ -59,89 +54,60 @@ fun TabManagement(
         onDeleteFinished = { index ->
             state.eventSink.invoke(TabManagementEvent.OnDeleteFinished(index))
         },
-        onBackKeyPressed = {
-            state.eventSink.invoke(TabManagementEvent.OnBackKeyPressed)
-        },
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TabManagementContent(
-    modifier: Modifier,
+private fun TabManagementList(
+    modifier: Modifier = Modifier,
     currentTabList: ImmutableList<CustomTab>,
     onSwapFinished: (from: Int, to: Int) -> Unit = { _, _ -> },
     onDeleteFinished: (index: Int) -> Unit = { },
-    onBackKeyPressed: () -> Unit = {},
 ) {
-    Scaffold(
-        modifier = modifier,
-        snackbarHost = {
-            SnackbarHost(rememberAndSetupSnackBarHostState())
-        },
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Manage Tabs")
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackKeyPressed) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "Back",
-                        )
-                    }
-                },
-            )
-        },
+    val listState: LazyListState =
+        rememberLazyListState()
+    val customTabState =
+        rememberSwapListState<CustomTab>(
+            lazyListState = listState,
+            onSwapFinished = { from, to, _ ->
+                Napier.d(tag = TAG) { "PlayQueueView: drag stopped from $from to $to" }
+                onSwapFinished(from, to)
+            },
+            onDeleteFinished = { index, _ ->
+                Napier.d(tag = TAG) { "onDeleteFinished $index" }
+                onDeleteFinished(index)
+            },
+        )
+
+    LaunchedEffect(currentTabList) {
+        customTabState.onApplyNewList(currentTabList)
+    }
+
+    LazyColumn(
+        modifier =
+            modifier.fillMaxSize(),
+        state = listState,
     ) {
-        val listState: LazyListState =
-            rememberLazyListState()
-        val customTabState =
-            rememberSwapListState<CustomTab>(
-                lazyListState = listState,
-                onSwapFinished = { from, to, _ ->
-                    Napier.d(tag = TAG) { "PlayQueueView: drag stopped from $from to $to" }
-                    onSwapFinished(from, to)
-                },
-                onDeleteFinished = { index, _ ->
-                    Napier.d(tag = TAG) { "onDeleteFinished $index" }
-                    onDeleteFinished(index)
-                },
-            )
-
-        LaunchedEffect(currentTabList) {
-            customTabState.onApplyNewList(currentTabList)
-        }
-
-        LazyColumn(
-            modifier =
-                modifier.padding(it).fillMaxSize(),
-            state = listState,
-        ) {
-            items(
-                items = customTabState.itemList,
-                key = { it.hashCode() },
-            ) { item ->
-                ReorderableItem(
-                    state = customTabState.reorderableLazyListState,
-                    key = item.hashCode(),
-                ) { _ ->
-                    CustomTabItem(
-                        item = item,
-                        onSwapFinish = {
-                            customTabState.onStopDrag()
-                        },
-                        onDeleteItem = {
-                            customTabState.onDeleteItem(item)
-                        },
-                    )
-                }
+        items(
+            items = customTabState.itemList,
+            key = { it.hashCode() },
+        ) { item ->
+            ReorderableItem(
+                state = customTabState.reorderableLazyListState,
+                key = item.hashCode(),
+            ) { _ ->
+                CustomTabItem(
+                    item = item,
+                    onSwapFinish = {
+                        customTabState.onStopDrag()
+                    },
+                    onDeleteItem = {
+                        customTabState.onDeleteItem(item)
+                    },
+                )
             }
         }
     }
-
-    ActionDialogContainer()
 }
 
 @Composable

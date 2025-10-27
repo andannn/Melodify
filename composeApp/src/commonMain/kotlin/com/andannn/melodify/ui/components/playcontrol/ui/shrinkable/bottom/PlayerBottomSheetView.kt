@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.components.lyrics.Lyrics
 import com.andannn.melodify.ui.components.playcontrol.ui.BottomSheetState
 import com.andannn.melodify.ui.components.queue.PlayQueue
-import com.andannn.melodify.ui.widgets.AndroidBackHandler
+import com.slack.circuit.foundation.internal.BackHandler
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -81,7 +81,7 @@ internal fun PlayerBottomSheetView(
     }
 
     val sheetState = rememberPlayerBottomSheetState()
-    AndroidBackHandler(enabled = isExpand) {
+    BackHandler(enabled = isExpand) {
         scope.launch {
             state.animateTo(BottomSheetState.Shrink)
         }

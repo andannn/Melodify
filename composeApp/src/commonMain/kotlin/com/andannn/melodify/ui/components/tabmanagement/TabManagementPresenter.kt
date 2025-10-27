@@ -8,14 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import com.andannn.melodify.LocalPopupController
+import com.andannn.melodify.LocalRepository
+import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.ui.components.popup.LocalPopupController
-import com.andannn.melodify.ui.components.popup.PopupController
-import com.andannn.melodify.ui.util.LocalRepository
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -25,26 +24,17 @@ import kotlinx.coroutines.launch
 private const val TAG = "TabManagementPresenter"
 
 @Composable
-fun rememberTabManagementPresenter(
-    navigator: Navigator,
-    repository: Repository = LocalRepository.current,
-    popupController: PopupController = LocalPopupController.current,
-) = remember(
-    navigator,
-    repository,
-    popupController,
-) {
-    TabManagementPresenter(
-        navigator,
+fun rememberTabManagementPresenter(repository: Repository = LocalRepository.current) =
+    remember(
         repository,
-        popupController,
-    )
-}
+    ) {
+        TabManagementPresenter(
+            repository,
+        )
+    }
 
 class TabManagementPresenter(
-    private val navigator: Navigator,
     private val repository: Repository,
-    private val popupController: PopupController,
 ) : Presenter<TabManagementState> {
     private val userPreferenceRepository = repository.userPreferenceRepository
 
@@ -59,7 +49,6 @@ class TabManagementPresenter(
             currentTabList.toImmutableList(),
         ) { event ->
             when (event) {
-                TabManagementEvent.OnBackKeyPressed -> navigator.pop()
                 is TabManagementEvent.OnSwapFinished -> {
                     scope.launch {
                         val (from, to) = event
@@ -97,8 +86,6 @@ data class TabManagementState(
 ) : CircuitUiState
 
 sealed interface TabManagementEvent {
-    data object OnBackKeyPressed : TabManagementEvent
-
     data class OnSwapFinished(
         val from: Int,
         val to: Int,

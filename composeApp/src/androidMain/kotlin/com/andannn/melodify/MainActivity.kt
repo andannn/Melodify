@@ -34,7 +34,6 @@ import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.core.syncer.SyncWorkHelper
 import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
-import com.andannn.melodify.ui.dialog.ConnectFailedAlertDialog
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach

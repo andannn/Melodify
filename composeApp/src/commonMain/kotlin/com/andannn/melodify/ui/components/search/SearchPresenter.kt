@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
@@ -20,21 +21,16 @@ import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
-import com.andannn.melodify.ui.components.common.LibraryContentListScreen
-import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
 import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
-import com.andannn.melodify.ui.util.LocalRepository
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun rememberSearchUiPresenter(
-    navigator: Navigator,
     repository: Repository = LocalRepository.current,
     playerUiController: PlayerUiController = LocalPlayerUiController.current,
 ) = remember(
@@ -42,7 +38,6 @@ fun rememberSearchUiPresenter(
     playerUiController,
 ) {
     SearchUiPresenter(
-        navigator,
         playerUiController,
         repository.mediaContentRepository,
         repository.userPreferenceRepository,
@@ -52,7 +47,6 @@ fun rememberSearchUiPresenter(
 }
 
 class SearchUiPresenter(
-    private val navigator: Navigator,
     private val playerUiController: PlayerUiController,
     private val contentLibrary: MediaContentRepository,
     private val userPreferenceRepository: UserPreferenceRepository,
@@ -107,23 +101,10 @@ class SearchUiPresenter(
                 }
 
                 is SearchUiEvent.OnPlayAudio -> onPlayAudio(scope, eventSink.audioItemModel)
-
-                SearchUiEvent.Back -> navigator.pop()
-
-                is SearchUiEvent.OnNavigateToLibraryContentList ->
-                    navigator.goTo(
-                        LibraryContentListScreen(eventSink.source),
-                    )
-
                 is SearchUiEvent.OnExpandChange -> {
-                    if (!eventSink.isExpand && searchResult is SearchState.Init) {
-                        // If no search action triggered when request shrink, just close the search page.
-                        navigator.pop()
-                        return@SearchUiState
-                    }
-
                     expanded = eventSink.isExpand
                 }
+
                 is SearchUiEvent.OnInputTextChange -> {
                     searchText = eventSink.inputText
                 }
@@ -178,12 +159,6 @@ sealed interface SearchUiEvent {
     data class OnConfirmSearch(
         val text: String,
     ) : SearchUiEvent
-
-    data class OnNavigateToLibraryContentList(
-        val source: LibraryDataSource,
-    ) : SearchUiEvent
-
-    data object Back : SearchUiEvent
 
     data class OnInputTextChange(
         val inputText: String,

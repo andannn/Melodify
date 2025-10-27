@@ -6,7 +6,7 @@ package com.andannn.melodify.ui.widgets
 
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import com.andannn.melodify.ui.icons.SmpIcon
+import com.andannn.melodify.model.SmpIcon
 
 @Composable
 fun SmpIcon(

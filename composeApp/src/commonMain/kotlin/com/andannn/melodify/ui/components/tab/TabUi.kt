@@ -8,7 +8,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
@@ -27,8 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.ui.components.popup.LocalPopupController
-import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.util.getCategoryResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,6 +33,7 @@ import com.andannn.melodify.ui.util.getCategoryResource
 fun TabUi(
     state: TabUiState,
     modifier: Modifier = Modifier,
+    onTabManagementClick: () -> Unit = {},
 ) {
     val tabs = state.customTabList
     val selectedIndex = state.selectedIndex
@@ -86,9 +84,7 @@ fun TabUi(
         IconButton(
             modifier = Modifier.padding(start = 4.dp),
             enabled = buttonVisible,
-            onClick = {
-                state.eventSink.invoke(TabUiEvent.OnTabManagementClick)
-            },
+            onClick = onTabManagementClick,
         ) {
             AnimatedVisibility(visible = buttonVisible) {
                 Icon(
