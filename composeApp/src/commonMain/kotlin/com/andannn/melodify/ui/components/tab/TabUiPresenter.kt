@@ -12,24 +12,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import com.andannn.melodify.LocalPopupController
+import com.andannn.melodify.LocalRepository
+import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.contentFlow
-import com.andannn.melodify.ui.components.common.LocalRepository
-import com.andannn.melodify.ui.components.common.TabManageScreen
-import com.andannn.melodify.ui.components.popup.LocalPopupController
-import com.andannn.melodify.ui.components.popup.PopupController
-import com.andannn.melodify.ui.components.popup.addToNextPlay
-import com.andannn.melodify.ui.components.popup.addToPlaylist
-import com.andannn.melodify.ui.components.popup.addToQueue
-import com.andannn.melodify.ui.components.popup.dialog.DialogAction
-import com.andannn.melodify.ui.components.popup.dialog.DialogId
-import com.andannn.melodify.ui.components.popup.dialog.OptionItem
+import com.andannn.melodify.model.DialogAction
+import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.ui.popup.addToNextPlay
+import com.andannn.melodify.ui.popup.addToPlaylist
+import com.andannn.melodify.ui.popup.addToQueue
+import com.andannn.melodify.ui.popup.dialog.OptionItem
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
@@ -40,25 +38,20 @@ private const val TAG = "TabUiState"
 
 @Composable
 fun rememberTabUiPresenter(
-    navigator: Navigator,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-) = remember(navigator, repository, popupController) {
+) = remember(repository, popupController) {
     TabUiPresenter(
-        navigator,
         repository,
         popupController,
     )
 }
 
 class TabUiPresenter(
-    private val navigator: Navigator,
     private val repository: Repository,
     private val popupController: PopupController,
 ) : Presenter<TabUiState> {
     private val userPreferenceRepository = repository.userPreferenceRepository
-    private val mediaContentRepository = repository.mediaContentRepository
-    private val playListRepository = repository.playListRepository
 
     @Composable
     override fun present(): TabUiState {
@@ -149,8 +142,6 @@ class TabUiPresenter(
                             }
                         }
                     }
-
-                TabUiEvent.OnTabManagementClick -> navigator.goTo(TabManageScreen)
             }
         }
     }
@@ -173,6 +164,4 @@ sealed interface TabUiEvent {
     data class OnShowTabOption(
         val tab: CustomTab,
     ) : TabUiEvent
-
-    data object OnTabManagementClick : TabUiEvent
 }

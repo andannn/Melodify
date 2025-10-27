@@ -25,14 +25,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
-import com.andannn.melodify.ui.common.dynamictheming.DynamicThemePrimaryColorsFromImage
-import com.andannn.melodify.ui.common.dynamictheming.rememberDominantColorState
-import com.andannn.melodify.ui.common.theme.MIN_CONTRAST_OF_PRIMARY_VS_SURFACE
-import com.andannn.melodify.ui.common.util.contrastAgainst
-import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.FlexiblePlayerLayout
+import com.andannn.melodify.ui.theme.MIN_CONTRAST_OF_PRIMARY_VS_SURFACE
+import com.andannn.melodify.ui.theme.dynamictheming.DynamicThemePrimaryColorsFromImage
+import com.andannn.melodify.ui.theme.dynamictheming.rememberDominantColorState
+import com.andannn.melodify.ui.util.contrastAgainst
+import com.slack.circuit.foundation.internal.BackHandler
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -67,7 +67,7 @@ internal fun PlayerViewContent(
                 }
             }
 
-        AndroidBackHandler(
+        BackHandler(
             enabled = layoutState.playerState == PlayerState.Expand,
             layoutState::shrinkPlayerLayout,
         )

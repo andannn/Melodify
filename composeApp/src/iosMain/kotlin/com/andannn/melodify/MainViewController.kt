@@ -14,8 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.ComposeUIViewController
 import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
-import com.andannn.melodify.ui.components.popup.LocalPopupController
-import com.andannn.melodify.ui.components.popup.PopupControllerImpl
+import com.andannn.melodify.ui.popup.PopupControllerImpl
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.core.context.startKoin

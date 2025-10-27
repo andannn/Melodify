@@ -21,9 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.ui.common.util.rememberSwapListState
-import com.andannn.melodify.ui.common.widgets.ActionType
-import com.andannn.melodify.ui.common.widgets.ListTileItemView
+import com.andannn.melodify.ui.util.rememberSwapListState
+import com.andannn.melodify.ui.widgets.ActionType
+import com.andannn.melodify.ui.widgets.ListTileItemView
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

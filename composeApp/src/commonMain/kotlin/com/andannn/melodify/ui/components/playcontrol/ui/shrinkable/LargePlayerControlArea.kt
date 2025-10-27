@@ -29,12 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
-import com.andannn.melodify.ui.common.theme.MelodifyTheme
-import com.andannn.melodify.ui.common.util.getIcon
-import com.andannn.melodify.ui.common.widgets.AutoResizedText
-import com.andannn.melodify.ui.common.widgets.SmpMainIconButton
-import com.andannn.melodify.ui.common.widgets.SmpSubIconButton
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
+import com.andannn.melodify.ui.theme.MelodifyTheme
+import com.andannn.melodify.ui.util.getIcon
+import com.andannn.melodify.ui.widgets.AutoResizedText
+import com.andannn.melodify.ui.widgets.SmpMainIconButton
+import com.andannn.melodify.ui.widgets.SmpSubIconButton
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable

@@ -7,12 +7,12 @@ package com.andannn.melodify.ui.components.popup.dialog
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material.CursorDropdownMenu
 import androidx.compose.runtime.Composable
+import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.ui.popup.dialog.DialogType
 
 actual val DialogId.dialogIdType: DialogType
     get() =
         when (this) {
-            is DialogId.MediaOption -> DialogType.DropDownDialog
-
             is DialogId.SleepTimerOptionDialog,
             DialogId.NewPlayListDialog,
             DialogId.SleepCountingDialog,

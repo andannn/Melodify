@@ -11,21 +11,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.andannn.melodify.navigation.HomePresenterFactory
-import com.andannn.melodify.navigation.HomeUiFactory
-import com.andannn.melodify.navigation.LibraryContentPresenterFactory
-import com.andannn.melodify.navigation.LibraryContentUiFactory
-import com.andannn.melodify.navigation.LibraryPresenterFactory
-import com.andannn.melodify.navigation.LibraryUiFactory
-import com.andannn.melodify.navigation.SearchPresenterFactory
-import com.andannn.melodify.navigation.SearchUiFactory
-import com.andannn.melodify.navigation.TabManagePresenterFactory
-import com.andannn.melodify.navigation.TabManageUiFactory
-import com.andannn.melodify.ui.common.widgets.AndroidBackHandler
-import com.andannn.melodify.ui.components.common.HomeScreen
-import com.andannn.melodify.ui.components.common.LocalRepository
-import com.andannn.melodify.ui.components.popup.LocalPopupController
-import com.andannn.melodify.ui.components.popup.PopupControllerImpl
+import com.andannn.melodify.ui.HomeScreen
+import com.andannn.melodify.ui.PresenterFactory
+import com.andannn.melodify.ui.UiFactory
+import com.andannn.melodify.ui.popup.PopupControllerImpl
 import com.slack.circuit.backstack.BackStack.Record
 import com.slack.circuit.backstack.BackStackRecordLocalProvider
 import com.slack.circuit.backstack.ProvidedValues
@@ -34,14 +23,13 @@ import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import org.koin.mp.KoinPlatform.getKoin
-
-private const val TAG = "MelodifyMobileApp"
 
 @Composable
 fun MelodifyMobileApp(
@@ -59,7 +47,7 @@ fun MelodifyMobileApp(
                     rememberCircuitNavigator(backStack) {
                     }
 
-                AndroidBackHandler(enabled = backStack.size > 1) {
+                BackHandler(enabled = backStack.size > 1) {
                     navigator.pop()
                 }
 
@@ -96,19 +84,11 @@ private fun buildCircuitMobile() =
     buildCircuit(
         presenterFactory =
             listOf(
-                HomePresenterFactory,
-                LibraryPresenterFactory,
-                LibraryContentPresenterFactory,
-                SearchPresenterFactory,
-                TabManagePresenterFactory,
+                PresenterFactory,
             ),
         uiFactory =
             listOf(
-                HomeUiFactory,
-                LibraryUiFactory,
-                LibraryContentUiFactory,
-                SearchUiFactory,
-                TabManageUiFactory,
+                UiFactory,
             ),
     )
 

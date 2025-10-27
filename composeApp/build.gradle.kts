@@ -1,14 +1,10 @@
-import guru.nidi.graphviz.attribute.Color
-import guru.nidi.graphviz.attribute.Style
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     id("melodify.kmp.application")
     id("melodify.compose.multiplatform.application")
-    alias(libs.plugins.paparazzi)
     alias(libs.plugins.google.service)
     alias(libs.plugins.firebase.crashlytics)
-    alias(libs.plugins.dependency.graph.generator)
     alias(libs.plugins.serialization)
 }
 
@@ -161,33 +157,4 @@ tasks.register("moveKeyStoreRelease") {
 
 tasks.named("preBuild") {
     dependsOn("moveKeyStoreRelease")
-}
-
-// command: ./gradlew generateDependencyGraphApp
-dependencyGraphGenerator {
-    generators.create("app") {
-        include =
-            { dependency -> dependency.moduleGroup.startsWith("Melodify") }
-        children = { true }
-        dependencyNode = { node, dependency ->
-            if (dependency.moduleGroup.contains("feature")) {
-                node.add(
-                    Style.FILLED,
-                    Color.rgb("#c6f68d"),
-                )
-            } else if (dependency.moduleName == "data" || dependency.moduleName == "syncer") {
-                node.add(
-                    Style.FILLED,
-                    Color.rgb("#ffddb0"),
-                )
-            } else if (dependency.moduleGroup.contains("core")) {
-                node.add(
-                    Style.FILLED,
-                    Color.rgb("#b39afd"),
-                )
-            } else {
-                node
-            }
-        }
-    }
 }

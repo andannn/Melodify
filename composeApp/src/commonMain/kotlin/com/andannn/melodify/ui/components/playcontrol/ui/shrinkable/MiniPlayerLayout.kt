@@ -28,8 +28,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.ui.common.widgets.FavoriteIconButton
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
+import com.andannn.melodify.ui.widgets.FavoriteIconButton
 
 @Composable
 internal fun MiniPlayerLayout(
