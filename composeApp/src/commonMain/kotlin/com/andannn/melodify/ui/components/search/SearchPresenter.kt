@@ -21,8 +21,6 @@ import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
-import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -30,24 +28,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun rememberSearchUiPresenter(
-    repository: Repository = LocalRepository.current,
-    playerUiController: PlayerUiController = LocalPlayerUiController.current,
-) = remember(
-    repository,
-    playerUiController,
-) {
-    SearchUiPresenter(
-        playerUiController,
-        repository.mediaContentRepository,
-        repository.userPreferenceRepository,
-        repository.mediaControllerRepository,
-        repository.playerStateMonitoryRepository,
-    )
-}
+fun rememberSearchUiPresenter(repository: Repository = LocalRepository.current) =
+    remember(
+        repository,
+    ) {
+        SearchUiPresenter(
+            repository.mediaContentRepository,
+            repository.userPreferenceRepository,
+            repository.mediaControllerRepository,
+            repository.playerStateMonitoryRepository,
+        )
+    }
 
 class SearchUiPresenter(
-    private val playerUiController: PlayerUiController,
     private val contentLibrary: MediaContentRepository,
     private val userPreferenceRepository: UserPreferenceRepository,
     private val mediaControllerRepository: MediaControllerRepository,
@@ -129,8 +122,6 @@ class SearchUiPresenter(
                 // play audio item
                 mediaControllerRepository.playMediaList(listOf(audioItemModel))
             }
-
-            playerUiController.expandPlayer()
         }
     }
 

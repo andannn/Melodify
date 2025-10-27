@@ -9,8 +9,8 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import com.andannn.melodify.ui.components.popup.LocalPopupController
-import com.andannn.melodify.ui.components.popup.PopupController
+import com.andannn.melodify.LocalPopupController
+import com.andannn.melodify.PopupController
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -39,21 +39,21 @@ class CommonWindowState(
     val snackBarHostState: SnackbarHostState,
     private val popupController: PopupController,
 ) {
-    init {
-        scope.launch {
-            for (message in popupController.snackBarMessageChannel) {
-                Napier.d(tag = TAG) { "show snackbar: $message" }
-                var result: SnackbarResult? = null
-                try {
-                    result = snackBarHostState.showSnackbar(message)
-                } catch (e: CancellationException) {
-                    result = SnackbarResult.Dismissed
-                    throw e
-                } finally {
-                    popupController.snackBarResultChannel.send(result!!)
-                    Napier.d(tag = TAG) { "show snackbar dismiss $result" }
-                }
-            }
-        }
-    }
+//    init {
+//        scope.launch {
+//            for (message in popupController.snackBarMessageChannel) {
+//                Napier.d(tag = TAG) { "show snackbar: $message" }
+//                var result: SnackbarResult? = null
+//                try {
+//                    result = snackBarHostState.showSnackbar(message)
+//                } catch (e: CancellationException) {
+//                    result = SnackbarResult.Dismissed
+//                    throw e
+//                } finally {
+//                    popupController.snackBarResultChannel.send(result!!)
+//                    Napier.d(tag = TAG) { "show snackbar dismiss $result" }
+//                }
+//            }
+//        }
+//    }
 }

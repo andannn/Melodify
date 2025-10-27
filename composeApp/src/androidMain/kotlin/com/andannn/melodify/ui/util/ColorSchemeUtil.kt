@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.theme.dynamictheming
+package com.andannn.melodify.ui.util
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
@@ -20,47 +20,82 @@ import com.materialkolor.scheme.SchemeRainbow
 import com.materialkolor.scheme.SchemeTonalSpot
 import com.materialkolor.scheme.SchemeVibrant
 
-actual fun createThemeFromSeed(
+enum class DynamicSchemeVariant {
+    // / Default for Material theme colors. Builds pastel palettes with a low chroma.
+    TONAL_SPOT,
+
+    // / The resulting color palettes match seed color, even if the seed color
+    // / is very bright (high chroma).
+    FIDELITY,
+
+    // / All colors are grayscale, no chroma.
+    MONOCHROME,
+
+    // / Close to grayscale, a hint of chroma.
+    NEUTRAL,
+
+    // / Pastel colors, high chroma palettes. The primary palette's chroma is at
+    // / maximum. Use `fidelity` instead if tokens should alter their tone to match
+    // / the palette vibrancy.
+    VIBRANT,
+
+    // / Pastel colors, medium chroma palettes. The primary palette's hue is
+    // / different from the seed color, for variety.
+    EXPRESSIVE,
+
+    // / Almost identical to `fidelity`. Tokens and palettes match the seed color.
+    // / [ColorScheme.primaryContainer] is the seed color, adjusted to ensure
+    // / contrast with surfaces. The tertiary palette is analogue of the seed color.
+    CONTENT,
+
+    // / A playful theme - the seed color's hue does not appear in the theme.
+    RAINBOW,
+
+    // / A playful theme - the seed color's hue does not appear in the theme.
+    FRUIT_SALAD,
+}
+
+fun createThemeFromSeed(
     seedColor: Color,
     isDark: Boolean,
-    dynamicSchemeVariant: DynamicSchemeVariant,
-    contrastLevel: Double,
-    primary: Color?,
-    onPrimary: Color?,
-    primaryContainer: Color?,
-    onPrimaryContainer: Color?,
-    inversePrimary: Color?,
-    secondary: Color?,
-    onSecondary: Color?,
-    secondaryContainer: Color?,
-    onSecondaryContainer: Color?,
-    tertiary: Color?,
-    onTertiary: Color?,
-    tertiaryContainer: Color?,
-    onTertiaryContainer: Color?,
-    background: Color?,
-    onBackground: Color?,
-    surface: Color?,
-    onSurface: Color?,
-    surfaceVariant: Color?,
-    onSurfaceVariant: Color?,
-    surfaceTint: Color?,
-    inverseSurface: Color?,
-    inverseOnSurface: Color?,
-    error: Color?,
-    onError: Color?,
-    errorContainer: Color?,
-    onErrorContainer: Color?,
-    outline: Color?,
-    outlineVariant: Color?,
-    scrim: Color?,
-    surfaceBright: Color?,
-    surfaceDim: Color?,
-    surfaceContainer: Color?,
-    surfaceContainerHigh: Color?,
-    surfaceContainerHighest: Color?,
-    surfaceContainerLow: Color?,
-    surfaceContainerLowest: Color?,
+    dynamicSchemeVariant: DynamicSchemeVariant = DynamicSchemeVariant.TONAL_SPOT,
+    contrastLevel: Double = 0.0,
+    primary: Color? = null,
+    onPrimary: Color? = null,
+    primaryContainer: Color? = null,
+    onPrimaryContainer: Color? = null,
+    inversePrimary: Color? = null,
+    secondary: Color? = null,
+    onSecondary: Color? = null,
+    secondaryContainer: Color? = null,
+    onSecondaryContainer: Color? = null,
+    tertiary: Color? = null,
+    onTertiary: Color? = null,
+    tertiaryContainer: Color? = null,
+    onTertiaryContainer: Color? = null,
+    background: Color? = null,
+    onBackground: Color? = null,
+    surface: Color? = null,
+    onSurface: Color? = null,
+    surfaceVariant: Color? = null,
+    onSurfaceVariant: Color? = null,
+    surfaceTint: Color? = null,
+    inverseSurface: Color? = null,
+    inverseOnSurface: Color? = null,
+    error: Color? = null,
+    onError: Color? = null,
+    errorContainer: Color? = null,
+    onErrorContainer: Color? = null,
+    outline: Color? = null,
+    outlineVariant: Color? = null,
+    scrim: Color? = null,
+    surfaceBright: Color? = null,
+    surfaceDim: Color? = null,
+    surfaceContainer: Color? = null,
+    surfaceContainerHigh: Color? = null,
+    surfaceContainerHighest: Color? = null,
+    surfaceContainerLow: Color? = null,
+    surfaceContainerLowest: Color? = null,
 ): ColorScheme {
     val scheme: DynamicScheme =
         buildDynamicScheme(isDark, seedColor, dynamicSchemeVariant, contrastLevel)
@@ -105,7 +140,7 @@ actual fun createThemeFromSeed(
     )
 }
 
-fun buildDynamicScheme(
+private fun buildDynamicScheme(
     isDark: Boolean,
     seedColor: Color,
     schemeVariant: DynamicSchemeVariant,
