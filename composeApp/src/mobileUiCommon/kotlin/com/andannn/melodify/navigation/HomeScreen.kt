@@ -29,14 +29,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.repository.UserPreferenceRepository
-import com.andannn.melodify.ui.common.widgets.DropDownMenuIconButton
 import com.andannn.melodify.ui.components.common.HomeScreen
 import com.andannn.melodify.ui.components.common.LibraryScreen
 import com.andannn.melodify.ui.components.common.SearchScreen
-import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
 import com.andannn.melodify.ui.components.playcontrol.Player
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
 import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
@@ -48,6 +44,7 @@ import com.andannn.melodify.ui.components.tab.rememberTabUiPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContent
 import com.andannn.melodify.ui.components.tabcontent.TabContentState
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
+import com.andannn.melodify.ui.widgets.DropDownMenuIconButton
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -88,6 +85,7 @@ object HomePresenterFactory : Presenter.Factory {
                 presenterOf {
                     rememberHomeUiPresenter(navigator).present()
                 }
+
             else -> null
         }
 }

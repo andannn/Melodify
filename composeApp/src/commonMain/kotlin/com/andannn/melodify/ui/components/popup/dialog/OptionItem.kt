@@ -4,8 +4,8 @@
  */
 package com.andannn.melodify.ui.components.popup.dialog
 
-import com.andannn.melodify.ui.common.icons.SimpleMusicIcons
-import com.andannn.melodify.ui.common.icons.SmpIcon
+import com.andannn.melodify.ui.icons.SimpleMusicIcons
+import com.andannn.melodify.ui.icons.SmpIcon
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.add_to_home_tab
 import melodify.composeapp.generated.resources.add_to_playlist

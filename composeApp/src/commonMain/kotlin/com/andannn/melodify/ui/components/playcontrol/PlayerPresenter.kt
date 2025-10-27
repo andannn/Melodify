@@ -21,12 +21,15 @@ import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.SleepTimerRepository
-import com.andannn.melodify.ui.common.util.LocalRepository
 import com.andannn.melodify.ui.components.popup.LocalPopupController
 import com.andannn.melodify.ui.components.popup.PopupController
+import com.andannn.melodify.ui.components.popup.addToNextPlay
+import com.andannn.melodify.ui.components.popup.addToQueue
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
-import com.andannn.melodify.ui.components.popup.handleMediaOptionClick
+import com.andannn.melodify.ui.components.popup.dialog.OptionItem
+import com.andannn.melodify.ui.components.popup.openSleepTimer
+import com.andannn.melodify.ui.util.LocalRepository
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -75,7 +78,9 @@ class PlayerPresenter(
             playerStateMonitoryRepository.observeIsShuffle().collectAsRetainedState(false)
         val duration by
             playerStateMonitoryRepository.observeCurrentPositionMs().collectAsRetainedState(0L)
-        val isSleepTimerCounting by sleepTimerRepository.observeIsCounting().collectAsRetainedState(false)
+        val isSleepTimerCounting by sleepTimerRepository
+            .observeIsCounting()
+            .collectAsRetainedState(false)
         var isFavorite by rememberSaveable {
             mutableStateOf(false)
         }
@@ -144,15 +149,22 @@ class PlayerPresenter(
         scope.launch {
             val result =
                 popupController.showDialog(
-                    DialogId.PlayerOption(mediaItem),
+                    DialogId.OptionDialog(
+                        options =
+                            listOf(
+                                OptionItem.PLAY_NEXT,
+                                OptionItem.ADD_TO_QUEUE,
+                                OptionItem.SLEEP_TIMER,
+                            ),
+                    ),
                 )
-            if (result is DialogAction.MediaOptionDialog.ClickItem) {
-                with(repository) {
-                    with(popupController) {
-                        handleMediaOptionClick(
-                            optionItem = result.optionItem,
-                            dialog = result.dialog,
-                        )
+            if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
+                context(repository, popupController) {
+                    when (result.optionItem) {
+                        OptionItem.PLAY_NEXT -> addToNextPlay(listOf(mediaItem))
+                        OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(mediaItem))
+                        OptionItem.SLEEP_TIMER -> openSleepTimer()
+                        else -> {}
                     }
                 }
             }

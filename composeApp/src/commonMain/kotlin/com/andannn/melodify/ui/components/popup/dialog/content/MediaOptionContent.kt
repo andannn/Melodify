@@ -19,11 +19,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.ui.common.icons.SmpIcon
-import com.andannn.melodify.ui.common.widgets.SmpIcon
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
 import com.andannn.melodify.ui.components.popup.dialog.OptionItem
+import com.andannn.melodify.ui.widgets.SmpIcon
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -38,30 +37,6 @@ internal fun MediaOptionContent(
                 item = item,
                 onClick = {
                     onAction(DialogAction.MediaOptionDialog.ClickOptionItem(item))
-                },
-            )
-
-            if (index != dialogId.options.size - 1) {
-                HorizontalDivider()
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-    }
-}
-
-@Composable
-internal fun MediaOptionContent(
-    dialogId: DialogId.MediaOption,
-    modifier: Modifier = Modifier,
-    onAction: (DialogAction) -> Unit = {},
-) {
-    Column(modifier.navigationBarsPadding().fillMaxWidth()) {
-        dialogId.options.mapIndexed { index, item ->
-            SheetItem(
-                item = item,
-                onClick = {
-                    onAction(DialogAction.MediaOptionDialog.ClickItem(item, dialogId))
                 },
             )
 

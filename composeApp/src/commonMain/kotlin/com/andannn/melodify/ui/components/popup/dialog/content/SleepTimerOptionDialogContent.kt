@@ -18,9 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.ui.common.util.durationString
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.SleepTimerOption
+import com.andannn.melodify.ui.util.durationString
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.end_of_song
 import melodify.composeapp.generated.resources.sleep_timer

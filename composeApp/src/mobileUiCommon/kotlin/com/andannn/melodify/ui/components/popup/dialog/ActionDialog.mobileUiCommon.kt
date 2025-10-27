@@ -13,7 +13,6 @@ actual val DialogId.dialogIdType: DialogType
             is DialogId.SleepTimerOptionDialog,
             DialogId.SleepCountingDialog,
             is DialogId.OptionDialog,
-            is DialogId.MediaOption,
             is DialogId.AddMusicsToPlayListDialog,
             is DialogId.ChangeSortRuleDialog,
             -> DialogType.ModalBottomSheet

@@ -11,9 +11,9 @@ import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.browsable
-import com.andannn.melodify.ui.common.util.LocalRepository
-import com.andannn.melodify.ui.components.common.newLibraryContentListScreen
+import com.andannn.melodify.ui.components.common.LibraryContentListScreen
 import com.andannn.melodify.ui.components.library.util.asDataSource
+import com.andannn.melodify.ui.util.LocalRepository
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState
@@ -57,7 +57,7 @@ class LibraryContentPresenter(
             when (eventSink) {
                 is LibraryContentUiEvent.OnItemClick -> {
                     if (eventSink.item.browsable) {
-                        navigator.goTo(newLibraryContentListScreen(eventSink.item.asDataSource()))
+                        navigator.goTo(LibraryContentListScreen(eventSink.item.asDataSource()))
                     } else {
                         playMusic(eventSink.item as AudioItemModel, contentList)
                     }

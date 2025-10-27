@@ -36,8 +36,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.platform.formatTime
-import com.andannn.melodify.ui.common.util.getIcon
-import com.andannn.melodify.ui.common.widgets.CircleBorderImage
+import com.andannn.melodify.ui.util.getIcon
+import com.andannn.melodify.ui.widgets.CircleBorderImage
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable

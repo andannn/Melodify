@@ -6,8 +6,8 @@ package com.andannn.melodify.ui.common.dynamictheming
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
-import com.andannn.melodify.ui.common.theme.DarkColorPalette
-import com.andannn.melodify.ui.common.theme.LightColorPalette
+import com.andannn.melodify.ui.theme.DarkColorPalette
+import com.andannn.melodify.ui.theme.LightColorPalette
 
 actual fun createThemeFromSeed(
     seedColor: Color,

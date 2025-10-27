@@ -20,9 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.repository.SleepTimerRepository
-import com.andannn.melodify.ui.common.theme.MelodifyTheme
-import com.andannn.melodify.ui.common.util.durationString
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
+import com.andannn.melodify.ui.theme.MelodifyTheme
+import com.andannn.melodify.ui.util.durationString
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.cancel_timer
 import melodify.composeapp.generated.resources.sleep_timer

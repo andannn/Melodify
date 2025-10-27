@@ -37,12 +37,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayMode
-import com.andannn.melodify.ui.common.util.verticalGradientScrim
-import com.andannn.melodify.ui.common.widgets.CircleBorderImage
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.components.playcontrol.ui.MinImageSize
 import com.andannn.melodify.ui.components.playcontrol.ui.PlayerViewState
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.bottom.PlayerBottomSheetView
+import com.andannn.melodify.ui.util.verticalGradientScrim
+import com.andannn.melodify.ui.widgets.CircleBorderImage
 
 val MinImagePaddingTop = 5.dp
 

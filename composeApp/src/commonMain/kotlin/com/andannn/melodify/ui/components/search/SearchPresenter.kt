@@ -20,11 +20,11 @@ import com.andannn.melodify.core.data.repository.MediaContentRepository
 import com.andannn.melodify.core.data.repository.MediaControllerRepository
 import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
-import com.andannn.melodify.ui.common.util.LocalRepository
-import com.andannn.melodify.ui.components.common.newLibraryContentListScreen
+import com.andannn.melodify.ui.components.common.LibraryContentListScreen
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
 import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
+import com.andannn.melodify.ui.util.LocalRepository
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -112,7 +112,7 @@ class SearchUiPresenter(
 
                 is SearchUiEvent.OnNavigateToLibraryContentList ->
                     navigator.goTo(
-                        newLibraryContentListScreen(eventSink.source),
+                        LibraryContentListScreen(eventSink.source),
                     )
 
                 is SearchUiEvent.OnExpandChange -> {

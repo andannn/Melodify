@@ -6,8 +6,8 @@ package com.andannn.melodify.ui.components.library
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import com.andannn.melodify.ui.components.common.LibraryContentListScreen
 import com.andannn.melodify.ui.components.common.SearchScreen
-import com.andannn.melodify.ui.components.common.newLibraryContentListScreen
 import com.andannn.melodify.ui.components.librarycontentlist.LibraryDataSource
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -22,7 +22,7 @@ class LibraryPresenter(
             when (eventSink) {
                 is LibraryUiEvent.OnNavigateToLibraryContentList ->
                     navigator.goTo(
-                        newLibraryContentListScreen(eventSink.source),
+                        LibraryContentListScreen(eventSink.source),
                     )
 
                 LibraryUiEvent.Back -> navigator.pop()

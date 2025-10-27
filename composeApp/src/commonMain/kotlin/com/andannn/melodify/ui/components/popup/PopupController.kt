@@ -72,25 +72,6 @@ fun rememberAndSetupSnackBarHostState(holder: PopupController = LocalPopupContro
     return snackbarHostState
 }
 
-class NoOpPopupController : PopupController {
-    override val currentDialog: DialogData =
-        object : DialogData {
-            override val dialogId: DialogId
-                get() = DialogId.SleepCountingDialog
-
-            override fun performAction(action: DialogAction) {
-            }
-        }
-    override var snackBarController: SnackbarHostState? = null
-
-    override suspend fun showSnackBar(
-        message: SnackBarMessage,
-        messageFormatArgs: List<Any>,
-    ): SnackbarResult = SnackbarResult.Dismissed
-
-    override suspend fun showDialog(dialogId: DialogId): DialogAction = DialogAction.Dismissed
-}
-
 class PopupControllerImpl : PopupController {
     private val mutex = Mutex()
 
@@ -130,31 +111,6 @@ class PopupControllerImpl : PopupController {
         }
 }
 
-context(
-    repo: Repository,
-    popupController: PopupController,
-)
-suspend fun handleMediaOptionClick(
-    optionItem: OptionItem,
-    dialog: DialogId.MediaOption,
-) {
-    when (optionItem) {
-        OptionItem.PLAY_NEXT -> dialog.media.addToNextPlay()
-        OptionItem.ADD_TO_QUEUE -> dialog.media.addToQueue()
-        OptionItem.SLEEP_TIMER -> handleClickSleepTimer()
-        OptionItem.DELETE_FROM_PLAYLIST ->
-            onDeleteItemInPlayList(
-                (dialog as DialogId.AudioOptionInPlayList).playListId,
-                dialog.media,
-            )
-
-        OptionItem.ADD_TO_PLAYLIST -> error("never")
-        OptionItem.DELETE_PLAYLIST -> (dialog.media as PlayListItemModel).delete()
-        OptionItem.ADD_TO_HOME_TAB -> dialog.media.pinToHomeTab()
-        OptionItem.DELETE_TAB -> error("never")
-    }
-}
-
 context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
 suspend fun MediaItemModel.pinToHomeTab() {
     val tab =
@@ -183,32 +139,6 @@ suspend fun addToNextPlay(items: List<AudioItemModel>) {
         )
     } else {
         repo.playMediaList(items, 0)
-    }
-}
-
-context(repo: Repository)
-private suspend fun MediaItemModel.addToNextPlay() {
-    val havePlayingQueue = repo.getPlayListQueue().isNotEmpty()
-    if (havePlayingQueue) {
-        repo.addMediaItems(
-            index = repo.getPlayingIndexInQueue() + 1,
-            mediaItems = audios(),
-        )
-    } else {
-        repo.playMediaList(audios(), 0)
-    }
-}
-
-context(repo: Repository)
-private suspend fun MediaItemModel.addToQueue() {
-    val playListQueue = repo.getPlayListQueue()
-    if (playListQueue.isNotEmpty()) {
-        repo.addMediaItems(
-            index = playListQueue.size,
-            mediaItems = audios(),
-        )
-    } else {
-        repo.playMediaList(audios(), 0)
     }
 }
 
@@ -248,7 +178,7 @@ private suspend fun PlayListItemModel.delete() {
 }
 
 context(sleepTimerRepository: SleepTimerRepository, popupController: PopupController)
-private suspend fun handleClickSleepTimer() {
+suspend fun openSleepTimer() {
     if (sleepTimerRepository.isCounting()) {
         val result = popupController.showDialog(DialogId.SleepCountingDialog)
         if (result is DialogAction.SleepTimerCountingDialog.OnCancelTimer) {

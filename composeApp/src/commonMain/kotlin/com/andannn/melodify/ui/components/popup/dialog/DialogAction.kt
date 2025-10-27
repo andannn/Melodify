@@ -25,11 +25,6 @@ sealed interface DialogAction {
     }
 
     interface MediaOptionDialog : DialogAction {
-        data class ClickItem(
-            val optionItem: OptionItem,
-            val dialog: DialogId.MediaOption,
-        ) : MediaOptionDialog
-
         data class ClickOptionItem(
             val optionItem: OptionItem,
         ) : MediaOptionDialog

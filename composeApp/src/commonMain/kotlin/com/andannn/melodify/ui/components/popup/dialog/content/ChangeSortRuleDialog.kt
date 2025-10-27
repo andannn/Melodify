@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.SortRule
-import com.andannn.melodify.ui.common.widgets.TransparentBackgroundListItem
 import com.andannn.melodify.ui.components.popup.dialog.DialogAction
 import com.andannn.melodify.ui.components.popup.dialog.DialogId
+import com.andannn.melodify.ui.widgets.TransparentBackgroundListItem
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter

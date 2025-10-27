@@ -11,8 +11,6 @@ import androidx.compose.runtime.Composable
 actual val DialogId.dialogIdType: DialogType
     get() =
         when (this) {
-            is DialogId.MediaOption -> DialogType.DropDownDialog
-
             is DialogId.SleepTimerOptionDialog,
             DialogId.NewPlayListDialog,
             DialogId.SleepCountingDialog,

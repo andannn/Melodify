@@ -30,13 +30,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.ui.common.icons.SimpleMusicIcons
-import com.andannn.melodify.ui.common.icons.SmpIcon
-import com.andannn.melodify.ui.common.widgets.ExtraPaddingBottom
-import com.andannn.melodify.ui.common.widgets.SmpIcon
 import com.andannn.melodify.ui.components.library.util.toDataSource
 import com.andannn.melodify.ui.components.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.components.popup.rememberAndSetupSnackBarHostState
+import com.andannn.melodify.ui.icons.SimpleMusicIcons
+import com.andannn.melodify.ui.icons.SmpIcon
+import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
+import com.andannn.melodify.ui.widgets.SmpIcon
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.album_page_title
 import melodify.composeapp.generated.resources.artist_page_title

@@ -16,7 +16,7 @@ actual data object HomeScreen : Screen
 @Parcelize
 actual data object LibraryScreen : Screen
 
-actual data class LibraryContentListScreen(
+actual data class LibraryContentListScreen actual constructor(
     actual val datasource: LibraryDataSource,
 ) : Screen {
     constructor(parcel: Parcel) : this(
@@ -39,10 +39,8 @@ actual data class LibraryContentListScreen(
     }
 }
 
-actual fun newLibraryContentListScreen(datasource: LibraryDataSource): LibraryContentListScreen = LibraryContentListScreen(datasource)
-
 @Parcelize
 actual object SearchScreen : Screen
 
 @Parcelize
-actual object TabManageScreen : com.slack.circuit.runtime.screen.Screen
+actual object TabManageScreen : Screen

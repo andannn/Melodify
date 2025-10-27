@@ -14,9 +14,9 @@ expect object LibraryScreen : Screen
 expect object SearchScreen : Screen
 
 expect class LibraryContentListScreen : Screen {
+    constructor(datasource: LibraryDataSource)
+
     val datasource: LibraryDataSource
 }
 
 expect object TabManageScreen : Screen
-
-expect fun newLibraryContentListScreen(datasource: LibraryDataSource): LibraryContentListScreen
