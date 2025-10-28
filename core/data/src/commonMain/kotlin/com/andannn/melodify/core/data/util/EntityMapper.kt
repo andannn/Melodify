@@ -56,6 +56,7 @@ internal fun MediaEntity.toAppItem() =
         artistId = artistId?.toString() ?: "",
         cdTrackNumber = cdTrackNumber ?: 0,
         discNumber = discNumber ?: 0,
+        releaseYear = year?.toString() ?: "Unknown",
         source = sourceUri ?: error("No source uri"),
     )
 
@@ -113,6 +114,7 @@ internal fun CrossRefWithMediaRelation.mapToAppItem(): AudioItemModel {
             cdTrackNumber = 0,
             discNumber = 0,
             source = "",
+            releaseYear = "",
         )
     }
 }

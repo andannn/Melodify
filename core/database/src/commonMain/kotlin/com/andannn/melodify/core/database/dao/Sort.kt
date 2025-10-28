@@ -45,4 +45,6 @@ sealed class MediaSortType(
     object Genre : MediaSortType(MediaColumns.GENRE)
 
     object TrackNum : MediaSortType(MediaColumns.CD_TRACK_NUMBER)
+
+    object ReleaseYear : MediaSortType(MediaColumns.YEAR)
 }

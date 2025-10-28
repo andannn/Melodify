@@ -87,6 +87,11 @@ sealed interface SortOption {
     ) : SortOption
 
     @Serializable
+    data class ReleaseYear(
+        val ascending: Boolean,
+    ) : SortOption
+
+    @Serializable
     data object NONE : SortOption
 }
 
@@ -97,6 +102,7 @@ fun SortOption.isAscending() =
         is SortOption.Title -> ascending
         is SortOption.TrackNum -> ascending
         is SortOption.Genre -> ascending
+        is SortOption.ReleaseYear -> ascending
         is SortOption.NONE -> false
     }
 
@@ -132,6 +138,11 @@ internal fun MutableList<Sort>.addSortOption(sort: SortOption) {
         is SortOption.Genre ->
             apply {
                 add(Sort(MediaSortType.Genre, sort.ascending.toOrder()))
+            }
+
+        is SortOption.ReleaseYear ->
+            apply {
+                add(Sort(MediaSortType.ReleaseYear, sort.ascending.toOrder()))
             }
 
         SortOption.NONE -> {}

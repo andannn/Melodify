@@ -32,6 +32,7 @@ fun MediaItem.toAppItem(): MediaItemModel =
                 EXTRA_ALBUM_COVER_ART_KEY,
             ) ?: "",
         extraUniqueId = mediaMetadata.extras?.getString(UNIQUE_ID_KEY),
+        releaseYear = "0",
         source =
             Uri
                 .withAppendedPath(

@@ -52,6 +52,7 @@ private fun MediaItem.toModel(): AudioItemModel =
         artistId = artist,
         cdTrackNumber = trackNumber ?: 0,
         discNumber = 0,
+        releaseYear = "",
         source = source,
     )
 

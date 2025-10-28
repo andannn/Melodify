@@ -15,11 +15,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Album
 import androidx.compose.material.icons.outlined.Audiotrack
-import androidx.compose.material.icons.outlined.Numbers
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material.icons.outlined.Tag
+import androidx.compose.material.icons.outlined.Timeline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -59,6 +59,7 @@ import melodify.composeapp.generated.resources.artist_page_title
 import melodify.composeapp.generated.resources.sort_by_genre
 import melodify.composeapp.generated.resources.sort_by_media_title
 import melodify.composeapp.generated.resources.sort_by_none
+import melodify.composeapp.generated.resources.sort_by_release_year
 import melodify.composeapp.generated.resources.sort_by_track_number
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -427,6 +428,7 @@ private fun SortOption.toSortOptionType() =
         is SortOption.Artist -> SortOptionType.Artist
         is SortOption.Title -> SortOptionType.Title
         is SortOption.TrackNum -> SortOptionType.TrackNum
+        is SortOption.ReleaseYear -> SortOptionType.ReleaseYear
         is SortOption.Genre -> SortOptionType.Genre
         is SortOption.NONE -> SortOptionType.None
     }
@@ -436,6 +438,7 @@ private enum class SortOptionType {
     Album,
     Title,
     TrackNum,
+    ReleaseYear,
     None,
     Genre,
     ;
@@ -447,6 +450,7 @@ private enum class SortOptionType {
                 Artist,
                 Title,
                 Genre,
+                ReleaseYear,
             )
         val SecondaryGroupOptions =
             listOf(
@@ -454,6 +458,7 @@ private enum class SortOptionType {
                 Artist,
                 Title,
                 Genre,
+                ReleaseYear,
                 None,
             )
         val ContentOptions =
@@ -473,6 +478,7 @@ private fun SortOptionType.orderLabel(ascending: Boolean) =
         -> if (ascending) "A → Z" else "Z → A"
 
         SortOptionType.TrackNum -> if (ascending) "1 → 9" else "9 → 1"
+        SortOptionType.ReleaseYear -> if (ascending) "Old → New" else "New → Old"
         SortOptionType.None -> error("Never. This should not happen.")
     }
 
@@ -484,6 +490,7 @@ private fun SortOptionType.label() =
         SortOptionType.Title -> Res.string.sort_by_media_title
         SortOptionType.TrackNum -> Res.string.sort_by_track_number
         SortOptionType.Genre -> Res.string.sort_by_genre
+        SortOptionType.ReleaseYear -> Res.string.sort_by_release_year
     }
 
 private fun SortOptionType.icon() =
@@ -494,6 +501,7 @@ private fun SortOptionType.icon() =
         SortOptionType.TrackNum -> Icons.Outlined.Audiotrack
         SortOptionType.None -> Icons.Outlined.Remove
         SortOptionType.Genre -> Icons.Outlined.Tag
+        SortOptionType.ReleaseYear -> Icons.Outlined.Timeline
     }
 
 private fun SortOptionType.createSortOption(isAscending: Boolean) =
@@ -503,6 +511,7 @@ private fun SortOptionType.createSortOption(isAscending: Boolean) =
         SortOptionType.Title -> SortOption.Title(isAscending)
         SortOptionType.TrackNum -> SortOption.TrackNum(isAscending)
         SortOptionType.Genre -> SortOption.Genre(isAscending)
+        SortOptionType.ReleaseYear -> SortOption.ReleaseYear(isAscending)
         SortOptionType.None -> SortOption.NONE
     }
 

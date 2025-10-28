@@ -225,6 +225,7 @@ private fun AudioItemModel.keyOf(groupType: GroupType) =
         GroupType.ALBUM -> albumId
         GroupType.Genre -> genreId
         GroupType.TITLE -> name[0].toString()
+        GroupType.YEAR -> releaseYear
         GroupType.NONE -> null
     }
 
@@ -234,6 +235,7 @@ private fun SortOption.toSortType() =
         is SortOption.Title -> GroupType.TITLE
         is SortOption.Artist -> GroupType.ARTIST
         is SortOption.Genre -> GroupType.Genre
+        is SortOption.ReleaseYear -> GroupType.YEAR
         SortOption.NONE -> GroupType.NONE
         is SortOption.TrackNum -> error("TrackNum is not supported")
     }
@@ -261,6 +263,12 @@ private fun GroupType.toHeader(key: String?): HeaderItem? =
         GroupType.Genre ->
             HeaderItem.ID(
                 id = key.toString(),
+                groupType = this,
+            )
+
+        GroupType.YEAR ->
+            HeaderItem.Name(
+                name = key.toString(),
                 groupType = this,
             )
 

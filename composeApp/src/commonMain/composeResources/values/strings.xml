@@ -49,4 +49,5 @@
     <string name="sort_by_track_number">CD Track</string>
     <string name="sort_by_genre">Genre</string>
     <string name="sort_by_none">None</string>
+    <string name="sort_by_release_year">Release date</string>
 </resources>
