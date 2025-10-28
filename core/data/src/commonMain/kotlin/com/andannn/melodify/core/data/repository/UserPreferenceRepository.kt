@@ -6,6 +6,7 @@ package com.andannn.melodify.core.data.repository
 
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.SortRule
+import com.andannn.melodify.core.data.model.TabKind
 import com.andannn.melodify.core.data.model.UserSetting
 import kotlinx.coroutines.flow.Flow
 
@@ -21,18 +22,23 @@ interface UserPreferenceRepository {
     val currentCustomTabsFlow: Flow<List<CustomTab>>
 
     /**
-     * update current custom tabs
-     *
-     * @param currentCustomTabs current custom tabs
-     */
-    suspend fun updateCurrentCustomTabs(currentCustomTabs: List<CustomTab>)
-
-    /**
      * add new custom tab
      *
-     * @param tab tab to add
+     * @param externalId external id
+     * @param tabName name of new custom tab
+     * @param tabKind kind of new custom tab
      */
-    suspend fun addNewCustomTab(tab: CustomTab)
+    suspend fun addNewCustomTab(
+        externalId: String,
+        tabName: String,
+        tabKind: TabKind,
+    )
+
+    suspend fun isTabExist(
+        externalId: String,
+        tabName: String,
+        tabKind: TabKind,
+    ): Boolean
 
     /**
      * delete custom tab
@@ -87,5 +93,21 @@ interface UserPreferenceRepository {
      * get sort rule of tab.
      * return flow of default sort rule if tab is null.
      */
-    fun getSortRule(tab: CustomTab?): Flow<SortRule>
+    fun getCurrentSortRule(tab: CustomTab?): Flow<SortRule>
+
+    /**
+     * get custom sort rule of tab.
+     */
+    suspend fun getTabCustomSortRule(tab: CustomTab): SortRule?
+
+    /**
+     * swap tab order
+     *
+     * @param from from tab
+     * @param to to tab
+     */
+    suspend fun swapTabOrder(
+        from: CustomTab,
+        to: CustomTab,
+    )
 }

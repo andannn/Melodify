@@ -7,37 +7,55 @@ package com.andannn.melodify.core.data.model
 import androidx.paging.PagingData
 import com.andannn.melodify.core.data.Repository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.serialization.Serializable
 
-@Serializable
-sealed interface CustomTab {
-    @Serializable
-    data object AllMusic : CustomTab
+sealed class CustomTab(
+    open val tabId: Long,
+) {
+    data class AllMusic(
+        override val tabId: Long,
+    ) : CustomTab(tabId)
 
-    @Serializable
     data class AlbumDetail(
+        override val tabId: Long,
         val albumId: String,
         val label: String,
-    ) : CustomTab
+    ) : CustomTab(tabId)
 
-    @Serializable
     data class ArtistDetail(
+        override val tabId: Long,
         val artistId: String,
         val label: String,
-    ) : CustomTab
+    ) : CustomTab(tabId)
 
-    @Serializable
     data class GenreDetail(
+        override val tabId: Long,
         val genreId: String,
         val label: String,
-    ) : CustomTab
+    ) : CustomTab(tabId)
 
-    @Serializable
     data class PlayListDetail(
+        override val tabId: Long,
         val playListId: String,
         val label: String,
-    ) : CustomTab
+    ) : CustomTab(tabId)
 }
+
+enum class TabKind {
+    ALBUM,
+    ARTIST,
+    GENRE,
+    PLAYLIST,
+    ALL_MUSIC,
+}
+
+fun CustomTab.toTabKind(): TabKind =
+    when (this) {
+        is CustomTab.AlbumDetail -> TabKind.ALBUM
+        is CustomTab.ArtistDetail -> TabKind.ARTIST
+        is CustomTab.GenreDetail -> TabKind.GENRE
+        is CustomTab.PlayListDetail -> TabKind.PLAYLIST
+        is CustomTab.AllMusic -> TabKind.ALL_MUSIC
+    }
 
 context(repository: Repository)
 fun CustomTab.contentFlow(sort: SortRule): Flow<List<AudioItemModel>> =

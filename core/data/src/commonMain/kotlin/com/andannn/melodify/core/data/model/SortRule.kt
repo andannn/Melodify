@@ -21,23 +21,28 @@ data class SortRule(
     val contentSort: SortOption = SortOption.NONE,
     @SerialName("show_track_num")
     val showTrackNum: Boolean = false,
+    @SerialName("is_preset")
+    val isPreset: Boolean = true,
 ) {
     companion object Preset {
         val TitleASC =
             SortRule(
                 primaryGroupSort = SortOption.Title(true),
                 showTrackNum = false,
+                isPreset = true,
             )
         val AlbumASC =
             SortRule(
                 primaryGroupSort = SortOption.Album(true),
                 contentSort = SortOption.TrackNum(true),
                 showTrackNum = true,
+                isPreset = true,
             )
         val ArtistASC =
             SortRule(
                 primaryGroupSort = SortOption.Artist(true),
                 showTrackNum = false,
+                isPreset = true,
             )
 
         val ArtistAlbumASC =
@@ -46,10 +51,16 @@ data class SortRule(
                 secondaryGroupSort = SortOption.Album(true),
                 contentSort = SortOption.TrackNum(true),
                 showTrackNum = true,
+                isPreset = true,
             )
-        val None = SortRule(SortOption.NONE)
+        val None =
+            SortRule(
+                primaryGroupSort = SortOption.NONE,
+                isPreset = true,
+            )
 
-        val Default = AlbumASC
+        val DefaultPreset = AlbumASC
+        val DefaultCustom = AlbumASC.copy(isPreset = false)
     }
 }
 
@@ -78,6 +89,15 @@ sealed interface SortOption {
     @Serializable
     data object NONE : SortOption
 }
+
+fun SortOption.isAscending() =
+    when (this) {
+        is SortOption.Album -> ascending
+        is SortOption.Artist -> ascending
+        is SortOption.Title -> ascending
+        is SortOption.TrackNum -> ascending
+        is SortOption.NONE -> false
+    }
 
 internal fun SortRule.toSortMethod() =
     SortMethod.buildMethod {

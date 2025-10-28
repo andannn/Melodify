@@ -175,9 +175,7 @@ internal fun HomeUiScreen(
                                 ),
                             )
                         },
-                        icon = {
-                            Icon(Icons.Rounded.MoreVert, contentDescription = "")
-                        },
+                        imageVector = Icons.Rounded.MoreVert,
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                 },

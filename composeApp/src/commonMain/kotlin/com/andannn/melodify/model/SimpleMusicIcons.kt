@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DeleteSweep
+import androidx.compose.material.icons.rounded.DisplaySettings
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.LibraryMusic
@@ -37,6 +38,7 @@ object SimpleMusicIcons {
     val Genre = SmpIcon.ImageVectorIcon(Icons.Rounded.LibraryMusic)
     val PlayList = SmpIcon.ImageVectorIcon(Icons.Rounded.PlayCircle)
     val QueueMusic = SmpIcon.ImageVectorIcon(Icons.AutoMirrored.Outlined.QueueMusic)
+    val DisplaySettings = SmpIcon.ImageVectorIcon(Icons.Rounded.DisplaySettings)
 }
 
 sealed class SmpIcon {

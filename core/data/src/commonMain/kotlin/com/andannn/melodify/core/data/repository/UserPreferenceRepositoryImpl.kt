@@ -7,16 +7,19 @@ package com.andannn.melodify.core.data.repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaPreviewMode
 import com.andannn.melodify.core.data.model.SortRule
+import com.andannn.melodify.core.data.model.TabKind
 import com.andannn.melodify.core.data.model.UserSetting
 import com.andannn.melodify.core.data.util.mapToCustomTabModel
-import com.andannn.melodify.core.data.util.toEntity
 import com.andannn.melodify.core.database.dao.UserDataDao
+import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.CustomTabType
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.datastore.UserSettingPreferences
 import com.andannn.melodify.core.datastore.model.PreviewModeValues
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
@@ -40,28 +43,34 @@ class UserPreferenceRepositoryImpl(
             .getCustomTabsFlow()
             .map { it.mapToCustomTabModel().filterNotNull() }
 
-    override suspend fun updateCurrentCustomTabs(currentCustomTabs: List<CustomTab>) {
-        userDataDao.clearAndInsertCustomTabs(
-            currentCustomTabs.map { it.toEntity() },
+    override suspend fun addNewCustomTab(
+        externalId: String,
+        tabName: String,
+        tabKind: TabKind,
+    ) {
+        userDataDao.insertCustomTab(
+            CustomTabEntity(
+                externalId = externalId,
+                name = tabName,
+                type = tabKind.toEntityName(),
+                sortOrder = (userDataDao.getMaxSortOrder() ?: 1) + 1,
+            ),
         )
     }
 
-    override suspend fun addNewCustomTab(tab: CustomTab) {
-        val currentTabs = userDataDao.getCustomTabsFlow().first()
-        userDataDao.clearAndInsertCustomTabs(currentTabs + tab.toEntity())
-    }
+    override suspend fun isTabExist(
+        externalId: String,
+        tabName: String,
+        tabKind: TabKind,
+    ): Boolean =
+        userDataDao.isTabExist(
+            externalId = externalId,
+            name = tabName,
+            type = tabKind.toEntityName(),
+        )
 
     override suspend fun deleteCustomTab(tab: CustomTab) {
-        val (type, id) =
-            when (tab) {
-                is CustomTab.AlbumDetail -> CustomTabType.ALBUM_DETAIL to tab.albumId
-                CustomTab.AllMusic -> CustomTabType.ALL_MUSIC to null
-                is CustomTab.ArtistDetail -> CustomTabType.ARTIST_DETAIL to tab.artistId
-                is CustomTab.GenreDetail -> CustomTabType.GENRE_DETAIL to tab.genreId
-                is CustomTab.PlayListDetail -> CustomTabType.PLAYLIST_DETAIL to tab.playListId
-            }
-
-        userDataDao.deleteCustomTab(type = type, externalId = id)
+        userDataDao.deleteCustomTab(tabId = tab.tabId)
     }
 
     override suspend fun addLibraryPath(path: String): Boolean {
@@ -108,15 +117,50 @@ class UserPreferenceRepositoryImpl(
         tab: CustomTab,
         sortRule: SortRule,
     ) {
+        userDataDao.updateDisplaySettingForTab(
+            tabId = tab.tabId,
+            settings = Json.encodeToString(sortRule),
+        )
     }
 
-    override fun getSortRule(tab: CustomTab?): Flow<SortRule> {
+    override fun getCurrentSortRule(tab: CustomTab?): Flow<SortRule> {
         val defaultSortRuleFlow = userSettingFlow.map { it.defaultSortRule }
-        return defaultSortRuleFlow.map { default ->
-            default ?: SortRule.Preset.Default
+        val customTabSortRuleFlow =
+            if (tab != null) {
+                userDataDao.getDisplaySettingFlowOfTab(tab.tabId)
+            } else {
+                flowOf(null)
+            }
+        return combine(
+            defaultSortRuleFlow,
+            customTabSortRuleFlow,
+        ) { default, custom ->
+            val customSortRule: SortRule? = custom?.let { Json.decodeFromString(it) }
+            customSortRule ?: default ?: SortRule.Preset.DefaultPreset
         }
     }
+
+    override suspend fun getTabCustomSortRule(tab: CustomTab): SortRule? =
+        userDataDao.getDisplaySettingFlowOfTab(tab.tabId).first()?.let {
+            Json.decodeFromString(it)
+        }
+
+    override suspend fun swapTabOrder(
+        from: CustomTab,
+        to: CustomTab,
+    ) {
+        userDataDao.swapTabOrder(from.tabId, toId = to.tabId)
+    }
 }
+
+private fun TabKind.toEntityName(): String =
+    when (this) {
+        TabKind.ALBUM -> CustomTabType.ALBUM_DETAIL
+        TabKind.ARTIST -> CustomTabType.ARTIST_DETAIL
+        TabKind.GENRE -> CustomTabType.GENRE_DETAIL
+        TabKind.PLAYLIST -> CustomTabType.PLAYLIST_DETAIL
+        TabKind.ALL_MUSIC -> CustomTabType.ALL_MUSIC
+    }
 
 expect fun isPathValid(path: String): Boolean
 

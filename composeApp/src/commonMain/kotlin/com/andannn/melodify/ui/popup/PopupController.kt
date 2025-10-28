@@ -19,6 +19,7 @@ import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.model.TabKind
 import com.andannn.melodify.core.data.repository.PlayListRepository
 import com.andannn.melodify.core.data.repository.SleepTimerRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
@@ -77,19 +78,19 @@ class PopupControllerImpl : PopupController {
 
 context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
 suspend fun MediaItemModel.pinToHomeTab() {
-    val tab =
+    val tabKind =
         when (this) {
-            is AlbumItemModel -> CustomTab.AlbumDetail(id, name)
-            is ArtistItemModel -> CustomTab.ArtistDetail(id, name)
-            is GenreItemModel -> CustomTab.GenreDetail(id, name)
-            is PlayListItemModel -> CustomTab.PlayListDetail(id, name)
+            is AlbumItemModel -> TabKind.ALBUM
+            is ArtistItemModel -> TabKind.ARTIST
+            is GenreItemModel -> TabKind.GENRE
+            is PlayListItemModel -> TabKind.PLAYLIST
             is AudioItemModel -> error("invalid")
         }
-    val current = userPreferenceRepository.currentCustomTabsFlow.first()
-    if (current.contains(tab)) {
+    val exist = userPreferenceRepository.isTabExist(externalId = id, tabName = name, tabKind = tabKind)
+    if (exist) {
         popupController.showSnackBar(SnackBarMessage.TabAlreadyExist)
     } else {
-        userPreferenceRepository.addNewCustomTab(tab)
+        userPreferenceRepository.addNewCustomTab(externalId = id, tabName = name, tabKind = tabKind)
     }
 }
 
@@ -201,10 +202,9 @@ private suspend fun createNewPlayList(items: List<AudioItemModel>) {
         )
 
         repo.addNewCustomTab(
-            CustomTab.PlayListDetail(
-                playListId.toString(),
-                name,
-            ),
+            externalId = playListId.toString(),
+            tabName = name,
+            tabKind = TabKind.PLAYLIST,
         )
     }
 }
@@ -226,10 +226,9 @@ private suspend fun createNewPlayListFromSource(source: MediaItemModel) {
         )
 
         repo.addNewCustomTab(
-            CustomTab.PlayListDetail(
-                playListId.toString(),
-                name,
-            ),
+            externalId = playListId.toString(),
+            tabName = name,
+            tabKind = TabKind.PLAYLIST,
         )
     }
 }

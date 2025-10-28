@@ -16,8 +16,8 @@ import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.contentFlow
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
@@ -26,7 +26,6 @@ import com.andannn.melodify.ui.popup.addToPlaylist
 import com.andannn.melodify.ui.popup.addToQueue
 import com.andannn.melodify.ui.popup.dialog.OptionItem
 import com.slack.circuit.retained.collectAsRetainedState
-import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
@@ -61,10 +60,15 @@ class TabUiPresenter(
         val currentTabList by userPreferenceRepository.currentCustomTabsFlow.collectAsRetainedState(
             emptyList(),
         )
-        val groupSort by rememberRetained {
-            mutableStateOf(
-                SortRule.Preset.AlbumASC,
-            )
+
+        suspend fun currentItems(): List<AudioItemModel> {
+            val currentTab =
+                currentTabList.getOrNull(selectedIndex) ?: return emptyList()
+            val groupSort =
+                userPreferenceRepository.getCurrentSortRule(currentTab).first()
+            return with(repository) {
+                currentTab.contentFlow(sort = groupSort).first()
+            }
         }
 
         LaunchedEffect(Unit) {
@@ -115,6 +119,7 @@ class TabUiPresenter(
                                             add(OptionItem.PLAY_NEXT)
                                             add(OptionItem.ADD_TO_QUEUE)
                                             add(OptionItem.ADD_TO_PLAYLIST)
+                                            add(OptionItem.DISPLAY_SETTING)
 
                                             if (tab !is CustomTab.AllMusic) {
                                                 add(OptionItem.DELETE_TAB)
@@ -125,18 +130,19 @@ class TabUiPresenter(
 
                         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
                             context(repository, popupController) {
-                                val items =
-                                    currentTabList
-                                        .getOrNull(selectedIndex)
-                                        ?.contentFlow(sort = groupSort)
-                                        ?.first() ?: error("current tab is null")
                                 when (result.optionItem) {
                                     OptionItem.DELETE_TAB ->
                                         repository.userPreferenceRepository.deleteCustomTab(tab)
 
-                                    OptionItem.PLAY_NEXT -> addToNextPlay(items)
-                                    OptionItem.ADD_TO_QUEUE -> addToQueue(items)
-                                    OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items)
+                                    OptionItem.PLAY_NEXT -> currentItems().also { addToNextPlay(it) }
+                                    OptionItem.ADD_TO_QUEUE -> currentItems().also { addToQueue(it) }
+                                    OptionItem.ADD_TO_PLAYLIST ->
+                                        currentItems().also { addToPlaylist(it) }
+
+                                    OptionItem.DISPLAY_SETTING -> {
+                                        popupController.showDialog(DialogId.ChangeSortRuleDialog(tab))
+                                    }
+
                                     else -> {}
                                 }
                             }

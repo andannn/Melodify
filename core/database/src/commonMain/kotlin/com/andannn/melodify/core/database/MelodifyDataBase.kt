@@ -21,6 +21,7 @@ import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.CustomTabColumns
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
@@ -74,8 +75,9 @@ internal object Tables {
         AutoMigration(from = 4, to = 5, AutoMigration4To5Spec::class),
         AutoMigration(from = 5, to = 6, AutoMigration5To6Spec::class),
         AutoMigration(from = 6, to = 7),
+        AutoMigration(from = 7, to = 8, AutoMigration7To8Spec::class),
     ],
-    version = 7,
+    version = 8,
 )
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class MelodifyDataBase : RoomDatabase() {
@@ -222,6 +224,17 @@ private fun createUpdateTrackCountTrigger(connection: SQLiteConnection) {
         END;
         """.trimIndent(),
     )
+}
+
+class AutoMigration7To8Spec : AutoMigrationSpec {
+    override fun onPostMigrate(connection: SQLiteConnection) {
+        connection.execSQL(
+            """
+            UPDATE ${Tables.CUSTOM_TAB} 
+            SET ${CustomTabColumns.SORT_ORDER} = ${CustomTabColumns.ID}
+            """.trimIndent(),
+        )
+    }
 }
 
 // Trigger is created by Room Automatically.

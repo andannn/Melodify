@@ -8,9 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
-import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.slack.circuit.retained.collectAsRetainedState
@@ -52,27 +50,15 @@ class TabManagementPresenter(
                 is TabManagementEvent.OnSwapFinished -> {
                     scope.launch {
                         val (from, to) = event
-                        val newTabList =
-                            currentTabList.toMutableList().apply {
-                                val item = removeAt(from)
-                                add(to, item)
-                            }
-
-                        userPreferenceRepository.updateCurrentCustomTabs(
-                            newTabList,
-                        )
+                        userPreferenceRepository.swapTabOrder(from = currentTabList[from], to = currentTabList[to])
                     }
                 }
 
                 is TabManagementEvent.OnDeleteFinished -> {
                     scope.launch {
-                        val newTabList =
-                            currentTabList.toMutableList().apply {
-                                removeAt(event.index)
-                            }
-                        userPreferenceRepository.updateCurrentCustomTabs(
-                            newTabList,
-                        )
+                        val toDelete =
+                            currentTabList[event.index]
+                        userPreferenceRepository.deleteCustomTab(toDelete)
                     }
                 }
             }
