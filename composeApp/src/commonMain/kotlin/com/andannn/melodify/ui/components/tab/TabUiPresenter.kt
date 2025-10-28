@@ -61,11 +61,6 @@ class TabUiPresenter(
         val currentTabList by userPreferenceRepository.currentCustomTabsFlow.collectAsRetainedState(
             emptyList(),
         )
-        val groupSort by rememberRetained {
-            mutableStateOf(
-                SortRule.Preset.AlbumASC,
-            )
-        }
 
         LaunchedEffect(Unit) {
             userPreferenceRepository.currentCustomTabsFlow
@@ -125,11 +120,11 @@ class TabUiPresenter(
 
                         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
                             context(repository, popupController) {
-                                val items =
-                                    currentTabList
-                                        .getOrNull(selectedIndex)
-                                        ?.contentFlow(sort = groupSort)
-                                        ?.first() ?: error("current tab is null")
+                                val currentTab =
+                                    currentTabList.getOrNull(selectedIndex) ?: return@launch
+                                val groupSort =
+                                    userPreferenceRepository.getSortRule(currentTab).first()
+                                val items = currentTab.contentFlow(sort = groupSort).first()
                                 when (result.optionItem) {
                                     OptionItem.DELETE_TAB ->
                                         repository.userPreferenceRepository.deleteCustomTab(tab)
