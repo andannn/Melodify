@@ -6,12 +6,15 @@ package com.andannn.melodify.ui.popup.dialog.content
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Album
 import androidx.compose.material.icons.outlined.Audiotrack
@@ -103,8 +106,9 @@ private fun ChangeSortRuleDialogContent(
         remember(sortRule) {
             PresetSortRule.entries.firstOrNull { sortRule.isPreset && it.sortRule == sortRule }
         }
+    val options = PresetSortRule.entries
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier.fillMaxHeight()) {
         val title =
             if (isDefaultSettings) {
                 "Change Default Sort Order"
@@ -121,156 +125,168 @@ private fun ChangeSortRuleDialogContent(
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.titleLarge,
         )
-        val options = PresetSortRule.entries
 
-        Spacer(modifier = Modifier.height(16.dp))
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-        Text(
-            modifier =
-                Modifier.padding(horizontal = 12.dp),
-            text = "Preset",
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary,
-        )
-
-        options.forEach { rule ->
-            TransparentBackgroundListItem(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                onClick = {
-                    if (rule != selectedPresetOption) {
-                        onChangePresetSortRule(rule)
-                    }
-                },
-                headlineContent = {
-                    Text(
-                        text = rule.headerText(),
-                    )
-                },
-                supportingContent = {
-                    Text(
-                        text = rule.subTitle(),
-                    )
-                },
-                trailingContent = {
-                    RadioButton(
-                        selected = selectedPresetOption == rule,
-                        onClick = null,
-                    )
-                },
-            )
-        }
-
-        if (!isDefaultSettings) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                modifier =
-                    Modifier.padding(horizontal = 12.dp),
-                text = "Customize",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                val resolvedSortOption =
-                    remember(sortRule) {
-                        if (sortRule.isPreset) {
-                            SortRule.DefaultCustom
-                        } else {
-                            sortRule
-                        }
-                    }
-
-                Column(
+            item {
+                Text(
                     modifier =
-                        Modifier
-                            .padding(horizontal = 16.dp)
-                            .weight(1f)
-                            .graphicsLayer {
-                                alpha = if (sortRule.isPreset) 0.5f else 1f
+                        Modifier.padding(horizontal = 12.dp),
+                    text = "Preset",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+
+            item {
+                Column {
+                    options.forEach { rule ->
+                        TransparentBackgroundListItem(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                            onClick = {
+                                if (rule != selectedPresetOption) {
+                                    onChangePresetSortRule(rule)
+                                }
                             },
-                ) {
-                    val enabled = !sortRule.isPreset
-
-                    CustomSortOptionGroup(
-                        modifier = Modifier,
-                        enabled = enabled,
-                        sortRule = resolvedSortOption,
-                        onPrimarySortRuleChange = { option ->
-                            if (!sortRule.containsOption(option)) {
-                                onChangeCustomSortRule(
-                                    sortRule.copy(
-                                        primaryGroupSort = option,
-                                    ),
+                            headlineContent = {
+                                Text(
+                                    text = rule.headerText(),
                                 )
-                            }
-                        },
-                        onSecondarySortRuleChange = { option ->
-                            if (!sortRule.containsOption(option)) {
-                                onChangeCustomSortRule(
-                                    sortRule.copy(
-                                        secondaryGroupSort = option,
-                                    ),
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = rule.subTitle(),
                                 )
-                            }
-                        },
-                        onContentSortRuleChange = { option ->
-                            if (!sortRule.containsOption(option)) {
-                                onChangeCustomSortRule(
-                                    sortRule.copy(
-                                        contentSort = option,
-                                    ),
-                                )
-                            }
-                        },
-                    )
-
-                    Spacer(Modifier.height(8.dp))
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text("Show Track Number")
-                        Spacer(Modifier.width(6.dp))
-                        Switch(
-                            enabled = enabled,
-                            checked = resolvedSortOption.showTrackNum,
-                            onCheckedChange = {
-                                onChangeCustomSortRule(
-                                    resolvedSortOption.copy(
-                                        showTrackNum = it,
-                                    ),
+                            },
+                            trailingContent = {
+                                RadioButton(
+                                    selected = selectedPresetOption == rule,
+                                    onClick = null,
                                 )
                             },
                         )
                     }
-
-                    Spacer(Modifier.height(8.dp))
-
-                    TextButton(
-                        enabled = enabled,
-                        onClick = {
-                            onChangeCustomSortRule(SortRule.DefaultCustom)
-                        },
-                    ) {
-                        Text("Reset")
-                    }
                 }
-
-                RadioButton(
-                    modifier = Modifier.padding(end = 8.dp),
-                    selected = !sortRule.isPreset,
-                    onClick = onCustomRadioButtonClick,
-                )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+
+            item {
+                if (!isDefaultSettings) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        modifier =
+                            Modifier.padding(horizontal = 12.dp),
+                        text = "Customize",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                    ) {
+                        val resolvedSortOption =
+                            remember(sortRule) {
+                                if (sortRule.isPreset) {
+                                    SortRule.DefaultCustom
+                                } else {
+                                    sortRule
+                                }
+                            }
+
+                        Column(
+                            modifier =
+                                Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .weight(1f)
+                                    .graphicsLayer {
+                                        alpha = if (sortRule.isPreset) 0.5f else 1f
+                                    },
+                        ) {
+                            val enabled = !sortRule.isPreset
+
+                            CustomSortOptionGroup(
+                                modifier = Modifier,
+                                enabled = enabled,
+                                sortRule = resolvedSortOption,
+                                onPrimarySortRuleChange = { option ->
+                                    if (!sortRule.containsOption(option)) {
+                                        onChangeCustomSortRule(
+                                            sortRule.copy(
+                                                primaryGroupSort = option,
+                                            ),
+                                        )
+                                    }
+                                },
+                                onSecondarySortRuleChange = { option ->
+                                    if (!sortRule.containsOption(option)) {
+                                        onChangeCustomSortRule(
+                                            sortRule.copy(
+                                                secondaryGroupSort = option,
+                                            ),
+                                        )
+                                    }
+                                },
+                                onContentSortRuleChange = { option ->
+                                    if (!sortRule.containsOption(option)) {
+                                        onChangeCustomSortRule(
+                                            sortRule.copy(
+                                                contentSort = option,
+                                            ),
+                                        )
+                                    }
+                                },
+                            )
+
+                            Spacer(Modifier.height(8.dp))
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text("Show Track Number")
+                                Spacer(Modifier.width(6.dp))
+                                Switch(
+                                    enabled = enabled,
+                                    checked = resolvedSortOption.showTrackNum,
+                                    onCheckedChange = {
+                                        onChangeCustomSortRule(
+                                            resolvedSortOption.copy(
+                                                showTrackNum = it,
+                                            ),
+                                        )
+                                    },
+                                )
+                            }
+
+                            Spacer(Modifier.height(8.dp))
+
+                            TextButton(
+                                enabled = enabled,
+                                onClick = {
+                                    onChangeCustomSortRule(SortRule.DefaultCustom)
+                                },
+                            ) {
+                                Text("Reset")
+                            }
+                        }
+
+                        RadioButton(
+                            modifier = Modifier.padding(end = 8.dp),
+                            selected = !sortRule.isPreset,
+                            onClick = onCustomRadioButtonClick,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
         }
     }
 }
@@ -355,12 +371,11 @@ private fun SortOptionSelector(
             )
 
             Box(
-                Modifier.weight(1.5f).height(48.dp),
+                Modifier.weight(1.5f),
             ) {
                 if (currentOption !is SortOption.NONE) {
-                    Row(modifier = Modifier.fillMaxWidth()) {
+                    FlowRow(modifier = Modifier.fillMaxWidth()) {
                         SelectableTextButton(
-                            modifier = Modifier.weight(1f),
                             text = currentOptionType.orderLabel(ascending = true),
                             enabled = enabled,
                             selected = isAscending,
@@ -372,7 +387,6 @@ private fun SortOptionSelector(
                             },
                         )
                         SelectableTextButton(
-                            modifier = Modifier.weight(1f),
                             text = currentOptionType.orderLabel(ascending = false),
                             enabled = enabled,
                             selected = !isAscending,
@@ -414,7 +428,7 @@ private fun SelectableTextButton(
             colors = colors,
             onClick = onClick,
         ) {
-            Text(text)
+            Text(text, maxLines = 1)
         }
     }
 }
