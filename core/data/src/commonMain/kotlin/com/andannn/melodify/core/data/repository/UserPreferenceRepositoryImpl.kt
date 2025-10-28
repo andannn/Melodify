@@ -118,6 +118,10 @@ class UserPreferenceRepositoryImpl(
         tab: CustomTab,
         sortRule: SortRule,
     ) {
+        userDataDao.updateDisplaySettingForTab(
+            tabId = tab.tabId,
+            settings = Json.encodeToString(sortRule),
+        )
     }
 
     override fun getSortRule(tab: CustomTab?): Flow<SortRule> {

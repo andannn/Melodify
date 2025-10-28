@@ -12,6 +12,7 @@ import melodify.composeapp.generated.resources.add_to_playlist
 import melodify.composeapp.generated.resources.add_to_queue
 import melodify.composeapp.generated.resources.delete_from_playlist
 import melodify.composeapp.generated.resources.delete_this_tab
+import melodify.composeapp.generated.resources.display_settings
 import melodify.composeapp.generated.resources.play_next
 import melodify.composeapp.generated.resources.remove_playlist
 import melodify.composeapp.generated.resources.sleep_timer
@@ -54,6 +55,10 @@ enum class OptionItem(
     ADD_TO_HOME_TAB(
         smpIcon = SimpleMusicIcons.AddToHomeTab,
         text = Res.string.add_to_home_tab,
+    ),
+    DISPLAY_SETTING(
+        smpIcon = SimpleMusicIcons.DisplaySettings,
+        text = Res.string.display_settings,
     ),
 }
 

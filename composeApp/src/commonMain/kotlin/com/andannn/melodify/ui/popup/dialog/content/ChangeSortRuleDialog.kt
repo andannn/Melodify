@@ -17,12 +17,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.ui.util.getCategoryResource
 import com.andannn.melodify.ui.widgets.TransparentBackgroundListItem
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
@@ -38,20 +40,35 @@ fun ChangeSortRuleDialog(
 ) {
     val state = rememberChangeSortRulePresenter(dialog.tab).present()
     Column(modifier = modifier) {
-        val title = if (dialog.tab != null) dialog.tab.toString() else "Change Default Sort Order"
+        val title =
+            if (dialog.tab != null) {
+                "Display Setting for " + getCategoryResource(dialog.tab)
+            } else {
+                "Change Default Sort Order"
+            }
         Text(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
             text = title,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.titleLarge,
         )
         val options = PresetSortRule.entries
 
+        Text(
+            modifier =
+                Modifier.padding(horizontal = 12.dp),
+            text = "Preset",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
         options.forEach { rule ->
             TransparentBackgroundListItem(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 onClick = {
                     if (rule != state.selectedOption) {
                         state.eventSink(UiEvent.OnChangeSortRule(rule))

@@ -44,4 +44,5 @@
     <string name="favorite">Favorite</string>
     <string name="tab_already_exist">Tab already exist.</string>
     <string name="default_sort_order">Default Sort Order</string>
+    <string name="display_settings">Display options</string>
 </resources>
