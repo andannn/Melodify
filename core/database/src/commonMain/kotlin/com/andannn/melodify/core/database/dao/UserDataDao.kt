@@ -28,25 +28,44 @@ interface UserDataDao {
     suspend fun getMaxSortOrder(): Int?
 
     @Query("SELECT ${CustomTabColumns.SORT_ORDER} FROM ${Tables.CUSTOM_TAB} WHERE ${CustomTabColumns.ID} = :id LIMIT 1")
-    suspend fun getSortOrder(id: Long): Int?
-
-    @Query("UPDATE ${Tables.CUSTOM_TAB} SET ${CustomTabColumns.SORT_ORDER} = :sortOrder WHERE ${CustomTabColumns.ID} = :id")
-    suspend fun updateSortOrder(
-        id: Long,
-        sortOrder: Int,
-    )
+    suspend fun getSortOrder(id: Long): Int
 
     @Transaction
     suspend fun swapTabOrder(
         fromId: Long,
         toId: Long,
     ) {
-        val fromOrder = getSortOrder(fromId) ?: 0
-        val toOrder = getSortOrder(toId) ?: 0
+        val fromOrder = getSortOrder(fromId)
+        val toOrder = getSortOrder(toId)
 
-        updateSortOrder(fromId, toOrder)
-        updateSortOrder(toId, fromOrder)
+        moveByOrder(
+            from = fromOrder,
+            to = toOrder,
+            movingId = fromId,
+        )
     }
+
+    @Query(
+        """
+        UPDATE custom_tab_table
+        SET sort_order = CASE
+            WHEN :from = :to THEN sort_order
+            WHEN :movingId IS NOT NULL AND custom_tab_id = :movingId THEN :to
+            WHEN :from < :to AND sort_order > :from AND sort_order <= :to
+                THEN sort_order - 1
+            WHEN :from > :to AND sort_order >= :to AND sort_order < :from
+                THEN sort_order + 1
+            ELSE sort_order
+        END
+        WHERE (sort_order BETWEEN MIN(:from, :to) AND MAX(:from, :to))
+           OR (custom_tab_id = :movingId)
+        """,
+    )
+    suspend fun moveByOrder(
+        from: Int,
+        to: Int,
+        movingId: Long,
+    )
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertCustomTab(customTab: CustomTabEntity): Long?
