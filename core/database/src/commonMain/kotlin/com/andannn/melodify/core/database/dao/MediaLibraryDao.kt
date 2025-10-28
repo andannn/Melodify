@@ -26,6 +26,15 @@ import kotlinx.coroutines.flow.Flow
 
 private const val TAG = "MediaLibraryDao"
 
+private const val DEFAULT_CHUNK_SIZE = 500
+
+object MediaType {
+    const val MEDIA = 0
+    const val ALBUM = 1
+    const val ARTIST = 2
+    const val GENRE = 3
+}
+
 @Dao
 interface MediaLibraryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -232,15 +241,47 @@ interface MediaLibraryDao {
         artists: List<ArtistEntity>,
         genres: List<GenreEntity>,
         audios: List<MediaEntity>,
+        onStep: (type: Int, inserted: Int, total: Int) -> Unit,
     ) {
         deleteAllAlbums()
         deleteAllArtists()
         deleteAllGenres()
         deleteAllMedias()
 
-        insertAlbums(albums)
-        insertArtists(artists)
-        insertGenres(genres)
-        insertMedias(audios)
+        batchInsert(albums, DEFAULT_CHUNK_SIZE) { inserted, total ->
+            onStep(MediaType.ALBUM, inserted, total)
+        }
+        batchInsert(artists, DEFAULT_CHUNK_SIZE) { inserted, total ->
+            onStep(MediaType.ARTIST, inserted, total)
+        }
+        batchInsert(genres, DEFAULT_CHUNK_SIZE) { inserted, total ->
+            onStep(MediaType.GENRE, inserted, total)
+        }
+        batchInsert(audios, DEFAULT_CHUNK_SIZE) { inserted, total ->
+            onStep(MediaType.MEDIA, inserted, total)
+        }
+    }
+
+    private suspend fun <T> batchInsert(
+        all: List<T>,
+        chunk: Int,
+        onStep: (inserted: Int, total: Int) -> Unit,
+    ) {
+        val total = all.size.coerceAtLeast(1)
+        var done = 0
+        all
+            .asSequence()
+            .chunked(chunk)
+            .forEach { part ->
+                when (val first = part.firstOrNull()) {
+                    is AlbumEntity -> insertAlbums(part as List<AlbumEntity>)
+                    is ArtistEntity -> insertArtists(part as List<ArtistEntity>)
+                    is GenreEntity -> insertGenres(part as List<GenreEntity>)
+                    is MediaEntity -> insertMedias(part as List<MediaEntity>)
+                    else -> Unit
+                }
+                done += part.size
+                onStep(done, total)
+            }
     }
 }

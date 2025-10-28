@@ -10,12 +10,14 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.andannn.melodify.core.datastore.UserSettingPreferences
 import io.github.aakira.napier.Napier
 import org.koin.core.component.KoinComponent
@@ -52,7 +54,32 @@ object SyncWorkHelper {
     }
 }
 
+fun Data.toSyncStatus() =
+    when (getString(EVENT_TYPE)) {
+        EVENT_TYPE_VALUE_START -> SyncStatus.Start
+        EVENT_TYPE_VALUE_COMPLETE -> SyncStatus.Complete
+        EVENT_TYPE_VALUE_FAILED -> SyncStatus.Failed
+        EVENT_TYPE_VALUE_PROGRESS -> {
+            SyncStatus.Progress(
+                type = SyncType.valueOf(getString(MEDIA_TYPE) ?: error("no media type")),
+                total = getInt(TOTAL, 0),
+                progress = getInt(PROGRESS, 0),
+            )
+        }
+
+        else -> {}
+    }
+
 private const val TAG = "SyncAllWorker"
+
+private const val MEDIA_TYPE = "Type"
+private const val TOTAL = "total"
+private const val PROGRESS = "progress"
+private const val EVENT_TYPE = "EventType"
+private const val EVENT_TYPE_VALUE_START = "START"
+private const val EVENT_TYPE_VALUE_COMPLETE = "COMPLETE"
+private const val EVENT_TYPE_VALUE_FAILED = "FAILED"
+private const val EVENT_TYPE_VALUE_PROGRESS = "PROGRESS"
 
 internal class SyncAllMediaWorker(
     private val appContext: Context,
@@ -70,10 +97,13 @@ internal class SyncAllMediaWorker(
             return Result.failure()
         }
 
-        val result = mediaLibrarySyncer.syncAllMediaLibrary()
-        Napier.d(tag = TAG) { "sync finished. result $result" }
+        var status: SyncStatus? = null
+        mediaLibrarySyncer.syncAllMediaLibrary().collect {
+            status = it
+            setProgress(it.toData())
+        }
 
-        return if (result) {
+        return if (status is SyncStatus.Complete) {
             logSuccessSyncTimestamp()
             Result.success()
         } else {
@@ -99,4 +129,30 @@ internal class SyncAllMediaWorker(
             System.currentTimeMillis(),
         )
     }
+
+    private fun SyncStatus.toData() =
+        when (this) {
+            SyncStatus.Start ->
+                workDataOf(
+                    EVENT_TYPE to EVENT_TYPE_VALUE_START,
+                )
+
+            SyncStatus.Complete ->
+                workDataOf(
+                    EVENT_TYPE to EVENT_TYPE_VALUE_COMPLETE,
+                )
+
+            is SyncStatus.Failed ->
+                workDataOf(
+                    EVENT_TYPE to EVENT_TYPE_VALUE_FAILED,
+                )
+
+            is SyncStatus.Progress ->
+                workDataOf(
+                    EVENT_TYPE to EVENT_TYPE_VALUE_PROGRESS,
+                    MEDIA_TYPE to type.name,
+                    TOTAL to total,
+                    PROGRESS to progress,
+                )
+        }
 }
