@@ -87,7 +87,7 @@ class TabContentPresenter(
             val currentTab = selectedTab
             if (currentTab == null) return@LaunchedEffect
 
-            userPreferenceRepository.getSortRule(currentTab).collect {
+            userPreferenceRepository.getCurrentSortRule(currentTab).collect {
                 groupSort = it
             }
         }

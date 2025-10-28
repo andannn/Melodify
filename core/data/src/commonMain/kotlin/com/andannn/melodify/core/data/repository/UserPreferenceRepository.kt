@@ -93,7 +93,12 @@ interface UserPreferenceRepository {
      * get sort rule of tab.
      * return flow of default sort rule if tab is null.
      */
-    fun getSortRule(tab: CustomTab?): Flow<SortRule>
+    fun getCurrentSortRule(tab: CustomTab?): Flow<SortRule>
+
+    /**
+     * get custom sort rule of tab.
+     */
+    suspend fun getTabCustomSortRule(tab: CustomTab): SortRule?
 
     /**
      * swap tab order

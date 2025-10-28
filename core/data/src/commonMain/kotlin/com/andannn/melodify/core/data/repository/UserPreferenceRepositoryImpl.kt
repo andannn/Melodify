@@ -10,7 +10,6 @@ import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.TabKind
 import com.andannn.melodify.core.data.model.UserSetting
 import com.andannn.melodify.core.data.util.mapToCustomTabModel
-import com.andannn.melodify.core.data.util.toEntity
 import com.andannn.melodify.core.database.dao.UserDataDao
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.CustomTabType
@@ -124,7 +123,7 @@ class UserPreferenceRepositoryImpl(
         )
     }
 
-    override fun getSortRule(tab: CustomTab?): Flow<SortRule> {
+    override fun getCurrentSortRule(tab: CustomTab?): Flow<SortRule> {
         val defaultSortRuleFlow = userSettingFlow.map { it.defaultSortRule }
         val customTabSortRuleFlow =
             if (tab != null) {
@@ -137,9 +136,14 @@ class UserPreferenceRepositoryImpl(
             customTabSortRuleFlow,
         ) { default, custom ->
             val customSortRule: SortRule? = custom?.let { Json.decodeFromString(it) }
-            customSortRule ?: default ?: SortRule.Preset.Default
+            customSortRule ?: default ?: SortRule.Preset.DefaultPreset
         }
     }
+
+    override suspend fun getTabCustomSortRule(tab: CustomTab): SortRule? =
+        userDataDao.getDisplaySettingFlowOfTab(tab.tabId).first()?.let {
+            Json.decodeFromString(it)
+        }
 
     override suspend fun swapTabOrder(
         from: CustomTab,
