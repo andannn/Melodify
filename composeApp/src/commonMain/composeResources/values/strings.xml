@@ -47,5 +47,6 @@
     <string name="display_settings">Display options</string>
     <string name="sort_by_media_title">Title</string>
     <string name="sort_by_track_number">CD Track</string>
+    <string name="sort_by_genre">Genre</string>
     <string name="sort_by_none">None</string>
 </resources>

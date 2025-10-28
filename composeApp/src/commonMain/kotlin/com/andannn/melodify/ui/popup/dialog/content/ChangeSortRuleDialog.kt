@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.Numbers
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material.icons.outlined.SortByAlpha
+import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -55,6 +56,7 @@ import kotlinx.coroutines.launch
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.album_page_title
 import melodify.composeapp.generated.resources.artist_page_title
+import melodify.composeapp.generated.resources.sort_by_genre
 import melodify.composeapp.generated.resources.sort_by_media_title
 import melodify.composeapp.generated.resources.sort_by_none
 import melodify.composeapp.generated.resources.sort_by_track_number
@@ -425,6 +427,7 @@ private fun SortOption.toSortOptionType() =
         is SortOption.Artist -> SortOptionType.Artist
         is SortOption.Title -> SortOptionType.Title
         is SortOption.TrackNum -> SortOptionType.TrackNum
+        is SortOption.Genre -> SortOptionType.Genre
         is SortOption.NONE -> SortOptionType.None
     }
 
@@ -434,6 +437,7 @@ private enum class SortOptionType {
     Title,
     TrackNum,
     None,
+    Genre,
     ;
 
     companion object {
@@ -442,12 +446,14 @@ private enum class SortOptionType {
                 Album,
                 Artist,
                 Title,
+                Genre,
             )
         val SecondaryGroupOptions =
             listOf(
                 Album,
                 Artist,
                 Title,
+                Genre,
                 None,
             )
         val ContentOptions =
@@ -462,6 +468,7 @@ private fun SortOptionType.orderLabel(ascending: Boolean) =
     when (this) {
         SortOptionType.Artist,
         SortOptionType.Title,
+        SortOptionType.Genre,
         SortOptionType.Album,
         -> if (ascending) "A → Z" else "Z → A"
 
@@ -476,6 +483,7 @@ private fun SortOptionType.label() =
         SortOptionType.None -> Res.string.sort_by_none
         SortOptionType.Title -> Res.string.sort_by_media_title
         SortOptionType.TrackNum -> Res.string.sort_by_track_number
+        SortOptionType.Genre -> Res.string.sort_by_genre
     }
 
 private fun SortOptionType.icon() =
@@ -485,6 +493,7 @@ private fun SortOptionType.icon() =
         SortOptionType.Title -> Icons.Outlined.SortByAlpha
         SortOptionType.TrackNum -> Icons.Outlined.Audiotrack
         SortOptionType.None -> Icons.Outlined.Remove
+        SortOptionType.Genre -> Icons.Outlined.Tag
     }
 
 private fun SortOptionType.createSortOption(isAscending: Boolean) =
@@ -493,6 +502,7 @@ private fun SortOptionType.createSortOption(isAscending: Boolean) =
         SortOptionType.Album -> SortOption.Album(isAscending)
         SortOptionType.Title -> SortOption.Title(isAscending)
         SortOptionType.TrackNum -> SortOption.TrackNum(isAscending)
+        SortOptionType.Genre -> SortOption.Genre(isAscending)
         SortOptionType.None -> SortOption.NONE
     }
 

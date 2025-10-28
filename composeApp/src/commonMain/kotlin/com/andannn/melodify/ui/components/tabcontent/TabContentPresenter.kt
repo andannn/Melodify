@@ -200,6 +200,7 @@ class TabContentPresenter(
 
 enum class GroupType {
     ARTIST,
+    Genre,
     ALBUM,
     TITLE,
     NONE,
