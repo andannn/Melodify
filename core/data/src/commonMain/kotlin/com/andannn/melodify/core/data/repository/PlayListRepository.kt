@@ -47,7 +47,7 @@ interface PlayListRepository {
     /**
      * Return flow of playList by playListId
      */
-    suspend fun getPlayListFlowById(playListId: Long): Flow<PlayListItemModel?>
+    fun getPlayListFlowById(playListId: Long): Flow<PlayListItemModel?>
 
     /**
      * Add musics to favorite playList

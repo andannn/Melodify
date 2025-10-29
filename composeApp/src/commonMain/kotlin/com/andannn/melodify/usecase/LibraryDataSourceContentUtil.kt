@@ -10,6 +10,7 @@ import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.repository.PlayListRepository.Companion.FAVORITE_PLAY_LIST_ID
 import com.andannn.melodify.model.LibraryDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 context(repository: Repository)
 fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
@@ -53,4 +54,15 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
                 id.toLong(),
                 SortRule.Preset.TitleASC,
             )
+    }
+
+context(repository: Repository)
+fun LibraryDataSource.item(): Flow<MediaItemModel?> =
+    when (this) {
+        is LibraryDataSource.AlbumDetail -> repository.mediaContentRepository.getAlbumByAlbumIdFlow(id)
+        is LibraryDataSource.ArtistDetail -> repository.mediaContentRepository.getArtistByArtistIdFlow(id)
+        LibraryDataSource.Favorite -> repository.playListRepository.getPlayListFlowById(FAVORITE_PLAY_LIST_ID)
+        is LibraryDataSource.GenreDetail -> repository.mediaContentRepository.getGenreByGenreIdFlow(id)
+        is LibraryDataSource.PlayListDetail -> repository.getPlayListFlowById(id.toLong())
+        else -> flowOf(null)
     }

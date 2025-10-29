@@ -22,25 +22,30 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.asLibraryDataSource
 import com.andannn.melodify.model.browseable
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.LibraryDetailScreen
+import com.andannn.melodify.ui.components.librarydetail.LibraryContentEvent
 import com.andannn.melodify.ui.components.librarydetail.LibraryContentState
 import com.andannn.melodify.ui.components.librarydetail.item.MediaLibraryItem
 import com.andannn.melodify.ui.components.librarydetail.rememberLibraryDetailPresenter
+import com.andannn.melodify.ui.components.librarydetail.showLibraryMediaOption
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import kotlinx.coroutines.launch
 
 @Composable
 fun rememberLibraryDetailScreenPresenter(
@@ -67,26 +72,28 @@ private class LibraryDetailScreenPresenter(
     @Composable
     override fun present(): LibraryDetailScreenState {
         val state = rememberLibraryDetailPresenter(dataSource).present()
+        val scope = rememberCoroutineScope()
         return LibraryDetailScreenState(
             dataSource = dataSource,
             state = state,
         ) { event ->
-            when (event) {
-                LibraryDetailScreenEvent.OnBackKeyPressed -> navigator.pop()
-                is LibraryDetailScreenEvent.OnMediaItemClick ->
-                    navigator.goTo(
-                        LibraryDetailScreen(event.mediaItem.asLibraryDataSource()),
-                    )
+            with(repository) {
+                with(popupController) {
+                    when (event) {
+                        LibraryDetailScreenEvent.OnBackKeyPressed -> navigator.pop()
+                        is LibraryDetailScreenEvent.OnMediaItemClick ->
+                            if (dataSource.browseable()) {
+                                navigator.goTo(LibraryDetailScreen(event.mediaItem.asLibraryDataSource()))
+                            } else {
+                                state.eventSink.invoke(LibraryContentEvent.OnRequestPlay(event.mediaItem as AudioItemModel))
+                            }
 
-                LibraryDetailScreenEvent.OnOptionClick ->
-                    with(repository) {
-                        with(popupController) {
-// TODO:
-//                        showLibraryMediaOption(
-//
-//                        )
+                        LibraryDetailScreenEvent.OnOptionClick -> {
+                            val item = state.mediaItem ?: return@with
+                            scope.launch { showLibraryMediaOption(item) }
                         }
                     }
+                }
             }
         }
     }

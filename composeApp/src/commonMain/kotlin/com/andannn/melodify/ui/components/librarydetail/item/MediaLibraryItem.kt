@@ -24,6 +24,9 @@ import com.andannn.melodify.ui.widgets.ListTileItemView
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
+import melodify.composeapp.generated.resources.Res
+import melodify.composeapp.generated.resources.track_count
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun MediaLibraryItem(
@@ -57,11 +60,15 @@ private fun MediaLibraryItemContent(
     val cover = mediaItemModel.artWorkUri
     val subTitle =
         when (mediaItemModel) {
-            is AlbumItemModel -> "Album"
-            is ArtistItemModel -> "Artist"
-            is AudioItemModel -> "Song"
-            is GenreItemModel -> "Genre"
-            is PlayListItemModel -> "Playlist"
+            is AlbumItemModel -> stringResource(Res.string.track_count, mediaItemModel.trackCount)
+            is ArtistItemModel -> stringResource(Res.string.track_count, mediaItemModel.trackCount)
+            is AudioItemModel -> mediaItemModel.album
+            is GenreItemModel -> stringResource(Res.string.track_count, mediaItemModel.trackCount)
+            is PlayListItemModel ->
+                stringResource(
+                    Res.string.track_count,
+                    mediaItemModel.trackCount,
+                )
         }
 
     ListTileItemView(

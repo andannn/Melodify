@@ -22,10 +22,16 @@ import com.andannn.melodify.usecase.deleteItemInPlayList
 import com.andannn.melodify.usecase.pinToHomeTab
 import kotlinx.coroutines.flow.first
 
+/**
+ * Show library media options dialog.
+ *
+ * @param media Media item.
+ * @param playListId set playlist id when the [media] is from playlist. Default is null.
+ */
 context(popController: PopupController, repository: Repository)
 suspend fun showLibraryMediaOption(
     media: MediaItemModel,
-    playListId: String?,
+    playListId: String? = null,
 ) {
     val isAudio = media is AudioItemModel
     val isPlayList = media is PlayListItemModel
