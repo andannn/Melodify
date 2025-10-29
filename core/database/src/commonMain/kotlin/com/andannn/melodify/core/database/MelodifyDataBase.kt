@@ -131,7 +131,7 @@ internal val addInitialCustomTabsCallback =
         override fun onCreate(connection: SQLiteConnection) {
             connection.execSQL(
                 """
-                INSERT INTO custom_tab_table (custom_tab_type) VALUES ('all_music')
+                INSERT INTO custom_tab_table (custom_tab_type, sort_order) VALUES ('all_music', 0)
                 """.trimIndent(),
             )
         }

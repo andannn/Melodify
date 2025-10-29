@@ -87,7 +87,13 @@ private fun LazyListContent(
                     },
                 ) { index, item ->
                     // trigger item read event to load more.
-                    pagingItems[primaryGroupList.flattenIndex(primaryGroupIndex, secondaryGroupIndex, index)]
+                    pagingItems[
+                        primaryGroupList.flattenIndex(
+                            primaryGroupIndex,
+                            secondaryGroupIndex,
+                            index,
+                        ),
+                    ]
 
                     val showTrackNum = sortRule.showTrackNum
                     ListTileItemView(
@@ -217,7 +223,9 @@ private fun AudioItemModel.keyOf(groupType: GroupType) =
     when (groupType) {
         GroupType.ARTIST -> artistId
         GroupType.ALBUM -> albumId
+        GroupType.Genre -> genreId
         GroupType.TITLE -> name[0].toString()
+        GroupType.YEAR -> releaseYear
         GroupType.NONE -> null
     }
 
@@ -226,6 +234,8 @@ private fun SortOption.toSortType() =
         is SortOption.Album -> GroupType.ALBUM
         is SortOption.Title -> GroupType.TITLE
         is SortOption.Artist -> GroupType.ARTIST
+        is SortOption.Genre -> GroupType.Genre
+        is SortOption.ReleaseYear -> GroupType.YEAR
         SortOption.NONE -> GroupType.NONE
         is SortOption.TrackNum -> error("TrackNum is not supported")
     }
@@ -245,6 +255,18 @@ private fun GroupType.toHeader(key: String?): HeaderItem? =
             )
 
         GroupType.TITLE ->
+            HeaderItem.Name(
+                name = key.toString(),
+                groupType = this,
+            )
+
+        GroupType.Genre ->
+            HeaderItem.ID(
+                id = key.toString(),
+                groupType = this,
+            )
+
+        GroupType.YEAR ->
             HeaderItem.Name(
                 name = key.toString(),
                 groupType = this,

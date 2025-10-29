@@ -51,9 +51,12 @@ internal fun MediaEntity.toAppItem() =
         album = album ?: "",
         albumId = albumId?.toString() ?: "",
         artist = artist ?: "",
+        genreId = genreId?.toString() ?: "",
+        genre = genre ?: "",
         artistId = artistId?.toString() ?: "",
         cdTrackNumber = cdTrackNumber ?: 0,
         discNumber = discNumber ?: 0,
+        releaseYear = year?.toString() ?: "Unknown",
         source = sourceUri ?: error("No source uri"),
     )
 
@@ -77,7 +80,7 @@ internal fun ArtistEntity.toAppItem() =
 internal fun GenreEntity.toAppItem() =
     GenreItemModel(
         id = genreId.toString(),
-        name = name ?: "",
+        name = name ?: "V.A.",
         // TODO:
         artWorkUri = null,
         trackCount = 0,
@@ -106,9 +109,12 @@ internal fun CrossRefWithMediaRelation.mapToAppItem(): AudioItemModel {
             album = "",
             albumId = "",
             artistId = "",
+            genreId = "",
+            genre = "",
             cdTrackNumber = 0,
             discNumber = 0,
             source = "",
+            releaseYear = "",
         )
     }
 }

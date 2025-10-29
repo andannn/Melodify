@@ -26,7 +26,7 @@ interface PopupController {
 
     suspend fun showSnackBar(
         message: SnackBarMessage,
-        messageFormatArgs: List<Any> = emptyList(),
+        vararg messageFormatArgs: Any,
     ): SnackbarResult
 
     suspend fun showDialog(dialogId: DialogId): DialogAction

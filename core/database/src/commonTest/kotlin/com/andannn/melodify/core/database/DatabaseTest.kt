@@ -845,14 +845,39 @@ class DatabaseTest {
                         name = "B",
                         type = "type",
                         externalId = "b1",
+                        sortOrder = 2,
+                    ),
+                )
+            val thirdId =
+                dao.insertCustomTab(
+                    CustomTabEntity(
+                        name = "C",
+                        type = "type",
+                        externalId = "c1",
                         sortOrder = 3,
                     ),
                 )
 
-            dao.swapTabOrder(firstId!!, secondId!!)
-            val tabs = dao.getCustomTabsFlow().first()
-            assertEquals(3, tabs.first { it.id == firstId }.sortOrder)
-            assertEquals(1, tabs.first { it.id == secondId }.sortOrder)
+            dao.swapTabOrder(firstId!!, firstId)
+            dao.getCustomTabsFlow().first().also { tabs ->
+                assertEquals(firstId, tabs[1].id)
+                assertEquals(secondId, tabs[2].id)
+                assertEquals(thirdId, tabs[3].id)
+            }
+
+            dao.swapTabOrder(firstId, thirdId!!)
+            dao.getCustomTabsFlow().first().also { tabs ->
+                assertEquals(secondId, tabs[1].id)
+                assertEquals(thirdId, tabs[2].id)
+                assertEquals(firstId, tabs[3].id)
+            }
+
+            dao.swapTabOrder(firstId, secondId!!)
+            dao.getCustomTabsFlow().first().also { tabs ->
+                assertEquals(firstId, tabs[1].id)
+                assertEquals(secondId, tabs[2].id)
+                assertEquals(thirdId, tabs[3].id)
+            }
         }
 }
 

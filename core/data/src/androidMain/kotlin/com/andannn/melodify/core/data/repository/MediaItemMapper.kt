@@ -23,6 +23,8 @@ fun MediaItem.toAppItem(): MediaItemModel =
         albumId = "0",
         artist = mediaMetadata.artist.toString(),
         artistId = "0",
+        genre = mediaMetadata.genre.toString(),
+        genreId = "0",
         cdTrackNumber = mediaMetadata.trackNumber ?: 0,
         discNumber = 0,
         artWorkUri =
@@ -30,6 +32,7 @@ fun MediaItem.toAppItem(): MediaItemModel =
                 EXTRA_ALBUM_COVER_ART_KEY,
             ) ?: "",
         extraUniqueId = mediaMetadata.extras?.getString(UNIQUE_ID_KEY),
+        releaseYear = "0",
         source =
             Uri
                 .withAppendedPath(

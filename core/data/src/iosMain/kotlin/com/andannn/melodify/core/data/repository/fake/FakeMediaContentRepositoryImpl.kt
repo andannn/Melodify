@@ -46,10 +46,13 @@ private fun MediaItem.toModel(): AudioItemModel =
         modifiedDate = -1,
         album = album,
         albumId = album,
+        genre = genre,
+        genreId = genre,
         artist = artist,
         artistId = artist,
         cdTrackNumber = trackNumber ?: 0,
         discNumber = 0,
+        releaseYear = "",
         source = source,
     )
 

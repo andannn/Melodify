@@ -9,6 +9,10 @@ import androidx.compose.material3.SnackbarVisuals
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.add_to_playlist_failed_message
 import melodify.composeapp.generated.resources.add_to_playlist_success_message
+import melodify.composeapp.generated.resources.sync_completed
+import melodify.composeapp.generated.resources.sync_failed
+import melodify.composeapp.generated.resources.sync_progress
+import melodify.composeapp.generated.resources.sync_start
 import melodify.composeapp.generated.resources.tab_already_exist
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
@@ -29,6 +33,22 @@ sealed class SnackBarMessage(
 
     data object TabAlreadyExist : SnackBarMessage(
         message = Res.string.tab_already_exist,
+    )
+
+    data object SyncStatusStart : SnackBarMessage(
+        message = Res.string.sync_start,
+    )
+
+    data object SyncProgress : SnackBarMessage(
+        message = Res.string.sync_progress,
+    )
+
+    data object SyncCompleted : SnackBarMessage(
+        message = Res.string.sync_completed,
+    )
+
+    data object SyncFailed : SnackBarMessage(
+        message = Res.string.sync_failed,
     )
 
     suspend fun toSnackbarVisuals(messageFormatArgs: List<Any>): SnackbarVisuals {

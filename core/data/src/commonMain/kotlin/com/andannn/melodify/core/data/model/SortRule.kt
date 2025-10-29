@@ -53,11 +53,6 @@ data class SortRule(
                 showTrackNum = true,
                 isPreset = true,
             )
-        val None =
-            SortRule(
-                primaryGroupSort = SortOption.NONE,
-                isPreset = true,
-            )
 
         val DefaultPreset = AlbumASC
         val DefaultCustom = AlbumASC.copy(isPreset = false)
@@ -87,6 +82,16 @@ sealed interface SortOption {
     ) : SortOption
 
     @Serializable
+    data class Genre(
+        val ascending: Boolean,
+    ) : SortOption
+
+    @Serializable
+    data class ReleaseYear(
+        val ascending: Boolean,
+    ) : SortOption
+
+    @Serializable
     data object NONE : SortOption
 }
 
@@ -96,6 +101,8 @@ fun SortOption.isAscending() =
         is SortOption.Artist -> ascending
         is SortOption.Title -> ascending
         is SortOption.TrackNum -> ascending
+        is SortOption.Genre -> ascending
+        is SortOption.ReleaseYear -> ascending
         is SortOption.NONE -> false
     }
 
@@ -126,6 +133,16 @@ internal fun MutableList<Sort>.addSortOption(sort: SortOption) {
         is SortOption.TrackNum ->
             apply {
                 add(Sort(MediaSortType.TrackNum, sort.ascending.toOrder()))
+            }
+
+        is SortOption.Genre ->
+            apply {
+                add(Sort(MediaSortType.Genre, sort.ascending.toOrder()))
+            }
+
+        is SortOption.ReleaseYear ->
+            apply {
+                add(Sort(MediaSortType.ReleaseYear, sort.ascending.toOrder()))
             }
 
         SortOption.NONE -> {}

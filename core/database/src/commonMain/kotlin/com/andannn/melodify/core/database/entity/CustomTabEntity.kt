@@ -14,7 +14,6 @@ internal object CustomTabColumns {
     const val NAME = "custom_tab_name"
     const val TYPE = "custom_tab_type"
     const val EXTERNAL_ID = "custom_tab_external_id"
-    const val CREATED_DATE = "custom_tab_created_date"
     const val DISPLAY_SETTING = "display_setting"
     const val SORT_ORDER = "sort_order"
 }

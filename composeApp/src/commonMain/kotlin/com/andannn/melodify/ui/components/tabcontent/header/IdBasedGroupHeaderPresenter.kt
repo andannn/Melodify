@@ -62,6 +62,7 @@ class GroupHeaderPresenter(
                 when (groupType) {
                     GroupType.ARTIST -> mediaContentRepository.getArtistByArtistId(headerId)
                     GroupType.ALBUM -> mediaContentRepository.getAlbumByAlbumId(headerId)
+                    GroupType.Genre -> mediaContentRepository.getGenreByGenreId(headerId)
                     else -> error("invalid group type")
                 }
         }
