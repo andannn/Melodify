@@ -86,6 +86,22 @@ sealed interface LibraryDataSource {
     }
 }
 
+fun LibraryDataSource.browseable() =
+    when (this) {
+        LibraryDataSource.AllAlbum,
+        LibraryDataSource.AllArtist,
+        LibraryDataSource.AllGenre,
+        LibraryDataSource.AllPlaylist,
+        LibraryDataSource.AllSong,
+        -> true
+        is LibraryDataSource.AlbumDetail,
+        is LibraryDataSource.ArtistDetail,
+        LibraryDataSource.Favorite,
+        is LibraryDataSource.GenreDetail,
+        is LibraryDataSource.PlayListDetail,
+        -> false
+    }
+
 internal fun MediaItemModel.asLibraryDataSource() =
     when (this) {
         is AlbumItemModel -> LibraryDataSource.AlbumDetail(id)

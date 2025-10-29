@@ -8,7 +8,6 @@ import com.andannn.melodify.ui.routes.HomeState
 import com.andannn.melodify.ui.routes.HomeUiScreen
 import com.andannn.melodify.ui.routes.Library
 import com.andannn.melodify.ui.routes.LibraryDetail
-import com.andannn.melodify.ui.routes.LibraryDetailScreenPresenter
 import com.andannn.melodify.ui.routes.LibraryDetailScreenState
 import com.andannn.melodify.ui.routes.LibraryPresenter
 import com.andannn.melodify.ui.routes.LibraryState
@@ -19,6 +18,7 @@ import com.andannn.melodify.ui.routes.TabManagementScreen
 import com.andannn.melodify.ui.routes.TabManagementScreenPresenter
 import com.andannn.melodify.ui.routes.TabManagementScreenState
 import com.andannn.melodify.ui.routes.rememberHomeUiPresenter
+import com.andannn.melodify.ui.routes.rememberLibraryDetailScreenPresenter
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -78,7 +78,7 @@ object PresenterFactory : Presenter.Factory {
 
             is LibraryDetailScreen ->
                 presenterOf {
-                    LibraryDetailScreenPresenter(
+                    rememberLibraryDetailScreenPresenter(
                         dataSource = screen.datasource,
                         navigator = navigator,
                     ).present()
