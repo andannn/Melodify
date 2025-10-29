@@ -25,9 +25,9 @@ import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.asDataSource
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.LibraryDetailScreen
-import com.andannn.melodify.ui.components.common.MediaItemWithOptionAction
 import com.andannn.melodify.ui.components.librarydetail.LibraryContentState
 import com.andannn.melodify.ui.components.librarydetail.rememberLibraryDetailPresenter
+import com.andannn.melodify.ui.components.libraryitem.MediaLibraryItem
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -123,7 +123,7 @@ private fun LibraryDetailContent(
                 items = contentList,
                 key = { it.id },
             ) { item ->
-                MediaItemWithOptionAction(
+                MediaLibraryItem(
                     modifier = Modifier.padding(vertical = 4.dp),
                     mediaItemModel = item,
                     onItemClick = {

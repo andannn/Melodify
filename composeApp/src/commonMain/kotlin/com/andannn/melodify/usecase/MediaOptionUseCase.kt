@@ -71,7 +71,7 @@ suspend fun addToQueue(items: List<AudioItemModel>) {
 }
 
 context(playListRepository: PlayListRepository)
-private suspend fun onDeleteItemInPlayList(
+private suspend fun deleteItemInPlayList(
     playListId: String,
     source: AudioItemModel,
 ) {
@@ -79,7 +79,7 @@ private suspend fun onDeleteItemInPlayList(
 }
 
 context(repo: Repository)
-private suspend fun PlayListItemModel.delete() {
+suspend fun PlayListItemModel.delete() {
     repo.deletePlayList(id.toLong())
 
     val currentCustomTabs = repo.currentCustomTabsFlow.first()

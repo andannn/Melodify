@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.ui.components.common.MediaItemWithOptionAction
+import com.andannn.melodify.ui.components.libraryitem.MediaLibraryItem
 import com.andannn.melodify.ui.components.search.SearchState
 
 @Composable
@@ -69,7 +69,7 @@ private fun SearchPageContent(
                 items = result.albums,
                 key = { it.id },
             ) {
-                MediaItemWithOptionAction(
+                MediaLibraryItem(
                     mediaItemModel = it,
                     onItemClick = {
                         onResultItemClick(it)
@@ -91,7 +91,7 @@ private fun SearchPageContent(
                 items = result.audios,
                 key = { it.id },
             ) {
-                MediaItemWithOptionAction(
+                MediaLibraryItem(
                     mediaItemModel = it,
                     onItemClick = {
                         onResultItemClick(it)
@@ -113,7 +113,7 @@ private fun SearchPageContent(
                 items = result.artists,
                 key = { it.id },
             ) {
-                MediaItemWithOptionAction(
+                MediaLibraryItem(
                     mediaItemModel = it,
                     onItemClick = {
                         onResultItemClick(it)
