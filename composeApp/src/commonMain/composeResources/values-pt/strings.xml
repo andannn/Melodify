@@ -37,6 +37,51 @@
     <string name="new_playlist_dialog_input_hint">Título</string>
     <string name="remove_playlist">Excluir playlist</string>
     <string name="delete_this_tab">Excluir esta aba</string>
-    <string name="add_to_home_tab">Adicionar à guia inicial</string>
     <string name="favorite">Favorito</string>
+    <string name="add_to_home_tab">Fixar na tela inicial</string>
+    <string name="default_sort_order">Ordem padrão</string>
+    <string name="display_settings">Opções de exibição</string>
+    <string name="sort_by_media_title">Título</string>
+    <string name="sort_by_track_number">Faixa</string>
+    <string name="sort_by_genre">Gênero</string>
+    <string name="sort_by_none">Nenhum</string>
+    <string name="sort_by_release_year">Data de lançamento</string>
+    <string name="sync_start">Iniciar sincronização</string>
+    <string name="sync_progress">Sincronizando: %1$s</string>
+    <string name="sync_completed">%1$s músicas carregadas</string>
+    <string name="sync_failed">Falha na sincronização</string>
+    <string name="re_sync_media_library">Atualizar biblioteca</string>
+    <string name="change_default_sort_order">Alterar a ordem de classificação padrão</string>
+    <string name="display_setting_for">Opções de exibição para %1$s</string>
+
+    <string name="sort_by_album">Ordenar por álbum</string>
+    <string name="sort_by_artist">Ordenar por artista</string>
+    <string name="sort_by_title">Ordenar por título</string>
+    <string name="sort_by_artist_then_album">Ordenar por artista e depois por álbum</string>
+
+    <string name="sort_sub_album_asc">Agrupa os itens por álbum e ordena as faixas em ordem crescente.</string>
+    <string name="sort_sub_artist_asc">Ordena os itens por artista em ordem crescente.</string>
+    <string name="sort_sub_title_name_asc">Ordena os itens alfabeticamente por título.</string>
+    <string name="sort_sub_artist_album_asc">Agrupa os itens por artista e depois por álbum, ordenando as faixas em ordem crescente.</string>
+
+    <string name="order_a_to_z">A → Z</string>
+    <string name="order_z_to_a">Z → A</string>
+    <string name="order_1_to_9">1 → 9</string>
+    <string name="order_9_to_1">9 → 1</string>
+    <string name="order_old_to_new">Antigo → Novo</string>
+    <string name="order_new_to_old">Novo → Antigo</string>
+
+    <string name="preset">Pré-ajuste</string>
+    <string name="customize">Personalizar</string>
+    <string name="primary_group_by">Agrupamento principal por</string>
+    <string name="secondary_group_by">Agrupamento secundário por</string>
+    <string name="content_sort_by">Ordenar conteúdo por</string>
+    <string name="show_track_number">Mostrar número da faixa</string>
+    <string name="reset_settings">Repor definições</string>
+
+    <string name="sync_progress_media">Música %1$d / %2$d</string>
+    <string name="sync_progress_album">Álbum %1$d / %2$d</string>
+    <string name="sync_progress_artist">Artista %1$d / %2$d</string>
+    <string name="sync_progress_genre">Género %1$d / %2$d</string>
+
 </resources>

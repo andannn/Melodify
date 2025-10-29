@@ -58,7 +58,13 @@ import kotlinx.coroutines.launch
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.default_sort_order
 import melodify.composeapp.generated.resources.re_sync_media_library
+import melodify.composeapp.generated.resources.sync_progress_album
+import melodify.composeapp.generated.resources.sync_progress_artist
+import melodify.composeapp.generated.resources.sync_progress_genre
+import melodify.composeapp.generated.resources.sync_progress_media
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
@@ -131,7 +137,7 @@ private suspend fun resyncAllSongs() =
                         SyncStatus.Complete ->
                             popController.showSnackBar(
                                 SnackBarMessage.SyncCompleted,
-                                "${mediaCount ?: 0} Songs",
+                                mediaCount ?: 0,
                             )
 
                         SyncStatus.Failed ->
@@ -271,10 +277,10 @@ internal enum class MenuOption(
     ),
 }
 
-private fun SyncStatus.Progress.toSnackBarInfoString() =
-    when (this.type) {
-        SyncType.MEDIA -> "Song ${this.progress} / ${this.total}"
-        SyncType.ALBUM -> "Album ${this.progress} / ${this.total}"
-        SyncType.ARTIST -> "Artist ${this.progress} / ${this.total}"
-        SyncType.GENRE -> "Genre ${this.progress} / ${this.total}"
+private suspend fun SyncStatus.Progress.toSnackBarInfoString(): String =
+    when (type) {
+        SyncType.MEDIA -> getString(Res.string.sync_progress_media, progress, total)
+        SyncType.ALBUM -> getString(Res.string.sync_progress_album, progress, total)
+        SyncType.ARTIST -> getString(Res.string.sync_progress_artist, progress, total)
+        SyncType.GENRE -> getString(Res.string.sync_progress_genre, progress, total)
     }

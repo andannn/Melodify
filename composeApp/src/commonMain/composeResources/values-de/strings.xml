@@ -37,6 +37,51 @@
     <string name="new_playlist_dialog_input_hint">Titel</string>
     <string name="remove_playlist">Playlist löschen</string>
     <string name="delete_this_tab">Diesen Tab löschen</string>
-    <string name="add_to_home_tab">Zur Startseite hinzufügen</string>
     <string name="favorite">Favoriten</string>
+    <string name="add_to_home_tab">An Startseite anheften</string>
+    <string name="default_sort_order">Standard-Sortierreihenfolge</string>
+    <string name="display_settings">Anzeigeoptionen</string>
+    <string name="sort_by_media_title">Titel</string>
+    <string name="sort_by_track_number">CD-Titelnummer</string>
+    <string name="sort_by_genre">Genre</string>
+    <string name="sort_by_none">Keine</string>
+    <string name="sort_by_release_year">Veröffentlichungsdatum</string>
+    <string name="sync_start">Synchronisierung starten</string>
+    <string name="sync_progress">Synchronisierungsfortschritt: %1$s</string>
+    <string name="sync_completed">%1$s Titel geladen</string>
+    <string name="sync_failed">Synchronisierung fehlgeschlagen</string>
+    <string name="re_sync_media_library">Mediathek aktualisieren</string>
+    <string name="change_default_sort_order">Standard-Sortierreihenfolge ändern</string>
+    <string name="display_setting_for">Anzeigeoptionen für %1$s</string>
+
+    <string name="sort_by_album">Nach Album sortieren</string>
+    <string name="sort_by_artist">Nach Künstler sortieren</string>
+    <string name="sort_by_title">Nach Titel sortieren</string>
+    <string name="sort_by_artist_then_album">Nach Künstler und dann nach Album sortieren</string>
+
+    <string name="sort_sub_album_asc">Elemente nach Album gruppieren und Titel in aufsteigender Reihenfolge sortieren.</string>
+    <string name="sort_sub_artist_asc">Elemente nach Künstler in aufsteigender Reihenfolge sortieren.</string>
+    <string name="sort_sub_title_name_asc">Elemente alphabetisch nach Titel sortieren.</string>
+    <string name="sort_sub_artist_album_asc">Elemente nach Künstler und dann nach Album gruppieren, Titel in aufsteigender Reihenfolge sortieren.</string>
+
+    <string name="order_a_to_z">A → Z</string>
+    <string name="order_z_to_a">Z → A</string>
+    <string name="order_1_to_9">1 → 9</string>
+    <string name="order_9_to_1">9 → 1</string>
+    <string name="order_old_to_new">Alt → Neu</string>
+    <string name="order_new_to_old">Neu → Alt</string>
+
+    <string name="preset">Voreinstellung</string>
+    <string name="customize">Anpassen</string>
+
+    <string name="primary_group_by">Primäre Gruppierung nach</string>
+    <string name="secondary_group_by">Sekundäre Gruppierung nach</string>
+    <string name="content_sort_by">Inhalt sortieren nach</string>
+    <string name="show_track_number">Titelnummer anzeigen</string>
+    <string name="reset_settings">Einstellungen zurücksetzen</string>
+
+    <string name="sync_progress_media">Titel %1$d / %2$d</string>
+    <string name="sync_progress_album">Album %1$d / %2$d</string>
+    <string name="sync_progress_artist">Künstler %1$d / %2$d</string>
+    <string name="sync_progress_genre">Genre %1$d / %2$d</string>
 </resources>

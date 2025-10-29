@@ -37,6 +37,51 @@
     <string name="new_playlist_dialog_input_hint">Título</string>
     <string name="remove_playlist">Eliminar lista de reproducción</string>
     <string name="delete_this_tab">Eliminar esta pestaña</string>
-    <string name="add_to_home_tab">Añadir a la pestaña de inicio</string>
     <string name="favorite">Favoritos</string>
+    <string name="add_to_home_tab">Fijar en inicio</string>
+    <string name="default_sort_order">Orden de clasificación predeterminado</string>
+    <string name="display_settings">Opciones de visualización</string>
+    <string name="sort_by_media_title">Título</string>
+    <string name="sort_by_track_number">Pista del CD</string>
+    <string name="sort_by_genre">Género</string>
+    <string name="sort_by_none">Ninguno</string>
+    <string name="sort_by_release_year">Fecha de lanzamiento</string>
+    <string name="sync_start">Iniciar sincronización</string>
+    <string name="sync_progress">Progreso de sincronización: %1$s</string>
+    <string name="sync_completed">%1$s canciones cargadas</string>
+    <string name="sync_failed">Sincronización fallida</string>
+    <string name="re_sync_media_library">Actualizar biblioteca multimedia</string>
+    <string name="change_default_sort_order">Cambiar el orden de clasificación predeterminado</string>
+    <string name="display_setting_for">Opciones de visualización para %1$s</string>
+
+    <string name="sort_by_album">Ordenar por álbum</string>
+    <string name="sort_by_artist">Ordenar por artista</string>
+    <string name="sort_by_title">Ordenar por título</string>
+    <string name="sort_by_artist_then_album">Ordenar por artista y luego por álbum</string>
+
+    <string name="sort_sub_album_asc">Agrupar los elementos por álbum y ordenar las pistas en orden ascendente.</string>
+    <string name="sort_sub_artist_asc">Ordenar los elementos por artista en orden ascendente.</string>
+    <string name="sort_sub_title_name_asc">Ordenar los elementos alfabéticamente por título.</string>
+    <string name="sort_sub_artist_album_asc">Agrupar los elementos por artista y luego por álbum, ordenando las pistas en orden ascendente.</string>
+
+    <string name="order_a_to_z">A → Z</string>
+    <string name="order_z_to_a">Z → A</string>
+    <string name="order_1_to_9">1 → 9</string>
+    <string name="order_9_to_1">9 → 1</string>
+    <string name="order_old_to_new">Antiguo → Nuevo</string>
+    <string name="order_new_to_old">Nuevo → Antiguo</string>
+
+    <string name="preset">Preajuste</string>
+    <string name="customize">Personalizar</string>
+
+    <string name="primary_group_by">Agrupación principal por</string>
+    <string name="secondary_group_by">Agrupación secundaria por</string>
+    <string name="content_sort_by">Ordenar contenido por</string>
+    <string name="show_track_number">Mostrar número de pista</string>
+    <string name="reset_settings">Restablecer ajustes</string>
+
+    <string name="sync_progress_media">Canción %1$d / %2$d</string>
+    <string name="sync_progress_album">Álbum %1$d / %2$d</string>
+    <string name="sync_progress_artist">Artista %1$d / %2$d</string>
+    <string name="sync_progress_genre">Género %1$d / %2$d</string>
 </resources>

@@ -37,6 +37,50 @@
     <string name="new_playlist_dialog_input_hint">제목</string>
     <string name="remove_playlist">플레이리스트 삭제</string>
     <string name="delete_this_tab">이 탭 삭제</string>
-    <string name="add_to_home_tab">홈 탭에 추가</string>
     <string name="favorite">즐겨찾기</string>
+    <string name="add_to_home_tab">홈에 고정</string>
+    <string name="default_sort_order">기본 정렬</string>
+    <string name="display_settings">표시 설정</string>
+    <string name="sort_by_media_title">제목</string>
+    <string name="sort_by_track_number">트랙</string>
+    <string name="sort_by_genre">장르</string>
+    <string name="sort_by_none">없음</string>
+    <string name="sort_by_release_year">발매일</string>
+    <string name="sync_start">동기화 시작</string>
+    <string name="sync_progress">동기화 중: %1$s</string>
+    <string name="sync_completed">%1$s곡 불러오기 완료</string>
+    <string name="sync_failed">동기화 실패</string>
+    <string name="re_sync_media_library">라이브러리 새로고침</string>
+    <string name="change_default_sort_order">기본 정렬 순서 변경</string>
+    <string name="display_setting_for">%1$s 표시 설정</string>
+
+    <string name="sort_by_album">앨범별 정렬</string>
+    <string name="sort_by_artist">아티스트별 정렬</string>
+    <string name="sort_by_title">제목별 정렬</string>
+    <string name="sort_by_artist_then_album">아티스트 → 앨범 순으로 정렬</string>
+
+    <string name="sort_sub_album_asc">앨범별로 묶고 트랙을 오름차순으로 정렬합니다.</string>
+    <string name="sort_sub_artist_asc">아티스트별로 항목을 오름차순으로 정렬합니다.</string>
+    <string name="sort_sub_title_name_asc">제목을 알파벳 순으로 정렬합니다.</string>
+    <string name="sort_sub_artist_album_asc">아티스트별로 묶은 뒤 앨범 순으로 트랙을 오름차순 정렬합니다.</string>
+
+    <string name="order_a_to_z">A → Z</string>
+    <string name="order_z_to_a">Z → A</string>
+    <string name="order_1_to_9">1 → 9</string>
+    <string name="order_9_to_1">9 → 1</string>
+    <string name="order_old_to_new">오래된 순</string>
+    <string name="order_new_to_old">최신 순</string>
+
+    <string name="preset">프리셋</string>
+    <string name="customize">사용자 설정</string>
+    <string name="primary_group_by">1차 그룹 기준</string>
+    <string name="secondary_group_by">2차 그룹 기준</string>
+    <string name="content_sort_by">콘텐츠 정렬 기준</string>
+    <string name="show_track_number">트랙 번호 표시</string>
+    <string name="reset_settings">설정 초기화</string>
+
+    <string name="sync_progress_media">노래 %1$d / %2$d</string>
+    <string name="sync_progress_album">앨범 %1$d / %2$d</string>
+    <string name="sync_progress_artist">아티스트 %1$d / %2$d</string>
+    <string name="sync_progress_genre">장르 %1$d / %2$d</string>
 </resources>
