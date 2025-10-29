@@ -80,25 +80,21 @@ internal fun FlexiblePlayerLayout(
     Surface(
         modifier =
             modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
         shadowElevation = 10.dp,
     ) {
         val primaryColor = MaterialTheme.colorScheme.primary
         val backGroundModifier =
-            if (layoutState.isPlayerExpanding) {
-                Modifier.verticalGradientScrim(
-                    color = primaryColor.copy(alpha = 0.38f),
-                    startYPercentage = 1f,
-                    endYPercentage = 0f,
-                )
-            } else {
-                Modifier
-            }
+            Modifier.verticalGradientScrim(
+                color = primaryColor.copy(alpha = 0.38f),
+                startYPercentage = 1f,
+                endYPercentage = 0f,
+            )
 
         Box(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
                     .then(backGroundModifier),
         ) {
             val fadeInAreaAlpha by remember {

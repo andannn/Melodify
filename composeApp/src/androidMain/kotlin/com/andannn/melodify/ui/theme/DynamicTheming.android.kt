@@ -52,15 +52,8 @@ actual fun DynamicThemePrimaryColorsFromImage(
             label = "domain color",
         )
 
-    var debounceCounter by remember {
-        mutableIntStateOf(0)
-    }
-
     LaunchedEffect(seedColor) {
-        debounceCounter += 1
-        if (debounceCounter % 5 == 0) {
-            scheme = createThemeFromSeed(seedColor, isDark = true)
-        }
+        scheme = createThemeFromSeed(seedColor, isDark = true)
     }
 
     MaterialTheme(
@@ -113,7 +106,7 @@ class DominantColorStateImpl(
     override val color: Color
         get() = _color.value
 
-    private var dynamicThemeEnable: Boolean = false
+    private var dynamicThemeEnable: Boolean = true
 
     private var colorFromImage: Color = defaultColor
 
