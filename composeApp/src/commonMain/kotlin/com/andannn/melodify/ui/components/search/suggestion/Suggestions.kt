@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.ui.components.libraryitem.MediaLibraryItem
+import com.andannn.melodify.ui.components.librarydetail.item.MediaLibraryItem
 
 /**
  * Content of the search bar when expanded.

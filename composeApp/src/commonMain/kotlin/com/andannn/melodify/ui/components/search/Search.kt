@@ -27,7 +27,7 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.browsable
 import com.andannn.melodify.model.LibraryDataSource
-import com.andannn.melodify.model.asDataSource
+import com.andannn.melodify.model.asLibraryDataSource
 import com.andannn.melodify.ui.components.search.result.SearchPageView
 import com.andannn.melodify.ui.components.search.suggestion.Suggestions
 
@@ -82,7 +82,7 @@ private fun SearchViewContent(
 ) {
     fun onResultItemClick(item: MediaItemModel) {
         if (item.browsable) {
-            onNavigateToLibraryContentList(item.asDataSource())
+            onNavigateToLibraryContentList(item.asLibraryDataSource())
         } else {
             // open player and play this audio item.
             onPlayAudio(item as AudioItemModel)

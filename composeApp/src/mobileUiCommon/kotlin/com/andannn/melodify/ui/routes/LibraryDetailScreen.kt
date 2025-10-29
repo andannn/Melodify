@@ -22,12 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.LibraryDataSource
-import com.andannn.melodify.model.asDataSource
+import com.andannn.melodify.model.asLibraryDataSource
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.LibraryDetailScreen
 import com.andannn.melodify.ui.components.librarydetail.LibraryContentState
+import com.andannn.melodify.ui.components.librarydetail.item.MediaLibraryItem
 import com.andannn.melodify.ui.components.librarydetail.rememberLibraryDetailPresenter
-import com.andannn.melodify.ui.components.libraryitem.MediaLibraryItem
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -47,7 +47,7 @@ class LibraryDetailScreenPresenter(
                 LibraryDetailScreenEvent.OnBackKeyPressed -> navigator.pop()
                 is LibraryDetailScreenEvent.OnMediaItemClick ->
                     navigator.goTo(
-                        LibraryDetailScreen(event.mediaItem.asDataSource()),
+                        LibraryDetailScreen(event.mediaItem.asLibraryDataSource()),
                     )
             }
         }
@@ -75,6 +75,7 @@ fun LibraryDetail(
     LibraryDetailContent(
         modifier = modifier,
         title = screenState.state.title,
+        dataSource = screenState.state.dataSource,
         contentList = screenState.state.contentList,
         onBackPressed = {
             screenState.eventSink(LibraryDetailScreenEvent.OnBackKeyPressed)
@@ -90,9 +91,10 @@ fun LibraryDetail(
 private fun LibraryDetailContent(
     title: String,
     contentList: List<MediaItemModel>,
+    dataSource: LibraryDataSource,
     modifier: Modifier = Modifier,
-    onBackPressed: () -> Unit,
-    onItemClick: (MediaItemModel) -> Unit,
+    onBackPressed: () -> Unit = {},
+    onItemClick: (MediaItemModel) -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier,
@@ -126,6 +128,7 @@ private fun LibraryDetailContent(
                 MediaLibraryItem(
                     modifier = Modifier.padding(vertical = 4.dp),
                     mediaItemModel = item,
+                    playListId = (dataSource as? LibraryDataSource.PlayListDetail)?.id,
                     onItemClick = {
                         onItemClick(item)
                     },

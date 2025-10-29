@@ -71,7 +71,7 @@ suspend fun addToQueue(items: List<AudioItemModel>) {
 }
 
 context(playListRepository: PlayListRepository)
-private suspend fun deleteItemInPlayList(
+suspend fun deleteItemInPlayList(
     playListId: String,
     source: AudioItemModel,
 ) {

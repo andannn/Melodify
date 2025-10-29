@@ -48,8 +48,9 @@ class LibraryDetailPresenter(
             value = with(repository) { dataSource.getTitle() }
         }
         return LibraryContentState(
-            contentList,
-            title,
+            dataSource = dataSource,
+            contentList = contentList,
+            title = title,
         )
     }
 
@@ -67,6 +68,7 @@ class LibraryDetailPresenter(
 }
 
 data class LibraryContentState(
+    val dataSource: LibraryDataSource,
     val contentList: List<MediaItemModel> = emptyList(),
     val title: String = "",
 ) : CircuitUiState

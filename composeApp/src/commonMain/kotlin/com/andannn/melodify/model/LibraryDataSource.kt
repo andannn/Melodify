@@ -86,7 +86,7 @@ sealed interface LibraryDataSource {
     }
 }
 
-internal fun MediaItemModel.asDataSource() =
+internal fun MediaItemModel.asLibraryDataSource() =
     when (this) {
         is AlbumItemModel -> LibraryDataSource.AlbumDetail(id)
         is ArtistItemModel -> LibraryDataSource.ArtistDetail(id)
