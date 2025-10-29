@@ -59,11 +59,35 @@ import kotlinx.coroutines.launch
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.album_page_title
 import melodify.composeapp.generated.resources.artist_page_title
+import melodify.composeapp.generated.resources.change_default_sort_order
+import melodify.composeapp.generated.resources.content_sort_by
+import melodify.composeapp.generated.resources.customize
+import melodify.composeapp.generated.resources.display_setting_for
+import melodify.composeapp.generated.resources.order_1_to_9
+import melodify.composeapp.generated.resources.order_9_to_1
+import melodify.composeapp.generated.resources.order_a_to_z
+import melodify.composeapp.generated.resources.order_new_to_old
+import melodify.composeapp.generated.resources.order_old_to_new
+import melodify.composeapp.generated.resources.order_z_to_a
+import melodify.composeapp.generated.resources.preset
+import melodify.composeapp.generated.resources.primary_group_by
+import melodify.composeapp.generated.resources.reset_settings
+import melodify.composeapp.generated.resources.secondary_group_by
+import melodify.composeapp.generated.resources.show_track_number
+import melodify.composeapp.generated.resources.sort_by_album
+import melodify.composeapp.generated.resources.sort_by_artist
+import melodify.composeapp.generated.resources.sort_by_artist_then_album
 import melodify.composeapp.generated.resources.sort_by_genre
 import melodify.composeapp.generated.resources.sort_by_media_title
 import melodify.composeapp.generated.resources.sort_by_none
 import melodify.composeapp.generated.resources.sort_by_release_year
+import melodify.composeapp.generated.resources.sort_by_title
 import melodify.composeapp.generated.resources.sort_by_track_number
+import melodify.composeapp.generated.resources.sort_sub_album_asc
+import melodify.composeapp.generated.resources.sort_sub_artist_album_asc
+import melodify.composeapp.generated.resources.sort_sub_artist_asc
+import melodify.composeapp.generated.resources.sort_sub_title_name_asc
+import org.jetbrains.compose.resources.stringResource
 import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "ChangeSortRuleDialog"
@@ -111,9 +135,9 @@ private fun ChangeSortRuleDialogContent(
     Column(modifier = modifier.fillMaxHeight()) {
         val title =
             if (isDefaultSettings) {
-                "Change Default Sort Order"
+                stringResource(Res.string.change_default_sort_order)
             } else {
-                "Display Setting for " + getCategoryResource(tab)
+                stringResource(Res.string.display_setting_for, getCategoryResource(tab))
             }
         Text(
             modifier =
@@ -137,7 +161,7 @@ private fun ChangeSortRuleDialogContent(
                 Text(
                     modifier =
                         Modifier.padding(horizontal = 12.dp),
-                    text = "Preset",
+                    text = stringResource(Res.string.preset),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -180,7 +204,7 @@ private fun ChangeSortRuleDialogContent(
                     Text(
                         modifier =
                             Modifier.padding(horizontal = 12.dp),
-                        text = "Customize",
+                        text = stringResource(Res.string.customize),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -251,7 +275,7 @@ private fun ChangeSortRuleDialogContent(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Text("Show Track Number")
+                                Text(stringResource(Res.string.show_track_number))
                                 Spacer(Modifier.width(6.dp))
                                 Switch(
                                     enabled = enabled,
@@ -274,7 +298,7 @@ private fun ChangeSortRuleDialogContent(
                                     onChangeCustomSortRule(SortRule.DefaultCustom)
                                 },
                             ) {
-                                Text("Reset")
+                                Text(stringResource(Res.string.reset_settings))
                             }
                         }
 
@@ -306,7 +330,7 @@ private fun CustomSortOptionGroup(
             enabled = enabled,
             options = SortOptionType.PrimaryGroupOptions,
             currentOption = sortRule.primaryGroupSort,
-            label = "Primary Group by..",
+            label = stringResource(Res.string.primary_group_by),
             onChangeSortRule = onPrimarySortRuleChange,
         )
         Spacer(Modifier.height(8.dp))
@@ -315,7 +339,7 @@ private fun CustomSortOptionGroup(
             enabled = enabled,
             options = SortOptionType.SecondaryGroupOptions,
             currentOption = sortRule.secondaryGroupSort,
-            label = "Secondary Group by..",
+            label = stringResource(Res.string.secondary_group_by),
             onChangeSortRule = onSecondarySortRuleChange,
         )
         Spacer(Modifier.height(8.dp))
@@ -324,7 +348,7 @@ private fun CustomSortOptionGroup(
             enabled = enabled,
             options = SortOptionType.ContentOptions,
             currentOption = sortRule.contentSort,
-            label = "Content Sort by..",
+            label = stringResource(Res.string.content_sort_by),
             onChangeSortRule = onContentSortRuleChange,
         )
     }
@@ -483,16 +507,34 @@ private enum class SortOptionType {
     }
 }
 
-private fun SortOptionType.orderLabel(ascending: Boolean) =
+@Composable
+private fun SortOptionType.orderLabel(ascending: Boolean): String =
     when (this) {
         SortOptionType.Artist,
         SortOptionType.Title,
         SortOptionType.Genre,
         SortOptionType.Album,
-        -> if (ascending) "A → Z" else "Z → A"
+        ->
+            if (ascending) {
+                stringResource(Res.string.order_a_to_z)
+            } else {
+                stringResource(Res.string.order_z_to_a)
+            }
 
-        SortOptionType.TrackNum -> if (ascending) "1 → 9" else "9 → 1"
-        SortOptionType.ReleaseYear -> if (ascending) "Old → New" else "New → Old"
+        SortOptionType.TrackNum ->
+            if (ascending) {
+                stringResource(Res.string.order_1_to_9)
+            } else {
+                stringResource(Res.string.order_9_to_1)
+            }
+
+        SortOptionType.ReleaseYear ->
+            if (ascending) {
+                stringResource(Res.string.order_old_to_new)
+            } else {
+                stringResource(Res.string.order_new_to_old)
+            }
+
         SortOptionType.None -> error("Never. This should not happen.")
     }
 
@@ -546,20 +588,30 @@ private enum class PresetSortRule(
     ),
 }
 
-private fun PresetSortRule.headerText() =
+@Composable
+private fun PresetSortRule.headerText(): String =
     when (this) {
-        PresetSortRule.AlbumAsc -> "Sort by Album"
-        PresetSortRule.ArtistAsc -> "Sort by Artist"
-        PresetSortRule.TitleNameAsc -> "Sort by Title"
-        PresetSortRule.ArtistAlbumASC -> "Sort by Artist, then Album"
+        PresetSortRule.AlbumAsc ->
+            stringResource(Res.string.sort_by_album)
+        PresetSortRule.ArtistAsc ->
+            stringResource(Res.string.sort_by_artist)
+        PresetSortRule.TitleNameAsc ->
+            stringResource(Res.string.sort_by_title)
+        PresetSortRule.ArtistAlbumASC ->
+            stringResource(Res.string.sort_by_artist_then_album)
     }
 
-private fun PresetSortRule.subTitle() =
+@Composable
+private fun PresetSortRule.subTitle(): String =
     when (this) {
-        PresetSortRule.AlbumAsc -> "Group items by album and sort tracks in ascending order."
-        PresetSortRule.ArtistAsc -> "Group items by artist in ascending order."
-        PresetSortRule.TitleNameAsc -> "Group items alphabetically by title."
-        PresetSortRule.ArtistAlbumASC -> "Group items by artist and then by album, sorting tracks in ascending order."
+        PresetSortRule.AlbumAsc ->
+            stringResource(Res.string.sort_sub_album_asc)
+        PresetSortRule.ArtistAsc ->
+            stringResource(Res.string.sort_sub_artist_asc)
+        PresetSortRule.TitleNameAsc ->
+            stringResource(Res.string.sort_sub_title_name_asc)
+        PresetSortRule.ArtistAlbumASC ->
+            stringResource(Res.string.sort_sub_artist_album_asc)
     }
 
 @OptIn(ExperimentalMaterial3Api::class)

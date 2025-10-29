@@ -37,6 +37,51 @@
     <string name="new_playlist_dialog_input_hint">Название</string>
     <string name="remove_playlist">Удалить плейлист</string>
     <string name="delete_this_tab">Удалить эту вкладку</string>
-    <string name="add_to_home_tab">Добавить на вкладку «Главная»</string>
     <string name="favorite">Избранное</string>
+    <string name="add_to_home_tab">Закрепить на главной</string>
+    <string name="default_sort_order">Порядок по умолчанию</string>
+    <string name="display_settings">Параметры отображения</string>
+    <string name="sort_by_media_title">Название</string>
+    <string name="sort_by_track_number">Трек</string>
+    <string name="sort_by_genre">Жанр</string>
+    <string name="sort_by_none">Нет</string>
+    <string name="sort_by_release_year">Дата выхода</string>
+    <string name="sync_start">Начать синхронизацию</string>
+    <string name="sync_progress">Синхронизация: %1$s</string>
+    <string name="sync_completed">%1$s песен загружено</string>
+    <string name="sync_failed">Ошибка синхронизации</string>
+    <string name="re_sync_media_library">Обновить медиатеку</string>
+    <string name="change_default_sort_order">Изменить порядок сортировки по умолчанию</string>
+    <string name="display_setting_for">Параметры отображения для %1$s</string>
+
+    <string name="sort_by_album">Сортировать по альбому</string>
+    <string name="sort_by_artist">Сортировать по исполнителю</string>
+    <string name="sort_by_title">Сортировать по названию</string>
+    <string name="sort_by_artist_then_album">Сортировать по исполнителю, затем по альбому</string>
+
+    <string name="sort_sub_album_asc">Группировать элементы по альбому и сортировать треки в порядке возрастания.</string>
+    <string name="sort_sub_artist_asc">Сортировать элементы по исполнителю в порядке возрастания.</string>
+    <string name="sort_sub_title_name_asc">Сортировать элементы в алфавитном порядке по названию.</string>
+    <string name="sort_sub_artist_album_asc">Группировать элементы по исполнителю, затем по альбому, сортируя треки в порядке возрастания.</string>
+
+    <string name="order_a_to_z">A → Z</string>
+    <string name="order_z_to_a">Z → A</string>
+    <string name="order_1_to_9">1 → 9</string>
+    <string name="order_9_to_1">9 → 1</string>
+    <string name="order_old_to_new">Старые → Новые</string>
+    <string name="order_new_to_old">Новые → Старые</string>
+
+    <string name="preset">Пресет</string>
+    <string name="customize">Настроить</string>
+
+    <string name="primary_group_by">Основная группировка по</string>
+    <string name="secondary_group_by">Вторичная группировка по</string>
+    <string name="content_sort_by">Сортировать содержимое по</string>
+    <string name="show_track_number">Показывать номер трека</string>
+    <string name="reset_settings">Сбросить настройки</string>
+
+    <string name="sync_progress_media">Песня %1$d / %2$d</string>
+    <string name="sync_progress_album">Альбом %1$d / %2$d</string>
+    <string name="sync_progress_artist">Исполнитель %1$d / %2$d</string>
+    <string name="sync_progress_genre">Жанр %1$d / %2$d</string>
 </resources>

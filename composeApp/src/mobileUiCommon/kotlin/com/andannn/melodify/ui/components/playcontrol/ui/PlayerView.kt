@@ -88,7 +88,7 @@ internal fun PlayerViewContent(
             }
 
             LaunchedEffect(layoutState.isPlayerExpanding) {
-                dominantColorState.setDynamicThemeEnable(layoutState.isPlayerExpanding)
+                dominantColorState.setDynamicThemeEnable(true)
             }
 
             FlexiblePlayerLayout(

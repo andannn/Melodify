@@ -40,7 +40,7 @@ internal class PlayListRepositoryImpl(
             )
         }
 
-    override suspend fun getPlayListFlowById(playListId: Long) =
+    override fun getPlayListFlowById(playListId: Long) =
         playListDao
             .getPlayListFlow(playListId)
             .map {

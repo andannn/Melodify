@@ -2,16 +2,10 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.popup
+package com.andannn.melodify.usecase
 
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.audios
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -26,55 +20,11 @@ import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.SnackBarMessage
-import com.andannn.melodify.ui.popup.dialog.DialogData
-import com.andannn.melodify.ui.popup.dialog.DialogDataImpl
 import com.andannn.melodify.ui.popup.dialog.SleepTimerOption
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
-private const val TAG = "PopupController"
-
-class PopupControllerImpl : PopupController {
-    private val mutex = Mutex()
-
-    private var _currentDialog by mutableStateOf<DialogData?>(null)
-
-    override val currentDialog: DialogData?
-        get() = _currentDialog
-
-    override var snackBarController: SnackbarHostState? = null
-
-    /**
-     * Show snackbar and wait for user interaction.
-     */
-    override suspend fun showSnackBar(
-        message: SnackBarMessage,
-        vararg messageFormatArgs: Any,
-    ): SnackbarResult =
-        snackBarController?.showSnackbar(message.toSnackbarVisuals(messageFormatArgs.toList()))
-            ?: error("Snackbar HostState is not setup. ")
-
-    /**
-     * Show dialog and wait for user interaction.
-     *
-     * Dialog show at most one snackbar at a time.
-     */
-    override suspend fun showDialog(dialogId: DialogId): DialogAction =
-        mutex.withLock {
-            Napier.d(tag = TAG) { "show dialog. dialogId = $dialogId" }
-            try {
-                return suspendCancellableCoroutine { continuation ->
-                    _currentDialog = DialogDataImpl(dialogId, continuation)
-                }
-            } finally {
-                Napier.d(tag = TAG) { "currentDialog closed = $dialogId" }
-                _currentDialog = null
-            }
-        }
-}
+private const val TAG = "MediaOptionUseCase"
 
 context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
 suspend fun MediaItemModel.pinToHomeTab() {
@@ -121,7 +71,7 @@ suspend fun addToQueue(items: List<AudioItemModel>) {
 }
 
 context(playListRepository: PlayListRepository)
-private suspend fun onDeleteItemInPlayList(
+suspend fun deleteItemInPlayList(
     playListId: String,
     source: AudioItemModel,
 ) {
@@ -129,7 +79,7 @@ private suspend fun onDeleteItemInPlayList(
 }
 
 context(repo: Repository)
-private suspend fun PlayListItemModel.delete() {
+suspend fun PlayListItemModel.delete() {
     repo.deletePlayList(id.toLong())
 
     val currentCustomTabs = repo.currentCustomTabsFlow.first()
@@ -199,30 +149,6 @@ private suspend fun createNewPlayList(items: List<AudioItemModel>) {
         repo.addMusicToPlayList(
             playListId = playListId,
             musics = items,
-        )
-
-        repo.addNewCustomTab(
-            externalId = playListId.toString(),
-            tabName = name,
-            tabKind = TabKind.PLAYLIST,
-        )
-    }
-}
-
-context(repo: Repository, popupController: PopupController)
-private suspend fun createNewPlayListFromSource(source: MediaItemModel) {
-    val result = popupController.showDialog(DialogId.NewPlayListDialog)
-    Napier.d(tag = TAG) { "result. name = $result" }
-    if (result is DialogAction.InputDialog.Accept) {
-        val name = result.input
-        Napier.d(tag = TAG) { "create new playlist start. name = $name" }
-        val playListId = repo.createNewPlayList(name)
-
-        Napier.d(tag = TAG) { "playlist created. id = $playListId" }
-
-        repo.addMusicToPlayList(
-            playListId = playListId,
-            musics = source.audios(),
         )
 
         repo.addNewCustomTab(

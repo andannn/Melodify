@@ -11,9 +11,9 @@ import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.SortRule
-import com.andannn.melodify.core.data.repository.PlayListRepository.Companion.FAVORITE_PLAY_LIST_ID
 import com.andannn.melodify.model.LibraryDataSource
+import com.andannn.melodify.usecase.content
+import com.andannn.melodify.usecase.item
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState
@@ -42,6 +42,9 @@ class LibraryDetailPresenter(
 ) : Presenter<LibraryContentState> {
     @Composable
     override fun present(): LibraryContentState {
+        val dataSourceMediaItem by with(repository) { dataSource.item() }.collectAsRetainedState(
+            null,
+        )
         val contentList by with(repository) { dataSource.content() }.collectAsRetainedState(
             emptyList(),
         )
@@ -49,9 +52,16 @@ class LibraryDetailPresenter(
             value = with(repository) { dataSource.getTitle() }
         }
         return LibraryContentState(
-            contentList,
-            title,
-        )
+            dataSource = dataSource,
+            mediaItem = dataSourceMediaItem,
+            contentList = contentList,
+            title = title,
+        ) { event ->
+            when (event) {
+                is LibraryContentEvent.OnRequestPlay ->
+                    playMusic(event.mediaItem, contentList)
+            }
+        }
     }
 
     private fun playMusic(
@@ -67,8 +77,22 @@ class LibraryDetailPresenter(
     }
 }
 
+data class LibraryContentState(
+    val dataSource: LibraryDataSource,
+    val mediaItem: MediaItemModel?,
+    val contentList: List<MediaItemModel> = emptyList(),
+    val title: String = "",
+    val eventSink: (LibraryContentEvent) -> Unit = {},
+) : CircuitUiState
+
+sealed interface LibraryContentEvent {
+    data class OnRequestPlay(
+        val mediaItem: AudioItemModel,
+    ) : LibraryContentEvent
+}
+
 context(repository: Repository)
-private suspend fun LibraryDataSource.getTitle() =
+private suspend fun LibraryDataSource.getTitle(): String =
     when (this) {
         LibraryDataSource.AllAlbum -> getString(Res.string.album_page_title)
         LibraryDataSource.AllArtist -> getString(Res.string.artist_page_title)
@@ -91,52 +115,4 @@ private suspend fun LibraryDataSource.getTitle() =
         is LibraryDataSource.PlayListDetail ->
             repository.playListRepository.getPlayListById(id.toLong())?.name
                 ?: ""
-    }
-
-data class LibraryContentState(
-    val contentList: List<MediaItemModel> = emptyList(),
-    val title: String = "",
-) : CircuitUiState
-
-context(repository: Repository)
-private fun LibraryDataSource.content() =
-    when (this) {
-        is LibraryDataSource.AlbumDetail ->
-            repository.mediaContentRepository.getAudiosOfAlbumFlow(
-                id,
-                SortRule.Preset.TitleASC,
-            )
-
-        LibraryDataSource.AllAlbum -> repository.mediaContentRepository.getAllAlbumsFlow()
-        LibraryDataSource.AllArtist -> repository.mediaContentRepository.getAllArtistFlow()
-        LibraryDataSource.AllGenre -> repository.mediaContentRepository.getAllGenreFlow()
-        LibraryDataSource.AllPlaylist -> repository.playListRepository.getAllPlayListFlow()
-        LibraryDataSource.AllSong ->
-            repository.mediaContentRepository.getAllMediaItemsFlow(
-                SortRule.Preset.TitleASC,
-            )
-
-        is LibraryDataSource.ArtistDetail ->
-            repository.mediaContentRepository.getAudiosOfArtistFlow(
-                id,
-                SortRule.Preset.TitleASC,
-            )
-
-        LibraryDataSource.Favorite ->
-            repository.playListRepository.getAudiosOfPlayListFlow(
-                FAVORITE_PLAY_LIST_ID,
-                SortRule.Preset.TitleASC,
-            )
-
-        is LibraryDataSource.GenreDetail ->
-            repository.mediaContentRepository.getAudiosOfGenreFlow(
-                id,
-                SortRule.Preset.TitleASC,
-            )
-
-        is LibraryDataSource.PlayListDetail ->
-            repository.playListRepository.getAudiosOfPlayListFlow(
-                id.toLong(),
-                SortRule.Preset.TitleASC,
-            )
     }

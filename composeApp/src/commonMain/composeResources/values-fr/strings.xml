@@ -37,6 +37,50 @@
     <string name="new_playlist_dialog_input_hint">Titre</string>
     <string name="remove_playlist">Supprimer la playlist</string>
     <string name="delete_this_tab">Supprimer cet onglet</string>
-    <string name="add_to_home_tab">Ajouter à l'onglet d'accueil</string>
     <string name="favorite">Favoritos</string>
+    <string name="add_to_home_tab">Épingler à l’accueil</string>
+    <string name="default_sort_order">Ordre de tri par défaut</string>
+    <string name="display_settings">Options d’affichage</string>
+    <string name="sort_by_media_title">Titre</string>
+    <string name="sort_by_track_number">Piste CD</string>
+    <string name="sort_by_genre">Genre</string>
+    <string name="sort_by_none">Aucun</string>
+    <string name="sort_by_release_year">Date de sortie</string>
+    <string name="sync_start">Démarrer la synchronisation</string>
+    <string name="sync_progress">Progression de la synchronisation : %1$s</string>
+    <string name="sync_completed">%1$s morceaux chargés</string>
+    <string name="sync_failed">Échec de la synchronisation</string>
+    <string name="re_sync_media_library">Actualiser la bibliothèque multimédia</string>
+    <string name="change_default_sort_order">Modifier l’ordre de tri par défaut</string>
+    <string name="display_setting_for">Options d’affichage pour %1$s</string>
+
+    <string name="sort_by_album">Trier par album</string>
+    <string name="sort_by_artist">Trier par artiste</string>
+    <string name="sort_by_title">Trier par titre</string>
+    <string name="sort_by_artist_then_album">Trier par artiste puis par album</string>
+
+    <string name="sort_sub_album_asc">Grouper les éléments par album et trier les pistes par ordre croissant.</string>
+    <string name="sort_sub_artist_asc">Trier les éléments par artiste dans l’ordre croissant.</string>
+    <string name="sort_sub_title_name_asc">Trier les éléments alphabétiquement par titre.</string>
+    <string name="sort_sub_artist_album_asc">Grouper les éléments par artiste puis par album, en triant les pistes par ordre croissant.</string>
+
+    <string name="order_a_to_z">A → Z</string>
+    <string name="order_z_to_a">Z → A</string>
+    <string name="order_1_to_9">1 → 9</string>
+    <string name="order_9_to_1">9 → 1</string>
+    <string name="order_old_to_new">Ancien → Récent</string>
+    <string name="order_new_to_old">Récent → Ancien</string>
+
+    <string name="preset">Préréglage</string>
+    <string name="customize">Personnaliser</string>
+    <string name="primary_group_by">Regrouper principalement par</string>
+    <string name="secondary_group_by">Regrouper secondairement par</string>
+    <string name="content_sort_by">Trier le contenu par</string>
+    <string name="show_track_number">Afficher le numéro de piste</string>
+    <string name="reset_settings">Réinitialiser les paramètres</string>
+
+    <string name="sync_progress_media">Titre %1$d / %2$d</string>
+    <string name="sync_progress_album">Album %1$d / %2$d</string>
+    <string name="sync_progress_artist">Artiste %1$d / %2$d</string>
+    <string name="sync_progress_genre">Genre %1$d / %2$d</string>
 </resources>

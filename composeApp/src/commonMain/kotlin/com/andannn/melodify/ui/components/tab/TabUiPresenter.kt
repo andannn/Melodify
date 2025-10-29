@@ -21,10 +21,10 @@ import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.contentFlow
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
-import com.andannn.melodify.ui.popup.addToNextPlay
-import com.andannn.melodify.ui.popup.addToPlaylist
-import com.andannn.melodify.ui.popup.addToQueue
 import com.andannn.melodify.ui.popup.dialog.OptionItem
+import com.andannn.melodify.usecase.addToNextPlay
+import com.andannn.melodify.usecase.addToPlaylist
+import com.andannn.melodify.usecase.addToQueue
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
