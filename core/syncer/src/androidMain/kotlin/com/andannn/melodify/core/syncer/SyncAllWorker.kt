@@ -22,6 +22,7 @@ import com.andannn.melodify.core.datastore.UserSettingPreferences
 import io.github.aakira.napier.Napier
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 object SyncWorkHelper {
@@ -42,7 +43,10 @@ object SyncWorkHelper {
         )
     }
 
-    fun doOneTimeSyncWork(context: Context) {
+    /**
+     *
+     */
+    fun doOneTimeSyncWork(context: Context): UUID {
         val oneTimeWorkRequest =
             OneTimeWorkRequestBuilder<SyncAllMediaWorker>()
                 .build()
@@ -51,6 +55,8 @@ object SyncWorkHelper {
             ExistingWorkPolicy.KEEP,
             oneTimeWorkRequest,
         )
+
+        return oneTimeWorkRequest.id
     }
 }
 
@@ -67,19 +73,19 @@ fun Data.toSyncStatus() =
             )
         }
 
-        else -> {}
+        else -> null
     }
 
 private const val TAG = "SyncAllWorker"
 
-private const val MEDIA_TYPE = "Type"
-private const val TOTAL = "total"
-private const val PROGRESS = "progress"
+private const val MEDIA_TYPE = "MediaType"
+private const val TOTAL = "Total"
+private const val PROGRESS = "Progress"
 private const val EVENT_TYPE = "EventType"
-private const val EVENT_TYPE_VALUE_START = "START"
-private const val EVENT_TYPE_VALUE_COMPLETE = "COMPLETE"
-private const val EVENT_TYPE_VALUE_FAILED = "FAILED"
-private const val EVENT_TYPE_VALUE_PROGRESS = "PROGRESS"
+private const val EVENT_TYPE_VALUE_START = "VALUE_START"
+private const val EVENT_TYPE_VALUE_COMPLETE = "VALUE_COMPLETE"
+private const val EVENT_TYPE_VALUE_FAILED = "VALUE_FAILED"
+private const val EVENT_TYPE_VALUE_PROGRESS = "VALUE_PROGRESS"
 
 internal class SyncAllMediaWorker(
     private val appContext: Context,

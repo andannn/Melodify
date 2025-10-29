@@ -52,9 +52,9 @@ class PopupControllerImpl : PopupController {
      */
     override suspend fun showSnackBar(
         message: SnackBarMessage,
-        messageFormatArgs: List<Any>,
+        vararg messageFormatArgs: Any,
     ): SnackbarResult =
-        snackBarController?.showSnackbar(message.toSnackbarVisuals(messageFormatArgs))
+        snackBarController?.showSnackbar(message.toSnackbarVisuals(messageFormatArgs.toList()))
             ?: error("Snackbar HostState is not setup. ")
 
     /**
@@ -251,7 +251,7 @@ private suspend fun PlayListItemModel.addAll(audioList: List<AudioItemModel>) {
 
             popupController.showSnackBar(
                 message = SnackBarMessage.AddPlayListSuccess,
-                messageFormatArgs = listOf(name),
+                name,
             )
         }
 

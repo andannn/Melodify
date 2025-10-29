@@ -30,8 +30,11 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.PopupController
-import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.syncer.SyncMediaStoreHandler
+import com.andannn.melodify.core.syncer.SyncStatus
+import com.andannn.melodify.core.syncer.SyncType
 import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.model.SnackBarMessage
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.LibraryScreen
 import com.andannn.melodify.ui.SearchScreen
@@ -49,29 +52,39 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.default_sort_order
+import melodify.composeapp.generated.resources.re_sync_media_library
 import org.jetbrains.compose.resources.StringResource
+import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 internal fun rememberHomeUiPresenter(
     navigator: Navigator,
     popController: PopupController = LocalPopupController.current,
+    syncMediaStoreHandler: SyncMediaStoreHandler = getKoin().get(),
 ): Presenter<HomeState> =
     remember(
         navigator,
         popController,
+        syncMediaStoreHandler,
     ) {
         HomePresenter(
             navigator,
             popController,
+            syncMediaStoreHandler,
         )
     }
+
+private const val TAG = "HomeScreen"
 
 private class HomePresenter(
     private val navigator: Navigator,
     private val popController: PopupController,
+    private val syncMediaStoreHandler: SyncMediaStoreHandler,
 ) : Presenter<HomeState> {
     @Composable
     override fun present(): HomeState {
@@ -85,23 +98,68 @@ private class HomePresenter(
             tabContentState = tabContentPresenter.present(),
         ) { eventSink ->
             with(popController) {
-                when (eventSink) {
-                    HomeUiEvent.LibraryButtonClick -> navigator.goTo(LibraryScreen)
-                    HomeUiEvent.SearchButtonClick -> navigator.goTo(SearchScreen)
-                    is HomeUiEvent.OnMenuSelected -> {
-                        when (eventSink.selected) {
-                            MenuOption.DEFAULT_SORT -> scope.launch { changeSortRule(null) }
+                with(syncMediaStoreHandler) {
+                    when (eventSink) {
+                        HomeUiEvent.LibraryButtonClick -> navigator.goTo(LibraryScreen)
+                        HomeUiEvent.SearchButtonClick -> navigator.goTo(SearchScreen)
+                        is HomeUiEvent.OnMenuSelected -> {
+                            when (eventSink.selected) {
+                                MenuOption.DEFAULT_SORT -> scope.launch { changeSortRule() }
+                                MenuOption.RE_SYNC_ALL_MEDIA -> scope.launch { resyncAllSongs() }
+                            }
                         }
+
+                        HomeUiEvent.OnTabManagementClick -> navigator.goTo(TabManageScreen)
                     }
-                    HomeUiEvent.OnTabManagementClick -> navigator.goTo(TabManageScreen)
                 }
             }
         }
     }
 }
 
+context(syncMediaStoreHandler: SyncMediaStoreHandler, popController: PopupController)
+private suspend fun resyncAllSongs() =
+    coroutineScope {
+        var job: Job? = null
+        var mediaCount: Int? = null
+        syncMediaStoreHandler.reSyncAllMedia().collect {
+            Napier.d(tag = TAG) { "sync status update $it" }
+            job?.cancel()
+            job =
+                launch {
+                    when (it) {
+                        SyncStatus.Complete ->
+                            popController.showSnackBar(
+                                SnackBarMessage.SyncCompleted,
+                                "${mediaCount ?: 0} Songs",
+                            )
+
+                        SyncStatus.Failed ->
+                            popController.showSnackBar(
+                                SnackBarMessage.SyncFailed,
+                            )
+
+                        is SyncStatus.Progress -> {
+                            if (it.type == SyncType.MEDIA) {
+                                mediaCount = it.total
+                            }
+                            popController.showSnackBar(
+                                SnackBarMessage.SyncProgress,
+                                it.toSnackBarInfoString(),
+                            )
+                        }
+
+                        SyncStatus.Start ->
+                            popController.showSnackBar(
+                                SnackBarMessage.SyncStatusStart,
+                            )
+                    }
+                }
+        }
+    }
+
 context(popupController: PopupController)
-private suspend fun changeSortRule(tab: CustomTab?) {
+private suspend fun changeSortRule() {
     popupController.showDialog(
         DialogId.ChangeSortRuleDialog(),
     )
@@ -143,7 +201,7 @@ internal fun HomeUiScreen(
         topBar = {
             TopAppBar(
                 colors =
-                    TopAppBarDefaults.centerAlignedTopAppBarColors().run {
+                    TopAppBarDefaults.topAppBarColors().run {
                         copy(scrolledContainerColor = containerColor)
                     },
                 title = {
@@ -202,10 +260,21 @@ internal fun HomeUiScreen(
     ActionDialogContainer()
 }
 
-enum class MenuOption(
+internal enum class MenuOption(
     val textRes: StringResource,
 ) {
     DEFAULT_SORT(
         textRes = Res.string.default_sort_order,
     ),
+    RE_SYNC_ALL_MEDIA(
+        textRes = Res.string.re_sync_media_library,
+    ),
 }
+
+private fun SyncStatus.Progress.toSnackBarInfoString() =
+    when (this.type) {
+        SyncType.MEDIA -> "Song ${this.progress} / ${this.total}"
+        SyncType.ALBUM -> "Album ${this.progress} / ${this.total}"
+        SyncType.ARTIST -> "Artist ${this.progress} / ${this.total}"
+        SyncType.GENRE -> "Genre ${this.progress} / ${this.total}"
+    }
