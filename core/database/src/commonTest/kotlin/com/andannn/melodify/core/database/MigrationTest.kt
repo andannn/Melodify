@@ -227,4 +227,26 @@ class MigrationTest {
             }
         migratedConnection.close()
     }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
+    fun migrate8To9SyncAlbumTableTest() {
+        val migrationTestHelper =
+            getMigrationTestHelper(
+                tempFile.toString(),
+            )
+        val newConnection = migrationTestHelper.createDatabase(8)
+        newConnection.execSQL(
+            """
+            INSERT INTO ${Tables.CUSTOM_TAB} 
+            (${CustomTabColumns.ID}, ${CustomTabColumns.TYPE}, ${CustomTabColumns.NAME}, ${CustomTabColumns.EXTERNAL_ID}, ${CustomTabColumns.DISPLAY_SETTING})
+            VALUES (4, 'album_detail', 'Album1', 'A01', '{"primary_group_sort":{"type":"com.andannn.melodify.core.data.model.SortOption.Album","ascending":true},"content_sort":{"type":"com.andannn.melodify.core.data.model.SortOption.TrackNum","ascending":true},"show_track_num":true,"is_preset":false}')
+            """.trimIndent(),
+        )
+        newConnection.close()
+        val migratedConnection =
+            migrationTestHelper.runMigrationsAndValidate(9)
+        migratedConnection.close()
+    }
 }

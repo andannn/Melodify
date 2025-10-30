@@ -27,7 +27,7 @@ import com.andannn.melodify.core.data.model.contentFlow
 import com.andannn.melodify.core.data.model.contentPagingDataFlow
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
-import com.andannn.melodify.ui.popup.dialog.OptionItem
+import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
@@ -45,22 +45,30 @@ private const val TAG = "TabContentPresenter"
 @Composable
 fun rememberTabContentPresenter(
     selectedTab: CustomTab?,
+    onRequestGoToAlbum: (AudioItemModel) -> Unit = {},
+    onRequestGoToArtist: (AudioItemModel) -> Unit = {},
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
 ) = remember(
     selectedTab,
     repository,
     popupController,
+    onRequestGoToAlbum,
+    onRequestGoToArtist,
 ) {
     TabContentPresenter(
-        selectedTab,
-        repository,
-        popupController,
+        selectedTab = selectedTab,
+        onRequestGoToAlbum = onRequestGoToAlbum,
+        onRequestGoToArtist = onRequestGoToArtist,
+        repository = repository,
+        popupController = popupController,
     )
 }
 
 class TabContentPresenter(
     private val selectedTab: CustomTab?,
+    private val onRequestGoToAlbum: (AudioItemModel) -> Unit = {},
+    private val onRequestGoToArtist: (AudioItemModel) -> Unit = {},
     private val repository: Repository,
     private val popupController: PopupController,
 ) : Presenter<TabContentState> {
@@ -127,9 +135,7 @@ class TabContentPresenter(
 
                 is TabContentEvent.OnShowMusicItemOption ->
                     scope.launch {
-                        onShowMusicItemOption(
-                            eventSink.mediaItemModel,
-                        )
+                        onShowMusicItemOption(eventSink.mediaItemModel)
                     }
             }
         }
@@ -178,6 +184,8 @@ class TabContentPresenter(
                 OptionItem.PLAY_NEXT,
                 OptionItem.ADD_TO_QUEUE,
                 OptionItem.ADD_TO_PLAYLIST,
+                OptionItem.OPEN_LIBRARY_ALBUM,
+                OptionItem.OPEN_LIBRARY_ARTIST,
             )
         val result =
             popupController.showDialog(
@@ -191,6 +199,8 @@ class TabContentPresenter(
                     OptionItem.PLAY_NEXT -> addToNextPlay(listOf(item))
                     OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(item))
                     OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item))
+                    OptionItem.OPEN_LIBRARY_ALBUM -> onRequestGoToAlbum(item)
+                    OptionItem.OPEN_LIBRARY_ARTIST -> onRequestGoToArtist(item)
                     else -> {}
                 }
             }

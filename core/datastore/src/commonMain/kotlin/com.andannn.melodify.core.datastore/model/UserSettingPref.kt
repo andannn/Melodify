@@ -43,8 +43,8 @@ data class UserSettingPref(
     /**
      * default sort rule
      *
-     * key: [PreferencesKeyName.DEFAULT_SORT_RULE_KEY_NAME]
-     * Value: [String]
+     * key: [PreferencesKeyName.DEFAULT_PRESET_SORT_RULE_KEY_NAME]
+     * Value: [Int]
      */
-    val defaultSortRule: String?,
+    val defaultSortRule: Int?,
 )

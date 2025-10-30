@@ -9,11 +9,7 @@ import androidx.room.execSQL
 import androidx.room.useReaderConnection
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
-import com.andannn.melodify.core.database.dao.MediaSortType
 import com.andannn.melodify.core.database.dao.PlayListDao
-import com.andannn.melodify.core.database.dao.Sort
-import com.andannn.melodify.core.database.dao.SortMethod
-import com.andannn.melodify.core.database.dao.SortOrder
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistColumns
@@ -26,6 +22,8 @@ import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
+import com.andannn.melodify.core.database.entity.SortOptionData
+import com.andannn.melodify.core.database.entity.SortRuleEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -34,6 +32,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 internal expect fun inMemoryDatabaseBuilder(): RoomDatabase.Builder<MelodifyDataBase>
 
@@ -718,9 +717,9 @@ class DatabaseTest {
             dao
                 .getAllMediaFlow(
                     sort =
-                        SortMethod.buildMethod {
-                            add(Sort(MediaSortType.Album, SortOrder.DESCENDING))
-                            add(Sort(MediaSortType.TrackNum, SortOrder.DESCENDING))
+                        MediaSorts.buildMethod {
+                            add(Sort(MediaColumns.ALBUM, SortOrder.DESCENDING))
+                            add(Sort(MediaColumns.CD_TRACK_NUMBER, SortOrder.DESCENDING))
                         },
                 ).first()
                 .also { mediaList ->
@@ -763,8 +762,8 @@ class DatabaseTest {
             dao
                 .getAllMediaFlow(
                     sort =
-                        SortMethod.buildMethod {
-                            add(Sort(MediaSortType.Title, SortOrder.ASCENDING))
+                        MediaSorts.buildMethod {
+                            add(Sort(MediaColumns.TITLE, SortOrder.ASCENDING))
                         },
                 ).first()
                 .also { mediaList ->
@@ -772,35 +771,6 @@ class DatabaseTest {
                     assertEquals(1, mediaList[1].id)
                     assertEquals(3, mediaList[2].id)
                 }
-        }
-
-    @Test
-    @IgnoreAndroidUnitTest
-    fun `update displaySetting test1`() =
-        testScope.runTest {
-            val dao = database.getUserDataDao()
-            dao.updateDisplaySettingForTab(111, "sssss").let {
-                assertEquals(0, it)
-            }
-        }
-
-    @Test
-    @IgnoreAndroidUnitTest
-    fun `update displaySetting test`() =
-        testScope.runTest {
-            val dao = database.getUserDataDao()
-            dao.insertCustomTab(
-                CustomTabEntity(
-                    id = 10,
-                    type = "bbbbb",
-                ),
-            )
-            dao.updateDisplaySettingForTab(10, "sssss").let {
-                assertEquals(1, it)
-            }
-            dao.getDisplaySettingFlowOfTab(10).first().let {
-                assertEquals("sssss", it)
-            }
         }
 
     @Test
@@ -877,6 +847,49 @@ class DatabaseTest {
                 assertEquals(firstId, tabs[1].id)
                 assertEquals(secondId, tabs[2].id)
                 assertEquals(thirdId, tabs[3].id)
+            }
+        }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    fun `insert sort rule`() =
+        runTest {
+            val dao = database.getUserDataDao()
+            dao.insertCustomTab(
+                CustomTabEntity(
+                    id = 1234,
+                    name = "name",
+                    type = "bbbbb",
+                ),
+            )
+            dao.upsertSortRuleEntity(
+                SortRuleEntity(
+                    foreignKey = 1234,
+                    primaryGroupSort = SortOptionData(1, false),
+                ),
+            )
+            dao.getDisplaySettingFlowOfTab(1234).first().also {
+                assertEquals(
+                    SortOptionData(1, false),
+                    it?.primaryGroupSort,
+                )
+            }
+            dao.upsertSortRuleEntity(
+                SortRuleEntity(
+                    foreignKey = 1234,
+                    primaryGroupSort = SortOptionData(4, true),
+                ),
+            )
+            dao.getDisplaySettingFlowOfTab(1234).first().also {
+                assertEquals(
+                    SortOptionData(4, true),
+                    it?.primaryGroupSort,
+                )
+            }
+
+            dao.deleteCustomTab(1234)
+            dao.getDisplaySettingFlowOfTab(1234).first().also {
+                assertNull(it)
             }
         }
 }

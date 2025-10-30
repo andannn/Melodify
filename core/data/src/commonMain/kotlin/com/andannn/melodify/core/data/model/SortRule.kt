@@ -4,24 +4,33 @@
  */
 package com.andannn.melodify.core.data.model
 
-import com.andannn.melodify.core.database.dao.MediaSortType
-import com.andannn.melodify.core.database.dao.Sort
-import com.andannn.melodify.core.database.dao.SortMethod
-import com.andannn.melodify.core.database.dao.SortOrder
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.andannn.melodify.core.database.MediaSorts
+import com.andannn.melodify.core.database.Sort
+import com.andannn.melodify.core.database.SortOrder
+import com.andannn.melodify.core.database.entity.MediaColumns
 
-@Serializable
+enum class PresetSortRule(
+    val sortRule: SortRule,
+) {
+    AlbumAsc(
+        sortRule = SortRule.Preset.AlbumASC,
+    ),
+    ArtistAsc(
+        sortRule = SortRule.Preset.ArtistASC,
+    ),
+    TitleNameAsc(
+        sortRule = SortRule.Preset.TitleASC,
+    ),
+    ArtistAlbumASC(
+        sortRule = SortRule.Preset.ArtistAlbumASC,
+    ),
+}
+
 data class SortRule(
-    @SerialName("primary_group_sort")
     val primaryGroupSort: SortOption,
-    @SerialName("secondary_group_sort")
     val secondaryGroupSort: SortOption = SortOption.NONE,
-    @SerialName("content_sort")
     val contentSort: SortOption = SortOption.NONE,
-    @SerialName("show_track_num")
     val showTrackNum: Boolean = false,
-    @SerialName("is_preset")
     val isPreset: Boolean = true,
 ) {
     companion object Preset {
@@ -59,39 +68,31 @@ data class SortRule(
     }
 }
 
-@Serializable
 sealed interface SortOption {
-    @Serializable
     data class Album(
         val ascending: Boolean,
     ) : SortOption
 
-    @Serializable
     data class Title(
         val ascending: Boolean,
     ) : SortOption
 
-    @Serializable
     data class Artist(
         val ascending: Boolean,
     ) : SortOption
 
-    @Serializable
     data class TrackNum(
         val ascending: Boolean,
     ) : SortOption
 
-    @Serializable
     data class Genre(
         val ascending: Boolean,
     ) : SortOption
 
-    @Serializable
     data class ReleaseYear(
         val ascending: Boolean,
     ) : SortOption
 
-    @Serializable
     data object NONE : SortOption
 }
 
@@ -107,7 +108,7 @@ fun SortOption.isAscending() =
     }
 
 internal fun SortRule.toSortMethod() =
-    SortMethod.buildMethod {
+    MediaSorts.buildMethod {
         addSortOption(primaryGroupSort)
         addSortOption(secondaryGroupSort)
         addSortOption(contentSort)
@@ -117,32 +118,32 @@ internal fun MutableList<Sort>.addSortOption(sort: SortOption) {
     when (sort) {
         is SortOption.Album ->
             apply {
-                add(Sort(MediaSortType.Album, sort.ascending.toOrder()))
+                add(Sort(MediaColumns.ALBUM, sort.ascending.toOrder()))
             }
 
         is SortOption.Artist ->
             apply {
-                add(Sort(MediaSortType.Artist, sort.ascending.toOrder()))
+                add(Sort(MediaColumns.ARTIST, sort.ascending.toOrder()))
             }
 
         is SortOption.Title ->
             apply {
-                add(Sort(MediaSortType.Title, sort.ascending.toOrder()))
+                add(Sort(MediaColumns.TITLE, sort.ascending.toOrder()))
             }
 
         is SortOption.TrackNum ->
             apply {
-                add(Sort(MediaSortType.TrackNum, sort.ascending.toOrder()))
+                add(Sort(MediaColumns.CD_TRACK_NUMBER, sort.ascending.toOrder()))
             }
 
         is SortOption.Genre ->
             apply {
-                add(Sort(MediaSortType.Genre, sort.ascending.toOrder()))
+                add(Sort(MediaColumns.GENRE, sort.ascending.toOrder()))
             }
 
         is SortOption.ReleaseYear ->
             apply {
-                add(Sort(MediaSortType.ReleaseYear, sort.ascending.toOrder()))
+                add(Sort(MediaColumns.YEAR, sort.ascending.toOrder()))
             }
 
         SortOption.NONE -> {}

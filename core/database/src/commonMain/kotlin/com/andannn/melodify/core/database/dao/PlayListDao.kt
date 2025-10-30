@@ -12,6 +12,7 @@ import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.room.RoomRawQuery
 import androidx.room.Transaction
+import com.andannn.melodify.core.database.MediaSorts
 import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
 import com.andannn.melodify.core.database.entity.MediaColumns
@@ -22,6 +23,7 @@ import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRefColumns
+import com.andannn.melodify.core.database.toSortString
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 
@@ -130,20 +132,20 @@ interface PlayListDao {
 
     fun getMediasInPlayListFlow(
         playListId: Long,
-        sortMethod: SortMethod? = null,
+        mediaSorts: MediaSorts? = null,
     ): Flow<List<CrossRefWithMediaRelation>> =
         getMediasInPlayListFlowRaw(
-            buildPlayListRawQuery(playListId, sortMethod),
+            buildPlayListRawQuery(playListId, mediaSorts),
         )
 
     fun getMediaPagingSourceInPlayList(
         playListId: Long,
-        sortMethod: SortMethod? = null,
-    ): PagingSource<Int, CrossRefWithMediaRelation> = getMediasInPlayListFlowPagingSource(buildPlayListRawQuery(playListId, sortMethod))
+        mediaSorts: MediaSorts? = null,
+    ): PagingSource<Int, CrossRefWithMediaRelation> = getMediasInPlayListFlowPagingSource(buildPlayListRawQuery(playListId, mediaSorts))
 
     private fun buildPlayListRawQuery(
         playListId: Long,
-        sort: SortMethod?,
+        sort: MediaSorts?,
     ): RoomRawQuery {
         val sort = sort?.toSortString() ?: ""
         val sql = """

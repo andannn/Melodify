@@ -26,7 +26,7 @@ import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.repository.SleepTimerRepository
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
-import com.andannn.melodify.ui.popup.dialog.OptionItem
+import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.openSleepTimer

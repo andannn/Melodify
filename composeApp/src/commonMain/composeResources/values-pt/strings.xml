@@ -84,4 +84,6 @@
     <string name="sync_progress_artist">Artista %1$d / %2$d</string>
     <string name="sync_progress_genre">Género %1$d / %2$d</string>
 
+    <string name="go_to_library_album">Ir para o álbum</string>
+    <string name="go_to_library_artist">Ir para o artista</string>
 </resources>

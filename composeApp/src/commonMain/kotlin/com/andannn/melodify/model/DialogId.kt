@@ -6,7 +6,6 @@ package com.andannn.melodify.model
 
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.ui.popup.dialog.OptionItem
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.confirm_delete_playlist_item
 import melodify.composeapp.generated.resources.decline
@@ -74,7 +73,7 @@ sealed interface DialogId {
 
     data object SleepCountingDialog : DialogId
 
-    class OptionDialog(
+    data class OptionDialog(
         val options: List<OptionItem>,
     ) : DialogId
 }

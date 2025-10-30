@@ -14,6 +14,7 @@ import com.andannn.melodify.core.database.entity.CustomTabColumns
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryColumns
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
+import com.andannn.melodify.core.database.entity.SortRuleEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -90,16 +91,11 @@ interface UserDataDao {
         type: String,
     ): Boolean
 
-    @Query("UPDATE ${Tables.CUSTOM_TAB} SET ${CustomTabColumns.DISPLAY_SETTING} = :settings WHERE custom_tab_id == :tabId")
-    suspend fun updateDisplaySettingForTab(
-        tabId: Long,
-        settings: String,
-    ): Int
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertSortRuleEntity(entity: SortRuleEntity)
 
-    @Query(
-        "SELECT ${Tables.CUSTOM_TAB}.${CustomTabColumns.DISPLAY_SETTING} FROM ${Tables.CUSTOM_TAB} WHERE ${CustomTabColumns.ID} = :tabId",
-    )
-    fun getDisplaySettingFlowOfTab(tabId: Long): Flow<String?>
+    @Query("SELECT * FROM ${Tables.SORT_RULE} WHERE custom_tab_foreign_key = :tabId")
+    fun getDisplaySettingFlowOfTab(tabId: Long): Flow<SortRuleEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSearchHistory(searchHistories: List<SearchHistoryEntity>)

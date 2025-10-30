@@ -14,6 +14,12 @@ internal object CustomTabColumns {
     const val NAME = "custom_tab_name"
     const val TYPE = "custom_tab_type"
     const val EXTERNAL_ID = "custom_tab_external_id"
+
+    @Deprecated(
+        """
+        Use SortRuleEntity to save sort rule.
+    """,
+    )
     const val DISPLAY_SETTING = "display_setting"
     const val SORT_ORDER = "sort_order"
 }
@@ -40,6 +46,11 @@ data class CustomTabEntity(
     val name: String? = null,
     @ColumnInfo(name = CustomTabColumns.EXTERNAL_ID)
     val externalId: String? = null,
+    @Deprecated(
+        """
+        Use SortRuleEntity to save sort rule.
+    """,
+    )
     @ColumnInfo(name = CustomTabColumns.DISPLAY_SETTING)
     val displaySettings: String? = null,
     @ColumnInfo(name = CustomTabColumns.SORT_ORDER)

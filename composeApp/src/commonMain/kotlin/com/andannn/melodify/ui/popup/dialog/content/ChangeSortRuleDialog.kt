@@ -571,7 +571,7 @@ private fun SortOptionType.createSortOption(isAscending: Boolean) =
         SortOptionType.None -> SortOption.NONE
     }
 
-private enum class PresetSortRule(
+enum class PresetSortRule(
     val sortRule: SortRule,
 ) {
     AlbumAsc(

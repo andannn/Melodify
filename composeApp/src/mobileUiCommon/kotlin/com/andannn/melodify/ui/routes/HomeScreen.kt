@@ -34,8 +34,10 @@ import com.andannn.melodify.core.syncer.SyncMediaStoreHandler
 import com.andannn.melodify.core.syncer.SyncStatus
 import com.andannn.melodify.core.syncer.SyncType
 import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.SnackBarMessage
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
+import com.andannn.melodify.ui.LibraryDetailScreen
 import com.andannn.melodify.ui.LibraryScreen
 import com.andannn.melodify.ui.SearchScreen
 import com.andannn.melodify.ui.TabManageScreen
@@ -98,7 +100,16 @@ private class HomePresenter(
         val scope = rememberCoroutineScope()
         val tabUiPresenter = rememberTabUiPresenter()
         val tabUiState = tabUiPresenter.present()
-        val tabContentPresenter = rememberTabContentPresenter(tabUiState.selectedTab)
+        val tabContentPresenter =
+            rememberTabContentPresenter(
+                selectedTab = tabUiState.selectedTab,
+                onRequestGoToAlbum = {
+                    navigator.goTo(LibraryDetailScreen(LibraryDataSource.AlbumDetail(id = it.albumId)))
+                },
+                onRequestGoToArtist = {
+                    navigator.goTo(LibraryDetailScreen(LibraryDataSource.ArtistDetail(id = it.artistId)))
+                },
+            )
         return HomeState(
             tabUiState = tabUiState,
             tabContentState = tabContentPresenter.present(),

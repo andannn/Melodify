@@ -2,10 +2,8 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.popup.dialog
+package com.andannn.melodify.model
 
-import com.andannn.melodify.model.SimpleMusicIcons
-import com.andannn.melodify.model.SmpIcon
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.add_to_home_tab
 import melodify.composeapp.generated.resources.add_to_playlist
@@ -13,6 +11,8 @@ import melodify.composeapp.generated.resources.add_to_queue
 import melodify.composeapp.generated.resources.delete_from_playlist
 import melodify.composeapp.generated.resources.delete_this_tab
 import melodify.composeapp.generated.resources.display_settings
+import melodify.composeapp.generated.resources.go_to_library_album
+import melodify.composeapp.generated.resources.go_to_library_artist
 import melodify.composeapp.generated.resources.play_next
 import melodify.composeapp.generated.resources.remove_playlist
 import melodify.composeapp.generated.resources.sleep_timer
@@ -59,6 +59,14 @@ enum class OptionItem(
     DISPLAY_SETTING(
         smpIcon = SimpleMusicIcons.DisplaySettings,
         text = Res.string.display_settings,
+    ),
+    OPEN_LIBRARY_ALBUM(
+        smpIcon = SimpleMusicIcons.Album,
+        text = Res.string.go_to_library_album,
+    ),
+    OPEN_LIBRARY_ARTIST(
+        smpIcon = SimpleMusicIcons.Artist,
+        text = Res.string.go_to_library_artist,
     ),
 }
 

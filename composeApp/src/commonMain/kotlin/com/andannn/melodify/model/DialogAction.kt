@@ -6,8 +6,6 @@ package com.andannn.melodify.model
 
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.ui.popup.dialog.OptionItem
-import com.andannn.melodify.ui.popup.dialog.SleepTimerOption
 
 sealed interface DialogAction {
     data object Dismissed : DialogAction

@@ -15,9 +15,9 @@ import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.ui.components.tabcontent.GroupType
 import com.andannn.melodify.ui.components.tabcontent.HeaderItem
-import com.andannn.melodify.ui.popup.dialog.OptionItem
 import com.andannn.melodify.usecase.pinToHomeTab
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState

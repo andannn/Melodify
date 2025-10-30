@@ -10,6 +10,8 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.model.SortOption
+import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
@@ -18,6 +20,8 @@ import com.andannn.melodify.core.database.entity.CustomTabType
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
+import com.andannn.melodify.core.database.entity.SortOptionData
+import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.valid
 
 internal fun List<AlbumEntity>.mapToAlbumItemModel() =
@@ -137,7 +141,13 @@ internal fun CustomTabEntity.toAppItem() =
 
 internal fun CustomTab.toEntity() =
     when (this) {
-        is CustomTab.AllMusic -> CustomTabEntity(id = tabId, type = CustomTabType.ALL_MUSIC, externalId = "")
+        is CustomTab.AllMusic ->
+            CustomTabEntity(
+                id = tabId,
+                type = CustomTabType.ALL_MUSIC,
+                externalId = "",
+            )
+
         is CustomTab.ArtistDetail ->
             CustomTabEntity(
                 id = tabId,
@@ -169,4 +179,79 @@ internal fun CustomTab.toEntity() =
                 externalId = albumId,
                 name = label,
             )
+    }
+
+internal fun SortRuleEntity.toModel() =
+    SortRule(
+        primaryGroupSort = primaryGroupSort.toModel(),
+        secondaryGroupSort = secondaryGroupSort.toModel(),
+        contentSort = contentSort.toModel(),
+        showTrackNum = showTrackNum,
+        isPreset = isPreset,
+    )
+
+internal fun SortRule.toEntity(bindTabId: Long): SortRuleEntity =
+    SortRuleEntity(
+        foreignKey = bindTabId,
+        primaryGroupSort = primaryGroupSort.toEntity(),
+        secondaryGroupSort = secondaryGroupSort.toEntity(),
+        contentSort = contentSort.toEntity(),
+        showTrackNum = showTrackNum,
+        isPreset = isPreset,
+    )
+
+internal fun SortOptionData?.toModel() =
+    if (this == null) {
+        SortOption.NONE
+    } else {
+        when (type) {
+            SortOptionData.SORT_TYPE_ALBUM -> SortOption.Album(isAscending)
+            SortOptionData.SORT_TYPE_ARTIST -> SortOption.Artist(isAscending)
+            SortOptionData.SORT_TYPE_GENRE -> SortOption.Genre(isAscending)
+            SortOptionData.SORT_TYPE_TITLE -> SortOption.Title(isAscending)
+            SortOptionData.SORT_TYPE_YEAR -> SortOption.ReleaseYear(isAscending)
+            SortOptionData.SORT_TYPE_TRACK_NUM -> SortOption.TrackNum(isAscending)
+            else -> SortOption.NONE
+        }
+    }
+
+internal fun SortOption.toEntity() =
+    when (this) {
+        is SortOption.Album ->
+            SortOptionData(
+                type = SortOptionData.SORT_TYPE_ALBUM,
+                isAscending = ascending,
+            )
+
+        is SortOption.Artist ->
+            SortOptionData(
+                type = SortOptionData.SORT_TYPE_ARTIST,
+                isAscending = ascending,
+            )
+
+        is SortOption.Genre ->
+            SortOptionData(
+                type = SortOptionData.SORT_TYPE_GENRE,
+                isAscending = ascending,
+            )
+
+        is SortOption.ReleaseYear ->
+            SortOptionData(
+                type = SortOptionData.SORT_TYPE_YEAR,
+                isAscending = ascending,
+            )
+
+        is SortOption.Title ->
+            SortOptionData(
+                type = SortOptionData.SORT_TYPE_TITLE,
+                isAscending = ascending,
+            )
+
+        is SortOption.TrackNum ->
+            SortOptionData(
+                type = SortOptionData.SORT_TYPE_TRACK_NUM,
+                isAscending = ascending,
+            )
+
+        SortOption.NONE -> null
     }
