@@ -9,11 +9,7 @@ import androidx.room.execSQL
 import androidx.room.useReaderConnection
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
-import com.andannn.melodify.core.database.dao.MediaSortType
 import com.andannn.melodify.core.database.dao.PlayListDao
-import com.andannn.melodify.core.database.dao.Sort
-import com.andannn.melodify.core.database.dao.SortMethod
-import com.andannn.melodify.core.database.dao.SortOrder
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistColumns
@@ -718,9 +714,9 @@ class DatabaseTest {
             dao
                 .getAllMediaFlow(
                     sort =
-                        SortMethod.buildMethod {
-                            add(Sort(MediaSortType.Album, SortOrder.DESCENDING))
-                            add(Sort(MediaSortType.TrackNum, SortOrder.DESCENDING))
+                        MediaSorts.buildMethod {
+                            add(Sort(MediaColumns.ALBUM, SortOrder.DESCENDING))
+                            add(Sort(MediaColumns.CD_TRACK_NUMBER, SortOrder.DESCENDING))
                         },
                 ).first()
                 .also { mediaList ->
@@ -763,8 +759,8 @@ class DatabaseTest {
             dao
                 .getAllMediaFlow(
                     sort =
-                        SortMethod.buildMethod {
-                            add(Sort(MediaSortType.Title, SortOrder.ASCENDING))
+                        MediaSorts.buildMethod {
+                            add(Sort(MediaColumns.TITLE, SortOrder.ASCENDING))
                         },
                 ).first()
                 .also { mediaList ->

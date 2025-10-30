@@ -4,10 +4,10 @@
  */
 package com.andannn.melodify.core.data.model
 
-import com.andannn.melodify.core.database.dao.MediaSortType
-import com.andannn.melodify.core.database.dao.Sort
-import com.andannn.melodify.core.database.dao.SortMethod
-import com.andannn.melodify.core.database.dao.SortOrder
+import com.andannn.melodify.core.database.MediaSorts
+import com.andannn.melodify.core.database.Sort
+import com.andannn.melodify.core.database.SortOrder
+import com.andannn.melodify.core.database.entity.MediaColumns
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -107,7 +107,7 @@ fun SortOption.isAscending() =
     }
 
 internal fun SortRule.toSortMethod() =
-    SortMethod.buildMethod {
+    MediaSorts.buildMethod {
         addSortOption(primaryGroupSort)
         addSortOption(secondaryGroupSort)
         addSortOption(contentSort)
@@ -117,32 +117,32 @@ internal fun MutableList<Sort>.addSortOption(sort: SortOption) {
     when (sort) {
         is SortOption.Album ->
             apply {
-                add(Sort(MediaSortType.Album, sort.ascending.toOrder()))
+                add(Sort(MediaColumns.ALBUM, sort.ascending.toOrder()))
             }
 
         is SortOption.Artist ->
             apply {
-                add(Sort(MediaSortType.Artist, sort.ascending.toOrder()))
+                add(Sort(MediaColumns.ARTIST, sort.ascending.toOrder()))
             }
 
         is SortOption.Title ->
             apply {
-                add(Sort(MediaSortType.Title, sort.ascending.toOrder()))
+                add(Sort(MediaColumns.TITLE, sort.ascending.toOrder()))
             }
 
         is SortOption.TrackNum ->
             apply {
-                add(Sort(MediaSortType.TrackNum, sort.ascending.toOrder()))
+                add(Sort(MediaColumns.CD_TRACK_NUMBER, sort.ascending.toOrder()))
             }
 
         is SortOption.Genre ->
             apply {
-                add(Sort(MediaSortType.Genre, sort.ascending.toOrder()))
+                add(Sort(MediaColumns.GENRE, sort.ascending.toOrder()))
             }
 
         is SortOption.ReleaseYear ->
             apply {
-                add(Sort(MediaSortType.ReleaseYear, sort.ascending.toOrder()))
+                add(Sort(MediaColumns.YEAR, sort.ascending.toOrder()))
             }
 
         SortOption.NONE -> {}

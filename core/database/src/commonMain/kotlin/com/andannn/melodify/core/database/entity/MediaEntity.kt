@@ -9,7 +9,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.andannn.melodify.core.database.Tables
 
-internal object MediaColumns {
+object MediaColumns {
     const val ID = "media_id"
     const val TITLE = "media_title"
     const val SOURCE_URI = "source_uri"

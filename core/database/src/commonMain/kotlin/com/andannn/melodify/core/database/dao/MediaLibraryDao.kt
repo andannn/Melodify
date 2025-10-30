@@ -12,6 +12,7 @@ import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.room.RoomRawQuery
 import androidx.room.Transaction
+import com.andannn.melodify.core.database.MediaSorts
 import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
@@ -21,6 +22,7 @@ import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
+import com.andannn.melodify.core.database.toSortString
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 
@@ -76,12 +78,12 @@ interface MediaLibraryDao {
     @RawQuery(observedEntities = [MediaEntity::class])
     fun getMediaFlowPagingSource(rawQuery: RoomRawQuery): PagingSource<Int, MediaEntity>
 
-    fun getAllMediaFlow(sort: SortMethod? = null): Flow<List<MediaEntity>> = getMediaFlowRaw(buildAllMediaRawQuery(sort))
+    fun getAllMediaFlow(sort: MediaSorts? = null): Flow<List<MediaEntity>> = getMediaFlowRaw(buildAllMediaRawQuery(sort))
 
-    fun getAllMediaPagingSource(sort: SortMethod? = null): PagingSource<Int, MediaEntity> =
+    fun getAllMediaPagingSource(sort: MediaSorts? = null): PagingSource<Int, MediaEntity> =
         getMediaFlowPagingSource(buildAllMediaRawQuery(sort))
 
-    private fun buildAllMediaRawQuery(sort: SortMethod?): RoomRawQuery {
+    private fun buildAllMediaRawQuery(sort: MediaSorts?): RoomRawQuery {
         val sort = sort?.toSortString() ?: ""
         val sql = "SELECT * FROM ${Tables.LIBRARY_MEDIA} $sort"
         return RoomRawQuery(sql)
@@ -89,17 +91,17 @@ interface MediaLibraryDao {
 
     fun getMediasByAlbumIdFlow(
         albumId: String,
-        sort: SortMethod?,
+        sort: MediaSorts?,
     ): Flow<List<MediaEntity>> = getMediaFlowRaw(buildAlbumMediaRawQuery(albumId, sort))
 
     fun getMediasPagingSourceByAlbumId(
         albumId: String,
-        sort: SortMethod?,
+        sort: MediaSorts?,
     ): PagingSource<Int, MediaEntity> = getMediaFlowPagingSource(buildAlbumMediaRawQuery(albumId, sort))
 
     private fun buildAlbumMediaRawQuery(
         albumId: String,
-        sort: SortMethod?,
+        sort: MediaSorts?,
     ): RoomRawQuery {
         val sort = sort?.toSortString() ?: ""
         val sql =
@@ -110,17 +112,17 @@ interface MediaLibraryDao {
 
     fun getMediasByArtistIdFlow(
         artistId: String,
-        sort: SortMethod?,
+        sort: MediaSorts?,
     ): Flow<List<MediaEntity>> = getMediaFlowRaw(buildArtistMediaRawQuery(artistId, sort))
 
     fun getMediasPagingSourceByArtistId(
         artistId: String,
-        sort: SortMethod?,
+        sort: MediaSorts?,
     ): PagingSource<Int, MediaEntity> = getMediaFlowPagingSource(buildArtistMediaRawQuery(artistId, sort))
 
     private fun buildArtistMediaRawQuery(
         artistId: String,
-        sort: SortMethod?,
+        sort: MediaSorts?,
     ): RoomRawQuery {
         val sort = sort?.toSortString() ?: ""
         val sql =
@@ -131,17 +133,17 @@ interface MediaLibraryDao {
 
     fun getMediasByGenreIdFlow(
         genreId: String,
-        sort: SortMethod?,
+        sort: MediaSorts?,
     ): Flow<List<MediaEntity>> = getMediaFlowRaw(buildGenreMediaRawQuery(genreId, sort))
 
     fun getMediasPagingSourceByGenreId(
         genreId: String,
-        sort: SortMethod?,
+        sort: MediaSorts?,
     ): PagingSource<Int, MediaEntity> = getMediaFlowPagingSource(buildGenreMediaRawQuery(genreId, sort))
 
     private fun buildGenreMediaRawQuery(
         genreId: String,
-        sort: SortMethod?,
+        sort: MediaSorts?,
     ): RoomRawQuery {
         val sort = sort?.toSortString() ?: ""
         val sql =
