@@ -10,7 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import com.andannn.melodify.ui.HomeScreen
 import com.andannn.melodify.ui.PresenterFactory
 import com.andannn.melodify.ui.UiFactory
@@ -23,7 +25,6 @@ import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
-import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
@@ -31,6 +32,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import org.koin.mp.KoinPlatform.getKoin
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MelodifyMobileApp(
     modifier: Modifier = Modifier,
@@ -57,7 +59,7 @@ fun MelodifyMobileApp(
                     providedValues =
                         providedValuesForBackStack(
                             backStack,
-                            stackLocalProviders =
+                            backStackLocalProviders =
                                 persistentListOf(
                                     PopupControllerRecordLocalProvider,
                                 ),

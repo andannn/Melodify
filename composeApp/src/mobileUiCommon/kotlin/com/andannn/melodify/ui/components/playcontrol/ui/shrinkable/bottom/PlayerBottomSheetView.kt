@@ -35,7 +35,9 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.IntOffset
@@ -43,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.components.lyrics.Lyrics
 import com.andannn.melodify.ui.components.playcontrol.ui.BottomSheetState
 import com.andannn.melodify.ui.components.queue.PlayQueue
-import com.slack.circuit.foundation.internal.BackHandler
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -56,7 +57,7 @@ import kotlin.math.roundToInt
 
 private const val TAG = "PlayQueueView"
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 internal fun PlayerBottomSheetView(
     state: AnchoredDraggableState<BottomSheetState>,

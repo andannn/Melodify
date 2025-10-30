@@ -22,7 +22,9 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
@@ -32,9 +34,8 @@ import com.andannn.melodify.ui.theme.DynamicThemePrimaryColorsFromImage
 import com.andannn.melodify.ui.theme.MIN_CONTRAST_OF_PRIMARY_VS_SURFACE
 import com.andannn.melodify.ui.theme.rememberDominantColorState
 import com.andannn.melodify.ui.util.contrastAgainst
-import com.slack.circuit.foundation.internal.BackHandler
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 internal fun PlayerViewContent(
     state: PlayerUiState.Active,

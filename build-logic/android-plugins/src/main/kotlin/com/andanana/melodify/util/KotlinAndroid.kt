@@ -24,9 +24,7 @@ import org.gradle.kotlin.dsl.dependencies
 /**
  * Configure base Kotlin with Android options
  */
-internal fun Project.configureKotlinAndroid(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
-) {
+internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension<*, *, *, *, *, *>) {
     // android extensions
     commonExtension.apply {
         defaultConfig.apply {
@@ -34,7 +32,7 @@ internal fun Project.configureKotlinAndroid(
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
 
-        compileSdk = 35
+        compileSdk = 36
 
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_17
