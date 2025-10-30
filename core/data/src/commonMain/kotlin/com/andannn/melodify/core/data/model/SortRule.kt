@@ -8,20 +8,29 @@ import com.andannn.melodify.core.database.MediaSorts
 import com.andannn.melodify.core.database.Sort
 import com.andannn.melodify.core.database.SortOrder
 import com.andannn.melodify.core.database.entity.MediaColumns
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
-@Serializable
+enum class PresetSortRule(
+    val sortRule: SortRule,
+) {
+    AlbumAsc(
+        sortRule = SortRule.Preset.AlbumASC,
+    ),
+    ArtistAsc(
+        sortRule = SortRule.Preset.ArtistASC,
+    ),
+    TitleNameAsc(
+        sortRule = SortRule.Preset.TitleASC,
+    ),
+    ArtistAlbumASC(
+        sortRule = SortRule.Preset.ArtistAlbumASC,
+    ),
+}
+
 data class SortRule(
-    @SerialName("primary_group_sort")
     val primaryGroupSort: SortOption,
-    @SerialName("secondary_group_sort")
     val secondaryGroupSort: SortOption = SortOption.NONE,
-    @SerialName("content_sort")
     val contentSort: SortOption = SortOption.NONE,
-    @SerialName("show_track_num")
     val showTrackNum: Boolean = false,
-    @SerialName("is_preset")
     val isPreset: Boolean = true,
 ) {
     companion object Preset {
@@ -59,39 +68,31 @@ data class SortRule(
     }
 }
 
-@Serializable
 sealed interface SortOption {
-    @Serializable
     data class Album(
         val ascending: Boolean,
     ) : SortOption
 
-    @Serializable
     data class Title(
         val ascending: Boolean,
     ) : SortOption
 
-    @Serializable
     data class Artist(
         val ascending: Boolean,
     ) : SortOption
 
-    @Serializable
     data class TrackNum(
         val ascending: Boolean,
     ) : SortOption
 
-    @Serializable
     data class Genre(
         val ascending: Boolean,
     ) : SortOption
 
-    @Serializable
     data class ReleaseYear(
         val ascending: Boolean,
     ) : SortOption
 
-    @Serializable
     data object NONE : SortOption
 }
 

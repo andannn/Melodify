@@ -40,7 +40,7 @@ class UserSettingPreferences(
                     lastSuccessfulSyncTime =
                         preferences[longPreferencesKey(PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME)],
                     defaultSortRule =
-                        preferences[stringPreferencesKey(PreferencesKeyName.DEFAULT_SORT_RULE_KEY_NAME)],
+                        preferences[intPreferencesKey(PreferencesKeyName.DEFAULT_PRESET_SORT_RULE_KEY_NAME)],
                 )
             }
 
@@ -65,9 +65,9 @@ class UserSettingPreferences(
         }
     }
 
-    suspend fun setDefaultSortRule(defaultSortRule: String) {
+    suspend fun setDefaultPreset(defaultPreset: Int) {
         preferences.edit { preferences ->
-            preferences[stringPreferencesKey(PreferencesKeyName.DEFAULT_SORT_RULE_KEY_NAME)] = defaultSortRule
+            preferences[intPreferencesKey(PreferencesKeyName.DEFAULT_PRESET_SORT_RULE_KEY_NAME)] = defaultPreset
         }
     }
 }

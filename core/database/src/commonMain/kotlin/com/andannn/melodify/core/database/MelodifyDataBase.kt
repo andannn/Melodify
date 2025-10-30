@@ -9,6 +9,7 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
+import androidx.room.TypeConverters
 import androidx.room.migration.AutoMigrationSpec
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
@@ -32,6 +33,8 @@ import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
+import com.andannn.melodify.core.database.entity.SortOptionJsonConverter
+import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.fts.AlbumFtsEntity
 import com.andannn.melodify.core.database.entity.fts.ArtistFtsEntity
 import com.andannn.melodify.core.database.entity.fts.MediaFtsEntity
@@ -52,6 +55,7 @@ internal object Tables {
     const val LIBRARY_GENRE = "library_genre_table"
     const val CUSTOM_TAB = "custom_tab_table"
     const val SEARCH_HISTORY = "search_history_table"
+    const val SORT_RULE = "sort_rule_table"
 }
 
 @Database(
@@ -69,6 +73,7 @@ internal object Tables {
         ArtistFtsEntity::class,
         MediaFtsEntity::class,
         SearchHistoryEntity::class,
+        SortRuleEntity::class,
     ],
     autoMigrations = [
         AutoMigration(from = 3, to = 4),
@@ -76,9 +81,11 @@ internal object Tables {
         AutoMigration(from = 5, to = 6, AutoMigration5To6Spec::class),
         AutoMigration(from = 6, to = 7),
         AutoMigration(from = 7, to = 8, AutoMigration7To8Spec::class),
+        AutoMigration(from = 8, to = 9),
     ],
-    version = 8,
+    version = 9,
 )
+@TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class MelodifyDataBase : RoomDatabase() {
     abstract fun getLyricDao(): LyricDao
