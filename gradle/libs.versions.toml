@@ -2,7 +2,7 @@
 firebaseBom = "34.4.0"
 jaudiotagger = "2.0.3"
 kotlinxCollectionsImmutable = "0.4.0"
-ksp = "2.2.0-2.0.2"
+ksp = "2.2.21-2.0.4"
 materialColorUtilitiesAndroid = "2.1.1"
 kotlin = "2.2.21"
 androidx-palette = "1.0.0"
