@@ -11,8 +11,8 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.model.asLibraryDataSource
-import com.andannn.melodify.ui.popup.dialog.OptionItem
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue

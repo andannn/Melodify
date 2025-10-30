@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
-import com.andannn.melodify.ui.popup.dialog.OptionItem
+import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.ui.widgets.SmpIcon
 import org.jetbrains.compose.resources.stringResource
 

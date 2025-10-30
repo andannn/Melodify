@@ -21,7 +21,7 @@ import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.contentFlow
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
-import com.andannn.melodify.ui.popup.dialog.OptionItem
+import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
@@ -139,9 +139,8 @@ class TabUiPresenter(
                                     OptionItem.ADD_TO_PLAYLIST ->
                                         currentItems().also { addToPlaylist(it) }
 
-                                    OptionItem.DISPLAY_SETTING -> {
+                                    OptionItem.DISPLAY_SETTING ->
                                         popupController.showDialog(DialogId.ChangeSortRuleDialog(tab))
-                                    }
 
                                     else -> {}
                                 }

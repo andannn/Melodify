@@ -19,8 +19,8 @@ import com.andannn.melodify.core.data.repository.SleepTimerRepository
 import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.model.SleepTimerOption
 import com.andannn.melodify.model.SnackBarMessage
-import com.andannn.melodify.ui.popup.dialog.SleepTimerOption
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 
