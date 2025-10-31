@@ -12,11 +12,11 @@ import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
-import com.andannn.melodify.ui.components.tabcontent.GroupType
 import com.andannn.melodify.ui.components.tabcontent.HeaderItem
 import com.andannn.melodify.usecase.pinToHomeTab
 import com.slack.circuit.retained.produceRetainedState
@@ -49,7 +49,7 @@ class GroupHeaderPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
 ) : Presenter<GroupHeaderState> {
-    private val groupType = headerItem.groupType
+    private val groupKey = headerItem.groupKey
     private val headerId = headerItem.id
     private val mediaContentRepository = repository.mediaContentRepository
 
@@ -59,10 +59,10 @@ class GroupHeaderPresenter(
         val scope = rememberCoroutineScope()
         val mediaItem by produceRetainedState<MediaItemModel?>(null) {
             value =
-                when (groupType) {
-                    GroupType.ARTIST -> mediaContentRepository.getArtistByArtistId(headerId)
-                    GroupType.ALBUM -> mediaContentRepository.getAlbumByAlbumId(headerId)
-                    GroupType.Genre -> mediaContentRepository.getGenreByGenreId(headerId)
+                when (groupKey) {
+                    is GroupKey.ARTIST -> mediaContentRepository.getArtistByArtistId(headerId)
+                    is GroupKey.ALBUM -> mediaContentRepository.getAlbumByAlbumId(headerId)
+                    is GroupKey.Genre -> mediaContentRepository.getGenreByGenreId(headerId)
                     else -> error("invalid group type")
                 }
         }

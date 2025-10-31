@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.SortOption
 import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.browsableOrPlayable
@@ -147,17 +148,17 @@ private fun Header(
 }
 
 sealed class HeaderItem(
-    open val groupType: GroupType,
+    open val groupKey: GroupKey,
 ) {
     data class ID(
         val id: String,
-        override val groupType: GroupType,
-    ) : HeaderItem(groupType)
+        override val groupKey: GroupKey,
+    ) : HeaderItem(groupKey)
 
     data class Name(
         val name: String,
-        override val groupType: GroupType,
-    ) : HeaderItem(groupType)
+        override val groupKey: GroupKey,
+    ) : HeaderItem(groupKey)
 }
 
 private data class PrimaryGroup(
@@ -196,10 +197,10 @@ private fun List<PrimaryGroup>.flattenIndex(
 }
 
 private fun List<AudioItemModel?>.groupByType(sortRule: SortRule): List<PrimaryGroup> =
-    groupByType(sortRule.primaryGroupSort.toSortType())
+    groupByType(sortRule.primaryGroupSort)
         .map { (headerItem, contentList) ->
             val primaryHeader = headerItem
-            val items = contentList.groupByType(sortRule.secondaryGroupSort.toSortType())
+            val items = contentList.groupByType(sortRule.secondaryGroupSort)
 
             PrimaryGroup(
                 headerItem = primaryHeader,
@@ -207,84 +208,58 @@ private fun List<AudioItemModel?>.groupByType(sortRule: SortRule): List<PrimaryG
             )
         }
 
-private fun List<AudioItemModel?>.groupByType(groupType: GroupType): List<SecondaryGroup> =
+private fun List<AudioItemModel?>.groupByType(sortOption: SortOption): List<SecondaryGroup> =
     this
         .filterNotNull()
         .groupBy {
-            groupType.keyOf(it)
+            it.keyOf(sortOption)
         }.map { (key, value) ->
             SecondaryGroup(
-                headerItem = groupType.toHeader(key?.key),
+                headerItem = key?.toHeader(),
                 content = value,
             )
         }
 
-enum class GroupType {
-    ARTIST,
-    Genre,
-    YEAR,
-    ALBUM,
-    TITLE,
-    NONE,
-}
-
-data class GroupKey(
-    val groupType: GroupType,
-    val key: String,
-)
-
-private fun GroupType.keyOf(model: AudioItemModel): GroupKey? =
-    when (this) {
-        GroupType.ARTIST -> GroupKey(this, model.artistId)
-        GroupType.ALBUM -> GroupKey(this, model.albumId)
-        GroupType.Genre -> GroupKey(this, model.genreId)
-        GroupType.TITLE -> GroupKey(this, model.name[0].toString())
-        GroupType.YEAR -> GroupKey(this, model.releaseYear)
-        GroupType.NONE -> null
+private fun AudioItemModel.keyOf(sortOption: SortOption): GroupKey? =
+    when (sortOption) {
+        is SortOption.Album -> GroupKey.ALBUM(albumId)
+        is SortOption.Artist -> GroupKey.ARTIST(artistId)
+        is SortOption.Genre -> GroupKey.Genre(genreId)
+        is SortOption.ReleaseYear -> GroupKey.YEAR(releaseYear)
+        is SortOption.Title -> GroupKey.TITLE(name[0].toString())
+        SortOption.NONE -> null
+        is SortOption.TrackNum -> error("Not support")
     }
 
-private fun SortOption.toSortType() =
+private fun GroupKey.toHeader(): HeaderItem? =
     when (this) {
-        is SortOption.Album -> GroupType.ALBUM
-        is SortOption.Title -> GroupType.TITLE
-        is SortOption.Artist -> GroupType.ARTIST
-        is SortOption.Genre -> GroupType.Genre
-        is SortOption.ReleaseYear -> GroupType.YEAR
-        SortOption.NONE -> GroupType.NONE
-        is SortOption.TrackNum -> error("TrackNum is not supported")
-    }
-
-private fun GroupType.toHeader(key: String?): HeaderItem? =
-    when (this) {
-        GroupType.ARTIST ->
+        is GroupKey.ARTIST ->
             HeaderItem.ID(
-                id = key ?: error("key is null"),
-                groupType = this,
+                id = artistId,
+                groupKey = this,
             )
 
-        GroupType.ALBUM ->
+        is GroupKey.ALBUM ->
             HeaderItem.ID(
-                id = key ?: error("key is null"),
-                groupType = this,
+                id = albumId,
+                groupKey = this,
             )
 
-        GroupType.TITLE ->
+        is GroupKey.TITLE ->
             HeaderItem.Name(
-                name = key.toString(),
-                groupType = this,
+                name = firstCharacterString,
+                groupKey = this,
             )
 
-        GroupType.Genre ->
+        is GroupKey.Genre ->
             HeaderItem.ID(
-                id = key.toString(),
-                groupType = this,
+                id = genreId,
+                groupKey = this,
             )
 
-        GroupType.YEAR ->
+        is GroupKey.YEAR ->
             HeaderItem.Name(
-                name = key.toString(),
-                groupType = this,
+                name = year,
+                groupKey = this,
             )
-
-        GroupType.NONE -> null
     }
