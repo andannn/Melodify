@@ -12,12 +12,11 @@ import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
-import com.andannn.melodify.ui.components.tabcontent.GroupType
-import com.andannn.melodify.ui.components.tabcontent.HeaderItem
 import com.andannn.melodify.usecase.pinToHomeTab
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState
@@ -29,40 +28,51 @@ private const val TAG = "GroupHeaderPresenter"
 
 @Composable
 fun rememberGroupHeaderPresenter(
-    headerItem: HeaderItem.ID,
+    groupKey: GroupKey,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-) = remember(
-    headerItem,
-    repository,
-    popupController,
-) {
-    GroupHeaderPresenter(
-        headerItem,
+): Presenter<GroupHeaderState> =
+    remember(
+        groupKey,
         repository,
         popupController,
-    )
+    ) {
+        GroupHeaderPresenter(
+            groupKey,
+            repository,
+            popupController,
+        )
+    }
+
+data class GroupHeaderState(
+    val mediaItem: MediaItemModel?,
+    val title: String,
+    val cover: String?,
+    val trackCount: Int,
+    val eventSink: (GroupHeaderEvent) -> Unit = {},
+) : CircuitUiState
+
+sealed interface GroupHeaderEvent {
+    data object OnOptionClick : GroupHeaderEvent
 }
 
-class GroupHeaderPresenter(
-    private val headerItem: HeaderItem.ID,
+private class GroupHeaderPresenter(
+    private val groupKey: GroupKey,
     private val repository: Repository,
     private val popupController: PopupController,
 ) : Presenter<GroupHeaderState> {
-    private val groupType = headerItem.groupType
-    private val headerId = headerItem.id
     private val mediaContentRepository = repository.mediaContentRepository
 
     @Composable
     override fun present(): GroupHeaderState {
-        Napier.d(tag = TAG) { "GroupHeaderPresenter present $headerItem" }
+        Napier.d(tag = TAG) { "GroupHeaderPresenter present $groupKey" }
         val scope = rememberCoroutineScope()
         val mediaItem by produceRetainedState<MediaItemModel?>(null) {
             value =
-                when (groupType) {
-                    GroupType.ARTIST -> mediaContentRepository.getArtistByArtistId(headerId)
-                    GroupType.ALBUM -> mediaContentRepository.getAlbumByAlbumId(headerId)
-                    GroupType.Genre -> mediaContentRepository.getGenreByGenreId(headerId)
+                when (groupKey) {
+                    is GroupKey.Artist -> mediaContentRepository.getArtistByArtistId(artistId = groupKey.artistId)
+                    is GroupKey.Album -> mediaContentRepository.getAlbumByAlbumId(albumId = groupKey.albumId)
+                    is GroupKey.Genre -> mediaContentRepository.getGenreByGenreId(genreId = groupKey.genreId)
                     else -> error("invalid group type")
                 }
         }
@@ -98,16 +108,4 @@ class GroupHeaderPresenter(
             }
         }
     }
-}
-
-data class GroupHeaderState(
-    val mediaItem: MediaItemModel?,
-    val title: String,
-    val cover: String?,
-    val trackCount: Int,
-    val eventSink: (GroupHeaderEvent) -> Unit = {},
-) : CircuitUiState
-
-sealed interface GroupHeaderEvent {
-    data object OnOptionClick : GroupHeaderEvent
 }

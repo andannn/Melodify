@@ -208,15 +208,6 @@ class TabContentPresenter(
     }
 }
 
-enum class GroupType {
-    ARTIST,
-    Genre,
-    YEAR,
-    ALBUM,
-    TITLE,
-    NONE,
-}
-
 data class TabContentState(
     val selectedTab: CustomTab? = null,
     val groupSort: SortRule,
