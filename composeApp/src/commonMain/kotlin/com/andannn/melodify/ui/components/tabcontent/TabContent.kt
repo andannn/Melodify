@@ -162,10 +162,10 @@ sealed class HeaderItem(
 
 private data class PrimaryGroup(
     val headerItem: HeaderItem?,
-    val content: List<ContentGroup>,
+    val content: List<SecondaryGroup>,
 )
 
-private data class ContentGroup(
+private data class SecondaryGroup(
     val headerItem: HeaderItem?,
     val content: List<AudioItemModel>,
 )
@@ -207,25 +207,39 @@ private fun List<AudioItemModel?>.groupByType(sortRule: SortRule): List<PrimaryG
             )
         }
 
-private fun List<AudioItemModel?>.groupByType(groupType: GroupType): List<ContentGroup> =
+private fun List<AudioItemModel?>.groupByType(groupType: GroupType): List<SecondaryGroup> =
     this
         .filterNotNull()
         .groupBy {
-            it.keyOf(groupType)
+            groupType.keyOf(it)
         }.map { (key, value) ->
-            ContentGroup(
-                headerItem = groupType.toHeader(key),
+            SecondaryGroup(
+                headerItem = groupType.toHeader(key?.key),
                 content = value,
             )
         }
 
-private fun AudioItemModel.keyOf(groupType: GroupType) =
-    when (groupType) {
-        GroupType.ARTIST -> artistId
-        GroupType.ALBUM -> albumId
-        GroupType.Genre -> genreId
-        GroupType.TITLE -> name[0].toString()
-        GroupType.YEAR -> releaseYear
+enum class GroupType {
+    ARTIST,
+    Genre,
+    YEAR,
+    ALBUM,
+    TITLE,
+    NONE,
+}
+
+data class GroupKey(
+    val groupType: GroupType,
+    val key: String,
+)
+
+private fun GroupType.keyOf(model: AudioItemModel): GroupKey? =
+    when (this) {
+        GroupType.ARTIST -> GroupKey(this, model.artistId)
+        GroupType.ALBUM -> GroupKey(this, model.albumId)
+        GroupType.Genre -> GroupKey(this, model.genreId)
+        GroupType.TITLE -> GroupKey(this, model.name[0].toString())
+        GroupType.YEAR -> GroupKey(this, model.releaseYear)
         GroupType.NONE -> null
     }
 
