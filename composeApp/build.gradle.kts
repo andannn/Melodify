@@ -72,8 +72,8 @@ android {
 
     defaultConfig {
         applicationId = "com.andannn.melodify"
-        versionCode = 43
-        versionName = "1.1.6"
+        versionCode = 44
+        versionName = "1.1.7"
 
         signingConfig = signingConfigs.getByName("debug")
     }
