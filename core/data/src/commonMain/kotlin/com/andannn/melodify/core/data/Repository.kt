@@ -5,9 +5,7 @@
 package com.andannn.melodify.core.data
 
 import com.andannn.melodify.core.data.internal.LyricRepository
-import com.andannn.melodify.core.data.internal.MediaContentRepository
 import com.andannn.melodify.core.data.internal.MediaControllerRepository
-import com.andannn.melodify.core.data.internal.PlayListRepository
 import com.andannn.melodify.core.data.internal.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.internal.SleepTimerRepository
 import com.andannn.melodify.core.data.internal.UserPreferenceRepository

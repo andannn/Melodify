@@ -5,7 +5,7 @@
 package com.andannn.melodify.core.data.internal.fake
 
 import androidx.paging.PagingData
-import com.andannn.melodify.core.data.internal.MediaContentRepository
+import com.andannn.melodify.core.data.MediaContentRepository
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel

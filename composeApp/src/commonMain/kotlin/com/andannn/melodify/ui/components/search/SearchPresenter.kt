@@ -12,8 +12,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.LocalRepository
+import com.andannn.melodify.core.data.MediaContentRepository
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.internal.MediaContentRepository
 import com.andannn.melodify.core.data.internal.MediaControllerRepository
 import com.andannn.melodify.core.data.internal.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.internal.UserPreferenceRepository

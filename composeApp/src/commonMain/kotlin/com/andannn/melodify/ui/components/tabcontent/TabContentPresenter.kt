@@ -23,6 +23,7 @@ import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.DisplaySetting
+import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
@@ -123,7 +124,7 @@ class TabContentPresenter(
                         val items =
                             with(repository) {
                                 selectedTab
-                                    ?.contentFlow(sort = groupSort)
+                                    ?.contentFlow(sorts = groupSort.sortOptions())
                                     ?.first()
                                     ?: error("selectedTab is null")
                             }
@@ -150,7 +151,7 @@ class TabContentPresenter(
         }
         return with(repository) {
             selectedTab.contentPagingDataFlow(
-                sort = groupSort,
+                sorts = groupSort.sortOptions(),
             )
         }
     }

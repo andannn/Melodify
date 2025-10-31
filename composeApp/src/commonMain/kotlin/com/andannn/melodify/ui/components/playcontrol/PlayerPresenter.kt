@@ -16,9 +16,9 @@ import androidx.compose.runtime.setValue
 import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.PopupController
+import com.andannn.melodify.core.data.PlayListRepository
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.internal.MediaControllerRepository
-import com.andannn.melodify.core.data.internal.PlayListRepository
 import com.andannn.melodify.core.data.internal.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.internal.SleepTimerRepository
 import com.andannn.melodify.core.data.model.AudioItemModel

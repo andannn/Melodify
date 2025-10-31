@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.data.model
 
+import com.andannn.melodify.core.database.MediaSorts
 import com.andannn.melodify.core.database.Sort
 import com.andannn.melodify.core.database.SortOrder
 import com.andannn.melodify.core.database.entity.MediaColumns
@@ -45,6 +46,13 @@ fun SortOption.isAscending() =
         is SortOption.Genre -> ascending
         is SortOption.ReleaseYear -> ascending
         is SortOption.NONE -> false
+    }
+
+internal fun List<SortOption>.toSortMethod() =
+    MediaSorts.buildMethod {
+        this@toSortMethod.forEach {
+            addSortOption(it)
+        }
     }
 
 internal fun MutableList<Sort>.addSortOption(sort: SortOption) {

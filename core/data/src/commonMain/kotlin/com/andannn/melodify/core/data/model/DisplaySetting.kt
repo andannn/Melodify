@@ -4,8 +4,6 @@
  */
 package com.andannn.melodify.core.data.model
 
-import com.andannn.melodify.core.database.MediaSorts
-
 data class DisplaySetting(
     val primaryGroupSort: SortOption,
     val secondaryGroupSort: SortOption = SortOption.NONE,
@@ -48,9 +46,9 @@ data class DisplaySetting(
     }
 }
 
-internal fun DisplaySetting.toSortMethod() =
-    MediaSorts.buildMethod {
-        addSortOption(primaryGroupSort)
-        addSortOption(secondaryGroupSort)
-        addSortOption(contentSort)
+fun DisplaySetting.sortOptions() =
+    buildList {
+        add(primaryGroupSort)
+        add(secondaryGroupSort)
+        add(contentSort)
     }
