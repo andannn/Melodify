@@ -1,14 +1,18 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.data.model
 
 /**
  * group key for media items
  */
 sealed interface GroupKey {
-    data class ARTIST(
+    data class Artist(
         val artistId: String,
     ) : GroupKey
 
-    data class ALBUM(
+    data class Album(
         val albumId: String,
     ) : GroupKey
 
@@ -16,11 +20,11 @@ sealed interface GroupKey {
         val genreId: String,
     ) : GroupKey
 
-    data class YEAR(
+    data class Year(
         val year: String,
     ) : GroupKey
 
-    data class TITLE(
+    data class Title(
         val firstCharacterString: String,
     ) : GroupKey
 }

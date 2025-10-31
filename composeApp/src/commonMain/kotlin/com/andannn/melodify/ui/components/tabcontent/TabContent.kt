@@ -63,20 +63,20 @@ private fun LazyListContent(
     LazyColumn(
         modifier = modifier,
     ) {
-        primaryGroupList.forEachIndexed { primaryGroupIndex, (primaryHeader, secondaryGroupList) ->
-            if (primaryHeader != null) {
-                stickyHeader(primaryHeader.hashCode()) {
-                    Header(isPrimary = true, headerItem = primaryHeader)
+        primaryGroupList.forEachIndexed { primaryGroupIndex, (primaryGroupKey, secondaryGroupList) ->
+            if (primaryGroupKey != null) {
+                stickyHeader(primaryGroupKey.hashCode()) {
+                    Header(isPrimary = true, groupKey = primaryGroupKey)
                 }
             }
 
             secondaryGroupList.forEachIndexed { secondaryGroupIndex, (secondaryHeader, items) ->
                 if (secondaryHeader != null) {
-                    stickyHeader((primaryHeader to secondaryHeader).hashCode()) {
+                    stickyHeader((primaryGroupKey to secondaryHeader).hashCode()) {
                         Header(
                             modifier = Modifier.padding(start = 8.dp),
                             isPrimary = false,
-                            headerItem = secondaryHeader,
+                            groupKey = secondaryHeader,
                         )
                     }
                 }
@@ -124,50 +124,43 @@ private fun LazyListContent(
 @Composable
 private fun Header(
     isPrimary: Boolean,
-    headerItem: HeaderItem,
+    groupKey: GroupKey,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
-        when (headerItem) {
-            is HeaderItem.ID -> {
-                val presenter = rememberGroupHeaderPresenter(headerItem)
-                IdBasedGroupHeader(
-                    state = presenter.present(),
-                    isPrimary = isPrimary,
-                )
-            }
-
-            is HeaderItem.Name -> {
-                NameBasedGroupHeader(
-                    item = headerItem,
-                    isPrimary = isPrimary,
-                )
-            }
+        if (groupKey.isIdBased()) {
+            val presenter = rememberGroupHeaderPresenter(groupKey)
+            IdBasedGroupHeader(
+                state = presenter.present(),
+                isPrimary = isPrimary,
+            )
+        } else {
+            val name =
+                when (groupKey) {
+                    is GroupKey.Title -> groupKey.firstCharacterString
+                    is GroupKey.Year -> groupKey.year
+                    else -> return
+                }
+            NameBasedGroupHeader(
+                name = name,
+                isPrimary = isPrimary,
+            )
         }
     }
 }
 
-sealed class HeaderItem(
-    open val groupKey: GroupKey,
-) {
-    data class ID(
-        val id: String,
-        override val groupKey: GroupKey,
-    ) : HeaderItem(groupKey)
-
-    data class Name(
-        val name: String,
-        override val groupKey: GroupKey,
-    ) : HeaderItem(groupKey)
-}
+private fun GroupKey.isIdBased(): Boolean =
+    this is GroupKey.Album ||
+        this is GroupKey.Artist ||
+        this is GroupKey.Genre
 
 private data class PrimaryGroup(
-    val headerItem: HeaderItem?,
+    val headerItem: GroupKey?,
     val content: List<SecondaryGroup>,
 )
 
 private data class SecondaryGroup(
-    val headerItem: HeaderItem?,
+    val headerItem: GroupKey?,
     val content: List<AudioItemModel>,
 )
 
@@ -215,51 +208,18 @@ private fun List<AudioItemModel?>.groupByType(sortOption: SortOption): List<Seco
             it.keyOf(sortOption)
         }.map { (key, value) ->
             SecondaryGroup(
-                headerItem = key?.toHeader(),
+                headerItem = key,
                 content = value,
             )
         }
 
 private fun AudioItemModel.keyOf(sortOption: SortOption): GroupKey? =
     when (sortOption) {
-        is SortOption.Album -> GroupKey.ALBUM(albumId)
-        is SortOption.Artist -> GroupKey.ARTIST(artistId)
+        is SortOption.Album -> GroupKey.Album(albumId)
+        is SortOption.Artist -> GroupKey.Artist(artistId)
         is SortOption.Genre -> GroupKey.Genre(genreId)
-        is SortOption.ReleaseYear -> GroupKey.YEAR(releaseYear)
-        is SortOption.Title -> GroupKey.TITLE(name[0].toString())
+        is SortOption.ReleaseYear -> GroupKey.Year(releaseYear)
+        is SortOption.Title -> GroupKey.Title(name[0].toString())
         SortOption.NONE -> null
         is SortOption.TrackNum -> error("Not support")
-    }
-
-private fun GroupKey.toHeader(): HeaderItem? =
-    when (this) {
-        is GroupKey.ARTIST ->
-            HeaderItem.ID(
-                id = artistId,
-                groupKey = this,
-            )
-
-        is GroupKey.ALBUM ->
-            HeaderItem.ID(
-                id = albumId,
-                groupKey = this,
-            )
-
-        is GroupKey.TITLE ->
-            HeaderItem.Name(
-                name = firstCharacterString,
-                groupKey = this,
-            )
-
-        is GroupKey.Genre ->
-            HeaderItem.ID(
-                id = genreId,
-                groupKey = this,
-            )
-
-        is GroupKey.YEAR ->
-            HeaderItem.Name(
-                name = year,
-                groupKey = this,
-            )
     }
