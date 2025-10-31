@@ -5,9 +5,9 @@
 package com.andannn.melodify.usecase
 
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.internal.PlayListRepository.Companion.FAVORITE_PLAY_LIST_ID
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.SortRule
-import com.andannn.melodify.core.data.repository.PlayListRepository.Companion.FAVORITE_PLAY_LIST_ID
 import com.andannn.melodify.model.LibraryDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf

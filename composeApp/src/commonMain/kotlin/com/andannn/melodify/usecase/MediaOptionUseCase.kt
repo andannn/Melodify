@@ -6,6 +6,9 @@ package com.andannn.melodify.usecase
 
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.internal.PlayListRepository
+import com.andannn.melodify.core.data.internal.SleepTimerRepository
+import com.andannn.melodify.core.data.internal.UserPreferenceRepository
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -14,9 +17,6 @@ import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.TabKind
-import com.andannn.melodify.core.data.repository.PlayListRepository
-import com.andannn.melodify.core.data.repository.SleepTimerRepository
-import com.andannn.melodify.core.data.repository.UserPreferenceRepository
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.SleepTimerOption

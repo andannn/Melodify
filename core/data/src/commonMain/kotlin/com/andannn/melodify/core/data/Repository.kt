@@ -4,13 +4,13 @@
  */
 package com.andannn.melodify.core.data
 
-import com.andannn.melodify.core.data.repository.LyricRepository
-import com.andannn.melodify.core.data.repository.MediaContentRepository
-import com.andannn.melodify.core.data.repository.MediaControllerRepository
-import com.andannn.melodify.core.data.repository.PlayListRepository
-import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
-import com.andannn.melodify.core.data.repository.SleepTimerRepository
-import com.andannn.melodify.core.data.repository.UserPreferenceRepository
+import com.andannn.melodify.core.data.internal.LyricRepository
+import com.andannn.melodify.core.data.internal.MediaContentRepository
+import com.andannn.melodify.core.data.internal.MediaControllerRepository
+import com.andannn.melodify.core.data.internal.PlayListRepository
+import com.andannn.melodify.core.data.internal.PlayerStateMonitoryRepository
+import com.andannn.melodify.core.data.internal.SleepTimerRepository
+import com.andannn.melodify.core.data.internal.UserPreferenceRepository
 
 class Repository constructor(
     val lyricRepository: LyricRepository,

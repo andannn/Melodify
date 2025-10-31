@@ -5,16 +5,16 @@
 package com.andannn.melodify.core.data.di
 
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.repository.LyricRepository
-import com.andannn.melodify.core.data.repository.LyricRepositoryImpl
-import com.andannn.melodify.core.data.repository.MediaContentRepository
-import com.andannn.melodify.core.data.repository.MediaContentRepositoryImpl
-import com.andannn.melodify.core.data.repository.PlayListRepository
-import com.andannn.melodify.core.data.repository.PlayListRepositoryImpl
-import com.andannn.melodify.core.data.repository.SleepTimerRepository
-import com.andannn.melodify.core.data.repository.SleepTimerRepositoryImpl
-import com.andannn.melodify.core.data.repository.UserPreferenceRepository
-import com.andannn.melodify.core.data.repository.UserPreferenceRepositoryImpl
+import com.andannn.melodify.core.data.internal.LyricRepository
+import com.andannn.melodify.core.data.internal.LyricRepositoryImpl
+import com.andannn.melodify.core.data.internal.MediaContentRepository
+import com.andannn.melodify.core.data.internal.MediaContentRepositoryImpl
+import com.andannn.melodify.core.data.internal.PlayListRepository
+import com.andannn.melodify.core.data.internal.PlayListRepositoryImpl
+import com.andannn.melodify.core.data.internal.SleepTimerRepository
+import com.andannn.melodify.core.data.internal.SleepTimerRepositoryImpl
+import com.andannn.melodify.core.data.internal.UserPreferenceRepository
+import com.andannn.melodify.core.data.internal.UserPreferenceRepositoryImpl
 import com.andannn.melodify.core.database.di.databaseModule
 import com.andannn.melodify.core.datastore.di.userPreferencesModule
 import com.andannn.melodify.core.network.di.serviceModule

@@ -4,10 +4,10 @@
  */
 package com.andannn.melodify.core.data.di
 
-import com.andannn.melodify.core.data.repository.MediaControllerRepository
-import com.andannn.melodify.core.data.repository.MediaControllerRepositoryImpl
-import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepository
-import com.andannn.melodify.core.data.repository.PlayerStateMonitoryRepositoryImpl
+import com.andannn.melodify.core.data.internal.MediaControllerRepository
+import com.andannn.melodify.core.data.internal.MediaControllerRepositoryImpl
+import com.andannn.melodify.core.data.internal.PlayerStateMonitoryRepository
+import com.andannn.melodify.core.data.internal.PlayerStateMonitoryRepositoryImpl
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
