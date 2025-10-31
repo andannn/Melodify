@@ -5,9 +5,9 @@
 package com.andannn.melodify.core.data.internal
 
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.MediaPreviewMode
-import com.andannn.melodify.core.data.model.PresetSortRule
-import com.andannn.melodify.core.data.model.SortRule
+import com.andannn.melodify.core.data.model.PresetDisplaySetting
 import com.andannn.melodify.core.data.model.TabKind
 import com.andannn.melodify.core.data.model.UserSetting
 import com.andannn.melodify.core.database.dao.UserDataDao
@@ -34,7 +34,7 @@ internal class UserPreferenceRepositoryImpl(
                 mediaPreviewMode = it.mediaPreviewMode.toMediaPreviewMode(),
                 libraryPath = it.libraryPath,
                 lastSuccessfulSyncTime = it.lastSuccessfulSyncTime,
-                defaultPresetSortRule = it.defaultSortRule?.toDefaultPresetRule(),
+                defaultPresetDisplaySetting = it.defaultSortRule?.toDefaultPresetRule(),
             )
         }
 
@@ -107,8 +107,8 @@ internal class UserPreferenceRepositoryImpl(
 
     override suspend fun getLastSuccessfulSyncTime(): Long? = preferences.userDate.first().lastSuccessfulSyncTime
 
-    override suspend fun saveDefaultSortRule(sortRule: SortRule) {
-        val preset = PresetSortRule.entries.first { it.sortRule == sortRule }
+    override suspend fun saveDefaultSortRule(displaySetting: DisplaySetting) {
+        val preset = PresetDisplaySetting.entries.first { it.displaySetting == displaySetting }
         preferences.setDefaultPreset(
             preset.toIntValue(),
         )
@@ -116,13 +116,13 @@ internal class UserPreferenceRepositoryImpl(
 
     override suspend fun saveSortRuleForTab(
         tab: CustomTab,
-        sortRule: SortRule,
+        displaySetting: DisplaySetting,
     ) {
-        userDataDao.upsertSortRuleEntity(entity = sortRule.toEntity(tab.tabId))
+        userDataDao.upsertSortRuleEntity(entity = displaySetting.toEntity(tab.tabId))
     }
 
-    override fun getCurrentSortRule(tab: CustomTab?): Flow<SortRule> {
-        val defaultSortRuleFlow = userSettingFlow.map { it.defaultPresetSortRule?.sortRule }
+    override fun getCurrentSortRule(tab: CustomTab?): Flow<DisplaySetting> {
+        val defaultSortRuleFlow = userSettingFlow.map { it.defaultPresetDisplaySetting?.displaySetting }
         val customTabSortRuleFlow =
             if (tab != null) {
                 userDataDao.getDisplaySettingFlowOfTab(tab.tabId)
@@ -133,12 +133,12 @@ internal class UserPreferenceRepositoryImpl(
             defaultSortRuleFlow,
             customTabSortRuleFlow,
         ) { default, custom ->
-            val customSortRule: SortRule? = custom?.toModel()
-            customSortRule ?: default ?: SortRule.Preset.DefaultPreset
+            val customDisplaySetting: DisplaySetting? = custom?.toModel()
+            customDisplaySetting ?: default ?: DisplaySetting.Preset.DefaultPreset
         }
     }
 
-    override suspend fun getTabCustomSortRule(tab: CustomTab): SortRule? =
+    override suspend fun getTabCustomSortRule(tab: CustomTab): DisplaySetting? =
         userDataDao.getDisplaySettingFlowOfTab(tab.tabId).first()?.toModel()
 
     override suspend fun swapTabOrder(
@@ -175,21 +175,21 @@ private fun Int.toMediaPreviewMode(): MediaPreviewMode =
         else -> MediaPreviewMode.GRID_PREVIEW
     }
 
-private fun PresetSortRule.toIntValue() =
+private fun PresetDisplaySetting.toIntValue() =
     when (this) {
-        PresetSortRule.AlbumAsc -> DefaultPresetValues.ALBUM_ASC_VALUE
-        PresetSortRule.ArtistAsc -> DefaultPresetValues.ARTIST_ASC_VALUE
-        PresetSortRule.TitleNameAsc -> DefaultPresetValues.TITLE_ASC_VALUE
-        PresetSortRule.ArtistAlbumASC -> DefaultPresetValues.ARTIST_ALBUM_ASC_VALUE
+        PresetDisplaySetting.AlbumAsc -> DefaultPresetValues.ALBUM_ASC_VALUE
+        PresetDisplaySetting.ArtistAsc -> DefaultPresetValues.ARTIST_ASC_VALUE
+        PresetDisplaySetting.TitleNameAsc -> DefaultPresetValues.TITLE_ASC_VALUE
+        PresetDisplaySetting.ArtistAlbumASC -> DefaultPresetValues.ARTIST_ALBUM_ASC_VALUE
     }
 
 private fun Int.toDefaultPresetRule() =
     when (this) {
-        DefaultPresetValues.ALBUM_ASC_VALUE -> PresetSortRule.AlbumAsc
-        DefaultPresetValues.ARTIST_ASC_VALUE -> PresetSortRule.ArtistAsc
-        DefaultPresetValues.TITLE_ASC_VALUE -> PresetSortRule.TitleNameAsc
-        DefaultPresetValues.ARTIST_ALBUM_ASC_VALUE -> PresetSortRule.ArtistAlbumASC
+        DefaultPresetValues.ALBUM_ASC_VALUE -> PresetDisplaySetting.AlbumAsc
+        DefaultPresetValues.ARTIST_ASC_VALUE -> PresetDisplaySetting.ArtistAsc
+        DefaultPresetValues.TITLE_ASC_VALUE -> PresetDisplaySetting.TitleNameAsc
+        DefaultPresetValues.ARTIST_ALBUM_ASC_VALUE -> PresetDisplaySetting.ArtistAlbumASC
 
         // Default
-        else -> PresetSortRule.AlbumAsc
+        else -> PresetDisplaySetting.AlbumAsc
     }

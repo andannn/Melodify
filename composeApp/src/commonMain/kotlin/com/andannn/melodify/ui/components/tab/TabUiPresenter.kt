@@ -18,13 +18,14 @@ import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.model.contentFlow
+import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
+import com.andannn.melodify.usecase.contentFlow
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -67,7 +68,7 @@ class TabUiPresenter(
             val groupSort =
                 userPreferenceRepository.getCurrentSortRule(currentTab).first()
             return with(repository) {
-                currentTab.contentFlow(sort = groupSort).first()
+                currentTab.contentFlow(sorts = groupSort.sortOptions()).first()
             }
         }
 

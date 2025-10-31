@@ -8,5 +8,5 @@ data class UserSetting(
     val mediaPreviewMode: MediaPreviewMode,
     val libraryPath: Set<String>,
     val lastSuccessfulSyncTime: Long?,
-    val defaultPresetSortRule: PresetSortRule?,
+    val defaultPresetDisplaySetting: PresetDisplaySetting?,
 )

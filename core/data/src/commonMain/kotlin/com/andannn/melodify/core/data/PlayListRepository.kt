@@ -2,12 +2,12 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.core.data.internal
+package com.andannn.melodify.core.data
 
 import androidx.paging.PagingData
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.core.data.model.SortRule
+import com.andannn.melodify.core.data.model.SortOption
 import com.andannn.melodify.core.database.dao.PlayListDao
 import kotlinx.coroutines.flow.Flow
 
@@ -26,12 +26,12 @@ interface PlayListRepository {
      */
     fun getAudiosOfPlayListFlow(
         playListId: Long,
-        sort: SortRule,
+        sort: List<SortOption>,
     ): Flow<List<AudioItemModel>>
 
     fun getAudioPagingFlowOfPlayList(
         playListId: Long,
-        sort: SortRule,
+        sort: List<SortOption>,
     ): Flow<PagingData<AudioItemModel>>
 
     /**

@@ -22,15 +22,17 @@ import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.model.SortRule
-import com.andannn.melodify.core.data.model.contentFlow
-import com.andannn.melodify.core.data.model.contentPagingDataFlow
+import com.andannn.melodify.core.data.model.DisplaySetting
+import com.andannn.melodify.core.data.model.GroupKey
+import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
+import com.andannn.melodify.usecase.contentFlow
+import com.andannn.melodify.usecase.contentPagingDataFlow
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -85,9 +87,9 @@ class TabContentPresenter(
         val scope = rememberCoroutineScope()
         Napier.d(tag = TAG) { "TabContentPresenter scope ${scope.hashCode()}" }
 
-        var groupSort by rememberRetained(selectedTab) {
+        var displaySetting by rememberRetained(selectedTab) {
             mutableStateOf(
-                SortRule.Preset.ArtistAlbumASC,
+                DisplaySetting.Preset.ArtistAlbumASC,
             )
         }
 
@@ -96,13 +98,13 @@ class TabContentPresenter(
             if (currentTab == null) return@LaunchedEffect
 
             userPreferenceRepository.getCurrentSortRule(currentTab).collect {
-                groupSort = it
+                displaySetting = it
             }
         }
 
         val pagingDataFlow =
-            rememberRetained(selectedTab, groupSort) {
-                getContentPagingFlow(selectedTab, groupSort).cachedIn(scope)
+            rememberRetained(selectedTab, displaySetting) {
+                getContentPagingFlow(selectedTab, displaySetting).cachedIn(scope)
             }
         val pagingItems: LazyPagingItems<AudioItemModel> = pagingDataFlow.collectAsLazyPagingItems()
 
@@ -114,43 +116,64 @@ class TabContentPresenter(
 
         return TabContentState(
             selectedTab = selectedTab,
-            groupSort = groupSort,
+            groupSort = displaySetting,
             pagingItems = pagingItems,
         ) { eventSink ->
-            when (eventSink) {
-                is TabContentEvent.OnPlayMusic ->
-                    scope.launch {
-                        val items =
-                            with(repository) {
-                                selectedTab
-                                    ?.contentFlow(sort = groupSort)
-                                    ?.first()
-                                    ?: error("selectedTab is null")
-                            }
-                        playMusic(
-                            eventSink.mediaItemModel,
-                            allAudios = items,
-                        )
-                    }
+            context(repository, popupController) {
+                when (eventSink) {
+                    is TabContentEvent.OnPlayMusic ->
+                        scope.launch {
+                            val items =
+                                with(repository) {
+                                    selectedTab
+                                        ?.contentFlow(sorts = displaySetting.sortOptions())
+                                        ?.first()
+                                        ?: error("selectedTab is null")
+                                }
+                            playMusic(
+                                eventSink.mediaItemModel,
+                                allAudios = items,
+                            )
+                        }
 
-                is TabContentEvent.OnShowMusicItemOption ->
-                    scope.launch {
-                        onShowMusicItemOption(eventSink.mediaItemModel)
-                    }
+                    is TabContentEvent.OnShowMusicItemOption ->
+                        scope.launch {
+                            onShowMusicItemOption(eventSink.mediaItemModel)
+                        }
+
+                    is TabContentEvent.OnGroupOptionClick ->
+                        scope.launch {
+                            handleGroupOption(
+                                eventSink.optionItem,
+                                eventSink.groupKeys,
+                                displaySetting,
+                                selectedTab,
+                            )
+                        }
+
+                    is TabContentEvent.OnGroupItemClick ->
+                        scope.launch {
+                            handleGroupItemClick(
+                                eventSink.groupKeys,
+                                displaySetting,
+                                selectedTab,
+                            )
+                        }
+                }
             }
         }
     }
 
     private fun getContentPagingFlow(
         selectedTab: CustomTab?,
-        groupSort: SortRule,
+        groupSort: DisplaySetting,
     ): Flow<PagingData<AudioItemModel>> {
         if (selectedTab == null) {
             return flowOf()
         }
         return with(repository) {
             selectedTab.contentPagingDataFlow(
-                sort = groupSort,
+                sorts = groupSort.sortOptions(),
             )
         }
     }
@@ -178,6 +201,48 @@ class TabContentPresenter(
         }
     }
 
+    context(repository: Repository, popupController: PopupController)
+    private suspend fun handleGroupItemClick(
+        groupKeys: List<GroupKey?>,
+        displaySetting: DisplaySetting,
+        selectedTab: CustomTab?,
+    ) {
+        val items =
+            selectedTab
+                ?.contentFlow(
+                    sorts = displaySetting.sortOptions(),
+                    whereGroups = groupKeys.filterNotNull(),
+                )?.first() ?: emptyList()
+        if (items.isNotEmpty()) {
+            playMusic(
+                items.first(),
+                items,
+            )
+        }
+    }
+
+    context(repository: Repository, popupController: PopupController)
+    private suspend fun handleGroupOption(
+        optionItem: OptionItem,
+        groupKeys: List<GroupKey?>,
+        displaySetting: DisplaySetting,
+        selectedTab: CustomTab?,
+    ) {
+        val items =
+            selectedTab
+                ?.contentFlow(
+                    sorts = displaySetting.sortOptions(),
+                    whereGroups = groupKeys.filterNotNull(),
+                )?.first() ?: emptyList()
+        when (optionItem) {
+            OptionItem.PLAY_NEXT -> addToNextPlay(items)
+            OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items)
+            OptionItem.ADD_TO_QUEUE -> addToQueue(items)
+            else -> {}
+        }
+    }
+
+    context(repository: Repository, popupController: PopupController)
     private suspend fun onShowMusicItemOption(item: AudioItemModel) {
         val options =
             listOf(
@@ -194,15 +259,13 @@ class TabContentPresenter(
                 ),
             )
         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
-            context(repository, popupController) {
-                when (result.optionItem) {
-                    OptionItem.PLAY_NEXT -> addToNextPlay(listOf(item))
-                    OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(item))
-                    OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item))
-                    OptionItem.OPEN_LIBRARY_ALBUM -> onRequestGoToAlbum(item)
-                    OptionItem.OPEN_LIBRARY_ARTIST -> onRequestGoToArtist(item)
-                    else -> {}
-                }
+            when (result.optionItem) {
+                OptionItem.PLAY_NEXT -> addToNextPlay(listOf(item))
+                OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(item))
+                OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item))
+                OptionItem.OPEN_LIBRARY_ALBUM -> onRequestGoToAlbum(item)
+                OptionItem.OPEN_LIBRARY_ARTIST -> onRequestGoToArtist(item)
+                else -> {}
             }
         }
     }
@@ -210,7 +273,7 @@ class TabContentPresenter(
 
 data class TabContentState(
     val selectedTab: CustomTab? = null,
-    val groupSort: SortRule,
+    val groupSort: DisplaySetting,
     val pagingItems: LazyPagingItems<AudioItemModel>,
     val eventSink: (TabContentEvent) -> Unit = {},
 ) : CircuitUiState
@@ -222,5 +285,14 @@ sealed interface TabContentEvent {
 
     data class OnPlayMusic(
         val mediaItemModel: AudioItemModel,
+    ) : TabContentEvent
+
+    data class OnGroupOptionClick(
+        val optionItem: OptionItem,
+        val groupKeys: List<GroupKey?>,
+    ) : TabContentEvent
+
+    data class OnGroupItemClick(
+        val groupKeys: List<GroupKey?>,
     ) : TabContentEvent
 }

@@ -5,7 +5,6 @@
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -18,13 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.SortOption
-import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.browsableOrPlayable
-import com.andannn.melodify.ui.components.tabcontent.header.IdBasedGroupHeader
-import com.andannn.melodify.ui.components.tabcontent.header.NameBasedGroupHeader
-import com.andannn.melodify.ui.components.tabcontent.header.rememberGroupHeaderPresenter
+import com.andannn.melodify.core.data.model.keyOf
+import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.ui.components.tabcontent.header.GroupHeader
 import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.widgets.ListTileItemView
 
@@ -35,7 +34,7 @@ fun TabContent(
 ) {
     LazyListContent(
         pagingItems = state.pagingItems,
-        sortRule = state.groupSort,
+        displaySetting = state.groupSort,
         modifier = modifier.fillMaxSize(),
         onMusicItemClick = {
             state.eventSink.invoke(TabContentEvent.OnPlayMusic(it))
@@ -43,22 +42,30 @@ fun TabContent(
         onShowMusicItemOption = {
             state.eventSink.invoke(TabContentEvent.OnShowMusicItemOption(it))
         },
+        onGroupOptionClick = { optionItem, groupKeyList ->
+            state.eventSink.invoke(TabContentEvent.OnGroupOptionClick(optionItem, groupKeyList))
+        },
+        onGroupItemClick = { groupKeyList ->
+            state.eventSink.invoke(TabContentEvent.OnGroupItemClick(groupKeyList))
+        },
     )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyListContent(
-    sortRule: SortRule,
+    displaySetting: DisplaySetting,
     pagingItems: LazyPagingItems<AudioItemModel>,
     modifier: Modifier = Modifier,
+    onGroupOptionClick: (item: OptionItem, List<GroupKey?>) -> Unit,
+    onGroupItemClick: (List<GroupKey?>) -> Unit = {},
     onMusicItemClick: (AudioItemModel) -> Unit = {},
     onShowMusicItemOption: (AudioItemModel) -> Unit = {},
 ) {
     val items = pagingItems.itemSnapshotList
     val primaryGroupList =
-        remember(items, sortRule) {
-            items.groupByType(sortRule)
+        remember(items, displaySetting) {
+            items.groupByType(displaySetting)
         }
     LazyColumn(
         modifier = modifier,
@@ -66,17 +73,24 @@ private fun LazyListContent(
         primaryGroupList.forEachIndexed { primaryGroupIndex, (primaryGroupKey, secondaryGroupList) ->
             if (primaryGroupKey != null) {
                 stickyHeader(primaryGroupKey.hashCode()) {
-                    Header(isPrimary = true, groupKey = primaryGroupKey)
+                    GroupHeader(
+                        isPrimary = true,
+                        groupKey = primaryGroupKey,
+                        onGroupOptionSelected = { onGroupOptionClick(it, listOf(primaryGroupKey)) },
+                        onGroupHeaderClick = { onGroupItemClick(listOf(primaryGroupKey)) },
+                    )
                 }
             }
 
-            secondaryGroupList.forEachIndexed { secondaryGroupIndex, (secondaryHeader, items) ->
-                if (secondaryHeader != null) {
-                    stickyHeader((primaryGroupKey to secondaryHeader).hashCode()) {
-                        Header(
+            secondaryGroupList.forEachIndexed { secondaryGroupIndex, (secondaryGroupKey, items) ->
+                if (secondaryGroupKey != null) {
+                    stickyHeader((primaryGroupKey to secondaryGroupKey).hashCode()) {
+                        GroupHeader(
                             modifier = Modifier.padding(start = 8.dp),
                             isPrimary = false,
-                            groupKey = secondaryHeader,
+                            groupKey = secondaryGroupKey,
+                            onGroupOptionSelected = { onGroupOptionClick(it, listOf(primaryGroupKey, secondaryGroupKey)) },
+                            onGroupHeaderClick = { onGroupItemClick(listOf(primaryGroupKey, secondaryGroupKey)) },
                         )
                     }
                 }
@@ -96,7 +110,7 @@ private fun LazyListContent(
                         ),
                     ]
 
-                    val showTrackNum = sortRule.showTrackNum
+                    val showTrackNum = displaySetting.showTrackNum
                     ListTileItemView(
                         modifier = Modifier.padding(start = 12.dp),
                         playable = item.browsableOrPlayable,
@@ -120,39 +134,6 @@ private fun LazyListContent(
         item { ExtraPaddingBottom() }
     }
 }
-
-@Composable
-private fun Header(
-    isPrimary: Boolean,
-    groupKey: GroupKey,
-    modifier: Modifier = Modifier,
-) {
-    Box(modifier = modifier) {
-        if (groupKey.isIdBased()) {
-            val presenter = rememberGroupHeaderPresenter(groupKey)
-            IdBasedGroupHeader(
-                state = presenter.present(),
-                isPrimary = isPrimary,
-            )
-        } else {
-            val name =
-                when (groupKey) {
-                    is GroupKey.Title -> groupKey.firstCharacterString
-                    is GroupKey.Year -> groupKey.year
-                    else -> return
-                }
-            NameBasedGroupHeader(
-                name = name,
-                isPrimary = isPrimary,
-            )
-        }
-    }
-}
-
-private fun GroupKey.isIdBased(): Boolean =
-    this is GroupKey.Album ||
-        this is GroupKey.Artist ||
-        this is GroupKey.Genre
 
 private data class PrimaryGroup(
     val headerItem: GroupKey?,
@@ -189,11 +170,11 @@ private fun List<PrimaryGroup>.flattenIndex(
     return ret
 }
 
-private fun List<AudioItemModel?>.groupByType(sortRule: SortRule): List<PrimaryGroup> =
-    groupByType(sortRule.primaryGroupSort)
+private fun List<AudioItemModel?>.groupByType(displaySetting: DisplaySetting): List<PrimaryGroup> =
+    groupByType(displaySetting.primaryGroupSort)
         .map { (headerItem, contentList) ->
             val primaryHeader = headerItem
-            val items = contentList.groupByType(sortRule.secondaryGroupSort)
+            val items = contentList.groupByType(displaySetting.secondaryGroupSort)
 
             PrimaryGroup(
                 headerItem = primaryHeader,
@@ -212,14 +193,3 @@ private fun List<AudioItemModel?>.groupByType(sortOption: SortOption): List<Seco
                 content = value,
             )
         }
-
-private fun AudioItemModel.keyOf(sortOption: SortOption): GroupKey? =
-    when (sortOption) {
-        is SortOption.Album -> GroupKey.Album(albumId)
-        is SortOption.Artist -> GroupKey.Artist(artistId)
-        is SortOption.Genre -> GroupKey.Genre(genreId)
-        is SortOption.ReleaseYear -> GroupKey.Year(releaseYear)
-        is SortOption.Title -> GroupKey.Title(name[0].toString())
-        SortOption.NONE -> null
-        is SortOption.TrackNum -> error("Not support")
-    }

@@ -8,11 +8,11 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.LyricModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.SortOption
-import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
@@ -185,7 +185,7 @@ internal fun CustomTab.toEntity() =
     }
 
 internal fun SortRuleEntity.toModel() =
-    SortRule(
+    DisplaySetting(
         primaryGroupSort = primaryGroupSort.toModel(),
         secondaryGroupSort = secondaryGroupSort.toModel(),
         contentSort = contentSort.toModel(),
@@ -193,7 +193,7 @@ internal fun SortRuleEntity.toModel() =
         isPreset = isPreset,
     )
 
-internal fun SortRule.toEntity(bindTabId: Long): SortRuleEntity =
+internal fun DisplaySetting.toEntity(bindTabId: Long): SortRuleEntity =
     SortRuleEntity(
         foreignKey = bindTabId,
         primaryGroupSort = primaryGroupSort.toEntity(),

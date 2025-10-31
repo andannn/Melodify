@@ -30,17 +30,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.andannn.melodify.core.data.model.GroupKey
+import com.andannn.melodify.model.OptionItem
+import com.slack.circuit.runtime.presenter.Presenter
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun IdBasedGroupHeader(
-    state: GroupHeaderState,
+fun GroupHeader(
+    groupKey: GroupKey,
     isPrimary: Boolean,
+    onGroupOptionSelected: (OptionItem) -> Unit = {},
+    onGroupHeaderClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    presenter: Presenter<GroupHeaderState> =
+        rememberGroupHeaderPresenter(
+            groupKey,
+            onGroupOption = onGroupOptionSelected,
+        ),
 ) {
+    val state = presenter.present()
     HeaderInfo(
         modifier = modifier,
         isPrimary = isPrimary,
@@ -49,34 +60,8 @@ fun IdBasedGroupHeader(
         onOptionClick = {
             state.eventSink.invoke(GroupHeaderEvent.OnOptionClick)
         },
+        onClick = onGroupHeaderClick,
     )
-}
-
-@Composable
-fun NameBasedGroupHeader(
-    name: String,
-    isPrimary: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    val style =
-        if (isPrimary) {
-            MaterialTheme.typography.titleLarge
-        } else {
-            MaterialTheme.typography.titleMedium
-        }
-    Surface(
-        modifier = modifier,
-    ) {
-        Row(
-            modifier = Modifier.padding(8.dp),
-        ) {
-            Text(
-                text = "# $name",
-                style = style.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.weight(1f),
-            )
-        }
-    }
 }
 
 @Composable
@@ -87,11 +72,13 @@ private fun HeaderInfo(
     defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
     title: String = "",
     onOptionClick: () -> Unit = {},
+    onClick: () -> Unit = {},
 ) {
     Surface(
         modifier =
             modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
+        onClick = onClick,
     ) {
         Row(
             modifier =

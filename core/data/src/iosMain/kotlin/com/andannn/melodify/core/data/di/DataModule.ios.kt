@@ -4,7 +4,7 @@
  */
 package com.andannn.melodify.core.data.di
 
-import com.andannn.melodify.core.data.internal.MediaContentRepository
+import com.andannn.melodify.core.data.MediaContentRepository
 import com.andannn.melodify.core.data.internal.MediaControllerRepository
 import com.andannn.melodify.core.data.internal.MediaControllerRepositoryImpl
 import com.andannn.melodify.core.data.internal.PlayerStateMonitoryRepository

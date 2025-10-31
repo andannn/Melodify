@@ -25,7 +25,6 @@ import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material.icons.outlined.Timeline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -43,8 +42,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.SortOption
-import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.isAscending
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
@@ -103,9 +102,9 @@ fun ChangeSortRuleDialog(
     ChangeSortRuleDialogContent(
         modifier = modifier,
         tab = dialog.tab,
-        sortRule = state.sortRule,
+        displaySetting = state.displaySetting,
         onChangePresetSortRule = {
-            state.eventSink(UiEvent.OnChangeSortRule(it.sortRule))
+            state.eventSink(UiEvent.OnChangeSortRule(it.displaySetting))
         },
         onCustomRadioButtonClick = {
             state.eventSink(UiEvent.OnCustomRadioButtonClick)
@@ -119,16 +118,16 @@ fun ChangeSortRuleDialog(
 @Composable
 private fun ChangeSortRuleDialogContent(
     tab: CustomTab?,
-    sortRule: SortRule,
+    displaySetting: DisplaySetting,
     modifier: Modifier = Modifier,
     onChangePresetSortRule: (PresetSortRule) -> Unit = {},
-    onChangeCustomSortRule: (SortRule) -> Unit = {},
+    onChangeCustomSortRule: (DisplaySetting) -> Unit = {},
     onCustomRadioButtonClick: () -> Unit = {},
 ) {
     val isDefaultSettings = tab == null
     val selectedPresetOption =
-        remember(sortRule) {
-            PresetSortRule.entries.firstOrNull { sortRule.isPreset && it.sortRule == sortRule }
+        remember(displaySetting) {
+            PresetSortRule.entries.firstOrNull { displaySetting.isPreset && it.displaySetting == displaySetting }
         }
     val options = PresetSortRule.entries
 
@@ -218,11 +217,11 @@ private fun ChangeSortRuleDialogContent(
                                 .padding(horizontal = 16.dp),
                     ) {
                         val resolvedSortOption =
-                            remember(sortRule) {
-                                if (sortRule.isPreset) {
-                                    SortRule.DefaultCustom
+                            remember(displaySetting) {
+                                if (displaySetting.isPreset) {
+                                    DisplaySetting.DefaultCustom
                                 } else {
-                                    sortRule
+                                    displaySetting
                                 }
                             }
 
@@ -232,37 +231,37 @@ private fun ChangeSortRuleDialogContent(
                                     .padding(horizontal = 16.dp)
                                     .weight(1f)
                                     .graphicsLayer {
-                                        alpha = if (sortRule.isPreset) 0.5f else 1f
+                                        alpha = if (displaySetting.isPreset) 0.5f else 1f
                                     },
                         ) {
-                            val enabled = !sortRule.isPreset
+                            val enabled = !displaySetting.isPreset
 
                             CustomSortOptionGroup(
                                 modifier = Modifier,
                                 enabled = enabled,
-                                sortRule = resolvedSortOption,
+                                displaySetting = resolvedSortOption,
                                 onPrimarySortRuleChange = { option ->
-                                    if (!sortRule.containsOption(option)) {
+                                    if (!displaySetting.containsOption(option)) {
                                         onChangeCustomSortRule(
-                                            sortRule.copy(
+                                            displaySetting.copy(
                                                 primaryGroupSort = option,
                                             ),
                                         )
                                     }
                                 },
                                 onSecondarySortRuleChange = { option ->
-                                    if (!sortRule.containsOption(option)) {
+                                    if (!displaySetting.containsOption(option)) {
                                         onChangeCustomSortRule(
-                                            sortRule.copy(
+                                            displaySetting.copy(
                                                 secondaryGroupSort = option,
                                             ),
                                         )
                                     }
                                 },
                                 onContentSortRuleChange = { option ->
-                                    if (!sortRule.containsOption(option)) {
+                                    if (!displaySetting.containsOption(option)) {
                                         onChangeCustomSortRule(
-                                            sortRule.copy(
+                                            displaySetting.copy(
                                                 contentSort = option,
                                             ),
                                         )
@@ -295,7 +294,7 @@ private fun ChangeSortRuleDialogContent(
                             TextButton(
                                 enabled = enabled,
                                 onClick = {
-                                    onChangeCustomSortRule(SortRule.DefaultCustom)
+                                    onChangeCustomSortRule(DisplaySetting.DefaultCustom)
                                 },
                             ) {
                                 Text(stringResource(Res.string.reset_settings))
@@ -304,7 +303,7 @@ private fun ChangeSortRuleDialogContent(
 
                         RadioButton(
                             modifier = Modifier.padding(end = 8.dp),
-                            selected = !sortRule.isPreset,
+                            selected = !displaySetting.isPreset,
                             onClick = onCustomRadioButtonClick,
                         )
                     }
@@ -318,7 +317,7 @@ private fun ChangeSortRuleDialogContent(
 @Composable
 private fun CustomSortOptionGroup(
     modifier: Modifier = Modifier,
-    sortRule: SortRule,
+    displaySetting: DisplaySetting,
     enabled: Boolean,
     onPrimarySortRuleChange: (SortOption) -> Unit = {},
     onSecondarySortRuleChange: (SortOption) -> Unit = {},
@@ -329,7 +328,7 @@ private fun CustomSortOptionGroup(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             options = SortOptionType.PrimaryGroupOptions,
-            currentOption = sortRule.primaryGroupSort,
+            currentOption = displaySetting.primaryGroupSort,
             label = stringResource(Res.string.primary_group_by),
             onChangeSortRule = onPrimarySortRuleChange,
         )
@@ -338,7 +337,7 @@ private fun CustomSortOptionGroup(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             options = SortOptionType.SecondaryGroupOptions,
-            currentOption = sortRule.secondaryGroupSort,
+            currentOption = displaySetting.secondaryGroupSort,
             label = stringResource(Res.string.secondary_group_by),
             onChangeSortRule = onSecondarySortRuleChange,
         )
@@ -347,7 +346,7 @@ private fun CustomSortOptionGroup(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             options = SortOptionType.ContentOptions,
-            currentOption = sortRule.contentSort,
+            currentOption = displaySetting.contentSort,
             label = stringResource(Res.string.content_sort_by),
             onChangeSortRule = onContentSortRuleChange,
         )
@@ -457,7 +456,7 @@ private fun SelectableTextButton(
     }
 }
 
-private fun SortRule.containsOption(sortOption: SortOption) =
+private fun DisplaySetting.containsOption(sortOption: SortOption) =
     primaryGroupSort == sortOption || secondaryGroupSort == sortOption || contentSort == sortOption
 
 private fun SortOption.toSortOptionType() =
@@ -572,19 +571,19 @@ private fun SortOptionType.createSortOption(isAscending: Boolean) =
     }
 
 enum class PresetSortRule(
-    val sortRule: SortRule,
+    val displaySetting: DisplaySetting,
 ) {
     AlbumAsc(
-        sortRule = SortRule.Preset.AlbumASC,
+        displaySetting = DisplaySetting.Preset.AlbumASC,
     ),
     ArtistAsc(
-        sortRule = SortRule.Preset.ArtistASC,
+        displaySetting = DisplaySetting.Preset.ArtistASC,
     ),
     TitleNameAsc(
-        sortRule = SortRule.Preset.TitleASC,
+        displaySetting = DisplaySetting.Preset.TitleASC,
     ),
     ArtistAlbumASC(
-        sortRule = SortRule.Preset.ArtistAlbumASC,
+        displaySetting = DisplaySetting.Preset.ArtistAlbumASC,
     ),
 }
 
@@ -635,22 +634,22 @@ private class ChangeSortRulePresenter(
     @Composable
     override fun present(): UiState {
         val isDefaultSettings = customTab == null
-        val sortRule by userPreferences
+        val displaySetting by userPreferences
             .getCurrentSortRule(customTab)
-            .collectAsRetainedState(SortRule.Preset.DefaultPreset)
-        if (isDefaultSettings && !sortRule.isPreset) {
+            .collectAsRetainedState(DisplaySetting.Preset.DefaultPreset)
+        if (isDefaultSettings && !displaySetting.isPreset) {
             error("Never. Default setting only supports preset sort rule.")
         }
 
         val scope = rememberCoroutineScope()
-        return UiState(sortRule) { event ->
+        return UiState(displaySetting) { event ->
             when (event) {
                 is UiEvent.OnChangeSortRule -> {
                     scope.launch {
                         if (customTab == null) {
-                            userPreferences.saveDefaultSortRule(event.sortRule)
+                            userPreferences.saveDefaultSortRule(event.displaySetting)
                         } else {
-                            userPreferences.saveSortRuleForTab(customTab, event.sortRule)
+                            userPreferences.saveSortRuleForTab(customTab, event.displaySetting)
                         }
                     }
                 }
@@ -666,7 +665,7 @@ private class ChangeSortRulePresenter(
                             Napier.d(tag = TAG) { "Already has custom sort rule. $customSortRule" }
                         }
 
-                        userPreferences.saveSortRuleForTab(customTab, SortRule.DefaultCustom)
+                        userPreferences.saveSortRuleForTab(customTab, DisplaySetting.DefaultCustom)
                     }
                 }
             }
@@ -676,13 +675,13 @@ private class ChangeSortRulePresenter(
 
 @Stable
 private data class UiState(
-    val sortRule: SortRule,
+    val displaySetting: DisplaySetting,
     val eventSink: (UiEvent) -> Unit = {},
 ) : CircuitUiState
 
 private sealed interface UiEvent {
     data class OnChangeSortRule(
-        val sortRule: SortRule,
+        val displaySetting: DisplaySetting,
     ) : UiEvent
 
     data object OnCustomRadioButtonClick : UiEvent
