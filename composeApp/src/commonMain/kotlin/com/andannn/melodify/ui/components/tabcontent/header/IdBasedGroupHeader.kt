@@ -53,33 +53,6 @@ fun IdBasedGroupHeader(
 }
 
 @Composable
-fun NameBasedGroupHeader(
-    name: String,
-    isPrimary: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    val style =
-        if (isPrimary) {
-            MaterialTheme.typography.titleLarge
-        } else {
-            MaterialTheme.typography.titleMedium
-        }
-    Surface(
-        modifier = modifier,
-    ) {
-        Row(
-            modifier = Modifier.padding(8.dp),
-        ) {
-            Text(
-                text = "# $name",
-                style = style.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.weight(1f),
-            )
-        }
-    }
-}
-
-@Composable
 private fun HeaderInfo(
     modifier: Modifier = Modifier,
     coverArtUri: String?,

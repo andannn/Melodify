@@ -45,7 +45,6 @@ fun rememberGroupHeaderPresenter(
     }
 
 data class GroupHeaderState(
-    val mediaItem: MediaItemModel?,
     val title: String,
     val cover: String?,
     val trackCount: Int,
@@ -73,32 +72,45 @@ private class GroupHeaderPresenter(
                     is GroupKey.Artist -> mediaContentRepository.getArtistByArtistId(artistId = groupKey.artistId)
                     is GroupKey.Album -> mediaContentRepository.getAlbumByAlbumId(albumId = groupKey.albumId)
                     is GroupKey.Genre -> mediaContentRepository.getGenreByGenreId(genreId = groupKey.genreId)
-                    else -> error("invalid group type")
+                    else -> null
                 }
         }
 
+        val title =
+            remember(mediaItem, groupKey) {
+                when (groupKey) {
+                    is GroupKey.Title -> "# " + groupKey.firstCharacterString
+                    is GroupKey.Year -> "# " + groupKey.year
+                    else -> mediaItem?.name ?: ""
+                }
+            }
+
         return GroupHeaderState(
-            mediaItem = mediaItem,
-            title = mediaItem?.name ?: "",
+            title = title,
             cover = mediaItem?.artWorkUri,
             trackCount = mediaItem?.trackCount ?: 0,
         ) { event ->
             when (event) {
                 GroupHeaderEvent.OnOptionClick -> {
                     scope.launch {
-                        val media = mediaItem ?: error("mediaItem is null")
                         val dialog =
                             DialogId.OptionDialog(
                                 options =
-                                    listOf(
-                                        OptionItem.ADD_TO_HOME_TAB,
-                                    ),
+                                    buildList {
+                                        if (groupKey.canPinToHome()) add(OptionItem.ADD_TO_HOME_TAB)
+                                        add(OptionItem.PLAY_NEXT)
+                                        add(OptionItem.ADD_TO_QUEUE)
+                                        add(OptionItem.ADD_TO_PLAYLIST)
+                                    },
                             )
                         val result = popupController.showDialog(dialog)
                         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
                             context(repository, popupController) {
                                 when (result.optionItem) {
-                                    OptionItem.ADD_TO_HOME_TAB -> media.pinToHomeTab()
+                                    OptionItem.ADD_TO_HOME_TAB -> mediaItem?.pinToHomeTab()
+                                    OptionItem.PLAY_NEXT -> {}
+                                    OptionItem.ADD_TO_QUEUE -> {}
+                                    OptionItem.ADD_TO_PLAYLIST -> {}
                                     else -> {}
                                 }
                             }
@@ -109,3 +121,15 @@ private class GroupHeaderPresenter(
         }
     }
 }
+
+private fun GroupKey.canPinToHome() =
+    when (this) {
+        is GroupKey.Album,
+        is GroupKey.Artist,
+        is GroupKey.Genre,
+        -> true
+
+        is GroupKey.Title,
+        is GroupKey.Year,
+        -> false
+    }

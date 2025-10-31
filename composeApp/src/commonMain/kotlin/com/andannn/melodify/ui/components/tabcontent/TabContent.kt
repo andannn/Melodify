@@ -24,7 +24,6 @@ import com.andannn.melodify.core.data.model.SortOption
 import com.andannn.melodify.core.data.model.browsableOrPlayable
 import com.andannn.melodify.core.data.model.keyOf
 import com.andannn.melodify.ui.components.tabcontent.header.IdBasedGroupHeader
-import com.andannn.melodify.ui.components.tabcontent.header.NameBasedGroupHeader
 import com.andannn.melodify.ui.components.tabcontent.header.rememberGroupHeaderPresenter
 import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.widgets.ListTileItemView
@@ -78,6 +77,7 @@ private fun LazyListContent(
                             modifier = Modifier.padding(start = 8.dp),
                             isPrimary = false,
                             groupKey = secondaryHeader,
+                            parentKey = primaryGroupKey,
                         )
                     }
                 }
@@ -126,34 +126,17 @@ private fun LazyListContent(
 private fun Header(
     isPrimary: Boolean,
     groupKey: GroupKey,
+    parentKey: GroupKey? = null,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
-        if (groupKey.isIdBased()) {
-            val presenter = rememberGroupHeaderPresenter(groupKey)
-            IdBasedGroupHeader(
-                state = presenter.present(),
-                isPrimary = isPrimary,
-            )
-        } else {
-            val name =
-                when (groupKey) {
-                    is GroupKey.Title -> groupKey.firstCharacterString
-                    is GroupKey.Year -> groupKey.year
-                    else -> return
-                }
-            NameBasedGroupHeader(
-                name = name,
-                isPrimary = isPrimary,
-            )
-        }
+        val presenter = rememberGroupHeaderPresenter(groupKey)
+        IdBasedGroupHeader(
+            state = presenter.present(),
+            isPrimary = isPrimary,
+        )
     }
 }
-
-private fun GroupKey.isIdBased(): Boolean =
-    this is GroupKey.Album ||
-        this is GroupKey.Artist ||
-        this is GroupKey.Genre
 
 private data class PrimaryGroup(
     val headerItem: GroupKey?,
