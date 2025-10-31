@@ -33,6 +33,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 internal expect fun inMemoryDatabaseBuilder(): RoomDatabase.Builder<MelodifyDataBase>
 
@@ -775,7 +776,7 @@ class DatabaseTest {
 
     @Test
     @IgnoreAndroidUnitTest
-    fun `tab exist tab`() =
+    fun `is tab exist`() =
         testScope.runTest {
             val dao = database.getUserDataDao()
             dao.insertCustomTab(
@@ -891,6 +892,123 @@ class DatabaseTest {
             dao.getDisplaySettingFlowOfTab(1234).first().also {
                 assertNull(it)
             }
+        }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    fun `get media list where album test`() =
+        testScope.runTest {
+            val dao = database.getMediaLibraryDao()
+            dao.insertMedias(
+                audios =
+                    listOf(
+                        MediaEntity(
+                            id = 2,
+                            albumId = 2,
+                            title = "title a",
+                            album = "album a",
+                            cdTrackNumber = 1,
+                        ),
+                        MediaEntity(
+                            id = 3,
+                            title = "title c",
+                            albumId = 3,
+                            album = "album b",
+                        ),
+                        MediaEntity(
+                            id = 1,
+                            title = "title b",
+                            albumId = 2,
+                            album = "album a",
+                            cdTrackNumber = 2,
+                        ),
+                    ),
+            )
+            dao
+                .getAllMediaFlow(
+                    where =
+                        MediaWheres.buildMethod {
+                            add(
+                                Where(
+                                    MediaColumns.ALBUM_ID,
+                                    Where.Operator.EQUALS,
+                                    3.toString(),
+                                ),
+                            )
+                        },
+                ).first()
+                .also { mediaList ->
+                    assertTrue { mediaList.map { it.id }.contains(3) }
+                }
+        }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    fun `get media list where title test`() =
+        testScope.runTest {
+            val dao = database.getMediaLibraryDao()
+            dao.insertMedias(
+                audios =
+                    listOf(
+                        MediaEntity(
+                            id = 2,
+                            albumId = 2,
+                            title = "Aa",
+                            album = "album a",
+                            cdTrackNumber = 1,
+                        ),
+                        MediaEntity(
+                            id = 3,
+                            title = "aA",
+                            albumId = 3,
+                            album = "album b",
+                        ),
+                        MediaEntity(
+                            id = 4,
+                            title = "abijia",
+                            albumId = 3,
+                            album = "album b",
+                        ),
+                        MediaEntity(
+                            id = 1,
+                            title = "啊asdfasf",
+                            albumId = 2,
+                            album = "album a",
+                            cdTrackNumber = 2,
+                        ),
+                    ),
+            )
+
+            suspend fun mediaStartBy(first: String) =
+                dao
+                    .getAllMediaFlow(
+                        where =
+                            MediaWheres.buildMethod {
+                                add(
+                                    Where(
+                                        MediaColumns.TITLE,
+                                        Where.Operator.GLOB,
+                                        "$first*",
+                                    ),
+                                )
+                            },
+                    ).first()
+            mediaStartBy("a")
+                .also { mediaList ->
+                    assertEquals(2, mediaList.size)
+                    assertTrue { mediaList.map { it.id }.contains(3) }
+                    assertTrue { mediaList.map { it.id }.contains(4) }
+                }
+            mediaStartBy("A")
+                .also { mediaList ->
+                    assertEquals(1, mediaList.size)
+                    assertTrue { mediaList.map { it.id }.contains(2) }
+                }
+            mediaStartBy("啊")
+                .also { mediaList ->
+                    assertEquals(1, mediaList.size)
+                    assertTrue { mediaList.map { it.id }.contains(1) }
+                }
         }
 }
 
