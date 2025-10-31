@@ -18,10 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.SortOption
-import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.browsableOrPlayable
+import com.andannn.melodify.core.data.model.keyOf
 import com.andannn.melodify.ui.components.tabcontent.header.IdBasedGroupHeader
 import com.andannn.melodify.ui.components.tabcontent.header.NameBasedGroupHeader
 import com.andannn.melodify.ui.components.tabcontent.header.rememberGroupHeaderPresenter
@@ -35,7 +36,7 @@ fun TabContent(
 ) {
     LazyListContent(
         pagingItems = state.pagingItems,
-        sortRule = state.groupSort,
+        displaySetting = state.groupSort,
         modifier = modifier.fillMaxSize(),
         onMusicItemClick = {
             state.eventSink.invoke(TabContentEvent.OnPlayMusic(it))
@@ -49,7 +50,7 @@ fun TabContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyListContent(
-    sortRule: SortRule,
+    displaySetting: DisplaySetting,
     pagingItems: LazyPagingItems<AudioItemModel>,
     modifier: Modifier = Modifier,
     onMusicItemClick: (AudioItemModel) -> Unit = {},
@@ -57,8 +58,8 @@ private fun LazyListContent(
 ) {
     val items = pagingItems.itemSnapshotList
     val primaryGroupList =
-        remember(items, sortRule) {
-            items.groupByType(sortRule)
+        remember(items, displaySetting) {
+            items.groupByType(displaySetting)
         }
     LazyColumn(
         modifier = modifier,
@@ -96,7 +97,7 @@ private fun LazyListContent(
                         ),
                     ]
 
-                    val showTrackNum = sortRule.showTrackNum
+                    val showTrackNum = displaySetting.showTrackNum
                     ListTileItemView(
                         modifier = Modifier.padding(start = 12.dp),
                         playable = item.browsableOrPlayable,
@@ -189,11 +190,11 @@ private fun List<PrimaryGroup>.flattenIndex(
     return ret
 }
 
-private fun List<AudioItemModel?>.groupByType(sortRule: SortRule): List<PrimaryGroup> =
-    groupByType(sortRule.primaryGroupSort)
+private fun List<AudioItemModel?>.groupByType(displaySetting: DisplaySetting): List<PrimaryGroup> =
+    groupByType(displaySetting.primaryGroupSort)
         .map { (headerItem, contentList) ->
             val primaryHeader = headerItem
-            val items = contentList.groupByType(sortRule.secondaryGroupSort)
+            val items = contentList.groupByType(displaySetting.secondaryGroupSort)
 
             PrimaryGroup(
                 headerItem = primaryHeader,
@@ -212,14 +213,3 @@ private fun List<AudioItemModel?>.groupByType(sortOption: SortOption): List<Seco
                 content = value,
             )
         }
-
-private fun AudioItemModel.keyOf(sortOption: SortOption): GroupKey? =
-    when (sortOption) {
-        is SortOption.Album -> GroupKey.Album(albumId)
-        is SortOption.Artist -> GroupKey.Artist(artistId)
-        is SortOption.Genre -> GroupKey.Genre(genreId)
-        is SortOption.ReleaseYear -> GroupKey.Year(releaseYear)
-        is SortOption.Title -> GroupKey.Title(name[0].toString())
-        SortOption.NONE -> null
-        is SortOption.TrackNum -> error("Not support")
-    }

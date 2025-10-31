@@ -28,3 +28,14 @@ sealed interface GroupKey {
         val firstCharacterString: String,
     ) : GroupKey
 }
+
+fun AudioItemModel.keyOf(sortOption: SortOption): GroupKey? =
+    when (sortOption) {
+        is SortOption.Album -> GroupKey.Album(albumId)
+        is SortOption.Artist -> GroupKey.Artist(artistId)
+        is SortOption.Genre -> GroupKey.Genre(genreId)
+        is SortOption.ReleaseYear -> GroupKey.Year(releaseYear)
+        is SortOption.Title -> GroupKey.Title(name[0].toString())
+        SortOption.NONE -> null
+        is SortOption.TrackNum -> error("Not support")
+    }

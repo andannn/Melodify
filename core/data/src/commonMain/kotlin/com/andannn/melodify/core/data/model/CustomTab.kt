@@ -58,7 +58,7 @@ fun CustomTab.toTabKind(): TabKind =
     }
 
 context(repository: Repository)
-fun CustomTab.contentFlow(sort: SortRule): Flow<List<AudioItemModel>> =
+fun CustomTab.contentFlow(sort: DisplaySetting): Flow<List<AudioItemModel>> =
     when (this) {
         is CustomTab.AllMusic -> repository.mediaContentRepository.getAllMediaItemsFlow(sort)
         is CustomTab.AlbumDetail ->
@@ -82,7 +82,7 @@ fun CustomTab.contentFlow(sort: SortRule): Flow<List<AudioItemModel>> =
     }
 
 context(repository: Repository)
-fun CustomTab.contentPagingDataFlow(sort: SortRule): Flow<PagingData<AudioItemModel>> =
+fun CustomTab.contentPagingDataFlow(sort: DisplaySetting): Flow<PagingData<AudioItemModel>> =
     when (this) {
         is CustomTab.AllMusic -> repository.mediaContentRepository.getAllMediaItemsPagingFlow(sort)
         is CustomTab.AlbumDetail ->

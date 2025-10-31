@@ -8,8 +8,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.SortRule
 import com.andannn.melodify.core.data.model.toSortMethod
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import kotlinx.coroutines.ensureActive
@@ -20,7 +20,7 @@ import kotlin.coroutines.coroutineContext
 internal class MediaContentRepositoryImpl(
     private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaContentRepository {
-    override fun getAllMediaItemsPagingFlow(sort: SortRule): Flow<PagingData<AudioItemModel>> =
+    override fun getAllMediaItemsPagingFlow(sort: DisplaySetting): Flow<PagingData<AudioItemModel>> =
         Pager(
             config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
             pagingSourceFactory = { mediaLibraryDao.getAllMediaPagingSource(sort.toSortMethod()) },
@@ -28,7 +28,7 @@ internal class MediaContentRepositoryImpl(
             pagingData.map { it.toAppItem() }
         }
 
-    override fun getAllMediaItemsFlow(sort: SortRule) =
+    override fun getAllMediaItemsFlow(sort: DisplaySetting) =
         mediaLibraryDao
             .getAllMediaFlow(sort.toSortMethod())
             .map { it.mapToAudioItemModel() }
@@ -50,14 +50,14 @@ internal class MediaContentRepositoryImpl(
 
     override fun getAudiosOfAlbumFlow(
         albumId: String,
-        sort: SortRule,
+        sort: DisplaySetting,
     ) = mediaLibraryDao
         .getMediasByAlbumIdFlow(albumId, sort.toSortMethod())
         .map { it.mapToAudioItemModel() }
 
     override fun getAudiosPagingFlowOfAlbum(
         albumId: String,
-        sort: SortRule,
+        sort: DisplaySetting,
     ): Flow<PagingData<AudioItemModel>> =
         Pager(
             config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
@@ -73,14 +73,14 @@ internal class MediaContentRepositoryImpl(
 
     override fun getAudiosOfArtistFlow(
         artistId: String,
-        sort: SortRule,
+        sort: DisplaySetting,
     ) = mediaLibraryDao
         .getMediasByArtistIdFlow(artistId, sort.toSortMethod())
         .map { it.mapToAudioItemModel() }
 
     override fun getAudiosPagingFlowOfArtist(
         artistId: String,
-        sort: SortRule,
+        sort: DisplaySetting,
     ): Flow<PagingData<AudioItemModel>> =
         Pager(
             config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
@@ -96,14 +96,14 @@ internal class MediaContentRepositoryImpl(
 
     override fun getAudiosOfGenreFlow(
         genreId: String,
-        sort: SortRule,
+        sort: DisplaySetting,
     ) = mediaLibraryDao
         .getMediasByGenreIdFlow(genreId, sort.toSortMethod())
         .map { it.mapToAudioItemModel() }
 
     override fun getAudiosPagingFlowOfGenre(
         genreId: String,
-        sort: SortRule,
+        sort: DisplaySetting,
     ) = Pager(
         config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
         pagingSourceFactory = {

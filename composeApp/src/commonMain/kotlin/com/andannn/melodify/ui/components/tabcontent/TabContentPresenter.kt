@@ -22,7 +22,7 @@ import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.model.SortRule
+import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.contentFlow
 import com.andannn.melodify.core.data.model.contentPagingDataFlow
 import com.andannn.melodify.model.DialogAction
@@ -87,7 +87,7 @@ class TabContentPresenter(
 
         var groupSort by rememberRetained(selectedTab) {
             mutableStateOf(
-                SortRule.Preset.ArtistAlbumASC,
+                DisplaySetting.Preset.ArtistAlbumASC,
             )
         }
 
@@ -143,7 +143,7 @@ class TabContentPresenter(
 
     private fun getContentPagingFlow(
         selectedTab: CustomTab?,
-        groupSort: SortRule,
+        groupSort: DisplaySetting,
     ): Flow<PagingData<AudioItemModel>> {
         if (selectedTab == null) {
             return flowOf()
@@ -210,7 +210,7 @@ class TabContentPresenter(
 
 data class TabContentState(
     val selectedTab: CustomTab? = null,
-    val groupSort: SortRule,
+    val groupSort: DisplaySetting,
     val pagingItems: LazyPagingItems<AudioItemModel>,
     val eventSink: (TabContentEvent) -> Unit = {},
 ) : CircuitUiState
