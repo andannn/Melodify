@@ -5,7 +5,6 @@
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -23,8 +22,8 @@ import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.SortOption
 import com.andannn.melodify.core.data.model.browsableOrPlayable
 import com.andannn.melodify.core.data.model.keyOf
-import com.andannn.melodify.ui.components.tabcontent.header.IdBasedGroupHeader
-import com.andannn.melodify.ui.components.tabcontent.header.rememberGroupHeaderPresenter
+import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.ui.components.tabcontent.header.GroupHeader
 import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.widgets.ListTileItemView
 
@@ -43,6 +42,12 @@ fun TabContent(
         onShowMusicItemOption = {
             state.eventSink.invoke(TabContentEvent.OnShowMusicItemOption(it))
         },
+        onGroupOptionClick = { optionItem, groupKeyList ->
+            state.eventSink.invoke(TabContentEvent.OnGroupOptionClick(optionItem, groupKeyList))
+        },
+        onGroupItemClick = { groupKeyList ->
+            state.eventSink.invoke(TabContentEvent.OnGroupItemClick(groupKeyList))
+        },
     )
 }
 
@@ -52,6 +57,8 @@ private fun LazyListContent(
     displaySetting: DisplaySetting,
     pagingItems: LazyPagingItems<AudioItemModel>,
     modifier: Modifier = Modifier,
+    onGroupOptionClick: (item: OptionItem, List<GroupKey?>) -> Unit,
+    onGroupItemClick: (List<GroupKey?>) -> Unit = {},
     onMusicItemClick: (AudioItemModel) -> Unit = {},
     onShowMusicItemOption: (AudioItemModel) -> Unit = {},
 ) {
@@ -66,18 +73,24 @@ private fun LazyListContent(
         primaryGroupList.forEachIndexed { primaryGroupIndex, (primaryGroupKey, secondaryGroupList) ->
             if (primaryGroupKey != null) {
                 stickyHeader(primaryGroupKey.hashCode()) {
-                    Header(isPrimary = true, groupKey = primaryGroupKey)
+                    GroupHeader(
+                        isPrimary = true,
+                        groupKey = primaryGroupKey,
+                        onGroupOptionSelected = { onGroupOptionClick(it, listOf(primaryGroupKey)) },
+                        onGroupHeaderClick = { onGroupItemClick(listOf(primaryGroupKey)) },
+                    )
                 }
             }
 
-            secondaryGroupList.forEachIndexed { secondaryGroupIndex, (secondaryHeader, items) ->
-                if (secondaryHeader != null) {
-                    stickyHeader((primaryGroupKey to secondaryHeader).hashCode()) {
-                        Header(
+            secondaryGroupList.forEachIndexed { secondaryGroupIndex, (secondaryGroupKey, items) ->
+                if (secondaryGroupKey != null) {
+                    stickyHeader((primaryGroupKey to secondaryGroupKey).hashCode()) {
+                        GroupHeader(
                             modifier = Modifier.padding(start = 8.dp),
                             isPrimary = false,
-                            groupKey = secondaryHeader,
-                            parentKey = primaryGroupKey,
+                            groupKey = secondaryGroupKey,
+                            onGroupOptionSelected = { onGroupOptionClick(it, listOf(primaryGroupKey, secondaryGroupKey)) },
+                            onGroupHeaderClick = { onGroupItemClick(listOf(primaryGroupKey, secondaryGroupKey)) },
                         )
                     }
                 }
@@ -119,22 +132,6 @@ private fun LazyListContent(
         }
 
         item { ExtraPaddingBottom() }
-    }
-}
-
-@Composable
-private fun Header(
-    isPrimary: Boolean,
-    groupKey: GroupKey,
-    parentKey: GroupKey? = null,
-    modifier: Modifier = Modifier,
-) {
-    Box(modifier = modifier) {
-        val presenter = rememberGroupHeaderPresenter(groupKey)
-        IdBasedGroupHeader(
-            state = presenter.present(),
-            isPrimary = isPrimary,
-        )
     }
 }
 

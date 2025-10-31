@@ -31,16 +31,19 @@ fun rememberGroupHeaderPresenter(
     groupKey: GroupKey,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
+    onGroupOption: (OptionItem) -> Unit = {},
 ): Presenter<GroupHeaderState> =
     remember(
         groupKey,
         repository,
         popupController,
+        onGroupOption,
     ) {
         GroupHeaderPresenter(
             groupKey,
             repository,
             popupController,
+            onGroupOption,
         )
     }
 
@@ -59,6 +62,7 @@ private class GroupHeaderPresenter(
     private val groupKey: GroupKey,
     private val repository: Repository,
     private val popupController: PopupController,
+    private val onGroupOption: (OptionItem) -> Unit = {},
 ) : Presenter<GroupHeaderState> {
     private val mediaContentRepository = repository.mediaContentRepository
 
@@ -108,9 +112,9 @@ private class GroupHeaderPresenter(
                             context(repository, popupController) {
                                 when (result.optionItem) {
                                     OptionItem.ADD_TO_HOME_TAB -> mediaItem?.pinToHomeTab()
-                                    OptionItem.PLAY_NEXT -> {}
-                                    OptionItem.ADD_TO_QUEUE -> {}
-                                    OptionItem.ADD_TO_PLAYLIST -> {}
+                                    OptionItem.PLAY_NEXT -> onGroupOption(result.optionItem)
+                                    OptionItem.ADD_TO_QUEUE -> onGroupOption(result.optionItem)
+                                    OptionItem.ADD_TO_PLAYLIST -> onGroupOption(result.optionItem)
                                     else -> {}
                                 }
                             }

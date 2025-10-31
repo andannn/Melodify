@@ -45,7 +45,7 @@ fun AudioItemModel.keyOf(sortOption: SortOption): GroupKey? =
         is SortOption.TrackNum -> error("Not support")
     }
 
-fun List<GroupKey>.toWheresMethod() =
+internal fun List<GroupKey>.toWheresMethod() =
     MediaWheres
         .buildMethod {
             this@toWheresMethod.forEach {
