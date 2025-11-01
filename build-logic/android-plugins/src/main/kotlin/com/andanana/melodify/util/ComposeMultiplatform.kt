@@ -20,12 +20,12 @@ fun Project.configureComposeMultiplatform(extension: KotlinMultiplatformExtensio
             commonMain.dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
-                implementation(compose.material3)
                 implementation(compose.animation)
                 implementation(compose.ui)
                 implementation(compose.components.resources)
                 implementation(compose.materialIconsExtended)
                 implementation(compose.components.uiToolingPreview)
+                implementation(compose.material3)
                 implementation(libs.findLibrary("circuit.foundation").get())
                 implementation(libs.findLibrary("ui.backhandler").get())
             }
@@ -38,6 +38,7 @@ fun Project.configureComposeMultiplatform(extension: KotlinMultiplatformExtensio
 
             androidMain.dependencies {
                 implementation(compose.preview)
+                implementation(libs.findLibrary("compose.material3").get())
                 implementation(libs.findLibrary("androidx.ui.tooling").get())
             }
 

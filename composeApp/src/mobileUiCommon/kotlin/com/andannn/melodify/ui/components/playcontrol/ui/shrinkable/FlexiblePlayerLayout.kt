@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -198,24 +199,14 @@ internal fun FlexiblePlayerLayout(
             }
 
             if (!layoutState.isPlayerExpanding) {
-                Spacer(
+                ProgressIndicator(
                     modifier =
                         Modifier
-                            .fillMaxWidth(fraction = progress)
-                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
                             .padding(bottom = with(LocalDensity.current) { layoutState.navigationBarHeightPx.toDp() })
-                            .height(3.dp)
-                            .background(
-                                brush =
-                                    Brush.horizontalGradient(
-                                        colors =
-                                            listOf(
-                                                MaterialTheme.colorScheme.tertiaryContainer,
-                                                MaterialTheme.colorScheme.inversePrimary,
-                                                MaterialTheme.colorScheme.primary,
-                                            ),
-                                    ),
-                            ),
+                            .align(BottomStart),
+                    progress = progress,
+                    playing = isPlaying,
                 )
             }
         }

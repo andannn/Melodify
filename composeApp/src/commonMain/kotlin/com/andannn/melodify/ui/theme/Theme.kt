@@ -11,28 +11,9 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-val DarkColorPalette = darkColorScheme()
-
-val LightColorPalette = lightColorScheme()
-
 @Composable
-expect fun getColorScheme(
-    darkTheme: Boolean,
-    isDynamicColor: Boolean,
-): ColorScheme
-
-@Composable
-fun MelodifyTheme(
+expect fun MelodifyTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     isDynamicColor: Boolean = true,
     content: @Composable () -> Unit,
-) {
-    val colorScheme = getColorScheme(darkTheme, isDynamicColor)
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        shapes = Shapes,
-        content = content,
-    )
-}
+)
