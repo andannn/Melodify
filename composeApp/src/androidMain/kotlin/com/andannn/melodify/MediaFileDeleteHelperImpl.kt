@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify
 
 import android.app.Activity
@@ -8,24 +12,28 @@ import android.provider.MediaStore
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
-import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.MediaContentRepository
+import com.andannn.melodify.core.data.model.AudioItemModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.koin.core.component.KoinComponent
+import java.io.File
 
 private const val TAG = "MediaFileDeleteHelper"
 
 class MediaFileDeleteHelperImpl(
-    context: Context,
     private val intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>,
-) : MediaFileDeleteHelper {
+) : MediaFileDeleteHelper,
+    KoinComponent {
+    private val mediaLibraryRepository: MediaContentRepository = getKoin().get()
+    private val context: Context = getKoin().get()
     private val resolver = context.contentResolver
-
     private var currentCompleter: CompletableDeferred<ActivityResult>? = null
     private val mutex = Mutex()
 
-    override suspend fun deleteMedias(mediaList: List<MediaItemModel>) =
+    override suspend fun deleteMedias(mediaList: List<AudioItemModel>) =
         mutex.withLock {
             val completer = CompletableDeferred<ActivityResult>()
             currentCompleter = completer
@@ -52,7 +60,24 @@ class MediaFileDeleteHelperImpl(
                 val result = completer.await()
                 if (result.resultCode == Activity.RESULT_OK) {
                     Napier.d(tag = TAG) { "delete success" }
-                    MediaScannerConnection.scanFile()
+                    val paths =
+                        mediaList
+                            .mapNotNull { item ->
+                                item.path.let { File(it).parentFile?.path }
+                            }.distinct()
+                            .toTypedArray()
+
+                    // Mark file as deleted.
+                    mediaLibraryRepository.markMediaAsDeleted(ids)
+
+                    Napier.d(tag = TAG) { "scan start ${paths.toList()}" }
+                    MediaScannerConnection.scanFile(
+                        context,
+                        paths,
+                        arrayOf("audio/*"),
+                    ) { path, uri ->
+                        Napier.d(tag = TAG) { "scan finished. ${Thread.currentThread().name}" }
+                    }
                 }
             } finally {
                 currentCompleter = null

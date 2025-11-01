@@ -33,6 +33,7 @@ fun MediaItem.toAppItem(): MediaItemModel =
             ) ?: "",
         extraUniqueId = mediaMetadata.extras?.getString(UNIQUE_ID_KEY),
         releaseYear = "0",
+        path = "",
         source =
             Uri
                 .withAppendedPath(

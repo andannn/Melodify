@@ -59,11 +59,6 @@ interface MediaContentRepository {
     ): Flow<PagingData<AudioItemModel>>
 
     /**
-     * Return audios of artist
-     */
-    suspend fun getAudiosOfAlbum(albumId: String): List<AudioItemModel>
-
-    /**
      * Return flow of audios of artist
      */
     fun getAudiosOfArtistFlow(
@@ -79,11 +74,6 @@ interface MediaContentRepository {
     ): Flow<PagingData<AudioItemModel>>
 
     /**
-     * Return audios of artist
-     */
-    suspend fun getAudiosOfArtist(artistId: String): List<AudioItemModel>
-
-    /**
      * Return flow of audios of genre
      */
     fun getAudiosOfGenreFlow(
@@ -97,11 +87,6 @@ interface MediaContentRepository {
         sort: List<SortOption>,
         whereGroup: List<GroupKey> = emptyList(),
     ): Flow<PagingData<AudioItemModel>>
-
-    /**
-     * Return audios of genre
-     */
-    suspend fun getAudiosOfGenre(genreId: String): List<AudioItemModel>
 
     /**
      * Return flow of album by albumId
@@ -137,4 +122,6 @@ interface MediaContentRepository {
      * Search content by keyword
      */
     suspend fun searchContent(keyword: String): List<MediaItemModel>
+
+    suspend fun markMediaAsDeleted(mediaIds: List<String>)
 }

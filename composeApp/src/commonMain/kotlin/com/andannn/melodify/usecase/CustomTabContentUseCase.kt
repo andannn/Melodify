@@ -49,6 +49,7 @@ fun CustomTab.contentFlow(
             repository.playListRepository.getAudiosOfPlayListFlow(
                 playListId.toLong(),
                 sorts,
+                whereGroups,
             )
     }
 
@@ -89,5 +90,6 @@ fun CustomTab.contentPagingDataFlow(
             repository.playListRepository.getAudioPagingFlowOfPlayList(
                 playListId.toLong(),
                 sorts,
+                whereGroups,
             )
     }

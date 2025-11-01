@@ -6,6 +6,7 @@ package com.andannn.melodify.core.data
 
 import androidx.paging.PagingData
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.SortOption
 import com.andannn.melodify.core.database.dao.PlayListDao
@@ -27,11 +28,13 @@ interface PlayListRepository {
     fun getAudiosOfPlayListFlow(
         playListId: Long,
         sort: List<SortOption>,
+        wheres: List<GroupKey> = emptyList(),
     ): Flow<List<AudioItemModel>>
 
     fun getAudioPagingFlowOfPlayList(
         playListId: Long,
         sort: List<SortOption>,
+        wheres: List<GroupKey> = emptyList(),
     ): Flow<PagingData<AudioItemModel>>
 
     /**

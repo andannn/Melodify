@@ -50,6 +50,7 @@ internal fun List<GenreEntity>.mapToGenreItemModel() =
 internal fun MediaEntity.toAppItem() =
     AudioItemModel(
         id = id.toString(),
+        path = path ?: "",
 // Desktop app do not support the same item in play queue.
         extraUniqueId = id.toString(),
         name = title ?: "",
@@ -122,6 +123,7 @@ internal fun CrossRefWithMediaRelation.mapToAppItem(): AudioItemModel {
             discNumber = 0,
             source = "",
             releaseYear = "",
+            path = "",
         )
     }
 }

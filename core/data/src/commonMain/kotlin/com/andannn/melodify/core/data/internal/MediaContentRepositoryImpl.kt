@@ -164,21 +164,6 @@ internal class MediaContentRepositoryImpl(
             .getGenreByGenreIdFlow(genreId)
             .map { it?.toAppItem() }
 
-    override suspend fun getAudiosOfAlbum(albumId: String) =
-        mediaLibraryDao.getMediasByAlbumId(albumId).map {
-            it.toAppItem()
-        }
-
-    override suspend fun getAudiosOfArtist(artistId: String) =
-        mediaLibraryDao.getMediasByArtistId(artistId).map {
-            it.toAppItem()
-        }
-
-    override suspend fun getAudiosOfGenre(genreId: String) =
-        mediaLibraryDao.getMediasByGenreId(genreId).map {
-            it.toAppItem()
-        }
-
     override suspend fun getAlbumByAlbumId(albumId: String) = mediaLibraryDao.getAlbumByAlbumId(albumId)?.toAppItem()
 
     override suspend fun getArtistByArtistId(artistId: String) = mediaLibraryDao.getArtistByArtistId(artistId)?.toAppItem()
@@ -193,5 +178,9 @@ internal class MediaContentRepositoryImpl(
         val matchedArtists = mediaLibraryDao.searchArtist(keyword).map { it.toAppItem() }
 
         return matchedAudios + matchedAlbums + matchedArtists
+    }
+
+    override suspend fun markMediaAsDeleted(mediaIds: List<String>) {
+        mediaLibraryDao.markMediaAsDeleted(mediaIds)
     }
 }

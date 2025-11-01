@@ -6,6 +6,7 @@ package com.andannn.melodify.core.syncer.model
 
 data class AudioData(
     val id: Long,
+    val path: String = "",
     val sourceUri: String,
     val title: String = "",
     val duration: Int? = -1,

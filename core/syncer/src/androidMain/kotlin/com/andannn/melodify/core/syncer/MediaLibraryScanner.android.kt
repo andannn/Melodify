@@ -11,7 +11,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.syncer.model.MediaDataModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -20,7 +19,6 @@ import kotlinx.coroutines.withContext
 
 class MediaLibraryScannerImpl(
     private val app: Application,
-    private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaLibraryScanner {
     override suspend fun scanAllMedia(): MediaDataModel =
         coroutineScope {
@@ -149,6 +147,7 @@ class MediaLibraryScannerImpl(
         val itemList = mutableListOf<com.andannn.melodify.core.syncer.model.AudioData>()
 
         val idIndex = cursor.getColumnIndex(MediaStore.Audio.Media._ID)
+        val dataIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DATA)
         val titleIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
         val durationIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)
         val dateModifiedIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DATE_MODIFIED)
@@ -164,18 +163,8 @@ class MediaLibraryScannerImpl(
         val bitrateIndex = cursor.getColumnIndex(MediaStore.Audio.Media.BITRATE)
         val yearIndex = cursor.getColumnIndex(MediaStore.Audio.Media.YEAR)
         val composerIndex = cursor.getColumnIndex(MediaStore.Audio.Media.COMPOSER)
-        val genreIndex =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                cursor.getColumnIndex(MediaStore.Audio.Media.GENRE)
-            } else {
-                null
-            }
-        val genreIdIndex =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                cursor.getColumnIndex(MediaStore.Audio.Media.GENRE_ID)
-            } else {
-                null
-            }
+        val genreIndex = cursor.getColumnIndex(MediaStore.Audio.Media.GENRE)
+        val genreIdIndex = cursor.getColumnIndex(MediaStore.Audio.Media.GENRE_ID)
 
         while (cursor.moveToNext()) {
             val albumId = cursor.getLong(albumIdIndex)
@@ -183,6 +172,7 @@ class MediaLibraryScannerImpl(
             itemList.add(
                 com.andannn.melodify.core.syncer.model.AudioData(
                     id = id,
+                    path = cursor.getString(dataIndex),
                     sourceUri =
                         Uri
                             .withAppendedPath(
@@ -208,8 +198,8 @@ class MediaLibraryScannerImpl(
                     discNumber = cursor.getInt(discNumberIndex),
                     numTracks = cursor.getInt(numTracksIndex),
                     bitrate = cursor.getInt(bitrateIndex),
-                    genre = genreIndex?.let { cursor.getString(it) },
-                    genreId = genreIdIndex?.let { cursor.getLong(it) },
+                    genre = genreIndex.let { cursor.getString(it) },
+                    genreId = genreIdIndex.let { cursor.getLong(it) },
                     year = cursor.getString(yearIndex),
                     composer = cursor.getString(composerIndex),
                 ),
