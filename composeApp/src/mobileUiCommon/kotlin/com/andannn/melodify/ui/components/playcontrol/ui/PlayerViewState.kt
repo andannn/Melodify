@@ -21,8 +21,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiEventConsumer
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.BottomSheetDragAreaHeight
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.MinFadeoutWithExpandAreaPaddingTop
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.MinImagePaddingStart
@@ -44,7 +42,6 @@ internal fun rememberPlayerViewState(
     statusBarHeightPx: Int,
     density: Density,
     animaScope: CoroutineScope = rememberCoroutineScope(),
-    eventConsumer: PlayerUiEventConsumer = LocalPlayerUiController.current as PlayerUiEventConsumer,
 ) = remember(
     screenSize,
     navigationBarHeightPx,
@@ -58,7 +55,6 @@ internal fun rememberPlayerViewState(
         statusBarHeightPx = statusBarHeightPx.toFloat(),
         density = density,
         animaScope = animaScope,
-        eventConsumer = eventConsumer,
     )
 }
 
@@ -71,22 +67,7 @@ PlayerViewState(
     statusBarHeightPx: Float,
     private val density: Density,
     private val animaScope: CoroutineScope,
-    eventConsumer: PlayerUiEventConsumer,
 ) {
-    init {
-        animaScope.launch {
-            for (event in eventConsumer.expandEventReceiveChannel) {
-                expandPlayerLayout()
-            }
-        }
-
-        animaScope.launch {
-            for (event in eventConsumer.shrinkEventReceiveChannel) {
-                shrinkPlayerLayout()
-            }
-        }
-    }
-
     private val shrinkPlayerHeightPx = ShrinkPlayerHeight.toPx()
     val bottomSheetHeight =
         screenSize.height - statusBarHeightPx - shrinkPlayerHeightPx

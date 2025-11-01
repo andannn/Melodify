@@ -32,8 +32,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.andannn.melodify.core.data.internal.UserPreferenceRepository
 import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.core.syncer.SyncWorkHelper
-import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
@@ -147,7 +145,6 @@ class MainActivity : ComponentActivity() {
             }
 
             CompositionLocalProvider(
-                LocalPlayerUiController provides remember { PlayerUiController(coroutineScope) },
                 LocalMediaFileDeleteHelper provides deleteHelper,
             ) {
                 MelodifyTheme(darkTheme = true, isDynamicColor = true) {
