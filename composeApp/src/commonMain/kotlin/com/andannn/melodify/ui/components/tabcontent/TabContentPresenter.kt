@@ -16,8 +16,10 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.andannn.melodify.LocalMediaFileDeleteHelper
 import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
+import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -41,6 +43,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "TabContentPresenter"
 
@@ -51,12 +54,14 @@ fun rememberTabContentPresenter(
     onRequestGoToArtist: (AudioItemModel) -> Unit = {},
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
+    mediaFileDeleteHelper: MediaFileDeleteHelper = LocalMediaFileDeleteHelper.current,
 ) = remember(
     selectedTab,
     repository,
     popupController,
     onRequestGoToAlbum,
     onRequestGoToArtist,
+    mediaFileDeleteHelper,
 ) {
     TabContentPresenter(
         selectedTab = selectedTab,
@@ -64,6 +69,7 @@ fun rememberTabContentPresenter(
         onRequestGoToArtist = onRequestGoToArtist,
         repository = repository,
         popupController = popupController,
+        mediaFileDeleteHelper = mediaFileDeleteHelper,
     )
 }
 
@@ -73,6 +79,7 @@ class TabContentPresenter(
     private val onRequestGoToArtist: (AudioItemModel) -> Unit = {},
     private val repository: Repository,
     private val popupController: PopupController,
+    private val mediaFileDeleteHelper: MediaFileDeleteHelper,
 ) : Presenter<TabContentState> {
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val playListRepository = repository.playListRepository
@@ -251,6 +258,7 @@ class TabContentPresenter(
                 OptionItem.ADD_TO_PLAYLIST,
                 OptionItem.OPEN_LIBRARY_ALBUM,
                 OptionItem.OPEN_LIBRARY_ARTIST,
+                OptionItem.DELETE_MEDIA_FILE,
             )
         val result =
             popupController.showDialog(
@@ -265,6 +273,9 @@ class TabContentPresenter(
                 OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item))
                 OptionItem.OPEN_LIBRARY_ALBUM -> onRequestGoToAlbum(item)
                 OptionItem.OPEN_LIBRARY_ARTIST -> onRequestGoToArtist(item)
+                OptionItem.DELETE_MEDIA_FILE -> {
+                    mediaFileDeleteHelper.deleteMedias(listOf(item))
+                }
                 else -> {}
             }
         }
