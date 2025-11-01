@@ -87,4 +87,6 @@
 
     <string name="go_to_library_album">Zur Albumansicht</string>
     <string name="go_to_library_artist">Zur Künstleransicht</string>
+
+    <string name="delete_media_file">Mediendatei löschen</string>
 </resources>
