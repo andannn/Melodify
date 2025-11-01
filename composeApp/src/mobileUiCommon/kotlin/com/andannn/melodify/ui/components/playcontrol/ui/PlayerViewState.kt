@@ -4,8 +4,6 @@
  */
 package com.andannn.melodify.ui.components.playcontrol.ui
 
-import androidx.compose.animation.core.exponentialDecay
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -81,10 +79,6 @@ PlayerViewState(
                     BottomSheetState.Shrink at bottomSheetHeight - bottomSheetDragAreaHeightPx
                     BottomSheetState.Expand at 0f
                 },
-            positionalThreshold = { 300f },
-            velocityThreshold = { 400f },
-            snapAnimationSpec = spring(),
-            decayAnimationSpec = exponentialDecay(),
         )
 
     // 1f when sheet shrink, 0f when sheet fully expanded.
@@ -105,10 +99,6 @@ PlayerViewState(
                     PlayerState.Shrink at shrinkPlayerHeight
                     PlayerState.Expand at screenSize.height
                 },
-            positionalThreshold = { with(density) { 26.dp.toPx() } },
-            velocityThreshold = { with(density) { 20.dp.toPx() } },
-            snapAnimationSpec = spring(),
-            decayAnimationSpec = exponentialDecay(),
         )
 
     // 0f when player shrink, 1f when player fully expanded.
@@ -185,12 +175,6 @@ PlayerViewState(
             playerExpandState.animateTo(PlayerState.Expand)
         }
     }
-//
-//    fun shrinkBottomSheet() {
-//        animaScope.launch {
-//            bottomSheetState.animateTo(BottomSheetState.Shrink)
-//        }
-//    }
 
     fun expandBottomSheet() {
         animaScope.launch {
