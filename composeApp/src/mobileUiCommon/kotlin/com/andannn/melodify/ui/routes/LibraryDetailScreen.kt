@@ -41,6 +41,7 @@ import com.andannn.melodify.ui.components.librarydetail.LibraryContentState
 import com.andannn.melodify.ui.components.librarydetail.item.MediaLibraryItem
 import com.andannn.melodify.ui.components.librarydetail.rememberLibraryDetailPresenter
 import com.andannn.melodify.ui.components.librarydetail.showLibraryMediaOption
+import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -199,5 +200,6 @@ private fun LibraryDetailContent(
         }
     }
 
+    Player()
     ActionDialogContainer()
 }
