@@ -14,6 +14,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
 
 @Composable
 fun CircleBorderImage(
@@ -28,7 +30,12 @@ fun CircleBorderImage(
                     shape = CircleShape,
                     border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.primary),
                 ),
-        model = model,
+        model =
+            ImageRequest
+                .Builder(LocalPlatformContext.current)
+                .data(model)
+                .size(Int.MAX_VALUE)
+                .build(),
         contentScale = ContentScale.Crop,
         contentDescription = "",
     )

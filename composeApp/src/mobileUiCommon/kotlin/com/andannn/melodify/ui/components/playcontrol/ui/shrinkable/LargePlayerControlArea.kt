@@ -22,6 +22,7 @@ import androidx.compose.material.icons.rounded.SkipPrevious
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -32,7 +33,6 @@ import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import com.andannn.melodify.ui.util.getIcon
-import com.andannn.melodify.ui.widgets.AutoResizedText
 import com.andannn.melodify.ui.widgets.SmpMainIconButton
 import com.andannn.melodify.ui.widgets.SmpSubIconButton
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -55,13 +55,13 @@ internal fun LargePlayerControlArea(
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
         Column {
-            AutoResizedText(
+            Text(
                 modifier = Modifier.padding(horizontal = MaxImagePaddingStart),
                 text = titleState,
                 maxLines = 1,
                 style = MaterialTheme.typography.headlineMedium,
             )
-            AutoResizedText(
+            Text(
                 modifier = Modifier.padding(horizontal = MaxImagePaddingStart),
                 text = artist,
                 maxLines = 2,
@@ -69,7 +69,7 @@ internal fun LargePlayerControlArea(
             )
         }
         Slider(
-            modifier = Modifier.padding(horizontal = 4.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
             value = progress,
             enabled = enable,
             onValueChange = {
