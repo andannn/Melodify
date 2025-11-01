@@ -19,7 +19,10 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -31,6 +34,7 @@ import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.asLibraryDataSource
 import com.andannn.melodify.ui.components.search.result.SearchPageView
 import com.andannn.melodify.ui.components.search.suggestion.Suggestions
+import com.slack.circuit.retained.rememberRetained
 
 @Composable
 fun Search(
@@ -85,13 +89,19 @@ private fun SearchViewContent(
             onPlayAudio(item as AudioItemModel)
         }
     }
+    var hasRequestFocus by rememberRetained {
+        mutableStateOf(false)
+    }
 
     Column(modifier = modifier.fillMaxSize()) {
         val focusRequester = remember { FocusRequester() }
         val focusManager = LocalFocusManager.current
 
         LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
+            if (!hasRequestFocus) {
+                focusRequester.requestFocus()
+                hasRequestFocus = true
+            }
         }
 
         SearchBar(
