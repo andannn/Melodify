@@ -37,7 +37,6 @@ internal fun MiniPlayerLayout(
     artist: String,
     isPlaying: Boolean,
     isFavorite: Boolean,
-    enabled: Boolean,
     modifier: Modifier = Modifier,
     onEvent: (PlayerUiEvent) -> Unit = {},
 ) {
@@ -61,7 +60,6 @@ internal fun MiniPlayerLayout(
                 Modifier
                     .size(30.dp)
                     .scale(1.2f),
-            enabled = enabled,
             onClick = {
                 onEvent(PlayerUiEvent.OnPlayButtonClick)
             },
@@ -79,7 +77,6 @@ internal fun MiniPlayerLayout(
                     .size(30.dp)
                     .scale(1.2f)
                     .rotate(180f),
-            enabled = enabled,
             onClick = {
                 onEvent(PlayerUiEvent.OnNextButtonClick)
             },
@@ -92,7 +89,6 @@ internal fun MiniPlayerLayout(
         Spacer(modifier = Modifier.width(10.dp))
         FavoriteIconButton(
             modifier = Modifier.size(30.dp),
-            enabled = enabled,
             isFavorite = isFavorite,
             onClick = {
                 onEvent(PlayerUiEvent.OnFavoriteButtonClick)

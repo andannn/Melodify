@@ -17,12 +17,10 @@ import androidx.compose.ui.Modifier
 fun FavoriteIconButton(
     modifier: Modifier = Modifier,
     isFavorite: Boolean,
-    enabled: Boolean,
     onClick: () -> Unit,
 ) {
     IconButton(
         modifier = modifier,
-        enabled = enabled,
         onClick = onClick,
     ) {
         if (isFavorite) {

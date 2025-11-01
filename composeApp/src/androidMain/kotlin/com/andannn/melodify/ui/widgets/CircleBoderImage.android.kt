@@ -8,4 +8,4 @@ import androidx.compose.ui.graphics.Shape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-actual fun centerImageShape(): Shape = MaterialShapes.Cookie7Sided.toShape()
+actual fun centerImageShape(): Shape = MaterialShapes.Puffy.toShape()

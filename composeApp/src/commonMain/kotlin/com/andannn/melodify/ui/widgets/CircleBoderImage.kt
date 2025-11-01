@@ -29,18 +29,14 @@ fun CircleBorderImage(
     AsyncImage(
         modifier =
             modifier
-                .clip(shape = centerImageShape())
-                .border(
-                    shape = centerImageShape(),
-                    border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.primary),
-                ),
+                .clip(shape = centerImageShape()),
         model =
             ImageRequest
                 .Builder(LocalPlatformContext.current)
                 .data(model)
                 .size(Int.MAX_VALUE)
                 .build(),
-        contentScale = ContentScale.Crop,
+        contentScale = ContentScale.Fit,
         contentDescription = "",
     )
 }

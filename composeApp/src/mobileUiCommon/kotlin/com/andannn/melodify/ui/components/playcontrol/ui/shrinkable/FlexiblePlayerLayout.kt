@@ -84,19 +84,9 @@ internal fun FlexiblePlayerLayout(
         shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
         shadowElevation = 10.dp,
     ) {
-        val primaryColor = MaterialTheme.colorScheme.primary
-        val backGroundModifier =
-            Modifier.verticalGradientScrim(
-                color = primaryColor.copy(alpha = 0.38f),
-                startYPercentage = 1f,
-                endYPercentage = 0f,
-            )
-
         Box(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .then(backGroundModifier),
+                Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.secondaryContainer),
         ) {
             val fadeInAreaAlpha by remember {
                 derivedStateOf {
@@ -118,7 +108,6 @@ internal fun FlexiblePlayerLayout(
                             top = layoutState.miniPlayerPaddingTopDp,
                             start = MinImagePaddingStart * 2 + MinImageSize,
                         ),
-                enabled = fadeoutAreaAlpha == 1f,
                 title = title,
                 artist = artist,
                 isPlaying = isPlaying,
@@ -172,7 +161,6 @@ internal fun FlexiblePlayerLayout(
                             },
                     isPlaying = isPlaying,
                     playMode = playMode,
-                    enable = layoutState.isFullExpanded,
                     isShuffle = isShuffle,
                     progress = progress,
                     title = title,
