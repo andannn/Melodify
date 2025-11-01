@@ -83,7 +83,6 @@ private fun HeaderInfo(
         Row(
             modifier =
                 Modifier
-                    .padding(5.dp)
                     .height(IntrinsicSize.Min),
         ) {
             if (coverArtUri != null) {
@@ -125,7 +124,7 @@ private fun HeaderInfo(
                     )
 
                     IconButton(
-                        modifier = Modifier.padding(end = 6.dp).align(Alignment.Bottom),
+                        modifier = Modifier.align(Alignment.Bottom),
                         onClick = onOptionClick,
                     ) {
                         Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "menu")

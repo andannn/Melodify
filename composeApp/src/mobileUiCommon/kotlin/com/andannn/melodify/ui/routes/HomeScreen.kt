@@ -269,7 +269,7 @@ internal fun HomeUiScreen(
                 homeState.eventSink.invoke(HomeUiEvent.OnTabManagementClick)
             })
 
-            TabContent(homeState.tabContentState)
+            TabContent(homeState.tabContentState, modifier = Modifier.padding(horizontal = 4.dp))
         }
     }
 

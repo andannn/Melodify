@@ -5,6 +5,7 @@
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.paging.compose.LazyPagingItems
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.DisplaySetting
@@ -86,11 +88,23 @@ private fun LazyListContent(
                 if (secondaryGroupKey != null) {
                     stickyHeader((primaryGroupKey to secondaryGroupKey).hashCode()) {
                         GroupHeader(
-                            modifier = Modifier.padding(start = 8.dp),
+                            modifier = Modifier.padding(start = 16.dp),
                             isPrimary = false,
                             groupKey = secondaryGroupKey,
-                            onGroupOptionSelected = { onGroupOptionClick(it, listOf(primaryGroupKey, secondaryGroupKey)) },
-                            onGroupHeaderClick = { onGroupItemClick(listOf(primaryGroupKey, secondaryGroupKey)) },
+                            onGroupOptionSelected = {
+                                onGroupOptionClick(
+                                    it,
+                                    listOf(primaryGroupKey, secondaryGroupKey),
+                                )
+                            },
+                            onGroupHeaderClick = {
+                                onGroupItemClick(
+                                    listOf(
+                                        primaryGroupKey,
+                                        secondaryGroupKey,
+                                    ),
+                                )
+                            },
                         )
                     }
                 }
@@ -109,10 +123,18 @@ private fun LazyListContent(
                             index,
                         ),
                     ]
+                    var headerCount = 0
+                    if (primaryGroupKey != null) headerCount++
+                    if (secondaryGroupKey != null) headerCount++
 
                     val showTrackNum = displaySetting.showTrackNum
                     ListTileItemView(
-                        modifier = Modifier.padding(start = 12.dp),
+                        paddingValues =
+                            PaddingValues(
+                                start = 16.dp.times(headerCount),
+                                top = 4.dp,
+                                bottom = 4.dp,
+                            ),
                         playable = item.browsableOrPlayable,
                         isActive = false,
                         albumArtUri = item.artWorkUri,
