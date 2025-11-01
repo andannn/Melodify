@@ -43,6 +43,7 @@ private data class MediaItem(
 private fun MediaItem.toModel(): AudioItemModel =
     AudioItemModel(
         id = id,
+        path = "",
         name = title,
         artWorkUri = image,
         modifiedDate = -1,
@@ -114,7 +115,7 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
         whereGroup: List<GroupKey>,
     ): Flow<PagingData<AudioItemModel>> = flowOf()
 
-    override suspend fun getAudiosOfAlbum(albumId: String): List<AudioItemModel> = albumMaps[albumId]?.map { it.toModel() } ?: emptyList()
+    private suspend fun getAudiosOfAlbum(albumId: String): List<AudioItemModel> = albumMaps[albumId]?.map { it.toModel() } ?: emptyList()
 
     override fun getAudiosOfArtistFlow(
         artistId: String,
@@ -131,7 +132,7 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
         whereGroup: List<GroupKey>,
     ): Flow<PagingData<AudioItemModel>> = flowOf()
 
-    override suspend fun getAudiosOfArtist(artistId: String): List<AudioItemModel> =
+    private suspend fun getAudiosOfArtist(artistId: String): List<AudioItemModel> =
         artistMaps[artistId]?.map { it.toModel() } ?: emptyList()
 
     override fun getAudiosOfGenreFlow(
@@ -146,7 +147,7 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
         whereGroup: List<GroupKey>,
     ): Flow<PagingData<AudioItemModel>> = flowOf()
 
-    override suspend fun getAudiosOfGenre(genreId: String): List<AudioItemModel> = genreMaps[genreId]?.map { it.toModel() } ?: emptyList()
+    private suspend fun getAudiosOfGenre(genreId: String): List<AudioItemModel> = genreMaps[genreId]?.map { it.toModel() } ?: emptyList()
 
     override fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumItemModel?> = flow { emit(getAlbumByAlbumId(albumId)) }
 
@@ -161,6 +162,8 @@ internal class FakeMediaContentRepositoryImpl : MediaContentRepository {
     override suspend fun getGenreByGenreId(genreId: String): GenreItemModel? = getAllGenres().find { it.id == genreId }
 
     override suspend fun searchContent(keyword: String): List<MediaItemModel> = emptyList()
+
+    override suspend fun markMediaAsDeleted(mediaIds: List<String>) {}
 
     private fun getAllAlbums(): List<AlbumItemModel> =
         albumMaps.keys.map {

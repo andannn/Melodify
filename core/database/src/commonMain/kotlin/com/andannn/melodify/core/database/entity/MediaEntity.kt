@@ -11,6 +11,7 @@ import com.andannn.melodify.core.database.Tables
 
 object MediaColumns {
     const val ID = "media_id"
+    const val FILE_PATH = "file_path"
     const val TITLE = "media_title"
     const val SOURCE_URI = "source_uri"
     const val DURATION = "media_duration"
@@ -31,15 +32,18 @@ object MediaColumns {
     const val TRACK = "media_track"
     const val COMPOSER = "media_composer"
     const val COVER = "media_cover"
+    const val DELETED = "deleted"
 }
 
 @Entity(
     tableName = Tables.LIBRARY_MEDIA,
 )
-data class MediaEntity(
+data class MediaEntity constructor(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = MediaColumns.ID)
     val id: Long = 0,
+    @ColumnInfo(name = MediaColumns.FILE_PATH)
+    val path: String? = null,
     @ColumnInfo(name = MediaColumns.SOURCE_URI)
     val sourceUri: String? = null,
     @ColumnInfo(name = MediaColumns.TITLE)
@@ -80,6 +84,8 @@ data class MediaEntity(
     val composer: String? = null,
     @ColumnInfo(name = MediaColumns.COVER)
     val cover: String? = null,
+    @ColumnInfo(name = MediaColumns.DELETED)
+    val deleted: Int? = null,
 )
 
 val MediaEntity.valid: Boolean get() = id != 0L

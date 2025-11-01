@@ -9,7 +9,9 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 class MelodifyApplication : Application() {
@@ -25,7 +27,7 @@ class MelodifyApplication : Application() {
             androidContext(this@MelodifyApplication)
             modules(
                 listOf(
-                    activityViewModelModule,
+                    extraModel,
                     *modules.toTypedArray(),
                 ),
             )
@@ -33,7 +35,7 @@ class MelodifyApplication : Application() {
     }
 }
 
-private val activityViewModelModule =
+private val extraModel =
     module {
         viewModelOf(::MainActivityViewModel)
     }

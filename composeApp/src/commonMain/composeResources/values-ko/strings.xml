@@ -86,4 +86,6 @@
 
     <string name="go_to_library_album">앨범으로 이동</string>
     <string name="go_to_library_artist">아티스트로 이동</string>
+
+    <string name="delete_media_file">미디어 파일 삭제</string>
 </resources>

@@ -17,6 +17,7 @@ data class AudioItemModel constructor(
     override val id: String,
     override val name: String,
     override val artWorkUri: String?,
+    val path: String,
     val modifiedDate: Long,
     val album: String,
     val albumId: String,
@@ -32,7 +33,7 @@ data class AudioItemModel constructor(
     override val trackCount: Int = -1,
 ) : MediaItemModel {
     companion object {
-        val DEFAULT = AudioItemModel("0", "", "", 0, "", "0", "", "0", "", "0", releaseYear = "", 0, 0, "")
+        val DEFAULT = AudioItemModel("0", "", "", "", 0, "", "0", "", "0", "", "0", releaseYear = "", 0, 0, "")
 
         // prefix for invalid item which local file is deleted but still in playlist
         const val INVALID_ID_PREFIX = "invalid_id_"

@@ -44,6 +44,7 @@ fun List<AudioData>.toMediaEntity(): List<MediaEntity> =
     map {
         MediaEntity(
             id = it.id,
+            path = it.path,
             sourceUri = it.sourceUri,
             title = it.title,
             albumId = it.albumId,

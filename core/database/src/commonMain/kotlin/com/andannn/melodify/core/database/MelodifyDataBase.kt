@@ -82,8 +82,9 @@ internal object Tables {
         AutoMigration(from = 6, to = 7),
         AutoMigration(from = 7, to = 8, AutoMigration7To8Spec::class),
         AutoMigration(from = 8, to = 9),
+        AutoMigration(from = 9, to = 10),
     ],
-    version = 9,
+    version = 10,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)

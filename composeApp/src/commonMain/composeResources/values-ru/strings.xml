@@ -87,4 +87,6 @@
 
     <string name="go_to_library_album">Перейти к альбому</string>
     <string name="go_to_library_artist">Перейти к исполнителю</string>
+
+    <string name="delete_media_file">Удалить медиафайл</string>
 </resources>

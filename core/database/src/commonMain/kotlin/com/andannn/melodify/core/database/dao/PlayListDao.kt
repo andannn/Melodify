@@ -13,6 +13,7 @@ import androidx.room.RawQuery
 import androidx.room.RoomRawQuery
 import androidx.room.Transaction
 import com.andannn.melodify.core.database.MediaSorts
+import com.andannn.melodify.core.database.MediaWheres
 import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
 import com.andannn.melodify.core.database.entity.MediaColumns
@@ -24,6 +25,7 @@ import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRefColumns
 import com.andannn.melodify.core.database.toSortString
+import com.andannn.melodify.core.database.toWhereString
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 
@@ -132,30 +134,36 @@ interface PlayListDao {
 
     fun getMediasInPlayListFlow(
         playListId: Long,
-        mediaSorts: MediaSorts? = null,
+        wheres: MediaWheres?,
+        mediaSorts: MediaSorts?,
     ): Flow<List<CrossRefWithMediaRelation>> =
         getMediasInPlayListFlowRaw(
-            buildPlayListRawQuery(playListId, mediaSorts),
+            buildPlayListRawQuery(playListId, wheres, mediaSorts),
         )
 
     fun getMediaPagingSourceInPlayList(
         playListId: Long,
+        wheres: MediaWheres?,
         mediaSorts: MediaSorts? = null,
-    ): PagingSource<Int, CrossRefWithMediaRelation> = getMediasInPlayListFlowPagingSource(buildPlayListRawQuery(playListId, mediaSorts))
+    ): PagingSource<Int, CrossRefWithMediaRelation> =
+        getMediasInPlayListFlowPagingSource(buildPlayListRawQuery(playListId, wheres, mediaSorts))
 
     private fun buildPlayListRawQuery(
         playListId: Long,
+        wheres: MediaWheres?,
         sort: MediaSorts?,
     ): RoomRawQuery {
+        val filterDeleted = "${MediaColumns.DELETED} IS NOT 1"
+        val wheres =
+            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
         val sort = sort?.toSortString() ?: ""
         val sql = """
-            select * from ${Tables.PLAY_LIST}
-            join ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF} on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
-            left join ${Tables.LIBRARY_MEDIA} on ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${MediaColumns.ID}
-            where ${PlayListColumns.ID} = $playListId
+            SELECT * FROM ${Tables.PLAY_LIST}
+            JOIN ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF} ON ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
+            LEFT JOIN ${Tables.LIBRARY_MEDIA} ON ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${MediaColumns.ID}
+            $wheres AND ${PlayListColumns.ID} = $playListId
             $sort
         """
-        Napier.d(tag = TAG) { "buildPlayListRawQuery: $sql" }
         return RoomRawQuery(sql)
     }
 

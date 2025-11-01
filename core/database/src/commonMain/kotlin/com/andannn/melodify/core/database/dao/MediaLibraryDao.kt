@@ -44,6 +44,9 @@ interface MediaLibraryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAlbums(albums: List<AlbumEntity>)
 
+    @Query("UPDATE ${Tables.LIBRARY_MEDIA} SET ${MediaColumns.DELETED} = 1 WHERE ${MediaColumns.ID} IN (:ids)")
+    suspend fun markMediaAsDeleted(ids: List<String>)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertArtists(artists: List<ArtistEntity>)
 
@@ -94,7 +97,9 @@ interface MediaLibraryDao {
         wheres: MediaWheres?,
         sort: MediaSorts?,
     ): RoomRawQuery {
-        val wheres = wheres?.toWhereString() ?: ""
+        val filterDeleted = "${MediaColumns.DELETED} IS NOT 1"
+        val wheres =
+            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
         val sort = sort?.toSortString() ?: ""
         val sql = "SELECT * FROM ${Tables.LIBRARY_MEDIA} $wheres $sort"
         return RoomRawQuery(sql)
@@ -117,10 +122,12 @@ interface MediaLibraryDao {
         wheres: MediaWheres?,
         sort: MediaSorts?,
     ): RoomRawQuery {
-        val wheres = wheres?.toWhereString() ?: ""
+        val filterDeleted = "${MediaColumns.DELETED} IS NOT 1"
+        val wheres =
+            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
         val sort = sort?.toSortString() ?: ""
         val sql =
-            "SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ALBUM_ID} = $albumId $wheres $sort"
+            "SELECT * FROM ${Tables.LIBRARY_MEDIA} $wheres AND ${MediaColumns.ALBUM_ID} = $albumId $sort"
         Napier.d(tag = TAG) { "buildAlbumMediaRawQuery: $sql" }
         return RoomRawQuery(sql)
     }
@@ -142,10 +149,12 @@ interface MediaLibraryDao {
         wheres: MediaWheres?,
         sort: MediaSorts?,
     ): RoomRawQuery {
-        val wheres = wheres?.toWhereString() ?: ""
+        val filterDeleted = "${MediaColumns.DELETED} IS NOT 1"
+        val wheres =
+            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
         val sort = sort?.toSortString() ?: ""
         val sql =
-            "SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ARTIST_ID} = $artistId $wheres $sort"
+            "SELECT * FROM ${Tables.LIBRARY_MEDIA} $wheres AND ${MediaColumns.ARTIST_ID} = $artistId $sort"
         Napier.d(tag = TAG) { "buildArtistMediaRawQuery: $sql" }
         return RoomRawQuery(sql)
     }
@@ -167,25 +176,18 @@ interface MediaLibraryDao {
         wheres: MediaWheres?,
         sort: MediaSorts?,
     ): RoomRawQuery {
-        val wheres = wheres?.toWhereString() ?: ""
+        val filterDeleted = "${MediaColumns.DELETED} IS NOT 1"
+        val wheres =
+            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
         val sort = sort?.toSortString() ?: ""
         val sql =
-            "SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.GENRE_ID} = $genreId $wheres $sort"
+            "SELECT * FROM ${Tables.LIBRARY_MEDIA} $wheres AND ${MediaColumns.GENRE_ID} = $genreId $sort"
         Napier.d(tag = TAG) { "buildGenreMediaRawQuery: $sql" }
         return RoomRawQuery(sql)
     }
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ALBUM_ID} = :albumId")
-    suspend fun getMediasByAlbumId(albumId: String): List<MediaEntity>
-
-    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ARTIST_ID} = :artistId")
-    suspend fun getMediasByArtistId(artistId: String): List<MediaEntity>
-
     @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.GENRE_ID} = :genreId")
     fun getMediasByGenreIdFlow(genreId: String): Flow<List<MediaEntity>>
-
-    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.GENRE_ID} = :genreId")
-    suspend fun getMediasByGenreId(genreId: String): List<MediaEntity>
 
     @Query("SELECT * FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} = :albumId")
     fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumEntity?>

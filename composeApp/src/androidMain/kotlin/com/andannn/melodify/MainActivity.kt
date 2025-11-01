@@ -54,8 +54,6 @@ class MainActivity : ComponentActivity() {
     private val mainViewModel: MainActivityViewModel by viewModel()
     private val userPreferenceRepository: UserPreferenceRepository by inject()
 
-    private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -70,12 +68,18 @@ class MainActivity : ComponentActivity() {
                 ),
         )
 
-        intentSenderLauncher =
+        var deleteHelper: MediaFileDeleteHelperImpl? = null
+        val deleteIntentSenderLauncher: ActivityResultLauncher<IntentSenderRequest> =
             registerForActivityResult(
                 contract = ActivityResultContracts.StartIntentSenderForResult(),
             ) { result ->
-                Napier.d(tag = TAG) { "activity result: $result" }
+                deleteHelper?.onResult(result)
             }
+
+        deleteHelper =
+            MediaFileDeleteHelperImpl(
+                deleteIntentSenderLauncher,
+            )
 
         var uiState by mutableStateOf<MainUiState>(MainUiState.Init)
 
@@ -144,6 +148,7 @@ class MainActivity : ComponentActivity() {
 
             CompositionLocalProvider(
                 LocalPlayerUiController provides remember { PlayerUiController(coroutineScope) },
+                LocalMediaFileDeleteHelper provides deleteHelper,
             ) {
                 MelodifyTheme(darkTheme = true, isDynamicColor = true) {
                     when (uiState) {

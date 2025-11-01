@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -50,6 +51,7 @@ enum class ActionType {
 fun ListTileItemView(
     modifier: Modifier = Modifier,
     playable: Boolean = true,
+    paddingValues: PaddingValues = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
     actionType: ActionType = ActionType.OPTION,
     swapIconModifier: Modifier? = null,
     albumArtUri: String? = null,
@@ -92,7 +94,7 @@ fun ListTileItemView(
         Row(
             modifier =
                 Modifier
-                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .padding(paddingValues)
                     .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically,
         ) {
