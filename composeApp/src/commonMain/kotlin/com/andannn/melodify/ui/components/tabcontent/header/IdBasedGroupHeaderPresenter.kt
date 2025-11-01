@@ -105,6 +105,7 @@ private class GroupHeaderPresenter(
                                         add(OptionItem.PLAY_NEXT)
                                         add(OptionItem.ADD_TO_QUEUE)
                                         add(OptionItem.ADD_TO_PLAYLIST)
+                                        add(OptionItem.DELETE_MEDIA_FILE)
                                     },
                             )
                         val result = popupController.showDialog(dialog)
@@ -115,6 +116,7 @@ private class GroupHeaderPresenter(
                                     OptionItem.PLAY_NEXT -> onGroupOption(result.optionItem)
                                     OptionItem.ADD_TO_QUEUE -> onGroupOption(result.optionItem)
                                     OptionItem.ADD_TO_PLAYLIST -> onGroupOption(result.optionItem)
+                                    OptionItem.DELETE_MEDIA_FILE -> onGroupOption(result.optionItem)
                                     else -> {}
                                 }
                             }

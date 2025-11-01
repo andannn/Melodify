@@ -125,7 +125,7 @@ class TabContentPresenter(
             groupSort = displaySetting,
             pagingItems = pagingItems,
         ) { eventSink ->
-            context(repository, popupController) {
+            context(repository, popupController, mediaFileDeleteHelper) {
                 when (eventSink) {
                     is TabContentEvent.OnPlayMusic ->
                         scope.launch {
@@ -227,7 +227,7 @@ class TabContentPresenter(
         }
     }
 
-    context(repository: Repository, popupController: PopupController)
+    context(_: Repository, _: PopupController, fileDeleteHelper: MediaFileDeleteHelper)
     private suspend fun handleGroupOption(
         optionItem: OptionItem,
         groupKeys: List<GroupKey?>,
@@ -244,6 +244,7 @@ class TabContentPresenter(
             OptionItem.PLAY_NEXT -> addToNextPlay(items)
             OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items)
             OptionItem.ADD_TO_QUEUE -> addToQueue(items)
+            OptionItem.DELETE_MEDIA_FILE -> fileDeleteHelper.deleteMedias(items)
             else -> {}
         }
     }
