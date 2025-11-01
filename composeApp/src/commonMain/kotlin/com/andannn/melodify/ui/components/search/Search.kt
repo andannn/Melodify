@@ -7,6 +7,7 @@ package com.andannn.melodify.ui.components.search
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,7 +42,7 @@ fun Search(
     val state = searchPresenter.present()
     SearchViewContent(
         modifier = modifier,
-        inputText = state.inputText,
+        textFieldState = state.inputText,
         isExpand = state.isExpand,
         searchedResult = state.searchState,
         onConfirmSearch = {
@@ -52,9 +53,6 @@ fun Search(
         },
         onBackKeyPressed = onBackKeyPressed,
         onNavigateToLibraryContentList = onNavigateToLibraryDetail,
-        onInputTextChange = {
-            state.eventSink.invoke(SearchUiEvent.OnInputTextChange(it))
-        },
         onExpandChange = { isExpand ->
             if (!isExpand && state.searchState is SearchState.Init) {
                 // If no search action triggered when request shrink, just close the search page.
@@ -69,7 +67,7 @@ fun Search(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchViewContent(
-    inputText: String,
+    textFieldState: TextFieldState,
     isExpand: Boolean,
     searchedResult: SearchState,
     modifier: Modifier = Modifier,
@@ -77,7 +75,6 @@ private fun SearchViewContent(
     onBackKeyPressed: () -> Unit = {},
     onNavigateToLibraryContentList: (LibraryDataSource) -> Unit = {},
     onPlayAudio: (AudioItemModel) -> Unit = {},
-    onInputTextChange: (String) -> Unit = {},
     onExpandChange: (Boolean) -> Unit = {},
 ) {
     fun onResultItemClick(item: MediaItemModel) {
@@ -102,8 +99,7 @@ private fun SearchViewContent(
             inputField = {
                 SearchBarDefaults.InputField(
                     modifier = Modifier.focusRequester(focusRequester),
-                    query = inputText,
-                    onQueryChange = onInputTextChange,
+                    state = textFieldState,
                     expanded = isExpand,
                     onExpandedChange = onExpandChange,
                     onSearch = onConfirmSearch,
@@ -131,7 +127,7 @@ private fun SearchViewContent(
             onExpandedChange = onExpandChange,
         ) {
             Suggestions(
-                query = inputText,
+                query = textFieldState,
                 onConfirmSearch = onConfirmSearch,
             )
         }

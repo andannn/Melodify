@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.ui.components.search
 
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,8 +51,8 @@ class SearchUiPresenter(
     override fun present(): SearchUiState {
         val scope = rememberCoroutineScope()
 
-        var searchText by rememberSaveable {
-            mutableStateOf("")
+        var searchTextField by rememberRetained {
+            mutableStateOf(TextFieldState())
         }
 
         var searchResult by rememberRetained {
@@ -63,14 +64,15 @@ class SearchUiPresenter(
         return SearchUiState(
             searchState = searchResult,
             isExpand = expanded,
-            inputText = searchText,
+            inputText = searchTextField,
         ) { eventSink ->
             when (eventSink) {
                 is SearchUiEvent.OnConfirmSearch -> {
-                    searchText = eventSink.text
+                    searchTextField = TextFieldState(eventSink.text)
                     expanded = false
 
                     scope.launch {
+                        val searchText = searchTextField.text.toString()
                         if (searchText.isEmpty()) return@launch
 
                         searchResult = SearchState.Searching
@@ -96,10 +98,6 @@ class SearchUiPresenter(
                 is SearchUiEvent.OnPlayAudio -> onPlayAudio(scope, eventSink.audioItemModel)
                 is SearchUiEvent.OnExpandChange -> {
                     expanded = eventSink.isExpand
-                }
-
-                is SearchUiEvent.OnInputTextChange -> {
-                    searchText = eventSink.inputText
                 }
             }
         }
@@ -136,7 +134,7 @@ class SearchUiPresenter(
 }
 
 data class SearchUiState(
-    val inputText: String = "",
+    val inputText: TextFieldState = TextFieldState(),
     val isExpand: Boolean = true,
     val searchState: SearchState = SearchState.Init,
     val eventSink: (SearchUiEvent) -> Unit = {},
@@ -149,10 +147,6 @@ sealed interface SearchUiEvent {
 
     data class OnConfirmSearch(
         val text: String,
-    ) : SearchUiEvent
-
-    data class OnInputTextChange(
-        val inputText: String,
     ) : SearchUiEvent
 
     data class OnExpandChange(

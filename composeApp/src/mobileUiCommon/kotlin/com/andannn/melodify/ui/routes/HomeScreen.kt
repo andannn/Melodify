@@ -252,7 +252,6 @@ internal fun HomeUiScreen(
                         },
                         imageVector = Icons.Rounded.MoreVert,
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
                 },
                 scrollBehavior = scrollBehavior,
             )
