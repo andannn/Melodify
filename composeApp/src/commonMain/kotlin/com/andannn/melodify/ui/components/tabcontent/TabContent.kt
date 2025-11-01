@@ -5,16 +5,27 @@
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.paging.compose.LazyPagingItems
@@ -28,6 +39,7 @@ import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.ui.components.tabcontent.header.GroupHeader
 import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.widgets.ListTileItemView
+import io.github.aakira.napier.Napier
 
 @Composable
 fun TabContent(
@@ -87,25 +99,30 @@ private fun LazyListContent(
             secondaryGroupList.forEachIndexed { secondaryGroupIndex, (secondaryGroupKey, items) ->
                 if (secondaryGroupKey != null) {
                     stickyHeader((primaryGroupKey to secondaryGroupKey).hashCode()) {
-                        GroupHeader(
-                            modifier = Modifier.padding(start = 16.dp),
-                            isPrimary = false,
-                            groupKey = secondaryGroupKey,
-                            onGroupOptionSelected = {
-                                onGroupOptionClick(
-                                    it,
-                                    listOf(primaryGroupKey, secondaryGroupKey),
-                                )
-                            },
-                            onGroupHeaderClick = {
-                                onGroupItemClick(
-                                    listOf(
-                                        primaryGroupKey,
-                                        secondaryGroupKey,
-                                    ),
-                                )
-                            },
-                        )
+                        Row(modifier = Modifier.height(IntrinsicSize.Min)) {
+                            GroupIndicator(
+                                modifier = Modifier.width(20.dp),
+                                isLast = secondaryGroupIndex == secondaryGroupList.lastIndex,
+                            )
+                            GroupHeader(
+                                isPrimary = false,
+                                groupKey = secondaryGroupKey,
+                                onGroupOptionSelected = {
+                                    onGroupOptionClick(
+                                        it,
+                                        listOf(primaryGroupKey, secondaryGroupKey),
+                                    )
+                                },
+                                onGroupHeaderClick = {
+                                    onGroupItemClick(
+                                        listOf(
+                                            primaryGroupKey,
+                                            secondaryGroupKey,
+                                        ),
+                                    )
+                                },
+                            )
+                        }
                     }
                 }
 
@@ -128,33 +145,95 @@ private fun LazyListContent(
                     if (secondaryGroupKey != null) headerCount++
 
                     val showTrackNum = displaySetting.showTrackNum
-                    ListTileItemView(
-                        paddingValues =
-                            PaddingValues(
-                                start = 16.dp.times(headerCount),
-                                top = 4.dp,
-                                bottom = 4.dp,
-                            ),
-                        playable = item.browsableOrPlayable,
-                        isActive = false,
-                        albumArtUri = item.artWorkUri,
-                        title = item.name,
-                        trackNum = item.cdTrackNumber.takeIf { showTrackNum },
-                        onMusicItemClick = {
-                            onMusicItemClick.invoke(item)
-                        },
-                        onOptionButtonClick = {
-                            onShowMusicItemOption(item)
-                        },
-                    )
+                    Row(modifier = Modifier.height(IntrinsicSize.Min)) {
+                        if (headerCount >= 2) {
+                            val needConnection = secondaryGroupIndex != secondaryGroupList.lastIndex
+                            if (needConnection) {
+                                GroupConnection(modifier = Modifier.width(20.dp))
+                            } else {
+                                Spacer(modifier = Modifier.width(20.dp))
+                            }
+                        }
+                        if (headerCount >= 1) {
+                            GroupIndicator(
+                                modifier = Modifier.width(20.dp),
+                                isLast = index == items.lastIndex,
+                            )
+                        }
+                        ListTileItemView(
+                            paddingValues =
+                                PaddingValues(
+                                    top = 4.dp,
+                                    bottom = 4.dp,
+                                ),
+                            playable = item.browsableOrPlayable,
+                            isActive = false,
+                            albumArtUri = item.artWorkUri,
+                            title = item.name,
+                            trackNum = item.cdTrackNumber.takeIf { showTrackNum },
+                            onMusicItemClick = {
+                                onMusicItemClick.invoke(item)
+                            },
+                            onOptionButtonClick = {
+                                onShowMusicItemOption(item)
+                            },
+                        )
+                    }
                 }
-
-                item { Spacer(modifier = Modifier.height(24.dp)) }
             }
         }
 
         item { ExtraPaddingBottom() }
     }
+}
+
+@Composable
+private fun GroupIndicator(
+    modifier: Modifier,
+    isLast: Boolean,
+    color: Color = MaterialTheme.colorScheme.outlineVariant,
+) {
+    Spacer(
+        modifier =
+            modifier.fillMaxHeight().drawBehind {
+                val strokeWidth = 1.dp.toPx()
+                val startX = size.width.div(2f)
+                val startY = 0f
+                val endX = startX
+                val endY = if (isLast) size.height.div(2) - size.width.div(2f) else size.height
+
+                drawLine(color, Offset(startX, startY), Offset(endX, endY), strokeWidth)
+
+                val arcTopLeftY = size.height.div(2) - size.width
+                drawArc(
+                    color = color,
+                    topLeft = Offset(startX, arcTopLeftY),
+                    size = Size(size.width, size.width),
+                    useCenter = false,
+                    startAngle = 180f,
+                    sweepAngle = -90f,
+                    style = Stroke(width = strokeWidth),
+                )
+            },
+    )
+}
+
+@Composable
+private fun GroupConnection(
+    modifier: Modifier,
+    color: Color = MaterialTheme.colorScheme.outlineVariant,
+) {
+    Spacer(
+        modifier =
+            modifier.fillMaxHeight().drawBehind {
+                val strokeWidth = 1.dp.toPx()
+                val startX = size.width.div(2f)
+                val startY = 0f
+                val endX = startX
+                val endY = size.height
+                drawLine(color, Offset(startX, startY), Offset(endX, endY), strokeWidth)
+            },
+    )
 }
 
 private data class PrimaryGroup(
