@@ -32,11 +32,6 @@ kotlin {
             implementation(libs.okio)
             implementation(libs.room.paging)
         }
-
-        iosMain.dependencies {
-            implementation(libs.androidx.sqlite.bundled)
-        }
-
         androidInstrumentedTest.dependencies {
             implementation(libs.androidx.test.runner)
             implementation(libs.androidx.test.core.ktx)
@@ -58,7 +53,5 @@ kotlin {
 
 dependencies {
     add("kspAndroid", libs.room.compiler)
-    add("kspIosSimulatorArm64", libs.room.compiler)
-    add("kspIosArm64", libs.room.compiler)
     add("kspDesktop", libs.room.compiler)
 }

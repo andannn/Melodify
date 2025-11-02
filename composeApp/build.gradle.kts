@@ -14,10 +14,6 @@ kotlin {
             dependsOn(commonMain.get())
         }
 
-        iosMain {
-            dependsOn(mobileUiCommon)
-        }
-
         androidMain {
             dependsOn(mobileUiCommon)
         }
