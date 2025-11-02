@@ -11,9 +11,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+
+@Composable
+expect fun centerImageShape(): Shape
 
 @Composable
 fun CircleBorderImage(
@@ -23,13 +29,14 @@ fun CircleBorderImage(
     AsyncImage(
         modifier =
             modifier
-                .clip(shape = CircleShape)
-                .border(
-                    shape = CircleShape,
-                    border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.primary),
-                ),
-        model = model,
-        contentScale = ContentScale.Crop,
+                .clip(shape = centerImageShape()),
+        model =
+            ImageRequest
+                .Builder(LocalPlatformContext.current)
+                .data(model)
+                .size(Int.MAX_VALUE)
+                .build(),
+        contentScale = ContentScale.Fit,
         contentDescription = "",
     )
 }

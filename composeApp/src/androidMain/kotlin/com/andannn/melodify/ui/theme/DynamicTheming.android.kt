@@ -12,6 +12,8 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -35,6 +37,7 @@ import com.andannn.melodify.ui.util.createThemeFromSeed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 actual fun DynamicThemePrimaryColorsFromImage(
     dominantColorState: DominantColorState,
@@ -56,7 +59,7 @@ actual fun DynamicThemePrimaryColorsFromImage(
         scheme = createThemeFromSeed(seedColor, isDark = true)
     }
 
-    MaterialTheme(
+    MaterialExpressiveTheme(
         colorScheme = scheme,
         content = content,
     )

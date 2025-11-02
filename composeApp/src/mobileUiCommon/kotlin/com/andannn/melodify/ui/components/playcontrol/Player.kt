@@ -20,7 +20,7 @@ fun Player(
 }
 
 @Composable
-fun PlayerAreaView(
+private fun PlayerAreaView(
     state: PlayerUiState,
     modifier: Modifier = Modifier,
 ) {

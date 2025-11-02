@@ -8,26 +8,21 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowOutward
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.ui.components.librarydetail.item.MediaLibraryItem
 
 /**
  * Content of the search bar when expanded.
@@ -41,17 +36,15 @@ import com.andannn.melodify.ui.components.librarydetail.item.MediaLibraryItem
  */
 @Composable
 internal fun Suggestions(
-    query: String,
-    presenter: SuggestionsPresenter = rememberSuggestionsPresenter(query = query),
+    query: TextFieldState,
+    presenter: SuggestionsPresenter = rememberSuggestionsPresenter(query = query.text.toString()),
     modifier: Modifier = Modifier,
     onConfirmSearch: (String) -> Unit = {},
-    onBestMatchedItemClicked: (MediaItemModel) -> Unit = {},
 ) {
     SuggestionUi(
         modifier = modifier,
         uiState = presenter.present(),
         onConfirmSearch = onConfirmSearch,
-        onBestMatchedItemClicked = onBestMatchedItemClicked,
     )
 }
 
@@ -60,7 +53,6 @@ internal fun SuggestionUi(
     modifier: Modifier,
     uiState: SuggestionsUiState,
     onConfirmSearch: (String) -> Unit = {},
-    onBestMatchedItemClicked: (MediaItemModel) -> Unit = {},
 ) {
     Box(
         modifier = modifier,
@@ -68,7 +60,6 @@ internal fun SuggestionUi(
         SuggestionsContent(
             state = uiState.state,
             onConfirmSearch = onConfirmSearch,
-            onBestMatchedItemClicked = onBestMatchedItemClicked,
         )
     }
 }
@@ -78,7 +69,6 @@ private fun SuggestionsContent(
     state: SuggestionsState,
     modifier: Modifier = Modifier,
     onConfirmSearch: (String) -> Unit = {},
-    onBestMatchedItemClicked: (MediaItemModel) -> Unit = {},
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
         when (state) {
@@ -112,28 +102,6 @@ private fun SuggestionsContent(
                                 imageVector = Icons.Rounded.ArrowOutward,
                                 contentDescription = "SearchScreen",
                             )
-                        },
-                    )
-                }
-
-                if (state.bestMatchedItems.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    HorizontalDivider()
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        modifier = Modifier.padding(start = 12.dp),
-                        text = "Quick result",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
-
-                state.bestMatchedItems.forEach {
-                    MediaLibraryItem(
-                        modifier = Modifier,
-                        mediaItemModel = it,
-                        onItemClick = {
-                            onBestMatchedItemClicked(it)
                         },
                     )
                 }

@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.LibraryDetailScreen
+import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.components.search.Search
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.slack.circuit.runtime.CircuitUiState
@@ -55,6 +56,7 @@ fun SearchScreen(
         )
     }
 
+    Player()
     ActionDialogContainer()
 }
 

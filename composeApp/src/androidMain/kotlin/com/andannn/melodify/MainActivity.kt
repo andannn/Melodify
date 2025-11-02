@@ -22,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -32,8 +31,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.andannn.melodify.core.data.internal.UserPreferenceRepository
 import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.core.syncer.SyncWorkHelper
-import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
@@ -103,7 +100,6 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val coroutineScope = rememberCoroutineScope()
             var permissionGranted by remember {
                 mutableStateOf(isPermissionGranted())
             }
@@ -147,7 +143,6 @@ class MainActivity : ComponentActivity() {
             }
 
             CompositionLocalProvider(
-                LocalPlayerUiController provides remember { PlayerUiController(coroutineScope) },
                 LocalMediaFileDeleteHelper provides deleteHelper,
             ) {
                 MelodifyTheme(darkTheme = true, isDynamicColor = true) {

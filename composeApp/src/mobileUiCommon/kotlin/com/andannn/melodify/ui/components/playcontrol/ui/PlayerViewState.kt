@@ -4,8 +4,6 @@
  */
 package com.andannn.melodify.ui.components.playcontrol.ui
 
-import androidx.compose.animation.core.exponentialDecay
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -21,8 +19,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiEventConsumer
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.BottomSheetDragAreaHeight
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.MinFadeoutWithExpandAreaPaddingTop
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.MinImagePaddingStart
@@ -44,7 +40,6 @@ internal fun rememberPlayerViewState(
     statusBarHeightPx: Int,
     density: Density,
     animaScope: CoroutineScope = rememberCoroutineScope(),
-    eventConsumer: PlayerUiEventConsumer = LocalPlayerUiController.current as PlayerUiEventConsumer,
 ) = remember(
     screenSize,
     navigationBarHeightPx,
@@ -58,7 +53,6 @@ internal fun rememberPlayerViewState(
         statusBarHeightPx = statusBarHeightPx.toFloat(),
         density = density,
         animaScope = animaScope,
-        eventConsumer = eventConsumer,
     )
 }
 
@@ -71,22 +65,7 @@ PlayerViewState(
     statusBarHeightPx: Float,
     private val density: Density,
     private val animaScope: CoroutineScope,
-    eventConsumer: PlayerUiEventConsumer,
 ) {
-    init {
-        animaScope.launch {
-            for (event in eventConsumer.expandEventReceiveChannel) {
-                expandPlayerLayout()
-            }
-        }
-
-        animaScope.launch {
-            for (event in eventConsumer.shrinkEventReceiveChannel) {
-                shrinkPlayerLayout()
-            }
-        }
-    }
-
     private val shrinkPlayerHeightPx = ShrinkPlayerHeight.toPx()
     val bottomSheetHeight =
         screenSize.height - statusBarHeightPx - shrinkPlayerHeightPx
@@ -100,10 +79,6 @@ PlayerViewState(
                     BottomSheetState.Shrink at bottomSheetHeight - bottomSheetDragAreaHeightPx
                     BottomSheetState.Expand at 0f
                 },
-            positionalThreshold = { 300f },
-            velocityThreshold = { 400f },
-            snapAnimationSpec = spring(),
-            decayAnimationSpec = exponentialDecay(),
         )
 
     // 1f when sheet shrink, 0f when sheet fully expanded.
@@ -124,10 +99,6 @@ PlayerViewState(
                     PlayerState.Shrink at shrinkPlayerHeight
                     PlayerState.Expand at screenSize.height
                 },
-            positionalThreshold = { with(density) { 26.dp.toPx() } },
-            velocityThreshold = { with(density) { 20.dp.toPx() } },
-            snapAnimationSpec = spring(),
-            decayAnimationSpec = exponentialDecay(),
         )
 
     // 0f when player shrink, 1f when player fully expanded.
@@ -204,12 +175,6 @@ PlayerViewState(
             playerExpandState.animateTo(PlayerState.Expand)
         }
     }
-//
-//    fun shrinkBottomSheet() {
-//        animaScope.launch {
-//            bottomSheetState.animateTo(BottomSheetState.Shrink)
-//        }
-//    }
 
     fun expandBottomSheet() {
         animaScope.launch {

@@ -114,12 +114,6 @@ class TabContentPresenter(
             }
         val pagingItems: LazyPagingItems<AudioItemModel> = pagingDataFlow.collectAsLazyPagingItems()
 
-        DisposableEffect(Unit) {
-            onDispose {
-                Napier.d(tag = TAG) { "TabContentPresenter onDispose $selectedTab" }
-            }
-        }
-
         return TabContentState(
             selectedTab = selectedTab,
             groupSort = displaySetting,

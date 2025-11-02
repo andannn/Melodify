@@ -17,15 +17,10 @@ Development is progressing at a very slow pace.
 
 <img src="screenshot/desktop.png" width="75%" />
 
-## iOS
-Not yet implemented.
-
-
 ### Code style
 running `./gradlew ktLintFormat` to automatically fix lint errors.
 running `./gradlew spotlessApply` to add copyright.
 
 ### Testing
 
-1. Run `./gradlew connectedDebugAndroidTest` to execute android instrument tests.
-2. Run `./gradlew iosSimulatorArm64Test` to execute iOS tests.
+1. Run `./gradlew allTest` to execute android instrument tests.

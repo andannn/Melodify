@@ -29,9 +29,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -41,8 +40,8 @@ import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.components.playcontrol.ui.MinImageSize
 import com.andannn.melodify.ui.components.playcontrol.ui.PlayerViewState
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.bottom.PlayerBottomSheetView
-import com.andannn.melodify.ui.util.verticalGradientScrim
 import com.andannn.melodify.ui.widgets.CircleBorderImage
+import com.andannn.melodify.ui.widgets.ProgressIndicator
 
 val MinImagePaddingTop = 5.dp
 
@@ -68,6 +67,7 @@ internal fun FlexiblePlayerLayout(
     title: String = "",
     artist: String = "",
     progress: Float = 1f,
+    duration: Long = 0L,
     onEvent: (PlayerUiEvent) -> Unit = {},
     onShrinkButtonClick: () -> Unit = {},
 ) {
@@ -83,19 +83,9 @@ internal fun FlexiblePlayerLayout(
         shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
         shadowElevation = 10.dp,
     ) {
-        val primaryColor = MaterialTheme.colorScheme.primary
-        val backGroundModifier =
-            Modifier.verticalGradientScrim(
-                color = primaryColor.copy(alpha = 0.38f),
-                startYPercentage = 1f,
-                endYPercentage = 0f,
-            )
-
         Box(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .then(backGroundModifier),
+                Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background),
         ) {
             val fadeInAreaAlpha by remember {
                 derivedStateOf {
@@ -107,23 +97,24 @@ internal fun FlexiblePlayerLayout(
                     1 - (layoutState.imageTransactionFactor * 4).coerceIn(0f, 1f)
                 }
             }
-            MiniPlayerLayout(
-                modifier =
-                    Modifier
-                        .graphicsLayer {
-                            alpha = fadeoutAreaAlpha
-                        }.fillMaxWidth()
-                        .padding(
-                            top = layoutState.miniPlayerPaddingTopDp,
-                            start = MinImagePaddingStart * 2 + MinImageSize,
-                        ),
-                enabled = fadeoutAreaAlpha == 1f,
-                title = title,
-                artist = artist,
-                isPlaying = isPlaying,
-                isFavorite = isFavorite,
-                onEvent = onEvent,
-            )
+            if (fadeoutAreaAlpha > 0) {
+                MiniPlayerLayout(
+                    modifier =
+                        Modifier
+                            .graphicsLayer {
+                                alpha = fadeoutAreaAlpha
+                            }.fillMaxWidth()
+                            .padding(
+                                top = layoutState.miniPlayerPaddingTopDp,
+                                start = MinImagePaddingStart * 2 + MinImageSize,
+                            ),
+                    title = title,
+                    artist = artist,
+                    isPlaying = isPlaying,
+                    isFavorite = isFavorite,
+                    onEvent = onEvent,
+                )
+            }
 
             if (fadeInAreaAlpha != 0f) {
                 PlayerHeader(
@@ -161,23 +152,25 @@ internal fun FlexiblePlayerLayout(
             ) {
                 Spacer(modifier = Modifier.height(layoutState.imagePaddingTopDp + layoutState.imageSizeDp))
 
-                LargePlayerControlArea(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .graphicsLayer {
-                                alpha = fadeInAreaAlpha
-                            },
-                    isPlaying = isPlaying,
-                    playMode = playMode,
-                    enable = layoutState.isFullExpanded,
-                    isShuffle = isShuffle,
-                    progress = progress,
-                    title = title,
-                    artist = artist,
-                    onEvent = onEvent,
-                )
+                if (fadeInAreaAlpha > 0) {
+                    LargePlayerControlArea(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .graphicsLayer {
+                                    alpha = fadeInAreaAlpha
+                                },
+                        isPlaying = isPlaying,
+                        playMode = playMode,
+                        isShuffle = isShuffle,
+                        progress = progress,
+                        duration = duration,
+                        title = title,
+                        artist = artist,
+                        onEvent = onEvent,
+                    )
+                }
                 Spacer(modifier = Modifier.height(BottomSheetDragAreaHeight))
             }
 
@@ -198,24 +191,14 @@ internal fun FlexiblePlayerLayout(
             }
 
             if (!layoutState.isPlayerExpanding) {
-                Spacer(
+                ProgressIndicator(
                     modifier =
                         Modifier
-                            .fillMaxWidth(fraction = progress)
-                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
                             .padding(bottom = with(LocalDensity.current) { layoutState.navigationBarHeightPx.toDp() })
-                            .height(3.dp)
-                            .background(
-                                brush =
-                                    Brush.horizontalGradient(
-                                        colors =
-                                            listOf(
-                                                MaterialTheme.colorScheme.tertiaryContainer,
-                                                MaterialTheme.colorScheme.inversePrimary,
-                                                MaterialTheme.colorScheme.primary,
-                                            ),
-                                    ),
-                            ),
+                            .align(BottomStart),
+                    progress = progress,
+                    playing = isPlaying,
                 )
             }
         }
