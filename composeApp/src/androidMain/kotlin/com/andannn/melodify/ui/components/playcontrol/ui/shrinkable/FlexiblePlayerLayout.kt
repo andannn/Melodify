@@ -24,10 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Modifier
@@ -75,7 +72,6 @@ internal fun FlexiblePlayerLayout(
         with(LocalDensity.current) {
             WindowInsets.statusBars.getTop(this).toDp()
         }
-    val coverUriState = rememberUpdatedState(newValue = coverUri)
 
     Surface(
         modifier =
@@ -85,18 +81,18 @@ internal fun FlexiblePlayerLayout(
     ) {
         Box(
             modifier =
-                Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background),
+                Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background),
         ) {
-            val fadeInAreaAlpha by remember {
-                derivedStateOf {
+            val fadeInAreaAlpha =
+                remember(layoutState.imageTransactionFactor) {
                     (1f - (1f - layoutState.imageTransactionFactor).times(3f)).coerceIn(0f, 1f)
                 }
-            }
-            val fadeoutAreaAlpha by remember {
-                derivedStateOf {
+            val fadeoutAreaAlpha =
+                remember(layoutState.imageTransactionFactor) {
                     1 - (layoutState.imageTransactionFactor * 4).coerceIn(0f, 1f)
                 }
-            }
             if (fadeoutAreaAlpha > 0) {
                 MiniPlayerLayout(
                     modifier =
@@ -143,7 +139,7 @@ internal fun FlexiblePlayerLayout(
                             start = layoutState.imagePaddingStartDp,
                         ).width(layoutState.imageSizeDp)
                         .aspectRatio(1f),
-                model = coverUriState.value,
+                model = coverUri,
             )
 
             Column(

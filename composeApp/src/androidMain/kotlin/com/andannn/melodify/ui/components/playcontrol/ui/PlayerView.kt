@@ -61,12 +61,7 @@ internal fun PlayerViewContent(
                 density = density,
             )
 
-        val isPlayerDraggable by
-            remember {
-                derivedStateOf {
-                    !layoutState.isBottomSheetExpanding
-                }
-            }
+        val isPlayerDraggable = !layoutState.isBottomSheetExpanding
 
         BackHandler(
             enabled = layoutState.playerState == PlayerState.Expand,

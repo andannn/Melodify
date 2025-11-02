@@ -82,7 +82,7 @@ PlayerViewState(
         )
 
     // 1f when sheet shrink, 0f when sheet fully expanded.
-    private val bottomSheetOffsetFactor by derivedStateOf {
+    val bottomSheetOffsetFactor by derivedStateOf {
         bottomSheetState.offset.div(bottomSheetHeight - bottomSheetDragAreaHeightPx)
     }
 
