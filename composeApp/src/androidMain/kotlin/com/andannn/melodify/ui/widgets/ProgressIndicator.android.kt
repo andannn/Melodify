@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.components.playcontrol.ui.shrinkable
+package com.andannn.melodify.ui.widgets
 
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LinearWavyProgressIndicator
@@ -33,7 +33,7 @@ actual fun ProgressIndicator(
             ),
         gapSize = 1.dp,
         wavelength = 60.dp,
-        waveSpeed = 20.dp,
+        waveSpeed = 30.dp,
         amplitude = { progress ->
             if (!playing || progress <= 0.1f || progress >= 0.95f) {
                 0f

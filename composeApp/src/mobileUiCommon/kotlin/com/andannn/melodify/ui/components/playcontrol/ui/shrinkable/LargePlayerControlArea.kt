@@ -29,12 +29,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import com.andannn.melodify.ui.util.getIcon
 import com.andannn.melodify.ui.widgets.LinerWaveSlider
+import com.andannn.melodify.ui.widgets.MarqueeText
 import com.andannn.melodify.ui.widgets.SmpMainIconButton
 import com.andannn.melodify.ui.widgets.SmpSubIconButton
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -54,13 +56,14 @@ internal fun LargePlayerControlArea(
     val titleState by rememberUpdatedState(newValue = title)
     Column(
         modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        Column {
-            Text(
-                modifier = Modifier.padding(horizontal = MaxImagePaddingStart),
+        Column(
+            modifier = Modifier.weight(0.7f),
+        ) {
+            MarqueeText(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = MaxImagePaddingStart),
                 text = titleState,
-                maxLines = 1,
+                spacingBetweenCopies = 40.dp,
                 style = MaterialTheme.typography.headlineMedium,
             )
             Text(
@@ -71,7 +74,11 @@ internal fun LargePlayerControlArea(
             )
         }
         LinerWaveSlider(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .weight(1f),
             value = progress,
             playing = isPlaying,
             onValueChange = {
@@ -79,7 +86,10 @@ internal fun LargePlayerControlArea(
             },
         )
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp),
+            modifier =
+                Modifier
+                    .padding(horizontal = 10.dp)
+                    .weight(1.4f),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {

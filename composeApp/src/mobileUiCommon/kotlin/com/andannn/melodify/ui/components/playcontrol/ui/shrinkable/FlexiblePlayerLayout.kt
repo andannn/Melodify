@@ -31,8 +31,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -42,8 +40,8 @@ import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.components.playcontrol.ui.MinImageSize
 import com.andannn.melodify.ui.components.playcontrol.ui.PlayerViewState
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.bottom.PlayerBottomSheetView
-import com.andannn.melodify.ui.util.verticalGradientScrim
 import com.andannn.melodify.ui.widgets.CircleBorderImage
+import com.andannn.melodify.ui.widgets.ProgressIndicator
 
 val MinImagePaddingTop = 5.dp
 
