@@ -9,11 +9,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.ComposeUIViewController
-import com.andannn.melodify.ui.components.playcontrol.LocalPlayerUiController
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiController
 import com.andannn.melodify.ui.popup.PopupControllerImpl
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -47,10 +44,9 @@ fun MainViewController() =
 
         Napier.d("Permission granted: $permissionGranted")
         if (permissionGranted) {
-            val coroutineScope = rememberCoroutineScope()
             CompositionLocalProvider(
                 LocalPopupController provides remember { PopupControllerImpl() },
-                LocalPlayerUiController provides remember { PlayerUiController(coroutineScope) },
+                LocalMediaFileDeleteHelper provides remember { MediaFileDeleteHelperImpl() },
             ) {
                 MelodifyMobileApp()
             }

@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.player
 
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -183,7 +184,7 @@ internal class PlayerWrapperImpl : PlayerWrapper {
     override val currentPositionMs: Long
         get() = player?.currentPosition ?: 0
     override val currentDurationMs: Long
-        get() = player?.duration ?: 0
+        get() = player?.duration?.takeIf { it != C.TIME_UNSET } ?: 0
 
     override val playerState: PlayerState
         get() = playerStateFlow.value

@@ -67,6 +67,7 @@ internal fun FlexiblePlayerLayout(
     title: String = "",
     artist: String = "",
     progress: Float = 1f,
+    duration: Long = 0L,
     onEvent: (PlayerUiEvent) -> Unit = {},
     onShrinkButtonClick: () -> Unit = {},
 ) {
@@ -96,22 +97,24 @@ internal fun FlexiblePlayerLayout(
                     1 - (layoutState.imageTransactionFactor * 4).coerceIn(0f, 1f)
                 }
             }
-            MiniPlayerLayout(
-                modifier =
-                    Modifier
-                        .graphicsLayer {
-                            alpha = fadeoutAreaAlpha
-                        }.fillMaxWidth()
-                        .padding(
-                            top = layoutState.miniPlayerPaddingTopDp,
-                            start = MinImagePaddingStart * 2 + MinImageSize,
-                        ),
-                title = title,
-                artist = artist,
-                isPlaying = isPlaying,
-                isFavorite = isFavorite,
-                onEvent = onEvent,
-            )
+            if (fadeoutAreaAlpha > 0) {
+                MiniPlayerLayout(
+                    modifier =
+                        Modifier
+                            .graphicsLayer {
+                                alpha = fadeoutAreaAlpha
+                            }.fillMaxWidth()
+                            .padding(
+                                top = layoutState.miniPlayerPaddingTopDp,
+                                start = MinImagePaddingStart * 2 + MinImageSize,
+                            ),
+                    title = title,
+                    artist = artist,
+                    isPlaying = isPlaying,
+                    isFavorite = isFavorite,
+                    onEvent = onEvent,
+                )
+            }
 
             if (fadeInAreaAlpha != 0f) {
                 PlayerHeader(
@@ -149,22 +152,25 @@ internal fun FlexiblePlayerLayout(
             ) {
                 Spacer(modifier = Modifier.height(layoutState.imagePaddingTopDp + layoutState.imageSizeDp))
 
-                LargePlayerControlArea(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .graphicsLayer {
-                                alpha = fadeInAreaAlpha
-                            },
-                    isPlaying = isPlaying,
-                    playMode = playMode,
-                    isShuffle = isShuffle,
-                    progress = progress,
-                    title = title,
-                    artist = artist,
-                    onEvent = onEvent,
-                )
+                if (fadeInAreaAlpha > 0) {
+                    LargePlayerControlArea(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .graphicsLayer {
+                                    alpha = fadeInAreaAlpha
+                                },
+                        isPlaying = isPlaying,
+                        playMode = playMode,
+                        isShuffle = isShuffle,
+                        progress = progress,
+                        duration = duration,
+                        title = title,
+                        artist = artist,
+                        onEvent = onEvent,
+                    )
+                }
                 Spacer(modifier = Modifier.height(BottomSheetDragAreaHeight))
             }
 
