@@ -86,7 +86,7 @@ internal fun FlexiblePlayerLayout(
     ) {
         Box(
             modifier =
-                Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.secondaryContainer),
+                Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background),
         ) {
             val fadeInAreaAlpha by remember {
                 derivedStateOf {

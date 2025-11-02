@@ -22,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -101,7 +100,6 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val coroutineScope = rememberCoroutineScope()
             var permissionGranted by remember {
                 mutableStateOf(isPermissionGranted())
             }

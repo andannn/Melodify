@@ -4,9 +4,13 @@
  */
 package com.andannn.melodify.ui.widgets
 
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.Modifier
 
 @Composable
-actual fun centerImageShape(): Shape = CircleShape
+expect fun LinerWaveSlider(
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+    playing: Boolean = true,
+)

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -33,6 +34,7 @@ import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import com.andannn.melodify.ui.util.getIcon
+import com.andannn.melodify.ui.widgets.LinerWaveSlider
 import com.andannn.melodify.ui.widgets.SmpMainIconButton
 import com.andannn.melodify.ui.widgets.SmpSubIconButton
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -68,10 +70,10 @@ internal fun LargePlayerControlArea(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        Slider(
-            modifier = Modifier.padding(horizontal = 16.dp),
+        LinerWaveSlider(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             value = progress,
-            enabled = enable,
+            playing = isPlaying,
             onValueChange = {
                 onEvent(PlayerUiEvent.OnProgressChange(it))
             },
