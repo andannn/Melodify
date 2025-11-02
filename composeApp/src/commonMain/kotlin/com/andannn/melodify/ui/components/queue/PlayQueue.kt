@@ -163,11 +163,9 @@ private fun ReorderableCollectionItemScope.QueueItem(
                     onDragStopped = onSwapFinish,
                 ),
             isActive = isActive,
-//            defaultColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             albumArtUri = item.artWorkUri,
             title = item.name,
             subTitle = item.artist,
-            trackNum = item.cdTrackNumber,
             actionType = ActionType.SWAP,
             onMusicItemClick = onClick,
         )
