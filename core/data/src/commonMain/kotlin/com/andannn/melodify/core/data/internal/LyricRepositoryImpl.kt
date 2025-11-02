@@ -28,7 +28,10 @@ internal class LyricRepositoryImpl(
     ): Flow<LyricRepository.State> =
         flow {
             val lyric = lyricDao.getLyricByMediaIdFlow(mediaId).first()
-            if (lyric != null) emit(LyricRepository.State.Success(lyric.toLyricModel()))
+            if (lyric != null) {
+                emit(LyricRepository.State.Success(lyric.toLyricModel()))
+                return@flow
+            }
 
             try {
                 emit(LyricRepository.State.Loading)

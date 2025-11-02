@@ -90,8 +90,11 @@ sealed interface SyncedLyricsEvent {
 data class SyncedLyricsLine(
     val startTimeMs: Long,
     val endTimeMs: Long = 0L,
-    val lyrics: String,
-)
+    private val lyrics: String,
+) {
+    val lyricsString: String
+        get() = lyrics.takeIf { it.isNotBlank() } ?: "[ Music ]"
+}
 
 sealed interface LyricsState {
     data object AutoScrolling : LyricsState
@@ -165,7 +168,7 @@ private fun LyricLine(
         if (active) {
             MaterialTheme.colorScheme.primaryContainer
         } else {
-            Color.Transparent
+            MaterialTheme.colorScheme.surfaceContainerHighest
         }
     }
 
@@ -192,7 +195,7 @@ private fun LyricLine(
                 Modifier
                     .padding(vertical = 12.dp, horizontal = 16.dp)
                     .alpha(alpha),
-            text = lyricsLine.lyrics,
+            text = lyricsLine.lyricsString,
             style = MaterialTheme.typography.headlineSmall,
             color = fontColor,
         )
@@ -204,7 +207,6 @@ private fun LyricLine(
                         .align(Alignment.CenterEnd)
                         .alpha(seekButtonAlpha)
                         .padding(horizontal = 8.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHighest,
                 shape = RoundedCornerShape(12.dp),
                 onClick = onSeekTimeClick,
             ) {
