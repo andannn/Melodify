@@ -104,9 +104,9 @@ private fun SleepTimerCounterSheetContent(
 @Preview
 @Composable
 private fun SleepTimerCounterSheetContentPreview() {
-    MelodifyTheme {
+    MelodifyTheme(content = {
         SleepTimerCounterSheetContent(
             remain = 121234.seconds,
         )
-    }
+    })
 }

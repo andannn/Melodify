@@ -7,17 +7,12 @@ package com.andannn.melodify.ui.widgets
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.MarqueeSpacing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -192,7 +187,7 @@ private fun MarqueeViewport(
 @Preview
 @Composable
 private fun MarqueeTextPreview() {
-    MelodifyTheme {
+    MelodifyTheme(content = {
         Box(
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -201,5 +196,5 @@ private fun MarqueeTextPreview() {
                 text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
             )
         }
-    }
+    })
 }
