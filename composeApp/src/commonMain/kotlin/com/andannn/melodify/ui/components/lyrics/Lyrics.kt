@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Lyrics(
-    presenter: LyricPresenter = rememberLyricPresenter(),
     modifier: Modifier = Modifier,
+    presenter: LyricPresenter = rememberLyricPresenter(),
 ) {
     val state = presenter.present()
     LyricsViewContent(modifier = modifier.fillMaxSize(), lyricState = state)
@@ -72,6 +72,18 @@ private fun LyricsViewContent(
                 )
             }
         }
+
+        LyricState.Error -> {
+            Box(modifier = modifier.fillMaxSize()) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    style = MaterialTheme.typography.headlineSmall,
+                    text = "Lyric not found",
+                )
+            }
+        }
+
+        LyricState.Idle -> {}
     }
 }
 

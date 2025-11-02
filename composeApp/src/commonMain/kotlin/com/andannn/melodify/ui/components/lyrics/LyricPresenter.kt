@@ -7,11 +7,15 @@ package com.andannn.melodify.ui.components.lyrics
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.andannn.melodify.LocalRepository
+import com.andannn.melodify.core.data.LyricRepository
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.LyricModel
 import com.slack.circuit.retained.collectAsRetainedState
+import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 
@@ -33,27 +37,42 @@ class LyricPresenter(
             return LyricState.NoPlaying
         }
 
+        var currentLoadState by remember {
+            mutableStateOf<LyricRepository.State?>(null)
+        }
+
         LaunchedEffect(currentPlayingAudio) {
+            currentLoadState = null
+
             val audio = currentPlayingAudio
             if (audio != null) {
-                repository.lyricRepository.tryGetLyricOrIgnore(
-                    mediaId = audio.id,
-                    trackName = audio.name,
-                    artistName = audio.artist,
-                    albumName = audio.album,
-                )
+                repository.lyricRepository
+                    .getLyricByMediaIdFlow(
+                        mediaId = audio.id,
+                        trackName = audio.name,
+                        artistName = audio.artist,
+                        albumName = audio.album,
+                    ).collect {
+                        currentLoadState = it
+                    }
             }
         }
 
-        val lyric by repository.lyricRepository
-            .getLyricByMediaIdFlow(currentPlayingAudio?.id ?: "")
-            .collectAsRetainedState(null)
-        return if (lyric == null) LyricState.Loading else LyricState.Loaded(lyric)
+        return when (val state = currentLoadState) {
+            is LyricRepository.State.Error -> LyricState.Error
+            LyricRepository.State.Loading -> LyricState.Loading
+            is LyricRepository.State.Success -> LyricState.Loaded(state.model)
+            null -> LyricState.NoPlaying
+        }
     }
 }
 
 sealed class LyricState : CircuitUiState {
+    data object Idle : LyricState()
+
     data object Loading : LyricState()
+
+    data object Error : LyricState()
 
     data object NoPlaying : LyricState()
 
