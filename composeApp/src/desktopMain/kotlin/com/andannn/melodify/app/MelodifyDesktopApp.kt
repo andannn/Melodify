@@ -12,7 +12,6 @@ import androidx.compose.ui.window.ApplicationScope
 import com.andannn.melodify.LocalMediaFileDeleteHelper
 import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
-import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.MediaFileDeleteHelperImpl
 import com.andannn.melodify.ui.popup.PopupControllerImpl
 import com.andannn.melodify.ui.theme.MelodifyTheme
@@ -22,7 +21,7 @@ import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 internal fun ApplicationScope.MelodifyDeskTopApp(appState: MelodifyDeskTopAppState = rememberMelodifyDeskTopAppState()) {
-    MelodifyTheme(darkTheme = false) {
+    MelodifyTheme(darkTheme = false, {
         val scope = rememberCoroutineScope()
         CompositionLocalProvider(
             LocalPopupController provides remember { PopupControllerImpl() },
@@ -41,5 +40,5 @@ internal fun ApplicationScope.MelodifyDeskTopApp(appState: MelodifyDeskTopAppSta
                 )
             }
         }
-    }
+    })
 }

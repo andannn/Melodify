@@ -11,6 +11,7 @@ import androidx.collection.LruCache
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
@@ -37,10 +38,19 @@ import com.andannn.melodify.ui.util.createThemeFromSeed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+interface DominantColorState {
+    val color: Color
+
+    suspend fun updateColorsFromImageUrl(url: String)
+
+    fun setDynamicThemeEnable(enable: Boolean)
+}
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-actual fun DynamicThemePrimaryColorsFromImage(
+fun DynamicThemePrimaryColorsFromImage(
     dominantColorState: DominantColorState,
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable (() -> Unit),
 ) {
     val defaultScheme = MaterialTheme.colorScheme
@@ -56,7 +66,7 @@ actual fun DynamicThemePrimaryColorsFromImage(
         )
 
     LaunchedEffect(seedColor) {
-        scheme = createThemeFromSeed(seedColor, isDark = true)
+        scheme = createThemeFromSeed(seedColor, isDark = isDarkTheme)
     }
 
     MaterialExpressiveTheme(
@@ -66,11 +76,11 @@ actual fun DynamicThemePrimaryColorsFromImage(
 }
 
 @Composable
-actual fun rememberDominantColorState(
-    defaultColor: Color,
-    defaultOnColor: Color,
-    cacheSize: Int,
-    isColorValid: (Color) -> Boolean,
+fun rememberDominantColorState(
+    defaultColor: Color = MaterialTheme.colorScheme.primary,
+    defaultOnColor: Color = MaterialTheme.colorScheme.onPrimary,
+    cacheSize: Int = 12,
+    isColorValid: (Color) -> Boolean = { true },
 ): DominantColorState {
     val context = LocalContext.current
     return remember {

@@ -11,13 +11,13 @@ import com.slack.circuit.runtime.screen.Screen
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-actual data object HomeScreen : Screen
+data object HomeScreen : Screen
 
 @Parcelize
-actual data object LibraryScreen : Screen
+data object LibraryScreen : Screen
 
-actual data class LibraryDetailScreen actual constructor(
-    actual val datasource: LibraryDataSource,
+data class LibraryDetailScreen constructor(
+    val datasource: LibraryDataSource,
 ) : Screen {
     constructor(parcel: Parcel) : this(
         LibraryDataSource.parseFromString(parcel.readString()!!),
@@ -40,7 +40,7 @@ actual data class LibraryDetailScreen actual constructor(
 }
 
 @Parcelize
-actual object SearchScreen : Screen
+object SearchScreen : Screen
 
 @Parcelize
-actual object TabManageScreen : Screen
+object TabManageScreen : Screen

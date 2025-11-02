@@ -98,7 +98,7 @@ fun LargePreviewCard(
 @Preview
 @Composable
 private fun AlbumCardPreview() {
-    MelodifyTheme {
+    MelodifyTheme(content = {
         Surface {
             LargePreviewCard(
                 imageModifier =
@@ -117,5 +117,5 @@ private fun AlbumCardPreview() {
                         " Sub title Sub title ",
             )
         }
-    }
+    })
 }

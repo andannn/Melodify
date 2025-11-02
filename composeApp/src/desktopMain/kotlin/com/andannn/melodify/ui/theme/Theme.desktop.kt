@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 @Composable
 actual fun MelodifyTheme(
     darkTheme: Boolean,
-    isDynamicColor: Boolean,
     content: @Composable (() -> Unit),
 ) {
     val colorScheme =

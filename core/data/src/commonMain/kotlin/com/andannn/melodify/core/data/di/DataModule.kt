@@ -4,10 +4,10 @@
  */
 package com.andannn.melodify.core.data.di
 
+import com.andannn.melodify.core.data.LyricRepository
 import com.andannn.melodify.core.data.MediaContentRepository
 import com.andannn.melodify.core.data.PlayListRepository
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.internal.LyricRepository
 import com.andannn.melodify.core.data.internal.LyricRepositoryImpl
 import com.andannn.melodify.core.data.internal.MediaContentRepositoryImpl
 import com.andannn.melodify.core.data.internal.PlayListRepositoryImpl

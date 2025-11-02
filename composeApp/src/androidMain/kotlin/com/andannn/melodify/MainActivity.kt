@@ -6,11 +6,9 @@ package com.andannn.melodify
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -53,17 +51,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         SyncJobService.scheduleSyncLibraryJob(this)
         SyncWorkHelper.registerPeriodicSyncWork(this)
-
-        enableEdgeToEdge(
-            statusBarStyle =
-                SystemBarStyle.dark(
-                    scrim = Color.TRANSPARENT,
-                ),
-        )
 
         var deleteHelper: MediaFileDeleteHelperImpl? = null
         val deleteIntentSenderLauncher: ActivityResultLauncher<IntentSenderRequest> =
@@ -145,7 +137,7 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(
                 LocalMediaFileDeleteHelper provides deleteHelper,
             ) {
-                MelodifyTheme(darkTheme = true, isDynamicColor = true) {
+                MelodifyTheme {
                     when (uiState) {
                         is MainUiState.Error -> {
                             ConnectFailedAlertDialog(
