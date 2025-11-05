@@ -25,8 +25,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.LocalMediaFileDeleteHelper
 import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
+import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -54,14 +56,16 @@ fun rememberLibraryDetailScreenPresenter(
     navigator: Navigator,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
+    mediaFileDeleteHelper: MediaFileDeleteHelper = LocalMediaFileDeleteHelper.current,
 ): Presenter<LibraryDetailScreenState> =
     remember(
         dataSource,
         navigator,
         repository,
         popupController,
+        mediaFileDeleteHelper,
     ) {
-        LibraryDetailScreenPresenter(dataSource, navigator, repository, popupController)
+        LibraryDetailScreenPresenter(dataSource, navigator, repository, popupController, mediaFileDeleteHelper)
     }
 
 private class LibraryDetailScreenPresenter(
@@ -69,6 +73,7 @@ private class LibraryDetailScreenPresenter(
     private val navigator: Navigator,
     private val repository: Repository,
     private val popupController: PopupController,
+    private val fileDeleteHelper: MediaFileDeleteHelper,
 ) : Presenter<LibraryDetailScreenState> {
     @Composable
     override fun present(): LibraryDetailScreenState {
@@ -78,19 +83,18 @@ private class LibraryDetailScreenPresenter(
             dataSource = dataSource,
             state = state,
         ) { event ->
-            with(repository) {
-                with(popupController) {
-                    when (event) {
-                        LibraryDetailScreenEvent.OnBackKeyPressed -> navigator.pop()
-                        is LibraryDetailScreenEvent.OnMediaItemClick ->
-                            if (dataSource.browseable()) {
-                                navigator.goTo(LibraryDetailScreen(event.mediaItem.asLibraryDataSource()))
-                            } else {
-                                state.eventSink.invoke(LibraryContentEvent.OnRequestPlay(event.mediaItem as AudioItemModel))
-                            }
+            context(repository, popupController, fileDeleteHelper) {
+                when (event) {
+                    LibraryDetailScreenEvent.OnBackKeyPressed -> navigator.pop()
+                    is LibraryDetailScreenEvent.OnMediaItemClick ->
+                        if (dataSource.browseable()) {
+                            navigator.goTo(LibraryDetailScreen(event.mediaItem.asLibraryDataSource()))
+                        } else {
+                            state.eventSink.invoke(LibraryContentEvent.OnRequestPlay(event.mediaItem as AudioItemModel))
+                        }
 
-                        LibraryDetailScreenEvent.OnOptionClick -> {
-                            val item = state.mediaItem ?: return@with
+                    LibraryDetailScreenEvent.OnOptionClick -> {
+                        state.mediaItem?.let { item ->
                             scope.launch { showLibraryMediaOption(item) }
                         }
                     }

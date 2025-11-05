@@ -9,8 +9,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.andannn.melodify.LocalMediaFileDeleteHelper
 import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
+import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AlbumItemModel
@@ -88,17 +90,20 @@ private fun rememberMediaLibraryItemPresenter(
     playListId: String?,
     popupController: PopupController = LocalPopupController.current,
     repository: Repository = LocalRepository.current,
+    fileDeleteHelper: MediaFileDeleteHelper = LocalMediaFileDeleteHelper.current,
 ) = remember(
     mediaItemModel,
     playListId,
     popupController,
     repository,
+    fileDeleteHelper,
 ) {
     MediaLibraryItemPresenter(
         mediaItemModel = mediaItemModel,
         playListId = playListId,
         popupController = popupController,
         repository = repository,
+        fileDeleteHelper = fileDeleteHelper,
     )
 }
 
@@ -107,22 +112,21 @@ private class MediaLibraryItemPresenter(
     private val playListId: String?,
     private val popupController: PopupController,
     private val repository: Repository,
+    private val fileDeleteHelper: MediaFileDeleteHelper,
 ) : Presenter<UiState> {
     @Composable
     override fun present(): UiState {
         val scope = rememberCoroutineScope()
         return UiState { event ->
-            with(popupController) {
-                with(repository) {
-                    when (event) {
-                        UiEvent.OnOptionButtonClick ->
-                            scope.launch {
-                                showLibraryMediaOption(
-                                    media = mediaItemModel,
-                                    playListId = playListId,
-                                )
-                            }
-                    }
+            context(popupController, repository, fileDeleteHelper) {
+                when (event) {
+                    UiEvent.OnOptionButtonClick ->
+                        scope.launch {
+                            showLibraryMediaOption(
+                                media = mediaItemModel,
+                                playListId = playListId,
+                            )
+                        }
                 }
             }
         }
