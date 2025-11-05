@@ -2,11 +2,10 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.components.librarydetail.item
+package com.andannn.melodify.ui.components.mediaitem
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.andannn.melodify.LocalMediaFileDeleteHelper
@@ -23,6 +22,7 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.ui.components.librarydetail.showLibraryMediaOption
 import com.andannn.melodify.ui.widgets.ListTileItemView
+import com.andannn.melodify.viewModelScope
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
@@ -116,12 +116,12 @@ private class MediaLibraryItemPresenter(
 ) : Presenter<UiState> {
     @Composable
     override fun present(): UiState {
-        val scope = rememberCoroutineScope()
+        val viewModelScope = viewModelScope()
         return UiState { event ->
             context(popupController, repository, fileDeleteHelper) {
                 when (event) {
                     UiEvent.OnOptionButtonClick ->
-                        scope.launch {
+                        viewModelScope.launch {
                             showLibraryMediaOption(
                                 media = mediaItemModel,
                                 playListId = playListId,
