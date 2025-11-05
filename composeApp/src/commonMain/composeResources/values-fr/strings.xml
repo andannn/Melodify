@@ -88,4 +88,9 @@
     <string name="go_to_library_artist">Aller à l’artiste</string>
 
     <string name="delete_media_file">Supprimer le fichier multimédia</string>
+    <string name="one_deleted">1 chanson supprimée avec succès</string>
+    <string name="multiple_deleted">%1$d chansons supprimées avec succès</string>
+    <string name="added_to_play_next">Ajouté à la lecture suivante</string>
+    <string name="added_to_play_queue">Ajouté à la file d’attente de lecture</string>
+    <string name="delete_failed">Échec de la suppression</string>
 </resources>

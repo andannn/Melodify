@@ -89,4 +89,10 @@
     <string name="go_to_library_artist">Zur Künstleransicht</string>
 
     <string name="delete_media_file">Mediendatei löschen</string>
+
+    <string name="one_deleted">1 Lied erfolgreich gelöscht</string>
+    <string name="multiple_deleted">%1$d Lieder erfolgreich gelöscht</string>
+    <string name="added_to_play_next">Zur nächsten Wiedergabe hinzugefügt</string>
+    <string name="added_to_play_queue">Zur Wiedergabeliste hinzugefügt</string>
+    <string name="delete_failed">Löschen fehlgeschlagen</string>
 </resources>
