@@ -147,8 +147,7 @@ private suspend fun resyncAllSongs() =
                     when (it) {
                         SyncStatus.Complete ->
                             popController.showSnackBar(
-                                SnackBarMessage.SyncCompleted,
-                                mediaCount ?: 0,
+                                SnackBarMessage.SyncCompleted(mediaCount ?: 0),
                             )
 
                         SyncStatus.Failed ->
@@ -161,8 +160,7 @@ private suspend fun resyncAllSongs() =
                                 mediaCount = it.total
                             }
                             popController.showSnackBar(
-                                SnackBarMessage.SyncProgress,
-                                it.toSnackBarInfoString(),
+                                SnackBarMessage.SyncProgress(it.toSnackBarInfoString()),
                             )
                         }
 

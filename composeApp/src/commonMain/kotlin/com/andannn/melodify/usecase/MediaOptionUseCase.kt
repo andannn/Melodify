@@ -176,8 +176,7 @@ private suspend fun PlayListItemModel.addAll(audioList: List<AudioItemModel>) {
             )
 
             popupController.showSnackBar(
-                message = SnackBarMessage.AddPlayListSuccess,
-                name,
+                message = SnackBarMessage.AddPlayListSuccess(name),
             )
         }
 

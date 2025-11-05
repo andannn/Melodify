@@ -35,11 +35,8 @@ class PopupControllerImpl : PopupController {
     /**
      * Show snackbar and wait for user interaction.
      */
-    override suspend fun showSnackBar(
-        message: SnackBarMessage,
-        vararg messageFormatArgs: Any,
-    ): SnackbarResult =
-        snackBarController?.showSnackbar(message.toSnackbarVisuals(messageFormatArgs.toList()))
+    override suspend fun showSnackBar(message: SnackBarMessage): SnackbarResult =
+        snackBarController?.showSnackbar(message.toSnackbarVisuals())
             ?: error("Snackbar HostState is not setup. ")
 
     /**

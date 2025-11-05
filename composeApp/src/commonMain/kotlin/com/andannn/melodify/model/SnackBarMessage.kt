@@ -23,9 +23,13 @@ sealed class SnackBarMessage(
     private val actionLabel: StringResource? = null,
     private val withDismissAction: Boolean = false,
 ) {
-    data object AddPlayListSuccess : SnackBarMessage(
-        message = Res.string.add_to_playlist_success_message,
-    )
+    open fun getArgs(): List<Any> = emptyList()
+
+    data class AddPlayListSuccess(
+        val playListName: String,
+    ) : SnackBarMessage(message = Res.string.add_to_playlist_success_message) {
+        override fun getArgs(): List<Any> = listOf(playListName)
+    }
 
     data object AddPlayListFailed : SnackBarMessage(
         message = Res.string.add_to_playlist_failed_message,
@@ -39,22 +43,26 @@ sealed class SnackBarMessage(
         message = Res.string.sync_start,
     )
 
-    data object SyncProgress : SnackBarMessage(
-        message = Res.string.sync_progress,
-    )
+    data class SyncProgress(
+        val info: String,
+    ) : SnackBarMessage(message = Res.string.sync_progress) {
+        override fun getArgs(): List<Any> = listOf(info)
+    }
 
-    data object SyncCompleted : SnackBarMessage(
-        message = Res.string.sync_completed,
-    )
+    data class SyncCompleted(
+        val num: Int,
+    ) : SnackBarMessage(message = Res.string.sync_completed) {
+        override fun getArgs(): List<Any> = listOf(num)
+    }
 
     data object SyncFailed : SnackBarMessage(
         message = Res.string.sync_failed,
     )
 
-    suspend fun toSnackbarVisuals(messageFormatArgs: List<Any>): SnackbarVisuals {
+    suspend fun toSnackbarVisuals(): SnackbarVisuals {
         val actionLabel = actionLabel?.let { getString(it) }
         val duration = duration
-        val message = getString(message, *messageFormatArgs.toTypedArray())
+        val message = getString(message, *getArgs().toTypedArray())
         val withDismissAction = withDismissAction
         return object : SnackbarVisuals {
             override val actionLabel = actionLabel
