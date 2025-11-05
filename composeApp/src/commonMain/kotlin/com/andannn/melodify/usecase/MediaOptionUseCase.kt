@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.usecase
 
+import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.PlayListRepository
 import com.andannn.melodify.core.data.Repository
@@ -132,6 +133,21 @@ suspend fun addToPlaylist(items: List<AudioItemModel>) {
         result.playList.addAll(audioList = result.audios)
     } else if (result is DialogAction.AddToPlayListDialog.OnCreateNewPlayList) {
         createNewPlayList(items)
+    }
+}
+
+context(deleteHelper: MediaFileDeleteHelper, popupController: PopupController)
+suspend fun deleteItems(items: List<AudioItemModel>) {
+    if (items.isEmpty()) {
+        return
+    }
+
+    deleteHelper.deleteMedias(items)
+    Napier.d(tag = TAG) { "deleteItems. done" }
+    if (items.size == 1) {
+        popupController.showSnackBar(SnackBarMessage.OneDeleteSuccess)
+    } else {
+        popupController.showSnackBar(SnackBarMessage.MultipleDeleteSuccess(items.size))
     }
 }
 

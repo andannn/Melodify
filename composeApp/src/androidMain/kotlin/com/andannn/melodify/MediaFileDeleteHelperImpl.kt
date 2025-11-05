@@ -70,6 +70,7 @@ class MediaFileDeleteHelperImpl(
                     // Mark file as deleted.
                     mediaLibraryRepository.markMediaAsDeleted(ids)
 
+                    // Side Effect to re-scan MediaStore.
                     Napier.d(tag = TAG) { "scan start ${paths.toList()}" }
                     MediaScannerConnection.scanFile(
                         context,
