@@ -11,6 +11,7 @@ import melodify.composeapp.generated.resources.add_to_playlist_failed_message
 import melodify.composeapp.generated.resources.add_to_playlist_success_message
 import melodify.composeapp.generated.resources.added_to_play_next
 import melodify.composeapp.generated.resources.added_to_play_queue
+import melodify.composeapp.generated.resources.delete_failed
 import melodify.composeapp.generated.resources.multiple_deleted
 import melodify.composeapp.generated.resources.one_deleted
 import melodify.composeapp.generated.resources.sync_completed
@@ -79,6 +80,10 @@ sealed class SnackBarMessage(
 
     data object AddedToPlayQueue : SnackBarMessage(
         message = Res.string.added_to_play_queue,
+    )
+
+    data object DeleteFailed : SnackBarMessage(
+        message = Res.string.delete_failed,
     )
 
     suspend fun toSnackbarVisuals(): SnackbarVisuals {

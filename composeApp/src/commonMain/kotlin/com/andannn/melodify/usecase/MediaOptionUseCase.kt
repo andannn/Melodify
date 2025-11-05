@@ -37,7 +37,8 @@ suspend fun MediaItemModel.pinToHomeTab() {
             is PlayListItemModel -> TabKind.PLAYLIST
             is AudioItemModel -> error("invalid")
         }
-    val exist = userPreferenceRepository.isTabExist(externalId = id, tabName = name, tabKind = tabKind)
+    val exist =
+        userPreferenceRepository.isTabExist(externalId = id, tabName = name, tabKind = tabKind)
     if (exist) {
         popupController.showSnackBar(SnackBarMessage.TabAlreadyExist)
     } else {
@@ -144,12 +145,22 @@ suspend fun deleteItems(items: List<AudioItemModel>) {
         return
     }
 
-    deleteHelper.deleteMedias(items)
-    Napier.d(tag = TAG) { "deleteItems. done" }
-    if (items.size == 1) {
-        popupController.showSnackBar(SnackBarMessage.OneDeleteSuccess)
-    } else {
-        popupController.showSnackBar(SnackBarMessage.MultipleDeleteSuccess(items.size))
+    when (deleteHelper.deleteMedias(items)) {
+        MediaFileDeleteHelper.Result.Success -> {
+            if (items.size == 1) {
+                popupController.showSnackBar(SnackBarMessage.OneDeleteSuccess)
+            } else {
+                popupController.showSnackBar(SnackBarMessage.MultipleDeleteSuccess(items.size))
+            }
+        }
+
+        MediaFileDeleteHelper.Result.Failed -> {
+            popupController.showSnackBar(SnackBarMessage.DeleteFailed)
+        }
+
+        MediaFileDeleteHelper.Result.Denied -> {
+            // Noop
+        }
     }
 }
 

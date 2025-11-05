@@ -33,7 +33,7 @@ class MediaFileDeleteHelperImpl(
     private var currentCompleter: CompletableDeferred<ActivityResult>? = null
     private val mutex = Mutex()
 
-    override suspend fun deleteMedias(mediaList: List<AudioItemModel>) =
+    override suspend fun deleteMedias(mediaList: List<AudioItemModel>): MediaFileDeleteHelper.Result =
         mutex.withLock {
             val completer = CompletableDeferred<ActivityResult>()
             currentCompleter = completer
@@ -79,7 +79,13 @@ class MediaFileDeleteHelperImpl(
                     ) { path, uri ->
                         Napier.d(tag = TAG) { "scan finished. ${Thread.currentThread().name}" }
                     }
+                    MediaFileDeleteHelper.Result.Success
+                } else {
+                    MediaFileDeleteHelper.Result.Denied
                 }
+            } catch (e: Exception) {
+                Napier.e(tag = TAG, throwable = e) { "delete failed" }
+                MediaFileDeleteHelper.Result.Failed
             } finally {
                 currentCompleter = null
             }
