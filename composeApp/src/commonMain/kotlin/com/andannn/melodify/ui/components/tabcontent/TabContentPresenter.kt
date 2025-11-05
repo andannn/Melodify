@@ -35,6 +35,7 @@ import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.contentFlow
 import com.andannn.melodify.usecase.contentPagingDataFlow
+import com.andannn.melodify.usecase.deleteItems
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -221,7 +222,7 @@ class TabContentPresenter(
         }
     }
 
-    context(_: Repository, _: PopupController, fileDeleteHelper: MediaFileDeleteHelper)
+    context(_: Repository, _: PopupController, _: MediaFileDeleteHelper)
     private suspend fun handleGroupOption(
         optionItem: OptionItem,
         groupKeys: List<GroupKey?>,
@@ -238,12 +239,12 @@ class TabContentPresenter(
             OptionItem.PLAY_NEXT -> addToNextPlay(items)
             OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items)
             OptionItem.ADD_TO_QUEUE -> addToQueue(items)
-            OptionItem.DELETE_MEDIA_FILE -> fileDeleteHelper.deleteMedias(items)
+            OptionItem.DELETE_MEDIA_FILE -> deleteItems(items)
             else -> {}
         }
     }
 
-    context(repository: Repository, popupController: PopupController)
+    context(_: Repository, popupController: PopupController, _: MediaFileDeleteHelper)
     private suspend fun onShowMusicItemOption(item: AudioItemModel) {
         val options =
             listOf(
@@ -265,11 +266,9 @@ class TabContentPresenter(
                 OptionItem.PLAY_NEXT -> addToNextPlay(listOf(item))
                 OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(item))
                 OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item))
+                OptionItem.DELETE_MEDIA_FILE -> deleteItems(listOf(item))
                 OptionItem.OPEN_LIBRARY_ALBUM -> onRequestGoToAlbum(item)
                 OptionItem.OPEN_LIBRARY_ARTIST -> onRequestGoToArtist(item)
-                OptionItem.DELETE_MEDIA_FILE -> {
-                    mediaFileDeleteHelper.deleteMedias(listOf(item))
-                }
                 else -> {}
             }
         }

@@ -9,6 +9,11 @@ import androidx.compose.material3.SnackbarVisuals
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.add_to_playlist_failed_message
 import melodify.composeapp.generated.resources.add_to_playlist_success_message
+import melodify.composeapp.generated.resources.added_to_play_next
+import melodify.composeapp.generated.resources.added_to_play_queue
+import melodify.composeapp.generated.resources.delete_failed
+import melodify.composeapp.generated.resources.multiple_deleted
+import melodify.composeapp.generated.resources.one_deleted
 import melodify.composeapp.generated.resources.sync_completed
 import melodify.composeapp.generated.resources.sync_failed
 import melodify.composeapp.generated.resources.sync_progress
@@ -23,9 +28,13 @@ sealed class SnackBarMessage(
     private val actionLabel: StringResource? = null,
     private val withDismissAction: Boolean = false,
 ) {
-    data object AddPlayListSuccess : SnackBarMessage(
-        message = Res.string.add_to_playlist_success_message,
-    )
+    open fun getArgs(): List<Any> = emptyList()
+
+    data class AddPlayListSuccess(
+        val playListName: String,
+    ) : SnackBarMessage(message = Res.string.add_to_playlist_success_message) {
+        override fun getArgs(): List<Any> = listOf(playListName)
+    }
 
     data object AddPlayListFailed : SnackBarMessage(
         message = Res.string.add_to_playlist_failed_message,
@@ -39,22 +48,48 @@ sealed class SnackBarMessage(
         message = Res.string.sync_start,
     )
 
-    data object SyncProgress : SnackBarMessage(
-        message = Res.string.sync_progress,
-    )
+    data class SyncProgress(
+        val info: String,
+    ) : SnackBarMessage(message = Res.string.sync_progress) {
+        override fun getArgs(): List<Any> = listOf(info)
+    }
 
-    data object SyncCompleted : SnackBarMessage(
-        message = Res.string.sync_completed,
-    )
+    data class SyncCompleted(
+        val num: Int,
+    ) : SnackBarMessage(message = Res.string.sync_completed) {
+        override fun getArgs(): List<Any> = listOf(num)
+    }
 
     data object SyncFailed : SnackBarMessage(
         message = Res.string.sync_failed,
     )
 
-    suspend fun toSnackbarVisuals(messageFormatArgs: List<Any>): SnackbarVisuals {
+    data class MultipleDeleteSuccess(
+        val num: Int,
+    ) : SnackBarMessage(message = Res.string.multiple_deleted) {
+        override fun getArgs(): List<Any> = listOf(num)
+    }
+
+    data object OneDeleteSuccess : SnackBarMessage(
+        message = Res.string.one_deleted,
+    )
+
+    data object AddedToPlayNext : SnackBarMessage(
+        message = Res.string.added_to_play_next,
+    )
+
+    data object AddedToPlayQueue : SnackBarMessage(
+        message = Res.string.added_to_play_queue,
+    )
+
+    data object DeleteFailed : SnackBarMessage(
+        message = Res.string.delete_failed,
+    )
+
+    suspend fun toSnackbarVisuals(): SnackbarVisuals {
         val actionLabel = actionLabel?.let { getString(it) }
         val duration = duration
-        val message = getString(message, *messageFormatArgs.toTypedArray())
+        val message = getString(message, *getArgs().toTypedArray())
         val withDismissAction = withDismissAction
         return object : SnackbarVisuals {
             override val actionLabel = actionLabel

@@ -88,4 +88,10 @@
     <string name="go_to_library_artist">아티스트로 이동</string>
 
     <string name="delete_media_file">미디어 파일 삭제</string>
+
+    <string name="one_deleted">노래 1곡이 삭제되었습니다</string>
+    <string name="multiple_deleted">노래 %1$d곡이 삭제되었습니다</string>
+    <string name="added_to_play_next">다음 재생에 추가됨</string>
+    <string name="added_to_play_queue">재생 목록에 추가됨</string>
+    <string name="delete_failed">삭제 실패</string>
 </resources>

@@ -89,4 +89,10 @@
     <string name="go_to_library_artist">Ir al artista</string>
 
     <string name="delete_media_file">Eliminar archivo multimedia</string>
+
+    <string name="one_deleted">1 canción eliminada correctamente</string>
+    <string name="multiple_deleted">%1$d canciones eliminadas correctamente</string>
+    <string name="added_to_play_next">Añadido para reproducir a continuación</string>
+    <string name="added_to_play_queue">Añadido a la cola de reproducción</string>
+    <string name="delete_failed">Error al eliminar</string>
 </resources>

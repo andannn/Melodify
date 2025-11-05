@@ -85,4 +85,9 @@
     <string name="go_to_library_album">Go to album</string>
     <string name="go_to_library_artist">Go to artist</string>
     <string name="delete_media_file">Delete media file</string>
+    <string name="one_deleted">1 song deleted successfully</string>
+    <string name="multiple_deleted">%1$d songs deleted successfully</string>
+    <string name="added_to_play_next">Added to play next</string>
+    <string name="added_to_play_queue">Added to play queue</string>
+    <string name="delete_failed">Delete failed</string>
 </resources>

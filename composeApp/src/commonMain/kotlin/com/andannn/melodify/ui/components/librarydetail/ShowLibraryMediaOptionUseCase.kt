@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.ui.components.librarydetail
 
+import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -19,6 +20,7 @@ import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.content
 import com.andannn.melodify.usecase.delete
 import com.andannn.melodify.usecase.deleteItemInPlayList
+import com.andannn.melodify.usecase.deleteItems
 import com.andannn.melodify.usecase.pinToHomeTab
 import kotlinx.coroutines.flow.first
 
@@ -28,7 +30,7 @@ import kotlinx.coroutines.flow.first
  * @param media Media item.
  * @param playListId set playlist id when the [media] is from playlist. Default is null.
  */
-context(popController: PopupController, repository: Repository)
+context(popController: PopupController, repository: Repository, fileDeleteHelper: MediaFileDeleteHelper)
 suspend fun showLibraryMediaOption(
     media: MediaItemModel,
     playListId: String? = null,
@@ -49,6 +51,7 @@ suspend fun showLibraryMediaOption(
             add(OptionItem.PLAY_NEXT)
             add(OptionItem.ADD_TO_QUEUE)
             add(OptionItem.ADD_TO_PLAYLIST)
+            if (isAudio) add(OptionItem.DELETE_MEDIA_FILE)
             if (!isAudio) add(OptionItem.ADD_TO_HOME_TAB)
             if (isPlayList && !isFavoritePlayList) add(OptionItem.DELETE_PLAYLIST)
             if (playListId != null && isAudio) add(OptionItem.DELETE_FROM_PLAYLIST)
@@ -66,6 +69,7 @@ suspend fun showLibraryMediaOption(
             OptionItem.ADD_TO_HOME_TAB -> media.pinToHomeTab()
             OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(medias())
             OptionItem.DELETE_PLAYLIST -> (media as PlayListItemModel).delete()
+            OptionItem.DELETE_MEDIA_FILE -> deleteItems(medias())
             OptionItem.DELETE_FROM_PLAYLIST ->
                 deleteItemInPlayList(
                     playListId = playListId!!,

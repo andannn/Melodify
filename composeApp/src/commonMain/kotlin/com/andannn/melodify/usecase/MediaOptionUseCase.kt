@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.usecase
 
+import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.PlayListRepository
 import com.andannn.melodify.core.data.Repository
@@ -36,7 +37,8 @@ suspend fun MediaItemModel.pinToHomeTab() {
             is PlayListItemModel -> TabKind.PLAYLIST
             is AudioItemModel -> error("invalid")
         }
-    val exist = userPreferenceRepository.isTabExist(externalId = id, tabName = name, tabKind = tabKind)
+    val exist =
+        userPreferenceRepository.isTabExist(externalId = id, tabName = name, tabKind = tabKind)
     if (exist) {
         popupController.showSnackBar(SnackBarMessage.TabAlreadyExist)
     } else {
@@ -44,7 +46,7 @@ suspend fun MediaItemModel.pinToHomeTab() {
     }
 }
 
-context(repo: Repository)
+context(repo: Repository, popupController: PopupController)
 suspend fun addToNextPlay(items: List<AudioItemModel>) {
     val havePlayingQueue = repo.getPlayListQueue().isNotEmpty()
     if (havePlayingQueue) {
@@ -55,9 +57,10 @@ suspend fun addToNextPlay(items: List<AudioItemModel>) {
     } else {
         repo.playMediaList(items, 0)
     }
+    popupController.showSnackBar(SnackBarMessage.AddedToPlayNext)
 }
 
-context(repo: Repository)
+context(repo: Repository, popupController: PopupController)
 suspend fun addToQueue(items: List<AudioItemModel>) {
     val playListQueue = repo.getPlayListQueue()
     if (playListQueue.isNotEmpty()) {
@@ -68,6 +71,7 @@ suspend fun addToQueue(items: List<AudioItemModel>) {
     } else {
         repo.playMediaList(items, 0)
     }
+    popupController.showSnackBar(SnackBarMessage.AddedToPlayQueue)
 }
 
 context(playListRepository: PlayListRepository)
@@ -135,6 +139,31 @@ suspend fun addToPlaylist(items: List<AudioItemModel>) {
     }
 }
 
+context(deleteHelper: MediaFileDeleteHelper, popupController: PopupController)
+suspend fun deleteItems(items: List<AudioItemModel>) {
+    if (items.isEmpty()) {
+        return
+    }
+
+    when (deleteHelper.deleteMedias(items)) {
+        MediaFileDeleteHelper.Result.Success -> {
+            if (items.size == 1) {
+                popupController.showSnackBar(SnackBarMessage.OneDeleteSuccess)
+            } else {
+                popupController.showSnackBar(SnackBarMessage.MultipleDeleteSuccess(items.size))
+            }
+        }
+
+        MediaFileDeleteHelper.Result.Failed -> {
+            popupController.showSnackBar(SnackBarMessage.DeleteFailed)
+        }
+
+        MediaFileDeleteHelper.Result.Denied -> {
+            // Noop
+        }
+    }
+}
+
 context(repo: Repository, popupController: PopupController)
 private suspend fun createNewPlayList(items: List<AudioItemModel>) {
     val result = popupController.showDialog(DialogId.NewPlayListDialog)
@@ -176,8 +205,7 @@ private suspend fun PlayListItemModel.addAll(audioList: List<AudioItemModel>) {
             )
 
             popupController.showSnackBar(
-                message = SnackBarMessage.AddPlayListSuccess,
-                name,
+                message = SnackBarMessage.AddPlayListSuccess(name),
             )
         }
 

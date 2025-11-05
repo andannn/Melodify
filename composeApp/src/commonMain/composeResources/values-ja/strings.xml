@@ -89,4 +89,10 @@
     <string name="go_to_library_artist">アーティストへ移動</string>
 
     <string name="delete_media_file">メディアファイルを削除</string>
+
+    <string name="one_deleted">1 曲を削除しました</string>
+    <string name="multiple_deleted">%1$d 曲を削除しました</string>
+    <string name="added_to_play_next">次に再生するリストに追加しました</string>
+    <string name="added_to_play_queue">再生キューに追加しました</string>
+    <string name="delete_failed">削除に失敗しました</string>
 </resources>

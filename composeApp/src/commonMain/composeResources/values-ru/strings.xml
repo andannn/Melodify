@@ -89,4 +89,10 @@
     <string name="go_to_library_artist">Перейти к исполнителю</string>
 
     <string name="delete_media_file">Удалить медиафайл</string>
+
+    <string name="one_deleted">1 песня успешно удалена</string>
+    <string name="multiple_deleted">%1$d песен успешно удалено</string>
+    <string name="added_to_play_next">Добавлено для следующего воспроизведения</string>
+    <string name="added_to_play_queue">Добавлено в очередь воспроизведения</string>
+    <string name="delete_failed">Не удалось удалить</string>
 </resources>

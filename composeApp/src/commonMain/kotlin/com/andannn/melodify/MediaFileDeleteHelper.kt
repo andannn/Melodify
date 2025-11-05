@@ -12,5 +12,16 @@ val LocalMediaFileDeleteHelper: ProvidableCompositionLocal<MediaFileDeleteHelper
     compositionLocalOf { error("MediaFileDeleteHelper") }
 
 interface MediaFileDeleteHelper {
-    suspend fun deleteMedias(mediaList: List<AudioItemModel>)
+    /**
+     * Delete all [mediaList].
+     *
+     * @return true if all files are deleted successfully, false otherwise.
+     */
+    suspend fun deleteMedias(mediaList: List<AudioItemModel>): Result
+
+    enum class Result {
+        Success,
+        Failed,
+        Denied,
+    }
 }

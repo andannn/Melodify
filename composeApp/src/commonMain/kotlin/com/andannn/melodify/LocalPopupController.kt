@@ -24,10 +24,7 @@ interface PopupController {
 
     var snackBarController: SnackbarHostState?
 
-    suspend fun showSnackBar(
-        message: SnackBarMessage,
-        vararg messageFormatArgs: Any,
-    ): SnackbarResult
+    suspend fun showSnackBar(message: SnackBarMessage): SnackbarResult
 
     suspend fun showDialog(dialogId: DialogId): DialogAction
 }
