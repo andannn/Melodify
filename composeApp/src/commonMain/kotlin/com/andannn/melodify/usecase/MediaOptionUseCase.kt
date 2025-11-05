@@ -45,7 +45,7 @@ suspend fun MediaItemModel.pinToHomeTab() {
     }
 }
 
-context(repo: Repository)
+context(repo: Repository, popupController: PopupController)
 suspend fun addToNextPlay(items: List<AudioItemModel>) {
     val havePlayingQueue = repo.getPlayListQueue().isNotEmpty()
     if (havePlayingQueue) {
@@ -56,9 +56,10 @@ suspend fun addToNextPlay(items: List<AudioItemModel>) {
     } else {
         repo.playMediaList(items, 0)
     }
+    popupController.showSnackBar(SnackBarMessage.AddedToPlayNext)
 }
 
-context(repo: Repository)
+context(repo: Repository, popupController: PopupController)
 suspend fun addToQueue(items: List<AudioItemModel>) {
     val playListQueue = repo.getPlayListQueue()
     if (playListQueue.isNotEmpty()) {
@@ -69,6 +70,7 @@ suspend fun addToQueue(items: List<AudioItemModel>) {
     } else {
         repo.playMediaList(items, 0)
     }
+    popupController.showSnackBar(SnackBarMessage.AddedToPlayQueue)
 }
 
 context(playListRepository: PlayListRepository)

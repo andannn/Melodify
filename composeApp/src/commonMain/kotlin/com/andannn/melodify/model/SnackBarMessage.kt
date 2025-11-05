@@ -9,6 +9,8 @@ import androidx.compose.material3.SnackbarVisuals
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.add_to_playlist_failed_message
 import melodify.composeapp.generated.resources.add_to_playlist_success_message
+import melodify.composeapp.generated.resources.added_to_play_next
+import melodify.composeapp.generated.resources.added_to_play_queue
 import melodify.composeapp.generated.resources.multiple_deleted
 import melodify.composeapp.generated.resources.one_deleted
 import melodify.composeapp.generated.resources.sync_completed
@@ -69,6 +71,14 @@ sealed class SnackBarMessage(
 
     data object OneDeleteSuccess : SnackBarMessage(
         message = Res.string.one_deleted,
+    )
+
+    data object AddedToPlayNext : SnackBarMessage(
+        message = Res.string.added_to_play_next,
+    )
+
+    data object AddedToPlayQueue : SnackBarMessage(
+        message = Res.string.added_to_play_queue,
     )
 
     suspend fun toSnackbarVisuals(): SnackbarVisuals {
