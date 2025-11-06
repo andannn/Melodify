@@ -15,22 +15,34 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.andannn.melodify.LocalRootNavigator
+import com.andannn.melodify.RootNavigator
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.components.tabmanagement.TabManagementContent
+import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.presenter.Presenter
+
+@Composable
+fun rememberTabManagementScreenPresenter(navigator: RootNavigator = LocalRootNavigator.current) =
+    remember(
+        navigator,
+    ) {
+        TabManagementScreenPresenter(
+            navigator = navigator,
+        )
+    }
 
 class TabManagementScreenPresenter(
-    private val navigator: Navigator,
-) : Presenter<TabManagementScreenState> {
+    private val navigator: RootNavigator,
+) : ScopedPresenter<TabManagementScreenState>() {
     @Composable
     override fun present(): TabManagementScreenState =
         TabManagementScreenState { event ->
             when (event) {
-                UiEvent.OnBackKeyPressed -> navigator.pop()
+                UiEvent.OnBackKeyPressed -> navigator.popBackStack()
             }
         }
 }

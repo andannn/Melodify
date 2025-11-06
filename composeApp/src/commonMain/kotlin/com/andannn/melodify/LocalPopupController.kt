@@ -12,6 +12,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.navigation3.runtime.NavEntryDecorator
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
@@ -55,7 +56,7 @@ private class PopupControllerNavEntryDecorator<T : Any> :
         onPop = {
         },
         decorate = { entry ->
-            val holder = remember { PopupControllerImpl() }
+            val holder = retain { PopupControllerImpl() }
             CompositionLocalProvider(
                 LocalPopupController provides holder,
             ) {

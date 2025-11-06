@@ -68,7 +68,7 @@ fun TabContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyListContent(
-    displaySetting: DisplaySetting,
+    displaySetting: DisplaySetting?,
     pagingItems: LazyPagingItems<AudioItemModel>,
     modifier: Modifier = Modifier,
     onGroupOptionClick: (item: OptionItem, List<GroupKey?>) -> Unit,
@@ -79,7 +79,7 @@ private fun LazyListContent(
     val items = pagingItems.itemSnapshotList
     val primaryGroupList =
         remember(items, displaySetting) {
-            items.groupByType(displaySetting)
+            displaySetting ?.let { items.groupByType(displaySetting) } ?: emptyList()
         }
     LazyColumn(
         modifier = modifier,
@@ -144,7 +144,7 @@ private fun LazyListContent(
                     if (primaryGroupKey != null) headerCount++
                     if (secondaryGroupKey != null) headerCount++
 
-                    val showTrackNum = displaySetting.showTrackNum
+                    val showTrackNum = displaySetting?.showTrackNum ?: true
                     Row(modifier = Modifier.height(IntrinsicSize.Min)) {
                         if (headerCount >= 2) {
                             val needConnection = secondaryGroupIndex != secondaryGroupList.lastIndex

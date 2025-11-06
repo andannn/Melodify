@@ -23,7 +23,9 @@ import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import com.andannn.melodify.ui.Nav3Screen
 import com.andannn.melodify.ui.routes.HomeUiScreen
+import com.andannn.melodify.ui.routes.TabManagementScreen
 import com.andannn.melodify.ui.routes.rememberHomeUiPresenter
+import com.andannn.melodify.ui.routes.rememberTabManagementScreenPresenter
 import org.koin.mp.KoinPlatform.getKoin
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -49,27 +51,23 @@ fun MelodifyMobileNav3App(modifier: Modifier = Modifier) {
                     sceneStrategy = DialogSceneStrategy<NavKey>() then SinglePaneSceneStrategy(),
                     entryDecorators =
                         listOf(
-                            rememberPopupControllerNavEntryDecorator(),
                             rememberRetainedValueStoreNavEntryDecorator(),
+                            rememberPopupControllerNavEntryDecorator(),
 //                            rememberSceneSetupNavEntryDecorator(),
 //                            rememberSavedStateNavEntryDecorator(),
 //                            rememberViewModelStoreNavEntryDecorator(),
                         ),
-                    transitionSpec = {
-                        // Slide in from right when navigating forward
-                        slideInHorizontally(initialOffsetX = { it }) togetherWith
-                            slideOutHorizontally(targetOffsetX = { -it })
-                    },
-                    popTransitionSpec = {
-                        // Slide in from left when navigating back
-                        slideInHorizontally(initialOffsetX = { -it }) togetherWith
-                            slideOutHorizontally(targetOffsetX = { it })
-                    },
                     entryProvider =
                         entryProvider {
                             entry<Nav3Screen.HomeScreen> {
                                 HomeUiScreen(
                                     rememberHomeUiPresenter().present(),
+                                )
+                            }
+
+                            entry<Nav3Screen.TabManageScreen> {
+                                TabManagementScreen(
+                                    rememberTabManagementScreenPresenter().present(),
                                 )
                             }
                         },

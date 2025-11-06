@@ -5,10 +5,8 @@
 package com.andannn.melodify.ui.routes
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.MoreVert
@@ -23,8 +21,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
@@ -36,14 +34,9 @@ import com.andannn.melodify.core.syncer.SyncMediaStoreHandler
 import com.andannn.melodify.core.syncer.SyncStatus
 import com.andannn.melodify.core.syncer.SyncType
 import com.andannn.melodify.model.DialogId
-import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.SnackBarMessage
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.LibraryDetailScreen
-import com.andannn.melodify.ui.LibraryScreen
 import com.andannn.melodify.ui.Nav3Screen
-import com.andannn.melodify.ui.SearchScreen
-import com.andannn.melodify.ui.TabManageScreen
 import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.components.tab.TabUi
 import com.andannn.melodify.ui.components.tab.TabUiState
@@ -51,11 +44,11 @@ import com.andannn.melodify.ui.components.tab.rememberTabUiPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContent
 import com.andannn.melodify.ui.components.tabcontent.TabContentState
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
+import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.widgets.DropDownMenuIconButton
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -69,7 +62,6 @@ import melodify.composeapp.generated.resources.sync_progress_genre
 import melodify.composeapp.generated.resources.sync_progress_media
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
@@ -78,7 +70,7 @@ internal fun rememberHomeUiPresenter(
     popController: PopupController = LocalPopupController.current,
     syncMediaStoreHandler: SyncMediaStoreHandler = getKoin().get(),
 ): Presenter<HomeState> =
-    remember(
+    retain(
         navigator,
         popController,
         syncMediaStoreHandler,
@@ -96,22 +88,21 @@ private class HomePresenter(
     private val navigator: RootNavigator,
     private val popController: PopupController,
     private val syncMediaStoreHandler: SyncMediaStoreHandler,
-) : Presenter<HomeState> {
+) : ScopedPresenter<HomeState>() {
     @Composable
     override fun present(): HomeState {
-        Napier.d(tag = "HomePresenter") { "HomePresenter present" }
         val scope = rememberCoroutineScope()
         val tabUiPresenter = rememberTabUiPresenter()
         val tabUiState = tabUiPresenter.present()
         val tabContentPresenter =
             rememberTabContentPresenter(
                 selectedTab = tabUiState.selectedTab,
-                onRequestGoToAlbum = {
-                    navigator.navigateTo(Nav3Screen.LibraryDetailScreen(LibraryDataSource.AlbumDetail(id = it.albumId)))
-                },
-                onRequestGoToArtist = {
-                    navigator.navigateTo(Nav3Screen.LibraryDetailScreen(LibraryDataSource.ArtistDetail(id = it.artistId)))
-                },
+//                onRequestGoToAlbum = {
+//                    navigator.navigateTo(Nav3Screen.LibraryDetailScreen(LibraryDataSource.AlbumDetail(id = it.albumId)))
+//                },
+//                onRequestGoToArtist = {
+//                    navigator.navigateTo(Nav3Screen.LibraryDetailScreen(LibraryDataSource.ArtistDetail(id = it.artistId)))
+//                },
             )
         return HomeState(
             tabUiState = tabUiState,

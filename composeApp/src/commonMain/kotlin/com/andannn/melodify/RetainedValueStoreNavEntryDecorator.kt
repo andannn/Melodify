@@ -19,7 +19,6 @@ private class RetainedValueStoreNavEntryDecorator<T : Any>(
     private val retainedValuesStoreRegistry: RetainedValuesStoreRegistry,
 ) : NavEntryDecorator<T>(
         onPop = {
-            Napier.d { "JQN on POP it $it" }
             retainedValuesStoreRegistry.clearChild(it)
         },
         decorate = { entry ->

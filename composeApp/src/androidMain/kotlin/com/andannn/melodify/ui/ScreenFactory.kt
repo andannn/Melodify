@@ -74,7 +74,7 @@ object PresenterFactory : Presenter.Factory {
 // //                    rememberHomeUiPresenter(navigator).present()
 //                }
 
-            is TabManageScreen -> TabManagementScreenPresenter(navigator)
+//            is TabManageScreen -> TabManagementScreenPresenter(navigator)
 
             is LibraryDetailScreen ->
                 presenterOf {
