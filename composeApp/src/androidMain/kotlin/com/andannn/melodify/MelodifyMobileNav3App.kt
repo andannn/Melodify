@@ -50,6 +50,7 @@ fun MelodifyMobileNav3App(modifier: Modifier = Modifier) {
                     entryDecorators =
                         listOf(
                             rememberPopupControllerNavEntryDecorator(),
+                            rememberRetainedValueStoreNavEntryDecorator(),
 //                            rememberSceneSetupNavEntryDecorator(),
 //                            rememberSavedStateNavEntryDecorator(),
 //                            rememberViewModelStoreNavEntryDecorator(),
