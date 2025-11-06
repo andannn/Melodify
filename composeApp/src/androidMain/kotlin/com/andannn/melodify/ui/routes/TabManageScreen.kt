@@ -15,9 +15,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
-import com.andannn.melodify.LocalRootNavigator
 import com.andannn.melodify.RootNavigator
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.components.tabmanagement.TabManagementContent
@@ -26,8 +25,8 @@ import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.slack.circuit.runtime.CircuitUiState
 
 @Composable
-fun rememberTabManagementScreenPresenter(navigator: RootNavigator = LocalRootNavigator.current) =
-    remember(
+fun rememberTabManagementScreenPresenter(navigator: RootNavigator) =
+    retain(
         navigator,
     ) {
         TabManagementScreenPresenter(

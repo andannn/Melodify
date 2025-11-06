@@ -4,12 +4,7 @@
  */
 package com.andannn.melodify
 
-import androidx.compose.runtime.ProvidableCompositionLocal
-import androidx.compose.runtime.compositionLocalOf
 import com.andannn.melodify.core.data.model.AudioItemModel
-
-val LocalMediaFileDeleteHelper: ProvidableCompositionLocal<MediaFileDeleteHelper> =
-    compositionLocalOf { error("MediaFileDeleteHelper") }
 
 interface MediaFileDeleteHelper {
     /**

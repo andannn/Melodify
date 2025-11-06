@@ -48,6 +48,9 @@ private val runTimePermissions =
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainActivityViewModel by viewModel()
     private val userPreferenceRepository: UserPreferenceRepository by inject()
+    private val mediaFileDeleteHelper: MediaFileDeleteHelper by inject()
+    private val deleteHelper: MediaFileDeleteHelperImpl
+        get() = mediaFileDeleteHelper as MediaFileDeleteHelperImpl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -57,18 +60,13 @@ class MainActivity : ComponentActivity() {
         SyncJobService.scheduleSyncLibraryJob(this)
         SyncWorkHelper.registerPeriodicSyncWork(this)
 
-        var deleteHelper: MediaFileDeleteHelperImpl? = null
         val deleteIntentSenderLauncher: ActivityResultLauncher<IntentSenderRequest> =
             registerForActivityResult(
                 contract = ActivityResultContracts.StartIntentSenderForResult(),
             ) { result ->
-                deleteHelper?.onResult(result)
+                deleteHelper.onResult(result)
             }
-
-        deleteHelper =
-            MediaFileDeleteHelperImpl(
-                deleteIntentSenderLauncher,
-            )
+        deleteHelper.intentSenderLauncher = deleteIntentSenderLauncher
 
         var uiState by mutableStateOf<MainUiState>(MainUiState.Init)
 
@@ -134,28 +132,29 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            CompositionLocalProvider(
-                LocalMediaFileDeleteHelper provides deleteHelper,
-            ) {
-                MelodifyTheme {
-                    when (uiState) {
-                        is MainUiState.Error -> {
-                            ConnectFailedAlertDialog(
-                                onDismiss = { finish() },
-                            )
-                        }
-
-                        MainUiState.Ready -> {
-                            if (permissionGranted) {
-                                MelodifyMobileNav3App()
-                            }
-                        }
-
-                        MainUiState.Init -> {}
+            MelodifyTheme {
+                when (uiState) {
+                    is MainUiState.Error -> {
+                        ConnectFailedAlertDialog(
+                            onDismiss = { finish() },
+                        )
                     }
+
+                    MainUiState.Ready -> {
+                        if (permissionGranted) {
+                            MelodifyMobileNav3App()
+                        }
+                    }
+
+                    MainUiState.Init -> {}
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        deleteHelper.intentSenderLauncher = null
     }
 
     private fun isPermissionGranted(): Boolean {

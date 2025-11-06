@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.LocalPopupController
-import com.andannn.melodify.LocalRootNavigator
 import com.andannn.melodify.PopupController
 import com.andannn.melodify.RootNavigator
 import com.andannn.melodify.core.syncer.SyncMediaStoreHandler
@@ -66,7 +65,7 @@ import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 internal fun rememberHomeUiPresenter(
-    navigator: RootNavigator = LocalRootNavigator.current,
+    navigator: RootNavigator,
     popController: PopupController = LocalPopupController.current,
     syncMediaStoreHandler: SyncMediaStoreHandler = getKoin().get(),
 ): Presenter<HomeState> =

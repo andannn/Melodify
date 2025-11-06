@@ -37,5 +37,6 @@ class MelodifyApplication : Application() {
 
 private val extraModel =
     module {
+        singleOf(::MediaFileDeleteHelperImpl).bind(MediaFileDeleteHelper::class)
         viewModelOf(::MainActivityViewModel)
     }

@@ -25,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.LocalMediaFileDeleteHelper
 import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.MediaFileDeleteHelper
@@ -49,6 +48,7 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
+import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberLibraryDetailScreenPresenter(
@@ -56,7 +56,7 @@ fun rememberLibraryDetailScreenPresenter(
     navigator: Navigator,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-    mediaFileDeleteHelper: MediaFileDeleteHelper = LocalMediaFileDeleteHelper.current,
+    mediaFileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
 ): Presenter<LibraryDetailScreenState> =
     remember(
         dataSource,

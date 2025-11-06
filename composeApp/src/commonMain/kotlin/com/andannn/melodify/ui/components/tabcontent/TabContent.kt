@@ -5,7 +5,6 @@
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,10 +12,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -27,7 +27,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
 import androidx.paging.compose.LazyPagingItems
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.DisplaySetting
@@ -81,8 +80,12 @@ private fun LazyListContent(
         remember(items, displaySetting) {
             displaySetting ?.let { items.groupByType(displaySetting) } ?: emptyList()
         }
+    Napier.d { "JQN  primaryGroupList size ${primaryGroupList.size}" }
+    val state: LazyListState = rememberLazyListState()
+    Napier.d { "JQN  state ${state.hashCode()}" }
     LazyColumn(
         modifier = modifier,
+        state = state,
     ) {
         primaryGroupList.forEachIndexed { primaryGroupIndex, (primaryGroupKey, secondaryGroupList) ->
             if (primaryGroupKey != null) {

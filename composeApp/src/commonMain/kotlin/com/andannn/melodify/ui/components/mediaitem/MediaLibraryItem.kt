@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.andannn.melodify.LocalMediaFileDeleteHelper
 import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.MediaFileDeleteHelper
@@ -29,6 +28,7 @@ import kotlinx.coroutines.launch
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.track_count
 import org.jetbrains.compose.resources.stringResource
+import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun MediaLibraryItem(
@@ -90,7 +90,7 @@ private fun rememberMediaLibraryItemPresenter(
     playListId: String?,
     popupController: PopupController = LocalPopupController.current,
     repository: Repository = LocalRepository.current,
-    fileDeleteHelper: MediaFileDeleteHelper = LocalMediaFileDeleteHelper.current,
+    fileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
 ) = remember(
     mediaItemModel,
     playListId,

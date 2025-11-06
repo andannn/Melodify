@@ -5,19 +5,13 @@
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.retain.LocalRetainedValuesStore
 import androidx.compose.runtime.retain.retain
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.andannn.melodify.LocalMediaFileDeleteHelper
 import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.MediaFileDeleteHelper
@@ -49,6 +43,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "TabContentPresenter"
 
@@ -57,18 +52,18 @@ fun rememberTabContentPresenter(
     selectedTab: CustomTab?,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-    mediaFileDeleteHelper: MediaFileDeleteHelper = LocalMediaFileDeleteHelper.current,
+    fileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
 ) = retain(
     selectedTab,
     repository,
     popupController,
-    mediaFileDeleteHelper,
+    fileDeleteHelper,
 ) {
     TabContentPresenter(
         selectedTab = selectedTab,
         repository = repository,
         popupController = popupController,
-        mediaFileDeleteHelper = mediaFileDeleteHelper,
+        mediaFileDeleteHelper = fileDeleteHelper,
     )
 }
 
@@ -90,7 +85,7 @@ class TabContentPresenter(
         )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private var pagingDataFlow =
+    private val pagingDataFlow =
         displaySetting
             .filterNotNull()
             .flatMapLatest { displaySetting ->
@@ -98,10 +93,11 @@ class TabContentPresenter(
             }.cachedIn(this)
 
     init {
-
+        Napier.e { "JQN init  ${this.hashCode()}" }
         launch {
             try {
                 while (true) {
+                    Napier.e { "JQN d  ${this.hashCode()}" }
                     delay(1000)
                 }
             } catch (e: Exception) {

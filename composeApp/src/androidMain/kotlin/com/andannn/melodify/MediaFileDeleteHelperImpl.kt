@@ -23,10 +23,11 @@ import java.io.File
 
 private const val TAG = "MediaFileDeleteHelper"
 
-class MediaFileDeleteHelperImpl(
-    private val intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>,
-) : MediaFileDeleteHelper,
+class MediaFileDeleteHelperImpl :
+    MediaFileDeleteHelper,
     KoinComponent {
+    var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>? = null
+
     private val mediaLibraryRepository: MediaContentRepository = getKoin().get()
     private val context: Context = getKoin().get()
     private val resolver = context.contentResolver
@@ -56,7 +57,7 @@ class MediaFileDeleteHelperImpl(
                     IntentSenderRequest
                         .Builder(pendingIntent.intentSender)
                         .build()
-                intentSenderLauncher.launch(request)
+                intentSenderLauncher?.launch(request) ?: error("intentSender not set.")
                 val result = completer.await()
                 if (result.resultCode == Activity.RESULT_OK) {
                     Napier.d(tag = TAG) { "delete success" }

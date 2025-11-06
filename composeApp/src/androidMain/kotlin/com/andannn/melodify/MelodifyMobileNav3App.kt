@@ -18,6 +18,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
@@ -42,32 +43,28 @@ fun MelodifyMobileNav3App(modifier: Modifier = Modifier) {
                 )
             val navigator = remember(backStack) { RootNavigator(backStack) }
 
-            CompositionLocalProvider(
-                LocalRootNavigator provides navigator,
-            ) {
+            CompositionLocalProvider {
                 NavDisplay(
                     modifier = Modifier,
                     backStack = navigator.backStackList,
                     sceneStrategy = DialogSceneStrategy<NavKey>() then SinglePaneSceneStrategy(),
                     entryDecorators =
                         listOf(
+                            rememberSaveableStateHolderNavEntryDecorator(),
                             rememberRetainedValueStoreNavEntryDecorator(),
                             rememberPopupControllerNavEntryDecorator(),
-//                            rememberSceneSetupNavEntryDecorator(),
-//                            rememberSavedStateNavEntryDecorator(),
-//                            rememberViewModelStoreNavEntryDecorator(),
                         ),
                     entryProvider =
                         entryProvider {
                             entry<Nav3Screen.HomeScreen> {
                                 HomeUiScreen(
-                                    rememberHomeUiPresenter().present(),
+                                    rememberHomeUiPresenter(navigator).present(),
                                 )
                             }
 
                             entry<Nav3Screen.TabManageScreen> {
                                 TabManagementScreen(
-                                    rememberTabManagementScreenPresenter().present(),
+                                    rememberTabManagementScreenPresenter(navigator).present(),
                                 )
                             }
                         },
@@ -76,11 +73,6 @@ fun MelodifyMobileNav3App(modifier: Modifier = Modifier) {
         }
     }
 }
-
-val LocalRootNavigator =
-    androidx.compose.runtime.staticCompositionLocalOf<RootNavigator> {
-        error("No RootNavigator provided")
-    }
 
 class RootNavigator constructor(
     private val backStack: NavBackStack<NavKey>,
