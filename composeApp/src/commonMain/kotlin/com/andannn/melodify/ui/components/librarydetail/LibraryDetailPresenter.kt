@@ -5,21 +5,21 @@
 package com.andannn.melodify.ui.components.librarydetail
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.LibraryDataSource
+import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.usecase.content
 import com.andannn.melodify.usecase.item
-import com.slack.circuit.runtime.CircuitUiState
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -41,7 +41,22 @@ fun rememberLibraryDetailPresenter(
         LibraryDetailPresenter(repository, dataSource)
     }
 
-class LibraryDetailPresenter(
+@Stable
+data class LibraryContentState(
+    val dataSource: LibraryDataSource,
+    val mediaItem: MediaItemModel?,
+    val contentList: List<MediaItemModel> = emptyList(),
+    val title: String = "",
+    val eventSink: (LibraryContentEvent) -> Unit = {},
+)
+
+sealed interface LibraryContentEvent {
+    data class OnRequestPlay(
+        val mediaItem: AudioItemModel,
+    ) : LibraryContentEvent
+}
+
+private class LibraryDetailPresenter(
     private val repository: Repository,
     private val dataSource: LibraryDataSource,
 ) : ScopedPresenter<LibraryContentState>() {
@@ -98,20 +113,6 @@ class LibraryDetailPresenter(
             mediaItems.indexOf(audioItemModel),
         )
     }
-}
-
-data class LibraryContentState(
-    val dataSource: LibraryDataSource,
-    val mediaItem: MediaItemModel?,
-    val contentList: List<MediaItemModel> = emptyList(),
-    val title: String = "",
-    val eventSink: (LibraryContentEvent) -> Unit = {},
-) : CircuitUiState
-
-sealed interface LibraryContentEvent {
-    data class OnRequestPlay(
-        val mediaItem: AudioItemModel,
-    ) : LibraryContentEvent
 }
 
 context(repository: Repository)

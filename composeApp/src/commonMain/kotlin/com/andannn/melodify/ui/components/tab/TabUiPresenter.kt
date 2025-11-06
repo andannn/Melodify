@@ -5,14 +5,12 @@
 package com.andannn.melodify.ui.components.tab
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
-import com.andannn.melodify.LocalPopupController
-import com.andannn.melodify.LocalRepository
-import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
@@ -20,12 +18,14 @@ import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.ui.core.LocalPopupController
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.contentFlow
-import com.slack.circuit.runtime.CircuitUiState
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.scan
@@ -159,11 +159,12 @@ class TabUiPresenter(
     }
 }
 
+@Stable
 data class TabUiState(
     val selectedIndex: Int = 0,
     val customTabList: List<CustomTab> = emptyList(),
     val eventSink: (TabUiEvent) -> Unit = {},
-) : CircuitUiState {
+) {
     val selectedTab: CustomTab?
         get() = customTabList.getOrNull(selectedIndex)
 }

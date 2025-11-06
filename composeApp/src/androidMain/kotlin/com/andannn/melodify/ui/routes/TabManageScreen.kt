@@ -15,49 +15,16 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import com.andannn.melodify.RootNavigator
-import com.andannn.melodify.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.components.tabmanagement.TabManagementContent
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
-import com.slack.circuit.runtime.CircuitUiState
-
-@Composable
-fun rememberTabManagementScreenPresenter(navigator: RootNavigator) =
-    retain(
-        navigator,
-    ) {
-        TabManagementScreenPresenter(
-            navigator = navigator,
-        )
-    }
-
-class TabManagementScreenPresenter(
-    private val navigator: RootNavigator,
-) : ScopedPresenter<TabManagementScreenState>() {
-    @Composable
-    override fun present(): TabManagementScreenState =
-        TabManagementScreenState { event ->
-            when (event) {
-                UiEvent.OnBackKeyPressed -> navigator.popBackStack()
-            }
-        }
-}
-
-data class TabManagementScreenState(
-    val eventSink: (UiEvent) -> Unit,
-) : CircuitUiState
-
-sealed interface UiEvent {
-    data object OnBackKeyPressed : UiEvent
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun TabManagementScreen(
+fun TabManagementScreen(
     navigator: RootNavigator,
     modifier: Modifier = Modifier,
     presenter: Presenter<TabManagementScreenState> = rememberTabManagementScreenPresenter(navigator),

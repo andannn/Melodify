@@ -8,11 +8,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.retain.RetainObserver
 import androidx.compose.runtime.setValue
-import com.andannn.melodify.PopupController
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.SnackBarMessage
+import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.popup.dialog.DialogData
 import com.andannn.melodify.ui.popup.dialog.DialogDataImpl
 import io.github.aakira.napier.Napier
@@ -22,7 +23,9 @@ import kotlinx.coroutines.sync.withLock
 
 private const val TAG = "PopupController"
 
-class PopupControllerImpl : PopupController {
+class PopupControllerImpl :
+    PopupController,
+    RetainObserver {
     private val mutex = Mutex()
 
     private var _currentDialog by mutableStateOf<DialogData?>(null)
@@ -56,4 +59,20 @@ class PopupControllerImpl : PopupController {
                 _currentDialog = null
             }
         }
+
+    override fun onRetained() {}
+
+    override fun onEnteredComposition() {}
+
+    override fun onExitedComposition() {}
+
+    override fun onRetired() {
+        _currentDialog = null
+        snackBarController = null
+    }
+
+    override fun onUnused() {
+        _currentDialog = null
+        snackBarController = null
+    }
 }

@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify
+package com.andannn.melodify.ui.core
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult

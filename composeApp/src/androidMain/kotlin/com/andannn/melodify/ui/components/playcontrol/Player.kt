@@ -7,11 +7,12 @@ package com.andannn.melodify.ui.components.playcontrol
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.andannn.melodify.ui.components.playcontrol.ui.PlayerViewContent
+import com.andannn.melodify.ui.core.Presenter
 
 @Composable
 fun Player(
-    presenter: PlayerPresenter = rememberPlayerPresenter(),
     modifier: Modifier = Modifier,
+    presenter: Presenter<PlayerUiState> = rememberPlayerPresenter(),
 ) {
     PlayerAreaView(
         state = presenter.present(),

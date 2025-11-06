@@ -18,6 +18,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -100,11 +101,12 @@ object MainScreenPresenterFactory : Presenter.Factory {
         }
 }
 
+@Stable
 data class MainUiState(
     val tabUiState: TabUiState,
     val playerUiState: PlayerUiState,
     val tabContentState: TabContentState,
-) : CircuitUiState
+)
 
 @Composable
 internal fun MainWindow(

@@ -10,13 +10,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import com.andannn.melodify.LocalPopupController
-import com.andannn.melodify.LocalRepository
-import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.internal.UserPreferenceRepository
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.ui.core.LocalPopupController
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.PopupController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch

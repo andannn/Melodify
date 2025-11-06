@@ -5,6 +5,7 @@
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.retain.retain
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -12,10 +13,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.andannn.melodify.LocalPopupController
-import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.MediaFileDeleteHelper
-import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
@@ -25,6 +23,9 @@ import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.ui.core.LocalPopupController
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
@@ -32,10 +33,8 @@ import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.contentFlow
 import com.andannn.melodify.usecase.contentPagingDataFlow
 import com.andannn.melodify.usecase.deleteItems
-import com.slack.circuit.runtime.CircuitUiState
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -91,20 +90,6 @@ class TabContentPresenter(
             .flatMapLatest { displaySetting ->
                 getContentPagingFlow(selectedTab, displaySetting)
             }.cachedIn(this)
-
-    init {
-        Napier.e { "JQN init  ${this.hashCode()}" }
-        launch {
-            try {
-                while (true) {
-                    Napier.e { "JQN d  ${this.hashCode()}" }
-                    delay(1000)
-                }
-            } catch (e: Exception) {
-                Napier.e { "JQN e  $e" }
-            }
-        }
-    }
 
     @Composable
     override fun present(): TabContentState {
@@ -271,12 +256,13 @@ class TabContentPresenter(
     }
 }
 
+@Stable
 data class TabContentState(
     val selectedTab: CustomTab? = null,
     val groupSort: DisplaySetting?,
     val pagingItems: LazyPagingItems<AudioItemModel>,
     val eventSink: (TabContentEvent) -> Unit = {},
-) : CircuitUiState
+)
 
 sealed interface TabContentEvent {
     data class OnShowMusicItemOption(

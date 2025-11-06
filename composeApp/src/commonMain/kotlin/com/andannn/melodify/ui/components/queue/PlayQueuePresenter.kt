@@ -5,14 +5,14 @@
 package com.andannn.melodify.ui.components.queue
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import com.andannn.melodify.LocalRepository
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.slack.circuit.retained.collectAsRetainedState
-import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.presenter.Presenter
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.Presenter
 
 @Composable
 fun rememberPlayQueuePresenter(repository: Repository = LocalRepository.current) =
@@ -26,11 +26,11 @@ class PlayQueuePresenter(
     @Composable
     override fun present(): PlayQueueState {
         val playListQueue by
-            repository.playerStateMonitoryRepository.getPlayListQueueStateFlow().collectAsRetainedState(
+            repository.playerStateMonitoryRepository.getPlayListQueueStateFlow().collectAsStateWithLifecycle(
                 emptyList(),
             )
         val interactingMusicItem by
-            repository.playerStateMonitoryRepository.getPlayingMediaStateFlow().collectAsRetainedState(
+            repository.playerStateMonitoryRepository.getPlayingMediaStateFlow().collectAsStateWithLifecycle(
                 AudioItemModel.DEFAULT,
             )
         return PlayQueueState(
@@ -71,11 +71,12 @@ class PlayQueuePresenter(
     }
 }
 
+@Stable
 data class PlayQueueState(
     val interactingMusicItem: AudioItemModel,
     val playListQueue: List<AudioItemModel>,
     val eventSink: (PlayQueueEvent) -> Unit = {},
-) : CircuitUiState
+)
 
 sealed interface PlayQueueEvent {
     data class OnItemClick(

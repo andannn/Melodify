@@ -5,13 +5,11 @@
 package com.andannn.melodify.ui.components.mediaitem
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.andannn.melodify.LocalPopupController
-import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.MediaFileDeleteHelper
-import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
@@ -20,10 +18,11 @@ import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.ui.components.librarydetail.showLibraryMediaOption
+import com.andannn.melodify.ui.core.LocalPopupController
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.PopupController
+import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.ui.widgets.ListTileItemView
-import com.andannn.melodify.viewModelScope
-import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.track_count
@@ -91,7 +90,7 @@ private fun rememberMediaLibraryItemPresenter(
     popupController: PopupController = LocalPopupController.current,
     repository: Repository = LocalRepository.current,
     fileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
-) = remember(
+) = retain(
     mediaItemModel,
     playListId,
     popupController,
@@ -113,15 +112,14 @@ private class MediaLibraryItemPresenter(
     private val popupController: PopupController,
     private val repository: Repository,
     private val fileDeleteHelper: MediaFileDeleteHelper,
-) : Presenter<UiState> {
+) : ScopedPresenter<UiState>() {
     @Composable
-    override fun present(): UiState {
-        val viewModelScope = viewModelScope()
-        return UiState { event ->
+    override fun present(): UiState =
+        UiState { event ->
             context(popupController, repository, fileDeleteHelper) {
                 when (event) {
                     UiEvent.OnOptionButtonClick ->
-                        viewModelScope.launch {
+                        launch {
                             showLibraryMediaOption(
                                 media = mediaItemModel,
                                 playListId = playListId,
@@ -130,12 +128,12 @@ private class MediaLibraryItemPresenter(
                 }
             }
         }
-    }
 }
 
+@Stable
 private data class UiState(
     val eventSink: (UiEvent) -> Unit = {},
-) : CircuitUiState
+)
 
 private sealed interface UiEvent {
     data object OnOptionButtonClick : UiEvent

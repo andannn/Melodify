@@ -5,23 +5,23 @@
 package com.andannn.melodify.ui.components.tabcontent.header
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
-import com.andannn.melodify.LocalPopupController
-import com.andannn.melodify.LocalRepository
-import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.ui.core.LocalPopupController
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
-import com.slack.circuit.runtime.CircuitUiState
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 
@@ -48,12 +48,13 @@ fun rememberGroupHeaderPresenter(
         )
     }
 
+@Stable
 data class GroupHeaderState(
     val title: String,
     val cover: String?,
     val trackCount: Int,
     val eventSink: (GroupHeaderEvent) -> Unit = {},
-) : CircuitUiState
+)
 
 sealed interface GroupHeaderEvent {
     data object OnOptionClick : GroupHeaderEvent

@@ -21,28 +21,24 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.RootNavigator
-import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.ShortcutItem
 import com.andannn.melodify.model.toDataSource
-import com.andannn.melodify.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.widgets.ShortcutItem
-import com.slack.circuit.runtime.CircuitUiState
 
 @Composable
 fun Library(
-    state: LibraryState,
+    navigator: RootNavigator,
     modifier: Modifier = Modifier,
+    presenter: Presenter<LibraryState> = rememberLibraryPresenter(navigator),
 ) {
+    val state = presenter.present()
     LibraryContent(
         modifier = modifier,
         onBackKeyPressed = {
@@ -97,7 +93,10 @@ internal fun LibraryContent(
         },
     ) {
         LazyVerticalGrid(
-            modifier = Modifier.padding(it).padding(4.dp),
+            modifier =
+                Modifier
+                    .padding(it)
+                    .padding(4.dp),
             columns = GridCells.Adaptive(minSize = 180.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -125,45 +124,4 @@ internal fun LibraryContent(
     }
 
     ActionDialogContainer()
-}
-
-@Composable
-fun rememberLibraryPresenter(navigator: RootNavigator): Presenter<LibraryState> =
-    retain {
-        LibraryPresenter(
-            navigator = navigator,
-        )
-    }
-
-class LibraryPresenter(
-    private val navigator: RootNavigator,
-) : ScopedPresenter<LibraryState>() {
-    @Composable
-    override fun present(): LibraryState =
-        LibraryState { eventSink ->
-            when (eventSink) {
-                is LibraryUiEvent.OnNavigateToLibraryContentList ->
-                    navigator.navigateTo(
-                        Screen.LibraryDetail(eventSink.source),
-                    )
-
-                LibraryUiEvent.Back -> navigator.popBackStack()
-                LibraryUiEvent.OnNavigateToSearch -> navigator.navigateTo(Screen.Search)
-            }
-        }
-}
-
-@Stable
-data class LibraryState(
-    val evenSink: (LibraryUiEvent) -> Unit = {},
-) : CircuitUiState
-
-sealed interface LibraryUiEvent {
-    data class OnNavigateToLibraryContentList(
-        val source: LibraryDataSource,
-    ) : LibraryUiEvent
-
-    data object Back : LibraryUiEvent
-
-    data object OnNavigateToSearch : LibraryUiEvent
 }

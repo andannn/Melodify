@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.DisplaySetting
@@ -47,12 +48,10 @@ import com.andannn.melodify.core.data.model.SortOption
 import com.andannn.melodify.core.data.model.isAscending
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.util.getCategoryResource
 import com.andannn.melodify.ui.widgets.DropDownMenuIconButton
 import com.andannn.melodify.ui.widgets.TransparentBackgroundListItem
-import com.slack.circuit.retained.collectAsRetainedState
-import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import melodify.composeapp.generated.resources.Res
@@ -636,7 +635,7 @@ private class ChangeSortRulePresenter(
         val isDefaultSettings = customTab == null
         val displaySetting by userPreferences
             .getCurrentSortRule(customTab)
-            .collectAsRetainedState(DisplaySetting.Preset.DefaultPreset)
+            .collectAsStateWithLifecycle(DisplaySetting.Preset.DefaultPreset)
         if (isDefaultSettings && !displaySetting.isPreset) {
             error("Never. Default setting only supports preset sort rule.")
         }
@@ -677,7 +676,7 @@ private class ChangeSortRulePresenter(
 private data class UiState(
     val displaySetting: DisplaySetting,
     val eventSink: (UiEvent) -> Unit = {},
-) : CircuitUiState
+)
 
 private sealed interface UiEvent {
     data class OnChangeSortRule(

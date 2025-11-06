@@ -5,18 +5,14 @@
 package com.andannn.melodify.ui.components.tabmanagement
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.retain
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.ScopedPresenter
-import com.slack.circuit.retained.collectAsRetainedState
-import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -75,10 +71,11 @@ class TabManagementPresenter(
     }
 }
 
+@Stable
 data class TabManagementState(
     val tabList: ImmutableList<CustomTab> = persistentListOf(),
     val eventSink: (TabManagementEvent) -> Unit = {},
-) : CircuitUiState
+)
 
 sealed interface TabManagementEvent {
     data class OnSwapFinished(
