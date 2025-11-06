@@ -5,13 +5,11 @@
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
@@ -30,18 +28,20 @@ import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.contentFlow
 import com.andannn.melodify.usecase.contentPagingDataFlow
 import com.andannn.melodify.usecase.deleteItems
-import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
@@ -55,7 +55,7 @@ fun rememberTabContentPresenter(
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
     mediaFileDeleteHelper: MediaFileDeleteHelper = LocalMediaFileDeleteHelper.current,
-) = remember(
+) = retain(
     selectedTab,
     repository,
     popupController,
@@ -80,39 +80,49 @@ class TabContentPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
-) : Presenter<TabContentState> {
+) : ScopedPresenter<TabContentState>() {
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val playListRepository = repository.playListRepository
     private val userPreferenceRepository = repository.userPreferenceRepository
 
-    init {
-        Napier.d(tag = TAG) { "TabContentPresenter init $selectedTab" }
-    }
+    private var displaySetting by mutableStateOf(
+        DisplaySetting.Preset.ArtistAlbumASC,
+    )
 
-    @Composable
-    override fun present(): TabContentState {
-        val scope = rememberCoroutineScope()
-        Napier.d(tag = TAG) { "TabContentPresenter scope ${scope.hashCode()}" }
-
-        var displaySetting by rememberRetained(selectedTab) {
-            mutableStateOf(
-                DisplaySetting.Preset.ArtistAlbumASC,
-            )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private var pagingDataFlow =
+        snapshotFlow {
+            displaySetting
+        }.flatMapLatest { displaySetting ->
+            getContentPagingFlow(selectedTab, displaySetting).cachedIn(this)
         }
 
-        LaunchedEffect(selectedTab) {
-            val currentTab = selectedTab
-            if (currentTab == null) return@LaunchedEffect
+    init {
+        Napier.d { "JQN init ${this.hashCode()}" }
+        Napier.d(tag = TAG) { "TabContentPresenter init $selectedTab" }
 
-            userPreferenceRepository.getCurrentSortRule(currentTab).collect {
+        launch {
+            if (selectedTab == null) return@launch
+
+            userPreferenceRepository.getCurrentSortRule(selectedTab).collect {
                 displaySetting = it
             }
         }
 
-        val pagingDataFlow =
-            rememberRetained(selectedTab, displaySetting) {
-                getContentPagingFlow(selectedTab, displaySetting).cachedIn(scope)
+        launch {
+            try {
+                while (true) {
+                    delay(1000)
+                    Napier.d { "JQN invoke  ${this.hashCode()}" }
+                }
+            } catch (e: Exception) {
+                Napier.e { "JQN e  $e" }
             }
+        }
+    }
+
+    @Composable
+    override fun present(): TabContentState {
         val pagingItems: LazyPagingItems<AudioItemModel> = pagingDataFlow.collectAsLazyPagingItems()
 
         return TabContentState(
@@ -123,7 +133,7 @@ class TabContentPresenter(
             context(repository, popupController, mediaFileDeleteHelper) {
                 when (eventSink) {
                     is TabContentEvent.OnPlayMusic ->
-                        scope.launch {
+                        launch {
                             val items =
                                 with(repository) {
                                     selectedTab
@@ -138,12 +148,12 @@ class TabContentPresenter(
                         }
 
                     is TabContentEvent.OnShowMusicItemOption ->
-                        scope.launch {
+                        launch {
                             onShowMusicItemOption(eventSink.mediaItemModel)
                         }
 
                     is TabContentEvent.OnGroupOptionClick ->
-                        scope.launch {
+                        launch {
                             handleGroupOption(
                                 eventSink.optionItem,
                                 eventSink.groupKeys,
@@ -153,7 +163,7 @@ class TabContentPresenter(
                         }
 
                     is TabContentEvent.OnGroupItemClick ->
-                        scope.launch {
+                        launch {
                             handleGroupItemClick(
                                 eventSink.groupKeys,
                                 displaySetting,
@@ -169,6 +179,7 @@ class TabContentPresenter(
         selectedTab: CustomTab?,
         groupSort: DisplaySetting,
     ): Flow<PagingData<AudioItemModel>> {
+        Napier.d { "JQN getContentPagingFlow $selectedTab $groupSort ${this.hashCode()}" }
         if (selectedTab == null) {
             return flowOf()
         }
