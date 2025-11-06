@@ -29,7 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.LocalPopupController
+import com.andannn.melodify.LocalRootNavigator
 import com.andannn.melodify.PopupController
+import com.andannn.melodify.RootNavigator
 import com.andannn.melodify.core.syncer.SyncMediaStoreHandler
 import com.andannn.melodify.core.syncer.SyncStatus
 import com.andannn.melodify.core.syncer.SyncType
@@ -39,6 +41,7 @@ import com.andannn.melodify.model.SnackBarMessage
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.LibraryDetailScreen
 import com.andannn.melodify.ui.LibraryScreen
+import com.andannn.melodify.ui.Nav3Screen
 import com.andannn.melodify.ui.SearchScreen
 import com.andannn.melodify.ui.TabManageScreen
 import com.andannn.melodify.ui.components.playcontrol.Player
@@ -71,7 +74,7 @@ import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 internal fun rememberHomeUiPresenter(
-    navigator: Navigator,
+    navigator: RootNavigator = LocalRootNavigator.current,
     popController: PopupController = LocalPopupController.current,
     syncMediaStoreHandler: SyncMediaStoreHandler = getKoin().get(),
 ): Presenter<HomeState> =
@@ -90,7 +93,7 @@ internal fun rememberHomeUiPresenter(
 private const val TAG = "HomeScreen"
 
 private class HomePresenter(
-    private val navigator: Navigator,
+    private val navigator: RootNavigator,
     private val popController: PopupController,
     private val syncMediaStoreHandler: SyncMediaStoreHandler,
 ) : Presenter<HomeState> {
@@ -104,10 +107,10 @@ private class HomePresenter(
             rememberTabContentPresenter(
                 selectedTab = tabUiState.selectedTab,
                 onRequestGoToAlbum = {
-                    navigator.goTo(LibraryDetailScreen(LibraryDataSource.AlbumDetail(id = it.albumId)))
+                    navigator.navigateTo(Nav3Screen.LibraryDetailScreen(LibraryDataSource.AlbumDetail(id = it.albumId)))
                 },
                 onRequestGoToArtist = {
-                    navigator.goTo(LibraryDetailScreen(LibraryDataSource.ArtistDetail(id = it.artistId)))
+                    navigator.navigateTo(Nav3Screen.LibraryDetailScreen(LibraryDataSource.ArtistDetail(id = it.artistId)))
                 },
             )
         return HomeState(
@@ -117,8 +120,8 @@ private class HomePresenter(
             with(popController) {
                 with(syncMediaStoreHandler) {
                     when (eventSink) {
-                        HomeUiEvent.LibraryButtonClick -> navigator.goTo(LibraryScreen)
-                        HomeUiEvent.SearchButtonClick -> navigator.goTo(SearchScreen)
+                        HomeUiEvent.LibraryButtonClick -> navigator.navigateTo(Nav3Screen.LibraryScreen)
+                        HomeUiEvent.SearchButtonClick -> navigator.navigateTo(Nav3Screen.SearchScreen)
                         is HomeUiEvent.OnMenuSelected -> {
                             when (eventSink.selected) {
                                 MenuOption.DEFAULT_SORT -> scope.launch { changeSortRule() }
@@ -126,7 +129,7 @@ private class HomePresenter(
                             }
                         }
 
-                        HomeUiEvent.OnTabManagementClick -> navigator.goTo(TabManageScreen)
+                        HomeUiEvent.OnTabManagementClick -> navigator.navigateTo(Nav3Screen.TabManageScreen)
                     }
                 }
             }

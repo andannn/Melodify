@@ -69,10 +69,10 @@ object PresenterFactory : Presenter.Factory {
         context: CircuitContext,
     ): Presenter<*>? =
         when (screen) {
-            is HomeScreen ->
-                presenterOf {
-                    rememberHomeUiPresenter(navigator).present()
-                }
+//            is HomeScreen ->
+//                presenterOf {
+// //                    rememberHomeUiPresenter(navigator).present()
+//                }
 
             is TabManageScreen -> TabManagementScreenPresenter(navigator)
 

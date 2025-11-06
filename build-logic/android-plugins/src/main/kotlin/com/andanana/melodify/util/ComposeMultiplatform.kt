@@ -27,6 +27,8 @@ fun Project.configureComposeMultiplatform(extension: KotlinMultiplatformExtensio
                 implementation(compose.components.uiToolingPreview)
                 implementation(compose.material3)
                 implementation(libs.findLibrary("circuit.foundation").get())
+                implementation(libs.findLibrary("androidx.navigation3.ui").get())
+                implementation(libs.findLibrary("androidx.navigation3.runtime").get())
                 implementation(libs.findLibrary("ui.backhandler").get())
             }
 

@@ -147,7 +147,7 @@ class MainActivity : ComponentActivity() {
 
                         MainUiState.Ready -> {
                             if (permissionGranted) {
-                                MelodifyMobileApp()
+                                MelodifyMobileNav3App()
                             }
                         }
 
