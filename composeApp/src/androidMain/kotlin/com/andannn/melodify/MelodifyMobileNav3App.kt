@@ -4,9 +4,6 @@
  */
 package com.andannn.melodify
 
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -22,10 +19,16 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
-import com.andannn.melodify.ui.Nav3Screen
+import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.routes.HomeUiScreen
+import com.andannn.melodify.ui.routes.Library
+import com.andannn.melodify.ui.routes.LibraryDetail
+import com.andannn.melodify.ui.routes.SearchScreen
 import com.andannn.melodify.ui.routes.TabManagementScreen
 import com.andannn.melodify.ui.routes.rememberHomeUiPresenter
+import com.andannn.melodify.ui.routes.rememberLibraryDetailScreenPresenter
+import com.andannn.melodify.ui.routes.rememberLibraryPresenter
+import com.andannn.melodify.ui.routes.rememberSearchScreenPresenter
 import com.andannn.melodify.ui.routes.rememberTabManagementScreenPresenter
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -39,7 +42,7 @@ fun MelodifyMobileNav3App(modifier: Modifier = Modifier) {
         ) {
             val backStack =
                 rememberNavBackStack(
-                    Nav3Screen.HomeScreen,
+                    Screen.Home,
                 )
             val navigator = remember(backStack) { RootNavigator(backStack) }
 
@@ -56,15 +59,32 @@ fun MelodifyMobileNav3App(modifier: Modifier = Modifier) {
                         ),
                     entryProvider =
                         entryProvider {
-                            entry<Nav3Screen.HomeScreen> {
-                                HomeUiScreen(
-                                    rememberHomeUiPresenter(navigator).present(),
+                            entry<Screen.Home> {
+                                HomeUiScreen(navigator)
+                            }
+
+                            entry<Screen.TabManage> {
+                                TabManagementScreen(navigator)
+                            }
+
+                            entry<Screen.Library> {
+                                Library(
+                                    rememberLibraryPresenter(navigator).present(),
                                 )
                             }
 
-                            entry<Nav3Screen.TabManageScreen> {
-                                TabManagementScreen(
-                                    rememberTabManagementScreenPresenter(navigator).present(),
+                            entry<Screen.LibraryDetail> { screen ->
+                                LibraryDetail(
+                                    rememberLibraryDetailScreenPresenter(
+                                        dataSource = screen.datasource,
+                                        navigator = navigator,
+                                    ).present(),
+                                )
+                            }
+
+                            entry<Screen.Search> {
+                                SearchScreen(
+                                    rememberSearchScreenPresenter(navigator).present(),
                                 )
                             }
                         },
@@ -80,7 +100,7 @@ class RootNavigator constructor(
     val backStackList: List<NavKey>
         get() = backStack
 
-    fun navigateTo(screen: Nav3Screen) {
+    fun navigateTo(screen: Screen) {
         backStack.add(screen)
     }
 

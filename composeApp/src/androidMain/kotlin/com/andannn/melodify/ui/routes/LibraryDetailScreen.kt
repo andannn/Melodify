@@ -21,14 +21,14 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.PopupController
+import com.andannn.melodify.RootNavigator
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
@@ -36,29 +36,29 @@ import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.asLibraryDataSource
 import com.andannn.melodify.model.browseable
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.LibraryDetailScreen
+import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.components.librarydetail.LibraryContentEvent
 import com.andannn.melodify.ui.components.librarydetail.LibraryContentState
 import com.andannn.melodify.ui.components.librarydetail.rememberLibraryDetailPresenter
 import com.andannn.melodify.ui.components.librarydetail.showLibraryMediaOption
 import com.andannn.melodify.ui.components.mediaitem.MediaLibraryItem
 import com.andannn.melodify.ui.components.playcontrol.Player
+import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberLibraryDetailScreenPresenter(
     dataSource: LibraryDataSource,
-    navigator: Navigator,
+    navigator: RootNavigator,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
     mediaFileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
 ): Presenter<LibraryDetailScreenState> =
-    remember(
+    retain(
         dataSource,
         navigator,
         repository,
@@ -70,32 +70,31 @@ fun rememberLibraryDetailScreenPresenter(
 
 private class LibraryDetailScreenPresenter(
     private val dataSource: LibraryDataSource,
-    private val navigator: Navigator,
+    private val navigator: RootNavigator,
     private val repository: Repository,
     private val popupController: PopupController,
     private val fileDeleteHelper: MediaFileDeleteHelper,
-) : Presenter<LibraryDetailScreenState> {
+) : ScopedPresenter<LibraryDetailScreenState>() {
     @Composable
     override fun present(): LibraryDetailScreenState {
         val state = rememberLibraryDetailPresenter(dataSource).present()
-        val scope = rememberCoroutineScope()
         return LibraryDetailScreenState(
             dataSource = dataSource,
             state = state,
         ) { event ->
             context(repository, popupController, fileDeleteHelper) {
                 when (event) {
-                    LibraryDetailScreenEvent.OnBackKeyPressed -> navigator.pop()
+                    LibraryDetailScreenEvent.OnBackKeyPressed -> navigator.popBackStack()
                     is LibraryDetailScreenEvent.OnMediaItemClick ->
                         if (dataSource.browseable()) {
-                            navigator.goTo(LibraryDetailScreen(event.mediaItem.asLibraryDataSource()))
+                            navigator.navigateTo(Screen.LibraryDetail(event.mediaItem.asLibraryDataSource()))
                         } else {
                             state.eventSink.invoke(LibraryContentEvent.OnRequestPlay(event.mediaItem as AudioItemModel))
                         }
 
                     LibraryDetailScreenEvent.OnOptionClick -> {
                         state.mediaItem?.let { item ->
-                            scope.launch { showLibraryMediaOption(item) }
+                            launch { showLibraryMediaOption(item) }
                         }
                     }
                 }

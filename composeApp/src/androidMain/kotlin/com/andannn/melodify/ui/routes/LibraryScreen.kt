@@ -22,21 +22,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.RootNavigator
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.ShortcutItem
 import com.andannn.melodify.model.toDataSource
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.LibraryDetailScreen
-import com.andannn.melodify.ui.SearchScreen
-import com.andannn.melodify.ui.components.playcontrol.Player
+import com.andannn.melodify.ui.Screen
+import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.widgets.ShortcutItem
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.presenter.Presenter
 
 @Composable
 fun Library(
@@ -127,20 +127,28 @@ internal fun LibraryContent(
     ActionDialogContainer()
 }
 
+@Composable
+fun rememberLibraryPresenter(navigator: RootNavigator): Presenter<LibraryState> =
+    retain {
+        LibraryPresenter(
+            navigator = navigator,
+        )
+    }
+
 class LibraryPresenter(
-    private val navigator: Navigator,
-) : Presenter<LibraryState> {
+    private val navigator: RootNavigator,
+) : ScopedPresenter<LibraryState>() {
     @Composable
     override fun present(): LibraryState =
         LibraryState { eventSink ->
             when (eventSink) {
                 is LibraryUiEvent.OnNavigateToLibraryContentList ->
-                    navigator.goTo(
-                        LibraryDetailScreen(eventSink.source),
+                    navigator.navigateTo(
+                        Screen.LibraryDetail(eventSink.source),
                     )
 
-                LibraryUiEvent.Back -> navigator.pop()
-                LibraryUiEvent.OnNavigateToSearch -> navigator.goTo(SearchScreen)
+                LibraryUiEvent.Back -> navigator.popBackStack()
+                LibraryUiEvent.OnNavigateToSearch -> navigator.navigateTo(Screen.Search)
             }
         }
 }

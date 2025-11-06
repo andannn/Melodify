@@ -6,18 +6,23 @@ package com.andannn.melodify.ui.components.librarydetail
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.LibraryDataSource
+import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.usecase.content
 import com.andannn.melodify.usecase.item
-import com.slack.circuit.retained.collectAsRetainedState
-import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.presenter.Presenter
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.album_page_title
 import melodify.composeapp.generated.resources.artist_page_title
@@ -32,25 +37,43 @@ fun rememberLibraryDetailPresenter(
     dataSource: LibraryDataSource,
     repository: Repository = LocalRepository.current,
 ): Presenter<LibraryContentState> =
-    remember(repository, dataSource) {
+    retain(repository, dataSource) {
         LibraryDetailPresenter(repository, dataSource)
     }
 
 class LibraryDetailPresenter(
     private val repository: Repository,
     private val dataSource: LibraryDataSource,
-) : Presenter<LibraryContentState> {
+) : ScopedPresenter<LibraryContentState>() {
+    private val dataSourceMediaItemFlow =
+        with(repository) { dataSource.item() }
+            .stateIn(
+                this,
+                started = WhileSubscribed(),
+                initialValue = null,
+            )
+
+    private val contentListFlow =
+        with(repository) { dataSource.content() }
+            .stateIn(
+                this,
+                started = WhileSubscribed(),
+                initialValue = emptyList(),
+            )
+
+    private var title by mutableStateOf("")
+
+    init {
+        launch {
+            title = with(repository) { dataSource.getTitle() }
+        }
+    }
+
     @Composable
     override fun present(): LibraryContentState {
-        val dataSourceMediaItem by with(repository) { dataSource.item() }.collectAsRetainedState(
-            null,
-        )
-        val contentList by with(repository) { dataSource.content() }.collectAsRetainedState(
-            emptyList(),
-        )
-        val title by produceRetainedState("") {
-            value = with(repository) { dataSource.getTitle() }
-        }
+        val dataSourceMediaItem by dataSourceMediaItemFlow.collectAsStateWithLifecycle()
+        val contentList by contentListFlow.collectAsStateWithLifecycle()
+
         return LibraryContentState(
             dataSource = dataSource,
             mediaItem = dataSourceMediaItem,

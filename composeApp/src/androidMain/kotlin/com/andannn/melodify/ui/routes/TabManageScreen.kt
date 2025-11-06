@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import com.andannn.melodify.RootNavigator
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.components.tabmanagement.TabManagementContent
+import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.slack.circuit.runtime.CircuitUiState
@@ -57,9 +58,11 @@ sealed interface UiEvent {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun TabManagementScreen(
-    state: TabManagementScreenState,
+    navigator: RootNavigator,
     modifier: Modifier = Modifier,
+    presenter: Presenter<TabManagementScreenState> = rememberTabManagementScreenPresenter(navigator),
 ) {
+    val state = presenter.present()
     Scaffold(
         modifier = modifier,
         snackbarHost = {

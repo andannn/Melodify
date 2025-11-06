@@ -8,22 +8,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.ui.core.ScopedPresenter
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 private const val TAG = "TabManagementPresenter"
 
 @Composable
 fun rememberTabManagementPresenter(repository: Repository = LocalRepository.current) =
-    remember(
+    retain(
         repository,
     ) {
         TabManagementPresenter(
@@ -32,30 +37,34 @@ fun rememberTabManagementPresenter(repository: Repository = LocalRepository.curr
     }
 
 class TabManagementPresenter(
-    private val repository: Repository,
-) : Presenter<TabManagementState> {
+    repository: Repository,
+) : ScopedPresenter<TabManagementState>() {
     private val userPreferenceRepository = repository.userPreferenceRepository
+
+    private val currentTabListFlow =
+        userPreferenceRepository.currentCustomTabsFlow
+            .stateIn(
+                this,
+                started = WhileSubscribed(),
+                initialValue = emptyList(),
+            )
 
     @Composable
     override fun present(): TabManagementState {
-        val scope = rememberCoroutineScope()
-        val currentTabList by userPreferenceRepository.currentCustomTabsFlow.collectAsRetainedState(
-            emptyList(),
-        )
-
+        val currentTabList by currentTabListFlow.collectAsStateWithLifecycle()
         return TabManagementState(
             currentTabList.toImmutableList(),
         ) { event ->
             when (event) {
                 is TabManagementEvent.OnSwapFinished -> {
-                    scope.launch {
+                    launch {
                         val (from, to) = event
                         userPreferenceRepository.swapTabOrder(from = currentTabList[from], to = currentTabList[to])
                     }
                 }
 
                 is TabManagementEvent.OnDeleteFinished -> {
-                    scope.launch {
+                    launch {
                         val toDelete =
                             currentTabList[event.index]
                         userPreferenceRepository.deleteCustomTab(toDelete)

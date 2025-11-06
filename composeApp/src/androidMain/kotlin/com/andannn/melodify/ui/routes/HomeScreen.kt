@@ -35,7 +35,7 @@ import com.andannn.melodify.core.syncer.SyncType
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.SnackBarMessage
 import com.andannn.melodify.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.Nav3Screen
+import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.components.tab.TabUi
 import com.andannn.melodify.ui.components.tab.TabUiState
@@ -110,8 +110,8 @@ private class HomePresenter(
             with(popController) {
                 with(syncMediaStoreHandler) {
                     when (eventSink) {
-                        HomeUiEvent.LibraryButtonClick -> navigator.navigateTo(Nav3Screen.LibraryScreen)
-                        HomeUiEvent.SearchButtonClick -> navigator.navigateTo(Nav3Screen.SearchScreen)
+                        HomeUiEvent.LibraryButtonClick -> navigator.navigateTo(Screen.Library)
+                        HomeUiEvent.SearchButtonClick -> navigator.navigateTo(Screen.Search)
                         is HomeUiEvent.OnMenuSelected -> {
                             when (eventSink.selected) {
                                 MenuOption.DEFAULT_SORT -> scope.launch { changeSortRule() }
@@ -119,7 +119,7 @@ private class HomePresenter(
                             }
                         }
 
-                        HomeUiEvent.OnTabManagementClick -> navigator.navigateTo(Nav3Screen.TabManageScreen)
+                        HomeUiEvent.OnTabManagementClick -> navigator.navigateTo(Screen.TabManage)
                     }
                 }
             }
@@ -194,9 +194,11 @@ internal sealed interface HomeUiEvent {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeUiScreen(
-    homeState: HomeState,
+    navigator: RootNavigator,
     modifier: Modifier = Modifier,
+    homePresenter: Presenter<HomeState> = rememberHomeUiPresenter(navigator = navigator),
 ) {
+    val homeState = homePresenter.present()
     val scrollBehavior = enterAlwaysScrollBehavior()
     Scaffold(
         modifier = modifier,

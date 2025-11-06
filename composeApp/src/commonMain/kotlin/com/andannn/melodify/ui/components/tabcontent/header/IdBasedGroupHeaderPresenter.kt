@@ -6,8 +6,10 @@ package com.andannn.melodify.ui.components.tabcontent.header
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.setValue
 import com.andannn.melodify.LocalPopupController
 import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.PopupController
@@ -17,10 +19,9 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
-import com.andannn.melodify.usecase.pinToHomeTab
-import com.slack.circuit.retained.produceRetainedState
+import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.ScopedPresenter
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 
@@ -31,19 +32,19 @@ fun rememberGroupHeaderPresenter(
     groupKey: GroupKey,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-    onGroupOption: (OptionItem) -> Unit = {},
+//    onGroupOption: (OptionItem) -> Unit = {},
 ): Presenter<GroupHeaderState> =
-    remember(
+    retain(
         groupKey,
         repository,
         popupController,
-        onGroupOption,
+//        onGroupOption,
     ) {
         GroupHeaderPresenter(
             groupKey,
             repository,
             popupController,
-            onGroupOption,
+//            onGroupOption,
         )
     }
 
@@ -63,15 +64,14 @@ private class GroupHeaderPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
     private val onGroupOption: (OptionItem) -> Unit = {},
-) : Presenter<GroupHeaderState> {
+) : ScopedPresenter<GroupHeaderState>() {
     private val mediaContentRepository = repository.mediaContentRepository
 
-    @Composable
-    override fun present(): GroupHeaderState {
-        Napier.d(tag = TAG) { "GroupHeaderPresenter present $groupKey" }
-        val scope = rememberCoroutineScope()
-        val mediaItem by produceRetainedState<MediaItemModel?>(null) {
-            value =
+    private var mediaItem by mutableStateOf<MediaItemModel?>(null)
+
+    init {
+        launch {
+            mediaItem =
                 when (groupKey) {
                     is GroupKey.Artist -> mediaContentRepository.getArtistByArtistId(artistId = groupKey.artistId)
                     is GroupKey.Album -> mediaContentRepository.getAlbumByAlbumId(albumId = groupKey.albumId)
@@ -79,7 +79,11 @@ private class GroupHeaderPresenter(
                     else -> null
                 }
         }
+    }
 
+    @Composable
+    override fun present(): GroupHeaderState {
+        Napier.d(tag = TAG) { "GroupHeaderPresenter present $groupKey" }
         val title =
             remember(mediaItem, groupKey) {
                 when (groupKey) {
@@ -96,7 +100,7 @@ private class GroupHeaderPresenter(
         ) { event ->
             when (event) {
                 GroupHeaderEvent.OnOptionClick -> {
-                    scope.launch {
+                    launch {
                         val dialog =
                             DialogId.OptionDialog(
                                 options =
@@ -112,7 +116,8 @@ private class GroupHeaderPresenter(
                         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
                             context(repository, popupController) {
                                 when (result.optionItem) {
-                                    OptionItem.ADD_TO_HOME_TAB -> mediaItem?.pinToHomeTab()
+// TODO
+//                                    OptionItem.ADD_TO_HOME_TAB -> mediaItem?.pinToHomeTab()
                                     OptionItem.PLAY_NEXT -> onGroupOption(result.optionItem)
                                     OptionItem.ADD_TO_QUEUE -> onGroupOption(result.optionItem)
                                     OptionItem.ADD_TO_PLAYLIST -> onGroupOption(result.optionItem)

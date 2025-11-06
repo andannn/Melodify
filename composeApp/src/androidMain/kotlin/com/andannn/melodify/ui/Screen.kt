@@ -5,21 +5,21 @@ import com.andannn.melodify.model.LibraryDataSource
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface Nav3Screen : NavKey {
+sealed interface Screen : NavKey {
     @Serializable
-    data object HomeScreen : Nav3Screen
+    data object Home : Screen
 
     @Serializable
-    data object LibraryScreen : Nav3Screen
+    data object Library : Screen
 
     @Serializable
-    data class LibraryDetailScreen(
+    data class LibraryDetail(
         val datasource: LibraryDataSource,
-    ) : Nav3Screen
+    ) : Screen
 
     @Serializable
-    object SearchScreen : Nav3Screen
+    object Search : Screen
 
     @Serializable
-    object TabManageScreen : Nav3Screen
+    object TabManage : Screen
 }

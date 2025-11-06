@@ -36,9 +36,9 @@ import com.andannn.melodify.core.data.model.browsableOrPlayable
 import com.andannn.melodify.core.data.model.keyOf
 import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.ui.components.tabcontent.header.GroupHeader
+import com.andannn.melodify.ui.components.tabcontent.header.rememberGroupHeaderPresenter
 import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.widgets.ListTileItemView
-import io.github.aakira.napier.Napier
 
 @Composable
 fun TabContent(
@@ -78,21 +78,18 @@ private fun LazyListContent(
     val items = pagingItems.itemSnapshotList
     val primaryGroupList =
         remember(items, displaySetting) {
-            displaySetting ?.let { items.groupByType(displaySetting) } ?: emptyList()
+            displaySetting?.let { items.groupByType(displaySetting) } ?: emptyList()
         }
-    Napier.d { "JQN  primaryGroupList size ${primaryGroupList.size}" }
-    val state: LazyListState = rememberLazyListState()
-    Napier.d { "JQN  state ${state.hashCode()}" }
     LazyColumn(
         modifier = modifier,
-        state = state,
     ) {
         primaryGroupList.forEachIndexed { primaryGroupIndex, (primaryGroupKey, secondaryGroupList) ->
             if (primaryGroupKey != null) {
                 stickyHeader(primaryGroupKey.hashCode()) {
+                    val state = rememberGroupHeaderPresenter(primaryGroupKey).present()
                     GroupHeader(
+                        state = state,
                         isPrimary = true,
-                        groupKey = primaryGroupKey,
                         onGroupOptionSelected = { onGroupOptionClick(it, listOf(primaryGroupKey)) },
                         onGroupHeaderClick = { onGroupItemClick(listOf(primaryGroupKey)) },
                     )
@@ -107,9 +104,10 @@ private fun LazyListContent(
                                 modifier = Modifier.width(20.dp),
                                 isLast = secondaryGroupIndex == secondaryGroupList.lastIndex,
                             )
+                            val state = rememberGroupHeaderPresenter(secondaryGroupKey).present()
                             GroupHeader(
+                                state = state,
                                 isPrimary = false,
-                                groupKey = secondaryGroupKey,
                                 onGroupOptionSelected = {
                                     onGroupOptionClick(
                                         it,
