@@ -41,7 +41,7 @@ ktlint = "12.2.0"
 spotless = "7.0.4"
 licensee = "1.14.1"
 pagingCommonVersion = "3.4.0-alpha04"
-material3 = "1.5.0-alpha07"
+material3 = "1.5.0-alpha08"
 nav3Core = "1.0.0-beta01"
 lifecycleViewmodelNav3 = "2.10.0-beta01"
 
