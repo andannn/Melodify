@@ -7,7 +7,6 @@ package com.andannn.melodify.ui.routes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.retain.retain
-import com.andannn.melodify.RootNavigator
 import com.andannn.melodify.core.syncer.SyncMediaStoreHandler
 import com.andannn.melodify.core.syncer.SyncStatus
 import com.andannn.melodify.core.syncer.SyncType
@@ -18,7 +17,10 @@ import com.andannn.melodify.ui.components.tab.TabUiState
 import com.andannn.melodify.ui.components.tab.rememberTabUiPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContentState
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
+import com.andannn.melodify.ui.core.LaunchNavigationRequestHandlerEffect
 import com.andannn.melodify.ui.core.LocalPopupController
+import com.andannn.melodify.ui.core.NavigationRequestEventSink
+import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
@@ -39,7 +41,7 @@ import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberHomeUiPresenter(
-    navigator: RootNavigator,
+    navigator: Navigator,
     popController: PopupController = LocalPopupController.current,
     syncMediaStoreHandler: SyncMediaStoreHandler = getKoin().get(),
 ): Presenter<HomeState> =
@@ -88,23 +90,20 @@ sealed interface HomeUiEvent {
 private const val TAG = "HomeScreen"
 
 private class HomePresenter(
-    private val navigator: RootNavigator,
+    private val navigator: Navigator,
     private val popController: PopupController,
     private val syncMediaStoreHandler: SyncMediaStoreHandler,
 ) : ScopedPresenter<HomeState>() {
     @Composable
     override fun present(): HomeState {
         val tabUiState = rememberTabUiPresenter().present()
-        val tabContentPresenter =
-            rememberTabContentPresenter(
-                selectedTab = tabUiState.selectedTab,
-//                onRequestGoToAlbum = {
-//                    navigator.navigateTo(Nav3Screen.LibraryDetailScreen(LibraryDataSource.AlbumDetail(id = it.albumId)))
-//                },
-//                onRequestGoToArtist = {
-//                    navigator.navigateTo(Nav3Screen.LibraryDetailScreen(LibraryDataSource.ArtistDetail(id = it.artistId)))
-//                },
-            )
+        val tabContentPresenter = rememberTabContentPresenter(selectedTab = tabUiState.selectedTab)
+
+        LaunchNavigationRequestHandlerEffect(
+            navigator = navigator,
+            eventSink = tabContentPresenter,
+        )
+
         return HomeState(
             tabUiState = tabUiState,
             tabContentState = tabContentPresenter.present(),

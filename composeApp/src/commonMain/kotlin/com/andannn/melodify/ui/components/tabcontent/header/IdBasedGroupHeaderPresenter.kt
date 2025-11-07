@@ -11,9 +11,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
+import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
@@ -22,29 +26,47 @@ import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.usecase.addToNextPlay
+import com.andannn.melodify.usecase.addToPlaylist
+import com.andannn.melodify.usecase.addToQueue
+import com.andannn.melodify.usecase.contentFlow
+import com.andannn.melodify.usecase.deleteItems
+import com.andannn.melodify.usecase.pinToHomeTab
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "GroupHeaderPresenter"
 
+data class GroupInfo(
+    val groupKey: GroupKey,
+    val parentHeaderGroupKey: GroupKey? = null,
+    val displaySetting: DisplaySetting?,
+    val selectedTab: CustomTab?,
+) {
+    val selection
+        get() = listOf(groupKey, parentHeaderGroupKey)
+}
+
 @Composable
 fun rememberGroupHeaderPresenter(
-    groupKey: GroupKey,
+    groupInfo: GroupInfo,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-//    onGroupOption: (OptionItem) -> Unit = {},
+    mediaFileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
 ): Presenter<GroupHeaderState> =
     retain(
-        groupKey,
+        groupInfo,
         repository,
         popupController,
-//        onGroupOption,
+        mediaFileDeleteHelper,
     ) {
         GroupHeaderPresenter(
-            groupKey,
+            groupInfo,
             repository,
             popupController,
-//            onGroupOption,
+            mediaFileDeleteHelper,
         )
     }
 
@@ -61,10 +83,10 @@ sealed interface GroupHeaderEvent {
 }
 
 private class GroupHeaderPresenter(
-    private val groupKey: GroupKey,
+    private val groupInfo: GroupInfo,
     private val repository: Repository,
     private val popupController: PopupController,
-    private val onGroupOption: (OptionItem) -> Unit = {},
+    private val mediaFileDeleteHelper: MediaFileDeleteHelper,
 ) : ScopedPresenter<GroupHeaderState>() {
     private val mediaContentRepository = repository.mediaContentRepository
 
@@ -73,7 +95,7 @@ private class GroupHeaderPresenter(
     init {
         launch {
             mediaItem =
-                when (groupKey) {
+                when (val groupKey = groupInfo.groupKey) {
                     is GroupKey.Artist -> mediaContentRepository.getArtistByArtistId(artistId = groupKey.artistId)
                     is GroupKey.Album -> mediaContentRepository.getAlbumByAlbumId(albumId = groupKey.albumId)
                     is GroupKey.Genre -> mediaContentRepository.getGenreByGenreId(genreId = groupKey.genreId)
@@ -84,6 +106,7 @@ private class GroupHeaderPresenter(
 
     @Composable
     override fun present(): GroupHeaderState {
+        val groupKey = groupInfo.groupKey
         Napier.d(tag = TAG) { "GroupHeaderPresenter present $groupKey" }
         val title =
             remember(mediaItem, groupKey) {
@@ -115,14 +138,23 @@ private class GroupHeaderPresenter(
                             )
                         val result = popupController.showDialog(dialog)
                         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
-                            context(repository, popupController) {
+                            context(repository, popupController, mediaFileDeleteHelper) {
                                 when (result.optionItem) {
-// TODO
-//                                    OptionItem.ADD_TO_HOME_TAB -> mediaItem?.pinToHomeTab()
-                                    OptionItem.PLAY_NEXT -> onGroupOption(result.optionItem)
-                                    OptionItem.ADD_TO_QUEUE -> onGroupOption(result.optionItem)
-                                    OptionItem.ADD_TO_PLAYLIST -> onGroupOption(result.optionItem)
-                                    OptionItem.DELETE_MEDIA_FILE -> onGroupOption(result.optionItem)
+                                    OptionItem.ADD_TO_HOME_TAB -> launch { mediaItem?.pinToHomeTab() }
+                                    OptionItem.PLAY_NEXT,
+                                    OptionItem.ADD_TO_QUEUE,
+                                    OptionItem.ADD_TO_PLAYLIST,
+                                    OptionItem.DELETE_MEDIA_FILE,
+                                    ->
+                                        launch {
+                                            handleGroupOption(
+                                                result.optionItem,
+                                                groupInfo.selection,
+                                                groupInfo.displaySetting,
+                                                groupInfo.selectedTab,
+                                            )
+                                        }
+
                                     else -> {}
                                 }
                             }
@@ -130,6 +162,28 @@ private class GroupHeaderPresenter(
                     }
                 }
             }
+        }
+    }
+
+    context(_: Repository, _: PopupController, _: MediaFileDeleteHelper)
+    private suspend fun handleGroupOption(
+        optionItem: OptionItem,
+        groupKeys: List<GroupKey?>,
+        displaySetting: DisplaySetting?,
+        selectedTab: CustomTab?,
+    ) {
+        val items =
+            selectedTab
+                ?.contentFlow(
+                    sorts = displaySetting?.sortOptions() ?: return,
+                    whereGroups = groupKeys.filterNotNull(),
+                )?.first() ?: emptyList()
+        when (optionItem) {
+            OptionItem.PLAY_NEXT -> addToNextPlay(items)
+            OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items)
+            OptionItem.ADD_TO_QUEUE -> addToQueue(items)
+            OptionItem.DELETE_MEDIA_FILE -> deleteItems(items)
+            else -> {}
         }
     }
 }

@@ -7,14 +7,14 @@ package com.andannn.melodify.ui.routes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.retain.retain
-import com.andannn.melodify.RootNavigator
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.ui.Screen
+import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
 
 @Composable
-fun rememberSearchScreenPresenter(navigator: RootNavigator): Presenter<SearchScreenState> =
+fun rememberSearchScreenPresenter(navigator: Navigator): Presenter<SearchScreenState> =
     retain(navigator) {
         SearchScreenPresenter(navigator)
     }
@@ -33,7 +33,7 @@ sealed interface SearchScreenEvent {
 }
 
 private class SearchScreenPresenter(
-    private val navigator: RootNavigator,
+    private val navigator: Navigator,
 ) : ScopedPresenter<SearchScreenState>() {
     @Composable
     override fun present(): SearchScreenState =

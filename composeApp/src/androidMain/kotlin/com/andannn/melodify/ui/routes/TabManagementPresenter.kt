@@ -7,12 +7,12 @@ package com.andannn.melodify.ui.routes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.retain.retain
-import com.andannn.melodify.RootNavigator
+import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
 
 @Composable
-fun rememberTabManagementScreenPresenter(navigator: RootNavigator): Presenter<TabManagementScreenState> =
+fun rememberTabManagementScreenPresenter(navigator: Navigator): Presenter<TabManagementScreenState> =
     retain(
         navigator,
     ) {
@@ -31,7 +31,7 @@ sealed interface UiEvent {
 }
 
 private class TabManagementScreenPresenter(
-    private val navigator: RootNavigator,
+    private val navigator: Navigator,
 ) : ScopedPresenter<TabManagementScreenState>() {
     @Composable
     override fun present(): TabManagementScreenState =

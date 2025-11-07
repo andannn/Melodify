@@ -24,7 +24,7 @@ interface ScopedObserver :
     RetainObserver,
     CoroutineScope
 
-private class ScopedObserverImpl : ScopedObserver {
+class ScopedObserverImpl : ScopedObserver {
     private val job = SupervisorJob()
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main + job

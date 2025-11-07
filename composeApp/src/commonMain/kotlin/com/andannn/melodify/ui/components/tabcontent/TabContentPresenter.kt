@@ -22,11 +22,17 @@ import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.ui.core.ChannelNavigationRequestEventChannel
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.NavigationRequest
+import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.ScopedObserver
+import com.andannn.melodify.ui.core.ScopedObserverImpl
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
@@ -71,7 +77,10 @@ class TabContentPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
-) : ScopedPresenter<TabContentState>() {
+    private val scopedObserver: ScopedObserver = ScopedObserverImpl(),
+) : Presenter<TabContentState>,
+    ScopedObserver by scopedObserver,
+    NavigationRequestEventSink by ChannelNavigationRequestEventChannel(scopedObserver) {
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val playListRepository = repository.playListRepository
     private val userPreferenceRepository = repository.userPreferenceRepository
@@ -120,16 +129,6 @@ class TabContentPresenter(
                     is TabContentEvent.OnShowMusicItemOption ->
                         launch {
                             onShowMusicItemOption(eventSink.mediaItemModel)
-                        }
-
-                    is TabContentEvent.OnGroupOptionClick ->
-                        launch {
-                            handleGroupOption(
-                                eventSink.optionItem,
-                                eventSink.groupKeys,
-                                displaySetting.value!!,
-                                selectedTab,
-                            )
                         }
 
                     is TabContentEvent.OnGroupItemClick ->
@@ -202,28 +201,6 @@ class TabContentPresenter(
         }
     }
 
-    context(_: Repository, _: PopupController, _: MediaFileDeleteHelper)
-    private suspend fun handleGroupOption(
-        optionItem: OptionItem,
-        groupKeys: List<GroupKey?>,
-        displaySetting: DisplaySetting,
-        selectedTab: CustomTab?,
-    ) {
-        val items =
-            selectedTab
-                ?.contentFlow(
-                    sorts = displaySetting.sortOptions(),
-                    whereGroups = groupKeys.filterNotNull(),
-                )?.first() ?: emptyList()
-        when (optionItem) {
-            OptionItem.PLAY_NEXT -> addToNextPlay(items)
-            OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items)
-            OptionItem.ADD_TO_QUEUE -> addToQueue(items)
-            OptionItem.DELETE_MEDIA_FILE -> deleteItems(items)
-            else -> {}
-        }
-    }
-
     context(_: Repository, popupController: PopupController, _: MediaFileDeleteHelper)
     private suspend fun onShowMusicItemOption(item: AudioItemModel) {
         val options =
@@ -235,21 +212,28 @@ class TabContentPresenter(
                 OptionItem.OPEN_LIBRARY_ARTIST,
                 OptionItem.DELETE_MEDIA_FILE,
             )
-        val result =
-            popupController.showDialog(
-                DialogId.OptionDialog(
-                    options = options,
-                ),
-            )
+        val result = popupController.showDialog(DialogId.OptionDialog(options = options))
+
         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
             when (result.optionItem) {
                 OptionItem.PLAY_NEXT -> addToNextPlay(listOf(item))
                 OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(item))
                 OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item))
                 OptionItem.DELETE_MEDIA_FILE -> deleteItems(listOf(item))
-// TODO:
-//                OptionItem.OPEN_LIBRARY_ALBUM -> onRequestGoToAlbum(item)
-//                OptionItem.OPEN_LIBRARY_ARTIST -> onRequestGoToArtist(item)
+                OptionItem.OPEN_LIBRARY_ALBUM ->
+                    onRequest(
+                        NavigationRequest.GoToLibraryDetail(
+                            LibraryDataSource.AlbumDetail(id = item.albumId),
+                        ),
+                    )
+
+                OptionItem.OPEN_LIBRARY_ARTIST ->
+                    onRequest(
+                        NavigationRequest.GoToLibraryDetail(
+                            LibraryDataSource.ArtistDetail(id = item.artistId),
+                        ),
+                    )
+
                 else -> {}
             }
         }
@@ -271,11 +255,6 @@ sealed interface TabContentEvent {
 
     data class OnPlayMusic(
         val mediaItemModel: AudioItemModel,
-    ) : TabContentEvent
-
-    data class OnGroupOptionClick(
-        val optionItem: OptionItem,
-        val groupKeys: List<GroupKey?>,
     ) : TabContentEvent
 
     data class OnGroupItemClick(

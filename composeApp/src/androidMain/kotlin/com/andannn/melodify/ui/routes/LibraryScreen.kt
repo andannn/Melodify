@@ -23,9 +23,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.RootNavigator
 import com.andannn.melodify.model.ShortcutItem
 import com.andannn.melodify.model.toDataSource
+import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
@@ -34,7 +34,7 @@ import com.andannn.melodify.ui.widgets.ShortcutItem
 
 @Composable
 fun Library(
-    navigator: RootNavigator,
+    navigator: Navigator,
     modifier: Modifier = Modifier,
     presenter: Presenter<LibraryState> = rememberLibraryPresenter(navigator),
 ) {

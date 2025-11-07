@@ -29,7 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.ui.core.Presenter
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
@@ -38,11 +40,12 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun GroupHeader(
     isPrimary: Boolean,
+    groupInfo: GroupInfo,
     modifier: Modifier = Modifier,
-    state: GroupHeaderState,
-    onGroupOptionSelected: (OptionItem) -> Unit = {},
+    presenter: Presenter<GroupHeaderState> = rememberGroupHeaderPresenter(groupInfo),
     onGroupHeaderClick: () -> Unit = {},
 ) {
+    val state = presenter.present()
     HeaderInfo(
         modifier = modifier,
         isPrimary = isPrimary,

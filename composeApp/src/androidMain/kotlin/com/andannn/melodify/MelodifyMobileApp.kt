@@ -8,10 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -20,6 +19,7 @@ import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import com.andannn.melodify.ui.Screen
+import com.andannn.melodify.ui.core.RootNavigator
 import com.andannn.melodify.ui.core.rememberPopupControllerNavEntryDecorator
 import com.andannn.melodify.ui.core.rememberRetainedValueStoreNavEntryDecorator
 import com.andannn.melodify.ui.routes.HomeUiScreen
@@ -35,16 +35,15 @@ fun MelodifyMobileApp(modifier: Modifier = Modifier) {
         modifier = modifier,
         color = MaterialTheme.colorScheme.background,
     ) {
-        val backStack =
-            rememberNavBackStack(
-                Screen.Home,
-            )
-        val navigator = remember(backStack) { RootNavigator(backStack) }
+        val backStack = rememberNavBackStack(Screen.Home)
+        val navigator = retain { RootNavigator() }
+
+        navigator.backStack = backStack
 
         CompositionLocalProvider {
             NavDisplay(
                 modifier = Modifier,
-                backStack = navigator.backStackList,
+                backStack = backStack,
                 sceneStrategy = DialogSceneStrategy<NavKey>() then SinglePaneSceneStrategy(),
                 entryDecorators =
                     listOf(
@@ -68,8 +67,8 @@ fun MelodifyMobileApp(modifier: Modifier = Modifier) {
 
                         entry<Screen.LibraryDetail> { screen ->
                             LibraryDetail(
-                                dataSource = screen.datasource,
                                 navigator = navigator,
+                                dataSource = screen.datasource,
                             )
                         }
 
@@ -78,25 +77,6 @@ fun MelodifyMobileApp(modifier: Modifier = Modifier) {
                         }
                     },
             )
-        }
-    }
-}
-
-class RootNavigator constructor(
-    private val backStack: NavBackStack<NavKey>,
-) {
-    val backStackList: List<NavKey>
-        get() = backStack
-
-    fun navigateTo(screen: Screen) {
-        backStack.add(screen)
-    }
-
-    fun popBackStack() {
-        with(backStack) {
-            if (backStack.size > 1) {
-                removeAt(lastIndex)
-            }
         }
     }
 }

@@ -23,12 +23,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.RootNavigator
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.browseable
 import com.andannn.melodify.ui.components.mediaitem.MediaLibraryItem
 import com.andannn.melodify.ui.components.playcontrol.Player
+import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
@@ -36,7 +36,7 @@ import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 @Composable
 fun LibraryDetail(
     dataSource: LibraryDataSource,
-    navigator: RootNavigator,
+    navigator: Navigator,
     modifier: Modifier = Modifier,
     presenter: Presenter<LibraryDetailScreenState> =
         rememberLibraryDetailScreenPresenter(

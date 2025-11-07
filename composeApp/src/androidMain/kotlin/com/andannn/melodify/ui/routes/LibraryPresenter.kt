@@ -7,14 +7,14 @@ package com.andannn.melodify.ui.routes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.retain.retain
-import com.andannn.melodify.RootNavigator
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.ui.Screen
+import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
 
 @Composable
-fun rememberLibraryPresenter(navigator: RootNavigator): Presenter<LibraryState> =
+fun rememberLibraryPresenter(navigator: Navigator): Presenter<LibraryState> =
     retain {
         LibraryPresenter(
             navigator = navigator,
@@ -22,7 +22,7 @@ fun rememberLibraryPresenter(navigator: RootNavigator): Presenter<LibraryState> 
     }
 
 private class LibraryPresenter(
-    private val navigator: RootNavigator,
+    private val navigator: Navigator,
 ) : ScopedPresenter<LibraryState>() {
     @Composable
     override fun present(): LibraryState =
