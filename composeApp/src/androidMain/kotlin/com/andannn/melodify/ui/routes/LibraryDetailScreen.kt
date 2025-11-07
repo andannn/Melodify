@@ -76,7 +76,10 @@ private fun LibraryDetailContent(
     Scaffold(
         modifier = modifier,
         snackbarHost = {
-            SnackbarHost(rememberAndSetupSnackBarHostState())
+            SnackbarHost(
+                modifier = Modifier.padding(bottom = 64.dp),
+                hostState = rememberAndSetupSnackBarHostState(),
+            )
         },
         topBar = {
             TopAppBar(

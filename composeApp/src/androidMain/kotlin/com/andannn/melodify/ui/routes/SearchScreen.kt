@@ -4,10 +4,12 @@
  */
 package com.andannn.melodify.ui.routes
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.components.search.Search
 import com.andannn.melodify.ui.core.Navigator
@@ -25,7 +27,10 @@ fun SearchScreen(
     Scaffold(
         modifier = modifier,
         snackbarHost = {
-            SnackbarHost(rememberAndSetupSnackBarHostState())
+            SnackbarHost(
+                modifier = Modifier.padding(bottom = 64.dp),
+                hostState = rememberAndSetupSnackBarHostState(),
+            )
         },
     ) {
         // ignore padding

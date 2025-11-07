@@ -104,8 +104,8 @@ fun LibraryDataSource.browseable() =
         LibraryDataSource.AllArtist,
         LibraryDataSource.AllGenre,
         LibraryDataSource.AllPlaylist,
-        LibraryDataSource.AllSong,
         -> true
+        LibraryDataSource.AllSong,
         is LibraryDataSource.AlbumDetail,
         is LibraryDataSource.ArtistDetail,
         LibraryDataSource.Favorite,

@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.components.librarydetail
+package com.andannn.melodify.usecase
 
 import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.Repository
@@ -14,14 +14,6 @@ import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.model.asLibraryDataSource
 import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.usecase.addToNextPlay
-import com.andannn.melodify.usecase.addToPlaylist
-import com.andannn.melodify.usecase.addToQueue
-import com.andannn.melodify.usecase.content
-import com.andannn.melodify.usecase.delete
-import com.andannn.melodify.usecase.deleteItemInPlayList
-import com.andannn.melodify.usecase.deleteItems
-import com.andannn.melodify.usecase.pinToHomeTab
 import kotlinx.coroutines.flow.first
 
 /**
@@ -56,12 +48,7 @@ suspend fun showLibraryMediaOption(
             if (isPlayList && !isFavoritePlayList) add(OptionItem.DELETE_PLAYLIST)
             if (playListId != null && isAudio) add(OptionItem.DELETE_FROM_PLAYLIST)
         }
-    val result =
-        popController.showDialog(
-            DialogId.OptionDialog(
-                options = options,
-            ),
-        )
+    val result = popController.showDialog(DialogId.OptionDialog(options = options))
     if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
         when (result.optionItem) {
             OptionItem.PLAY_NEXT -> addToNextPlay(medias())

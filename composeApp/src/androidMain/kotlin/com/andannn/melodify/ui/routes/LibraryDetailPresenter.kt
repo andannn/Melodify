@@ -18,13 +18,13 @@ import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.components.librarydetail.LibraryContentEvent
 import com.andannn.melodify.ui.components.librarydetail.LibraryContentState
 import com.andannn.melodify.ui.components.librarydetail.rememberLibraryDetailPresenter
-import com.andannn.melodify.ui.components.librarydetail.showLibraryMediaOption
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.usecase.showLibraryMediaOption
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 

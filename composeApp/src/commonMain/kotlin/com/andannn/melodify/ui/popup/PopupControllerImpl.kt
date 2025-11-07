@@ -38,9 +38,15 @@ class PopupControllerImpl :
     /**
      * Show snackbar and wait for user interaction.
      */
-    override suspend fun showSnackBar(message: SnackBarMessage): SnackbarResult =
-        snackBarController?.showSnackbar(message.toSnackbarVisuals())
+    override suspend fun showSnackBar(message: SnackBarMessage): SnackbarResult {
+        Napier.d(tag = TAG) { "show snackbar. message = $message" }
+        return snackBarController
+            ?.showSnackbar(message.toSnackbarVisuals())
+            ?.also {
+                Napier.d(tag = TAG) { "showSnackBar. result = $it" }
+            }
             ?: error("Snackbar HostState is not setup. ")
+    }
 
     /**
      * Show dialog and wait for user interaction.
