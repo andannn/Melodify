@@ -8,6 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.andannn.melodify.ui.Screen
 
+/**
+ * Launch navigation request handler effects.
+ *
+ * @param navigator
+ * @param eventSink
+ */
 @Composable
 fun LaunchNavigationRequestHandlerEffect(
     navigator: Navigator,

@@ -9,9 +9,20 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.andannn.melodify.ui.Screen
 
+/**
+ * Navigator interface for navigation between screens.
+ */
 interface Navigator {
+    /**
+     * Navigate to a new screen.
+     *
+     * @param screen The screen to navigate to.
+     */
     fun navigateTo(screen: Screen)
 
+    /**
+     * Pop the current screen from the back stack.
+     */
     fun popBackStack()
 }
 

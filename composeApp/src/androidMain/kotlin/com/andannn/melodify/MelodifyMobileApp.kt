@@ -40,43 +40,41 @@ fun MelodifyMobileApp(modifier: Modifier = Modifier) {
 
         navigator.backStack = backStack
 
-        CompositionLocalProvider {
-            NavDisplay(
-                modifier = Modifier,
-                backStack = backStack,
-                sceneStrategy = DialogSceneStrategy<NavKey>() then SinglePaneSceneStrategy(),
-                entryDecorators =
-                    listOf(
-                        rememberSaveableStateHolderNavEntryDecorator(),
-                        rememberRetainedValueStoreNavEntryDecorator(),
-                        rememberPopupControllerNavEntryDecorator(),
-                    ),
-                entryProvider =
-                    entryProvider {
-                        entry<Screen.Home> {
-                            HomeUiScreen(navigator)
-                        }
+        NavDisplay(
+            modifier = Modifier,
+            backStack = backStack,
+            sceneStrategy = DialogSceneStrategy<NavKey>() then SinglePaneSceneStrategy(),
+            entryDecorators =
+                listOf(
+                    rememberSaveableStateHolderNavEntryDecorator(),
+                    rememberRetainedValueStoreNavEntryDecorator(),
+                    rememberPopupControllerNavEntryDecorator(),
+                ),
+            entryProvider =
+                entryProvider {
+                    entry<Screen.Home> {
+                        HomeUiScreen(navigator)
+                    }
 
-                        entry<Screen.TabManage> {
-                            TabManagementScreen(navigator)
-                        }
+                    entry<Screen.TabManage> {
+                        TabManagementScreen(navigator)
+                    }
 
-                        entry<Screen.Library> {
-                            Library(navigator)
-                        }
+                    entry<Screen.Library> {
+                        Library(navigator)
+                    }
 
-                        entry<Screen.LibraryDetail> { screen ->
-                            LibraryDetail(
-                                navigator = navigator,
-                                dataSource = screen.datasource,
-                            )
-                        }
+                    entry<Screen.LibraryDetail> { screen ->
+                        LibraryDetail(
+                            navigator = navigator,
+                            dataSource = screen.datasource,
+                        )
+                    }
 
-                        entry<Screen.Search> {
-                            SearchScreen(navigator = navigator)
-                        }
-                    },
-            )
-        }
+                    entry<Screen.Search> {
+                        SearchScreen(navigator = navigator)
+                    }
+                },
+        )
     }
 }
