@@ -36,13 +36,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.platform.formatTime
+import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.util.getIcon
 import com.andannn.melodify.ui.widgets.CircleBorderImage
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun DesktopPlayer(
-    presenter: PlayerPresenter = rememberPlayerPresenter(),
+    presenter: Presenter<PlayerUiState> = rememberPlayerPresenter(),
     modifier: Modifier = Modifier,
 ) {
     DesktopPlayerUi(
