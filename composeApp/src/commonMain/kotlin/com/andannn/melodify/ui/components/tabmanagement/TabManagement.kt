@@ -41,8 +41,8 @@ private const val TAG = "TabManagement"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabManagementContent(
-    presenter: TabManagementPresenter = rememberTabManagementPresenter(),
     modifier: Modifier = Modifier,
+    presenter: TabManagementPresenter = rememberTabManagementPresenter(),
 ) {
     val state = presenter.present()
     TabManagementList(

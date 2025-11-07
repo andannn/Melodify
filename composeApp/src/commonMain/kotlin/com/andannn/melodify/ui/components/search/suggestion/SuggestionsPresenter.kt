@@ -5,24 +5,22 @@
 package com.andannn.melodify.ui.components.search.suggestion
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
-import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.slack.circuit.retained.rememberRetained
-import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.presenter.Presenter
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.ScopedPresenter
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun rememberSuggestionsPresenter(
     query: String,
     repository: Repository = LocalRepository.current,
-) = remember(
+) = retain(
     query,
     repository,
 ) {
@@ -35,27 +33,22 @@ internal fun rememberSuggestionsPresenter(
 internal class SuggestionsPresenter(
     private val query: String,
     private val repository: Repository,
-) : Presenter<SuggestionsUiState> {
+) : ScopedPresenter<SuggestionsUiState>() {
     private val userPreferenceRepository = repository.userPreferenceRepository
+    val initialState =
+        if (query.isEmpty()) SuggestionsState.LoadingHistory else SuggestionsState.LoadingSuggestion
+    private var state by mutableStateOf(initialState)
 
-    @Composable
-    override fun present(): SuggestionsUiState {
-        val scope = rememberCoroutineScope()
-        val initialState =
-            if (query.isEmpty()) SuggestionsState.LoadingHistory else SuggestionsState.LoadingSuggestion
-
-        var state by rememberRetained {
-            mutableStateOf(initialState)
-        }
+    init {
         if (initialState is SuggestionsState.LoadingHistory) {
-            scope.launch {
+            launch {
                 state =
                     SuggestionsState.HistoryLoaded(
                         userPreferenceRepository.getAllSearchHistory(),
                     )
             }
         } else {
-            scope.launch {
+            launch {
                 val result = repository.mediaContentRepository.searchContent("$query*")
                 if (result.isEmpty()) {
                     state = SuggestionsState.NoSuggestion
@@ -73,14 +66,18 @@ internal class SuggestionsPresenter(
                 }
             }
         }
-        return SuggestionsUiState(state)
     }
+
+    @Composable
+    override fun present(): SuggestionsUiState = SuggestionsUiState(state)
 }
 
+@Stable
 data class SuggestionsUiState(
     val state: SuggestionsState,
-) : CircuitUiState
+)
 
+@Stable
 sealed interface SuggestionsState {
     /**
      * When query string is empty, show history search suggestions.

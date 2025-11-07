@@ -34,7 +34,6 @@ import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.asLibraryDataSource
 import com.andannn.melodify.ui.components.search.result.SearchPageView
 import com.andannn.melodify.ui.components.search.suggestion.Suggestions
-import com.slack.circuit.retained.rememberRetained
 
 @Composable
 fun Search(
@@ -46,6 +45,7 @@ fun Search(
     val state = searchPresenter.present()
     SearchViewContent(
         modifier = modifier,
+        focusRequester = state.focusRequester,
         textFieldState = state.inputText,
         isExpand = state.isExpand,
         searchedResult = state.searchState,
@@ -71,6 +71,7 @@ fun Search(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchViewContent(
+    focusRequester: FocusRequester,
     textFieldState: TextFieldState,
     isExpand: Boolean,
     searchedResult: SearchState,
@@ -89,21 +90,9 @@ private fun SearchViewContent(
             onPlayAudio(item as AudioItemModel)
         }
     }
-    var hasRequestFocus by rememberRetained {
-        mutableStateOf(false)
-    }
 
     Column(modifier = modifier.fillMaxSize()) {
-        val focusRequester = remember { FocusRequester() }
         val focusManager = LocalFocusManager.current
-
-        LaunchedEffect(Unit) {
-            if (!hasRequestFocus) {
-                focusRequester.requestFocus()
-                hasRequestFocus = true
-            }
-        }
-
         SearchBar(
             modifier = Modifier.fillMaxWidth(),
             inputField = {

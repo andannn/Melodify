@@ -18,6 +18,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,73 +44,19 @@ import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.window.CustomMenuBar
 import com.andannn.melodify.window.rememberCommonWindowState
-import com.slack.circuit.backstack.rememberSaveableBackStack
-import com.slack.circuit.foundation.Circuit
-import com.slack.circuit.foundation.CircuitCompositionLocals
-import com.slack.circuit.foundation.NavigableCircuitContent
-import com.slack.circuit.foundation.rememberCircuitNavigator
-import com.slack.circuit.runtime.CircuitContext
-import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.presenter.Presenter
-import com.slack.circuit.runtime.presenter.presenterOf
-import com.slack.circuit.runtime.screen.Screen
-import com.slack.circuit.runtime.ui.Ui
-import com.slack.circuit.runtime.ui.ui
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
 
-object MainScreen : Screen
-
-object MainScreenUiFactory : Ui.Factory {
-    override fun create(
-        screen: Screen,
-        context: CircuitContext,
-    ): Ui<*>? =
-        when (screen) {
-            is MainScreen ->
-                ui<MainUiState> { state, modifier ->
-                    MainScreen(state, modifier)
-                }
-
-            else -> null
-        }
-}
-
-object MainScreenPresenterFactory : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? =
-        when (screen) {
-            is MainScreen ->
-                presenterOf {
-                    val tabUiPresenter = rememberTabUiPresenter()
-                    val tabState = tabUiPresenter.present()
-                    val tabContentPresenter = rememberTabContentPresenter(tabState.selectedTab)
-                    val playerPresenter = rememberPlayerPresenter()
-                    MainUiState(
-                        tabUiState = tabState,
-                        tabContentState = tabContentPresenter.present(),
-                        playerUiState = playerPresenter.present(),
-                    )
-                }
-
-            else -> null
-        }
-}
-
+@Stable
 data class MainUiState(
     val tabUiState: TabUiState,
     val playerUiState: PlayerUiState,
     val tabContentState: TabContentState,
-) : CircuitUiState
+)
 
 @Composable
 internal fun MainWindow(
     appState: MelodifyDeskTopAppState,
-    circuit: Circuit = buildCircuitDesktop(),
     onCloseRequest: () -> Unit,
 ) {
     val graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -133,42 +80,22 @@ internal fun MainWindow(
                 SnackbarHost(windowState.snackBarHostState)
             },
         ) {
-            CircuitCompositionLocals(circuit = circuit) {
-                val backStack = rememberSaveableBackStack(MainScreen)
-                val navigator =
-                    rememberCircuitNavigator(backStack) {
-                        onCloseRequest.invoke()
-                    }
-
-                NavigableCircuitContent(navigator, backStack)
-            }
+            val tabUiPresenter = rememberTabUiPresenter()
+            val tabState = tabUiPresenter.present()
+            val tabContentPresenter = rememberTabContentPresenter(tabState.selectedTab)
+            val playerPresenter = rememberPlayerPresenter()
+            val state =
+                MainUiState(
+                    tabUiState = tabState,
+                    tabContentState = tabContentPresenter.present(),
+                    playerUiState = playerPresenter.present(),
+                )
+            MainScreen(state, Modifier)
         }
 
         ActionDialogContainer()
     }
 }
-
-private fun buildCircuitDesktop() =
-    buildCircuit(
-        presenterFactory =
-            listOf(
-                MainScreenPresenterFactory,
-            ),
-        uiFactory =
-            listOf(
-                MainScreenUiFactory,
-            ),
-    )
-
-private fun buildCircuit(
-    presenterFactory: List<Presenter.Factory> = emptyList(),
-    uiFactory: List<Ui.Factory> = emptyList(),
-): Circuit =
-    Circuit
-        .Builder()
-        .addPresenterFactories(presenterFactory)
-        .addUiFactories(uiFactory)
-        .build()
 
 @Composable
 fun MainScreen(

@@ -31,6 +31,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,14 +42,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.platform.formatTime
-import com.slack.circuit.retained.rememberRetained
-import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.presenter.Presenter
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -74,12 +72,13 @@ fun SyncedLyrics(
     )
 }
 
+@Stable
 data class SyncedLyricsState(
     val syncedLyricsLines: List<SyncedLyricsLine>,
     val lyricsState: LyricsState,
     val currentPlayingIndex: Int,
     val eventSink: (SyncedLyricsEvent) -> Unit,
-) : CircuitUiState
+)
 
 sealed interface SyncedLyricsEvent {
     data class SeekToTime(
@@ -87,6 +86,7 @@ sealed interface SyncedLyricsEvent {
     ) : SyncedLyricsEvent
 }
 
+@Stable
 data class SyncedLyricsLine(
     val startTimeMs: Long,
     val endTimeMs: Long = 0L,
@@ -96,6 +96,7 @@ data class SyncedLyricsLine(
         get() = lyrics.takeIf { it.isNotBlank() } ?: "[ Music ]"
 }
 
+@Stable
 sealed interface LyricsState {
     data object AutoScrolling : LyricsState
 
@@ -261,10 +262,10 @@ private class SyncedLyricsPresenter(
 
     @Composable
     override fun present(): SyncedLyricsState {
-        val syncedLyricsLines by rememberRetained {
+        val syncedLyricsLines by remember {
             mutableStateOf(parseSyncedLyrics(syncedLyrics))
         }
-        var lyricsState by rememberRetained {
+        var lyricsState by remember {
             mutableStateOf<LyricsState>(LyricsState.AutoScrolling)
         }
         var currentPlayingIndex by rememberSaveable {

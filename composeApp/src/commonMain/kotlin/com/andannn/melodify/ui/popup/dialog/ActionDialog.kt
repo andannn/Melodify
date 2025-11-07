@@ -14,12 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
-import com.andannn.melodify.LocalPopupController
-import com.andannn.melodify.PopupController
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.DialogType
 import com.andannn.melodify.model.dialogIdType
+import com.andannn.melodify.ui.core.LocalPopupController
+import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.popup.dialog.content.AddLibraryPathDialog
 import com.andannn.melodify.ui.popup.dialog.content.AddToPlayListDialogContent
 import com.andannn.melodify.ui.popup.dialog.content.AlertMessageDialogContent

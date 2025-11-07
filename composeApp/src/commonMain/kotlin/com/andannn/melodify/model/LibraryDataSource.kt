@@ -10,32 +10,44 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import kotlinx.serialization.Serializable
 
+@Serializable
 sealed interface LibraryDataSource {
+    @Serializable
     data object AllSong : LibraryDataSource
 
+    @Serializable
     data object AllArtist : LibraryDataSource
 
+    @Serializable
     data object AllAlbum : LibraryDataSource
 
+    @Serializable
     data object AllGenre : LibraryDataSource
 
+    @Serializable
     data object AllPlaylist : LibraryDataSource
 
+    @Serializable
     data object Favorite : LibraryDataSource
 
+    @Serializable
     data class ArtistDetail(
         val id: String,
     ) : LibraryDataSource
 
+    @Serializable
     data class AlbumDetail(
         val id: String,
     ) : LibraryDataSource
 
+    @Serializable
     data class GenreDetail(
         val id: String,
     ) : LibraryDataSource
 
+    @Serializable
     data class PlayListDetail(
         val id: String,
     ) : LibraryDataSource
@@ -92,8 +104,8 @@ fun LibraryDataSource.browseable() =
         LibraryDataSource.AllArtist,
         LibraryDataSource.AllGenre,
         LibraryDataSource.AllPlaylist,
-        LibraryDataSource.AllSong,
         -> true
+        LibraryDataSource.AllSong,
         is LibraryDataSource.AlbumDetail,
         is LibraryDataSource.ArtistDetail,
         LibraryDataSource.Favorite,

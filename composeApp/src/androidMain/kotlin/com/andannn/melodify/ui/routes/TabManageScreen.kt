@@ -16,39 +16,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.andannn.melodify.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.components.tabmanagement.TabManagementContent
+import com.andannn.melodify.ui.core.Navigator
+import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
-import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.presenter.Presenter
-
-class TabManagementScreenPresenter(
-    private val navigator: Navigator,
-) : Presenter<TabManagementScreenState> {
-    @Composable
-    override fun present(): TabManagementScreenState =
-        TabManagementScreenState { event ->
-            when (event) {
-                UiEvent.OnBackKeyPressed -> navigator.pop()
-            }
-        }
-}
-
-data class TabManagementScreenState(
-    val eventSink: (UiEvent) -> Unit,
-) : CircuitUiState
-
-sealed interface UiEvent {
-    data object OnBackKeyPressed : UiEvent
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun TabManagementScreen(
-    state: TabManagementScreenState,
+fun TabManagementScreen(
+    navigator: Navigator,
     modifier: Modifier = Modifier,
+    presenter: Presenter<TabManagementScreenState> = rememberTabManagementScreenPresenter(navigator),
 ) {
+    val state = presenter.present()
     Scaffold(
         modifier = modifier,
         snackbarHost = {

@@ -8,98 +8,73 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.ProvidedValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.backhandler.BackHandler
-import com.andannn.melodify.ui.HomeScreen
-import com.andannn.melodify.ui.PresenterFactory
-import com.andannn.melodify.ui.UiFactory
-import com.andannn.melodify.ui.popup.PopupControllerImpl
-import com.slack.circuit.backstack.BackStack.Record
-import com.slack.circuit.backstack.BackStackRecordLocalProvider
-import com.slack.circuit.backstack.ProvidedValues
-import com.slack.circuit.backstack.providedValuesForBackStack
-import com.slack.circuit.backstack.rememberSaveableBackStack
-import com.slack.circuit.foundation.Circuit
-import com.slack.circuit.foundation.CircuitCompositionLocals
-import com.slack.circuit.foundation.NavigableCircuitContent
-import com.slack.circuit.foundation.rememberCircuitNavigator
-import com.slack.circuit.runtime.presenter.Presenter
-import com.slack.circuit.runtime.ui.Ui
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import org.koin.mp.KoinPlatform.getKoin
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.DialogSceneStrategy
+import androidx.navigation3.scene.SinglePaneSceneStrategy
+import androidx.navigation3.ui.NavDisplay
+import com.andannn.melodify.ui.Screen
+import com.andannn.melodify.ui.core.RootNavigator
+import com.andannn.melodify.ui.core.rememberPopupControllerNavEntryDecorator
+import com.andannn.melodify.ui.core.rememberRetainedValueStoreNavEntryDecorator
+import com.andannn.melodify.ui.routes.HomeUiScreen
+import com.andannn.melodify.ui.routes.Library
+import com.andannn.melodify.ui.routes.LibraryDetail
+import com.andannn.melodify.ui.routes.SearchScreen
+import com.andannn.melodify.ui.routes.TabManagementScreen
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun MelodifyMobileApp(
-    modifier: Modifier = Modifier,
-    circuit: Circuit = buildCircuitMobile(),
-) {
-    CompositionLocalProvider(LocalRepository provides remember { getKoin().get() }) {
-        Surface(
-            modifier = modifier,
-            color = MaterialTheme.colorScheme.background,
-        ) {
-            CircuitCompositionLocals(circuit = circuit) {
-                val backStack = rememberSaveableBackStack(HomeScreen)
-                val navigator =
-                    rememberCircuitNavigator(backStack) {
+fun MelodifyMobileApp(modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.background,
+    ) {
+        val backStack = rememberNavBackStack(Screen.Home)
+        val navigator = retain { RootNavigator() }
+
+        navigator.backStack = backStack
+
+        NavDisplay(
+            modifier = Modifier,
+            backStack = backStack,
+            sceneStrategy = DialogSceneStrategy<NavKey>() then SinglePaneSceneStrategy(),
+            entryDecorators =
+                listOf(
+                    rememberSaveableStateHolderNavEntryDecorator(),
+                    rememberRetainedValueStoreNavEntryDecorator(),
+                    rememberPopupControllerNavEntryDecorator(),
+                ),
+            entryProvider =
+                entryProvider {
+                    entry<Screen.Home> {
+                        HomeUiScreen(navigator)
                     }
 
-                BackHandler(enabled = backStack.size > 1) {
-                    navigator.pop()
-                }
+                    entry<Screen.TabManage> {
+                        TabManagementScreen(navigator)
+                    }
 
-                NavigableCircuitContent(
-                    navigator = navigator,
-                    backStack = backStack,
-                    providedValues =
-                        providedValuesForBackStack(
-                            backStack,
-                            backStackLocalProviders =
-                                persistentListOf(
-                                    PopupControllerRecordLocalProvider,
-                                ),
-                        ),
-                )
-            }
-        }
+                    entry<Screen.Library> {
+                        Library(navigator)
+                    }
+
+                    entry<Screen.LibraryDetail> { screen ->
+                        LibraryDetail(
+                            navigator = navigator,
+                            dataSource = screen.datasource,
+                        )
+                    }
+
+                    entry<Screen.Search> {
+                        SearchScreen(navigator = navigator)
+                    }
+                },
+        )
     }
 }
-
-object PopupControllerRecordLocalProvider : BackStackRecordLocalProvider<Record> {
-    @Composable
-    override fun providedValuesFor(record: Record): ProvidedValues =
-        object : ProvidedValues {
-            @Composable
-            override fun provideValues(): ImmutableList<ProvidedValue<*>> =
-                persistentListOf(
-                    LocalPopupController provides remember { PopupControllerImpl() },
-                )
-        }
-}
-
-private fun buildCircuitMobile() =
-    buildCircuit(
-        presenterFactory =
-            listOf(
-                PresenterFactory,
-            ),
-        uiFactory =
-            listOf(
-                UiFactory,
-            ),
-    )
-
-internal fun buildCircuit(
-    presenterFactory: List<Presenter.Factory> = emptyList(),
-    uiFactory: List<Ui.Factory> = emptyList(),
-): Circuit =
-    Circuit
-        .Builder()
-        .addPresenterFactories(presenterFactory)
-        .addUiFactories(uiFactory)
-        .build()

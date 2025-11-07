@@ -5,16 +5,12 @@
 package com.andannn.melodify.ui.components.tab
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
-import com.andannn.melodify.LocalPopupController
-import com.andannn.melodify.LocalRepository
-import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
@@ -22,13 +18,14 @@ import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.ui.core.LocalPopupController
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.PopupController
+import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.contentFlow
-import com.slack.circuit.retained.collectAsRetainedState
-import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.scan
@@ -40,7 +37,7 @@ private const val TAG = "TabUiState"
 fun rememberTabUiPresenter(
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-) = remember(repository, popupController) {
+) = retain(repository, popupController) {
     TabUiPresenter(
         repository,
         popupController,
@@ -50,29 +47,23 @@ fun rememberTabUiPresenter(
 class TabUiPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
-) : Presenter<TabUiState> {
+) : ScopedPresenter<TabUiState>() {
     private val userPreferenceRepository = repository.userPreferenceRepository
 
-    @Composable
-    override fun present(): TabUiState {
-        Napier.d(tag = TAG) { "TabUiPresenter present" }
-        val scope = rememberCoroutineScope()
-        var selectedIndex by rememberSaveable { mutableStateOf(0) }
-        val currentTabList by userPreferenceRepository.currentCustomTabsFlow.collectAsRetainedState(
-            emptyList(),
-        )
+    var currentTabList by mutableStateOf<List<CustomTab>>(
+        emptyList(),
+    )
+    var selectedIndex by mutableIntStateOf(0)
 
-        suspend fun currentItems(): List<AudioItemModel> {
-            val currentTab =
-                currentTabList.getOrNull(selectedIndex) ?: return emptyList()
-            val groupSort =
-                userPreferenceRepository.getCurrentSortRule(currentTab).first()
-            return with(repository) {
-                currentTab.contentFlow(sorts = groupSort.sortOptions()).first()
+    init {
+        Napier.d(tag = TAG) { "tab ui init ${this.hashCode()}" }
+        launch {
+            userPreferenceRepository.currentCustomTabsFlow.collect {
+                currentTabList = it
             }
         }
 
-        LaunchedEffect(Unit) {
+        launch {
             userPreferenceRepository.currentCustomTabsFlow
                 .scan<List<CustomTab>, Pair<List<CustomTab>?, List<CustomTab>?>>(null to null) { pre, next ->
                     pre.second to next
@@ -103,6 +94,21 @@ class TabUiPresenter(
                     }
                 }
         }
+    }
+
+    private suspend fun currentItems(): List<AudioItemModel> {
+        val currentTab =
+            currentTabList.getOrNull(selectedIndex) ?: return emptyList()
+        val groupSort =
+            userPreferenceRepository.getCurrentSortRule(currentTab).first()
+        return with(repository) {
+            currentTab.contentFlow(sorts = groupSort.sortOptions()).first()
+        }
+    }
+
+    @Composable
+    override fun present(): TabUiState {
+        Napier.d(tag = TAG) { "TabUiPresenter present" }
         return TabUiState(
             selectedIndex.coerceAtMost(currentTabList.size - 1),
             currentTabList,
@@ -110,7 +116,7 @@ class TabUiPresenter(
             when (eventSink) {
                 is TabUiEvent.OnClickTab -> selectedIndex = eventSink.index
                 is TabUiEvent.OnShowTabOption ->
-                    scope.launch {
+                    launch {
                         val tab = eventSink.tab
                         val result =
                             popupController.showDialog(
@@ -153,11 +159,12 @@ class TabUiPresenter(
     }
 }
 
+@Stable
 data class TabUiState(
     val selectedIndex: Int = 0,
     val customTabList: List<CustomTab> = emptyList(),
     val eventSink: (TabUiEvent) -> Unit = {},
-) : CircuitUiState {
+) {
     val selectedTab: CustomTab?
         get() = customTabList.getOrNull(selectedIndex)
 }

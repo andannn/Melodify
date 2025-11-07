@@ -6,13 +6,13 @@ package com.andannn.melodify.ui.components.search
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import com.andannn.melodify.LocalRepository
+import androidx.compose.ui.focus.FocusRequester
 import com.andannn.melodify.core.data.MediaContentRepository
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.internal.MediaControllerRepository
@@ -22,15 +22,14 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.slack.circuit.retained.rememberRetained
-import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.presenter.Presenter
-import kotlinx.coroutines.CoroutineScope
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.ScopedPresenter
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun rememberSearchUiPresenter(repository: Repository = LocalRepository.current) =
-    remember(
+    retain(
         repository,
     ) {
         SearchUiPresenter(
@@ -46,22 +45,25 @@ class SearchUiPresenter(
     private val userPreferenceRepository: UserPreferenceRepository,
     private val mediaControllerRepository: MediaControllerRepository,
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
-) : Presenter<SearchUiState> {
+) : ScopedPresenter<SearchUiState>() {
+    private var searchTextField by mutableStateOf(TextFieldState())
+    private var searchResult by mutableStateOf<SearchState>(SearchState.Init)
+
+    private val focusRequester = FocusRequester()
+
+    init {
+        launch {
+            delay(50)
+            focusRequester.requestFocus()
+        }
+    }
+
     @Composable
     override fun present(): SearchUiState {
-        val scope = rememberCoroutineScope()
-
-        var searchTextField by rememberRetained {
-            mutableStateOf(TextFieldState())
-        }
-
-        var searchResult by rememberRetained {
-            mutableStateOf<SearchState>(SearchState.Init)
-        }
-
         var expanded by rememberSaveable { mutableStateOf(true) }
 
         return SearchUiState(
+            focusRequester = focusRequester,
             searchState = searchResult,
             isExpand = expanded,
             inputText = searchTextField,
@@ -71,7 +73,7 @@ class SearchUiPresenter(
                     searchTextField = TextFieldState(eventSink.text)
                     expanded = false
 
-                    scope.launch {
+                    launch {
                         val searchText = searchTextField.text.toString()
                         if (searchText.isEmpty()) return@launch
 
@@ -90,12 +92,12 @@ class SearchUiPresenter(
                             }
                     }
 
-                    scope.launch {
+                    launch {
                         userPreferenceRepository.addSearchHistory(eventSink.text)
                     }
                 }
 
-                is SearchUiEvent.OnPlayAudio -> onPlayAudio(scope, eventSink.audioItemModel)
+                is SearchUiEvent.OnPlayAudio -> onPlayAudio(eventSink.audioItemModel)
                 is SearchUiEvent.OnExpandChange -> {
                     expanded = eventSink.isExpand
                 }
@@ -103,11 +105,8 @@ class SearchUiPresenter(
         }
     }
 
-    private fun onPlayAudio(
-        scope: CoroutineScope,
-        audioItemModel: AudioItemModel,
-    ) {
-        scope.launch {
+    private fun onPlayAudio(audioItemModel: AudioItemModel) {
+        launch {
             val isQueueEmpty = playerStateMonitoryRepository.getPlayListQueue().isEmpty()
             if (!isQueueEmpty) {
                 // add audio item to queue and play this audio item
@@ -133,12 +132,14 @@ class SearchUiPresenter(
         )
 }
 
+@Stable
 data class SearchUiState(
+    val focusRequester: FocusRequester = FocusRequester(),
     val inputText: TextFieldState = TextFieldState(),
     val isExpand: Boolean = true,
     val searchState: SearchState = SearchState.Init,
     val eventSink: (SearchUiEvent) -> Unit = {},
-) : CircuitUiState
+)
 
 sealed interface SearchUiEvent {
     data class OnPlayAudio(
@@ -154,6 +155,7 @@ sealed interface SearchUiEvent {
     ) : SearchUiEvent
 }
 
+@Stable
 sealed interface SearchState {
     data object Init : SearchState
 

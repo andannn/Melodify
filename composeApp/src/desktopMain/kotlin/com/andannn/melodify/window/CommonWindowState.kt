@@ -5,16 +5,12 @@
 package com.andannn.melodify.window
 
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import com.andannn.melodify.LocalPopupController
-import com.andannn.melodify.PopupController
-import io.github.aakira.napier.Napier
+import com.andannn.melodify.ui.core.LocalPopupController
+import com.andannn.melodify.ui.core.PopupController
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlin.coroutines.cancellation.CancellationException
 
 private const val TAG = "MelodifyDesktopAppState"
 

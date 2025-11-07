@@ -5,7 +5,6 @@
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,10 +12,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -27,19 +27,18 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
 import androidx.paging.compose.LazyPagingItems
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.SortOption
 import com.andannn.melodify.core.data.model.browsableOrPlayable
 import com.andannn.melodify.core.data.model.keyOf
-import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.ui.components.tabcontent.header.GroupHeader
+import com.andannn.melodify.ui.components.tabcontent.header.GroupInfo
 import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.widgets.ListTileItemView
-import io.github.aakira.napier.Napier
 
 @Composable
 fun TabContent(
@@ -47,6 +46,7 @@ fun TabContent(
     modifier: Modifier = Modifier,
 ) {
     LazyListContent(
+        selectedTab = state.selectedTab,
         pagingItems = state.pagingItems,
         displaySetting = state.groupSort,
         modifier = modifier.fillMaxSize(),
@@ -55,9 +55,6 @@ fun TabContent(
         },
         onShowMusicItemOption = {
             state.eventSink.invoke(TabContentEvent.OnShowMusicItemOption(it))
-        },
-        onGroupOptionClick = { optionItem, groupKeyList ->
-            state.eventSink.invoke(TabContentEvent.OnGroupOptionClick(optionItem, groupKeyList))
         },
         onGroupItemClick = { groupKeyList ->
             state.eventSink.invoke(TabContentEvent.OnGroupItemClick(groupKeyList))
@@ -68,31 +65,48 @@ fun TabContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyListContent(
-    displaySetting: DisplaySetting,
+    selectedTab: CustomTab?,
+    displaySetting: DisplaySetting?,
     pagingItems: LazyPagingItems<AudioItemModel>,
     modifier: Modifier = Modifier,
-    onGroupOptionClick: (item: OptionItem, List<GroupKey?>) -> Unit,
-    onGroupItemClick: (List<GroupKey?>) -> Unit = {},
     onMusicItemClick: (AudioItemModel) -> Unit = {},
     onShowMusicItemOption: (AudioItemModel) -> Unit = {},
+    onGroupItemClick: (List<GroupKey?>) -> Unit = {},
 ) {
     val items = pagingItems.itemSnapshotList
     val primaryGroupList =
         remember(items, displaySetting) {
-            items.groupByType(displaySetting)
+            displaySetting?.let { items.groupByType(displaySetting) } ?: emptyList()
         }
+
+    @Composable
+    fun GroupHeaderContainer(
+        groupKey: GroupKey,
+        parentHeaderGroupKey: GroupKey? = null,
+    ) {
+        val groupState =
+            GroupInfo(
+                groupKey = groupKey,
+                parentHeaderGroupKey = parentHeaderGroupKey,
+                displaySetting = displaySetting,
+                selectedTab = selectedTab,
+            )
+        GroupHeader(
+            groupInfo = groupState,
+            isPrimary = true,
+            onGroupHeaderClick = {
+                onGroupItemClick.invoke(groupState.selection)
+            },
+        )
+    }
+
     LazyColumn(
         modifier = modifier,
     ) {
         primaryGroupList.forEachIndexed { primaryGroupIndex, (primaryGroupKey, secondaryGroupList) ->
             if (primaryGroupKey != null) {
                 stickyHeader(primaryGroupKey.hashCode()) {
-                    GroupHeader(
-                        isPrimary = true,
-                        groupKey = primaryGroupKey,
-                        onGroupOptionSelected = { onGroupOptionClick(it, listOf(primaryGroupKey)) },
-                        onGroupHeaderClick = { onGroupItemClick(listOf(primaryGroupKey)) },
-                    )
+                    GroupHeaderContainer(primaryGroupKey)
                 }
             }
 
@@ -104,23 +118,9 @@ private fun LazyListContent(
                                 modifier = Modifier.width(20.dp),
                                 isLast = secondaryGroupIndex == secondaryGroupList.lastIndex,
                             )
-                            GroupHeader(
-                                isPrimary = false,
+                            GroupHeaderContainer(
                                 groupKey = secondaryGroupKey,
-                                onGroupOptionSelected = {
-                                    onGroupOptionClick(
-                                        it,
-                                        listOf(primaryGroupKey, secondaryGroupKey),
-                                    )
-                                },
-                                onGroupHeaderClick = {
-                                    onGroupItemClick(
-                                        listOf(
-                                            primaryGroupKey,
-                                            secondaryGroupKey,
-                                        ),
-                                    )
-                                },
+                                parentHeaderGroupKey = primaryGroupKey,
                             )
                         }
                     }
@@ -144,7 +144,7 @@ private fun LazyListContent(
                     if (primaryGroupKey != null) headerCount++
                     if (secondaryGroupKey != null) headerCount++
 
-                    val showTrackNum = displaySetting.showTrackNum
+                    val showTrackNum = displaySetting?.showTrackNum ?: true
                     Row(modifier = Modifier.height(IntrinsicSize.Min)) {
                         if (headerCount >= 2) {
                             val needConnection = secondaryGroupIndex != secondaryGroupList.lastIndex

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -32,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.model.OptionItem
-import com.slack.circuit.runtime.presenter.Presenter
+import com.andannn.melodify.ui.core.Presenter
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
@@ -40,16 +39,11 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun GroupHeader(
-    groupKey: GroupKey,
     isPrimary: Boolean,
-    onGroupOptionSelected: (OptionItem) -> Unit = {},
-    onGroupHeaderClick: () -> Unit = {},
+    groupInfo: GroupInfo,
     modifier: Modifier = Modifier,
-    presenter: Presenter<GroupHeaderState> =
-        rememberGroupHeaderPresenter(
-            groupKey,
-            onGroupOption = onGroupOptionSelected,
-        ),
+    presenter: Presenter<GroupHeaderState> = rememberGroupHeaderPresenter(groupInfo),
+    onGroupHeaderClick: () -> Unit = {},
 ) {
     val state = presenter.present()
     HeaderInfo(

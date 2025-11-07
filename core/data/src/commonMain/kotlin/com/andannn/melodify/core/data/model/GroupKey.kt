@@ -5,7 +5,6 @@
 package com.andannn.melodify.core.data.model
 
 import com.andannn.melodify.core.database.MediaWheres
-import com.andannn.melodify.core.database.Sort
 import com.andannn.melodify.core.database.Where
 import com.andannn.melodify.core.database.entity.MediaColumns
 

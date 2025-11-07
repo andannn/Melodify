@@ -5,22 +5,15 @@
 package com.andannn.melodify.ui.components.tabcontent
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.retain.retain
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.andannn.melodify.LocalMediaFileDeleteHelper
-import com.andannn.melodify.LocalPopupController
-import com.andannn.melodify.LocalRepository
 import com.andannn.melodify.MediaFileDeleteHelper
-import com.andannn.melodify.PopupController
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
@@ -29,105 +22,101 @@ import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.ui.core.ChannelNavigationRequestEventChannel
+import com.andannn.melodify.ui.core.LocalPopupController
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.NavigationRequest
+import com.andannn.melodify.ui.core.NavigationRequestEventSink
+import com.andannn.melodify.ui.core.PopupController
+import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.ScopedObserver
+import com.andannn.melodify.ui.core.ScopedObserverImpl
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.contentFlow
 import com.andannn.melodify.usecase.contentPagingDataFlow
 import com.andannn.melodify.usecase.deleteItems
-import com.slack.circuit.retained.rememberRetained
-import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "TabContentPresenter"
 
 @Composable
 fun rememberTabContentPresenter(
     selectedTab: CustomTab?,
-    onRequestGoToAlbum: (AudioItemModel) -> Unit = {},
-    onRequestGoToArtist: (AudioItemModel) -> Unit = {},
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-    mediaFileDeleteHelper: MediaFileDeleteHelper = LocalMediaFileDeleteHelper.current,
-) = remember(
+    fileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
+) = retain(
     selectedTab,
     repository,
     popupController,
-    onRequestGoToAlbum,
-    onRequestGoToArtist,
-    mediaFileDeleteHelper,
+    fileDeleteHelper,
 ) {
     TabContentPresenter(
         selectedTab = selectedTab,
-        onRequestGoToAlbum = onRequestGoToAlbum,
-        onRequestGoToArtist = onRequestGoToArtist,
         repository = repository,
         popupController = popupController,
-        mediaFileDeleteHelper = mediaFileDeleteHelper,
+        mediaFileDeleteHelper = fileDeleteHelper,
     )
 }
 
 class TabContentPresenter(
     private val selectedTab: CustomTab?,
-    private val onRequestGoToAlbum: (AudioItemModel) -> Unit = {},
-    private val onRequestGoToArtist: (AudioItemModel) -> Unit = {},
     private val repository: Repository,
     private val popupController: PopupController,
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
-) : Presenter<TabContentState> {
+    private val scopedObserver: ScopedObserver = ScopedObserverImpl(),
+) : Presenter<TabContentState>,
+    ScopedObserver by scopedObserver,
+    NavigationRequestEventSink by ChannelNavigationRequestEventChannel(scopedObserver) {
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val playListRepository = repository.playListRepository
     private val userPreferenceRepository = repository.userPreferenceRepository
 
-    init {
-        Napier.d(tag = TAG) { "TabContentPresenter init $selectedTab" }
-    }
+    private var displaySetting =
+        userPreferenceRepository.getCurrentSortRule(selectedTab).stateIn(
+            scope = this,
+            started = kotlinx.coroutines.flow.SharingStarted.Eagerly,
+            initialValue = null,
+        )
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val pagingDataFlow =
+        displaySetting
+            .filterNotNull()
+            .flatMapLatest { displaySetting ->
+                getContentPagingFlow(selectedTab, displaySetting)
+            }.cachedIn(this)
 
     @Composable
     override fun present(): TabContentState {
-        val scope = rememberCoroutineScope()
-        Napier.d(tag = TAG) { "TabContentPresenter scope ${scope.hashCode()}" }
-
-        var displaySetting by rememberRetained(selectedTab) {
-            mutableStateOf(
-                DisplaySetting.Preset.ArtistAlbumASC,
-            )
-        }
-
-        LaunchedEffect(selectedTab) {
-            val currentTab = selectedTab
-            if (currentTab == null) return@LaunchedEffect
-
-            userPreferenceRepository.getCurrentSortRule(currentTab).collect {
-                displaySetting = it
-            }
-        }
-
-        val pagingDataFlow =
-            rememberRetained(selectedTab, displaySetting) {
-                getContentPagingFlow(selectedTab, displaySetting).cachedIn(scope)
-            }
         val pagingItems: LazyPagingItems<AudioItemModel> = pagingDataFlow.collectAsLazyPagingItems()
-
+        val displaySettingState by displaySetting.collectAsStateWithLifecycle()
         return TabContentState(
             selectedTab = selectedTab,
-            groupSort = displaySetting,
+            groupSort = displaySettingState,
             pagingItems = pagingItems,
         ) { eventSink ->
             context(repository, popupController, mediaFileDeleteHelper) {
                 when (eventSink) {
                     is TabContentEvent.OnPlayMusic ->
-                        scope.launch {
+                        launch {
                             val items =
                                 with(repository) {
                                     selectedTab
-                                        ?.contentFlow(sorts = displaySetting.sortOptions())
+                                        ?.contentFlow(sorts = displaySetting.value!!.sortOptions())
                                         ?.first()
                                         ?: error("selectedTab is null")
                                 }
@@ -138,25 +127,15 @@ class TabContentPresenter(
                         }
 
                     is TabContentEvent.OnShowMusicItemOption ->
-                        scope.launch {
+                        launch {
                             onShowMusicItemOption(eventSink.mediaItemModel)
                         }
 
-                    is TabContentEvent.OnGroupOptionClick ->
-                        scope.launch {
-                            handleGroupOption(
-                                eventSink.optionItem,
-                                eventSink.groupKeys,
-                                displaySetting,
-                                selectedTab,
-                            )
-                        }
-
                     is TabContentEvent.OnGroupItemClick ->
-                        scope.launch {
+                        launch {
                             handleGroupItemClick(
                                 eventSink.groupKeys,
-                                displaySetting,
+                                displaySetting.value!!,
                                 selectedTab,
                             )
                         }
@@ -222,28 +201,6 @@ class TabContentPresenter(
         }
     }
 
-    context(_: Repository, _: PopupController, _: MediaFileDeleteHelper)
-    private suspend fun handleGroupOption(
-        optionItem: OptionItem,
-        groupKeys: List<GroupKey?>,
-        displaySetting: DisplaySetting,
-        selectedTab: CustomTab?,
-    ) {
-        val items =
-            selectedTab
-                ?.contentFlow(
-                    sorts = displaySetting.sortOptions(),
-                    whereGroups = groupKeys.filterNotNull(),
-                )?.first() ?: emptyList()
-        when (optionItem) {
-            OptionItem.PLAY_NEXT -> addToNextPlay(items)
-            OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items)
-            OptionItem.ADD_TO_QUEUE -> addToQueue(items)
-            OptionItem.DELETE_MEDIA_FILE -> deleteItems(items)
-            else -> {}
-        }
-    }
-
     context(_: Repository, popupController: PopupController, _: MediaFileDeleteHelper)
     private suspend fun onShowMusicItemOption(item: AudioItemModel) {
         val options =
@@ -255,32 +212,41 @@ class TabContentPresenter(
                 OptionItem.OPEN_LIBRARY_ARTIST,
                 OptionItem.DELETE_MEDIA_FILE,
             )
-        val result =
-            popupController.showDialog(
-                DialogId.OptionDialog(
-                    options = options,
-                ),
-            )
+        val result = popupController.showDialog(DialogId.OptionDialog(options = options))
+
         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
             when (result.optionItem) {
                 OptionItem.PLAY_NEXT -> addToNextPlay(listOf(item))
                 OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(item))
                 OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item))
                 OptionItem.DELETE_MEDIA_FILE -> deleteItems(listOf(item))
-                OptionItem.OPEN_LIBRARY_ALBUM -> onRequestGoToAlbum(item)
-                OptionItem.OPEN_LIBRARY_ARTIST -> onRequestGoToArtist(item)
+                OptionItem.OPEN_LIBRARY_ALBUM ->
+                    onRequest(
+                        NavigationRequest.GoToLibraryDetail(
+                            LibraryDataSource.AlbumDetail(id = item.albumId),
+                        ),
+                    )
+
+                OptionItem.OPEN_LIBRARY_ARTIST ->
+                    onRequest(
+                        NavigationRequest.GoToLibraryDetail(
+                            LibraryDataSource.ArtistDetail(id = item.artistId),
+                        ),
+                    )
+
                 else -> {}
             }
         }
     }
 }
 
+@Stable
 data class TabContentState(
     val selectedTab: CustomTab? = null,
-    val groupSort: DisplaySetting,
+    val groupSort: DisplaySetting?,
     val pagingItems: LazyPagingItems<AudioItemModel>,
     val eventSink: (TabContentEvent) -> Unit = {},
-) : CircuitUiState
+)
 
 sealed interface TabContentEvent {
     data class OnShowMusicItemOption(
@@ -289,11 +255,6 @@ sealed interface TabContentEvent {
 
     data class OnPlayMusic(
         val mediaItemModel: AudioItemModel,
-    ) : TabContentEvent
-
-    data class OnGroupOptionClick(
-        val optionItem: OptionItem,
-        val groupKeys: List<GroupKey?>,
     ) : TabContentEvent
 
     data class OnGroupItemClick(

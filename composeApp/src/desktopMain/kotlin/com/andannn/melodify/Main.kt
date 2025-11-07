@@ -11,6 +11,9 @@ import com.andannn.melodify.core.syncer.SyncLibraryService
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.core.context.GlobalContext.startKoin
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
 import org.koin.mp.KoinPlatform.getKoin
 
 fun main() =
@@ -18,7 +21,12 @@ fun main() =
         Napier.base(DebugAntilog())
 
         startKoin {
-            modules(modules)
+            modules(
+                listOf(
+                    extraModel,
+                    *modules.toTypedArray(),
+                ),
+            )
         }
 
         // start watching library changes
@@ -27,4 +35,9 @@ fun main() =
         }
 
         MelodifyDeskTopApp()
+    }
+
+private val extraModel =
+    module {
+        singleOf(::MediaFileDeleteHelperImpl).bind(MediaFileDeleteHelper::class)
     }
