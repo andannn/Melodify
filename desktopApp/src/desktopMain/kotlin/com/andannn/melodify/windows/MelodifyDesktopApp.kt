@@ -16,6 +16,7 @@ import com.andannn.melodify.ui.theme.MelodifyTheme
 import com.andannn.melodify.windows.librarydetail.LibraryDetailWindow
 import com.andannn.melodify.windows.main.MainWindow
 import com.andannn.melodify.windows.preferences.PreferenceWindow
+import com.andannn.melodify.windows.tabmanage.TabManageWindow
 
 @Composable
 internal fun ApplicationScope.MelodifyDeskTopApp(
@@ -59,6 +60,12 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
                                 LibraryDetailWindow(
                                     navigator = navigator,
                                     dataSource = windowType.datasource,
+                                    onCloseRequest = ::onCloseRequest,
+                                )
+
+                            WindowType.TabManage ->
+                                TabManageWindow(
+                                    navigator = navigator,
                                     onCloseRequest = ::onCloseRequest,
                                 )
                         }

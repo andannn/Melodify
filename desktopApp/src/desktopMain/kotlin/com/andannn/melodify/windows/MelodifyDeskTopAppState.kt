@@ -20,6 +20,8 @@ sealed interface WindowType {
 
     data object SettingPreference : WindowType
 
+    data object TabManage : WindowType
+
     data class MediaLibrary(
         val datasource: LibraryDataSource,
     ) : WindowType

@@ -46,6 +46,7 @@ import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.MenuEvent
 import com.andannn.melodify.windows.WindowNavigator
+import com.andannn.melodify.windows.WindowType
 import com.andannn.melodify.windows.handleMenuEvent
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
@@ -95,7 +96,13 @@ internal fun MainWindow(
                     tabContentState = tabContentPresenter.present(),
                     playerUiState = playerPresenter.present(),
                 )
-            MainScreen(state, Modifier)
+            MainScreen(
+                state = state,
+                modifier = Modifier,
+                onTabManagementClick = {
+                    navigator.openWindow(WindowType.TabManage)
+                },
+            )
         }
 
         ActionDialogContainer()
@@ -106,15 +113,17 @@ internal fun MainWindow(
 fun MainScreen(
     state: MainUiState,
     modifier: Modifier = Modifier,
+    onTabManagementClick: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
         Row(modifier = modifier.weight(1f)) {
             TabWithContentSector(
-                state.tabUiState,
-                state.tabContentState,
+                tabUiState = state.tabUiState,
+                tabContentState = state.tabContentState,
                 modifier = Modifier.weight(2f),
+                onTabManagementClick = onTabManagementClick,
             )
 
             VerticalDivider()
@@ -138,6 +147,7 @@ private fun TabWithContentSector(
     tabUiState: TabUiState,
     tabContentState: TabContentState,
     modifier: Modifier = Modifier,
+    onTabManagementClick: () -> Unit = {},
 ) {
     Surface(
         modifier = modifier,
@@ -145,7 +155,7 @@ private fun TabWithContentSector(
         Column(
             modifier = Modifier,
         ) {
-            TabUi(tabUiState)
+            TabUi(tabUiState, onTabManagementClick = onTabManagementClick)
 
             TabContent(tabContentState)
         }
@@ -153,14 +163,14 @@ private fun TabWithContentSector(
 }
 
 enum class RightPageTab {
-    Lyrics,
     PlayQueue,
+    Lyrics,
 }
 
 @Composable
 private fun RightPaneSector(modifier: Modifier) {
     var selectedTab by remember {
-        mutableStateOf(RightPageTab.Lyrics)
+        mutableStateOf(RightPageTab.PlayQueue)
     }
     val selectedIndex by rememberUpdatedState(
         RightPageTab.entries.indexOf(selectedTab),

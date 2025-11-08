@@ -99,9 +99,12 @@ internal fun HomeUiScreen(
                     .nestedScroll(scrollBehavior.nestedScrollConnection)
                     .fillMaxSize(),
         ) {
-            TabUi(homeState.tabUiState, onTabManagementClick = {
-                homeState.eventSink.invoke(HomeUiEvent.OnTabManagementClick)
-            })
+            TabUi(
+                state = homeState.tabUiState,
+                onTabManagementClick = {
+                    homeState.eventSink.invoke(HomeUiEvent.OnTabManagementClick)
+                },
+            )
 
             TabContent(homeState.tabContentState, modifier = Modifier.padding(horizontal = 4.dp))
         }

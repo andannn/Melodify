@@ -25,6 +25,7 @@ import com.andannn.melodify.ui.components.librarydetail.rememberLibraryDetailPre
 import com.andannn.melodify.ui.components.mediaitem.MediaLibraryItem
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
+import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.LaunchNavigationRequestHandlerEffect
 import com.andannn.melodify.windows.WindowNavigator
@@ -83,5 +84,7 @@ fun LibraryDetailWindow(
                 }
             }
         }
+
+        ActionDialogContainer()
     }
 }
