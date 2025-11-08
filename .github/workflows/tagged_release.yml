@@ -43,7 +43,8 @@ jobs:
         id: decode_keystore
         uses: timheuer/base64-to-file@v1
         with:
-          fileName: 'keystore/keystore.jks'
+          fileName: 'keystore.jks'
+          fileDir: './composeApp/keystore/'
           encodedString: ${{ secrets.KEYSTORE }}
 #
 #      - name: Build macos app
@@ -54,11 +55,12 @@ jobs:
 #          create-dmg composeApp/build/compose/binaries/main-release/app/Melodify.dmg composeApp/build/compose/binaries/main-release/app/Melodify.app
 
       - name: Build android apk
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleProductionRelease -P android.releaseSigning=true
         env:
-          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEYSTORE_PATH: ./keystore/keystore.jks
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
 
       - name: Upload Release
         uses: "marvinpinto/action-automatic-releases@latest"

@@ -74,15 +74,6 @@ android {
         signingConfig = signingConfigs.getByName("debug")
     }
 
-    signingConfigs {
-        create("release") {
-            storeFile = file("keystore/keystore.jks")
-            storePassword = System.getenv("SIGNING_STORE_PASSWORD")
-            keyAlias = System.getenv("SIGNING_KEY_ALIAS")
-            keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
-        }
-    }
-
     lint {
         baseline = file("lint-baseline.xml")
     }
@@ -100,7 +91,20 @@ android {
                 "proguard-rules.pro",
             )
 
-            signingConfig = signingConfigs.getByName("release")
+            val shouldSign = project.findProperty("android.releaseSigning") == "true"
+            if (shouldSign) {
+                signingConfigs {
+                    create("release") {
+                        storeFile = file(System.getenv("SIGNING_KEYSTORE_PATH"))
+                        storePassword = System.getenv("KEYSTORE_PASSWORD")
+                        keyAlias = System.getenv("KEY_ALIAS")
+                        keyPassword = System.getenv("KEY_PASSWORD")
+                    }
+                }
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                signingConfig = signingConfigs.getByName("debug")
+            }
         }
     }
 }
@@ -124,33 +128,4 @@ compose.desktop {
             configurationFiles.from(project.file("compose-desktop.pro"))
         }
     }
-}
-
-tasks.register("moveKeyStoreRelease") {
-    if (project.gradle.startParameter.taskNames
-            .any { it.contains("Release") }
-    ) {
-        val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-        val allFilesFromDir = File(tmpFilePath).listFiles()
-        if (allFilesFromDir != null) {
-            val keystoreFile = allFilesFromDir.firstOrNull()
-
-            if (keystoreFile == null || keystoreFile.name != "keystore.jks") {
-                throw GradleException("File not found: $tmpFilePath Aborting build.")
-            }
-
-            copy {
-                from(keystoreFile.absolutePath)
-                into("$projectDir/keystore")
-            }
-        } else {
-            throw GradleException("File not found: $tmpFilePath Aborting build.")
-        }
-    } else {
-        println("Debug mode. skip moving keystore file.")
-    }
-}
-
-tasks.named("preBuild") {
-    dependsOn("moveKeyStoreRelease")
 }
