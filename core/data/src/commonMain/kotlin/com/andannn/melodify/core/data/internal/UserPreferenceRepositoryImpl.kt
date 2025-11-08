@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.data.internal
 
+import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.MediaPreviewMode

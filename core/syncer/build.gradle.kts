@@ -11,6 +11,9 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:database"))
             implementation(project(":core:datastore"))
+        }
+
+        commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
         }

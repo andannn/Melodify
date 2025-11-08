@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.internal.UserPreferenceRepository
+import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.LocalPopupController

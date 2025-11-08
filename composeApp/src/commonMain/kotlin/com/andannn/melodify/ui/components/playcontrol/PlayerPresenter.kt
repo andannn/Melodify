@@ -10,11 +10,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.retain.retain
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.andannn.melodify.core.data.MediaControllerRepository
 import com.andannn.melodify.core.data.PlayListRepository
+import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.internal.MediaControllerRepository
-import com.andannn.melodify.core.data.internal.PlayerStateMonitoryRepository
-import com.andannn.melodify.core.data.internal.SleepTimerRepository
+import com.andannn.melodify.core.data.SleepTimerRepository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.data.model.next

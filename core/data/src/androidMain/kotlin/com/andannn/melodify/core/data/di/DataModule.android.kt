@@ -4,9 +4,9 @@
  */
 package com.andannn.melodify.core.data.di
 
-import com.andannn.melodify.core.data.internal.MediaControllerRepository
+import com.andannn.melodify.core.data.MediaControllerRepository
+import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.internal.MediaControllerRepositoryImpl
-import com.andannn.melodify.core.data.internal.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.internal.PlayerStateMonitoryRepositoryImpl
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind

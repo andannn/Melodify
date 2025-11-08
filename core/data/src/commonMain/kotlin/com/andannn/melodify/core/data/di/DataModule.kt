@@ -8,12 +8,12 @@ import com.andannn.melodify.core.data.LyricRepository
 import com.andannn.melodify.core.data.MediaContentRepository
 import com.andannn.melodify.core.data.PlayListRepository
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.SleepTimerRepository
+import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.data.internal.LyricRepositoryImpl
 import com.andannn.melodify.core.data.internal.MediaContentRepositoryImpl
 import com.andannn.melodify.core.data.internal.PlayListRepositoryImpl
-import com.andannn.melodify.core.data.internal.SleepTimerRepository
 import com.andannn.melodify.core.data.internal.SleepTimerRepositoryImpl
-import com.andannn.melodify.core.data.internal.UserPreferenceRepository
 import com.andannn.melodify.core.data.internal.UserPreferenceRepositoryImpl
 import com.andannn.melodify.core.database.di.databaseModule
 import com.andannn.melodify.core.datastore.di.userPreferencesModule

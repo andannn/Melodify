@@ -7,8 +7,8 @@ package com.andannn.melodify.usecase
 import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.PlayListRepository
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.internal.SleepTimerRepository
-import com.andannn.melodify.core.data.internal.UserPreferenceRepository
+import com.andannn.melodify.core.data.SleepTimerRepository
+import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
