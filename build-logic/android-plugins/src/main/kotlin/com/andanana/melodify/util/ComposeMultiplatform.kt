@@ -18,28 +18,22 @@ fun Project.configureComposeMultiplatform(extension: KotlinMultiplatformExtensio
 
         sourceSets.apply {
             commonMain.dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.animation)
-                implementation(compose.ui)
-                implementation(compose.components.resources)
-                implementation(compose.materialIconsExtended)
-                implementation(compose.components.uiToolingPreview)
-                implementation(compose.material3)
+                implementation(libs.findLibrary("jetbrains.compose.material3").get())
+                implementation(libs.findLibrary("jetbrains.compose.animation").get())
+                implementation(libs.findLibrary("jetbrains.compose.resources").get())
+                implementation(libs.findLibrary("jetbrains.compose.foundation").get())
+                implementation(libs.findLibrary("jetbrains.compose.runtime").get())
+                implementation(libs.findLibrary("jetbrains.compose.ui").get())
+                implementation(libs.findLibrary("jetbrains.compose.ui.util").get())
+                implementation(libs.findLibrary("jetbrains.compose.ui.tooling.preview").get())
+                implementation(libs.findLibrary("jetbrains.compose.ui.backhandler").get())
+                implementation(libs.findLibrary("jetbrains.material.icons.extended").get())
                 implementation(libs.findLibrary("androidx.navigation3.ui").get())
                 implementation(libs.findLibrary("androidx.navigation3.runtime").get())
-                implementation(libs.findLibrary("ui.backhandler").get())
             }
 
             commonTest.dependencies {
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                implementation(compose.uiTest)
-            }
-
-            androidMain.dependencies {
-                implementation(compose.preview)
-                implementation(libs.findLibrary("compose.material3").get())
-                implementation(libs.findLibrary("androidx.ui.tooling").get())
+                implementation(libs.findLibrary("jetbrains.compose.ui.test").get())
             }
 
             androidInstrumentedTest.dependencies {
@@ -50,7 +44,7 @@ fun Project.configureComposeMultiplatform(extension: KotlinMultiplatformExtensio
             val desktopMain = getByName("desktopMain")
             desktopMain.dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation(compose.desktop.common)
+                implementation(libs.findLibrary("jetbrains.compose.desktop").get())
             }
 
             val desktopTest = getByName("desktopTest")
