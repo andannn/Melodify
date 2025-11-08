@@ -2,13 +2,12 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.window.preferences
+package com.andannn.melodify.windows.preferences
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.UserPreferenceRepository
@@ -17,32 +16,28 @@ import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
-import kotlinx.coroutines.CoroutineScope
+import com.andannn.melodify.ui.core.ScopedPresenter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun rememberLibraryPreferenceState(
-    scope: CoroutineScope = rememberCoroutineScope(),
     popUpController: PopupController = LocalPopupController.current,
     repository: Repository = LocalRepository.current,
-) = remember(
-    scope,
+) = retain(
     popUpController,
     repository,
 ) {
     LibraryPreferenceState(
-        scope,
         popUpController,
         repository.userPreferenceRepository,
     )
 }
 
 class LibraryPreferenceState(
-    private val scope: CoroutineScope,
     private val popUpController: PopupController,
     private val userPreferenceRepository: UserPreferenceRepository,
-) {
+) : ScopedPresenter<Unit>() {
     private val libraryPathFlow =
         userPreferenceRepository.userSettingFlow.map {
             it.libraryPath
@@ -52,7 +47,7 @@ class LibraryPreferenceState(
         private set
 
     init {
-        scope.launch {
+        launch {
             libraryPathFlow.collect {
                 libraryPath = it
             }
@@ -60,7 +55,7 @@ class LibraryPreferenceState(
     }
 
     fun onAddLibraryButtonClick() {
-        scope.launch {
+        launch {
             val result = popUpController.showDialog(DialogId.NewPlayListDialog)
 
             if (result is DialogAction.InputDialog.Accept) {
@@ -74,8 +69,12 @@ class LibraryPreferenceState(
     }
 
     fun onDeleteLibraryPath(pathToDelete: String) {
-        scope.launch {
+        launch {
             userPreferenceRepository.deleteLibraryPath(pathToDelete)
         }
+    }
+
+    @Composable
+    override fun present() {
     }
 }

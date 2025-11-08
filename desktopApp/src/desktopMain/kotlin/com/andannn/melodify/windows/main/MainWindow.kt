@@ -2,12 +2,13 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.window.main
+package com.andannn.melodify.windows.main
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,7 +30,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
-import com.andannn.melodify.app.MelodifyDeskTopAppState
 import com.andannn.melodify.ui.components.lyrics.Lyrics
 import com.andannn.melodify.ui.components.playcontrol.DesktopPlayerUi
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
@@ -41,9 +41,13 @@ import com.andannn.melodify.ui.components.tab.rememberTabUiPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContent
 import com.andannn.melodify.ui.components.tabcontent.TabContentState
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
+import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
-import com.andannn.melodify.window.CustomMenuBar
-import com.andannn.melodify.window.rememberCommonWindowState
+import com.andannn.melodify.windows.CustomMenuBar
+import com.andannn.melodify.windows.MenuEvent
+import com.andannn.melodify.windows.WindowNavigator
+import com.andannn.melodify.windows.WindowType
+import com.andannn.melodify.windows.handleMenuEvent
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
 
@@ -56,7 +60,7 @@ data class MainUiState(
 
 @Composable
 internal fun MainWindow(
-    appState: MelodifyDeskTopAppState,
+    navigator: WindowNavigator,
     onCloseRequest: () -> Unit,
 ) {
     val graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -66,18 +70,20 @@ internal fun MainWindow(
         rememberWindowState(
             size = DpSize(dimension.width.times(ratio).dp, dimension.height.times(ratio).dp),
         )
+
     Window(
         state = state,
         onCloseRequest = onCloseRequest,
         title = "Melodify",
     ) {
-        val windowState = rememberCommonWindowState()
-
-        CustomMenuBar(appState)
+        CustomMenuBar(navigator::handleMenuEvent)
 
         Scaffold(
             snackbarHost = {
-                SnackbarHost(windowState.snackBarHostState)
+                SnackbarHost(
+                    hostState = rememberAndSetupSnackBarHostState(),
+                    modifier = Modifier.padding(bottom = 64.dp),
+                )
             },
         ) {
             val tabUiPresenter = rememberTabUiPresenter()
@@ -90,7 +96,13 @@ internal fun MainWindow(
                     tabContentState = tabContentPresenter.present(),
                     playerUiState = playerPresenter.present(),
                 )
-            MainScreen(state, Modifier)
+            MainScreen(
+                state = state,
+                modifier = Modifier,
+                onTabManagementClick = {
+                    navigator.openWindow(WindowType.TabManage)
+                },
+            )
         }
 
         ActionDialogContainer()
@@ -101,15 +113,17 @@ internal fun MainWindow(
 fun MainScreen(
     state: MainUiState,
     modifier: Modifier = Modifier,
+    onTabManagementClick: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
         Row(modifier = modifier.weight(1f)) {
             TabWithContentSector(
-                state.tabUiState,
-                state.tabContentState,
+                tabUiState = state.tabUiState,
+                tabContentState = state.tabContentState,
                 modifier = Modifier.weight(2f),
+                onTabManagementClick = onTabManagementClick,
             )
 
             VerticalDivider()
@@ -133,6 +147,7 @@ private fun TabWithContentSector(
     tabUiState: TabUiState,
     tabContentState: TabContentState,
     modifier: Modifier = Modifier,
+    onTabManagementClick: () -> Unit = {},
 ) {
     Surface(
         modifier = modifier,
@@ -140,7 +155,7 @@ private fun TabWithContentSector(
         Column(
             modifier = Modifier,
         ) {
-            TabUi(tabUiState)
+            TabUi(tabUiState, onTabManagementClick = onTabManagementClick)
 
             TabContent(tabContentState)
         }
@@ -148,14 +163,14 @@ private fun TabWithContentSector(
 }
 
 enum class RightPageTab {
-    Lyrics,
     PlayQueue,
+    Lyrics,
 }
 
 @Composable
 private fun RightPaneSector(modifier: Modifier) {
     var selectedTab by remember {
-        mutableStateOf(RightPageTab.Lyrics)
+        mutableStateOf(RightPageTab.PlayQueue)
     }
     val selectedIndex by rememberUpdatedState(
         RightPageTab.entries.indexOf(selectedTab),

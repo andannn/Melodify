@@ -18,11 +18,6 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -37,14 +32,16 @@ import com.andannn.melodify.ui.components.search.suggestion.Suggestions
 
 @Composable
 fun Search(
-    searchPresenter: SearchUiPresenter = rememberSearchUiPresenter(),
     modifier: Modifier = Modifier,
+    showBackButton: Boolean = true,
+    searchPresenter: SearchUiPresenter = rememberSearchUiPresenter(),
     onBackKeyPressed: () -> Unit = {},
     onNavigateToLibraryDetail: (LibraryDataSource) -> Unit = {},
 ) {
     val state = searchPresenter.present()
     SearchViewContent(
         modifier = modifier,
+        showBackButton = showBackButton,
         focusRequester = state.focusRequester,
         textFieldState = state.inputText,
         isExpand = state.isExpand,
@@ -71,6 +68,7 @@ fun Search(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchViewContent(
+    showBackButton: Boolean,
     focusRequester: FocusRequester,
     textFieldState: TextFieldState,
     isExpand: Boolean,
@@ -109,15 +107,17 @@ private fun SearchViewContent(
                         )
                     },
                     leadingIcon = {
-                        IconButton(onClick = {
-                            focusManager.clearFocus()
-                            onBackKeyPressed.invoke()
-                        }) {
-                            Icon(
-                                Icons.AutoMirrored.Default.ArrowBack,
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                contentDescription = "Back",
-                            )
+                        if (showBackButton) {
+                            IconButton(onClick = {
+                                focusManager.clearFocus()
+                                onBackKeyPressed.invoke()
+                            }) {
+                                Icon(
+                                    Icons.AutoMirrored.Default.ArrowBack,
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    contentDescription = "Back",
+                                )
+                            }
                         }
                     },
                 )
