@@ -84,7 +84,7 @@ internal class MediaLibrarySyncerWrapper(
                     }
 
                     FileChangeType.DELETE -> {
-                        mediaLibraryDao.deleteMediaByUri(events.map { it.fileUri })
+                        mediaLibraryDao.deleteMediaByUris(events.map { it.fileUri })
                     }
                 }
             }

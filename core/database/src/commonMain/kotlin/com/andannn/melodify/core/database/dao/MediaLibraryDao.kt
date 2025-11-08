@@ -23,6 +23,7 @@ import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
+import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRefColumns
 import com.andannn.melodify.core.database.toSortString
 import com.andannn.melodify.core.database.toWhereString
 import io.github.aakira.napier.Napier
@@ -216,6 +217,12 @@ interface MediaLibraryDao {
     @Query("DELETE FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.SOURCE_URI} IN (:uris)")
     suspend fun deleteMediaByUri(uris: List<String>)
 
+    @Transaction
+    suspend fun deleteMediaByUris(uris: List<String>) {
+        deleteMediaByUri(uris)
+        deleteInvalidPlayListRefItem()
+    }
+
     @Query(
         """
         SELECT * FROM ${Tables.LIBRARY_ALBUM} 
@@ -248,6 +255,16 @@ interface MediaLibraryDao {
     """,
     )
     suspend fun searchArtist(keyword: String): List<ArtistEntity>
+
+    @Query(
+        """
+    DELETE FROM ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
+    WHERE ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} NOT IN (
+        SELECT ${MediaColumns.ID} FROM ${Tables.LIBRARY_MEDIA}
+    );
+    """,
+    )
+    suspend fun deleteInvalidPlayListRefItem()
 
     @Transaction
     suspend fun upsertMedia(
@@ -287,6 +304,7 @@ interface MediaLibraryDao {
         batchInsert(audios, DEFAULT_CHUNK_SIZE) { inserted, total ->
             onStep(MediaType.MEDIA, inserted, total)
         }
+        deleteInvalidPlayListRefItem()
     }
 
     private suspend fun <T> batchInsert(

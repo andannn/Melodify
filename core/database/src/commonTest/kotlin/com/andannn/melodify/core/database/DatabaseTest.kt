@@ -1010,6 +1010,51 @@ class DatabaseTest {
                     assertTrue { mediaList.map { it.id }.contains(1) }
                 }
         }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    fun `delete invalid play list ref item`() =
+        testScope.runTest {
+            libraryDao.insertDummyData()
+            playListDao.insertPlayListEntities(
+                entities =
+                    listOf(
+                        PlayListEntity(
+                            id = 1,
+                            createdDate = 1,
+                            artworkUri = null,
+                            name = "name",
+                        ),
+                    ),
+            )
+            playListDao.insertPlayListWithMediaCrossRef(
+                crossRefs =
+                    listOf(
+                        PlayListWithMediaCrossRef(
+                            playListId = 1,
+                            mediaStoreId = "1",
+                            addedDate = 1,
+                            artist = "",
+                            title = "",
+                        ),
+                        PlayListWithMediaCrossRef(
+                            playListId = 1,
+                            mediaStoreId = "3",
+                            addedDate = 2,
+                            artist = "",
+                            title = "",
+                        ),
+                    ),
+            )
+            playListDao.getMediasInPlayList(1).also {
+                assertEquals(2, it.size)
+            }
+            libraryDao.deleteInvalidPlayListRefItem()
+            playListDao.getMediasInPlayList(1).also {
+                assertEquals(1, it.size)
+                assertEquals(1, it.first().media.id)
+            }
+        }
 }
 
 private suspend fun MediaLibraryDao.insertDummyData() {
