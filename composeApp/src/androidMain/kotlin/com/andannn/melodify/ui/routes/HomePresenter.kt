@@ -27,6 +27,7 @@ import com.andannn.melodify.ui.core.ScopedPresenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import melodify.composeapp.generated.resources.Res
 import melodify.composeapp.generated.resources.default_sort_order
@@ -138,6 +139,12 @@ private suspend fun resyncAllSongs() =
             job?.cancel()
             job =
                 launch {
+                    if (it is SyncStatus.Progress && it.type == SyncType.MEDIA) {
+                        mediaCount = it.total
+                    }
+
+                    delay(50)
+
                     when (it) {
                         SyncStatus.Complete ->
                             popController.showSnackBar(
@@ -150,9 +157,6 @@ private suspend fun resyncAllSongs() =
                             )
 
                         is SyncStatus.Progress -> {
-                            if (it.type == SyncType.MEDIA) {
-                                mediaCount = it.total
-                            }
                             popController.showSnackBar(
                                 SnackBarMessage.SyncProgress(it.toSnackBarInfoString()),
                             )
