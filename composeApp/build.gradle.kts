@@ -119,8 +119,9 @@ compose.desktop {
             )
             appResourcesRootDir.set(file("appResources"))
         }
-
         buildTypes.release.proguard {
+// TODO: Can not launch app by launcher. disable proguard.
+            isEnabled = false
             version.set("7.4.0")
             configurationFiles.from(project.file("compose-desktop.pro"))
         }
