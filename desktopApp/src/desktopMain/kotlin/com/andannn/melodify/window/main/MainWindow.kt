@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,7 +30,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
-import com.andannn.melodify.app.MelodifyDeskTopAppState
 import com.andannn.melodify.ui.components.lyrics.Lyrics
 import com.andannn.melodify.ui.components.playcontrol.DesktopPlayerUi
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
@@ -41,9 +41,10 @@ import com.andannn.melodify.ui.components.tab.rememberTabUiPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContent
 import com.andannn.melodify.ui.components.tabcontent.TabContentState
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
+import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.window.CustomMenuBar
-import com.andannn.melodify.window.rememberCommonWindowState
+import com.andannn.melodify.window.MenuEvent
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
 
@@ -56,7 +57,7 @@ data class MainUiState(
 
 @Composable
 internal fun MainWindow(
-    appState: MelodifyDeskTopAppState,
+    onMenuEvent: (MenuEvent) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -66,18 +67,20 @@ internal fun MainWindow(
         rememberWindowState(
             size = DpSize(dimension.width.times(ratio).dp, dimension.height.times(ratio).dp),
         )
+
     Window(
         state = state,
         onCloseRequest = onCloseRequest,
         title = "Melodify",
     ) {
-        val windowState = rememberCommonWindowState()
-
-        CustomMenuBar(appState)
+        CustomMenuBar(onMenuEvent)
 
         Scaffold(
             snackbarHost = {
-                SnackbarHost(windowState.snackBarHostState)
+                SnackbarHost(
+                    hostState = rememberAndSetupSnackBarHostState(),
+                    modifier = Modifier.padding(bottom = 64.dp),
+                )
             },
         ) {
             val tabUiPresenter = rememberTabUiPresenter()

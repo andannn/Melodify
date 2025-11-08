@@ -4,17 +4,14 @@
  */
 package com.andannn.melodify
 
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.application
 import com.andannn.melodify.app.MelodifyDeskTopApp
-import com.andannn.melodify.core.syncer.SyncLibraryService
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import org.koin.mp.KoinPlatform.getKoin
 
 fun main() =
     application {
@@ -27,11 +24,6 @@ fun main() =
                     *modules.toTypedArray(),
                 ),
             )
-        }
-
-        // start watching library changes
-        LaunchedEffect(Unit) {
-            getKoin().get<SyncLibraryService>().startWatchingLibrary()
         }
 
         MelodifyDeskTopApp()

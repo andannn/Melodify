@@ -7,16 +7,19 @@ package com.andannn.melodify.window
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
-import com.andannn.melodify.app.MelodifyDeskTopAppState
+
+sealed interface MenuEvent {
+    data object OnOpenMediaLibrarySettings : MenuEvent
+}
 
 @Composable
-internal fun FrameWindowScope.CustomMenuBar(appState: MelodifyDeskTopAppState) {
+internal fun FrameWindowScope.CustomMenuBar(handler: (MenuEvent) -> Unit) {
     MenuBar {
-        Menu("Preferences") {
+        Menu("Settings") {
             Item(
-                "Configure",
+                "Media library",
                 onClick = {
-                    appState.showPreferenceWindow = true
+                    handler.invoke(MenuEvent.OnOpenMediaLibrarySettings)
                 },
             )
         }

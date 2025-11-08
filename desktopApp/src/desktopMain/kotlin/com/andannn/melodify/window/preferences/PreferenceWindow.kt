@@ -30,10 +30,11 @@ import androidx.compose.ui.window.rememberWindowState
 import com.andannn.melodify.app.MelodifyDeskTopAppState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.window.CustomMenuBar
+import com.andannn.melodify.window.MenuEvent
 
 @Composable
 internal fun PreferenceWindow(
-    appState: MelodifyDeskTopAppState,
+    onMenuEvent: (MenuEvent) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     Window(
@@ -41,7 +42,7 @@ internal fun PreferenceWindow(
         onCloseRequest = onCloseRequest,
         title = "Preferences",
     ) {
-        CustomMenuBar(appState)
+        CustomMenuBar(onMenuEvent)
 
         PreferencesWindowContent()
 
