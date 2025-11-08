@@ -117,6 +117,7 @@ compose.desktop {
             modules(
                 "jdk.unsupported",
             )
+            appResourcesRootDir.set(file("appResources"))
         }
 
         buildTypes.release.proguard {

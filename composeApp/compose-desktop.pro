@@ -23,3 +23,8 @@
 -keep class ** extends com.sun.jna.Library { *; }
 -keep class com.sun.jna.** { *; }
 -keep class org.jaudiotagger.tag.reference.Tagger { *; }
+-keep class org.jaudiotagger.tag.reference.Tagger { *; }
+-keep class com.andannn.melodify.core.player.LocalDiscoveryDirectoryProvider { *; }
+
+-keep class androidx.sqlite.driver.bundled.** { *; }
+-dontwarn androidx.sqlite.driver.bundled.**
