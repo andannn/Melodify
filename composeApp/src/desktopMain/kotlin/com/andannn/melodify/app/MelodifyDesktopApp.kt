@@ -18,7 +18,6 @@ import com.andannn.melodify.window.preferences.PreferenceWindow
 @Composable
 internal fun ApplicationScope.MelodifyDeskTopApp(appState: MelodifyDeskTopAppState = rememberMelodifyDeskTopAppState()) {
     MelodifyTheme(darkTheme = false, {
-        val scope = rememberCoroutineScope()
         CompositionLocalProvider(
             LocalPopupController provides remember { PopupControllerImpl() },
         ) {

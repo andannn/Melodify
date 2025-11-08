@@ -34,7 +34,7 @@ class PlayQueuePresenter(
                 AudioItemModel.DEFAULT,
             )
         return PlayQueueState(
-            interactingMusicItem!!,
+            interactingMusicItem,
             playListQueue,
         ) { eventSink ->
             when (eventSink) {
@@ -73,7 +73,7 @@ class PlayQueuePresenter(
 
 @Stable
 data class PlayQueueState(
-    val interactingMusicItem: AudioItemModel,
+    val interactingMusicItem: AudioItemModel?,
     val playListQueue: List<AudioItemModel>,
     val eventSink: (PlayQueueEvent) -> Unit = {},
 )

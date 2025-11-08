@@ -34,8 +34,8 @@ private const val TAG = "PlayQueueView"
 
 @Composable
 fun PlayQueue(
-    presenter: PlayQueuePresenter = rememberPlayQueuePresenter(),
     modifier: Modifier = Modifier,
+    presenter: PlayQueuePresenter = rememberPlayQueuePresenter(),
 ) {
     PlayQueueUi(
         state = presenter.present(),
@@ -72,7 +72,7 @@ private fun PlayQueueContent(
     onSwapFinished: (from: Int, to: Int) -> Unit,
     onDeleteFinished: (Int) -> Unit,
     playListQueue: ImmutableList<AudioItemModel>,
-    activeMediaItem: AudioItemModel,
+    activeMediaItem: AudioItemModel?,
     modifier: Modifier = Modifier,
 ) {
     val playingIndex = playListQueue.indexOfFirst { it == activeMediaItem }
@@ -111,7 +111,7 @@ private fun PlayQueueContent(
             ) { _ ->
                 QueueItem(
                     item = item,
-                    isActive = item.extraUniqueId == activeMediaItem.extraUniqueId,
+                    isActive = item.extraUniqueId == activeMediaItem?.extraUniqueId,
                     onClick = {
                         onItemClick(item)
                     },
