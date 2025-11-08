@@ -14,11 +14,13 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Melodify"
-include(":composeApp")
-include(":core:data")
-include(":core:player")
-include(":core:datastore")
-include(":core:network")
-include(":core:database")
-include(":core:syncer")
-include(":core:platform")
+include(":desktopApp")
+include(":androidApp")
+include(":shared:ui")
+include(":shared:data")
+include(":shared:player")
+include(":shared:datastore")
+include(":shared:network")
+include(":shared:database")
+include(":shared:syncer")
+include(":shared:platform")

@@ -44,7 +44,7 @@ jobs:
         uses: timheuer/base64-to-file@v1
         with:
           fileName: 'keystore.jks'
-          fileDir: './composeApp/keystore/'
+          fileDir: './androidApp/keystore/'
           encodedString: ${{ secrets.KEYSTORE }}
 #
 #      - name: Build macos app
@@ -52,7 +52,7 @@ jobs:
 #
 #      - name: Create .dmg
 #        run: |
-#          create-dmg composeApp/build/compose/binaries/main-release/app/Melodify.dmg composeApp/build/compose/binaries/main-release/app/Melodify.app
+#          create-dmg sharedApp/build/compose/binaries/main-release/app/Melodify.dmg sharedApp/build/compose/binaries/main-release/app/Melodify.app
 
       - name: Build android apk
         run: ./gradlew assembleProductionRelease -P android.releaseSigning=true
@@ -67,6 +67,6 @@ jobs:
         with:
           files: |
             composeApp/build/outputs/apk/release/composeApp-release.apk
-#            composeApp/build/compose/binaries/main-release/app/Melodify.dmg
+#            sharedApp/build/compose/binaries/main-release/app/Melodify.dmg
           repo_token: "${{ secrets.TOKEN }}"
           prerelease: true
