@@ -4,6 +4,9 @@
 -dontwarn kotlinx.**
 -dontwarn okhttp3.internal.platform.**
 -dontwarn com.sun.jna.internal.**
+-dontwarn org.graalvm.nativeimage.**
+-dontwarn com.oracle.svm.**
+-dontwarn okhttp3.internal.graal.**
 
 -keep class org.jetbrains.skia.** { *; }
 -keep class org.jetbrains.skiko.** { *; }
