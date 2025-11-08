@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.window.main
+package com.andannn.melodify.windows.main
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,8 +43,10 @@ import com.andannn.melodify.ui.components.tabcontent.TabContentState
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
-import com.andannn.melodify.window.CustomMenuBar
-import com.andannn.melodify.window.MenuEvent
+import com.andannn.melodify.windows.CustomMenuBar
+import com.andannn.melodify.windows.MenuEvent
+import com.andannn.melodify.windows.WindowNavigator
+import com.andannn.melodify.windows.handleMenuEvent
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
 
@@ -57,7 +59,7 @@ data class MainUiState(
 
 @Composable
 internal fun MainWindow(
-    onMenuEvent: (MenuEvent) -> Unit,
+    navigator: WindowNavigator,
     onCloseRequest: () -> Unit,
 ) {
     val graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -73,7 +75,7 @@ internal fun MainWindow(
         onCloseRequest = onCloseRequest,
         title = "Melodify",
     ) {
-        CustomMenuBar(onMenuEvent)
+        CustomMenuBar(navigator::handleMenuEvent)
 
         Scaffold(
             snackbarHost = {

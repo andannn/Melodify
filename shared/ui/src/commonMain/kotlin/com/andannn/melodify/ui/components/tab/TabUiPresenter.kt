@@ -56,16 +56,9 @@ class TabUiPresenter(
     var selectedIndex by mutableIntStateOf(0)
 
     init {
-        Napier.d(tag = TAG) { "tab ui init ${this.hashCode()}" }
         launch {
-            Napier.e { "JQN dddddd" }
-            try {
-                userPreferenceRepository.currentCustomTabsFlow.collect {
-                    currentTabList = it
-                }
-            } catch (e: Exception) {
-                Napier.e { "JQN e $e" }
-                throw e
+            userPreferenceRepository.currentCustomTabsFlow.collect {
+                currentTabList = it
             }
         }
 

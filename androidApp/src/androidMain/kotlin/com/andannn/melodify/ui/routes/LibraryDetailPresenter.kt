@@ -18,8 +18,10 @@ import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.components.librarydetail.LibraryContentEvent
 import com.andannn.melodify.ui.components.librarydetail.LibraryContentState
 import com.andannn.melodify.ui.components.librarydetail.rememberLibraryDetailPresenter
+import com.andannn.melodify.ui.core.LaunchNavigationRequestHandlerEffect
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
@@ -57,10 +59,6 @@ sealed interface LibraryDetailScreenEvent {
     data object OnBackKeyPressed : LibraryDetailScreenEvent
 
     data object OnOptionClick : LibraryDetailScreenEvent
-
-    data class OnMediaItemClick(
-        val mediaItem: MediaItemModel,
-    ) : LibraryDetailScreenEvent
 }
 
 private class LibraryDetailScreenPresenter(
@@ -72,7 +70,14 @@ private class LibraryDetailScreenPresenter(
 ) : ScopedPresenter<LibraryDetailScreenState>() {
     @Composable
     override fun present(): LibraryDetailScreenState {
-        val state = rememberLibraryDetailPresenter(dataSource).present()
+        val presenter = rememberLibraryDetailPresenter(dataSource)
+        val state = presenter.present()
+
+        LaunchNavigationRequestHandlerEffect(
+            navigator = navigator,
+            eventSink = presenter as NavigationRequestEventSink,
+        )
+
         return LibraryDetailScreenState(
             dataSource = dataSource,
             state = state,
@@ -80,12 +85,6 @@ private class LibraryDetailScreenPresenter(
             context(repository, popupController, fileDeleteHelper) {
                 when (event) {
                     LibraryDetailScreenEvent.OnBackKeyPressed -> navigator.popBackStack()
-                    is LibraryDetailScreenEvent.OnMediaItemClick ->
-                        if (dataSource.browseable()) {
-                            navigator.navigateTo(Screen.LibraryDetail(event.mediaItem.asLibraryDataSource()))
-                        } else {
-                            state.eventSink.invoke(LibraryContentEvent.OnRequestPlay(event.mediaItem as AudioItemModel))
-                        }
 
                     LibraryDetailScreenEvent.OnOptionClick -> {
                         state.mediaItem?.let { item ->

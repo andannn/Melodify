@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.window.preferences
+package com.andannn.melodify.windows.preferences
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,14 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
-import com.andannn.melodify.app.MelodifyDeskTopAppState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
-import com.andannn.melodify.window.CustomMenuBar
-import com.andannn.melodify.window.MenuEvent
+import com.andannn.melodify.windows.CustomMenuBar
+import com.andannn.melodify.windows.MenuEvent
+import com.andannn.melodify.windows.WindowNavigator
+import com.andannn.melodify.windows.handleMenuEvent
 
 @Composable
 internal fun PreferenceWindow(
-    onMenuEvent: (MenuEvent) -> Unit,
+    navigator: WindowNavigator,
     onCloseRequest: () -> Unit,
 ) {
     Window(
@@ -42,7 +43,7 @@ internal fun PreferenceWindow(
         onCloseRequest = onCloseRequest,
         title = "Preferences",
     ) {
-        CustomMenuBar(onMenuEvent)
+        CustomMenuBar(navigator::handleMenuEvent)
 
         PreferencesWindowContent()
 

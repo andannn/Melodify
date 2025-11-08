@@ -2,16 +2,16 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.app
+package com.andannn.melodify.windows
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.window.ApplicationScope
 import com.andannn.melodify.core.syncer.SyncLibraryService
+import com.andannn.melodify.model.LibraryDataSource
+import com.andannn.melodify.model.toDataSource
 import com.andannn.melodify.ui.core.ScopedPresenter
-import com.andannn.melodify.window.MenuEvent
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -19,15 +19,24 @@ sealed interface WindowType {
     data object Home : WindowType
 
     data object SettingPreference : WindowType
+
+    data class MediaLibrary(
+        val datasource: LibraryDataSource,
+    ) : WindowType
 }
 
 @Composable
-internal fun rememberMelodifyDeskTopAppState() =
-    retain {
-        MelodifyDeskTopAppState()
+internal fun rememberMelodifyDeskTopAppState(applicationScope: ApplicationScope) =
+    retain(
+        applicationScope,
+    ) {
+        MelodifyDeskTopAppState(applicationScope)
     }
 
-internal class MelodifyDeskTopAppState : ScopedPresenter<Unit>() {
+internal class MelodifyDeskTopAppState(
+    private val applicationScope: ApplicationScope,
+) : ScopedPresenter<Unit>(),
+    WindowNavigator {
     val windowStack = mutableStateSetOf<WindowType>(WindowType.Home)
 
     init {
@@ -36,24 +45,13 @@ internal class MelodifyDeskTopAppState : ScopedPresenter<Unit>() {
         }
     }
 
-    fun handleMenuEvent(menuEvent: MenuEvent) {
-        when (menuEvent) {
-            MenuEvent.OnOpenMediaLibrarySettings ->
-                openWindow(
-                    WindowType.SettingPreference,
-                )
-        }
-    }
-
-    fun openWindow(windowType: WindowType) {
+    override fun openWindow(windowType: WindowType) {
         windowStack.add(windowType)
     }
 
-    fun closeWindow(
-        windowType: WindowType,
-        applicationScope: ApplicationScope,
-    ) {
+    override fun closeWindow(windowType: WindowType) {
         windowStack.remove(windowType)
+
         if (windowStack.isEmpty()) {
             applicationScope.exitApplication()
         }

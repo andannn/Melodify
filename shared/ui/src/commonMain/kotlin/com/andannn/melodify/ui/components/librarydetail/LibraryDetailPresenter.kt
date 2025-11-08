@@ -15,11 +15,19 @@ import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.LibraryDataSource
+import com.andannn.melodify.model.asLibraryDataSource
+import com.andannn.melodify.model.browseable
+import com.andannn.melodify.ui.core.ChannelNavigationRequestEventChannel
 import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.NavigationRequest
+import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.ScopedObserver
+import com.andannn.melodify.ui.core.ScopedObserverImpl
 import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.usecase.content
 import com.andannn.melodify.usecase.item
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -54,12 +62,21 @@ sealed interface LibraryContentEvent {
     data class OnRequestPlay(
         val mediaItem: AudioItemModel,
     ) : LibraryContentEvent
+
+    data class OnMediaItemClick(
+        val mediaItem: MediaItemModel,
+    ) : LibraryContentEvent
 }
+
+private const val TAG = "LibraryDetailPresenter"
 
 private class LibraryDetailPresenter(
     private val repository: Repository,
     private val dataSource: LibraryDataSource,
-) : ScopedPresenter<LibraryContentState>() {
+    private val scopedObserver: ScopedObserver = ScopedObserverImpl(),
+) : Presenter<LibraryContentState>,
+    ScopedObserver by scopedObserver,
+    NavigationRequestEventSink by ChannelNavigationRequestEventChannel(scopedObserver) {
     private val dataSourceMediaItemFlow =
         with(repository) { dataSource.item() }
             .stateIn(
@@ -98,6 +115,15 @@ private class LibraryDetailPresenter(
             when (event) {
                 is LibraryContentEvent.OnRequestPlay ->
                     playMusic(event.mediaItem, contentList)
+
+                is LibraryContentEvent.OnMediaItemClick -> {
+                    if (dataSource.browseable()) {
+                        Napier.d(tag = TAG) { "request navigate to ${event.mediaItem.asLibraryDataSource()}" }
+                        onRequest(NavigationRequest.GoToLibraryDetail(event.mediaItem.asLibraryDataSource()))
+                    } else {
+                        playMusic(event.mediaItem as AudioItemModel, contentList)
+                    }
+                }
             }
         }
     }

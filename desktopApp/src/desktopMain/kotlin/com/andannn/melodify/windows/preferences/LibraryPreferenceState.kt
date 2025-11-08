@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.window.preferences
+package com.andannn.melodify.windows.preferences
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
