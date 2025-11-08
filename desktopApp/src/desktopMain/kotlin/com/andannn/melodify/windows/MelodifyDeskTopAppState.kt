@@ -12,6 +12,7 @@ import com.andannn.melodify.core.syncer.SyncLibraryService
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.toDataSource
 import com.andannn.melodify.ui.core.ScopedPresenter
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -22,10 +23,14 @@ sealed interface WindowType {
 
     data object TabManage : WindowType
 
+    data object Search : WindowType
+
     data class MediaLibrary(
         val datasource: LibraryDataSource,
     ) : WindowType
 }
+
+private const val TAG = "MelodifyDeskTopAppState"
 
 @Composable
 internal fun rememberMelodifyDeskTopAppState(applicationScope: ApplicationScope) =
@@ -52,6 +57,7 @@ internal class MelodifyDeskTopAppState(
     }
 
     override fun closeWindow(windowType: WindowType) {
+        Napier.d(tag = TAG) { "closeWindow: $windowType" }
         windowStack.remove(windowType)
 
         if (windowStack.isEmpty()) {

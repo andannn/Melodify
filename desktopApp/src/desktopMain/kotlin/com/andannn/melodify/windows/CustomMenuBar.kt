@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.windows
 
+import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
@@ -13,6 +14,8 @@ import org.jetbrains.compose.resources.stringResource
 
 sealed interface MenuEvent {
     data object OnOpenMediaLibrarySettings : MenuEvent
+
+    data object OnOpenSearch : MenuEvent
 
     data class OnOpenMediaLibrary(
         val shortcutItem: ShortcutItem,
@@ -26,11 +29,15 @@ fun WindowNavigator.handleMenuEvent(menuEvent: MenuEvent) {
                 WindowType.SettingPreference,
             )
 
-        is MenuEvent.OnOpenMediaLibrary -> {
+        is MenuEvent.OnOpenMediaLibrary ->
             openWindow(
                 WindowType.MediaLibrary(menuEvent.shortcutItem.toDataSource()),
             )
-        }
+
+        MenuEvent.OnOpenSearch ->
+            openWindow(
+                WindowType.Search,
+            )
     }
 }
 
@@ -55,6 +62,12 @@ internal fun FrameWindowScope.CustomMenuBar(handler: (MenuEvent) -> Unit) {
                     },
                 )
             }
+            Item(
+                "Search",
+                onClick = {
+                    handler.invoke(MenuEvent.OnOpenSearch)
+                },
+            )
         }
     }
 }
