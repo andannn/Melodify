@@ -36,6 +36,7 @@ import melodify.shared.ui.generated.resources.sync_progress_album
 import melodify.shared.ui.generated.resources.sync_progress_artist
 import melodify.shared.ui.generated.resources.sync_progress_genre
 import melodify.shared.ui.generated.resources.sync_progress_media
+import melodify.shared.ui.generated.resources.sync_progress_video
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.koin.mp.KoinPlatform.getKoin
@@ -184,4 +185,5 @@ private suspend fun SyncStatus.Progress.toSnackBarInfoString(): String =
         SyncType.ALBUM -> getString(Res.string.sync_progress_album, progress, total)
         SyncType.ARTIST -> getString(Res.string.sync_progress_artist, progress, total)
         SyncType.GENRE -> getString(Res.string.sync_progress_genre, progress, total)
+        SyncType.VIDEO -> getString(Res.string.sync_progress_video, progress, total)
     }

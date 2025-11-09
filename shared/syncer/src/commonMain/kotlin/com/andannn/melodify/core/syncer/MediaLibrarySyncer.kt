@@ -19,6 +19,7 @@ enum class SyncType {
     ARTIST,
     ALBUM,
     GENRE,
+    VIDEO,
 }
 
 private fun Int.toSyncType() =
@@ -27,6 +28,7 @@ private fun Int.toSyncType() =
         MediaType.ARTIST -> SyncType.ARTIST
         MediaType.GENRE -> SyncType.GENRE
         MediaType.MEDIA -> SyncType.MEDIA
+        MediaType.VIDEO -> SyncType.VIDEO
         else -> error("never")
     }
 
@@ -103,6 +105,7 @@ internal class MediaLibrarySyncerWrapper(
                     artists = mediaData.artistData.toArtistEntity(),
                     genres = mediaData.genreData.toGenreEntity(),
                     audios = mediaData.audioData.toMediaEntity(),
+                    videos = mediaData.videoData.toVideoEntity(),
                 ) { type, inserted, total ->
                     Napier.d(tag = TAG) { "Media sync process $type: inserted: $inserted,  total: $total" }
                     trySend(SyncStatus.Progress(type.toSyncType(), inserted, total))

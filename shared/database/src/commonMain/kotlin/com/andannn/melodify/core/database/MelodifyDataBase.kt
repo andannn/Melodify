@@ -35,6 +35,7 @@ import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortOptionJsonConverter
 import com.andannn.melodify.core.database.entity.SortRuleEntity
+import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.entity.fts.AlbumFtsEntity
 import com.andannn.melodify.core.database.entity.fts.ArtistFtsEntity
 import com.andannn.melodify.core.database.entity.fts.MediaFtsEntity
@@ -46,6 +47,7 @@ internal object Tables {
     const val LYRIC_WITH_AUDIO_CROSS_REF = "lyric_with_audio_cross_ref_table"
     const val PLAY_LIST = "play_list_table"
     const val PLAY_LIST_WITH_MEDIA_CROSS_REF = "play_list_with_media_cross_ref_table"
+    const val LIBRARY_VIDEO = "library_video_table"
     const val LIBRARY_MEDIA = "library_media_table"
     const val LIBRARY_FTS_MEDIA = "library_fts_media_table"
     const val LIBRARY_ALBUM = "library_album_table"
@@ -74,6 +76,7 @@ internal object Tables {
         MediaFtsEntity::class,
         SearchHistoryEntity::class,
         SortRuleEntity::class,
+        VideoEntity::class,
     ],
     autoMigrations = [
         AutoMigration(from = 3, to = 4),
@@ -83,8 +86,9 @@ internal object Tables {
         AutoMigration(from = 7, to = 8, AutoMigration7To8Spec::class),
         AutoMigration(from = 8, to = 9),
         AutoMigration(from = 9, to = 10),
+        AutoMigration(from = 10, to = 11),
     ],
-    version = 10,
+    version = 11,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)

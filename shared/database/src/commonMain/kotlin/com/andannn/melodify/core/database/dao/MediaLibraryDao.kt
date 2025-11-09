@@ -24,6 +24,7 @@ import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRefColumns
+import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.toSortString
 import com.andannn.melodify.core.database.toWhereString
 import io.github.aakira.napier.Napier
@@ -38,6 +39,7 @@ object MediaType {
     const val ALBUM = 1
     const val ARTIST = 2
     const val GENRE = 3
+    const val VIDEO = 4
 }
 
 @Dao
@@ -57,6 +59,9 @@ interface MediaLibraryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMedias(audios: List<MediaEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertVideos(audios: List<VideoEntity>)
+
     @Query("DELETE FROM ${Tables.LIBRARY_ALBUM}")
     suspend fun deleteAllAlbums()
 
@@ -68,6 +73,9 @@ interface MediaLibraryDao {
 
     @Query("DELETE FROM ${Tables.LIBRARY_MEDIA}")
     suspend fun deleteAllMedias()
+
+    @Query("DELETE FROM ${Tables.LIBRARY_VIDEO}")
+    suspend fun deleteAllVideos()
 
     @Query("SELECT * FROM ${Tables.LIBRARY_ALBUM}")
     fun getAllAlbumFlow(): Flow<List<AlbumEntity>>
@@ -285,12 +293,14 @@ interface MediaLibraryDao {
         artists: List<ArtistEntity>,
         genres: List<GenreEntity>,
         audios: List<MediaEntity>,
+        videos: List<VideoEntity> = emptyList(),
         onStep: (type: Int, inserted: Int, total: Int) -> Unit,
     ) {
         deleteAllAlbums()
         deleteAllArtists()
         deleteAllGenres()
         deleteAllMedias()
+        deleteAllVideos()
 
         batchInsert(albums, DEFAULT_CHUNK_SIZE) { inserted, total ->
             onStep(MediaType.ALBUM, inserted, total)
@@ -303,6 +313,9 @@ interface MediaLibraryDao {
         }
         batchInsert(audios, DEFAULT_CHUNK_SIZE) { inserted, total ->
             onStep(MediaType.MEDIA, inserted, total)
+        }
+        batchInsert(videos, DEFAULT_CHUNK_SIZE) { inserted, total ->
+            onStep(MediaType.VIDEO, inserted, total)
         }
         deleteInvalidPlayListRefItem()
     }
@@ -323,6 +336,7 @@ interface MediaLibraryDao {
                     is ArtistEntity -> insertArtists(part as List<ArtistEntity>)
                     is GenreEntity -> insertGenres(part as List<GenreEntity>)
                     is MediaEntity -> insertMedias(part as List<MediaEntity>)
+                    is VideoEntity -> insertVideos(part as List<VideoEntity>)
                     else -> Unit
                 }
                 done += part.size

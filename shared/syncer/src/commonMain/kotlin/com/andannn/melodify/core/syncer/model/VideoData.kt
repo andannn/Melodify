@@ -4,8 +4,9 @@
  */
 package com.andannn.melodify.core.syncer.model
 
-data class VideoData(
+data class VideoData constructor(
     val id: Long,
+    val sourceUri: String,
     val title: String?,
     val displayName: String?,
     val mimeType: String?,

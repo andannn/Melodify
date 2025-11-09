@@ -187,6 +187,12 @@ class MediaLibraryScannerImpl(
             itemList.add(
                 com.andannn.melodify.core.syncer.model.VideoData(
                     id = cursor.getLong(idIndex),
+                    sourceUri =
+                        Uri
+                            .withAppendedPath(
+                                MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                                cursor.getLong(idIndex).toString(),
+                            ).toString(),
                     title = cursor.getString(titleIndex),
                     displayName = cursor.getString(displayNameIndex),
                     mimeType = cursor.getString(mimeTypeIndex),
