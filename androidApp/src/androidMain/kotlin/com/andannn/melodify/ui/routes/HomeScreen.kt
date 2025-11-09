@@ -106,7 +106,7 @@ internal fun HomeUiScreen(
                 },
             )
 
-            TabContent(homeState.tabContentState, modifier = Modifier.padding(horizontal = 4.dp))
+            TabContent(homeState.tabContentState, modifier = Modifier)
         }
     }
 
