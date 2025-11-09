@@ -55,7 +55,7 @@ jobs:
 #          create-dmg sharedApp/build/compose/binaries/main-release/app/Melodify.dmg sharedApp/build/compose/binaries/main-release/app/Melodify.app
 
       - name: Build android apk
-        run: ./gradlew assembleProductionRelease -P android.releaseSigning=true
+        run: ./gradlew androidApp:assembleRelease -P android.releaseSigning=true
         env:
           SIGNING_KEYSTORE_PATH: ./keystore/keystore.jks
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -66,7 +66,7 @@ jobs:
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           files: |
-            composeApp/build/outputs/apk/release/composeApp-release.apk
+            androidApp/build/outputs/apk/release/androidApp-release.ap
 #            sharedApp/build/compose/binaries/main-release/app/Melodify.dmg
           repo_token: "${{ secrets.TOKEN }}"
           prerelease: true
