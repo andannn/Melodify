@@ -5,7 +5,7 @@
 package com.andannn.melodify.core.data.internal
 
 import com.andannn.melodify.core.data.MediaControllerRepository
-import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.player.VlcPlayer
 
@@ -15,7 +15,7 @@ internal class MediaControllerRepositoryImpl(
     override fun getCurrentPlayingItemDuration(): Long? = vlcPlayer.currentDurationMs
 
     override fun playMediaList(
-        mediaList: List<AudioItemModel>,
+        mediaList: List<MediaItemModel>,
         index: Int,
     ) {
         vlcPlayer.playMediaList(
@@ -47,7 +47,7 @@ internal class MediaControllerRepositoryImpl(
 
     override fun addMediaItems(
         index: Int,
-        mediaItems: List<AudioItemModel>,
+        mediaItems: List<MediaItemModel>,
     ) = vlcPlayer.addMediaItems(
         index = index,
         mrls = mediaItems.map { it.source },

@@ -24,6 +24,7 @@ import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRefColumns
+import com.andannn.melodify.core.database.entity.VideoColumns
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.toSortString
 import com.andannn.melodify.core.database.toWhereString
@@ -92,10 +93,26 @@ interface MediaLibraryDao {
     @RawQuery(observedEntities = [MediaEntity::class])
     fun getMediaFlowPagingSource(rawQuery: RoomRawQuery): PagingSource<Int, MediaEntity>
 
+    @RawQuery(observedEntities = [VideoEntity::class])
+    fun getVideoFlowPagingSource(rawQuery: RoomRawQuery): PagingSource<Int, VideoEntity>
+
+    @RawQuery(observedEntities = [VideoEntity::class])
+    fun getVideoFlowRaw(rawQuery: RoomRawQuery): Flow<List<VideoEntity>>
+
     fun getAllMediaFlow(
         where: MediaWheres? = null,
         sort: MediaSorts? = null,
     ): Flow<List<MediaEntity>> = getMediaFlowRaw(buildMediaRawQuery(where, sort))
+
+    fun getAllVideoPagingSource(
+        where: MediaWheres? = null,
+        sort: MediaSorts? = null,
+    ): PagingSource<Int, VideoEntity> = getVideoFlowPagingSource(buildVideoRawQuery(where, sort))
+
+    fun getAllVideoFlow(
+        where: MediaWheres? = null,
+        sort: MediaSorts? = null,
+    ): Flow<List<VideoEntity>> = getVideoFlowRaw(buildVideoRawQuery(where, sort))
 
     fun getAllMediaPagingSource(
         where: MediaWheres? = null,
@@ -111,6 +128,18 @@ interface MediaLibraryDao {
             wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
         val sort = sort?.toSortString() ?: ""
         val sql = "SELECT * FROM ${Tables.LIBRARY_MEDIA} $wheres $sort"
+        return RoomRawQuery(sql)
+    }
+
+    private fun buildVideoRawQuery(
+        wheres: MediaWheres?,
+        sort: MediaSorts?,
+    ): RoomRawQuery {
+        val filterDeleted = "${VideoColumns.DELETED} IS NOT 1"
+        val wheres =
+            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
+        val sort = sort?.toSortString() ?: ""
+        val sql = "SELECT * FROM ${Tables.LIBRARY_VIDEO} $wheres $sort"
         return RoomRawQuery(sql)
     }
 

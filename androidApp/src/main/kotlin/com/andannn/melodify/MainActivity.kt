@@ -15,6 +15,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -132,21 +133,25 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            MelodifyTheme {
-                when (uiState) {
-                    is MainUiState.Error -> {
-                        ConnectFailedAlertDialog(
-                            onDismiss = { finish() },
-                        )
-                    }
-
-                    MainUiState.Ready -> {
-                        if (permissionGranted) {
-                            MelodifyMobileApp()
+            CompositionLocalProvider(
+                LocalScreenController provides ScreenOrientationController(this),
+            ) {
+                MelodifyTheme {
+                    when (uiState) {
+                        is MainUiState.Error -> {
+                            ConnectFailedAlertDialog(
+                                onDismiss = { finish() },
+                            )
                         }
-                    }
 
-                    MainUiState.Init -> {}
+                        MainUiState.Ready -> {
+                            if (permissionGranted) {
+                                MelodifyMobileApp()
+                            }
+                        }
+
+                        MainUiState.Init -> {}
+                    }
                 }
             }
         }

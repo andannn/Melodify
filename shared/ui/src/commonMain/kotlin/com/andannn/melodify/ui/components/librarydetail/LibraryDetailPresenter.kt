@@ -24,7 +24,6 @@ import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedObserver
 import com.andannn.melodify.ui.core.ScopedObserverImpl
-import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.usecase.content
 import com.andannn.melodify.usecase.item
 import io.github.aakira.napier.Napier

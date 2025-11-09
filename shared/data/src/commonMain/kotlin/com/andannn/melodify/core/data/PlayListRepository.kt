@@ -7,6 +7,7 @@ package com.andannn.melodify.core.data
 import androidx.paging.PagingData
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GroupKey
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.SortOption
 import com.andannn.melodify.core.database.dao.PlayListDao
@@ -27,13 +28,13 @@ interface PlayListRepository {
      */
     fun getAudiosOfPlayListFlow(
         playListId: Long,
-        sort: List<SortOption>,
+        sort: List<SortOption.AudioOption>,
         wheres: List<GroupKey> = emptyList(),
     ): Flow<List<AudioItemModel>>
 
     fun getAudioPagingFlowOfPlayList(
         playListId: Long,
-        sort: List<SortOption>,
+        sort: List<SortOption.AudioOption>,
         wheres: List<GroupKey> = emptyList(),
     ): Flow<PagingData<AudioItemModel>>
 
@@ -83,7 +84,7 @@ interface PlayListRepository {
     /**
      * Toggle favorite media
      */
-    suspend fun toggleFavoriteMedia(audio: AudioItemModel)
+    suspend fun toggleFavoriteMedia(audio: MediaItemModel)
 
     /**
      * Remove musics from favorite playList

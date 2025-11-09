@@ -10,6 +10,7 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.model.VideoItemModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -121,6 +122,7 @@ fun MediaItemModel.asLibraryDataSource() =
         is GenreItemModel -> LibraryDataSource.GenreDetail(id)
         is PlayListItemModel -> LibraryDataSource.PlayListDetail(id)
         is AudioItemModel -> error("AudioItemModel should not be converted to DataSource")
+        is VideoItemModel -> error("VideoItemModel should not be converted to DataSource")
     }
 
 fun ShortcutItem.toDataSource() =

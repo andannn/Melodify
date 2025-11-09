@@ -9,9 +9,10 @@ import androidx.paging.map
 import com.andannn.melodify.core.data.PlayListRepository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GroupKey
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.SortOption
-import com.andannn.melodify.core.data.model.toSortMethod
+import com.andannn.melodify.core.data.model.toAudioSortMethod
 import com.andannn.melodify.core.data.model.toWheresMethod
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.entity.PlayListEntity
@@ -89,7 +90,7 @@ internal class PlayListRepositoryImpl(
             mediaStoreId,
         )
 
-    override suspend fun toggleFavoriteMedia(audio: AudioItemModel) {
+    override suspend fun toggleFavoriteMedia(audio: MediaItemModel) {
         val isFavorite =
             playListDao
                 .getIsMediaInPlayListFlow(
@@ -99,6 +100,8 @@ internal class PlayListRepositoryImpl(
         if (isFavorite) {
             removeMusicFromFavoritePlayList(listOf(audio.id))
         } else {
+// TODO: Implement Video Playlist
+            audio as AudioItemModel
             addMusicToFavoritePlayList(listOf(audio))
         }
     }
@@ -128,15 +131,18 @@ internal class PlayListRepositoryImpl(
 
     override fun getAudiosOfPlayListFlow(
         playListId: Long,
-        sort: List<SortOption>,
+        sort: List<SortOption.AudioOption>,
         wheres: List<GroupKey>,
     ) = playListDao
-        .getMediasInPlayListFlow(playListId, wheres.toWheresMethod(), sort.toSortMethod())
-        .map { it.map { it.mapToAppItem() } }
+        .getMediasInPlayListFlow(
+            playListId,
+            wheres.toWheresMethod(),
+            sort.toAudioSortMethod(),
+        ).map { it.map { it.mapToAppItem() } }
 
     override fun getAudioPagingFlowOfPlayList(
         playListId: Long,
-        sort: List<SortOption>,
+        sort: List<SortOption.AudioOption>,
         wheres: List<GroupKey>,
     ) = Pager(
         config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
@@ -144,7 +150,7 @@ internal class PlayListRepositoryImpl(
             playListDao.getMediaPagingSourceInPlayList(
                 playListId = playListId,
                 wheres = wheres.toWheresMethod(),
-                mediaSorts = sort.toSortMethod(),
+                mediaSorts = sort.toAudioSortMethod(),
             )
         },
     ).flow.map { pagingData ->

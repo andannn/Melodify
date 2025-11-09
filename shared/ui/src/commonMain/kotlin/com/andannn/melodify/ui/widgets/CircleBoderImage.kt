@@ -4,22 +4,15 @@
  */
 package com.andannn.melodify.ui.widgets
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-
-@Composable
-expect fun centerImageShape(): Shape
 
 @Composable
 fun CircleBorderImage(
@@ -29,7 +22,7 @@ fun CircleBorderImage(
     AsyncImage(
         modifier =
             modifier
-                .clip(shape = centerImageShape()),
+                .clip(shape = RoundedCornerShape(8.dp)),
         model =
             ImageRequest
                 .Builder(LocalPlatformContext.current)

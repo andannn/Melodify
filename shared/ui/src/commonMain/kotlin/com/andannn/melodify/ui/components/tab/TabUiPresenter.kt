@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
@@ -95,7 +96,7 @@ class TabUiPresenter(
         }
     }
 
-    private suspend fun currentItems(): List<AudioItemModel> {
+    private suspend fun currentItems(): List<MediaItemModel> {
         val currentTab =
             currentTabList.getOrNull(selectedIndex) ?: return emptyList()
         val groupSort =
@@ -143,7 +144,10 @@ class TabUiPresenter(
                                     OptionItem.PLAY_NEXT -> currentItems().also { addToNextPlay(it) }
                                     OptionItem.ADD_TO_QUEUE -> currentItems().also { addToQueue(it) }
                                     OptionItem.ADD_TO_PLAYLIST ->
-                                        currentItems().also { addToPlaylist(it) }
+                                        currentItems().also { list ->
+// TODO: Video playlist impl
+                                            addToPlaylist(list as List<AudioItemModel>)
+                                        }
 
                                     OptionItem.DISPLAY_SETTING ->
                                         popupController.showDialog(DialogId.ChangeSortRuleDialog(tab))

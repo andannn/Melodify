@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cached
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
@@ -31,11 +32,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
 import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
@@ -54,14 +58,14 @@ fun ListTileItemView(
     paddingValues: PaddingValues = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
     actionType: ActionType = ActionType.OPTION,
     swapIconModifier: Modifier? = null,
-    albumArtUri: String? = null,
+    thumbnailSourceUri: String? = null,
     isActive: Boolean = false,
     defaultColor: Color = MaterialTheme.colorScheme.surface,
-    defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
+    errorPlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
     title: String = "",
     subTitle: String = "",
     trackNum: Int? = null,
-    onMusicItemClick: (() -> Unit)? = null,
+    onItemClick: (() -> Unit)? = null,
     onOptionButtonClick: (() -> Unit)? = null,
 ) {
     @Composable
@@ -69,10 +73,10 @@ fun ListTileItemView(
         modifier: Modifier = Modifier,
         content: @Composable () -> Unit,
     ) {
-        if (onMusicItemClick != null) {
+        if (onItemClick != null) {
             Surface(
                 modifier = modifier,
-                onClick = onMusicItemClick,
+                onClick = onItemClick,
                 color = if (isActive) MaterialTheme.colorScheme.inversePrimary else defaultColor,
                 content = content,
             )
@@ -112,16 +116,21 @@ fun ListTileItemView(
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                } else if (albumArtUri != null) {
+                } else if (thumbnailSourceUri != null) {
                     AsyncImage(
+                        model =
+                            ImageRequest
+                                .Builder(LocalPlatformContext.current)
+                                .data(thumbnailSourceUri)
+                                .size(256)
+                                .build(),
                         modifier =
                             Modifier
                                 .size(50.dp)
+                                .background(MaterialTheme.colorScheme.surfaceDim)
                                 .clip(MaterialTheme.shapes.extraSmall),
-                        placeholder = painterResource(defaultImagePlaceholderRes),
-                        error = painterResource(defaultImagePlaceholderRes),
+                        error = painterResource(errorPlaceholderRes),
                         contentScale = ContentScale.Crop,
-                        model = albumArtUri,
                         contentDescription = "",
                     )
                 }

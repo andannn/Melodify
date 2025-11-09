@@ -6,6 +6,7 @@ package com.andannn.melodify.core.data
 
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.DisplaySetting
+import com.andannn.melodify.core.data.model.PresetDisplaySetting
 import com.andannn.melodify.core.data.model.TabKind
 import com.andannn.melodify.core.data.model.UserSetting
 import kotlinx.coroutines.flow.Flow
@@ -82,7 +83,10 @@ interface UserPreferenceRepository {
      */
     suspend fun getLastSuccessfulSyncTime(): Long?
 
-    suspend fun saveDefaultSortRule(displaySetting: DisplaySetting)
+    suspend fun saveDefaultSortRule(
+        isAudio: Boolean,
+        preset: PresetDisplaySetting,
+    )
 
     suspend fun saveSortRuleForTab(
         tab: CustomTab,
@@ -91,9 +95,10 @@ interface UserPreferenceRepository {
 
     /**
      * get sort rule of tab.
-     * return flow of default sort rule if tab is null.
      */
-    fun getCurrentSortRule(tab: CustomTab?): Flow<DisplaySetting>
+    fun getCurrentSortRule(tab: CustomTab): Flow<DisplaySetting>
+
+    fun getDefaultPresetSortRule(isAudio: Boolean): Flow<DisplaySetting>
 
     /**
      * get custom sort rule of tab.

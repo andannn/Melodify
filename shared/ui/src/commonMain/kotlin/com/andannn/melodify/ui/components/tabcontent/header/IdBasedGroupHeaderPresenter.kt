@@ -13,6 +13,7 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GroupKey
@@ -113,6 +114,7 @@ private class GroupHeaderPresenter(
                 when (groupKey) {
                     is GroupKey.Title -> "# " + groupKey.firstCharacterString
                     is GroupKey.Year -> "# " + groupKey.year
+                    is GroupKey.BucketId -> "# " + groupKey.bucketDisplayName
                     else -> mediaItem?.name ?: ""
                 }
             }
@@ -180,7 +182,8 @@ private class GroupHeaderPresenter(
                 )?.first() ?: emptyList()
         when (optionItem) {
             OptionItem.PLAY_NEXT -> addToNextPlay(items)
-            OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items)
+// TODO: Video Playlist impl
+            OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items as List<AudioItemModel>)
             OptionItem.ADD_TO_QUEUE -> addToQueue(items)
             OptionItem.DELETE_MEDIA_FILE -> deleteItems(items)
             else -> {}
@@ -197,5 +200,6 @@ private fun GroupKey.canPinToHome() =
 
         is GroupKey.Title,
         is GroupKey.Year,
+        is GroupKey.BucketId,
         -> false
     }

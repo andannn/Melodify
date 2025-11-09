@@ -6,6 +6,7 @@ package com.andannn.melodify.core.data.internal
 
 import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.player.PlayerState
@@ -50,7 +51,7 @@ internal class PlayerStateMonitoryRepositoryImpl(
             }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getPlayListQueueStateFlow() =
+    override fun getPlayListQueueStateFlow(): Flow<List<MediaItemModel>> =
         vlcPlayer
             .observePlayListQueue()
             .mapLatest { mrls ->

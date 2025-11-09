@@ -15,7 +15,12 @@ data class MediaSorts(
     }
 }
 
-internal fun MediaSorts.toSortString(): String = "ORDER BY " + sorts.joinToString(separator = ", ")
+internal fun MediaSorts.toSortString(): String =
+    if (sorts.isNotEmpty()) {
+        "ORDER BY " + sorts.joinToString(separator = ", ")
+    } else {
+        ""
+    }
 
 data class Sort(
     val column: String,

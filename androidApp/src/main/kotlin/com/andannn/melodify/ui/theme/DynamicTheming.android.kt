@@ -59,13 +59,10 @@ fun DynamicThemePrimaryColorsFromImage(
         animateColorAsState(
             dominantColorState.color,
             spring(stiffness = Spring.StiffnessLow),
-            finishedListener = {
-                scheme = createThemeFromSeed(it, isDark = true)
-            },
             label = "domain color",
         )
 
-    LaunchedEffect(seedColor) {
+    LaunchedEffect(seedColor, isDarkTheme) {
         scheme = createThemeFromSeed(seedColor, isDark = isDarkTheme)
     }
 

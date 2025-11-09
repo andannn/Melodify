@@ -4,7 +4,7 @@
  */
 package com.andannn.melodify.core.data
 
-import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,11 +16,11 @@ interface PlayerStateMonitoryRepository {
 
     fun getPlayingIndexInQueue(): Int
 
-    suspend fun getPlayListQueue(): List<AudioItemModel>
+    suspend fun getPlayListQueue(): List<MediaItemModel>
 
-    fun getPlayingMediaStateFlow(): Flow<AudioItemModel?>
+    fun getPlayingMediaStateFlow(): Flow<MediaItemModel?>
 
-    fun getPlayListQueueStateFlow(): Flow<List<AudioItemModel>>
+    fun getPlayListQueueStateFlow(): Flow<List<MediaItemModel>>
 
     fun getCurrentPlayMode(): PlayMode
 

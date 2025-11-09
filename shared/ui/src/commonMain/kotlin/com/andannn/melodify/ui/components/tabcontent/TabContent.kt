@@ -58,7 +58,9 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GroupKey
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.SortOption
+import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.core.data.model.browsableOrPlayable
 import com.andannn.melodify.core.data.model.keyOf
 import com.andannn.melodify.ui.components.tabcontent.header.GroupHeader
@@ -82,7 +84,10 @@ fun TabContent(
         displaySetting = state.groupSort,
         modifier = modifier.fillMaxSize(),
         onMusicItemClick = {
-            state.eventSink.invoke(TabContentEvent.OnPlayMusic(it))
+            state.eventSink.invoke(TabContentEvent.OnPlayMedia(it))
+        },
+        onVideoItemClick = {
+            state.eventSink.invoke(TabContentEvent.OnPlayMedia(it))
         },
         onShowMusicItemOption = {
             state.eventSink.invoke(TabContentEvent.OnShowMusicItemOption(it))
@@ -98,9 +103,10 @@ fun TabContent(
 private fun LazyListContent(
     selectedTab: CustomTab?,
     displaySetting: DisplaySetting?,
-    pagingItems: LazyPagingItems<AudioItemModel>,
+    pagingItems: LazyPagingItems<MediaItemModel>,
     modifier: Modifier = Modifier,
     onMusicItemClick: (AudioItemModel) -> Unit = {},
+    onVideoItemClick: (VideoItemModel) -> Unit = {},
     onShowMusicItemOption: (AudioItemModel) -> Unit = {},
     onGroupItemClick: (List<GroupKey?>) -> Unit = {},
 ) {
@@ -196,24 +202,47 @@ private fun LazyListContent(
                                     isLast = index == items.lastIndex,
                                 )
                             }
-                            ListTileItemView(
-                                paddingValues =
-                                    PaddingValues(
-                                        top = 4.dp,
-                                        bottom = 4.dp,
-                                    ),
-                                playable = item.browsableOrPlayable,
-                                isActive = false,
-                                albumArtUri = item.artWorkUri,
-                                title = item.name,
-                                trackNum = item.cdTrackNumber.takeIf { showTrackNum },
-                                onMusicItemClick = {
-                                    onMusicItemClick.invoke(item)
-                                },
-                                onOptionButtonClick = {
-                                    onShowMusicItemOption(item)
-                                },
-                            )
+                            when (item) {
+                                is AudioItemModel ->
+                                    ListTileItemView(
+                                        paddingValues =
+                                            PaddingValues(
+                                                top = 4.dp,
+                                                bottom = 4.dp,
+                                            ),
+                                        playable = item.browsableOrPlayable,
+                                        isActive = false,
+                                        thumbnailSourceUri = item.artWorkUri,
+                                        title = item.name,
+                                        trackNum = item.cdTrackNumber.takeIf { showTrackNum },
+                                        onItemClick = {
+                                            onMusicItemClick.invoke(item)
+                                        },
+                                        onOptionButtonClick = {
+                                            onShowMusicItemOption(item)
+                                        },
+                                    )
+
+                                is VideoItemModel ->
+                                    ListTileItemView(
+                                        paddingValues =
+                                            PaddingValues(
+                                                top = 4.dp,
+                                                bottom = 4.dp,
+                                            ),
+                                        playable = item.browsableOrPlayable,
+                                        isActive = false,
+                                        thumbnailSourceUri = item.artWorkUri,
+                                        title = item.name,
+                                        onItemClick = {
+                                            onVideoItemClick(item)
+                                        },
+                                        onOptionButtonClick = {
+//                                        onShowMusicItemOption(item)
+                                        },
+                                    )
+                                else -> error("not supported")
+                            }
                         }
                     }
                 }
@@ -263,7 +292,7 @@ private fun NoneStepScrollIndicator(
     val isDragged by interactionSource.collectIsDraggedAsState()
 
     var isVisible by remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
     LaunchedEffect(value) {
         isVisible = true
@@ -403,7 +432,7 @@ private data class PrimaryGroup(
 
 private data class SecondaryGroup(
     val headerItem: GroupKey?,
-    val content: List<AudioItemModel>,
+    val content: List<MediaItemModel>,
 )
 
 private fun List<PrimaryGroup>.flattenIndex(
@@ -431,7 +460,7 @@ private fun List<PrimaryGroup>.flattenIndex(
     return ret
 }
 
-private fun List<AudioItemModel?>.groupByType(displaySetting: DisplaySetting): List<PrimaryGroup> =
+private fun List<MediaItemModel?>.groupByType(displaySetting: DisplaySetting): List<PrimaryGroup> =
     groupByType(displaySetting.primaryGroupSort)
         .map { (headerItem, contentList) ->
             val primaryHeader = headerItem
@@ -443,7 +472,7 @@ private fun List<AudioItemModel?>.groupByType(displaySetting: DisplaySetting): L
             )
         }
 
-private fun List<AudioItemModel?>.groupByType(sortOption: SortOption): List<SecondaryGroup> =
+private fun List<MediaItemModel?>.groupByType(sortOption: SortOption): List<SecondaryGroup> =
     this
         .filterNotNull()
         .groupBy {

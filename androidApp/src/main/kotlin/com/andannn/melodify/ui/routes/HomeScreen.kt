@@ -76,7 +76,7 @@ internal fun HomeUiScreen(
                     )
                     val options = MenuOption.entries
                     DropDownMenuIconButton(
-                        options.map { it.textRes },
+                        options = options.map { it.textRes },
                         onSelectIndex = {
                             val selected = options[it]
                             homeState.eventSink.invoke(

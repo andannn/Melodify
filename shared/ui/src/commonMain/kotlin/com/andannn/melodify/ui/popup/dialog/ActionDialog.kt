@@ -24,6 +24,7 @@ import com.andannn.melodify.ui.popup.dialog.content.AddLibraryPathDialog
 import com.andannn.melodify.ui.popup.dialog.content.AddToPlayListDialogContent
 import com.andannn.melodify.ui.popup.dialog.content.AlertMessageDialogContent
 import com.andannn.melodify.ui.popup.dialog.content.ChangeSortRuleDialog
+import com.andannn.melodify.ui.popup.dialog.content.DefaultSortRuleSettingDialog
 import com.andannn.melodify.ui.popup.dialog.content.MediaOptionContent
 import com.andannn.melodify.ui.popup.dialog.content.NewPlayListDialogContent
 import com.andannn.melodify.ui.popup.dialog.content.SleepTimerCountingContent
@@ -34,16 +35,6 @@ fun ActionDialogContainer(
     popupController: PopupController = LocalPopupController.current,
     data: DialogData? = popupController.currentDialog,
 ) {
-// TODO: onRequestDismiss lambda is not updated when data changed. use state by *rememberUpdatedState*
-//    if (data != null) {
-//        ActionDialogContent(
-//            data = data,
-//            onRequestDismiss = {
-//                data.performAction(DialogAction.Dismissed)
-//            }
-//        )
-//    }
-
     val dataState = rememberUpdatedState(data)
     if (dataState.value != null) {
         ActionDialogContent(
@@ -153,6 +144,13 @@ fun DialogContent(data: DialogData) {
         is DialogId.ChangeSortRuleDialog ->
             ChangeSortRuleDialog(
                 dialog = dialog,
+                onAction = {
+                    data.performAction(it)
+                },
+            )
+
+        DialogId.DefaultSortRuleSettingDialog ->
+            DefaultSortRuleSettingDialog(
                 onAction = {
                     data.performAction(it)
                 },

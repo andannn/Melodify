@@ -11,6 +11,10 @@ sealed class CustomTab(
         override val tabId: Long,
     ) : CustomTab(tabId)
 
+    data class AllVideo(
+        override val tabId: Long,
+    ) : CustomTab(tabId)
+
     data class AlbumDetail(
         override val tabId: Long,
         val albumId: String,
@@ -35,6 +39,18 @@ sealed class CustomTab(
         val label: String,
     ) : CustomTab(tabId)
 }
+
+fun CustomTab.isAudio() =
+    when (this) {
+        is CustomTab.AlbumDetail,
+        is CustomTab.AllMusic,
+        is CustomTab.ArtistDetail,
+        is CustomTab.GenreDetail,
+        is CustomTab.PlayListDetail,
+        -> true
+
+        is CustomTab.AllVideo -> false
+    }
 
 enum class TabKind {
     ALBUM,

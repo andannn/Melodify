@@ -20,7 +20,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.andannn.melodify.core.data.model.AlbumItemModel
+import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.GenreItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.model.VideoItemModel
+import com.andannn.melodify.core.data.model.extraUniqueId
+import com.andannn.melodify.core.data.model.subTitle
 import com.andannn.melodify.ui.util.rememberSwapListState
 import com.andannn.melodify.ui.widgets.ActionType
 import com.andannn.melodify.ui.widgets.ListTileItemView
@@ -68,11 +76,11 @@ fun PlayQueueUi(
 
 @Composable
 private fun PlayQueueContent(
-    onItemClick: (AudioItemModel) -> Unit,
+    onItemClick: (MediaItemModel) -> Unit,
     onSwapFinished: (from: Int, to: Int) -> Unit,
     onDeleteFinished: (Int) -> Unit,
-    playListQueue: ImmutableList<AudioItemModel>,
-    activeMediaItem: AudioItemModel?,
+    playListQueue: ImmutableList<MediaItemModel>,
+    activeMediaItem: MediaItemModel?,
     modifier: Modifier = Modifier,
 ) {
     val playingIndex = playListQueue.indexOfFirst { it == activeMediaItem }
@@ -80,7 +88,7 @@ private fun PlayQueueContent(
     val listState: LazyListState =
         rememberLazyListState(if (playingIndex == -1) 0 else playingIndex)
     val playQueueState =
-        rememberSwapListState<AudioItemModel>(
+        rememberSwapListState<MediaItemModel>(
             lazyListState = listState,
             onSwapFinished = { from, to, _ ->
                 Napier.d(tag = TAG) { "PlayQueueView: drag stopped from $from to $to" }
@@ -129,7 +137,7 @@ private fun PlayQueueContent(
 
 @Composable
 private fun ReorderableCollectionItemScope.QueueItem(
-    item: AudioItemModel,
+    item: MediaItemModel,
     isActive: Boolean,
     modifier: Modifier = Modifier,
     onSwapFinish: () -> Unit = {},
@@ -163,11 +171,11 @@ private fun ReorderableCollectionItemScope.QueueItem(
                     onDragStopped = onSwapFinish,
                 ),
             isActive = isActive,
-            albumArtUri = item.artWorkUri,
+            thumbnailSourceUri = item.artWorkUri,
             title = item.name,
-            subTitle = item.artist,
+            subTitle = item.subTitle,
             actionType = ActionType.SWAP,
-            onMusicItemClick = onClick,
+            onItemClick = onClick,
         )
     }
 }

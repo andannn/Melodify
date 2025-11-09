@@ -175,7 +175,7 @@ private suspend fun resyncAllSongs() =
 context(popupController: PopupController)
 private suspend fun changeSortRule() {
     popupController.showDialog(
-        DialogId.ChangeSortRuleDialog(),
+        DialogId.DefaultSortRuleSettingDialog,
     )
 }
 

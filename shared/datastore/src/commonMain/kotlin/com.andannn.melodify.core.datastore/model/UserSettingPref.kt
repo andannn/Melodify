@@ -46,5 +46,12 @@ data class UserSettingPref(
      * key: [PreferencesKeyName.DEFAULT_PRESET_SORT_RULE_KEY_NAME]
      * Value: [Int]
      */
-    val defaultSortRule: Int?,
+    val defaultAudioSortRule: Int?,
+    /**
+     * default video sort rule
+     *
+     * key: [PreferencesKeyName.DEFAULT_VIDEO_PRESET_SORT_RULE_KEY_NAME]
+     * Value: [Int]
+     */
+    val defaultVideoSortRule: Int?,
 )

@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -31,14 +32,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.LocalScreenController
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.components.playcontrol.ui.MinImageSize
 import com.andannn.melodify.ui.components.playcontrol.ui.PlayerViewState
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.bottom.PlayerBottomSheetView
-import com.andannn.melodify.ui.widgets.CircleBorderImage
-import com.andannn.melodify.ui.widgets.ProgressIndicator
+import com.andannn.melodify.ui.widgets.AVPlayerView
 
 val MinImagePaddingTop = 5.dp
 
@@ -51,10 +52,9 @@ val BottomSheetDragAreaHeight = 110.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun FlexiblePlayerLayout(
+internal fun PortraitPlayerLayout(
     layoutState: PlayerViewState,
-    coverUri: String,
-    activeMediaItem: AudioItemModel,
+    activeMediaItem: MediaItemModel,
     modifier: Modifier = Modifier,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
     isShuffle: Boolean = false,
@@ -62,7 +62,7 @@ internal fun FlexiblePlayerLayout(
     isFavorite: Boolean = false,
     isCounting: Boolean = false,
     title: String = "",
-    artist: String = "",
+    subTitle: String = "",
     progress: Float = 1f,
     duration: Long = 0L,
     onEvent: (PlayerUiEvent) -> Unit = {},
@@ -105,7 +105,7 @@ internal fun FlexiblePlayerLayout(
                                 start = MinImagePaddingStart * 2 + MinImageSize,
                             ),
                     title = title,
-                    artist = artist,
+                    artist = subTitle,
                     isPlaying = isPlaying,
                     isFavorite = isFavorite,
                     onEvent = onEvent,
@@ -131,7 +131,7 @@ internal fun FlexiblePlayerLayout(
                 )
             }
 
-            CircleBorderImage(
+            Box(
                 modifier =
                     Modifier
                         .padding(
@@ -139,8 +139,23 @@ internal fun FlexiblePlayerLayout(
                             start = layoutState.imagePaddingStartDp,
                         ).width(layoutState.imageSizeDp)
                         .aspectRatio(1f),
-                model = coverUri,
-            )
+            ) {
+                AVPlayerView()
+                val controller = LocalScreenController.current
+                AVPlayerCover(
+                    title = title,
+                    subTitle = subTitle,
+                    isShuffle = isShuffle,
+                    isFullScreen = false,
+                    playMode = playMode,
+                    isPlaying = isPlaying,
+                    progress = progress,
+                    onEvent = onEvent,
+                    onClickFullScreen = {
+                        controller.setScreenOrientation(isPortrait = false)
+                    },
+                )
+            }
 
             Column(
                 modifier =
@@ -163,7 +178,7 @@ internal fun FlexiblePlayerLayout(
                         progress = progress,
                         duration = duration,
                         title = title,
-                        artist = artist,
+                        artist = subTitle,
                         onEvent = onEvent,
                     )
                 }
@@ -187,14 +202,13 @@ internal fun FlexiblePlayerLayout(
             }
 
             if (!layoutState.isPlayerExpanding) {
-                ProgressIndicator(
+                LinearProgressIndicator(
                     modifier =
                         Modifier
                             .fillMaxWidth()
                             .padding(bottom = with(LocalDensity.current) { layoutState.navigationBarHeightPx.toDp() })
                             .align(BottomStart),
-                    progress = progress,
-                    playing = isPlaying,
+                    progress = { progress },
                 )
             }
         }

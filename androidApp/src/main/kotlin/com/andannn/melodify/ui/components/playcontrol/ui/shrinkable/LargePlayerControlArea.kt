@@ -55,13 +55,19 @@ internal fun LargePlayerControlArea(
 ) {
     val titleState by rememberUpdatedState(newValue = title)
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(vertical = 8.dp),
     ) {
         Column(
             modifier = Modifier.weight(0.7f),
         ) {
             MarqueeText(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = MaxImagePaddingStart),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = MaxImagePaddingStart),
                 text = titleState,
                 spacingBetweenCopies = 40.dp,
                 style = MaterialTheme.typography.headlineMedium,
@@ -105,71 +111,17 @@ internal fun LargePlayerControlArea(
                 Text(durationString, style = MaterialTheme.typography.labelLarge)
             }
         }
-        Row(
+        PlayControlButtons(
             modifier =
                 Modifier
                     .padding(horizontal = 10.dp)
                     .weight(1.3f),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            SmpSubIconButton(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .aspectRatio(1f),
-                imageVector = if (isShuffle) Icons.Rounded.ShuffleOn else Icons.Rounded.Shuffle,
-                enabled = enable,
-                onClick = {
-                    onEvent(PlayerUiEvent.OnShuffleButtonClick)
-                },
-            )
-            SmpSubIconButton(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .aspectRatio(1f),
-                scale = 2f,
-                enabled = enable,
-                imageVector = Icons.Rounded.SkipPrevious,
-                onClick = {
-                    onEvent(PlayerUiEvent.OnPreviousButtonClick)
-                },
-            )
-
-            SmpMainIconButton(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .aspectRatio(1f),
-                enabled = enable,
-                imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                onClick = {
-                    onEvent(PlayerUiEvent.OnPlayButtonClick)
-                },
-            )
-            SmpSubIconButton(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .aspectRatio(1f)
-                        .padding(10.dp),
-                scale = 2f,
-                enabled = enable,
-                imageVector = Icons.Rounded.SkipNext,
-                onClick = {
-                    onEvent(PlayerUiEvent.OnNextButtonClick)
-                },
-            )
-            SmpSubIconButton(
-                modifier = Modifier.weight(1f),
-                imageVector = playMode.getIcon(),
-                enabled = enable,
-                onClick = {
-                    onEvent(PlayerUiEvent.OnPlayModeButtonClick)
-                },
-            )
-        }
+            enable = enable,
+            isPlaying = isPlaying,
+            playMode = playMode,
+            isShuffle = isShuffle,
+            onEvent = onEvent,
+        )
     }
 }
 

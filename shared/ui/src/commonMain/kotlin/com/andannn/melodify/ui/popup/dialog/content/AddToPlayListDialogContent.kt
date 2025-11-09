@@ -185,10 +185,10 @@ internal fun AddToPlayListRequestSheetContent(
                         modifier = Modifier.padding(horizontal = 6.dp),
                         title = playList.name,
                         subTitle = stringResource(Res.string.track_count, playList.trackCount),
-                        albumArtUri = playList.artWorkUri,
+                        thumbnailSourceUri = playList.artWorkUri,
                         actionType = ActionType.NONE,
                         defaultColor = Color.Transparent,
-                        onMusicItemClick = {
+                        onItemClick = {
                             onPlayListClick(playList)
                         },
                     )

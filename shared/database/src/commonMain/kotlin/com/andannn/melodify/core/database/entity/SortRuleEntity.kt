@@ -52,12 +52,17 @@ data class SortOptionData(
     val isAscending: Boolean,
 ) {
     companion object {
-        const val SORT_TYPE_ALBUM = 1
-        const val SORT_TYPE_ARTIST = 2
-        const val SORT_TYPE_GENRE = 3
-        const val SORT_TYPE_TITLE = 4
-        const val SORT_TYPE_YEAR = 5
-        const val SORT_TYPE_TRACK_NUM = 6
+        // Audio
+        const val SORT_TYPE_AUDIO_ALBUM = 1
+        const val SORT_TYPE_AUDIO_ARTIST = 2
+        const val SORT_TYPE_AUDIO_GENRE = 3
+        const val SORT_TYPE_AUDIO_TITLE = 4
+        const val SORT_TYPE_AUDIO_YEAR = 5
+        const val SORT_TYPE_AUDIO_TRACK_NUM = 6
+
+        // Video
+        const val SORT_TYPE_VIDEO_BUCKET_NAME = 7
+        const val SORT_TYPE_VIDEO_TITLE_NAME = 8
     }
 }
 

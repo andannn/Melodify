@@ -99,7 +99,6 @@ internal class MediaLibrarySyncerWrapper(
                 val mediaData = mediaLibraryScanner.scanAllMedia()
                 trySend(SyncStatus.Start)
 
-// TODO: Incremental comparison and insertion into the database, deleting outdated data.
                 mediaLibraryDao.clearAndInsertLibrary(
                     albums = mediaData.albumData.toAlbumEntity(),
                     artists = mediaData.artistData.toArtistEntity(),

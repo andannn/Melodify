@@ -8,15 +8,34 @@ enum class PresetDisplaySetting(
     val displaySetting: DisplaySetting,
 ) {
     AlbumAsc(
-        displaySetting = DisplaySetting.Preset.AlbumASC,
+        displaySetting = DisplaySetting.Preset.Audio.AlbumASC,
     ),
     ArtistAsc(
-        displaySetting = DisplaySetting.Preset.ArtistASC,
+        displaySetting = DisplaySetting.Preset.Audio.ArtistASC,
     ),
     TitleNameAsc(
-        displaySetting = DisplaySetting.Preset.TitleASC,
+        displaySetting = DisplaySetting.Preset.Audio.TitleASC,
     ),
     ArtistAlbumASC(
-        displaySetting = DisplaySetting.Preset.ArtistAlbumASC,
+        displaySetting = DisplaySetting.Preset.Audio.ArtistAlbumASC,
     ),
+    VideoBucketNameASC(
+        displaySetting = DisplaySetting.Preset.Video.BucketNameASC,
+    ),
+    ;
+
+    companion object {
+        val VIDEO_OPTIONS =
+            listOf(
+                VideoBucketNameASC,
+            )
+
+        val AUDIO_OPTIONS =
+            listOf(
+                AlbumAsc,
+                ArtistAsc,
+                TitleNameAsc,
+                ArtistAlbumASC,
+            )
+    }
 }

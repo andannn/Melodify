@@ -17,6 +17,7 @@ import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.TabKind
+import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.SleepTimerOption
@@ -35,7 +36,9 @@ suspend fun MediaItemModel.pinToHomeTab() {
             is ArtistItemModel -> TabKind.ARTIST
             is GenreItemModel -> TabKind.GENRE
             is PlayListItemModel -> TabKind.PLAYLIST
-            is AudioItemModel -> error("invalid")
+            is AudioItemModel,
+            is VideoItemModel,
+            -> error("invalid")
         }
     val exist =
         userPreferenceRepository.isTabExist(externalId = id, tabName = name, tabKind = tabKind)
@@ -47,7 +50,7 @@ suspend fun MediaItemModel.pinToHomeTab() {
 }
 
 context(repo: Repository, popupController: PopupController)
-suspend fun addToNextPlay(items: List<AudioItemModel>) {
+suspend fun addToNextPlay(items: List<MediaItemModel>) {
     val havePlayingQueue = repo.getPlayListQueue().isNotEmpty()
     if (havePlayingQueue) {
         repo.addMediaItems(
@@ -61,7 +64,7 @@ suspend fun addToNextPlay(items: List<AudioItemModel>) {
 }
 
 context(repo: Repository, popupController: PopupController)
-suspend fun addToQueue(items: List<AudioItemModel>) {
+suspend fun addToQueue(items: List<MediaItemModel>) {
     val playListQueue = repo.getPlayListQueue()
     if (playListQueue.isNotEmpty()) {
         repo.addMediaItems(
@@ -140,7 +143,7 @@ suspend fun addToPlaylist(items: List<AudioItemModel>) {
 }
 
 context(deleteHelper: MediaFileDeleteHelper, popupController: PopupController)
-suspend fun deleteItems(items: List<AudioItemModel>) {
+suspend fun deleteItems(items: List<MediaItemModel>) {
     if (items.isEmpty()) {
         return
     }

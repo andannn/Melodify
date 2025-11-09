@@ -13,6 +13,7 @@ import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.LyricModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.SortOption
+import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
@@ -24,6 +25,7 @@ import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.SortOptionData
 import com.andannn.melodify.core.database.entity.SortRuleEntity
+import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.entity.valid
 import com.andannn.melodify.core.network.model.LyricData
 
@@ -33,6 +35,11 @@ internal fun List<AlbumEntity>.mapToAlbumItemModel() =
     }
 
 internal fun List<MediaEntity>.mapToAudioItemModel() =
+    map {
+        it.toAppItem()
+    }
+
+internal fun List<VideoEntity>.mapToVideoItemModel() =
     map {
         it.toAppItem()
     }
@@ -66,6 +73,27 @@ internal fun MediaEntity.toAppItem() =
         discNumber = discNumber ?: 0,
         releaseYear = year?.toString() ?: "Unknown",
         source = sourceUri ?: error("No source uri"),
+    )
+
+internal fun VideoEntity.toAppItem(): VideoItemModel =
+    VideoItemModel(
+        id = id.toString(),
+        name = title.orEmpty(),
+        artWorkUri = sourceUri,
+        bucketId = bucketId?.toString().orEmpty(),
+        bucketName = bucketDisplayName.orEmpty(),
+        path = path.orEmpty(),
+        modifiedDate = modifiedDate ?: 0L,
+        duration = duration ?: 0,
+        size = size ?: 0,
+        mimeType = mimeType.orEmpty(),
+        width = width ?: 0,
+        height = height ?: 0,
+        resolution = resolution ?: "${width ?: 0}x${height ?: 0}",
+        relativePath = relativePath.orEmpty(),
+        source = sourceUri.orEmpty(),
+        extraUniqueId = null,
+        trackCount = -1,
     )
 
 internal fun AlbumEntity.toAppItem() =
@@ -136,54 +164,13 @@ internal fun List<CustomTabEntity>.mapToCustomTabModel() =
 internal fun CustomTabEntity.toAppItem() =
     when (type) {
         CustomTabType.ALL_MUSIC -> CustomTab.AllMusic(tabId = id)
+        CustomTabType.ALL_VIDEO -> CustomTab.AllVideo(tabId = id)
         CustomTabType.ALBUM_DETAIL -> CustomTab.AlbumDetail(tabId = id, externalId!!, name!!)
         CustomTabType.ARTIST_DETAIL -> CustomTab.ArtistDetail(tabId = id, externalId!!, name!!)
         CustomTabType.GENRE_DETAIL -> CustomTab.GenreDetail(tabId = id, externalId!!, name!!)
         CustomTabType.PLAYLIST_DETAIL -> CustomTab.PlayListDetail(tabId = id, externalId!!, name!!)
 
         else -> null
-    }
-
-internal fun CustomTab.toEntity() =
-    when (this) {
-        is CustomTab.AllMusic ->
-            CustomTabEntity(
-                id = tabId,
-                type = CustomTabType.ALL_MUSIC,
-                externalId = "",
-            )
-
-        is CustomTab.ArtistDetail ->
-            CustomTabEntity(
-                id = tabId,
-                type = CustomTabType.ARTIST_DETAIL,
-                externalId = artistId,
-                name = label,
-            )
-
-        is CustomTab.GenreDetail ->
-            CustomTabEntity(
-                id = tabId,
-                type = CustomTabType.GENRE_DETAIL,
-                externalId = genreId,
-                name = label,
-            )
-
-        is CustomTab.PlayListDetail ->
-            CustomTabEntity(
-                id = tabId,
-                type = CustomTabType.PLAYLIST_DETAIL,
-                externalId = playListId,
-                name = label,
-            )
-
-        is CustomTab.AlbumDetail ->
-            CustomTabEntity(
-                id = tabId,
-                type = CustomTabType.ALBUM_DETAIL,
-                externalId = albumId,
-                name = label,
-            )
     }
 
 internal fun SortRuleEntity.toModel() =
@@ -210,51 +197,65 @@ internal fun SortOptionData?.toModel() =
         SortOption.NONE
     } else {
         when (type) {
-            SortOptionData.SORT_TYPE_ALBUM -> SortOption.Album(isAscending)
-            SortOptionData.SORT_TYPE_ARTIST -> SortOption.Artist(isAscending)
-            SortOptionData.SORT_TYPE_GENRE -> SortOption.Genre(isAscending)
-            SortOptionData.SORT_TYPE_TITLE -> SortOption.Title(isAscending)
-            SortOptionData.SORT_TYPE_YEAR -> SortOption.ReleaseYear(isAscending)
-            SortOptionData.SORT_TYPE_TRACK_NUM -> SortOption.TrackNum(isAscending)
+            SortOptionData.SORT_TYPE_AUDIO_ALBUM -> SortOption.AudioOption.Album(isAscending)
+            SortOptionData.SORT_TYPE_AUDIO_ARTIST -> SortOption.AudioOption.Artist(isAscending)
+            SortOptionData.SORT_TYPE_AUDIO_GENRE -> SortOption.AudioOption.Genre(isAscending)
+            SortOptionData.SORT_TYPE_AUDIO_TITLE -> SortOption.AudioOption.Title(isAscending)
+            SortOptionData.SORT_TYPE_AUDIO_YEAR -> SortOption.AudioOption.ReleaseYear(isAscending)
+            SortOptionData.SORT_TYPE_AUDIO_TRACK_NUM -> SortOption.AudioOption.TrackNum(isAscending)
+            SortOptionData.SORT_TYPE_VIDEO_BUCKET_NAME -> SortOption.VideoOption.Bucket(isAscending)
+            SortOptionData.SORT_TYPE_VIDEO_TITLE_NAME -> SortOption.VideoOption.Title(isAscending)
             else -> SortOption.NONE
         }
     }
 
 internal fun SortOption.toEntity() =
     when (this) {
-        is SortOption.Album ->
+        is SortOption.AudioOption.Album ->
             SortOptionData(
-                type = SortOptionData.SORT_TYPE_ALBUM,
+                type = SortOptionData.SORT_TYPE_AUDIO_ALBUM,
                 isAscending = ascending,
             )
 
-        is SortOption.Artist ->
+        is SortOption.AudioOption.Artist ->
             SortOptionData(
-                type = SortOptionData.SORT_TYPE_ARTIST,
+                type = SortOptionData.SORT_TYPE_AUDIO_ARTIST,
                 isAscending = ascending,
             )
 
-        is SortOption.Genre ->
+        is SortOption.AudioOption.Genre ->
             SortOptionData(
-                type = SortOptionData.SORT_TYPE_GENRE,
+                type = SortOptionData.SORT_TYPE_AUDIO_GENRE,
                 isAscending = ascending,
             )
 
-        is SortOption.ReleaseYear ->
+        is SortOption.AudioOption.ReleaseYear ->
             SortOptionData(
-                type = SortOptionData.SORT_TYPE_YEAR,
+                type = SortOptionData.SORT_TYPE_AUDIO_YEAR,
                 isAscending = ascending,
             )
 
-        is SortOption.Title ->
+        is SortOption.AudioOption.Title ->
             SortOptionData(
-                type = SortOptionData.SORT_TYPE_TITLE,
+                type = SortOptionData.SORT_TYPE_AUDIO_TITLE,
                 isAscending = ascending,
             )
 
-        is SortOption.TrackNum ->
+        is SortOption.AudioOption.TrackNum ->
             SortOptionData(
-                type = SortOptionData.SORT_TYPE_TRACK_NUM,
+                type = SortOptionData.SORT_TYPE_AUDIO_TRACK_NUM,
+                isAscending = ascending,
+            )
+
+        is SortOption.VideoOption.Bucket ->
+            SortOptionData(
+                type = SortOptionData.SORT_TYPE_VIDEO_BUCKET_NAME,
+                isAscending = ascending,
+            )
+
+        is SortOption.VideoOption.Title ->
+            SortOptionData(
+                type = SortOptionData.SORT_TYPE_VIDEO_TITLE_NAME,
                 isAscending = ascending,
             )
 

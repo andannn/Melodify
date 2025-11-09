@@ -264,4 +264,19 @@ class MigrationTest {
             migrationTestHelper.runMigrationsAndValidate(10)
         migratedConnection.close()
     }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
+    fun migrate10To11SyncAlbumTableTest() {
+        val migrationTestHelper =
+            getMigrationTestHelper(
+                tempFile.toString(),
+            )
+        val newConnection = migrationTestHelper.createDatabase(10)
+        newConnection.close()
+        val migratedConnection =
+            migrationTestHelper.runMigrationsAndValidate(11)
+        migratedConnection.close()
+    }
 }

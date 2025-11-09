@@ -35,6 +35,8 @@ val MinImageSize = 60.dp
 
 @Composable
 internal fun rememberPlayerViewState(
+    initialPlayerState: PlayerState,
+    initialBottomSheetState: BottomSheetState,
     screenSize: Size,
     navigationBarHeightPx: Int,
     statusBarHeightPx: Int,
@@ -48,6 +50,8 @@ internal fun rememberPlayerViewState(
     animaScope,
 ) {
     PlayerViewState(
+        initialPlayerState = initialPlayerState,
+        initialBottomSheetState = initialBottomSheetState,
         screenSize = screenSize,
         navigationBarHeightPx = navigationBarHeightPx,
         statusBarHeightPx = statusBarHeightPx.toFloat(),
@@ -58,8 +62,9 @@ internal fun rememberPlayerViewState(
 
 @Stable
 @OptIn(ExperimentalFoundationApi::class)
-internal class
-PlayerViewState(
+internal class PlayerViewState(
+    initialPlayerState: PlayerState,
+    initialBottomSheetState: BottomSheetState,
     screenSize: Size,
     val navigationBarHeightPx: Int,
     statusBarHeightPx: Float,
@@ -73,7 +78,7 @@ PlayerViewState(
 
     val bottomSheetState =
         AnchoredDraggableState(
-            initialValue = BottomSheetState.Shrink,
+            initialValue = initialBottomSheetState,
             anchors =
                 DraggableAnchors {
                     BottomSheetState.Shrink at bottomSheetHeight - bottomSheetDragAreaHeightPx
@@ -93,7 +98,7 @@ PlayerViewState(
     private val shrinkPlayerHeight = shrinkPlayerHeightPx + navigationBarHeightPx
     val playerExpandState =
         AnchoredDraggableState(
-            initialValue = PlayerState.Shrink,
+            initialValue = initialPlayerState,
             anchors =
                 DraggableAnchors {
                     PlayerState.Shrink at shrinkPlayerHeight

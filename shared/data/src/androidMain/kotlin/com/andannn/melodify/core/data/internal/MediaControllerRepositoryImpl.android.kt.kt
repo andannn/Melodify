@@ -6,23 +6,26 @@ package com.andannn.melodify.core.data.internal
 
 import android.util.Log
 import androidx.media3.common.C
+import androidx.media3.common.Player
 import com.andannn.melodify.core.data.MediaControllerRepository
-import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.player.MediaBrowserManager
 
 private const val TAG = "MediaControllerRepository"
 
-internal class MediaControllerRepositoryImpl(
+class MediaControllerRepositoryImpl constructor(
     private val mediaBrowserManager: MediaBrowserManager,
 ) : MediaControllerRepository {
     private val mediaBrowser
         get() = mediaBrowserManager.mediaBrowser
 
+    fun getPlayer(): Player = mediaBrowser
+
     override fun getCurrentPlayingItemDuration(): Long = mediaBrowser.duration
 
     override fun playMediaList(
-        mediaList: List<AudioItemModel>,
+        mediaList: List<MediaItemModel>,
         index: Int,
     ) {
         Log.d(TAG, "playMediaList: ")
@@ -74,7 +77,7 @@ internal class MediaControllerRepositoryImpl(
 
     override fun addMediaItems(
         index: Int,
-        mediaItems: List<AudioItemModel>,
+        mediaItems: List<MediaItemModel>,
     ) {
         Log.d(TAG, "addMediaItems: index $index, mediaItems $mediaItems")
         mediaBrowser.addMediaItems(
