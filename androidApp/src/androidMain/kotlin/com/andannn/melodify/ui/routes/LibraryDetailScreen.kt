@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.browseable
+import com.andannn.melodify.ui.components.librarydetail.LibraryContentEvent
 import com.andannn.melodify.ui.components.mediaitem.MediaLibraryItem
 import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.core.Navigator
@@ -54,7 +55,7 @@ fun LibraryDetail(
             screenState.eventSink(LibraryDetailScreenEvent.OnBackKeyPressed)
         },
         onItemClick = {
-            screenState.eventSink(LibraryDetailScreenEvent.OnMediaItemClick(it))
+            screenState.state.eventSink(LibraryContentEvent.OnMediaItemClick(it))
         },
         onOpenMenuClick = {
             screenState.eventSink(LibraryDetailScreenEvent.OnOptionClick)
