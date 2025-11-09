@@ -11,6 +11,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.core.database.getIntOrNull
+import androidx.core.database.getLongOrNull
 import com.andannn.melodify.core.syncer.model.MediaDataModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -26,12 +28,14 @@ class MediaLibraryScannerImpl(
             val albumDataDeferred = async { getAllAlbumData() }
             val artistDataDeferred = async { getAllArtistData() }
             val genreDataDeferred = async { getAllGenreData() }
+            val videoDataDeferred = async { getAllVideoData() }
 
             return@coroutineScope MediaDataModel(
                 audioData = musicDataDeferred.await(),
                 albumData = albumDataDeferred.await(),
                 artistData = artistDataDeferred.await(),
                 genreData = genreDataDeferred.await(),
+                videoData = videoDataDeferred.await(),
             )
         }
 
@@ -103,6 +107,14 @@ class MediaLibraryScannerImpl(
                 parseMusicInfoCursor(cursor)
             } ?: emptyList()
 
+    private suspend fun getAllVideoData() =
+        app.contentResolver
+            .query2(
+                uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+            )?.use { cursor ->
+                parseVideoInfoCursor(cursor)
+            } ?: emptyList()
+
     private suspend fun getAllAlbumData() =
         app.contentResolver
             .query2(
@@ -140,6 +152,63 @@ class MediaLibraryScannerImpl(
                 ),
             )
         }
+        return itemList
+    }
+
+    private fun parseVideoInfoCursor(cursor: Cursor): List<com.andannn.melodify.core.syncer.model.VideoData> {
+        val itemList = mutableListOf<com.andannn.melodify.core.syncer.model.VideoData>()
+
+        val idIndex = cursor.getColumnIndex(MediaStore.Video.Media._ID)
+        val titleIndex = cursor.getColumnIndex(MediaStore.Video.Media.TITLE)
+        val displayNameIndex = cursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME)
+        val mimeTypeIndex = cursor.getColumnIndex(MediaStore.Video.Media.MIME_TYPE)
+        val sizeIndex = cursor.getColumnIndex(MediaStore.Video.Media.SIZE)
+        val durationIndex = cursor.getColumnIndex(MediaStore.Video.Media.DURATION)
+
+        val dataIndex = cursor.getColumnIndex(MediaStore.Video.Media.DATA)
+        val relativePathIndex = cursor.getColumnIndex(MediaStore.Video.Media.RELATIVE_PATH)
+        val bucketIdIndex = cursor.getColumnIndex(MediaStore.Video.Media.BUCKET_ID)
+        val bucketDisplayNameIndex =
+            cursor.getColumnIndex(MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
+        val volumeNameIndex = cursor.getColumnIndex(MediaStore.Video.Media.VOLUME_NAME)
+
+        val widthIndex = cursor.getColumnIndex(MediaStore.Video.Media.WIDTH)
+        val heightIndex = cursor.getColumnIndex(MediaStore.Video.Media.HEIGHT)
+        val orientationIndex = cursor.getColumnIndex(MediaStore.Video.Media.ORIENTATION)
+
+        val ownerPackageNameIndex = cursor.getColumnIndex(MediaStore.Video.Media.OWNER_PACKAGE_NAME)
+        val albumIndex = cursor.getColumnIndex(MediaStore.Video.Media.ALBUM)
+        val artistIndex = cursor.getColumnIndex(MediaStore.Video.Media.ARTIST)
+
+        val dateAddedIndex = cursor.getColumnIndex(MediaStore.Video.Media.DATE_ADDED)
+        val dateModifiedIndex = cursor.getColumnIndex(MediaStore.Video.Media.DATE_MODIFIED)
+
+        while (cursor.moveToNext()) {
+            itemList.add(
+                com.andannn.melodify.core.syncer.model.VideoData(
+                    id = cursor.getLong(idIndex),
+                    title = cursor.getString(titleIndex),
+                    displayName = cursor.getString(displayNameIndex),
+                    mimeType = cursor.getString(mimeTypeIndex),
+                    size = cursor.getLong(sizeIndex),
+                    duration = cursor.getLong(durationIndex),
+                    data = cursor.getString(dataIndex),
+                    relativePath = cursor.getString(relativePathIndex),
+                    bucketId = cursor.getLongOrNull(bucketIdIndex),
+                    bucketDisplayName = cursor.getString(bucketDisplayNameIndex),
+                    volumeName = cursor.getString(volumeNameIndex),
+                    width = cursor.getIntOrNull(widthIndex),
+                    height = cursor.getIntOrNull(heightIndex),
+                    orientation = cursor.getIntOrNull(orientationIndex),
+                    ownerPackageName = cursor.getString(ownerPackageNameIndex),
+                    album = cursor.getString(albumIndex),
+                    artist = cursor.getString(artistIndex),
+                    dateAdded = cursor.getLongOrNull(dateAddedIndex),
+                    dateModified = cursor.getLongOrNull(dateModifiedIndex),
+                ),
+            )
+        }
+
         return itemList
     }
 

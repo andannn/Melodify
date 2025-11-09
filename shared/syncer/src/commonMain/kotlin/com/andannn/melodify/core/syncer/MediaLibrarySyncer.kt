@@ -11,7 +11,6 @@ import com.andannn.melodify.core.syncer.model.FileChangeType
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlin.time.measureTime
 
 private const val TAG = "MediaLibrarySyncer"
 
