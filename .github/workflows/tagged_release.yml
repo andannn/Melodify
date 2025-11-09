@@ -58,9 +58,9 @@ jobs:
         run: ./gradlew androidApp:assembleRelease -P android.releaseSigning=true
         env:
           SIGNING_KEYSTORE_PATH: ./keystore/keystore.jks
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
 
       - name: Upload Release
         uses: "marvinpinto/action-automatic-releases@latest"
