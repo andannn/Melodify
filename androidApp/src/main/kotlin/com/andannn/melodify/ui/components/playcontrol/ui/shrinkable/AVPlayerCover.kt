@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -32,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
@@ -93,23 +95,33 @@ fun AVPlayerCover(
                         .padding(horizontal = 12.dp),
             ) {
                 if (isFullScreen) {
-                    Column {
-                        Spacer(Modifier.height(8.dp))
-                        MarqueeText(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = MaxImagePaddingStart),
-                            text = title,
-                            spacingBetweenCopies = 40.dp,
-                            style = MaterialTheme.typography.headlineMedium,
-                        )
-                        Text(
-                            modifier = Modifier.padding(horizontal = MaxImagePaddingStart),
-                            text = subTitle,
-                            maxLines = 2,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
+                    Row(modifier = Modifier.padding(top = 8.dp)) {
+                        IconButton(
+                            modifier = Modifier.rotate(-90f),
+                            onClick = onClickFullScreen,
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
+                                contentDescription = "Shrink",
+                            )
+                        }
+                        Column {
+                            MarqueeText(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = MaxImagePaddingStart),
+                                text = title,
+                                spacingBetweenCopies = 40.dp,
+                                style = MaterialTheme.typography.headlineMedium,
+                            )
+                            Text(
+                                modifier = Modifier.padding(horizontal = MaxImagePaddingStart),
+                                text = subTitle,
+                                maxLines = 2,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
                     }
                 }
                 if (isFullScreen) {
