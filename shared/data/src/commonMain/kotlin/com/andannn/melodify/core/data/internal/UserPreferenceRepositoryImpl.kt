@@ -181,15 +181,11 @@ private fun TabKind.toEntityName(): String =
         TabKind.GENRE -> CustomTabType.GENRE_DETAIL
         TabKind.PLAYLIST -> CustomTabType.PLAYLIST_DETAIL
         TabKind.ALL_MUSIC -> CustomTabType.ALL_MUSIC
+        TabKind.ALL_VIDEO -> CustomTabType.ALL_VIDEO
+        TabKind.VIDEO_BUCKET -> CustomTabType.VIDEO_BUCKET
     }
 
 expect fun isPathValid(path: String): Boolean
-
-private fun MediaPreviewMode.toIntValue(): Int =
-    when (this) {
-        MediaPreviewMode.LIST_PREVIEW -> PreviewModeValues.LIST_PREVIEW_VALUE
-        MediaPreviewMode.GRID_PREVIEW -> PreviewModeValues.GRID_PREVIEW_VALUE
-    }
 
 private fun Int.toMediaPreviewMode(): MediaPreviewMode =
     when (this) {

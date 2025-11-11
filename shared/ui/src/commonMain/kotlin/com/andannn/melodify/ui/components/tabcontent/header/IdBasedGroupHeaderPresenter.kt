@@ -18,6 +18,7 @@ import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.TabKind
 import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
@@ -142,7 +143,18 @@ private class GroupHeaderPresenter(
                         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
                             context(repository, popupController, mediaFileDeleteHelper) {
                                 when (result.optionItem) {
-                                    OptionItem.ADD_TO_HOME_TAB -> launch { mediaItem?.pinToHomeTab() }
+                                    OptionItem.ADD_TO_HOME_TAB ->
+                                        launch {
+                                            if (groupInfo.groupKey is GroupKey.BucketId) {
+                                                pinToHomeTab(
+                                                    externalId = groupInfo.groupKey.bucketId,
+                                                    tabName = groupInfo.groupKey.bucketDisplayName,
+                                                    tabKind = TabKind.VIDEO_BUCKET,
+                                                )
+                                            } else {
+                                                mediaItem?.pinToHomeTab()
+                                            }
+                                        }
                                     OptionItem.PLAY_NEXT,
                                     OptionItem.ADD_TO_QUEUE,
                                     OptionItem.ADD_TO_PLAYLIST,
@@ -196,10 +208,10 @@ private fun GroupKey.canPinToHome() =
         is GroupKey.Album,
         is GroupKey.Artist,
         is GroupKey.Genre,
+        is GroupKey.BucketId,
         -> true
 
         is GroupKey.Title,
         is GroupKey.Year,
-        is GroupKey.BucketId,
         -> false
     }

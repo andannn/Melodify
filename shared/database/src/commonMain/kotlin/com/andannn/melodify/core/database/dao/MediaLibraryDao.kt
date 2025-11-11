@@ -109,6 +109,18 @@ interface MediaLibraryDao {
         sort: MediaSorts? = null,
     ): PagingSource<Int, VideoEntity> = getVideoFlowPagingSource(buildVideoRawQuery(where, sort))
 
+    fun getVideoBucketPagingSource(
+        bucketId: String,
+        where: MediaWheres? = null,
+        sort: MediaSorts? = null,
+    ): PagingSource<Int, VideoEntity> = getVideoFlowPagingSource(buildVideoBucketRawQuery(bucketId, where, sort))
+
+    fun getVideoBucketFlow(
+        bucketId: String,
+        where: MediaWheres? = null,
+        sort: MediaSorts? = null,
+    ): Flow<List<VideoEntity>> = getVideoFlowRaw(buildVideoBucketRawQuery(bucketId, where, sort))
+
     fun getAllVideoFlow(
         where: MediaWheres? = null,
         sort: MediaSorts? = null,
@@ -128,6 +140,19 @@ interface MediaLibraryDao {
             wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
         val sort = sort?.toSortString() ?: ""
         val sql = "SELECT * FROM ${Tables.LIBRARY_MEDIA} $wheres $sort"
+        return RoomRawQuery(sql)
+    }
+
+    private fun buildVideoBucketRawQuery(
+        bucketId: String,
+        wheres: MediaWheres?,
+        sort: MediaSorts?,
+    ): RoomRawQuery {
+        val filterDeleted = "${VideoColumns.DELETED} IS NOT 1"
+        val wheres =
+            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
+        val sort = sort?.toSortString() ?: ""
+        val sql = "SELECT * FROM ${Tables.LIBRARY_VIDEO} $wheres AND ${VideoColumns.BUCKET_ID} = $bucketId $sort"
         return RoomRawQuery(sql)
     }
 

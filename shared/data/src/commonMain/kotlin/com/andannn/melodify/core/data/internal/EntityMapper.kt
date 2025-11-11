@@ -169,6 +169,7 @@ internal fun CustomTabEntity.toAppItem() =
         CustomTabType.ARTIST_DETAIL -> CustomTab.ArtistDetail(tabId = id, externalId!!, name!!)
         CustomTabType.GENRE_DETAIL -> CustomTab.GenreDetail(tabId = id, externalId!!, name!!)
         CustomTabType.PLAYLIST_DETAIL -> CustomTab.PlayListDetail(tabId = id, externalId!!, name!!)
+        CustomTabType.VIDEO_BUCKET -> CustomTab.BucketDetail(tabId = id, externalId!!, name!!)
 
         else -> null
     }

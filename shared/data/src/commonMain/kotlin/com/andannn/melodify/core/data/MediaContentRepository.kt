@@ -26,6 +26,18 @@ interface MediaContentRepository {
         whereGroup: List<GroupKey> = emptyList(),
     ): Flow<PagingData<VideoItemModel>>
 
+    fun getVideoBucketItemsPagingFlow(
+        bucketId: String,
+        sort: List<SortOption.VideoOption>,
+        whereGroup: List<GroupKey> = emptyList(),
+    ): Flow<PagingData<VideoItemModel>>
+
+    fun getVideoBucketItemsFlow(
+        bucketId: String,
+        sort: List<SortOption.VideoOption>,
+        whereGroup: List<GroupKey> = emptyList(),
+    ): Flow<List<VideoItemModel>>
+
     /**
      * Return flow of all media items
      */

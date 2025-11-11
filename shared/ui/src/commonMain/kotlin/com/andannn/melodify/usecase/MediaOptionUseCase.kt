@@ -40,12 +40,25 @@ suspend fun MediaItemModel.pinToHomeTab() {
             is VideoItemModel,
             -> error("invalid")
         }
+    pinToHomeTab(
+        externalId = id,
+        tabName = name,
+        tabKind = tabKind,
+    )
+}
+
+context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
+suspend fun pinToHomeTab(
+    externalId: String,
+    tabName: String,
+    tabKind: TabKind,
+) {
     val exist =
-        userPreferenceRepository.isTabExist(externalId = id, tabName = name, tabKind = tabKind)
+        userPreferenceRepository.isTabExist(externalId = externalId, tabName = tabName, tabKind = tabKind)
     if (exist) {
         popupController.showSnackBar(SnackBarMessage.TabAlreadyExist)
     } else {
-        userPreferenceRepository.addNewCustomTab(externalId = id, tabName = name, tabKind = tabKind)
+        userPreferenceRepository.addNewCustomTab(externalId = externalId, tabName = tabName, tabKind = tabKind)
     }
 }
 

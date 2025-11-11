@@ -90,6 +90,7 @@ fun getCategoryResource(category: CustomTab): String =
         is CustomTab.ArtistDetail -> category.label
         is CustomTab.GenreDetail -> category.label
         is CustomTab.PlayListDetail -> category.label
+        is CustomTab.BucketDetail -> category.label
     }
 
 @Composable

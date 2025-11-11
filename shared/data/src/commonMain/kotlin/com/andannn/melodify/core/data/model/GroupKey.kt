@@ -34,6 +34,7 @@ sealed interface GroupKey {
     ) : GroupKey
 
     data class BucketId(
+        val bucketId: String,
         val bucketDisplayName: String,
     ) : GroupKey
 }
@@ -54,7 +55,7 @@ fun MediaItemModel.keyOf(sortOption: SortOption): GroupKey? =
 
         is VideoItemModel ->
             when (sortOption) {
-                is SortOption.VideoOption.Bucket -> GroupKey.BucketId(bucketName)
+                is SortOption.VideoOption.Bucket -> GroupKey.BucketId(bucketId, bucketName)
                 SortOption.NONE -> null
                 else -> error("not support key $sortOption")
             }

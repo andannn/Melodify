@@ -56,6 +56,13 @@ fun CustomTab.contentFlow(
                 sorts.filterIsInstance<SortOption.AudioOption>(),
                 whereGroups,
             )
+
+        is CustomTab.BucketDetail ->
+            repository.mediaContentRepository.getVideoBucketItemsFlow(
+                bucketId,
+                sorts.filterIsInstance<SortOption.VideoOption>(),
+                whereGroups,
+            )
     }
 
 context(repository: Repository)
@@ -100,6 +107,13 @@ fun CustomTab.contentPagingDataFlow(
 
         is CustomTab.AllVideo ->
             repository.mediaContentRepository.getAllVideoItemsPagingFlow(
+                sorts.filterIsInstance<SortOption.VideoOption>(),
+                whereGroups,
+            )
+
+        is CustomTab.BucketDetail ->
+            repository.mediaContentRepository.getVideoBucketItemsPagingFlow(
+                bucketId,
                 sorts.filterIsInstance<SortOption.VideoOption>(),
                 whereGroups,
             )

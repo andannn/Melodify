@@ -20,7 +20,6 @@ import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
@@ -84,7 +83,6 @@ class TabContentPresenter(
     ScopedObserver by scopedObserver,
     NavigationRequestEventSink by ChannelNavigationRequestEventChannel(scopedObserver) {
     private val mediaControllerRepository = repository.mediaControllerRepository
-    private val playListRepository = repository.playListRepository
     private val userPreferenceRepository = repository.userPreferenceRepository
 
     private var displaySetting =
@@ -167,27 +165,14 @@ class TabContentPresenter(
             flowOf(null)
         }
 
-    private suspend fun playMedia(
+    private fun playMedia(
         mediaItem: MediaItemModel,
         allAudios: List<MediaItemModel>,
     ) {
-//        if (mediaItem.isValid()) {
         mediaControllerRepository.playMediaList(
             allAudios.toList(),
             allAudios.indexOf(mediaItem),
         )
-//        } else {
-//            Napier.d(tag = TAG) { "invalid media item click $mediaItem" }
-//            val result =
-//                popupController.showDialog(DialogId.ConfirmDeletePlaylist)
-//            Napier.d(tag = TAG) { "ConfirmDeletePlaylist result: $result" }
-//            if (result == DialogAction.AlertDialog.Accept) {
-//                val playListId = (selectedTab as CustomTab.PlayListDetail).playListId
-//                val mediaId = mediaItem.id.substringAfter(AudioItemModel.INVALID_ID_PREFIX)
-//
-//                playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(mediaId))
-//            }
-//        }
     }
 
     context(repository: Repository, popupController: PopupController)

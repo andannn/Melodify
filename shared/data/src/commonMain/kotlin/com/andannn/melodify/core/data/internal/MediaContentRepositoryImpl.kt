@@ -57,6 +57,36 @@ internal class MediaContentRepositoryImpl(
             pagingData.map { it.toAppItem() }
         }
 
+    override fun getVideoBucketItemsPagingFlow(
+        bucketId: String,
+        sort: List<SortOption.VideoOption>,
+        whereGroup: List<GroupKey>,
+    ): Flow<PagingData<VideoItemModel>> =
+        Pager(
+            config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
+            pagingSourceFactory = {
+                mediaLibraryDao.getVideoBucketPagingSource(
+                    bucketId = bucketId,
+                    sort = sort.toVideoSortMethod(),
+                    where = whereGroup.toWheresMethod(),
+                )
+            },
+        ).flow.map { pagingData ->
+            pagingData.map { it.toAppItem() }
+        }
+
+    override fun getVideoBucketItemsFlow(
+        bucketId: String,
+        sort: List<SortOption.VideoOption>,
+        whereGroup: List<GroupKey>,
+    ): Flow<List<VideoItemModel>> =
+        mediaLibraryDao
+            .getVideoBucketFlow(
+                bucketId = bucketId,
+                sort = sort.toVideoSortMethod(),
+                where = whereGroup.toWheresMethod(),
+            ).map { it.mapToVideoItemModel() }
+
     override fun getAllMediaItemsFlow(
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey>,
