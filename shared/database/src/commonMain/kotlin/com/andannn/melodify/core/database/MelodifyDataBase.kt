@@ -86,7 +86,7 @@ internal object Tables {
         AutoMigration(from = 7, to = 8, AutoMigration7To8Spec::class),
         AutoMigration(from = 8, to = 9),
         AutoMigration(from = 9, to = 10),
-        AutoMigration(from = 10, to = 11, AutoMigration10To11Spec::class),
+        AutoMigration(from = 10, to = 11),
     ],
     version = 11,
 )
@@ -142,7 +142,6 @@ internal val addInitialCustomTabsCallback =
     object : RoomDatabase.Callback() {
         override fun onCreate(connection: SQLiteConnection) {
             connection.execSQL("INSERT INTO custom_tab_table (custom_tab_type, sort_order) VALUES ('all_music', 0)")
-            connection.execSQL("INSERT INTO custom_tab_table (custom_tab_type, sort_order) VALUES ('all_video', 1)")
         }
     }
 
@@ -243,13 +242,6 @@ class AutoMigration7To8Spec : AutoMigrationSpec {
             SET ${CustomTabColumns.SORT_ORDER} = ${CustomTabColumns.ID}
             """.trimIndent(),
         )
-    }
-}
-
-class AutoMigration10To11Spec : AutoMigrationSpec {
-    override fun onPostMigrate(connection: SQLiteConnection) {
-// TODO: Sort order?
-        connection.execSQL("INSERT INTO custom_tab_table (custom_tab_type) VALUES ('all_video')")
     }
 }
 

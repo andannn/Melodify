@@ -65,11 +65,18 @@ internal class UserPreferenceRepositoryImpl(
         tabName: String,
         tabKind: TabKind,
     ): Boolean =
-        userDataDao.isTabExist(
-            externalId = externalId,
-            name = tabName,
-            type = tabKind.toEntityName(),
-        )
+        when (tabKind) {
+            TabKind.ALL_MUSIC,
+            TabKind.ALL_VIDEO,
+            -> userDataDao.isTabKindExist(tabKind.toEntityName())
+            else -> {
+                userDataDao.isTabExist(
+                    externalId = externalId,
+                    name = tabName,
+                    type = tabKind.toEntityName(),
+                )
+            }
+        }
 
     override suspend fun deleteCustomTab(tab: CustomTab) {
         userDataDao.deleteCustomTab(tabId = tab.tabId)

@@ -91,6 +91,17 @@ interface UserDataDao {
         type: String,
     ): Boolean
 
+    @Query(
+        """
+        SELECT EXISTS(
+            SELECT 1
+            FROM ${Tables.CUSTOM_TAB}
+            WHERE ${CustomTabColumns.TYPE} = :type
+        )
+    """,
+    )
+    suspend fun isTabKindExist(type: String): Boolean
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSortRuleEntity(entity: SortRuleEntity)
 

@@ -48,6 +48,24 @@ suspend fun MediaItemModel.pinToHomeTab() {
 }
 
 context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
+suspend fun pinAllMusicToHomeTab() {
+    pinToHomeTab(
+        externalId = "all_music",
+        tabName = "All Music",
+        tabKind = TabKind.ALL_MUSIC,
+    )
+}
+
+context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
+suspend fun pinAllVideoToHomeTab() {
+    pinToHomeTab(
+        externalId = "all_video",
+        tabName = "All Video",
+        tabKind = TabKind.ALL_VIDEO,
+    )
+}
+
+context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
 suspend fun pinToHomeTab(
     externalId: String,
     tabName: String,

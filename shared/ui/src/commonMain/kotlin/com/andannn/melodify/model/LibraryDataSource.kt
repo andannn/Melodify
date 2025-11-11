@@ -19,6 +19,9 @@ sealed interface LibraryDataSource {
     data object AllSong : LibraryDataSource
 
     @Serializable
+    data object AllVideo : LibraryDataSource
+
+    @Serializable
     data object AllArtist : LibraryDataSource
 
     @Serializable
@@ -52,51 +55,6 @@ sealed interface LibraryDataSource {
     data class PlayListDetail(
         val id: String,
     ) : LibraryDataSource
-
-    fun toStringCode() =
-        when (this) {
-            AllSong -> "AllSong"
-            AllArtist -> "AllArtist"
-            AllAlbum -> "AllAlbum"
-            AllGenre -> "AllGenre"
-            AllPlaylist -> "AllPlaylist"
-            Favorite -> "Favorite"
-            is ArtistDetail -> "ArtistDetail($id)"
-            is AlbumDetail -> "AlbumDetail($id)"
-            is GenreDetail -> "GenreDetail($id)"
-            is PlayListDetail -> "PlayListDetail($id)"
-        }
-
-    companion object {
-        fun parseFromString(code: String): LibraryDataSource =
-            if (code == "AllSong") {
-                AllSong
-            } else if (code == "AllArtist") {
-                AllArtist
-            } else if (code == "AllAlbum") {
-                AllAlbum
-            } else if (code == "AllGenre") {
-                AllGenre
-            } else if (code == "AllPlaylist") {
-                AllPlaylist
-            } else if (code == "Favorite") {
-                Favorite
-            } else if (code.startsWith("ArtistDetail")) {
-                val id = code.substring("ArtistDetail(".length, code.length - 1)
-                ArtistDetail(id)
-            } else if (code.startsWith("AlbumDetail")) {
-                val id = code.substring("AlbumDetail(".length, code.length - 1)
-                AlbumDetail(id)
-            } else if (code.startsWith("GenreDetail")) {
-                val id = code.substring("GenreDetail(".length, code.length - 1)
-                GenreDetail(id)
-            } else if (code.startsWith("PlayListDetail")) {
-                val id = code.substring("PlayListDetail(".length, code.length - 1)
-                PlayListDetail(id)
-            } else {
-                throw IllegalArgumentException("Unknown code: $code")
-            }
-    }
 }
 
 fun LibraryDataSource.browseable() =
@@ -106,6 +64,8 @@ fun LibraryDataSource.browseable() =
         LibraryDataSource.AllGenre,
         LibraryDataSource.AllPlaylist,
         -> true
+
+        LibraryDataSource.AllVideo,
         LibraryDataSource.AllSong,
         is LibraryDataSource.AlbumDetail,
         is LibraryDataSource.ArtistDetail,
@@ -133,4 +93,5 @@ fun ShortcutItem.toDataSource() =
         ShortcutItem.GENRE -> LibraryDataSource.AllGenre
         ShortcutItem.FAVORITE -> LibraryDataSource.Favorite
         ShortcutItem.PLAYLIST -> LibraryDataSource.AllPlaylist
+        ShortcutItem.ALL_VIDEO -> LibraryDataSource.AllVideo
     }

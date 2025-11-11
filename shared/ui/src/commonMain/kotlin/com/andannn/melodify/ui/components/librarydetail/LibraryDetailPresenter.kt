@@ -37,6 +37,7 @@ import melodify.shared.ui.generated.resources.audio_page_title
 import melodify.shared.ui.generated.resources.favorite
 import melodify.shared.ui.generated.resources.genre_title
 import melodify.shared.ui.generated.resources.playlist_page_title
+import melodify.shared.ui.generated.resources.video_page_title
 import org.jetbrains.compose.resources.getString
 
 @Composable
@@ -113,29 +114,27 @@ private class LibraryDetailPresenter(
         ) { event ->
             when (event) {
                 is LibraryContentEvent.OnRequestPlay ->
-                    playMusic(event.mediaItem, contentList)
+                    playMedia(event.mediaItem, contentList)
 
                 is LibraryContentEvent.OnMediaItemClick -> {
                     if (dataSource.browseable()) {
                         Napier.d(tag = TAG) { "request navigate to ${event.mediaItem.asLibraryDataSource()}" }
                         onRequest(NavigationRequest.GoToLibraryDetail(event.mediaItem.asLibraryDataSource()))
                     } else {
-                        playMusic(event.mediaItem as AudioItemModel, contentList)
+                        playMedia(event.mediaItem, contentList)
                     }
                 }
             }
         }
     }
 
-    private fun playMusic(
-        audioItemModel: AudioItemModel,
+    private fun playMedia(
+        audioItemModel: MediaItemModel,
         contentList: List<MediaItemModel>,
     ) {
-        val mediaItems = contentList.filterIsInstance<AudioItemModel>()
-
         repository.mediaControllerRepository.playMediaList(
-            mediaItems.toList(),
-            mediaItems.indexOf(audioItemModel),
+            contentList.toList(),
+            contentList.indexOf(audioItemModel),
         )
     }
 }
@@ -148,6 +147,7 @@ private suspend fun LibraryDataSource.getTitle(): String =
         LibraryDataSource.AllGenre -> getString(Res.string.genre_title)
         LibraryDataSource.AllPlaylist -> getString(Res.string.playlist_page_title)
         LibraryDataSource.AllSong -> getString(Res.string.audio_page_title)
+        LibraryDataSource.AllVideo -> getString(Res.string.video_page_title)
         LibraryDataSource.Favorite -> getString(Res.string.favorite)
         is LibraryDataSource.AlbumDetail ->
             repository.mediaContentRepository.getAlbumByAlbumId(id)?.name

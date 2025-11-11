@@ -122,17 +122,15 @@ private fun ReorderableCollectionItemScope.CustomTabItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(modifier = Modifier.size(48.dp)) {
-            if (item !is CustomTab.AllMusic) {
-                IconButton(
-                    modifier = Modifier.padding(start = 10.dp),
-                    onClick = onDeleteItem,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        tint = Color.Red,
-                        contentDescription = "Delete",
-                    )
-                }
+            IconButton(
+                modifier = Modifier.padding(start = 10.dp),
+                onClick = onDeleteItem,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    tint = Color.Red,
+                    contentDescription = "Delete",
+                )
             }
         }
 

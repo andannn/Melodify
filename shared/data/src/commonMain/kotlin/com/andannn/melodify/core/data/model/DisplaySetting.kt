@@ -20,6 +20,7 @@ data class DisplaySetting(
             val BucketNameASC =
                 DisplaySetting(
                     primaryGroupSort = SortOption.VideoOption.Bucket(true),
+                    contentSort = SortOption.VideoOption.Title(ascending = true),
                     showTrackNum = false,
                     isPreset = true,
                 )

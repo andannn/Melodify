@@ -11,7 +11,10 @@ import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.model.DialogAction
+import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.LibraryDataSource
+import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.model.asLibraryDataSource
 import com.andannn.melodify.model.browseable
 import com.andannn.melodify.ui.Screen
@@ -26,6 +29,9 @@ import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.usecase.pinAllMusicToHomeTab
+import com.andannn.melodify.usecase.pinAllVideoToHomeTab
+import com.andannn.melodify.usecase.pinToHomeTab
 import com.andannn.melodify.usecase.showLibraryMediaOption
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
@@ -45,7 +51,13 @@ fun rememberLibraryDetailScreenPresenter(
         popupController,
         mediaFileDeleteHelper,
     ) {
-        LibraryDetailScreenPresenter(dataSource, navigator, repository, popupController, mediaFileDeleteHelper)
+        LibraryDetailScreenPresenter(
+            dataSource,
+            navigator,
+            repository,
+            popupController,
+            mediaFileDeleteHelper,
+        )
     }
 
 @Stable
@@ -87,8 +99,40 @@ private class LibraryDetailScreenPresenter(
                     LibraryDetailScreenEvent.OnBackKeyPressed -> navigator.popBackStack()
 
                     LibraryDetailScreenEvent.OnOptionClick -> {
-                        state.mediaItem?.let { item ->
-                            launch { showLibraryMediaOption(item) }
+                        when (dataSource) {
+                            LibraryDataSource.AllSong,
+                            LibraryDataSource.AllVideo,
+                            ->
+                                launch {
+                                    val result =
+                                        popupController.showDialog(
+                                            DialogId.OptionDialog(
+                                                listOf(
+                                                    OptionItem.ADD_TO_HOME_TAB,
+                                                ),
+                                            ),
+                                        )
+
+                                    if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
+                                        when (result.optionItem) {
+                                            OptionItem.ADD_TO_HOME_TAB -> {
+                                                if (dataSource == LibraryDataSource.AllSong) {
+                                                    pinAllMusicToHomeTab()
+                                                } else {
+                                                    pinAllVideoToHomeTab()
+                                                }
+                                            }
+
+                                            else -> {}
+                                        }
+                                    }
+                                }
+
+                            else -> {
+                                state.mediaItem?.let { item ->
+                                    launch { showLibraryMediaOption(item) }
+                                }
+                            }
                         }
                     }
                 }

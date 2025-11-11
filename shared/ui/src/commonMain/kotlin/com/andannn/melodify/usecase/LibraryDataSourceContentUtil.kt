@@ -37,6 +37,13 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
                     .filterIsInstance<SortOption.AudioOption>(),
             )
 
+        LibraryDataSource.AllVideo ->
+            repository.mediaContentRepository.getAllVideoItemsFlow(
+                DisplaySetting.Preset.Video.BucketNameASC
+                    .sortOptions()
+                    .filterIsInstance<SortOption.VideoOption>(),
+            )
+
         is LibraryDataSource.ArtistDetail ->
             repository.mediaContentRepository.getAudiosOfArtistFlow(
                 id,
