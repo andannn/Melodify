@@ -15,6 +15,8 @@ import androidx.room.Transaction
 import com.andannn.melodify.core.database.MediaSorts
 import com.andannn.melodify.core.database.MediaWheres
 import com.andannn.melodify.core.database.Tables
+import com.andannn.melodify.core.database.Where
+import com.andannn.melodify.core.database.appendOrCreateWith
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistColumns
@@ -102,57 +104,109 @@ interface MediaLibraryDao {
     fun getAllMediaFlow(
         where: MediaWheres? = null,
         sort: MediaSorts? = null,
-    ): Flow<List<MediaEntity>> = getMediaFlowRaw(buildMediaRawQuery(where, sort))
+    ): Flow<List<MediaEntity>> =
+        getMediaFlowRaw(
+            buildMediaRawQuery(
+                wheres =
+                    where.appendOrCreateWith {
+                        listOf(
+                            audioNotDeletedWhere(),
+                        )
+                    },
+                sort = sort,
+            ),
+        )
 
     fun getAllVideoPagingSource(
         where: MediaWheres? = null,
         sort: MediaSorts? = null,
-    ): PagingSource<Int, VideoEntity> = getVideoFlowPagingSource(buildVideoRawQuery(where, sort))
+    ): PagingSource<Int, VideoEntity> =
+        getVideoFlowPagingSource(
+            buildVideoRawQuery(
+                wheres =
+                    where.appendOrCreateWith {
+                        listOf(
+                            videoNotDeletedWhere(),
+                        )
+                    },
+                sort = sort,
+            ),
+        )
 
-    fun getVideoBucketPagingSource(
-        bucketId: String,
+    fun getAllVideoFlow(
         where: MediaWheres? = null,
         sort: MediaSorts? = null,
-    ): PagingSource<Int, VideoEntity> = getVideoFlowPagingSource(buildVideoBucketRawQuery(bucketId, where, sort))
+    ): Flow<List<VideoEntity>> =
+        getVideoFlowRaw(
+            buildVideoRawQuery(
+                wheres =
+                    where.appendOrCreateWith {
+                        listOf(
+                            videoNotDeletedWhere(),
+                        )
+                    },
+                sort = sort,
+            ),
+        )
 
     fun getVideoBucketFlow(
         bucketId: String,
         where: MediaWheres? = null,
         sort: MediaSorts? = null,
-    ): Flow<List<VideoEntity>> = getVideoFlowRaw(buildVideoBucketRawQuery(bucketId, where, sort))
+    ): Flow<List<VideoEntity>> =
+        getVideoFlowRaw(
+            buildVideoRawQuery(
+                wheres =
+                    where.appendOrCreateWith {
+                        listOf(
+                            bucketIdWhere(bucketId),
+                            videoNotDeletedWhere(),
+                        )
+                    },
+                sort = sort,
+            ),
+        )
 
-    fun getAllVideoFlow(
+    fun getVideoBucketPagingSource(
+        bucketId: String,
         where: MediaWheres? = null,
         sort: MediaSorts? = null,
-    ): Flow<List<VideoEntity>> = getVideoFlowRaw(buildVideoRawQuery(where, sort))
+    ): PagingSource<Int, VideoEntity> =
+        getVideoFlowPagingSource(
+            buildVideoRawQuery(
+                wheres =
+                    where.appendOrCreateWith {
+                        listOf(
+                            bucketIdWhere(bucketId),
+                            videoNotDeletedWhere(),
+                        )
+                    },
+                sort = sort,
+            ),
+        )
 
     fun getAllMediaPagingSource(
         where: MediaWheres? = null,
         sort: MediaSorts? = null,
-    ): PagingSource<Int, MediaEntity> = getMediaFlowPagingSource(buildMediaRawQuery(where, sort))
+    ): PagingSource<Int, MediaEntity> =
+        getMediaFlowPagingSource(
+            buildMediaRawQuery(
+                wheres =
+                    where.appendOrCreateWith {
+                        listOf(
+                            audioNotDeletedWhere(),
+                        )
+                    },
+                sort = sort,
+            ),
+        )
 
     private fun buildMediaRawQuery(
         wheres: MediaWheres?,
         sort: MediaSorts?,
     ): RoomRawQuery {
-        val filterDeleted = "${MediaColumns.DELETED} IS NOT 1"
-        val wheres =
-            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
-        val sort = sort?.toSortString() ?: ""
-        val sql = "SELECT * FROM ${Tables.LIBRARY_MEDIA} $wheres $sort"
-        return RoomRawQuery(sql)
-    }
-
-    private fun buildVideoBucketRawQuery(
-        bucketId: String,
-        wheres: MediaWheres?,
-        sort: MediaSorts?,
-    ): RoomRawQuery {
-        val filterDeleted = "${VideoColumns.DELETED} IS NOT 1"
-        val wheres =
-            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
-        val sort = sort?.toSortString() ?: ""
-        val sql = "SELECT * FROM ${Tables.LIBRARY_VIDEO} $wheres AND ${VideoColumns.BUCKET_ID} = $bucketId $sort"
+        val sql =
+            "SELECT * FROM ${Tables.LIBRARY_MEDIA} ${wheres.toWhereString()} ${sort.toSortString()}"
         return RoomRawQuery(sql)
     }
 
@@ -160,11 +214,8 @@ interface MediaLibraryDao {
         wheres: MediaWheres?,
         sort: MediaSorts?,
     ): RoomRawQuery {
-        val filterDeleted = "${VideoColumns.DELETED} IS NOT 1"
-        val wheres =
-            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
-        val sort = sort?.toSortString() ?: ""
-        val sql = "SELECT * FROM ${Tables.LIBRARY_VIDEO} $wheres $sort"
+        val sql =
+            "SELECT * FROM ${Tables.LIBRARY_VIDEO} ${wheres.toWhereString()} ${sort.toSortString()}"
         return RoomRawQuery(sql)
     }
 
@@ -172,82 +223,109 @@ interface MediaLibraryDao {
         albumId: String,
         where: MediaWheres?,
         sort: MediaSorts?,
-    ): Flow<List<MediaEntity>> = getMediaFlowRaw(buildAlbumMediaRawQuery(albumId, where, sort))
+    ): Flow<List<MediaEntity>> =
+        getMediaFlowRaw(
+            buildMediaRawQuery(
+                wheres =
+                    where.appendOrCreateWith {
+                        listOf(
+                            albumIdWhere(albumId),
+                            audioNotDeletedWhere(),
+                        )
+                    },
+                sort = sort,
+            ),
+        )
 
     fun getMediasPagingSourceByAlbumId(
         albumId: String,
         where: MediaWheres?,
         sort: MediaSorts?,
-    ): PagingSource<Int, MediaEntity> = getMediaFlowPagingSource(buildAlbumMediaRawQuery(albumId, where, sort))
-
-    private fun buildAlbumMediaRawQuery(
-        albumId: String,
-        wheres: MediaWheres?,
-        sort: MediaSorts?,
-    ): RoomRawQuery {
-        val filterDeleted = "${MediaColumns.DELETED} IS NOT 1"
-        val wheres =
-            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
-        val sort = sort?.toSortString() ?: ""
-        val sql =
-            "SELECT * FROM ${Tables.LIBRARY_MEDIA} $wheres AND ${MediaColumns.ALBUM_ID} = $albumId $sort"
-        Napier.d(tag = TAG) { "buildAlbumMediaRawQuery: $sql" }
-        return RoomRawQuery(sql)
-    }
+    ): PagingSource<Int, MediaEntity> =
+        getMediaFlowPagingSource(
+            buildMediaRawQuery(
+                wheres =
+                    where.appendOrCreateWith {
+                        listOf(
+                            albumIdWhere(albumId),
+                            audioNotDeletedWhere(),
+                        )
+                    },
+                sort = sort,
+            ),
+        )
 
     fun getMediasByArtistIdFlow(
         artistId: String,
         wheres: MediaWheres?,
         sort: MediaSorts?,
-    ): Flow<List<MediaEntity>> = getMediaFlowRaw(buildArtistMediaRawQuery(artistId, wheres, sort))
+    ): Flow<List<MediaEntity>> =
+        getMediaFlowRaw(
+            buildMediaRawQuery(
+                wheres =
+                    wheres.appendOrCreateWith {
+                        listOf(
+                            artistIdWhere(artistId),
+                            audioNotDeletedWhere(),
+                        )
+                    },
+                sort = sort,
+            ),
+        )
 
     fun getMediasPagingSourceByArtistId(
         artistId: String,
         wheres: MediaWheres?,
         sort: MediaSorts?,
-    ): PagingSource<Int, MediaEntity> = getMediaFlowPagingSource(buildArtistMediaRawQuery(artistId, wheres, sort))
-
-    private fun buildArtistMediaRawQuery(
-        artistId: String,
-        wheres: MediaWheres?,
-        sort: MediaSorts?,
-    ): RoomRawQuery {
-        val filterDeleted = "${MediaColumns.DELETED} IS NOT 1"
-        val wheres =
-            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
-        val sort = sort?.toSortString() ?: ""
-        val sql =
-            "SELECT * FROM ${Tables.LIBRARY_MEDIA} $wheres AND ${MediaColumns.ARTIST_ID} = $artistId $sort"
-        Napier.d(tag = TAG) { "buildArtistMediaRawQuery: $sql" }
-        return RoomRawQuery(sql)
-    }
+    ): PagingSource<Int, MediaEntity> =
+        getMediaFlowPagingSource(
+            buildMediaRawQuery(
+                wheres =
+                    wheres.appendOrCreateWith {
+                        listOf(
+                            artistIdWhere(artistId),
+                            audioNotDeletedWhere(),
+                        )
+                    },
+                sort = sort,
+            ),
+        )
 
     fun getMediasByGenreIdFlow(
         genreId: String,
         wheres: MediaWheres?,
         sort: MediaSorts?,
-    ): Flow<List<MediaEntity>> = getMediaFlowRaw(buildGenreMediaRawQuery(genreId, wheres, sort))
+    ): Flow<List<MediaEntity>> =
+        getMediaFlowRaw(
+            buildMediaRawQuery(
+                wheres =
+                    wheres.appendOrCreateWith {
+                        listOf(
+                            genreIdWhere(genreId),
+                            audioNotDeletedWhere(),
+                        )
+                    },
+                sort = sort,
+            ),
+        )
 
     fun getMediasPagingSourceByGenreId(
         genreId: String,
         wheres: MediaWheres?,
         sort: MediaSorts?,
-    ): PagingSource<Int, MediaEntity> = getMediaFlowPagingSource(buildGenreMediaRawQuery(genreId, wheres, sort))
-
-    private fun buildGenreMediaRawQuery(
-        genreId: String,
-        wheres: MediaWheres?,
-        sort: MediaSorts?,
-    ): RoomRawQuery {
-        val filterDeleted = "${MediaColumns.DELETED} IS NOT 1"
-        val wheres =
-            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
-        val sort = sort?.toSortString() ?: ""
-        val sql =
-            "SELECT * FROM ${Tables.LIBRARY_MEDIA} $wheres AND ${MediaColumns.GENRE_ID} = $genreId $sort"
-        Napier.d(tag = TAG) { "buildGenreMediaRawQuery: $sql" }
-        return RoomRawQuery(sql)
-    }
+    ): PagingSource<Int, MediaEntity> =
+        getMediaFlowPagingSource(
+            buildMediaRawQuery(
+                wheres =
+                    wheres.appendOrCreateWith {
+                        listOf(
+                            genreIdWhere(genreId),
+                            audioNotDeletedWhere(),
+                        )
+                    },
+                sort = sort,
+            ),
+        )
 
     @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.GENRE_ID} = :genreId")
     fun getMediasByGenreIdFlow(genreId: String): Flow<List<MediaEntity>>
@@ -327,6 +405,48 @@ interface MediaLibraryDao {
     """,
     )
     suspend fun deleteInvalidPlayListRefItem()
+
+    private fun bucketIdWhere(bucketId: String) =
+        Where(
+            VideoColumns.BUCKET_ID,
+            "=",
+            bucketId,
+        )
+
+    private fun videoNotDeletedWhere() =
+        Where(
+            VideoColumns.DELETED,
+            "IS NOT",
+            "1",
+        )
+
+    private fun audioNotDeletedWhere() =
+        Where(
+            MediaColumns.DELETED,
+            "IS NOT",
+            "1",
+        )
+
+    private fun albumIdWhere(albumId: String) =
+        Where(
+            MediaColumns.ALBUM_ID,
+            "=",
+            albumId,
+        )
+
+    private fun artistIdWhere(artist: String) =
+        Where(
+            MediaColumns.ARTIST_ID,
+            "=",
+            artist,
+        )
+
+    private fun genreIdWhere(genreId: String) =
+        Where(
+            MediaColumns.GENRE_ID,
+            "=",
+            genreId,
+        )
 
     @Transaction
     suspend fun upsertMedia(

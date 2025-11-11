@@ -4,6 +4,9 @@
  */
 package com.andannn.melodify.core.database
 
+import com.andannn.melodify.core.database.MediaWheres.Companion.buildMethod
+import kotlin.apply
+
 data class MediaWheres(
     val wheres: List<Where>,
 ) {
@@ -15,7 +18,22 @@ data class MediaWheres(
     }
 }
 
-internal fun MediaWheres.toWhereString(): String = "WHERE " + wheres.joinToString(separator = " AND ")
+fun MediaWheres?.appendOrCreateWith(builder: () -> List<Where>) =
+    this.let { old ->
+        buildMethod {
+            if (old != null) {
+                addAll(old.wheres)
+            }
+            addAll(builder())
+        }
+    }
+
+internal fun MediaWheres?.toWhereString(): String =
+    if (this != null && wheres.isNotEmpty()) {
+        "WHERE " + wheres.joinToString(separator = " AND ")
+    } else {
+        ""
+    }
 
 data class Where(
     val column: String,

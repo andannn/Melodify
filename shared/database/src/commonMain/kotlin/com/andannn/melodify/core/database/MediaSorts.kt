@@ -13,10 +13,12 @@ data class MediaSorts(
                 buildList(builderAction),
             )
     }
+
+    override fun toString(): String = toSortString()
 }
 
-internal fun MediaSorts.toSortString(): String =
-    if (sorts.isNotEmpty()) {
+internal fun MediaSorts?.toSortString(): String =
+    if (this != null && sorts.isNotEmpty()) {
         "ORDER BY " + sorts.joinToString(separator = ", ")
     } else {
         ""
