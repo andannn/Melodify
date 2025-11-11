@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.Presenter
 
@@ -51,8 +52,8 @@ class PlayQueuePresenter(
     }
 
     private fun onItemClick(
-        playListQueue: List<AudioItemModel>,
-        item: AudioItemModel,
+        playListQueue: List<MediaItemModel>,
+        item: MediaItemModel,
     ) {
         repository.mediaControllerRepository.seekMediaItem(
             mediaItemIndex = playListQueue.indexOf(item),
@@ -73,14 +74,14 @@ class PlayQueuePresenter(
 
 @Stable
 data class PlayQueueState(
-    val interactingMusicItem: AudioItemModel?,
-    val playListQueue: List<AudioItemModel>,
+    val interactingMusicItem: MediaItemModel?,
+    val playListQueue: List<MediaItemModel>,
     val eventSink: (PlayQueueEvent) -> Unit = {},
 )
 
 sealed interface PlayQueueEvent {
     data class OnItemClick(
-        val item: AudioItemModel,
+        val item: MediaItemModel,
     ) : PlayQueueEvent
 
     data class OnDeleteFinished(

@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.LyricRepository
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.LyricModel
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.Presenter
@@ -62,7 +63,7 @@ private class LyricPresenter(
             currentPlayingAudioFlow.collect { currentPlayingAudio ->
                 currentLoadState = null
 
-                val audio = currentPlayingAudio
+                val audio = currentPlayingAudio as? AudioItemModel
                 if (audio != null) {
                     repository.lyricRepository
                         .getLyricByMediaIdFlow(

@@ -9,4 +9,5 @@ data class MediaDataModel(
     val albumData: List<AlbumData>,
     val artistData: List<ArtistData>,
     val genreData: List<GenreData>,
+    val videoData: List<VideoData> = emptyList(),
 )

@@ -17,6 +17,7 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
@@ -70,16 +71,18 @@ private fun MediaLibraryItemContent(
                     Res.string.track_count,
                     mediaItemModel.trackCount,
                 )
+
+            is VideoItemModel -> mediaItemModel.bucketName
         }
 
     ListTileItemView(
         modifier = modifier,
         title = title,
-        albumArtUri = cover,
+        thumbnailSourceUri = cover,
         subTitle = subTitle,
         defaultColor = Color.Transparent,
         onOptionButtonClick = onOptionButtonClick,
-        onMusicItemClick = onItemClick,
+        onItemClick = onItemClick,
     )
 }
 

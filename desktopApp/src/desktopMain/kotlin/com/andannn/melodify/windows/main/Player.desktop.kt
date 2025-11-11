@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
+import com.andannn.melodify.core.data.model.subTitle
 import com.andannn.melodify.core.platform.formatTime
 import com.andannn.melodify.ui.util.getIcon
 import com.andannn.melodify.ui.widgets.CircleBorderImage
@@ -55,7 +56,7 @@ fun DesktopPlayerUi(
                 isPlaying = state.isPlaying,
                 isFavorite = state.isFavorite,
                 title = state.mediaItem.name,
-                artist = state.mediaItem.artist,
+                artist = state.mediaItem.subTitle,
                 progress = state.progress,
                 duration = state.duration,
                 onEvent = state.eventSink,

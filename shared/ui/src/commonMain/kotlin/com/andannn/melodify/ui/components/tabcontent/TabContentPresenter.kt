@@ -19,6 +19,7 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GroupKey
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
@@ -82,18 +83,17 @@ class TabContentPresenter(
     ScopedObserver by scopedObserver,
     NavigationRequestEventSink by ChannelNavigationRequestEventChannel(scopedObserver) {
     private val mediaControllerRepository = repository.mediaControllerRepository
-    private val playListRepository = repository.playListRepository
     private val userPreferenceRepository = repository.userPreferenceRepository
 
     private var displaySetting =
-        userPreferenceRepository.getCurrentSortRule(selectedTab).stateIn(
+        getDisplaySettingFlow().stateIn(
             scope = this,
             started = kotlinx.coroutines.flow.SharingStarted.Eagerly,
             initialValue = null,
         )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val pagingDataFlow =
+    private val pagingDataFlow: Flow<PagingData<MediaItemModel>> =
         displaySetting
             .filterNotNull()
             .flatMapLatest { displaySetting ->
@@ -102,7 +102,7 @@ class TabContentPresenter(
 
     @Composable
     override fun present(): TabContentState {
-        val pagingItems: LazyPagingItems<AudioItemModel> = pagingDataFlow.collectAsLazyPagingItems()
+        val pagingItems: LazyPagingItems<MediaItemModel> = pagingDataFlow.collectAsLazyPagingItems()
         val displaySettingState by displaySetting.collectAsStateWithLifecycle()
         return TabContentState(
             selectedTab = selectedTab,
@@ -111,7 +111,7 @@ class TabContentPresenter(
         ) { eventSink ->
             context(repository, popupController, mediaFileDeleteHelper) {
                 when (eventSink) {
-                    is TabContentEvent.OnPlayMusic ->
+                    is TabContentEvent.OnPlayMedia ->
                         launch {
                             val items =
                                 with(repository) {
@@ -120,13 +120,13 @@ class TabContentPresenter(
                                         ?.first()
                                         ?: error("selectedTab is null")
                                 }
-                            playMusic(
+                            playMedia(
                                 eventSink.mediaItemModel,
                                 allAudios = items,
                             )
                         }
 
-                    is TabContentEvent.OnShowMusicItemOption ->
+                    is TabContentEvent.OnShowMediaItemOption ->
                         launch {
                             onShowMusicItemOption(eventSink.mediaItemModel)
                         }
@@ -147,38 +147,32 @@ class TabContentPresenter(
     private fun getContentPagingFlow(
         selectedTab: CustomTab?,
         groupSort: DisplaySetting,
-    ): Flow<PagingData<AudioItemModel>> {
+    ): Flow<PagingData<MediaItemModel>> {
         if (selectedTab == null) {
             return flowOf()
         }
         return with(repository) {
             selectedTab.contentPagingDataFlow(
                 sorts = groupSort.sortOptions(),
-            )
+            ) as Flow<PagingData<MediaItemModel>>
         }
     }
 
-    private suspend fun playMusic(
-        mediaItem: AudioItemModel,
-        allAudios: List<AudioItemModel>,
-    ) {
-        if (mediaItem.isValid()) {
-            mediaControllerRepository.playMediaList(
-                allAudios.toList(),
-                allAudios.indexOf(mediaItem),
-            )
+    private fun getDisplaySettingFlow() =
+        if (selectedTab != null) {
+            userPreferenceRepository.getCurrentSortRule(selectedTab)
         } else {
-            Napier.d(tag = TAG) { "invalid media item click $mediaItem" }
-            val result =
-                popupController.showDialog(DialogId.ConfirmDeletePlaylist)
-            Napier.d(tag = TAG) { "ConfirmDeletePlaylist result: $result" }
-            if (result == DialogAction.AlertDialog.Accept) {
-                val playListId = (selectedTab as CustomTab.PlayListDetail).playListId
-                val mediaId = mediaItem.id.substringAfter(AudioItemModel.INVALID_ID_PREFIX)
-
-                playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(mediaId))
-            }
+            flowOf(null)
         }
+
+    private fun playMedia(
+        mediaItem: MediaItemModel,
+        allAudios: List<MediaItemModel>,
+    ) {
+        mediaControllerRepository.playMediaList(
+            allAudios.toList(),
+            allAudios.indexOf(mediaItem),
+        )
     }
 
     context(repository: Repository, popupController: PopupController)
@@ -194,7 +188,7 @@ class TabContentPresenter(
                     whereGroups = groupKeys.filterNotNull(),
                 )?.first() ?: emptyList()
         if (items.isNotEmpty()) {
-            playMusic(
+            playMedia(
                 items.first(),
                 items,
             )
@@ -202,35 +196,37 @@ class TabContentPresenter(
     }
 
     context(_: Repository, popupController: PopupController, _: MediaFileDeleteHelper)
-    private suspend fun onShowMusicItemOption(item: AudioItemModel) {
+    private suspend fun onShowMusicItemOption(item: MediaItemModel) {
+        Napier.d(message = "onShowMusicItemOption: $item")
+        val isAudio = item is AudioItemModel
         val options =
-            listOf(
-                OptionItem.PLAY_NEXT,
-                OptionItem.ADD_TO_QUEUE,
-                OptionItem.ADD_TO_PLAYLIST,
-                OptionItem.OPEN_LIBRARY_ALBUM,
-                OptionItem.OPEN_LIBRARY_ARTIST,
-                OptionItem.DELETE_MEDIA_FILE,
-            )
+            buildList {
+                add(OptionItem.PLAY_NEXT)
+                add(OptionItem.ADD_TO_QUEUE)
+                if (isAudio) add(OptionItem.ADD_TO_PLAYLIST)
+                if (isAudio) add(OptionItem.OPEN_LIBRARY_ALBUM)
+                if (isAudio) add(OptionItem.OPEN_LIBRARY_ARTIST)
+                add(OptionItem.DELETE_MEDIA_FILE)
+            }
         val result = popupController.showDialog(DialogId.OptionDialog(options = options))
 
         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
             when (result.optionItem) {
                 OptionItem.PLAY_NEXT -> addToNextPlay(listOf(item))
                 OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(item))
-                OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item))
+                OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item as AudioItemModel))
                 OptionItem.DELETE_MEDIA_FILE -> deleteItems(listOf(item))
                 OptionItem.OPEN_LIBRARY_ALBUM ->
                     onRequest(
                         NavigationRequest.GoToLibraryDetail(
-                            LibraryDataSource.AlbumDetail(id = item.albumId),
+                            LibraryDataSource.AlbumDetail(id = (item as AudioItemModel).albumId),
                         ),
                     )
 
                 OptionItem.OPEN_LIBRARY_ARTIST ->
                     onRequest(
                         NavigationRequest.GoToLibraryDetail(
-                            LibraryDataSource.ArtistDetail(id = item.artistId),
+                            LibraryDataSource.ArtistDetail(id = (item as AudioItemModel).artistId),
                         ),
                     )
 
@@ -244,17 +240,17 @@ class TabContentPresenter(
 data class TabContentState(
     val selectedTab: CustomTab? = null,
     val groupSort: DisplaySetting?,
-    val pagingItems: LazyPagingItems<AudioItemModel>,
+    val pagingItems: LazyPagingItems<MediaItemModel>,
     val eventSink: (TabContentEvent) -> Unit = {},
 )
 
 sealed interface TabContentEvent {
-    data class OnShowMusicItemOption(
-        val mediaItemModel: AudioItemModel,
+    data class OnShowMediaItemOption(
+        val mediaItemModel: MediaItemModel,
     ) : TabContentEvent
 
-    data class OnPlayMusic(
-        val mediaItemModel: AudioItemModel,
+    data class OnPlayMedia(
+        val mediaItemModel: MediaItemModel,
     ) : TabContentEvent
 
     data class OnGroupItemClick(

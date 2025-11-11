@@ -95,4 +95,11 @@
     <string name="added_to_play_next">Zur nächsten Wiedergabe hinzugefügt</string>
     <string name="added_to_play_queue">Zur Wiedergabeliste hinzugefügt</string>
     <string name="delete_failed">Löschen fehlgeschlagen</string>
+
+    <string name="sort_by_video_bucket">Ordner</string>
+    <string name="preset_video">Video-Voreinstellung</string>
+    <string name="preset_audio">Audio-Voreinstellung</string>
+    <string name="video_page_title">Alle Videos</string>
+    <string name="sort_sub_bucket_name_asc">Elemente nach Videogruppennamen in aufsteigender Reihenfolge gruppieren.</string>
+    <string name="sort_by_video_bucket_name">Nach Videogruppennamen sortieren</string>
 </resources>

@@ -17,6 +17,7 @@ import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.TabKind
+import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.SleepTimerOption
@@ -35,19 +36,52 @@ suspend fun MediaItemModel.pinToHomeTab() {
             is ArtistItemModel -> TabKind.ARTIST
             is GenreItemModel -> TabKind.GENRE
             is PlayListItemModel -> TabKind.PLAYLIST
-            is AudioItemModel -> error("invalid")
+            is AudioItemModel,
+            is VideoItemModel,
+            -> error("invalid")
         }
+    pinToHomeTab(
+        externalId = id,
+        tabName = name,
+        tabKind = tabKind,
+    )
+}
+
+context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
+suspend fun pinAllMusicToHomeTab() {
+    pinToHomeTab(
+        externalId = "all_music",
+        tabName = "All Music",
+        tabKind = TabKind.ALL_MUSIC,
+    )
+}
+
+context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
+suspend fun pinAllVideoToHomeTab() {
+    pinToHomeTab(
+        externalId = "all_video",
+        tabName = "All Video",
+        tabKind = TabKind.ALL_VIDEO,
+    )
+}
+
+context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
+suspend fun pinToHomeTab(
+    externalId: String,
+    tabName: String,
+    tabKind: TabKind,
+) {
     val exist =
-        userPreferenceRepository.isTabExist(externalId = id, tabName = name, tabKind = tabKind)
+        userPreferenceRepository.isTabExist(externalId = externalId, tabName = tabName, tabKind = tabKind)
     if (exist) {
         popupController.showSnackBar(SnackBarMessage.TabAlreadyExist)
     } else {
-        userPreferenceRepository.addNewCustomTab(externalId = id, tabName = name, tabKind = tabKind)
+        userPreferenceRepository.addNewCustomTab(externalId = externalId, tabName = tabName, tabKind = tabKind)
     }
 }
 
 context(repo: Repository, popupController: PopupController)
-suspend fun addToNextPlay(items: List<AudioItemModel>) {
+suspend fun addToNextPlay(items: List<MediaItemModel>) {
     val havePlayingQueue = repo.getPlayListQueue().isNotEmpty()
     if (havePlayingQueue) {
         repo.addMediaItems(
@@ -61,7 +95,7 @@ suspend fun addToNextPlay(items: List<AudioItemModel>) {
 }
 
 context(repo: Repository, popupController: PopupController)
-suspend fun addToQueue(items: List<AudioItemModel>) {
+suspend fun addToQueue(items: List<MediaItemModel>) {
     val playListQueue = repo.getPlayListQueue()
     if (playListQueue.isNotEmpty()) {
         repo.addMediaItems(
@@ -140,7 +174,7 @@ suspend fun addToPlaylist(items: List<AudioItemModel>) {
 }
 
 context(deleteHelper: MediaFileDeleteHelper, popupController: PopupController)
-suspend fun deleteItems(items: List<AudioItemModel>) {
+suspend fun deleteItems(items: List<MediaItemModel>) {
     if (items.isEmpty()) {
         return
     }

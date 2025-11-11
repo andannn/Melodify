@@ -1,40 +1,16 @@
 plugins {
     id("melodify.kmp.application")
     id("melodify.compose.multiplatform.application")
+    alias(libs.plugins.android.application)
     alias(libs.plugins.google.service)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.serialization)
 }
 
-kotlin {
-    sourceSets {
-        androidMain.dependencies {
-            implementation(project(":shared:ui"))
-            implementation(project(":shared:data"))
-            implementation(project(":shared:player"))
-            implementation(project(":shared:syncer"))
-            implementation(project(":shared:platform"))
-
-            implementation(libs.coil3.compose)
-            implementation(libs.androidx.core.ktx)
-            implementation(libs.androidx.core.splashscreen)
-            implementation(libs.androidx.activity.compose)
-
-            implementation(libs.androidx.palette)
-            implementation(libs.material.color.utilities.android)
-
-            // Firebase
-            implementation(project.dependencies.platform(libs.firebase.bom))
-            implementation(libs.firebase.analytics)
-            implementation(libs.firebase.crashlytics)
-        }
-    }
-}
-
 android {
     namespace = "com.andannn.melodify"
 
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    sourceSets["main"].manifest.srcFile("src/main/AndroidManifest.xml")
 
     defaultConfig {
         applicationId = "com.andannn.melodify"
@@ -73,4 +49,25 @@ android {
             }
         }
     }
+}
+
+dependencies {
+    implementation(project(":shared:ui"))
+    implementation(project(":shared:data"))
+    implementation(project(":shared:player"))
+    implementation(project(":shared:syncer"))
+    implementation(project(":shared:platform"))
+
+    implementation(libs.coil3.compose)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.activity.compose)
+
+    implementation(libs.androidx.palette)
+    implementation(libs.material.color.utilities.android)
+
+    // Firebase
+    implementation(project.dependencies.platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 }

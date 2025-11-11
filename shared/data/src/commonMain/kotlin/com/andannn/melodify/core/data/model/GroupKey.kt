@@ -7,6 +7,7 @@ package com.andannn.melodify.core.data.model
 import com.andannn.melodify.core.database.MediaWheres
 import com.andannn.melodify.core.database.Where
 import com.andannn.melodify.core.database.entity.MediaColumns
+import com.andannn.melodify.core.database.entity.VideoColumns
 
 /**
  * group key for media items
@@ -31,17 +32,35 @@ sealed interface GroupKey {
     data class Title(
         val firstCharacterString: String,
     ) : GroupKey
+
+    data class BucketId(
+        val bucketId: String,
+        val bucketDisplayName: String,
+    ) : GroupKey
 }
 
-fun AudioItemModel.keyOf(sortOption: SortOption): GroupKey? =
-    when (sortOption) {
-        is SortOption.Album -> GroupKey.Album(albumId)
-        is SortOption.Artist -> GroupKey.Artist(artistId)
-        is SortOption.Genre -> GroupKey.Genre(genreId)
-        is SortOption.ReleaseYear -> GroupKey.Year(releaseYear)
-        is SortOption.Title -> GroupKey.Title(name[0].toString())
-        SortOption.NONE -> null
-        is SortOption.TrackNum -> error("Not support")
+fun MediaItemModel.keyOf(sortOption: SortOption): GroupKey? =
+    when (this) {
+        is AudioItemModel ->
+            when (sortOption) {
+                is SortOption.AudioOption.Album -> GroupKey.Album(albumId)
+                is SortOption.AudioOption.Artist -> GroupKey.Artist(artistId)
+                is SortOption.AudioOption.Genre -> GroupKey.Genre(genreId)
+                is SortOption.AudioOption.ReleaseYear -> GroupKey.Year(releaseYear)
+                is SortOption.AudioOption.Title -> GroupKey.Title(name[0].toString())
+                is SortOption.AudioOption.TrackNum -> error("Not support")
+                SortOption.NONE -> null
+                else -> error("not support key")
+            }
+
+        is VideoItemModel ->
+            when (sortOption) {
+                is SortOption.VideoOption.Bucket -> GroupKey.BucketId(bucketId, bucketName)
+                is SortOption.VideoOption.Title -> GroupKey.Title(name[0].toString())
+                SortOption.NONE -> null
+                else -> error("not support key $sortOption")
+            }
+        else -> error("not support key")
     }
 
 internal fun List<GroupKey>.toWheresMethod() =
@@ -62,6 +81,7 @@ internal fun MutableList<Where>.addWhereOption(where: GroupKey) =
                         Where.Operator.EQUALS,
                         where.albumId,
                     )
+
                 is GroupKey.Artist ->
                     Where(
                         MediaColumns.ARTIST_ID,
@@ -75,17 +95,26 @@ internal fun MutableList<Where>.addWhereOption(where: GroupKey) =
                         Where.Operator.EQUALS,
                         where.genreId,
                     )
+
                 is GroupKey.Title ->
                     Where(
                         MediaColumns.TITLE,
                         Where.Operator.GLOB,
                         where.firstCharacterString + "*",
                     )
+
                 is GroupKey.Year ->
                     Where(
                         MediaColumns.YEAR,
                         Where.Operator.EQUALS,
                         where.year,
+                    )
+
+                is GroupKey.BucketId ->
+                    Where(
+                        VideoColumns.BUCKET_DISPLAY_NAME,
+                        Where.Operator.EQUALS,
+                        where.bucketDisplayName,
                     )
             }
         add(where)

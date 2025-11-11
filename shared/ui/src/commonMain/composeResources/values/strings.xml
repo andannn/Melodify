@@ -82,6 +82,7 @@
     <string name="sync_progress_album">Album %1$d / %2$d</string>
     <string name="sync_progress_artist">Artist %1$d / %2$d</string>
     <string name="sync_progress_genre">Genre %1$d / %2$d</string>
+    <string name="sync_progress_video">Video %1$d / %2$d</string>
     <string name="go_to_library_album">Go to album</string>
     <string name="go_to_library_artist">Go to artist</string>
     <string name="delete_media_file">Delete media file</string>
@@ -90,4 +91,10 @@
     <string name="added_to_play_next">Added to play next</string>
     <string name="added_to_play_queue">Added to play queue</string>
     <string name="delete_failed">Delete failed</string>
+    <string name="sort_by_video_bucket">Bucket</string>
+    <string name="preset_video">Video Preset</string>
+    <string name="preset_audio">Audio Preset</string>
+    <string name="video_page_title">All Videos</string>
+    <string name="sort_sub_bucket_name_asc">Group items by video group name in ascending order.</string>
+    <string name="sort_by_video_bucket_name">Sort by Video group name</string>
 </resources>

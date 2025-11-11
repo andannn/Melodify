@@ -26,10 +26,12 @@ internal object CustomTabColumns {
 
 object CustomTabType {
     const val ALL_MUSIC = "all_music"
+    const val ALL_VIDEO = "all_video"
     const val ALBUM_DETAIL = "album_detail"
     const val ARTIST_DETAIL = "artist_detail"
     const val GENRE_DETAIL = "genre_detail"
     const val PLAYLIST_DETAIL = "playlist_detail"
+    const val VIDEO_BUCKET = "video_bucket"
 }
 
 @Entity(tableName = Tables.CUSTOM_TAB)

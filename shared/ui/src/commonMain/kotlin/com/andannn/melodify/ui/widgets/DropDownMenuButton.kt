@@ -30,10 +30,10 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun DropDownMenuIconButton(
+    modifier: Modifier = Modifier,
     options: List<StringResource>,
     enabled: Boolean = true,
     onSelectIndex: (index: Int) -> Unit,
-    modifier: Modifier = Modifier,
     // Hide selected item by default
     selectedIndex: Int? = null,
     imageVector: ImageVector = Icons.Default.FilterAlt,

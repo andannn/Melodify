@@ -8,10 +8,10 @@ import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.MediaType
 import com.andannn.melodify.core.syncer.model.FileChangeEvent
 import com.andannn.melodify.core.syncer.model.FileChangeType
+import com.andannn.melodify.core.syncer.toMediaEntity
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlin.time.measureTime
 
 private const val TAG = "MediaLibrarySyncer"
 
@@ -20,6 +20,7 @@ enum class SyncType {
     ARTIST,
     ALBUM,
     GENRE,
+    VIDEO,
 }
 
 private fun Int.toSyncType() =
@@ -28,6 +29,7 @@ private fun Int.toSyncType() =
         MediaType.ARTIST -> SyncType.ARTIST
         MediaType.GENRE -> SyncType.GENRE
         MediaType.MEDIA -> SyncType.MEDIA
+        MediaType.VIDEO -> SyncType.VIDEO
         else -> error("never")
     }
 
@@ -80,10 +82,12 @@ internal class MediaLibrarySyncerWrapper(
                             mediaData.artistData.toArtistEntity(),
                             mediaData.genreData.toGenreEntity(),
                             mediaData.audioData.toMediaEntity(),
+                            mediaData.videoData.toVideoEntity(),
                         )
                     }
 
                     FileChangeType.DELETE -> {
+                        Napier.d(tag = TAG) { "Processing Delete event: ${events.map { it.fileUri }}" }
                         mediaLibraryDao.deleteMediaByUris(events.map { it.fileUri })
                     }
                 }
@@ -98,12 +102,12 @@ internal class MediaLibrarySyncerWrapper(
                 val mediaData = mediaLibraryScanner.scanAllMedia()
                 trySend(SyncStatus.Start)
 
-// TODO: Incremental comparison and insertion into the database, deleting outdated data.
                 mediaLibraryDao.clearAndInsertLibrary(
                     albums = mediaData.albumData.toAlbumEntity(),
                     artists = mediaData.artistData.toArtistEntity(),
                     genres = mediaData.genreData.toGenreEntity(),
                     audios = mediaData.audioData.toMediaEntity(),
+                    videos = mediaData.videoData.toVideoEntity(),
                 ) { type, inserted, total ->
                     Napier.d(tag = TAG) { "Media sync process $type: inserted: $inserted,  total: $total" }
                     trySend(SyncStatus.Progress(type.toSyncType(), inserted, total))

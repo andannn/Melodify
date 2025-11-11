@@ -8,10 +8,13 @@ import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.MediaEntity
+import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.syncer.model.AlbumData
 import com.andannn.melodify.core.syncer.model.ArtistData
 import com.andannn.melodify.core.syncer.model.AudioData
 import com.andannn.melodify.core.syncer.model.GenreData
+import com.andannn.melodify.core.syncer.model.VideoData
+import com.sun.jndi.toolkit.url.Uri
 
 fun List<AlbumData>.toAlbumEntity(): List<AlbumEntity> =
     map {
@@ -64,5 +67,31 @@ fun List<AudioData>.toMediaEntity(): List<MediaEntity> =
             bitrate = it.bitrate,
             modifiedDate = it.modifiedDate,
             cover = it.cover,
+        )
+    }
+
+fun List<VideoData>.toVideoEntity(): List<VideoEntity> =
+    map {
+        VideoEntity(
+            id = it.id,
+            sourceUri = it.sourceUri,
+            path = it.data,
+            title = it.title,
+            duration = it.duration.toInt(),
+            modifiedDate = it.dateModified,
+            size = it.size.toInt(),
+            mimeType = it.mimeType,
+            width = it.width,
+            height = it.height,
+            orientation = it.orientation,
+            resolution = "${it.width}x${it.height}",
+            relativePath = it.relativePath,
+            bucketId = it.bucketId,
+            bucketDisplayName = it.bucketDisplayName,
+            volumeName = it.volumeName,
+            album = it.album,
+            artist = it.artist,
+            dateAdded = it.dateAdded,
+            dateModified = it.dateModified,
         )
     }

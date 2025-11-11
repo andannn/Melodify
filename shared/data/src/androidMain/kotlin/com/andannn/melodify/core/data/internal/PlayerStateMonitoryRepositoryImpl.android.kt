@@ -6,9 +6,11 @@ package com.andannn.melodify.core.data.internal
 
 import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.player.PlayerState
 import com.andannn.melodify.core.player.PlayerWrapper
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
@@ -25,20 +27,20 @@ class PlayerStateMonitoryRepositoryImpl(
 
     override fun getPlayingIndexInQueue(): Int = playerWrapper.playingIndexInQueue
 
-    override suspend fun getPlayListQueue(): List<AudioItemModel> =
+    override suspend fun getPlayListQueue(): List<MediaItemModel> =
         playerWrapper.playList.map {
-            it.toAppItem() as? AudioItemModel ?: error("invalid")
+            it.toAppItem()
         }
 
     override fun getPlayingMediaStateFlow() =
         playerWrapper.observePlayingMedia().map {
-            it?.toAppItem() as? AudioItemModel
+            it?.toAppItem()
         }
 
-    override fun getPlayListQueueStateFlow() =
+    override fun getPlayListQueueStateFlow(): Flow<List<MediaItemModel>> =
         playerWrapper.observePlayListQueue().map { items ->
-            items.mapNotNull {
-                it.toAppItem() as? AudioItemModel
+            items.map {
+                it.toAppItem()
             }
         }
 

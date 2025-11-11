@@ -15,5 +15,6 @@ actual val DialogId.dialogIdType: DialogType
             is DialogId.AddMusicsToPlayListDialog,
             is DialogId.ChangeSortRuleDialog,
             is DialogId.OptionDialog,
+            DialogId.DefaultSortRuleSettingDialog,
             -> DialogType.AlertDialog
         }

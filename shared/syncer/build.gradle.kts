@@ -18,6 +18,11 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
         }
 
+        androidInstrumentedTest.dependencies {
+            implementation(libs.androidx.test.runner)
+            implementation(libs.androidx.test.core.ktx)
+        }
+
         desktopMain.dependencies {
             // https://mvnrepository.com/artifact/org/jaudiotagger
             implementation(libs.jaudiotagger)

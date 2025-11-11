@@ -13,9 +13,16 @@ data class MediaSorts(
                 buildList(builderAction),
             )
     }
+
+    override fun toString(): String = toSortString()
 }
 
-internal fun MediaSorts.toSortString(): String = "ORDER BY " + sorts.joinToString(separator = ", ")
+internal fun MediaSorts?.toSortString(): String =
+    if (this != null && sorts.isNotEmpty()) {
+        "ORDER BY " + sorts.joinToString(separator = ", ")
+    } else {
+        ""
+    }
 
 data class Sort(
     val column: String,

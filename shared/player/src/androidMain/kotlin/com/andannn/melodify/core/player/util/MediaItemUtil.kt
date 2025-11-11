@@ -12,14 +12,18 @@ import androidx.media3.common.MediaMetadata
 
 const val UNIQUE_ID_KEY = "unique_id"
 const val EXTRA_ALBUM_COVER_ART_KEY = "extra_album_cover_art_key"
+const val IS_AUDIO_KEY = "is_audio"
+const val VIDEO_BUCKET_NAME = "video_bucket_name"
 
 fun buildMediaItem(
+    isAudio: Boolean,
     title: String,
     mediaId: String,
     isPlayable: Boolean,
     isBrowsable: Boolean,
     mediaType: @MediaMetadata.MediaType Int,
     subtitleConfigurations: List<MediaItem.SubtitleConfiguration> = mutableListOf(),
+    bucketName: String? = null,
     album: String? = null,
     artist: String? = null,
     genre: String? = null,
@@ -50,6 +54,8 @@ fun buildMediaItem(
                 Bundle().apply {
                     uniqueId?.let { putString(UNIQUE_ID_KEY, it) }
                     imageUri?.let { putString(EXTRA_ALBUM_COVER_ART_KEY, it.toString()) }
+                    bucketName?.let { putString(VIDEO_BUCKET_NAME, it) }
+                    putBoolean(IS_AUDIO_KEY, isAudio)
                 },
             ).build()
 

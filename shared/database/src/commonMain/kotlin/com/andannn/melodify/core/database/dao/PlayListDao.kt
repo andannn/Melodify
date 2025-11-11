@@ -15,6 +15,8 @@ import androidx.room.Transaction
 import com.andannn.melodify.core.database.MediaSorts
 import com.andannn.melodify.core.database.MediaWheres
 import com.andannn.melodify.core.database.Tables
+import com.andannn.melodify.core.database.Where
+import com.andannn.melodify.core.database.appendOrCreateWith
 import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
@@ -138,7 +140,15 @@ interface PlayListDao {
         mediaSorts: MediaSorts?,
     ): Flow<List<CrossRefWithMediaRelation>> =
         getMediasInPlayListFlowRaw(
-            buildPlayListRawQuery(playListId, wheres, mediaSorts),
+            buildPlayListRawQuery(
+                wheres.appendOrCreateWith {
+                    listOf(
+                        playListIdWhere(playListId.toString()),
+                        audioNotDeletedWhere(),
+                    )
+                },
+                mediaSorts,
+            ),
         )
 
     fun getMediaPagingSourceInPlayList(
@@ -146,26 +156,45 @@ interface PlayListDao {
         wheres: MediaWheres?,
         mediaSorts: MediaSorts? = null,
     ): PagingSource<Int, CrossRefWithMediaRelation> =
-        getMediasInPlayListFlowPagingSource(buildPlayListRawQuery(playListId, wheres, mediaSorts))
+        getMediasInPlayListFlowPagingSource(
+            buildPlayListRawQuery(
+                wheres.appendOrCreateWith {
+                    listOf(
+                        playListIdWhere(playListId.toString()),
+                        audioNotDeletedWhere(),
+                    )
+                },
+                mediaSorts,
+            ),
+        )
 
     private fun buildPlayListRawQuery(
-        playListId: Long,
         wheres: MediaWheres?,
         sort: MediaSorts?,
     ): RoomRawQuery {
-        val filterDeleted = "${MediaColumns.DELETED} IS NOT 1"
-        val wheres =
-            wheres?.toWhereString()?.let { "$it AND $filterDeleted" } ?: "WHERE $filterDeleted"
-        val sort = sort?.toSortString() ?: ""
         val sql = """
             SELECT * FROM ${Tables.PLAY_LIST}
             JOIN ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF} ON ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
             LEFT JOIN ${Tables.LIBRARY_MEDIA} ON ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${MediaColumns.ID}
-            $wheres AND ${PlayListColumns.ID} = $playListId
-            $sort
+            ${wheres.toWhereString()}
+            ${sort.toSortString()}
         """
         return RoomRawQuery(sql)
     }
+
+    private fun audioNotDeletedWhere() =
+        Where(
+            MediaColumns.DELETED,
+            "IS NOT",
+            "1",
+        )
+
+    private fun playListIdWhere(playListId: String) =
+        Where(
+            PlayListColumns.ID,
+            "=",
+            playListId,
+        )
 
     @RawQuery(observedEntities = [MediaEntity::class, PlayListEntity::class, PlayListWithMediaCrossRef::class])
     fun getMediasInPlayListFlowRaw(rawQuery: RoomRawQuery): Flow<List<CrossRefWithMediaRelation>>

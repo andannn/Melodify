@@ -13,10 +13,12 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.core.data.model.TabKind
 import com.andannn.melodify.core.data.model.sortOptions
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
@@ -113,6 +115,7 @@ private class GroupHeaderPresenter(
                 when (groupKey) {
                     is GroupKey.Title -> "# " + groupKey.firstCharacterString
                     is GroupKey.Year -> "# " + groupKey.year
+                    is GroupKey.BucketId -> "# " + groupKey.bucketDisplayName
                     else -> mediaItem?.name ?: ""
                 }
             }
@@ -140,7 +143,18 @@ private class GroupHeaderPresenter(
                         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
                             context(repository, popupController, mediaFileDeleteHelper) {
                                 when (result.optionItem) {
-                                    OptionItem.ADD_TO_HOME_TAB -> launch { mediaItem?.pinToHomeTab() }
+                                    OptionItem.ADD_TO_HOME_TAB ->
+                                        launch {
+                                            if (groupInfo.groupKey is GroupKey.BucketId) {
+                                                pinToHomeTab(
+                                                    externalId = groupInfo.groupKey.bucketId,
+                                                    tabName = groupInfo.groupKey.bucketDisplayName,
+                                                    tabKind = TabKind.VIDEO_BUCKET,
+                                                )
+                                            } else {
+                                                mediaItem?.pinToHomeTab()
+                                            }
+                                        }
                                     OptionItem.PLAY_NEXT,
                                     OptionItem.ADD_TO_QUEUE,
                                     OptionItem.ADD_TO_PLAYLIST,
@@ -180,7 +194,8 @@ private class GroupHeaderPresenter(
                 )?.first() ?: emptyList()
         when (optionItem) {
             OptionItem.PLAY_NEXT -> addToNextPlay(items)
-            OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items)
+// TODO: Video Playlist impl
+            OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items as List<AudioItemModel>)
             OptionItem.ADD_TO_QUEUE -> addToQueue(items)
             OptionItem.DELETE_MEDIA_FILE -> deleteItems(items)
             else -> {}
@@ -193,6 +208,7 @@ private fun GroupKey.canPinToHome() =
         is GroupKey.Album,
         is GroupKey.Artist,
         is GroupKey.Genre,
+        is GroupKey.BucketId,
         -> true
 
         is GroupKey.Title,

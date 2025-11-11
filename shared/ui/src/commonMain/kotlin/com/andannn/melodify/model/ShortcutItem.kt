@@ -11,6 +11,7 @@ import melodify.shared.ui.generated.resources.audio_page_title
 import melodify.shared.ui.generated.resources.favorite
 import melodify.shared.ui.generated.resources.genre_title
 import melodify.shared.ui.generated.resources.playlist_page_title
+import melodify.shared.ui.generated.resources.video_page_title
 import org.jetbrains.compose.resources.StringResource
 
 enum class ShortcutItem(
@@ -20,6 +21,11 @@ enum class ShortcutItem(
     ALL_SONG(
         iconRes = SimpleMusicIcons.Music,
         textRes = Res.string.audio_page_title,
+    ),
+
+    ALL_VIDEO(
+        iconRes = SimpleMusicIcons.Video,
+        textRes = Res.string.video_page_title,
     ),
 
     ALBUM(

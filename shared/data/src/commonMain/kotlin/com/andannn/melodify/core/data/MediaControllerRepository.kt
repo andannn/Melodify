@@ -4,14 +4,14 @@
  */
 package com.andannn.melodify.core.data
 
-import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 
 interface MediaControllerRepository {
     fun getCurrentPlayingItemDuration(): Long?
 
     fun playMediaList(
-        mediaList: List<AudioItemModel>,
+        mediaList: List<MediaItemModel>,
         index: Int = 0,
     )
 
@@ -36,7 +36,7 @@ interface MediaControllerRepository {
 
     fun addMediaItems(
         index: Int,
-        mediaItems: List<AudioItemModel>,
+        mediaItems: List<MediaItemModel>,
     )
 
     fun moveMediaItem(

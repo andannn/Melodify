@@ -10,7 +10,6 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.andannn.melodify.core.datastore.model.PlatModeValues
 import com.andannn.melodify.core.datastore.model.PreferencesKeyName
@@ -39,8 +38,10 @@ class UserSettingPreferences(
                             ?: emptySet(),
                     lastSuccessfulSyncTime =
                         preferences[longPreferencesKey(PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME)],
-                    defaultSortRule =
+                    defaultAudioSortRule =
                         preferences[intPreferencesKey(PreferencesKeyName.DEFAULT_PRESET_SORT_RULE_KEY_NAME)],
+                    defaultVideoSortRule =
+                        preferences[intPreferencesKey(PreferencesKeyName.DEFAULT_VIDEO_PRESET_SORT_RULE_KEY_NAME)],
                 )
             }
 
@@ -65,9 +66,15 @@ class UserSettingPreferences(
         }
     }
 
-    suspend fun setDefaultPreset(defaultPreset: Int) {
+    suspend fun setDefaultAudioPreset(defaultPreset: Int) {
         preferences.edit { preferences ->
             preferences[intPreferencesKey(PreferencesKeyName.DEFAULT_PRESET_SORT_RULE_KEY_NAME)] = defaultPreset
+        }
+    }
+
+    suspend fun setDefaultVideoPreset(defaultPreset: Int) {
+        preferences.edit { preferences ->
+            preferences[intPreferencesKey(PreferencesKeyName.DEFAULT_VIDEO_PRESET_SORT_RULE_KEY_NAME)] = defaultPreset
         }
     }
 }

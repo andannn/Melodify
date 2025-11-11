@@ -58,12 +58,12 @@ sealed interface DialogId {
 
     /**
      * Change the sort rule of the tab.
-     *
-     * If [tab] is null, changes for the default Sort Rule.
      */
     data class ChangeSortRuleDialog(
-        val tab: CustomTab? = null,
+        val tab: CustomTab,
     ) : DialogId
+
+    data object DefaultSortRuleSettingDialog : DialogId
 
     data class AddMusicsToPlayListDialog(
         val items: List<AudioItemModel>,

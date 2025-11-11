@@ -16,6 +16,7 @@ import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.SleepTimerRepository
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.data.model.next
 import com.andannn.melodify.model.DialogAction
@@ -63,7 +64,7 @@ sealed class PlayerUiState(
         val duration: Long = 0L,
         val isFavorite: Boolean = false,
         val playMode: PlayMode = PlayMode.REPEAT_ALL,
-        val mediaItem: AudioItemModel,
+        val mediaItem: MediaItemModel,
         val progress: Float,
         val isPlaying: Boolean,
         val isCounting: Boolean,
@@ -75,7 +76,7 @@ sealed interface PlayerUiEvent {
     data object OnFavoriteButtonClick : PlayerUiEvent
 
     data class OnOptionIconClick(
-        val mediaItem: AudioItemModel,
+        val mediaItem: MediaItemModel,
     ) : PlayerUiEvent
 
     data object OnPlayButtonClick : PlayerUiEvent
@@ -176,7 +177,8 @@ private class PlayerPresenter(
     private val isFavoriteFlow =
         interactingMusicItemFlow
             .flatMapLatest { interactingMusicItem ->
-                getIsFavoriteFlow(interactingMusicItem)
+// TODO: Implement Video favorite
+                getIsFavoriteFlow(interactingMusicItem as? AudioItemModel)
             }.stateIn(
                 this,
                 started = SharingStarted.WhileSubscribed(),
@@ -248,7 +250,7 @@ private class PlayerPresenter(
         }
     }
 
-    private fun onOptionIconClick(mediaItem: AudioItemModel) {
+    private fun onOptionIconClick(mediaItem: MediaItemModel) {
         launch {
             val result =
                 popupController.showDialog(
@@ -281,7 +283,7 @@ private class PlayerPresenter(
             playListRepository.isMediaInFavoritePlayListFlow(interactingMusicItem.id)
         }
 
-    private fun onFavoriteButtonClick(current: AudioItemModel?) {
+    private fun onFavoriteButtonClick(current: MediaItemModel?) {
         if (current == null) return
 
         launch {

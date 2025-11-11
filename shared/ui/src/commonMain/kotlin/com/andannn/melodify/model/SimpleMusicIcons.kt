@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DeleteSweep
 import androidx.compose.material.icons.rounded.DisplaySettings
@@ -33,6 +34,7 @@ object SimpleMusicIcons {
     val PlayListRemove = SmpIcon.ImageVectorIcon(Icons.Rounded.PlaylistRemove)
     val AddToHomeTab = SmpIcon.ImageVectorIcon(Icons.Filled.Home)
     val Music = SmpIcon.ImageVectorIcon(Icons.Filled.MusicNote)
+    val Video = SmpIcon.ImageVectorIcon(Icons.Filled.VideoLibrary)
     val Album = SmpIcon.ImageVectorIcon(Icons.Filled.Album)
     val Artist = SmpIcon.ImageVectorIcon(Icons.Filled.Person)
     val Genre = SmpIcon.ImageVectorIcon(Icons.Rounded.LibraryMusic)

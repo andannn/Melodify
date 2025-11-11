@@ -20,6 +20,11 @@ kotlin {
             implementation(libs.androidx.paging.compose)
             implementation(libs.kotlinx.serialization.json)
         }
+
+        androidMain.dependencies {
+            implementation(libs.androidx.media3.ui.compose)
+            implementation(libs.coil3.video)
+        }
     }
 }
 

@@ -38,4 +38,5 @@ object DefaultPresetValues {
     const val ARTIST_ASC_VALUE: Int = 1
     const val TITLE_ASC_VALUE: Int = 2
     const val ARTIST_ALBUM_ASC_VALUE: Int = 3
+    const val BUCKET_NAME_ASC_VALUE: Int = 4
 }
