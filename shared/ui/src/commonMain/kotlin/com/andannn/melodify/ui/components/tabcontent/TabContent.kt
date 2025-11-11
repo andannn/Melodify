@@ -126,7 +126,7 @@ private fun LazyListContent(
             )
         GroupHeader(
             groupInfo = groupState,
-            isPrimary = true,
+            isPrimary = parentHeaderGroupKey == null,
             onGroupHeaderClick = {
                 onGroupItemClick.invoke(groupState.selection)
             },
