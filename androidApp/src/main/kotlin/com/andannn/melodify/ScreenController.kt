@@ -20,6 +20,7 @@ val LocalScreenController: ProvidableCompositionLocal<ScreenController> =
         error("ScreenOrientationController not provided")
     }
 
+@Suppress("ktlint:standard:function-naming")
 fun ScreenOrientationController(activity: MainActivity): ScreenController = ScreenControllerImpl(activity)
 
 interface ScreenController {

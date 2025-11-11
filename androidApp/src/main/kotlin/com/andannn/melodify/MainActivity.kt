@@ -40,8 +40,7 @@ private const val TAG = "MainActivity"
 
 private val runTimePermissions =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        listOf(Manifest.permission.READ_MEDIA_AUDIO)
-        listOf(Manifest.permission.READ_MEDIA_VIDEO)
+        listOf(Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO)
     } else {
         listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
     }
@@ -110,14 +109,15 @@ class MainActivity : ComponentActivity() {
             if (!permissionGranted) {
                 LaunchedEffect(Unit) {
                     runTimePermissions
-                        .filter {
+                        .filter { permission ->
                             ContextCompat.checkSelfPermission(
                                 // context =
                                 this@MainActivity,
                                 // permission =
-                                it,
+                                permission,
                             ) == PackageManager.PERMISSION_DENIED
                         }.let {
+                            Napier.d(tag = TAG) { "requesting permissions: $it" }
                             launcher.launch(it.toTypedArray())
                         }
                 }
