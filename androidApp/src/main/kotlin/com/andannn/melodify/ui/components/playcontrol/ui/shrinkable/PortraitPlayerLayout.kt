@@ -147,6 +147,7 @@ internal fun PortraitPlayerLayout(
                     subTitle = subTitle,
                     isShuffle = isShuffle,
                     isFullScreen = false,
+                    duration = duration,
                     playMode = playMode,
                     isPlaying = isPlaying,
                     progress = progress,

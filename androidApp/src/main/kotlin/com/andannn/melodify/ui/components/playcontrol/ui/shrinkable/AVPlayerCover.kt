@@ -14,13 +14,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,19 +34,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
-import com.andannn.melodify.core.data.model.subTitle
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
+import com.andannn.melodify.ui.util.formatDuration
 import com.andannn.melodify.ui.widgets.LinerWaveSlider
 import com.andannn.melodify.ui.widgets.MarqueeText
 import kotlinx.coroutines.delay
+import kotlin.math.roundToLong
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AVPlayerCover(
     title: String,
     subTitle: String,
+    duration: Long,
     progress: Float,
     isShuffle: Boolean,
     isPlaying: Boolean,
@@ -93,6 +94,7 @@ fun AVPlayerCover(
             ) {
                 if (isFullScreen) {
                     Column {
+                        Spacer(Modifier.height(8.dp))
                         MarqueeText(
                             modifier =
                                 Modifier
@@ -134,20 +136,41 @@ fun AVPlayerCover(
                             .align(Alignment.BottomCenter),
                 ) {
                     if (isFullScreen) {
-                        LinerWaveSlider(
+                        Row(
                             modifier = Modifier.weight(1f),
-                            playing = isPlaying,
-                            value = progress,
-                            onValueChange = {
-                                onEvent(PlayerUiEvent.OnProgressChange(it))
-                            },
-                        )
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            val durationString =
+                                remember(duration) {
+                                    formatDuration(duration)
+                                }
+                            val progressString =
+                                remember(progress, duration) {
+                                    formatDuration((progress * duration).roundToLong())
+                                }
+
+                            Text(progressString, style = MaterialTheme.typography.labelLarge)
+                            LinerWaveSlider(
+                                modifier = Modifier.weight(1f),
+                                playing = isPlaying,
+                                value = progress,
+                                onValueChange = {
+                                    onEvent(PlayerUiEvent.OnProgressChange(it))
+                                },
+                            )
+                            Text(durationString, style = MaterialTheme.typography.labelLarge)
+                        }
                     } else {
                         Spacer(Modifier.weight(1f))
                     }
                     IconButton(
                         modifier = Modifier,
                         onClick = onClickFullScreen,
+                        colors =
+                            IconButtonDefaults.iconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                                contentColor = MaterialTheme.colorScheme.onSurface,
+                            ),
                     ) {
                         Icon(
                             imageVector = Icons.Default.Fullscreen,

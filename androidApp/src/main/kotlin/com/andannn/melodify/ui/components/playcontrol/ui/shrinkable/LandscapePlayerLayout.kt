@@ -39,6 +39,7 @@ internal fun LandScapePlayerLayout(
             title = title,
             subTitle = subTitle,
             isFullScreen = true,
+            duration = duration,
             isShuffle = isShuffle,
             playMode = playMode,
             isPlaying = isPlaying,

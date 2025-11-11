@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.platform.formatTime
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
+import com.andannn.melodify.ui.util.formatDuration
 import com.andannn.melodify.ui.util.getIcon
 import com.andannn.melodify.ui.widgets.LinerWaveSlider
 import com.andannn.melodify.ui.widgets.MarqueeText
@@ -123,11 +124,4 @@ internal fun LargePlayerControlArea(
             onEvent = onEvent,
         )
     }
-}
-
-private fun formatDuration(millis: Long): String {
-    val d = millis.milliseconds
-    val minutes = d.inWholeMinutes
-    val seconds = d.inWholeSeconds % 60
-    return formatTime(minutes, seconds.toInt())
 }
