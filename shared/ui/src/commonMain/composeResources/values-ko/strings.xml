@@ -94,4 +94,11 @@
     <string name="added_to_play_next">다음 재생에 추가됨</string>
     <string name="added_to_play_queue">재생 목록에 추가됨</string>
     <string name="delete_failed">삭제 실패</string>
+
+    <string name="sort_by_video_bucket">폴더</string>
+    <string name="preset_video">비디오 프리셋</string>
+    <string name="preset_audio">오디오 프리셋</string>
+    <string name="video_page_title">모든 비디오</string>
+    <string name="sort_sub_bucket_name_asc">비디오 그룹 이름 기준으로 오름차순 정렬합니다.</string>
+    <string name="sort_by_video_bucket_name">비디오 그룹 이름으로 정렬</string>
 </resources>

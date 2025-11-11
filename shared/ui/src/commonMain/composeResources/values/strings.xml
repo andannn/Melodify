@@ -2,7 +2,6 @@
 <resources>
     <string name="home">Home</string>
     <string name="audio_page_title">All Songs</string>
-    <string name="video_page_title">All Videos</string>
     <string name="album_page_title">Album</string>
     <string name="artist_page_title">Artist</string>
     <string name="playlist_page_title">Play List</string>
@@ -62,12 +61,10 @@
     <string name="sort_by_artist">Sort by Artist</string>
     <string name="sort_by_title">Sort by Title</string>
     <string name="sort_by_artist_then_album">Sort by Artist, then Album</string>
-    <string name="sort_by_video_bucket_name">Sort by Video group name</string>
     <string name="sort_sub_album_asc">Group items by album and sort tracks in ascending order.</string>
     <string name="sort_sub_artist_asc">Group items by artist in ascending order.</string>
     <string name="sort_sub_title_name_asc">Group items alphabetically by title.</string>
     <string name="sort_sub_artist_album_asc">Group items by artist and then by album, sorting tracks in ascending order.</string>
-    <string name="sort_sub_bucket_name_asc">Group items by video group name in ascending order.</string>
     <string name="order_a_to_z">A → Z</string>
     <string name="order_z_to_a">Z → A</string>
     <string name="order_1_to_9">1 → 9</string>
@@ -97,4 +94,7 @@
     <string name="sort_by_video_bucket">Bucket</string>
     <string name="preset_video">Video Preset</string>
     <string name="preset_audio">Audio Preset</string>
+    <string name="video_page_title">All Videos</string>
+    <string name="sort_sub_bucket_name_asc">Group items by video group name in ascending order.</string>
+    <string name="sort_by_video_bucket_name">Sort by Video group name</string>
 </resources>

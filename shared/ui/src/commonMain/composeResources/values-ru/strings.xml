@@ -95,4 +95,11 @@
     <string name="added_to_play_next">Добавлено для следующего воспроизведения</string>
     <string name="added_to_play_queue">Добавлено в очередь воспроизведения</string>
     <string name="delete_failed">Не удалось удалить</string>
+
+    <string name="sort_by_video_bucket">Папка</string>
+    <string name="preset_video">Видеопредустановка</string>
+    <string name="preset_audio">Аудиопредустановка</string>
+    <string name="video_page_title">Все видео</string>
+    <string name="sort_sub_bucket_name_asc">Группировать элементы по названию видеогруппы в порядке возрастания.</string>
+    <string name="sort_by_video_bucket_name">Сортировать по названию видеогруппы</string>
 </resources>

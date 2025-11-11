@@ -35,7 +35,7 @@ internal class PlayerStateMonitoryRepositoryImpl(
 
     override fun getPlayingIndexInQueue(): Int = vlcPlayer.playingIndexInQueue
 
-    override suspend fun getPlayListQueue(): List<AudioItemModel> = getPlayListQueueStateFlow().first()
+    override suspend fun getPlayListQueue(): List<MediaItemModel> = getPlayListQueueStateFlow().first()
 
     override fun getPlayingMediaStateFlow() =
         vlcPlayer
