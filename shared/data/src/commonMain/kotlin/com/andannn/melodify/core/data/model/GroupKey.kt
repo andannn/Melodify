@@ -56,6 +56,7 @@ fun MediaItemModel.keyOf(sortOption: SortOption): GroupKey? =
         is VideoItemModel ->
             when (sortOption) {
                 is SortOption.VideoOption.Bucket -> GroupKey.BucketId(bucketId, bucketName)
+                is SortOption.VideoOption.Title -> GroupKey.Title(name[0].toString())
                 SortOption.NONE -> null
                 else -> error("not support key $sortOption")
             }

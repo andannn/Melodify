@@ -441,7 +441,7 @@ enum class SortOptionType {
             } else {
                 listOf(
                     VideoBucket,
-                    None,
+                    VideoTitle,
                 )
             }
 
@@ -457,6 +457,7 @@ enum class SortOptionType {
                 )
             } else {
                 listOf(
+                    VideoTitle,
                     None,
                 )
             }
@@ -466,6 +467,7 @@ enum class SortOptionType {
                 listOf(
                     TrackNum,
                     Title,
+                    None,
                 )
             } else {
                 listOf(

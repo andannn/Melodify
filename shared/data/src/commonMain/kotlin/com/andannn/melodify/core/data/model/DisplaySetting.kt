@@ -26,7 +26,12 @@ data class DisplaySetting(
                 )
 
             val DefaultPreset = BucketNameASC
-            val DefaultCustom = BucketNameASC.copy(isPreset = false)
+            val DefaultCustom =
+                DisplaySetting(
+                    primaryGroupSort = SortOption.VideoOption.Bucket(true),
+                    showTrackNum = false,
+                    isPreset = false,
+                )
         }
 
         object Audio {
@@ -60,7 +65,12 @@ data class DisplaySetting(
                 )
 
             val DefaultPreset = AlbumASC
-            val DefaultCustom = AlbumASC.copy(isPreset = false)
+            val DefaultCustom =
+                DisplaySetting(
+                    primaryGroupSort = SortOption.AudioOption.Album(true),
+                    showTrackNum = true,
+                    isPreset = false,
+                )
         }
     }
 }
