@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.getKoin
@@ -59,7 +60,7 @@ class SyncJobService :
             Napier.d(tag = TAG) { "sync triggeredContentUris: ${params.triggeredContentUris?.toList()}" }
             if (triggeredContentUris.any { !it.isSpecificFile() }) {
                 // Oops, there is some general change!
-                syncer.syncAllMediaLibrary()
+                syncer.syncAllMediaLibrary().collect()
             } else {
                 syncer.syncMediaByChanges(
                     triggeredContentUris.mapToChangeEvent(contentResolver),
@@ -95,6 +96,11 @@ class SyncJobService :
                             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                             JobInfo.TriggerContentUri.FLAG_NOTIFY_FOR_DESCENDANTS,
                         ),
+                    ).addTriggerContentUri(
+                        JobInfo.TriggerContentUri(
+                            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                            JobInfo.TriggerContentUri.FLAG_NOTIFY_FOR_DESCENDANTS,
+                        ),
                     ).setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setPersisted(false)
                     .build()
@@ -112,46 +118,66 @@ class SyncJobService :
 }
 
 private suspend fun Array<Uri>.mapToChangeEvent(contentResolver: ContentResolver): List<FileChangeEvent> {
-    val ids =
-        mapNotNull {
-            it.lastPathSegment?.toLongOrNull()
-        }
-    if (ids.isNotEmpty()) {
-        val validIds = contentResolver.filterValidMediaFromIds(ids)
-        return ids.map { id ->
-            if (validIds.contains(id)) {
-                FileChangeEvent(
-                    fileUri =
-                        Uri
-                            .withAppendedPath(
-                                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                                id.toString(),
-                            ).toString(),
-                    fileChangeType = FileChangeType.MODIFY,
-                )
-            } else {
-                FileChangeEvent(
-                    fileUri =
-                        Uri
-                            .withAppendedPath(
-                                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                                id.toString(),
-                            ).toString(),
-                    fileChangeType = FileChangeType.DELETE,
-                )
-            }
+    val validUri = this.filter { it.lastPathSegment?.toLongOrNull() != null }
+    val audioUris = validUri.filter { it.isAudioUri() }
+    val videoUris = validUri.filter { it.isVideoUri() }
+
+    val validAudioIds =
+        contentResolver.filterValidAudioFromIds(audioUris.map { it.lastPathSegment!!.toLong() })
+    val validVideoIds =
+        contentResolver.filterValidVideoFromIds(videoUris.map { it.lastPathSegment!!.toLong() })
+
+    val audioChangeEvent = audioUris.mapToChangeEvent(validAudioIds)
+    val videoChangeEvent = videoUris.mapToChangeEvent(validVideoIds)
+    return audioChangeEvent + videoChangeEvent
+}
+
+private fun List<Uri>.mapToChangeEvent(validIds: List<Long>): List<FileChangeEvent> =
+    this.map { audioUri ->
+        val id = audioUri.lastPathSegment!!.toLong()
+        if (validIds.contains(id)) {
+            FileChangeEvent(
+                fileUri = audioUri.toString(),
+                fileChangeType = FileChangeType.MODIFY,
+            )
+        } else {
+            FileChangeEvent(
+                fileUri = audioUri.toString(),
+                fileChangeType = FileChangeType.DELETE,
+            )
         }
     }
 
-    return emptyList()
-}
-
-private suspend fun ContentResolver.filterValidMediaFromIds(ids: List<Long>) =
+private suspend fun ContentResolver.filterValidAudioFromIds(ids: List<Long>) =
     withContext(Dispatchers.IO) {
         query2(
             uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             projection = arrayOf(MediaStore.Audio.Media._ID, MediaStore.Audio.AudioColumns.DATA),
             selection = "${MediaStore.Audio.Media._ID} IN (${ids.joinToString(",") { "?" }})",
+            selectionArgs = ids.map { it.toString() }.toTypedArray(),
+        )?.use { cursor ->
+            val validIds = mutableListOf<Long>()
+            while (cursor.moveToNext()) {
+                val id = cursor.getLong(0)
+                val path = cursor.getString(1)
+                Napier.d(tag = TAG) { "id: $id, path: $path" }
+
+                if (path == null || !File(path).exists()) {
+                    continue
+                }
+
+                validIds.add(id)
+            }
+            validIds
+        } ?: emptyList()
+    }
+
+private suspend fun ContentResolver.filterValidVideoFromIds(ids: List<Long>) =
+    withContext(Dispatchers.IO) {
+        query2(
+            uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+            projection = arrayOf(MediaStore.Video.Media._ID, MediaStore.Video.VideoColumns.DATA),
+            selection = "${MediaStore.Video.Media._ID} IN (${ids.joinToString(",") { "?" }})",
             selectionArgs = ids.map { it.toString() }.toTypedArray(),
         )?.use { cursor ->
             val validIds = mutableListOf<Long>()

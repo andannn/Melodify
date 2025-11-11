@@ -150,4 +150,6 @@ interface MediaContentRepository {
     suspend fun searchContent(keyword: String): List<MediaItemModel>
 
     suspend fun markMediaAsDeleted(mediaIds: List<String>)
+
+    suspend fun markVideoAsDeleted(mediaIds: List<String>)
 }

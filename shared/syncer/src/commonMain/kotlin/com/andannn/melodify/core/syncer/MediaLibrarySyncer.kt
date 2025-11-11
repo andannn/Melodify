@@ -8,6 +8,7 @@ import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.MediaType
 import com.andannn.melodify.core.syncer.model.FileChangeEvent
 import com.andannn.melodify.core.syncer.model.FileChangeType
+import com.andannn.melodify.core.syncer.toMediaEntity
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -81,10 +82,12 @@ internal class MediaLibrarySyncerWrapper(
                             mediaData.artistData.toArtistEntity(),
                             mediaData.genreData.toGenreEntity(),
                             mediaData.audioData.toMediaEntity(),
+                            mediaData.videoData.toVideoEntity(),
                         )
                     }
 
                     FileChangeType.DELETE -> {
+                        Napier.d(tag = TAG) { "Processing Delete event: ${events.map { it.fileUri }}" }
                         mediaLibraryDao.deleteMediaByUris(events.map { it.fileUri })
                     }
                 }

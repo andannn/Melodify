@@ -53,6 +53,9 @@ interface MediaLibraryDao {
     @Query("UPDATE ${Tables.LIBRARY_MEDIA} SET ${MediaColumns.DELETED} = 1 WHERE ${MediaColumns.ID} IN (:ids)")
     suspend fun markMediaAsDeleted(ids: List<String>)
 
+    @Query("UPDATE ${Tables.LIBRARY_VIDEO} SET ${VideoColumns.DELETED} = 1 WHERE ${VideoColumns.ID} IN (:ids)")
+    suspend fun markVideoAsDeleted(ids: List<String>)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertArtists(artists: List<ArtistEntity>)
 
@@ -357,9 +360,13 @@ interface MediaLibraryDao {
     @Query("DELETE FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.SOURCE_URI} IN (:uris)")
     suspend fun deleteMediaByUri(uris: List<String>)
 
+    @Query("DELETE FROM ${Tables.LIBRARY_VIDEO} WHERE ${VideoColumns.SOURCE_URI} IN (:uris)")
+    suspend fun deleteVideoByUri(uris: List<String>)
+
     @Transaction
     suspend fun deleteMediaByUris(uris: List<String>) {
         deleteMediaByUri(uris)
+        deleteVideoByUri(uris)
         deleteInvalidPlayListRefItem()
     }
 
@@ -454,11 +461,13 @@ interface MediaLibraryDao {
         artists: List<ArtistEntity>,
         genres: List<GenreEntity>,
         audios: List<MediaEntity>,
+        videos: List<VideoEntity> = emptyList(),
     ) {
         insertAlbums(albums)
         insertArtists(artists)
         insertGenres(genres)
         insertMedias(audios)
+        insertVideos(videos)
     }
 
     @Transaction

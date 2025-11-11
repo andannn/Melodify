@@ -83,14 +83,11 @@ fun TabContent(
         pagingItems = state.pagingItems,
         displaySetting = state.groupSort,
         modifier = modifier.fillMaxSize(),
-        onMusicItemClick = {
+        onMediaItemClick = {
             state.eventSink.invoke(TabContentEvent.OnPlayMedia(it))
         },
-        onVideoItemClick = {
-            state.eventSink.invoke(TabContentEvent.OnPlayMedia(it))
-        },
-        onShowMusicItemOption = {
-            state.eventSink.invoke(TabContentEvent.OnShowMusicItemOption(it))
+        onShowMediaItemOption = {
+            state.eventSink.invoke(TabContentEvent.OnShowMediaItemOption(it))
         },
         onGroupItemClick = { groupKeyList ->
             state.eventSink.invoke(TabContentEvent.OnGroupItemClick(groupKeyList))
@@ -105,9 +102,8 @@ private fun LazyListContent(
     displaySetting: DisplaySetting?,
     pagingItems: LazyPagingItems<MediaItemModel>,
     modifier: Modifier = Modifier,
-    onMusicItemClick: (AudioItemModel) -> Unit = {},
-    onVideoItemClick: (VideoItemModel) -> Unit = {},
-    onShowMusicItemOption: (AudioItemModel) -> Unit = {},
+    onMediaItemClick: (MediaItemModel) -> Unit = {},
+    onShowMediaItemOption: (MediaItemModel) -> Unit = {},
     onGroupItemClick: (List<GroupKey?>) -> Unit = {},
 ) {
     val items = pagingItems.itemSnapshotList
@@ -216,10 +212,10 @@ private fun LazyListContent(
                                         title = item.name,
                                         trackNum = item.cdTrackNumber.takeIf { showTrackNum },
                                         onItemClick = {
-                                            onMusicItemClick.invoke(item)
+                                            onMediaItemClick(item)
                                         },
                                         onOptionButtonClick = {
-                                            onShowMusicItemOption(item)
+                                            onShowMediaItemOption(item)
                                         },
                                     )
 
@@ -235,10 +231,10 @@ private fun LazyListContent(
                                         thumbnailSourceUri = item.artWorkUri,
                                         title = item.name,
                                         onItemClick = {
-                                            onVideoItemClick(item)
+                                            onMediaItemClick(item)
                                         },
                                         onOptionButtonClick = {
-//                                        onShowMusicItemOption(item)
+                                            onShowMediaItemOption(item)
                                         },
                                     )
                                 else -> error("not supported")

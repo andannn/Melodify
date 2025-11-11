@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getLongOrNull
+import androidx.core.net.toUri
 import com.andannn.melodify.core.syncer.model.MediaDataModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -40,11 +41,12 @@ class MediaLibraryScannerImpl(
         }
 
     override suspend fun scanMediaByUri(uris: List<String>): MediaDataModel {
-        val ids = uris.mapNotNull { Uri.parse(it).lastPathSegment?.toLongOrNull() }
+        val ids = uris.mapNotNull { it.toUri().lastPathSegment?.toLongOrNull() }
         val audioData = getMusicDataByIds(ids)
         val albumIds = audioData.mapNotNull { it.albumId }.distinct()
         val artistIds = audioData.mapNotNull { it.artistId }.distinct()
         val genreIds = audioData.mapNotNull { it.genreId }.distinct()
+        val videoData = getVideoDataByIds(ids)
 
         return coroutineScope {
             val albumDataDeferred = async { getAlbumDataByIds(albumIds) }
@@ -55,6 +57,7 @@ class MediaLibraryScannerImpl(
                 albumData = albumDataDeferred.await(),
                 artistData = artistDataDeferred.await(),
                 genreData = genreDataDeferred.await(),
+                videoData = videoData,
             )
         }
     }
@@ -67,6 +70,16 @@ class MediaLibraryScannerImpl(
                 selectionArgs = ids.map { it.toString() }.toTypedArray(),
             )?.use { cursor ->
                 parseMusicInfoCursor(cursor)
+            } ?: emptyList()
+
+    private suspend fun getVideoDataByIds(ids: List<Long>) =
+        app.contentResolver
+            .query2(
+                uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                selection = "${MediaStore.Video.Media._ID} IN (${ids.joinToString(",") { "?" }})",
+                selectionArgs = ids.map { it.toString() }.toTypedArray(),
+            )?.use { cursor ->
+                parseVideoInfoCursor(cursor)
             } ?: emptyList()
 
     private suspend fun getAlbumDataByIds(ids: List<Long>) =

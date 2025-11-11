@@ -47,7 +47,6 @@ class MediaFileDeleteHelperImpl :
             currentCompleter = completer
 
             try {
-                val ids = mediaList.map { itemModel -> itemModel.id }
                 val uriList =
                     mediaList.map { itemModel ->
                         when (itemModel) {
@@ -66,6 +65,7 @@ class MediaFileDeleteHelperImpl :
                     IntentSenderRequest
                         .Builder(pendingIntent.intentSender)
                         .build()
+                Napier.d(tag = TAG) { "request delete uriList: $uriList" }
                 intentSenderLauncher?.launch(request) ?: error("intentSender not set.")
                 val result = completer.await()
                 if (result.resultCode == Activity.RESULT_OK) {
@@ -84,14 +84,19 @@ class MediaFileDeleteHelperImpl :
                             .toTypedArray()
 
                     // Mark file as deleted.
-                    mediaLibraryRepository.markMediaAsDeleted(ids)
+                    mediaList.filterIsInstance<AudioItemModel>().let {
+                        mediaLibraryRepository.markMediaAsDeleted(it.map { itemModel -> itemModel.id })
+                    }
+                    mediaList.filterIsInstance<VideoItemModel>().let {
+                        mediaLibraryRepository.markVideoAsDeleted(it.map { itemModel -> itemModel.id })
+                    }
 
                     // Side Effect to re-scan MediaStore.
                     Napier.d(tag = TAG) { "scan start ${paths.toList()}" }
                     MediaScannerConnection.scanFile(
                         context,
                         paths,
-                        arrayOf("audio/*"),
+                        arrayOf("audio/*", "video/*"),
                     ) { path, uri ->
                         Napier.d(tag = TAG) { "scan finished. ${Thread.currentThread().name}" }
                     }

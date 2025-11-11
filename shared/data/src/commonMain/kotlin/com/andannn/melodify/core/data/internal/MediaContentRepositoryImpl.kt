@@ -241,4 +241,8 @@ internal class MediaContentRepositoryImpl(
     override suspend fun markMediaAsDeleted(mediaIds: List<String>) {
         mediaLibraryDao.markMediaAsDeleted(mediaIds)
     }
+
+    override suspend fun markVideoAsDeleted(mediaIds: List<String>) {
+        mediaLibraryDao.markVideoAsDeleted(mediaIds)
+    }
 }

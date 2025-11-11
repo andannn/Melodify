@@ -126,7 +126,7 @@ class TabContentPresenter(
                             )
                         }
 
-                    is TabContentEvent.OnShowMusicItemOption ->
+                    is TabContentEvent.OnShowMediaItemOption ->
                         launch {
                             onShowMusicItemOption(eventSink.mediaItemModel)
                         }
@@ -196,35 +196,37 @@ class TabContentPresenter(
     }
 
     context(_: Repository, popupController: PopupController, _: MediaFileDeleteHelper)
-    private suspend fun onShowMusicItemOption(item: AudioItemModel) {
+    private suspend fun onShowMusicItemOption(item: MediaItemModel) {
+        Napier.d(message = "onShowMusicItemOption: $item")
+        val isAudio = item is AudioItemModel
         val options =
-            listOf(
-                OptionItem.PLAY_NEXT,
-                OptionItem.ADD_TO_QUEUE,
-                OptionItem.ADD_TO_PLAYLIST,
-                OptionItem.OPEN_LIBRARY_ALBUM,
-                OptionItem.OPEN_LIBRARY_ARTIST,
-                OptionItem.DELETE_MEDIA_FILE,
-            )
+            buildList {
+                add(OptionItem.PLAY_NEXT)
+                add(OptionItem.ADD_TO_QUEUE)
+                if (isAudio) add(OptionItem.ADD_TO_PLAYLIST)
+                if (isAudio) add(OptionItem.OPEN_LIBRARY_ALBUM)
+                if (isAudio) add(OptionItem.OPEN_LIBRARY_ARTIST)
+                add(OptionItem.DELETE_MEDIA_FILE)
+            }
         val result = popupController.showDialog(DialogId.OptionDialog(options = options))
 
         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
             when (result.optionItem) {
                 OptionItem.PLAY_NEXT -> addToNextPlay(listOf(item))
                 OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(item))
-                OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item))
+                OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item as AudioItemModel))
                 OptionItem.DELETE_MEDIA_FILE -> deleteItems(listOf(item))
                 OptionItem.OPEN_LIBRARY_ALBUM ->
                     onRequest(
                         NavigationRequest.GoToLibraryDetail(
-                            LibraryDataSource.AlbumDetail(id = item.albumId),
+                            LibraryDataSource.AlbumDetail(id = (item as AudioItemModel).albumId),
                         ),
                     )
 
                 OptionItem.OPEN_LIBRARY_ARTIST ->
                     onRequest(
                         NavigationRequest.GoToLibraryDetail(
-                            LibraryDataSource.ArtistDetail(id = item.artistId),
+                            LibraryDataSource.ArtistDetail(id = (item as AudioItemModel).artistId),
                         ),
                     )
 
@@ -243,8 +245,8 @@ data class TabContentState(
 )
 
 sealed interface TabContentEvent {
-    data class OnShowMusicItemOption(
-        val mediaItemModel: AudioItemModel,
+    data class OnShowMediaItemOption(
+        val mediaItemModel: MediaItemModel,
     ) : TabContentEvent
 
     data class OnPlayMedia(
