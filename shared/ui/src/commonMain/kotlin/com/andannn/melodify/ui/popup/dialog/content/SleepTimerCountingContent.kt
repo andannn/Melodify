@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.SleepTimerRepository
 import com.andannn.melodify.model.DialogAction
@@ -27,7 +28,6 @@ import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.cancel_timer
 import melodify.shared.ui.generated.resources.sleep_timer
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.mp.KoinPlatform.getKoin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds

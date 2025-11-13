@@ -25,6 +25,7 @@ fun Project.configureComposeMultiplatform(extension: KotlinMultiplatformExtensio
                 implementation(libs.findLibrary("jetbrains.compose.runtime").get())
                 implementation(libs.findLibrary("jetbrains.compose.ui").get())
                 implementation(libs.findLibrary("jetbrains.compose.ui.util").get())
+                implementation(libs.findLibrary("jetbrains.compose.ui.tooling").get())
                 implementation(libs.findLibrary("jetbrains.compose.ui.tooling.preview").get())
                 implementation(libs.findLibrary("jetbrains.compose.ui.backhandler").get())
                 implementation(libs.findLibrary("jetbrains.material.icons.extended").get())
