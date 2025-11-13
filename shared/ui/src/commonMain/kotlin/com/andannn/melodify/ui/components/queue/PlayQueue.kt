@@ -20,13 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.andannn.melodify.core.data.model.AlbumItemModel
-import com.andannn.melodify.core.data.model.ArtistItemModel
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.core.data.model.extraUniqueId
 import com.andannn.melodify.core.data.model.subTitle
 import com.andannn.melodify.ui.util.rememberSwapListState
