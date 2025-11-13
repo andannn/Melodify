@@ -39,6 +39,7 @@ spotless = "8.0.0"
 licensee = "1.14.1"
 pagingCommonVersion = "3.4.0-alpha04"
 nav3Core = "1.0.0-rc01"
+navigationevent = "1.0.0-rc01"
 lifecycle = "2.10.0-rc01"
 materialIconsExtended = "1.7.3"
 jbComposeMaterial3Version = "1.10.0-alpha04"
@@ -109,11 +110,11 @@ androidx-paging-compose = { module = "androidx.paging:paging-compose", version.r
 room-paging = { group = "androidx.room", name = "room-paging", version.ref = "androidxRoom" }
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
+androidx-navigationevent = { module = "androidx.navigationevent:navigationevent", version.ref = "navigationevent" }
 lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 jetbrains-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 jetbrains-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-plugin" }
 jetbrains-compose-ui-util = { module = "org.jetbrains.compose.ui:ui-util", version.ref = "compose-plugin" }
-jetbrains-compose-ui-backhandler = { group = "org.jetbrains.compose.ui", name = "ui-backhandler", version.ref = "compose-plugin" }
 jetbrains-compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose-plugin" }
 jetbrains-compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-plugin" }
 jetbrains-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-plugin" }
