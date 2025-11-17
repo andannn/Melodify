@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.andannn.melodify.ui.theme.MelodifyTheme
@@ -31,7 +32,6 @@ import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -98,24 +98,26 @@ fun LargePreviewCard(
 @Preview
 @Composable
 private fun AlbumCardPreview() {
-    MelodifyTheme(content = {
-        Surface {
-            LargePreviewCard(
-                imageModifier =
-                    Modifier
-                        .clip(shape = CircleShape)
-                        .alpha(0.3f)
-                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)),
-                artCoverUri = "",
-                title =
-                    "TitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitltleTitleTitleT" +
-                        "itleTitleTitltleTitleTitleTitleTitleTitltleTitleTitleTitleTitleTitle" +
-                        "TitleTitleTitleTitleTitleTitleTitleTitleTitleTitle",
-                subTitle =
-                    "Sub title Sub title Sub title Sub title Sub title Sub title Sub title" +
-                        " Sub title Sub title Sub title Sub title Sub title Sub title Sub title" +
-                        " Sub title Sub title ",
-            )
-        }
-    })
+    MelodifyTheme(
+        content = {
+            Surface {
+                LargePreviewCard(
+                    imageModifier =
+                        Modifier
+                            .clip(shape = CircleShape)
+                            .alpha(0.3f)
+                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)),
+                    artCoverUri = "",
+                    title =
+                        "TitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitltleTitleTitleT" +
+                            "itleTitleTitltleTitleTitleTitleTitleTitltleTitleTitleTitleTitleTitle" +
+                            "TitleTitleTitleTitleTitleTitleTitleTitleTitleTitle",
+                    subTitle =
+                        "Sub title Sub title Sub title Sub title Sub title Sub title Sub title" +
+                            " Sub title Sub title Sub title Sub title Sub title Sub title Sub title" +
+                            " Sub title Sub title ",
+                )
+            }
+        },
+    )
 }

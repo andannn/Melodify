@@ -38,11 +38,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationEventHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import com.andannn.melodify.ui.components.lyrics.Lyrics
 import com.andannn.melodify.ui.components.playcontrol.ui.BottomSheetState
 import com.andannn.melodify.ui.components.queue.PlayQueue
@@ -83,7 +85,10 @@ internal fun PlayerBottomSheetView(
     }
 
     val sheetState = rememberPlayerBottomSheetState()
-    BackHandler(enabled = isExpand) {
+    NavigationEventHandler(
+        state = rememberNavigationEventState(NavigationEventInfo.None),
+        isBackEnabled = isExpand,
+    ) {
         scope.launch {
             state.animateTo(BottomSheetState.Shrink)
         }

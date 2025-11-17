@@ -8,32 +8,47 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.ScopedPresenter
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 
 @Composable
 fun rememberPlayQueuePresenter(repository: Repository = LocalRepository.current) =
-    remember(repository) {
+    retain(repository) {
         PlayQueuePresenter(repository)
     }
 
 class PlayQueuePresenter(
     private val repository: Repository,
-) : Presenter<PlayQueueState> {
+) : ScopedPresenter<PlayQueueState>() {
+    private val playListQueueFlow =
+        repository.playerStateMonitoryRepository
+            .getPlayListQueueStateFlow()
+            .stateIn(
+                this,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = emptyList(),
+            )
+    private val interactingMusicItemFlow =
+        repository.playerStateMonitoryRepository
+            .getPlayingMediaStateFlow()
+            .stateIn(
+                this,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = AudioItemModel.DEFAULT,
+            )
+
     @Composable
     override fun present(): PlayQueueState {
-        val playListQueue by
-            repository.playerStateMonitoryRepository.getPlayListQueueStateFlow().collectAsStateWithLifecycle(
-                emptyList(),
-            )
-        val interactingMusicItem by
-            repository.playerStateMonitoryRepository.getPlayingMediaStateFlow().collectAsStateWithLifecycle(
-                AudioItemModel.DEFAULT,
-            )
+        val playListQueue by playListQueueFlow.collectAsStateWithLifecycle()
+        val interactingMusicItem by interactingMusicItemFlow.collectAsStateWithLifecycle()
         return PlayQueueState(
             interactingMusicItem,
             playListQueue,
