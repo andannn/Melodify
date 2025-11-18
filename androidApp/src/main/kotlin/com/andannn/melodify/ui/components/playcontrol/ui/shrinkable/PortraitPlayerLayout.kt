@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -41,7 +40,6 @@ import com.andannn.melodify.ui.components.playcontrol.ui.MinImageSize
 import com.andannn.melodify.ui.components.playcontrol.ui.PlayerViewState
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.bottom.PlayerBottomSheetView
 import com.andannn.melodify.ui.widgets.AVPlayerView
-import io.github.aakira.napier.Napier
 
 val MinImagePaddingTop = 5.dp
 
@@ -107,7 +105,7 @@ internal fun PortraitPlayerLayout(
                                 start = MinImagePaddingStart * 2 + MinImageSize,
                             ),
                     title = title,
-                    artist = subTitle,
+                    subTitle = subTitle,
                     isPlaying = isPlaying,
                     isFavorite = isFavorite,
                     onEvent = onEvent,

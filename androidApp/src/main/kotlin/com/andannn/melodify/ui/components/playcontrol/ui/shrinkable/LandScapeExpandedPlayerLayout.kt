@@ -16,7 +16,7 @@ import com.andannn.melodify.ui.widgets.AVPlayerView
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun LandScapePlayerLayout(
+internal fun LandScapeExpandedPlayerLayout(
     modifier: Modifier = Modifier,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
     isShuffle: Boolean = false,

@@ -37,12 +37,15 @@ import com.andannn.melodify.LocalScreenController
 import com.andannn.melodify.core.data.model.subTitle
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
-import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.LandScapePlayerLayout
+import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.LandScapeExpandedPlayerLayout
+import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.LandScapeShrinkPlayerLayout
+import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.MiniPlayerLayout
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.PortraitPlayerLayout
 import com.andannn.melodify.ui.theme.DynamicThemePrimaryColorsFromImage
 import com.andannn.melodify.ui.theme.MIN_CONTRAST_OF_PRIMARY_VS_SURFACE
 import com.andannn.melodify.ui.theme.rememberDominantColorState
 import com.andannn.melodify.ui.util.contrastAgainst
+import io.github.aakira.napier.Napier
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -81,11 +84,13 @@ internal fun PlayerViewContent(
             state = rememberNavigationEventState(NavigationEventInfo.None),
             isBackEnabled = layoutState.playerState == PlayerState.Expand,
         ) {
-            if (!screenController.isCurrentPortrait && retainedPlayerState == PlayerState.Expand) {
-                // Change to portrait screen if back from fullscreen Landscape layout.
-                screenController.setScreenOrientation(isPortrait = true)
-            } else if (screenController.isCurrentPortrait && retainedPlayerState == PlayerState.Expand) {
-                layoutState.shrinkPlayerLayout()
+            if (retainedPlayerState == PlayerState.Expand) {
+                if (screenController.isCurrentPortrait) {
+                    layoutState.shrinkPlayerLayout()
+                } else {
+                    // Change to portrait screen if back from fullscreen Landscape layout.
+                    screenController.setScreenOrientation(isPortrait = true)
+                }
             }
         }
 
@@ -154,7 +159,7 @@ internal fun PlayerViewContent(
                             isRequestDarkTheme = false
                         }
                     }
-                    LandScapePlayerLayout(
+                    LandScapeExpandedPlayerLayout(
                         playMode = state.playMode,
                         isShuffle = state.isShuffle,
                         isPlaying = state.isPlaying,
@@ -170,7 +175,16 @@ internal fun PlayerViewContent(
                         onEvent = onEvent,
                     )
                 } else {
-                    // TODO: Add Landscape Layout
+                    LandScapeShrinkPlayerLayout(
+                        title = state.mediaItem.name,
+                        subTitle = state.mediaItem.subTitle,
+                        isPlaying = state.isPlaying,
+                        isFavorite = state.isFavorite,
+                        onEvent = onEvent,
+                        onExpand = {
+                            layoutState.expandPlayerLayout()
+                        },
+                    )
                 }
             }
         }
