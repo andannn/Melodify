@@ -45,7 +45,6 @@ import com.andannn.melodify.ui.theme.DynamicThemePrimaryColorsFromImage
 import com.andannn.melodify.ui.theme.MIN_CONTRAST_OF_PRIMARY_VS_SURFACE
 import com.andannn.melodify.ui.theme.rememberDominantColorState
 import com.andannn.melodify.ui.util.contrastAgainst
-import io.github.aakira.napier.Napier
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -76,6 +75,15 @@ internal fun PlayerViewContent(
                 density = LocalDensity.current,
             )
 
+        fun shrinkWhenLandscape() {
+            if (screenController.isRequestLandscape()) {
+                // Change to portrait screen if back from fullscreen Landscape layout.
+                screenController.cancelRequest()
+            } else {
+                layoutState.shrinkPlayerLayout()
+            }
+        }
+
         LaunchedEffect(layoutState.playerState) {
             retainedPlayerState = layoutState.playerState
         }
@@ -84,12 +92,12 @@ internal fun PlayerViewContent(
             state = rememberNavigationEventState(NavigationEventInfo.None),
             isBackEnabled = layoutState.playerState == PlayerState.Expand,
         ) {
+            // onBack
             if (retainedPlayerState == PlayerState.Expand) {
                 if (screenController.isCurrentPortrait) {
                     layoutState.shrinkPlayerLayout()
                 } else {
-                    // Change to portrait screen if back from fullscreen Landscape layout.
-                    screenController.setScreenOrientation(isPortrait = true)
+                    shrinkWhenLandscape()
                 }
             }
         }
@@ -105,7 +113,7 @@ internal fun PlayerViewContent(
             mutableStateOf(false)
         }
         DynamicThemePrimaryColorsFromImage(
-            dominantColorState,
+            dominantColorState = dominantColorState,
             isDarkTheme = isRequestDarkTheme || isSystemDarkTheme,
         ) {
             val url = state.mediaItem.artWorkUri
@@ -150,6 +158,9 @@ internal fun PlayerViewContent(
                     duration = state.duration,
                     onShrinkButtonClick = layoutState::shrinkPlayerLayout,
                     onEvent = onEvent,
+                    onRequestFullScreen = {
+                        screenController.requestLandscape()
+                    },
                 )
             } else {
                 if (layoutState.playerState == PlayerState.Expand) {
@@ -170,7 +181,7 @@ internal fun PlayerViewContent(
                         progress = state.progress,
                         duration = state.duration,
                         onShrink = {
-                            screenController.setScreenOrientation(isPortrait = true)
+                            shrinkWhenLandscape()
                         },
                         onEvent = onEvent,
                     )

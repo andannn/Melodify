@@ -67,6 +67,7 @@ internal fun PortraitPlayerLayout(
     duration: Long = 0L,
     onEvent: (PlayerUiEvent) -> Unit = {},
     onShrinkButtonClick: () -> Unit = {},
+    onRequestFullScreen: () -> Unit = {},
 ) {
     val statusBarHeight =
         with(LocalDensity.current) {
@@ -145,11 +146,8 @@ internal fun PortraitPlayerLayout(
                     TouchToggleVisible(
                         modifier = Modifier.fillMaxSize(),
                     ) {
-                        val controller = LocalScreenController.current
                         FullScreenButtonCover(
-                            onClick = {
-                                controller.setScreenOrientation(isPortrait = false)
-                            },
+                            onClick = onRequestFullScreen,
                         )
                     }
                 }

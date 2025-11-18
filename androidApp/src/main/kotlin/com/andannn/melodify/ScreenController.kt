@@ -30,7 +30,11 @@ fun ScreenOrientationController(activity: MainActivity): ScreenController = Scre
 interface ScreenController {
     val isCurrentPortrait: Boolean
 
-    fun setScreenOrientation(isPortrait: Boolean)
+    fun requestLandscape()
+
+    fun isRequestLandscape(): Boolean
+
+    fun cancelRequest()
 }
 
 private class ScreenControllerImpl(
@@ -39,21 +43,19 @@ private class ScreenControllerImpl(
     override val isCurrentPortrait: Boolean
         get() = activity.orientation == Configuration.ORIENTATION_PORTRAIT
 
-    override fun setScreenOrientation(isPortrait: Boolean) {
-        activity.setScreenOrientation(isPortrait)
+    override fun requestLandscape() {
+        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+    }
+
+    override fun isRequestLandscape(): Boolean = activity.requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+
+    override fun cancelRequest() {
+        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
 }
 
 private val Activity.orientation
     get() = resources?.configuration?.orientation ?: Configuration.ORIENTATION_UNDEFINED
-
-private fun Activity.setScreenOrientation(isPortrait: Boolean) {
-    if (isPortrait) {
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-    } else {
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-    }
-}
 
 /**
  * Set immersive mode when this composable is active.
