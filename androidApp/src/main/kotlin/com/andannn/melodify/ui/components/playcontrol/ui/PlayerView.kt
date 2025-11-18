@@ -43,7 +43,6 @@ import com.andannn.melodify.ui.theme.DynamicThemePrimaryColorsFromImage
 import com.andannn.melodify.ui.theme.MIN_CONTRAST_OF_PRIMARY_VS_SURFACE
 import com.andannn.melodify.ui.theme.rememberDominantColorState
 import com.andannn.melodify.ui.util.contrastAgainst
-import io.github.aakira.napier.Napier
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -165,7 +164,7 @@ internal fun PlayerViewContent(
                         subTitle = state.mediaItem.subTitle,
                         progress = state.progress,
                         duration = state.duration,
-                        onShrinkButtonClick = {
+                        onShrink = {
                             screenController.setScreenOrientation(isPortrait = true)
                         },
                         onEvent = onEvent,

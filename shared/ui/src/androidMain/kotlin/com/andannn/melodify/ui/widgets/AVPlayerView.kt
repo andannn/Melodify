@@ -44,6 +44,7 @@ fun AVPlayerView(
                 CircleBorderImage(
                     modifier = Modifier.fillMaxSize(),
                     model = playingMedia?.artWorkUri ?: "",
+                    contentScale = ContentScale.Crop,
                 )
             is VideoItemModel -> {
                 val player =

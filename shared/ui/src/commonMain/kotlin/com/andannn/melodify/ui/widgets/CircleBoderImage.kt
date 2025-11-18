@@ -18,6 +18,7 @@ import coil3.request.ImageRequest
 fun CircleBorderImage(
     model: String,
     modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Fit,
 ) {
     AsyncImage(
         modifier =
@@ -29,7 +30,7 @@ fun CircleBorderImage(
                 .data(model)
                 .size(Int.MAX_VALUE)
                 .build(),
-        contentScale = ContentScale.Fit,
+        contentScale = contentScale,
         contentDescription = "",
     )
 }
