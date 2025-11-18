@@ -34,14 +34,14 @@ import com.andannn.melodify.ui.widgets.FavoriteIconButton
 @Composable
 internal fun MiniPlayerLayout(
     title: String,
-    artist: String,
+    subTitle: String,
     isPlaying: Boolean,
     isFavorite: Boolean,
     modifier: Modifier = Modifier,
     onEvent: (PlayerUiEvent) -> Unit = {},
 ) {
     val titleState = rememberUpdatedState(title)
-    val artistState = rememberUpdatedState(artist)
+    val artistState = rememberUpdatedState(subTitle)
 
     Row(
         modifier = modifier,

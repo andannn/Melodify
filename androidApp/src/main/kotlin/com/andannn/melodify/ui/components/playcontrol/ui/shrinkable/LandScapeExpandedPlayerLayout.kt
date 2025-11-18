@@ -10,14 +10,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.andannn.melodify.ImmersiveModeEffect
-import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.widgets.AVPlayerView
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun LandScapePlayerLayout(
+internal fun LandScapeExpandedPlayerLayout(
     modifier: Modifier = Modifier,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
     isShuffle: Boolean = false,
@@ -29,24 +28,25 @@ internal fun LandScapePlayerLayout(
     progress: Float = 1f,
     duration: Long = 0L,
     onEvent: (PlayerUiEvent) -> Unit = {},
-    onShrinkButtonClick: () -> Unit = {},
+    onShrink: () -> Unit = {},
 ) {
     Surface(modifier = modifier.fillMaxSize()) {
         AVPlayerView(
             modifier = Modifier.fillMaxSize(),
         )
-        AVPlayerCover(
-            title = title,
-            subTitle = subTitle,
-            isFullScreen = true,
-            duration = duration,
-            isShuffle = isShuffle,
-            playMode = playMode,
-            isPlaying = isPlaying,
-            progress = progress,
-            onEvent = onEvent,
-            onClickFullScreen = onShrinkButtonClick,
-        )
+        TouchToggleVisible {
+            AVPlayerCover(
+                title = title,
+                subTitle = subTitle,
+                duration = duration,
+                isShuffle = isShuffle,
+                playMode = playMode,
+                isPlaying = isPlaying,
+                progress = progress,
+                onEvent = onEvent,
+                onShrink = onShrink,
+            )
+        }
     }
 
     ImmersiveModeEffect()

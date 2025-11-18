@@ -47,6 +47,72 @@ import com.andannn.melodify.ui.widgets.MarqueeText
 import kotlinx.coroutines.delay
 import kotlin.math.roundToLong
 
+@Composable
+fun TouchToggleVisible(
+    modifier: Modifier = Modifier,
+    showDurationMs: Long = 4000,
+    content: @Composable () -> Unit,
+) {
+    var isShowing by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(isShowing) {
+        if (isShowing) {
+            delay(showDurationMs)
+            isShowing = false
+        }
+    }
+    Box(
+        modifier =
+            modifier
+                .clickable(
+                    indication = null,
+                    interactionSource = null,
+                    onClick = {
+                        isShowing = !isShowing
+                    },
+                ),
+    ) {
+        AnimatedVisibility(
+            visible = isShowing,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun FullScreenButtonCover(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier =
+            modifier
+                .fillMaxSize()
+                .clip(shape = RoundedCornerShape(8.dp))
+                .background(Color.Black.copy(alpha = 0.5f)),
+    ) {
+        IconButton(
+            modifier = Modifier.align(Alignment.BottomEnd),
+            onClick = onClick,
+            colors =
+                IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                ),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Fullscreen,
+                contentDescription = "Play",
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AVPlayerCover(
@@ -58,141 +124,110 @@ fun AVPlayerCover(
     isPlaying: Boolean,
     playMode: PlayMode,
     modifier: Modifier = Modifier,
-    isFullScreen: Boolean = false,
     onEvent: (PlayerUiEvent) -> Unit,
-    onClickFullScreen: () -> Unit,
+    onShrink: () -> Unit,
 ) {
-    var isShowing by remember {
-        mutableStateOf(false)
-    }
-
-    LaunchedEffect(isShowing) {
-        if (isShowing) {
-            delay(4000)
-            isShowing = false
-        }
-    }
-
     Box(
         modifier =
             modifier
-                .fillMaxSize()
-                .clickable(
-                    indication = null,
-                    interactionSource = null,
-                    onClick = {
-                        isShowing = !isShowing
-                    },
-                ).clip(shape = RoundedCornerShape(8.dp)),
+                .clip(shape = RoundedCornerShape(8.dp))
+                .background(Color.Black.copy(alpha = 0.5f)),
     ) {
-        AnimatedVisibility(
-            visible = isShowing,
-            enter = fadeIn(),
-            exit = fadeOut(),
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp),
         ) {
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.5f))
-                        .padding(horizontal = 12.dp),
-            ) {
-                if (isFullScreen) {
-                    Row(modifier = Modifier.padding(top = 8.dp)) {
-                        IconButton(
-                            modifier = Modifier.rotate(-90f),
-                            onClick = onClickFullScreen,
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
-                                contentDescription = "Shrink",
-                            )
-                        }
-                        Column {
-                            MarqueeText(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = MaxImagePaddingStart),
-                                text = title,
-                                spacingBetweenCopies = 40.dp,
-                                style = MaterialTheme.typography.headlineMedium,
-                            )
-                            Text(
-                                modifier = Modifier.padding(horizontal = MaxImagePaddingStart),
-                                text = subTitle,
-                                maxLines = 2,
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                        }
-                    }
-                }
-                if (isFullScreen) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().align(Alignment.Center),
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Spacer(Modifier.weight(1f))
-                        PlayControlButtons(
-                            modifier = Modifier.weight(2f),
-                            isShuffle = isShuffle,
-                            isPlaying = isPlaying,
-                            playMode = playMode,
-                            onEvent = onEvent,
-                        )
-                        Spacer(Modifier.weight(1f))
-                    }
-                }
-
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.BottomCenter),
+            Row(modifier = Modifier.padding(top = 8.dp)) {
+                IconButton(
+                    modifier = Modifier.rotate(-90f),
+                    onClick = onShrink,
                 ) {
-                    if (isFullScreen) {
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            val durationString =
-                                remember(duration) {
-                                    formatDuration(duration)
-                                }
-                            val progressString =
-                                remember(progress, duration) {
-                                    formatDuration((progress * duration).roundToLong())
-                                }
-
-                            Text(progressString, style = MaterialTheme.typography.labelLarge)
-                            LinerWaveSlider(
-                                modifier = Modifier.weight(1f),
-                                playing = isPlaying,
-                                value = progress,
-                                onValueChange = {
-                                    onEvent(PlayerUiEvent.OnProgressChange(it))
-                                },
-                            )
-                            Text(durationString, style = MaterialTheme.typography.labelLarge)
-                        }
-                    } else {
-                        Spacer(Modifier.weight(1f))
-                    }
-                    IconButton(
-                        modifier = Modifier,
-                        onClick = onClickFullScreen,
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                                contentColor = MaterialTheme.colorScheme.onSurface,
-                            ),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Fullscreen,
-                            contentDescription = "Play",
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
+                        contentDescription = "Shrink",
+                    )
                 }
+                Column {
+                    MarqueeText(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = MaxImagePaddingStart),
+                        text = title,
+                        spacingBetweenCopies = 40.dp,
+                        style = MaterialTheme.typography.headlineMedium,
+                    )
+                    Text(
+                        modifier = Modifier.padding(horizontal = MaxImagePaddingStart),
+                        text = subTitle,
+                        maxLines = 2,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+        }
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Spacer(Modifier.weight(1f))
+            PlayControlButtons(
+                modifier = Modifier.weight(2f),
+                isShuffle = isShuffle,
+                isPlaying = isPlaying,
+                playMode = playMode,
+                onEvent = onEvent,
+            )
+            Spacer(Modifier.weight(1f))
+        }
+
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+        ) {
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                val durationString =
+                    remember(duration) {
+                        formatDuration(duration)
+                    }
+                val progressString =
+                    remember(progress, duration) {
+                        formatDuration((progress * duration).roundToLong())
+                    }
+
+                Text(progressString, style = MaterialTheme.typography.labelLarge)
+                LinerWaveSlider(
+                    modifier = Modifier.weight(1f),
+                    playing = isPlaying,
+                    value = progress,
+                    onValueChange = {
+                        onEvent(PlayerUiEvent.OnProgressChange(it))
+                    },
+                )
+                Text(durationString, style = MaterialTheme.typography.labelLarge)
+            }
+            IconButton(
+                onClick = onShrink,
+                colors =
+                    IconButtonDefaults.iconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Fullscreen,
+                    contentDescription = "Play",
+                )
             }
         }
     }

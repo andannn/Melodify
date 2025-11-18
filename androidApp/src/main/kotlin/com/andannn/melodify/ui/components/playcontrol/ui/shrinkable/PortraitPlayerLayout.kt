@@ -67,6 +67,7 @@ internal fun PortraitPlayerLayout(
     duration: Long = 0L,
     onEvent: (PlayerUiEvent) -> Unit = {},
     onShrinkButtonClick: () -> Unit = {},
+    onRequestFullScreen: () -> Unit = {},
 ) {
     val statusBarHeight =
         with(LocalDensity.current) {
@@ -105,7 +106,7 @@ internal fun PortraitPlayerLayout(
                                 start = MinImagePaddingStart * 2 + MinImageSize,
                             ),
                     title = title,
-                    artist = subTitle,
+                    subTitle = subTitle,
                     isPlaying = isPlaying,
                     isFavorite = isFavorite,
                     onEvent = onEvent,
@@ -141,21 +142,15 @@ internal fun PortraitPlayerLayout(
                         .aspectRatio(1f),
             ) {
                 AVPlayerView()
-                val controller = LocalScreenController.current
-                AVPlayerCover(
-                    title = title,
-                    subTitle = subTitle,
-                    isShuffle = isShuffle,
-                    isFullScreen = false,
-                    duration = duration,
-                    playMode = playMode,
-                    isPlaying = isPlaying,
-                    progress = progress,
-                    onEvent = onEvent,
-                    onClickFullScreen = {
-                        controller.setScreenOrientation(isPortrait = false)
-                    },
-                )
+                if (layoutState.isFullExpanded) {
+                    TouchToggleVisible(
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        FullScreenButtonCover(
+                            onClick = onRequestFullScreen,
+                        )
+                    }
+                }
             }
 
             Column(
