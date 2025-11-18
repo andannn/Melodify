@@ -39,7 +39,6 @@ import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.LandScapeExpandedPlayerLayout
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.LandScapeShrinkPlayerLayout
-import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.MiniPlayerLayout
 import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.PortraitPlayerLayout
 import com.andannn.melodify.ui.theme.DynamicThemePrimaryColorsFromImage
 import com.andannn.melodify.ui.theme.MIN_CONTRAST_OF_PRIMARY_VS_SURFACE
