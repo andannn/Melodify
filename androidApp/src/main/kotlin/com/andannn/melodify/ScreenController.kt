@@ -10,8 +10,10 @@ import android.content.res.Configuration
 import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -77,6 +79,25 @@ fun ImmersiveModeEffect() {
             windowInsetsController.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+        }
+    }
+}
+
+/**
+ * Set keep screen on when this composable is active.
+ * Set keep screen off when this composable is disposed.
+ */
+@Composable
+fun KeepScreenOnEffect() {
+    val activity = LocalActivity.current
+
+    DisposableEffect(Unit) {
+        Napier.d(tag = TAG) { "set keep screen on" }
+        activity?.window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        onDispose {
+            Napier.d(tag = TAG) { "set keep screen off" }
+            activity?.window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 }
