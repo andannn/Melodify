@@ -12,8 +12,11 @@ import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.model.asLibraryDataSource
+import com.andannn.melodify.ui.core.NavigationRequest
+import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.PopupController
 import kotlinx.coroutines.flow.first
 
@@ -23,12 +26,18 @@ import kotlinx.coroutines.flow.first
  * @param media Media item.
  * @param playListId set playlist id when the [media] is from playlist. Default is null.
  */
-context(popController: PopupController, repository: Repository, fileDeleteHelper: MediaFileDeleteHelper)
+context(
+    popController: PopupController,
+    repository: Repository,
+    fileDeleteHelper: MediaFileDeleteHelper,
+    eventSink: NavigationRequestEventSink
+)
 suspend fun showLibraryMediaOption(
     media: MediaItemModel,
     playListId: String? = null,
 ) {
     val isPlayable = media is AudioItemModel || media is VideoItemModel
+    val isAudio = media is AudioItemModel
     val isPlayList = media is PlayListItemModel
     val isFavoritePlayList = media is PlayListItemModel && media.isFavorite
 
@@ -44,6 +53,8 @@ suspend fun showLibraryMediaOption(
             add(OptionItem.PLAY_NEXT)
             add(OptionItem.ADD_TO_QUEUE)
             add(OptionItem.ADD_TO_PLAYLIST)
+            if (isAudio) add(OptionItem.OPEN_LIBRARY_ALBUM)
+            if (isAudio) add(OptionItem.OPEN_LIBRARY_ARTIST)
             if (isPlayable) add(OptionItem.DELETE_MEDIA_FILE)
             if (!isPlayable) add(OptionItem.ADD_TO_HOME_TAB)
             if (isPlayList && !isFavoritePlayList) add(OptionItem.DELETE_PLAYLIST)
@@ -58,6 +69,20 @@ suspend fun showLibraryMediaOption(
             OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(medias() as List<AudioItemModel>)
             OptionItem.DELETE_PLAYLIST -> (media as PlayListItemModel).delete()
             OptionItem.DELETE_MEDIA_FILE -> deleteItems(medias())
+            OptionItem.OPEN_LIBRARY_ALBUM ->
+                eventSink.onRequestNavigate(
+                    NavigationRequest.GoToLibraryDetail(
+                        LibraryDataSource.AlbumDetail(id = (media as AudioItemModel).albumId),
+                    ),
+                )
+
+            OptionItem.OPEN_LIBRARY_ARTIST ->
+                eventSink.onRequestNavigate(
+                    NavigationRequest.GoToLibraryDetail(
+                        LibraryDataSource.ArtistDetail(id = (media as AudioItemModel).artistId),
+                    ),
+                )
+
             OptionItem.DELETE_FROM_PLAYLIST ->
                 deleteItemInPlayList(
                     playListId = playListId!!,

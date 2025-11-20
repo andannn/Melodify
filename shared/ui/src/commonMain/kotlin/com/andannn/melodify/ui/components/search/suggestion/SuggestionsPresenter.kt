@@ -8,19 +8,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun rememberSuggestionsPresenter(
+internal fun retainSuggestionsPresenter(
     query: String,
     repository: Repository = LocalRepository.current,
-) = retain(
+) = retainPresenter(
     query,
     repository,
 ) {
@@ -41,14 +41,14 @@ internal class SuggestionsPresenter(
 
     init {
         if (initialState is SuggestionsState.LoadingHistory) {
-            launch {
+            retainedScope.launch {
                 state =
                     SuggestionsState.HistoryLoaded(
                         userPreferenceRepository.getAllSearchHistory(),
                     )
             }
         } else {
-            launch {
+            retainedScope.launch {
                 val result = repository.mediaContentRepository.searchContent("$query*")
                 if (result.isEmpty()) {
                     state = SuggestionsState.NoSuggestion

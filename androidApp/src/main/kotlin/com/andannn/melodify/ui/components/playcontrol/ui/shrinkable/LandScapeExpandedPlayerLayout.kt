@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.andannn.melodify.ImmersiveModeEffect
+import com.andannn.melodify.KeepScreenOnEffect
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.widgets.AVPlayerView
@@ -21,8 +22,6 @@ internal fun LandScapeExpandedPlayerLayout(
     playMode: PlayMode = PlayMode.REPEAT_ALL,
     isShuffle: Boolean = false,
     isPlaying: Boolean = false,
-    isFavorite: Boolean = false,
-    isCounting: Boolean = false,
     title: String = "",
     subTitle: String = "",
     progress: Float = 1f,
@@ -50,4 +49,7 @@ internal fun LandScapeExpandedPlayerLayout(
     }
 
     ImmersiveModeEffect()
+    if (isPlaying) {
+        KeepScreenOnEffect()
+    }
 }

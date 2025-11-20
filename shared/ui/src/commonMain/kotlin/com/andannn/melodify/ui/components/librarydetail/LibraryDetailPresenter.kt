@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
@@ -17,13 +16,13 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.asLibraryDataSource
 import com.andannn.melodify.model.browseable
-import com.andannn.melodify.ui.core.ChannelNavigationRequestEventChannel
+import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.NavigationRequest
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedObserver
-import com.andannn.melodify.ui.core.ScopedObserverImpl
+import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.usecase.content
 import com.andannn.melodify.usecase.item
 import io.github.aakira.napier.Napier
@@ -41,12 +40,13 @@ import melodify.shared.ui.generated.resources.video_page_title
 import org.jetbrains.compose.resources.getString
 
 @Composable
-fun rememberLibraryDetailPresenter(
+fun retainLibraryDetailPresenter(
     dataSource: LibraryDataSource,
+    navigationRequestSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
     repository: Repository = LocalRepository.current,
 ): Presenter<LibraryContentState> =
-    retain(repository, dataSource) {
-        LibraryDetailPresenter(repository, dataSource)
+    retainPresenter(repository, dataSource, navigationRequestSink) {
+        LibraryDetailPresenter(repository, dataSource, navigationRequestSink)
     }
 
 @Stable
@@ -73,14 +73,12 @@ private const val TAG = "LibraryDetailPresenter"
 private class LibraryDetailPresenter(
     private val repository: Repository,
     private val dataSource: LibraryDataSource,
-    private val scopedObserver: ScopedObserver = ScopedObserverImpl(),
-) : Presenter<LibraryContentState>,
-    ScopedObserver by scopedObserver,
-    NavigationRequestEventSink by ChannelNavigationRequestEventChannel(scopedObserver) {
+    private val navigationRequestSink: NavigationRequestEventSink,
+) : ScopedPresenter<LibraryContentState>() {
     private val dataSourceMediaItemFlow =
         with(repository) { dataSource.item() }
             .stateIn(
-                this,
+                retainedScope,
                 started = WhileSubscribed(),
                 initialValue = null,
             )
@@ -88,7 +86,7 @@ private class LibraryDetailPresenter(
     private val contentListFlow =
         with(repository) { dataSource.content() }
             .stateIn(
-                this,
+                retainedScope,
                 started = WhileSubscribed(),
                 initialValue = emptyList(),
             )
@@ -96,7 +94,7 @@ private class LibraryDetailPresenter(
     private var title by mutableStateOf("")
 
     init {
-        launch {
+        retainedScope.launch {
             title = with(repository) { dataSource.getTitle() }
         }
     }
@@ -119,7 +117,11 @@ private class LibraryDetailPresenter(
                 is LibraryContentEvent.OnMediaItemClick -> {
                     if (dataSource.browseable()) {
                         Napier.d(tag = TAG) { "request navigate to ${event.mediaItem.asLibraryDataSource()}" }
-                        onRequest(NavigationRequest.GoToLibraryDetail(event.mediaItem.asLibraryDataSource()))
+                        retainedScope.launch {
+                            navigationRequestSink.onRequestNavigate(
+                                NavigationRequest.GoToLibraryDetail(event.mediaItem.asLibraryDataSource()),
+                            )
+                        }
                     } else {
                         playMedia(event.mediaItem, contentList)
                     }

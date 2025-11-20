@@ -7,21 +7,19 @@ package com.andannn.melodify.ui.components.queue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.retain.retain
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
 @Composable
 fun rememberPlayQueuePresenter(repository: Repository = LocalRepository.current) =
-    retain(repository) {
+    retainPresenter(repository) {
         PlayQueuePresenter(repository)
     }
 
@@ -32,7 +30,7 @@ class PlayQueuePresenter(
         repository.playerStateMonitoryRepository
             .getPlayListQueueStateFlow()
             .stateIn(
-                this,
+                retainedScope,
                 started = SharingStarted.WhileSubscribed(),
                 initialValue = emptyList(),
             )
@@ -40,7 +38,7 @@ class PlayQueuePresenter(
         repository.playerStateMonitoryRepository
             .getPlayingMediaStateFlow()
             .stateIn(
-                this,
+                retainedScope,
                 started = SharingStarted.WhileSubscribed(),
                 initialValue = AudioItemModel.DEFAULT,
             )

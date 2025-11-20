@@ -173,8 +173,6 @@ internal fun PlayerViewContent(
                         playMode = state.playMode,
                         isShuffle = state.isShuffle,
                         isPlaying = state.isPlaying,
-                        isFavorite = state.isFavorite,
-                        isCounting = state.isCounting,
                         title = state.mediaItem.name,
                         subTitle = state.mediaItem.subTitle,
                         progress = state.progress,

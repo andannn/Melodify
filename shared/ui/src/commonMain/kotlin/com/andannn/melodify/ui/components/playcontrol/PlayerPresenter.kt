@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.retain.retain
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.MediaControllerRepository
 import com.andannn.melodify.core.data.PlayListRepository
@@ -27,6 +26,7 @@ import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.openSleepTimer
@@ -44,7 +44,7 @@ fun rememberPlayerPresenter(
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
 ): Presenter<PlayerUiState> =
-    retain(
+    retainPresenter(
         repository,
         popupController,
     ) {
@@ -114,7 +114,7 @@ private class PlayerPresenter(
         playerStateMonitoryRepository
             .getPlayingMediaStateFlow()
             .stateIn(
-                this,
+                retainedScope,
                 started = SharingStarted.WhileSubscribed(),
                 initialValue = null,
             )
@@ -123,7 +123,7 @@ private class PlayerPresenter(
         playerStateMonitoryRepository
             .observeIsPlaying()
             .stateIn(
-                this,
+                retainedScope,
                 started = SharingStarted.WhileSubscribed(),
                 initialValue = false,
             )
@@ -132,7 +132,7 @@ private class PlayerPresenter(
         playerStateMonitoryRepository
             .observeProgressFactor()
             .stateIn(
-                this,
+                retainedScope,
                 started = SharingStarted.WhileSubscribed(),
                 initialValue = 0f,
             )
@@ -141,7 +141,7 @@ private class PlayerPresenter(
         playerStateMonitoryRepository
             .observePlayMode()
             .stateIn(
-                this,
+                retainedScope,
                 started = SharingStarted.WhileSubscribed(),
                 initialValue = PlayMode.REPEAT_ALL,
             )
@@ -150,7 +150,7 @@ private class PlayerPresenter(
         playerStateMonitoryRepository
             .observeIsShuffle()
             .stateIn(
-                this,
+                retainedScope,
                 started = SharingStarted.WhileSubscribed(),
                 initialValue = false,
             )
@@ -159,7 +159,7 @@ private class PlayerPresenter(
         playerStateMonitoryRepository
             .observeCurrentPositionMs()
             .stateIn(
-                this,
+                retainedScope,
                 started = SharingStarted.WhileSubscribed(),
                 initialValue = 0L,
             )
@@ -168,7 +168,7 @@ private class PlayerPresenter(
         sleepTimerRepository
             .observeIsCounting()
             .stateIn(
-                this,
+                retainedScope,
                 started = SharingStarted.WhileSubscribed(),
                 initialValue = false,
             )
@@ -180,7 +180,7 @@ private class PlayerPresenter(
 // TODO: Implement Video favorite
                 getIsFavoriteFlow(interactingMusicItem as? AudioItemModel)
             }.stateIn(
-                this,
+                retainedScope,
                 started = SharingStarted.WhileSubscribed(),
                 initialValue = false,
             )
@@ -215,7 +215,7 @@ private class PlayerPresenter(
                 }
 
                 PlayerUiEvent.OnTimerIconClick ->
-                    launch {
+                    retainedScope.launch {
                         popupController.showDialog(
                             DialogId.SleepCountingDialog,
                         )
@@ -251,7 +251,7 @@ private class PlayerPresenter(
     }
 
     private fun onOptionIconClick(mediaItem: MediaItemModel) {
-        launch {
+        retainedScope.launch {
             val result =
                 popupController.showDialog(
                     DialogId.OptionDialog(
@@ -286,7 +286,7 @@ private class PlayerPresenter(
     private fun onFavoriteButtonClick(current: MediaItemModel?) {
         if (current == null) return
 
-        launch {
+        retainedScope.launch {
             playListRepository.toggleFavoriteMedia(current)
         }
     }

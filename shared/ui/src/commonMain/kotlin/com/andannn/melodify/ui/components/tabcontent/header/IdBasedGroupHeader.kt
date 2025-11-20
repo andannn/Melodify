@@ -29,8 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.andannn.melodify.core.data.model.GroupKey
-import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.ui.core.Presenter
 import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.default_image_icon
@@ -42,7 +40,7 @@ fun GroupHeader(
     isPrimary: Boolean,
     groupInfo: GroupInfo,
     modifier: Modifier = Modifier,
-    presenter: Presenter<GroupHeaderState> = rememberGroupHeaderPresenter(groupInfo),
+    presenter: Presenter<GroupHeaderState> = retainGroupHeaderPresenter(groupInfo),
     onGroupHeaderClick: () -> Unit = {},
 ) {
     val state = presenter.present()

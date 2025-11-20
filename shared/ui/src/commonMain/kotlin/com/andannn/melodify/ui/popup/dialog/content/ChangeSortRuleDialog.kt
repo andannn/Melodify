@@ -44,23 +44,17 @@ import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.util.getCategoryResource
-import com.andannn.melodify.ui.util.headerText
 import com.andannn.melodify.ui.util.icon
 import com.andannn.melodify.ui.util.label
 import com.andannn.melodify.ui.util.orderLabel
-import com.andannn.melodify.ui.util.subTitle
 import com.andannn.melodify.ui.widgets.DropDownMenuIconButton
 import com.andannn.melodify.ui.widgets.PresetSortOptionSelector
-import com.andannn.melodify.ui.widgets.TransparentBackgroundListItem
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.content_sort_by
 import melodify.shared.ui.generated.resources.customize
 import melodify.shared.ui.generated.resources.display_setting_for
-import melodify.shared.ui.generated.resources.preset
-import melodify.shared.ui.generated.resources.preset_audio
-import melodify.shared.ui.generated.resources.preset_video
 import melodify.shared.ui.generated.resources.primary_group_by
 import melodify.shared.ui.generated.resources.reset_settings
 import melodify.shared.ui.generated.resources.secondary_group_by
@@ -213,25 +207,26 @@ private fun ChangeSortRuleDialogContent(
 
                         Spacer(Modifier.height(8.dp))
 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(stringResource(Res.string.show_track_number))
-                            Spacer(Modifier.width(6.dp))
-                            Switch(
-                                enabled = enabled,
-                                checked = resolvedSortOption.showTrackNum,
-                                onCheckedChange = {
-                                    onChangeCustomSortRule(
-                                        resolvedSortOption.copy(
-                                            showTrackNum = it,
-                                        ),
-                                    )
-                                },
-                            )
+                        if (isAudio) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(stringResource(Res.string.show_track_number))
+                                Spacer(Modifier.width(6.dp))
+                                Switch(
+                                    enabled = enabled,
+                                    checked = resolvedSortOption.showTrackNum,
+                                    onCheckedChange = {
+                                        onChangeCustomSortRule(
+                                            resolvedSortOption.copy(
+                                                showTrackNum = it,
+                                            ),
+                                        )
+                                    },
+                                )
+                            }
+                            Spacer(Modifier.height(8.dp))
                         }
-
-                        Spacer(Modifier.height(8.dp))
 
                         TextButton(
                             enabled = enabled,

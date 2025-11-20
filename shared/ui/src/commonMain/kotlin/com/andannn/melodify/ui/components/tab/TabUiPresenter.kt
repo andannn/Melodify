@@ -9,7 +9,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
@@ -23,6 +22,7 @@ import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
@@ -35,10 +35,10 @@ import kotlinx.coroutines.launch
 private const val TAG = "TabUiState"
 
 @Composable
-fun rememberTabUiPresenter(
+fun retainTabUiPresenter(
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-) = retain(repository, popupController) {
+) = retainPresenter(repository, popupController) {
     TabUiPresenter(
         repository,
         popupController,
@@ -57,13 +57,13 @@ class TabUiPresenter(
     var selectedIndex by mutableIntStateOf(0)
 
     init {
-        launch {
+        retainedScope.launch {
             userPreferenceRepository.currentCustomTabsFlow.collect {
                 currentTabList = it
             }
         }
 
-        launch {
+        retainedScope.launch {
             userPreferenceRepository.currentCustomTabsFlow
                 .scan<List<CustomTab>, Pair<List<CustomTab>?, List<CustomTab>?>>(null to null) { pre, next ->
                     pre.second to next
@@ -116,7 +116,7 @@ class TabUiPresenter(
             when (eventSink) {
                 is TabUiEvent.OnClickTab -> selectedIndex = eventSink.index
                 is TabUiEvent.OnShowTabOption ->
-                    launch {
+                    retainedScope.launch {
                         val tab = eventSink.tab
                         val result =
                             popupController.showDialog(

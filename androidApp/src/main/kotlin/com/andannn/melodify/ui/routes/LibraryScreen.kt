@@ -36,7 +36,7 @@ import com.andannn.melodify.ui.widgets.ShortcutItem
 fun Library(
     navigator: Navigator,
     modifier: Modifier = Modifier,
-    presenter: Presenter<LibraryState> = rememberLibraryPresenter(navigator),
+    presenter: Presenter<LibraryState> = retainLibraryPresenter(navigator),
 ) {
     val state = presenter.present()
     LibraryContent(

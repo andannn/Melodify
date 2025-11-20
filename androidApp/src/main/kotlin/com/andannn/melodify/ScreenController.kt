@@ -8,10 +8,13 @@ import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.keepScreenOn
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -79,4 +82,13 @@ fun ImmersiveModeEffect() {
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
         }
     }
+}
+
+/**
+ * Set keep screen on when this composable is active.
+ * Set keep screen off when this composable is disposed.
+ */
+@Composable
+fun KeepScreenOnEffect() {
+    Spacer(Modifier.keepScreenOn())
 }

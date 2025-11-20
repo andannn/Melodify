@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
@@ -37,14 +38,14 @@ import com.andannn.melodify.ui.components.playcontrol.rememberPlayerPresenter
 import com.andannn.melodify.ui.components.queue.PlayQueue
 import com.andannn.melodify.ui.components.tab.TabUi
 import com.andannn.melodify.ui.components.tab.TabUiState
-import com.andannn.melodify.ui.components.tab.rememberTabUiPresenter
+import com.andannn.melodify.ui.components.tab.retainTabUiPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContent
 import com.andannn.melodify.ui.components.tabcontent.TabContentState
-import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
+import com.andannn.melodify.ui.components.tabcontent.retainTabContentPresenter
+import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.windows.CustomMenuBar
-import com.andannn.melodify.windows.MenuEvent
 import com.andannn.melodify.windows.WindowNavigator
 import com.andannn.melodify.windows.WindowType
 import com.andannn.melodify.windows.handleMenuEvent
@@ -86,9 +87,13 @@ internal fun MainWindow(
                 )
             },
         ) {
-            val tabUiPresenter = rememberTabUiPresenter()
+            val tabUiPresenter = retainTabUiPresenter()
             val tabState = tabUiPresenter.present()
-            val tabContentPresenter = rememberTabContentPresenter(tabState.selectedTab)
+            val eventSink =
+                retain {
+                    NavigationRequestEventSink()
+                }
+            val tabContentPresenter = retainTabContentPresenter(tabState.selectedTab, eventSink)
             val playerPresenter = rememberPlayerPresenter()
             val state =
                 MainUiState(

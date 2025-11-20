@@ -7,12 +7,12 @@ package com.andannn.melodify.ui.components.tabmanagement
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.retain.retain
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -23,8 +23,8 @@ import kotlinx.coroutines.launch
 private const val TAG = "TabManagementPresenter"
 
 @Composable
-fun rememberTabManagementPresenter(repository: Repository = LocalRepository.current) =
-    retain(
+fun retainTabManagementPresenter(repository: Repository = LocalRepository.current) =
+    retainPresenter(
         repository,
     ) {
         TabManagementPresenter(
@@ -40,7 +40,7 @@ class TabManagementPresenter(
     private val currentTabListFlow =
         userPreferenceRepository.currentCustomTabsFlow
             .stateIn(
-                this,
+                retainedScope,
                 started = WhileSubscribed(),
                 initialValue = emptyList(),
             )
@@ -53,14 +53,14 @@ class TabManagementPresenter(
         ) { event ->
             when (event) {
                 is TabManagementEvent.OnSwapFinished -> {
-                    launch {
+                    retainedScope.launch {
                         val (from, to) = event
                         userPreferenceRepository.swapTabOrder(from = currentTabList[from], to = currentTabList[to])
                     }
                 }
 
                 is TabManagementEvent.OnDeleteFinished -> {
-                    launch {
+                    retainedScope.launch {
                         val toDelete =
                             currentTabList[event.index]
                         userPreferenceRepository.deleteCustomTab(toDelete)

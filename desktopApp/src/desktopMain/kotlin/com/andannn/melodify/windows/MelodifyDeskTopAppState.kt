@@ -10,7 +10,6 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.window.ApplicationScope
 import com.andannn.melodify.core.syncer.SyncLibraryService
 import com.andannn.melodify.model.LibraryDataSource
-import com.andannn.melodify.model.toDataSource
 import com.andannn.melodify.ui.core.ScopedPresenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
@@ -47,7 +46,7 @@ internal class MelodifyDeskTopAppState(
     val windowStack = mutableStateSetOf<WindowType>(WindowType.Home)
 
     init {
-        launch {
+        retainedScope.launch {
             getKoin().get<SyncLibraryService>().startWatchingLibrary()
         }
     }

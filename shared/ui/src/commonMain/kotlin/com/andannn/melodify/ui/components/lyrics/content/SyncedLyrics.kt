@@ -47,6 +47,8 @@ import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.platform.formatTime
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -60,7 +62,7 @@ fun SyncedLyrics(
     syncedLyric: String,
     lazyListState: LazyListState = rememberLazyListState(),
     presenter: Presenter<SyncedLyricsState> =
-        rememberSyncedLyricsPresenter(
+        retainSyncedLyricsPresenter(
             syncedLyric,
             lazyListState,
         ),
@@ -238,12 +240,12 @@ private fun LyricLine(
 }
 
 @Composable
-private fun rememberSyncedLyricsPresenter(
+private fun retainSyncedLyricsPresenter(
     syncedLyric: String,
     lazyListState: LazyListState,
     repository: Repository = LocalRepository.current,
 ): Presenter<SyncedLyricsState> =
-    remember(syncedLyric, lazyListState, repository) {
+    retainPresenter(syncedLyric, lazyListState, repository) {
         SyncedLyricsPresenter(
             syncedLyrics = syncedLyric,
             lazyListState = lazyListState,
@@ -255,7 +257,7 @@ private class SyncedLyricsPresenter(
     private val syncedLyrics: String,
     val lazyListState: LazyListState,
     repository: Repository,
-) : Presenter<SyncedLyricsState> {
+) : ScopedPresenter<SyncedLyricsState>() {
     private val playControlRepository = repository.mediaControllerRepository
     private val playerStateMonitoryRepository = repository.playerStateMonitoryRepository
     private var waitingToCancelSeekJob: Job? = null

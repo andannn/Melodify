@@ -7,7 +7,6 @@ package com.andannn.melodify.ui.components.tabcontent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.retain.retain
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -25,15 +24,14 @@ import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.OptionItem
-import com.andannn.melodify.ui.core.ChannelNavigationRequestEventChannel
+import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.NavigationRequest
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedObserver
-import com.andannn.melodify.ui.core.ScopedObserverImpl
+import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
@@ -54,19 +52,22 @@ import org.koin.mp.KoinPlatform.getKoin
 private const val TAG = "TabContentPresenter"
 
 @Composable
-fun rememberTabContentPresenter(
+fun retainTabContentPresenter(
     selectedTab: CustomTab?,
+    navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
     fileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
-) = retain(
+) = retainPresenter(
     selectedTab,
+    navigationRequestEventSink,
     repository,
     popupController,
     fileDeleteHelper,
 ) {
     TabContentPresenter(
         selectedTab = selectedTab,
+        navigationRequestEventSink = navigationRequestEventSink,
         repository = repository,
         popupController = popupController,
         mediaFileDeleteHelper = fileDeleteHelper,
@@ -75,19 +76,17 @@ fun rememberTabContentPresenter(
 
 class TabContentPresenter(
     private val selectedTab: CustomTab?,
+    private val navigationRequestEventSink: NavigationRequestEventSink,
     private val repository: Repository,
     private val popupController: PopupController,
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
-    private val scopedObserver: ScopedObserver = ScopedObserverImpl(),
-) : Presenter<TabContentState>,
-    ScopedObserver by scopedObserver,
-    NavigationRequestEventSink by ChannelNavigationRequestEventChannel(scopedObserver) {
+) : ScopedPresenter<TabContentState>() {
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val userPreferenceRepository = repository.userPreferenceRepository
 
     private var displaySetting =
         getDisplaySettingFlow().stateIn(
-            scope = this,
+            scope = retainedScope,
             started = kotlinx.coroutines.flow.SharingStarted.Eagerly,
             initialValue = null,
         )
@@ -98,7 +97,7 @@ class TabContentPresenter(
             .filterNotNull()
             .flatMapLatest { displaySetting ->
                 getContentPagingFlow(selectedTab, displaySetting)
-            }.cachedIn(this)
+            }.cachedIn(retainedScope)
 
     @Composable
     override fun present(): TabContentState {
@@ -112,7 +111,7 @@ class TabContentPresenter(
             context(repository, popupController, mediaFileDeleteHelper) {
                 when (eventSink) {
                     is TabContentEvent.OnPlayMedia ->
-                        launch {
+                        retainedScope.launch {
                             val items =
                                 with(repository) {
                                     selectedTab
@@ -127,12 +126,12 @@ class TabContentPresenter(
                         }
 
                     is TabContentEvent.OnShowMediaItemOption ->
-                        launch {
+                        retainedScope.launch {
                             onShowMusicItemOption(eventSink.mediaItemModel)
                         }
 
                     is TabContentEvent.OnGroupItemClick ->
-                        launch {
+                        retainedScope.launch {
                             handleGroupItemClick(
                                 eventSink.groupKeys,
                                 displaySetting.value!!,
@@ -217,14 +216,14 @@ class TabContentPresenter(
                 OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item as AudioItemModel))
                 OptionItem.DELETE_MEDIA_FILE -> deleteItems(listOf(item))
                 OptionItem.OPEN_LIBRARY_ALBUM ->
-                    onRequest(
+                    navigationRequestEventSink.onRequestNavigate(
                         NavigationRequest.GoToLibraryDetail(
                             LibraryDataSource.AlbumDetail(id = (item as AudioItemModel).albumId),
                         ),
                     )
 
                 OptionItem.OPEN_LIBRARY_ARTIST ->
-                    onRequest(
+                    navigationRequestEventSink.onRequestNavigate(
                         NavigationRequest.GoToLibraryDetail(
                             LibraryDataSource.ArtistDetail(id = (item as AudioItemModel).artistId),
                         ),

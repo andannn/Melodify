@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
@@ -24,12 +23,13 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun rememberSearchUiPresenter(repository: Repository = LocalRepository.current) =
-    retain(
+    retainPresenter(
         repository,
     ) {
         SearchUiPresenter(
@@ -52,7 +52,7 @@ class SearchUiPresenter(
     private val focusRequester = FocusRequester()
 
     init {
-        launch {
+        retainedScope.launch {
             delay(50)
             focusRequester.requestFocus()
         }
@@ -73,7 +73,7 @@ class SearchUiPresenter(
                     searchTextField = TextFieldState(eventSink.text)
                     expanded = false
 
-                    launch {
+                    retainedScope.launch {
                         val searchText = searchTextField.text.toString()
                         if (searchText.isEmpty()) return@launch
 
@@ -92,7 +92,7 @@ class SearchUiPresenter(
                             }
                     }
 
-                    launch {
+                    retainedScope.launch {
                         userPreferenceRepository.addSearchHistory(eventSink.text)
                     }
                 }
@@ -106,7 +106,7 @@ class SearchUiPresenter(
     }
 
     private fun onPlayAudio(audioItemModel: AudioItemModel) {
-        launch {
+        retainedScope.launch {
             val isQueueEmpty = playerStateMonitoryRepository.getPlayListQueue().isEmpty()
             if (!isQueueEmpty) {
                 // add audio item to queue and play this audio item
