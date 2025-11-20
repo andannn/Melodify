@@ -25,7 +25,6 @@ import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.OptionItem
-import com.andannn.melodify.ui.core.ChannelNavigationRequestEventChannel
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.NavigationRequest
@@ -81,7 +80,7 @@ class TabContentPresenter(
     private val scopedObserver: ScopedObserver = ScopedObserverImpl(),
 ) : Presenter<TabContentState>,
     ScopedObserver by scopedObserver,
-    NavigationRequestEventSink by ChannelNavigationRequestEventChannel(scopedObserver) {
+    NavigationRequestEventSink by NavigationRequestEventSink() {
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val userPreferenceRepository = repository.userPreferenceRepository
 
@@ -217,14 +216,14 @@ class TabContentPresenter(
                 OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item as AudioItemModel))
                 OptionItem.DELETE_MEDIA_FILE -> deleteItems(listOf(item))
                 OptionItem.OPEN_LIBRARY_ALBUM ->
-                    onRequest(
+                    onRequestNavigate(
                         NavigationRequest.GoToLibraryDetail(
                             LibraryDataSource.AlbumDetail(id = (item as AudioItemModel).albumId),
                         ),
                     )
 
                 OptionItem.OPEN_LIBRARY_ARTIST ->
-                    onRequest(
+                    onRequestNavigate(
                         NavigationRequest.GoToLibraryDetail(
                             LibraryDataSource.ArtistDetail(id = (item as AudioItemModel).artistId),
                         ),

@@ -19,7 +19,6 @@ import com.andannn.melodify.ui.components.tabcontent.TabContentState
 import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
 import com.andannn.melodify.ui.core.LaunchNavigationRequestHandlerEffect
 import com.andannn.melodify.ui.core.LocalPopupController
-import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter

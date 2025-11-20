@@ -7,6 +7,7 @@ package com.andannn.melodify
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -37,7 +38,13 @@ fun MelodifyMobileApp(modifier: Modifier = Modifier) {
         val backStack = rememberNavBackStack(Screen.Home)
         val navigator = retain { RootNavigator() }
 
-        navigator.backStack = backStack
+        DisposableEffect(backStack) {
+            navigator.backStack = backStack
+
+            onDispose {
+                navigator.backStack = null
+            }
+        }
 
         NavDisplay(
             modifier = Modifier,

@@ -17,7 +17,6 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.asLibraryDataSource
 import com.andannn.melodify.model.browseable
-import com.andannn.melodify.ui.core.ChannelNavigationRequestEventChannel
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.NavigationRequest
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
@@ -76,7 +75,7 @@ private class LibraryDetailPresenter(
     private val scopedObserver: ScopedObserver = ScopedObserverImpl(),
 ) : Presenter<LibraryContentState>,
     ScopedObserver by scopedObserver,
-    NavigationRequestEventSink by ChannelNavigationRequestEventChannel(scopedObserver) {
+    NavigationRequestEventSink by NavigationRequestEventSink() {
     private val dataSourceMediaItemFlow =
         with(repository) { dataSource.item() }
             .stateIn(
@@ -119,7 +118,9 @@ private class LibraryDetailPresenter(
                 is LibraryContentEvent.OnMediaItemClick -> {
                     if (dataSource.browseable()) {
                         Napier.d(tag = TAG) { "request navigate to ${event.mediaItem.asLibraryDataSource()}" }
-                        onRequest(NavigationRequest.GoToLibraryDetail(event.mediaItem.asLibraryDataSource()))
+                        launch {
+                            onRequestNavigate(NavigationRequest.GoToLibraryDetail(event.mediaItem.asLibraryDataSource()))
+                        }
                     } else {
                         playMedia(event.mediaItem, contentList)
                     }

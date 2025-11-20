@@ -29,6 +29,7 @@ suspend fun showLibraryMediaOption(
     playListId: String? = null,
 ) {
     val isPlayable = media is AudioItemModel || media is VideoItemModel
+    val isAudio = media is AudioItemModel
     val isPlayList = media is PlayListItemModel
     val isFavoritePlayList = media is PlayListItemModel && media.isFavorite
 
@@ -44,6 +45,8 @@ suspend fun showLibraryMediaOption(
             add(OptionItem.PLAY_NEXT)
             add(OptionItem.ADD_TO_QUEUE)
             add(OptionItem.ADD_TO_PLAYLIST)
+            if (isAudio) add(OptionItem.OPEN_LIBRARY_ALBUM)
+            if (isAudio) add(OptionItem.OPEN_LIBRARY_ARTIST)
             if (isPlayable) add(OptionItem.DELETE_MEDIA_FILE)
             if (!isPlayable) add(OptionItem.ADD_TO_HOME_TAB)
             if (isPlayList && !isFavoritePlayList) add(OptionItem.DELETE_PLAYLIST)
@@ -58,6 +61,8 @@ suspend fun showLibraryMediaOption(
             OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(medias() as List<AudioItemModel>)
             OptionItem.DELETE_PLAYLIST -> (media as PlayListItemModel).delete()
             OptionItem.DELETE_MEDIA_FILE -> deleteItems(medias())
+            OptionItem.OPEN_LIBRARY_ALBUM -> TODO()
+            OptionItem.OPEN_LIBRARY_ARTIST -> TODO()
             OptionItem.DELETE_FROM_PLAYLIST ->
                 deleteItemInPlayList(
                     playListId = playListId!!,
