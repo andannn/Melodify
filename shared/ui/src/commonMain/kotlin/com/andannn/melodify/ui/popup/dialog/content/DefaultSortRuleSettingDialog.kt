@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -27,6 +26,7 @@ import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.PresetDisplaySetting
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.widgets.PresetSortOptionSelector
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
@@ -43,7 +43,7 @@ fun DefaultSortRuleSettingDialog(
     modifier: Modifier = Modifier,
     onAction: (DialogAction) -> Unit = {},
 ) {
-    val state = rememberDefaultSortRulePresenter().present()
+    val state = retainDefaultSortRulePresenter().present()
 
     DefaultSortRuleSettingDialogContent(
         modifier = modifier,
@@ -115,8 +115,8 @@ private fun DefaultSortRuleSettingDialogContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun rememberDefaultSortRulePresenter() =
-    retain {
+private fun retainDefaultSortRulePresenter() =
+    retainPresenter {
         DefaultSortRulePresenter()
     }
 
@@ -130,7 +130,7 @@ private class DefaultSortRulePresenter(
         userPreferences
             .getDefaultPresetSortRule(isAudio = true)
             .stateIn(
-                this,
+                retainedScope,
                 initialValue = null,
                 started = WhileSubscribed(5000),
             )
@@ -138,7 +138,7 @@ private class DefaultSortRulePresenter(
         userPreferences
             .getDefaultPresetSortRule(isAudio = false)
             .stateIn(
-                this,
+                retainedScope,
                 initialValue = null,
                 started = WhileSubscribed(5000),
             )
@@ -167,7 +167,7 @@ private class DefaultSortRulePresenter(
         ) { event ->
             when (event) {
                 is DefaultSortRuleStateEvent.ChangeAudioSortRule ->
-                    launch {
+                    retainedScope.launch {
                         userPreferences.saveDefaultSortRule(
                             isAudio = true,
                             event.sortRule,
@@ -175,7 +175,7 @@ private class DefaultSortRulePresenter(
                     }
 
                 is DefaultSortRuleStateEvent.ChangeVideoSortRule ->
-                    launch {
+                    retainedScope.launch {
                         userPreferences.saveDefaultSortRule(
                             isAudio = false,
                             event.sortRule,

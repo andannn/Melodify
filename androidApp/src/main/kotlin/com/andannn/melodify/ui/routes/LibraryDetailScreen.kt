@@ -40,7 +40,7 @@ fun LibraryDetail(
     navigator: Navigator,
     modifier: Modifier = Modifier,
     presenter: Presenter<LibraryDetailScreenState> =
-        rememberLibraryDetailScreenPresenter(
+        retainLibraryDetailScreenPresenter(
             dataSource = dataSource,
             navigator = navigator,
         ),

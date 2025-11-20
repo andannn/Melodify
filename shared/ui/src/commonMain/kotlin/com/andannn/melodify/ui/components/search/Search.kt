@@ -29,12 +29,13 @@ import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.asLibraryDataSource
 import com.andannn.melodify.ui.components.search.result.SearchPageView
 import com.andannn.melodify.ui.components.search.suggestion.Suggestions
+import com.andannn.melodify.ui.core.Presenter
 
 @Composable
 fun Search(
     modifier: Modifier = Modifier,
     showBackButton: Boolean = true,
-    searchPresenter: SearchUiPresenter = rememberSearchUiPresenter(),
+    searchPresenter: Presenter<SearchUiState> = rememberSearchUiPresenter(),
     onBackKeyPressed: () -> Unit = {},
     onNavigateToLibraryDetail: (LibraryDataSource) -> Unit = {},
 ) {

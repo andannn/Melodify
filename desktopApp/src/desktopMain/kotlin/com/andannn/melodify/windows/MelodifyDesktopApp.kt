@@ -10,7 +10,9 @@ import androidx.compose.runtime.retain.RetainedValuesStoreRegistry
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.retain.retainRetainedValuesStoreRegistry
 import androidx.compose.ui.window.ApplicationScope
+import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
 import com.andannn.melodify.ui.core.LocalPopupController
+import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.popup.PopupControllerImpl
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import com.andannn.melodify.windows.librarydetail.LibraryDetailWindow
@@ -29,62 +31,76 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
         appState.closeWindow(windowType)
     }
 
-    MelodifyTheme(
-        darkTheme = false,
-        content = {
-            val navigator: WindowNavigator = appState
-            appState.windowStack.forEach { windowType ->
-                retainedValuesStoreRegistry.ProvideChildRetainedValuesStore(
-                    windowType,
-                ) {
-                    CompositionLocalProvider(
-                        LocalPopupController provides retain { PopupControllerImpl() },
+    val navigator: WindowNavigator = appState
+
+    val eventSink =
+        retain {
+            NavigationRequestEventSink()
+        }
+    LaunchNavigationRequestHandlerEffect(
+        eventSink = eventSink,
+        navigator = navigator,
+    )
+
+    CompositionLocalProvider(
+        LocalNavigationRequestEventSink provides eventSink,
+    ) {
+        MelodifyTheme(
+            darkTheme = false,
+            content = {
+                appState.windowStack.forEach { windowType ->
+                    retainedValuesStoreRegistry.ProvideChildRetainedValuesStore(
+                        windowType,
                     ) {
-                        when (windowType) {
-                            WindowType.Home ->
-                                MainWindow(
-                                    navigator = navigator,
-                                    onCloseRequest = {
-                                        onCloseRequest(windowType)
-                                    },
-                                )
+                        CompositionLocalProvider(
+                            LocalPopupController provides retain { PopupControllerImpl() },
+                        ) {
+                            when (windowType) {
+                                WindowType.Home ->
+                                    MainWindow(
+                                        navigator = navigator,
+                                        onCloseRequest = {
+                                            onCloseRequest(windowType)
+                                        },
+                                    )
 
-                            WindowType.SettingPreference ->
-                                PreferenceWindow(
-                                    navigator = navigator,
-                                    onCloseRequest = {
-                                        onCloseRequest(windowType)
-                                    },
-                                )
+                                WindowType.SettingPreference ->
+                                    PreferenceWindow(
+                                        navigator = navigator,
+                                        onCloseRequest = {
+                                            onCloseRequest(windowType)
+                                        },
+                                    )
 
-                            is WindowType.MediaLibrary ->
-                                LibraryDetailWindow(
-                                    navigator = navigator,
-                                    dataSource = windowType.datasource,
-                                    onCloseRequest = {
-                                        onCloseRequest(windowType)
-                                    },
-                                )
+                                is WindowType.MediaLibrary ->
+                                    LibraryDetailWindow(
+                                        navigator = navigator,
+                                        dataSource = windowType.datasource,
+                                        onCloseRequest = {
+                                            onCloseRequest(windowType)
+                                        },
+                                    )
 
-                            WindowType.TabManage ->
-                                TabManageWindow(
-                                    navigator = navigator,
-                                    onCloseRequest = {
-                                        onCloseRequest(windowType)
-                                    },
-                                )
+                                WindowType.TabManage ->
+                                    TabManageWindow(
+                                        navigator = navigator,
+                                        onCloseRequest = {
+                                            onCloseRequest(windowType)
+                                        },
+                                    )
 
-                            WindowType.Search ->
-                                SearchWindow(
-                                    navigator = navigator,
-                                    onCloseRequest = {
-                                        onCloseRequest(windowType)
-                                    },
-                                )
+                                WindowType.Search ->
+                                    SearchWindow(
+                                        navigator = navigator,
+                                        onCloseRequest = {
+                                            onCloseRequest(windowType)
+                                        },
+                                    )
+                            }
                         }
                     }
                 }
-            }
-        },
-    )
+            },
+        )
+    }
 }

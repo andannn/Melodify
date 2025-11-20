@@ -9,7 +9,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.Repository
@@ -28,6 +27,7 @@ import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
@@ -52,13 +52,13 @@ data class GroupInfo(
 }
 
 @Composable
-fun rememberGroupHeaderPresenter(
+fun retainGroupHeaderPresenter(
     groupInfo: GroupInfo,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
     mediaFileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
 ): Presenter<GroupHeaderState> =
-    retain(
+    retainPresenter(
         groupInfo,
         repository,
         popupController,
@@ -95,7 +95,7 @@ private class GroupHeaderPresenter(
     private var mediaItem by mutableStateOf<MediaItemModel?>(null)
 
     init {
-        launch {
+        retainedScope.launch {
             mediaItem =
                 when (val groupKey = groupInfo.groupKey) {
                     is GroupKey.Artist -> mediaContentRepository.getArtistByArtistId(artistId = groupKey.artistId)
@@ -127,7 +127,7 @@ private class GroupHeaderPresenter(
         ) { event ->
             when (event) {
                 GroupHeaderEvent.OnOptionClick -> {
-                    launch {
+                    retainedScope.launch {
                         val dialog =
                             DialogId.OptionDialog(
                                 options =

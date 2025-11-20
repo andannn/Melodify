@@ -15,19 +15,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.ui.components.librarydetail.LibraryContentEvent
-import com.andannn.melodify.ui.components.librarydetail.rememberLibraryDetailPresenter
+import com.andannn.melodify.ui.components.librarydetail.retainLibraryDetailPresenter
 import com.andannn.melodify.ui.components.mediaitem.MediaLibraryItem
-import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.windows.CustomMenuBar
-import com.andannn.melodify.windows.LaunchNavigationRequestHandlerEffect
 import com.andannn.melodify.windows.WindowNavigator
 import com.andannn.melodify.windows.handleMenuEvent
 
@@ -42,16 +41,11 @@ fun LibraryDetailWindow(
         onCloseRequest = onCloseRequest,
         title = title,
     ) {
-        val presenter = rememberLibraryDetailPresenter(dataSource)
+        val presenter = retainLibraryDetailPresenter(dataSource)
         val state = presenter.present()
         LaunchedEffect(state.title) {
             title = state.title
         }
-
-        LaunchNavigationRequestHandlerEffect(
-            eventSink = presenter as NavigationRequestEventSink,
-            navigator = navigator,
-        )
 
         CustomMenuBar(navigator::handleMenuEvent)
 

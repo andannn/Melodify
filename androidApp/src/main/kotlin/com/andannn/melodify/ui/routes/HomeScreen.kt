@@ -38,7 +38,7 @@ import com.andannn.melodify.ui.widgets.DropDownMenuIconButton
 internal fun HomeUiScreen(
     navigator: Navigator,
     modifier: Modifier = Modifier,
-    homePresenter: Presenter<HomeState> = rememberHomeUiPresenter(navigator = navigator),
+    homePresenter: Presenter<HomeState> = retainHomeUiPresenter(navigator = navigator),
 ) {
     val homeState = homePresenter.present()
     val scrollBehavior = enterAlwaysScrollBehavior()

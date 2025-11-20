@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.util.getCategoryResource
 import com.andannn.melodify.ui.util.rememberSwapListState
 import com.andannn.melodify.ui.widgets.ActionType
@@ -42,7 +43,7 @@ private const val TAG = "TabManagement"
 @Composable
 fun TabManagementContent(
     modifier: Modifier = Modifier,
-    presenter: TabManagementPresenter = rememberTabManagementPresenter(),
+    presenter: Presenter<TabManagementState> = retainTabManagementPresenter(),
 ) {
     val state = presenter.present()
     TabManagementList(

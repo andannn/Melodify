@@ -27,9 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
+import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.windows.CustomMenuBar
-import com.andannn.melodify.windows.MenuEvent
 import com.andannn.melodify.windows.WindowNavigator
 import com.andannn.melodify.windows.handleMenuEvent
 
@@ -64,9 +65,10 @@ private fun PreferencesWindowContent(modifier: Modifier = Modifier) {
 
 @Composable
 fun LibraryPreference(
-    state: LibraryPreferenceState = rememberLibraryPreferenceState(),
+    presenter: Presenter<LibraryPreferenceUiState> = retainLibraryPreferenceState(),
     modifier: Modifier = Modifier,
 ) {
+    val state = presenter.present()
     Column(
         modifier = modifier,
     ) {
@@ -84,7 +86,9 @@ fun LibraryPreference(
             Spacer(modifier = Modifier.weight(1f))
 
             IconButton(
-                onClick = state::onAddLibraryButtonClick,
+                onClick = {
+                    state.eventSink.invoke(LibraryPreferenceUiEvent.OnAddLibraryButtonClick)
+                },
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
@@ -106,7 +110,9 @@ fun LibraryPreference(
             state.libraryPath.forEach {
                 LibraryPathItem(
                     path = it,
-                    onDelete = { state.onDeleteLibraryPath(it) },
+                    onDelete = {
+                        state.eventSink.invoke(LibraryPreferenceUiEvent.OnDeleteLibraryPath(it))
+                    },
                 )
                 HorizontalDivider(modifier.padding(horizontal = 4.dp))
             }

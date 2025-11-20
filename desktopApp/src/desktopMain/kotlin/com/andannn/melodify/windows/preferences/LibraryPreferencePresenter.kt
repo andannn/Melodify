@@ -5,10 +5,11 @@
 package com.andannn.melodify.windows.preferences
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.model.DialogAction
@@ -17,45 +18,68 @@ import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun rememberLibraryPreferenceState(
+internal fun retainLibraryPreferenceState(
     popUpController: PopupController = LocalPopupController.current,
     repository: Repository = LocalRepository.current,
-) = retain(
+) = retainPresenter(
     popUpController,
     repository,
 ) {
-    LibraryPreferenceState(
+    LibraryPreferencePresenter(
         popUpController,
         repository.userPreferenceRepository,
     )
 }
 
-class LibraryPreferenceState(
+@Stable
+class LibraryPreferenceUiState(
+    val libraryPath: Set<String>,
+    val eventSink: (LibraryPreferenceUiEvent) -> Unit,
+)
+
+sealed interface LibraryPreferenceUiEvent {
+    data object OnAddLibraryButtonClick : LibraryPreferenceUiEvent
+
+    data class OnDeleteLibraryPath(
+        val path: String,
+    ) : LibraryPreferenceUiEvent
+}
+
+class LibraryPreferencePresenter(
     private val popUpController: PopupController,
     private val userPreferenceRepository: UserPreferenceRepository,
-) : ScopedPresenter<Unit>() {
+) : ScopedPresenter<LibraryPreferenceUiState>() {
     private val libraryPathFlow =
-        userPreferenceRepository.userSettingFlow.map {
-            it.libraryPath
-        }
+        userPreferenceRepository.userSettingFlow
+            .map {
+                it.libraryPath
+            }.stateIn(
+                retainedScope,
+                initialValue = emptySet(),
+                started = kotlinx.coroutines.flow.SharingStarted.Lazily,
+            )
 
-    var libraryPath: Set<String> by mutableStateOf(emptySet())
-        private set
-
-    init {
-        launch {
-            libraryPathFlow.collect {
-                libraryPath = it
+    @Composable
+    override fun present(): LibraryPreferenceUiState {
+        val libraryPath by libraryPathFlow.collectAsStateWithLifecycle()
+        return LibraryPreferenceUiState(
+            libraryPath = libraryPath,
+        ) { event ->
+            when (event) {
+                is LibraryPreferenceUiEvent.OnAddLibraryButtonClick -> onAddLibraryButtonClick()
+                is LibraryPreferenceUiEvent.OnDeleteLibraryPath -> onDeleteLibraryPath(event.path)
             }
         }
     }
 
-    fun onAddLibraryButtonClick() {
-        launch {
+    private fun onAddLibraryButtonClick() {
+        retainedScope.launch {
             val result = popUpController.showDialog(DialogId.NewPlayListDialog)
 
             if (result is DialogAction.InputDialog.Accept) {
@@ -68,13 +92,9 @@ class LibraryPreferenceState(
         }
     }
 
-    fun onDeleteLibraryPath(pathToDelete: String) {
-        launch {
+    private fun onDeleteLibraryPath(pathToDelete: String) {
+        retainedScope.launch {
             userPreferenceRepository.deleteLibraryPath(pathToDelete)
         }
-    }
-
-    @Composable
-    override fun present() {
     }
 }

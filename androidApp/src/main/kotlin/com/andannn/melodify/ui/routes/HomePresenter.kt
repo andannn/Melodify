@@ -14,15 +14,17 @@ import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.SnackBarMessage
 import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.components.tab.TabUiState
-import com.andannn.melodify.ui.components.tab.rememberTabUiPresenter
+import com.andannn.melodify.ui.components.tab.retainTabUiPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContentState
-import com.andannn.melodify.ui.components.tabcontent.rememberTabContentPresenter
+import com.andannn.melodify.ui.components.tabcontent.retainTabContentPresenter
 import com.andannn.melodify.ui.core.LaunchNavigationRequestHandlerEffect
 import com.andannn.melodify.ui.core.LocalPopupController
+import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -41,12 +43,12 @@ import org.jetbrains.compose.resources.getString
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberHomeUiPresenter(
+fun retainHomeUiPresenter(
     navigator: Navigator,
     popController: PopupController = LocalPopupController.current,
     syncMediaStoreHandler: SyncMediaStoreHandler = getKoin().get(),
 ): Presenter<HomeState> =
-    retain(
+    retainPresenter(
         navigator,
         popController,
         syncMediaStoreHandler,
@@ -97,13 +99,9 @@ private class HomePresenter(
 ) : ScopedPresenter<HomeState>() {
     @Composable
     override fun present(): HomeState {
-        val tabUiState = rememberTabUiPresenter().present()
-        val tabContentPresenter = rememberTabContentPresenter(selectedTab = tabUiState.selectedTab)
-
-        LaunchNavigationRequestHandlerEffect(
-            navigator = navigator,
-            eventSink = tabContentPresenter,
-        )
+        val tabUiState = retainTabUiPresenter().present()
+        val tabContentPresenter =
+            retainTabContentPresenter(selectedTab = tabUiState.selectedTab)
 
         return HomeState(
             tabUiState = tabUiState,
@@ -116,8 +114,8 @@ private class HomePresenter(
                         HomeUiEvent.SearchButtonClick -> navigator.navigateTo(Screen.Search)
                         is HomeUiEvent.OnMenuSelected -> {
                             when (eventSink.selected) {
-                                MenuOption.DEFAULT_SORT -> launch { changeSortRule() }
-                                MenuOption.RE_SYNC_ALL_MEDIA -> launch { resyncAllSongs() }
+                                MenuOption.DEFAULT_SORT -> retainedScope.launch { changeSortRule() }
+                                MenuOption.RE_SYNC_ALL_MEDIA -> retainedScope.launch { resyncAllSongs() }
                             }
                         }
 

@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.LyricRepository
@@ -18,6 +17,7 @@ import com.andannn.melodify.core.data.model.LyricModel
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -38,8 +38,8 @@ sealed class LyricState {
 }
 
 @Composable
-fun rememberLyricPresenter(repository: Repository = LocalRepository.current): Presenter<LyricState> =
-    retain(repository) {
+fun retainLyricPresenter(repository: Repository = LocalRepository.current): Presenter<LyricState> =
+    retainPresenter(repository) {
         LyricPresenter(repository)
     }
 
@@ -50,7 +50,7 @@ private class LyricPresenter(
         repository.playerStateMonitoryRepository
             .getPlayingMediaStateFlow()
             .stateIn(
-                this,
+                retainedScope,
                 started = SharingStarted.WhileSubscribed(),
                 initialValue = null,
             )
@@ -59,7 +59,7 @@ private class LyricPresenter(
         mutableStateOf<LyricRepository.State?>(null)
 
     init {
-        launch {
+        retainedScope.launch {
             currentPlayingAudioFlow.collect { currentPlayingAudio ->
                 currentLoadState = null
 

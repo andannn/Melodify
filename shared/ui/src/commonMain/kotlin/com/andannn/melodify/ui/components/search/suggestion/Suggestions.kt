@@ -22,7 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.ui.core.Presenter
 
 /**
  * Content of the search bar when expanded.
@@ -37,8 +37,8 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 @Composable
 internal fun Suggestions(
     query: TextFieldState,
-    presenter: SuggestionsPresenter = rememberSuggestionsPresenter(query = query.text.toString()),
     modifier: Modifier = Modifier,
+    presenter: Presenter<SuggestionsUiState> = retainSuggestionsPresenter(query = query.text.toString()),
     onConfirmSearch: (String) -> Unit = {},
 ) {
     SuggestionUi(

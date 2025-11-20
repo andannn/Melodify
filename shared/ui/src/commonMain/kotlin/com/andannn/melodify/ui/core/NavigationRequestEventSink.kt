@@ -4,6 +4,8 @@
  */
 package com.andannn.melodify.ui.core
 
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.staticCompositionLocalOf
 import com.andannn.melodify.model.LibraryDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -21,6 +23,11 @@ interface NavigationRequestEventSink {
 
     suspend fun onRequestNavigate(event: NavigationRequest)
 }
+
+val LocalNavigationRequestEventSink: ProvidableCompositionLocal<NavigationRequestEventSink> =
+    staticCompositionLocalOf {
+        error("NavigationRequestEventSink not provided")
+    }
 
 fun NavigationRequestEventSink(): NavigationRequestEventSink = ChannelNavigationRequestEventChannel()
 

@@ -19,7 +19,7 @@ import com.andannn.melodify.ui.core.Presenter
 @Composable
 fun Lyrics(
     modifier: Modifier = Modifier,
-    presenter: Presenter<LyricState> = rememberLyricPresenter(),
+    presenter: Presenter<LyricState> = retainLyricPresenter(),
 ) {
     LyricsViewContent(
         modifier = modifier.fillMaxSize(),
