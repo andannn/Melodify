@@ -112,9 +112,9 @@ internal fun MutableList<Where>.addWhereOption(where: GroupKey) =
 
                 is GroupKey.BucketId ->
                     Where(
-                        VideoColumns.BUCKET_DISPLAY_NAME,
+                        VideoColumns.BUCKET_ID,
                         Where.Operator.EQUALS,
-                        where.bucketDisplayName,
+                        where.bucketId,
                     )
             }
         add(where)
