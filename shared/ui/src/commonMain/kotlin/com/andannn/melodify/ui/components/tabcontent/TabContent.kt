@@ -228,7 +228,8 @@ private fun LazyListContent(
                                             ),
                                         playable = item.browsableOrPlayable,
                                         isActive = false,
-                                        thumbnailSourceUri = item.artWorkUri,
+// TODO: hide video thumbnail
+                                        thumbnailSourceUri = null,
                                         title = item.name,
                                         onItemClick = {
                                             onMediaItemClick(item)
@@ -237,6 +238,7 @@ private fun LazyListContent(
                                             onShowMediaItemOption(item)
                                         },
                                     )
+
                                 else -> error("not supported")
                             }
                         }

@@ -102,37 +102,39 @@ fun ListTileItemView(
                     .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box {
-                if (trackNum != null) {
-                    Text(
-                        modifier =
-                            Modifier
-                                .background(
-                                    color = MaterialTheme.colorScheme.surface,
-                                    shape = MaterialTheme.shapes.extraSmall,
-                                ).align(Alignment.Center)
-                                .width(30.dp),
-                        text = trackNum.toString(),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                } else if (thumbnailSourceUri != null) {
-                    AsyncImage(
-                        model =
-                            ImageRequest
-                                .Builder(LocalPlatformContext.current)
-                                .data(thumbnailSourceUri)
-                                .size(256)
-                                .build(),
-                        modifier =
-                            Modifier
-                                .size(50.dp)
-                                .background(MaterialTheme.colorScheme.surfaceDim)
-                                .clip(MaterialTheme.shapes.extraSmall),
-                        error = painterResource(errorPlaceholderRes),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "",
-                    )
+            if (trackNum != null || thumbnailSourceUri != null) {
+                Box {
+                    if (trackNum != null) {
+                        Text(
+                            modifier =
+                                Modifier
+                                    .background(
+                                        color = MaterialTheme.colorScheme.surface,
+                                        shape = MaterialTheme.shapes.extraSmall,
+                                    ).align(Alignment.Center)
+                                    .width(30.dp),
+                            text = trackNum.toString(),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    } else {
+                        AsyncImage(
+                            model =
+                                ImageRequest
+                                    .Builder(LocalPlatformContext.current)
+                                    .data(thumbnailSourceUri)
+                                    .size(256)
+                                    .build(),
+                            modifier =
+                                Modifier
+                                    .size(50.dp)
+                                    .background(MaterialTheme.colorScheme.surfaceDim)
+                                    .clip(MaterialTheme.shapes.extraSmall),
+                            error = painterResource(errorPlaceholderRes),
+                            contentScale = ContentScale.Crop,
+                            contentDescription = "",
+                        )
+                    }
                 }
             }
 
