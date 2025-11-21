@@ -25,7 +25,7 @@ private class RetainedValueStoreNavEntryDecorator<T : Any>(
             retainedValuesStoreRegistry.clearChild(it)
         },
         decorate = { entry ->
-            retainedValuesStoreRegistry.ProvideChildRetainedValuesStore(
+            retainedValuesStoreRegistry.LocalRetainedValuesStoreProvider(
                 entry.contentKey,
             ) {
                 entry.Content()
