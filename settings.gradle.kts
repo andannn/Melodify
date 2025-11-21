@@ -14,8 +14,9 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Melodify"
-include(":desktopApp")
-include(":androidApp")
+include(":desktop-app")
+include(":android-app")
+include(":android-benchmark")
 include(":shared:ui")
 include(":shared:data")
 include(":shared:player")

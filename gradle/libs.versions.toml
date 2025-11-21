@@ -42,6 +42,10 @@ nav3Core = "1.0.0"
 navigationevent = "1.0.0"
 lifecycle = "2.10.0"
 materialIconsExtended = "1.7.3"
+baselineprofile = "1.4.1"
+benchmarkMacroJunit4 = "1.4.1"
+uiautomator = "2.4.0-alpha06"
+testRules = "1.7.0"
 jbComposeMaterial3Version = "1.10.0-alpha05"
 compose-plugin = "1.10.0-beta02"
 
@@ -94,7 +98,6 @@ koin-android = { module = "io.insert-koin:koin-android" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napierVersion" }
-androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtx" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinxCoroutines" }
 ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTooling" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
@@ -103,6 +106,8 @@ paparazzi = { group = "app.cash.paparazzi", name = "paparazzi", version.ref = "p
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
 vlcj = { module = "uk.co.caprica:vlcj", version.ref = "vlcj" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "testRules" }
+androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtx" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "androidx-glance" }
 androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "pagingCommonVersion" }
@@ -124,6 +129,8 @@ jetbrains-compose-animation = { module = "org.jetbrains.compose.animation:animat
 jetbrains-compose-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-plugin" }
 jetbrains-compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "compose-plugin" }
 jetbrains-compose-desktop = { module = "org.jetbrains.compose.desktop:desktop", version.ref = "compose-plugin" }
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 
 # dependecy in build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -138,6 +145,8 @@ ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle"
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

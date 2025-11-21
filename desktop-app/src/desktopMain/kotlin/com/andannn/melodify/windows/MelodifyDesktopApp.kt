@@ -49,7 +49,7 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
             darkTheme = false,
             content = {
                 appState.windowStack.forEach { windowType ->
-                    retainedValuesStoreRegistry.ProvideChildRetainedValuesStore(
+                    retainedValuesStoreRegistry.LocalRetainedValuesStoreProvider(
                         windowType,
                     ) {
                         CompositionLocalProvider(
