@@ -44,7 +44,7 @@ jobs:
         uses: timheuer/base64-to-file@v1
         with:
           fileName: 'keystore.jks'
-          fileDir: './androidApp/keystore/'
+          fileDir: './android-app/keystore/'
           encodedString: ${{ secrets.KEYSTORE }}
 #
 #      - name: Build macos app
@@ -55,7 +55,7 @@ jobs:
 #          create-dmg sharedApp/build/compose/binaries/main-release/app/Melodify.dmg sharedApp/build/compose/binaries/main-release/app/Melodify.app
 
       - name: Build android apk
-        run: ./gradlew androidApp:assembleRelease -P android.releaseSigning=true
+        run: ./gradlew android-app:assembleRelease -P android.releaseSigning=true
         env:
           SIGNING_KEYSTORE_PATH: ./keystore/keystore.jks
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
@@ -66,7 +66,7 @@ jobs:
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           files: |
-            androidApp/build/outputs/apk/release/androidApp-release.apk
+            android-app/build/outputs/apk/release/android-app-release.apk
 #            sharedApp/build/compose/binaries/main-release/app/Melodify.dmg
           repo_token: "${{ secrets.TOKEN }}"
           prerelease: true
