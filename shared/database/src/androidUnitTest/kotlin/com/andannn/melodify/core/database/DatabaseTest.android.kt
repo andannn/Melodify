@@ -6,7 +6,7 @@ package com.andannn.melodify.core.database
 
 import androidx.room.RoomDatabase
 
-internal actual fun inMemoryDatabaseBuilder(): RoomDatabase.Builder<MelodifyDataBase> {
+actual fun inMemoryDatabaseBuilder(): RoomDatabase.Builder<MelodifyDataBase> {
     error(
         "Android Unit test can not do database migration test.",
     )

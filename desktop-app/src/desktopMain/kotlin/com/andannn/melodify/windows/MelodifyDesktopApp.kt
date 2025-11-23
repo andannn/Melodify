@@ -13,7 +13,7 @@ import androidx.compose.ui.window.ApplicationScope
 import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
-import com.andannn.melodify.ui.popup.PopupControllerImpl
+import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import com.andannn.melodify.windows.librarydetail.LibraryDetailWindow
 import com.andannn.melodify.windows.main.MainWindow
@@ -53,7 +53,7 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
                         windowType,
                     ) {
                         CompositionLocalProvider(
-                            LocalPopupController provides retain { PopupControllerImpl() },
+                            LocalPopupController provides retain { PopupController() },
                         ) {
                             when (windowType) {
                                 WindowType.Home ->

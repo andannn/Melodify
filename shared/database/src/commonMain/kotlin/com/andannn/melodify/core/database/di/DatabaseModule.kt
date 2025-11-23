@@ -12,6 +12,7 @@ import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.dao.UserDataDao
 import com.andannn.melodify.core.database.setUpDatabase
 import com.andannn.melodify.core.database.setUpDummyData
+import com.andannn.melodify.core.database.util.inMemoryDatabaseBuilder
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -35,8 +36,10 @@ val databaseModule =
 val dummyDatabaseModule =
     module {
         includes(
-            databaseBuilder,
             module {
+                single<RoomDatabase.Builder<MelodifyDataBase>> {
+                    inMemoryDatabaseBuilder()
+                }
                 single<MelodifyDataBase> {
                     get<RoomDatabase.Builder<MelodifyDataBase>>()
                         .setUpDatabase()

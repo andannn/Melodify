@@ -25,6 +25,7 @@ import com.andannn.melodify.core.network.di.dummyServiceModule
 import com.andannn.melodify.core.network.di.serviceModule
 import com.andannn.melodify.core.player.SleepTimerController
 import com.andannn.melodify.core.player.SleepTimerControllerImpl
+import com.andannn.melodify.core.player.di.dummyPlayerModule
 import com.andannn.melodify.core.player.di.playerModule
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -63,6 +64,7 @@ val instrumentDataModel =
         singleOf(::SleepTimerControllerImpl).bind(SleepTimerController::class)
 
         includes(
+            dummyPlayerModule,
             dummyServiceModule,
             userPreferencesModule,
             dummyDatabaseModule,

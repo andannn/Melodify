@@ -17,4 +17,11 @@ val playerModule: Module =
         singleOf(::SleepTimerControllerImpl).bind(SleepTimerController::class)
     }
 
+val dummyPlayerModule: Module =
+    module {
+        includes(dummyPlatformPlayerModule)
+    }
+
 internal expect val platformPlayerModule: Module
+
+internal expect val dummyPlatformPlayerModule: Module

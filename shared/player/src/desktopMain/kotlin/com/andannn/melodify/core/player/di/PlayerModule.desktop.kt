@@ -15,3 +15,4 @@ internal actual val platformPlayerModule: Module =
     module {
         singleOf(::PlayerImpl).bind(VlcPlayer::class)
     }
+internal actual val dummyPlatformPlayerModule: Module = module { }
