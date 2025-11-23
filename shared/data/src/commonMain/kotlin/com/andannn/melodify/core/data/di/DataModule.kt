@@ -23,6 +23,7 @@ import com.andannn.melodify.core.database.di.dummyDatabaseModule
 import com.andannn.melodify.core.datastore.di.userPreferencesModule
 import com.andannn.melodify.core.network.di.dummyServiceModule
 import com.andannn.melodify.core.network.di.serviceModule
+import com.andannn.melodify.core.platform.platformModule
 import com.andannn.melodify.core.player.SleepTimerController
 import com.andannn.melodify.core.player.SleepTimerControllerImpl
 import com.andannn.melodify.core.player.di.dummyPlayerModule
@@ -47,10 +48,11 @@ val dataModule =
             serviceModule,
             userPreferencesModule,
             databaseModule,
+            platformModule,
         )
     }
 
-val instrumentDataModel =
+val dummyDataModel =
     module {
         singleOf(::Repository)
         singleOf(::PlayListRepositoryImpl).bind(PlayListRepository::class)
