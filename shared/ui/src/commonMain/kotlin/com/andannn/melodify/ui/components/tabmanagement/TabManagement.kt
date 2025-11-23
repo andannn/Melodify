@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -25,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.ui.core.Presenter
@@ -41,7 +43,7 @@ private const val TAG = "TabManagement"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TabManagementContent(
+fun TabManagementUi(
     modifier: Modifier = Modifier,
     presenter: Presenter<TabManagementState> = retainTabManagementPresenter(),
 ) {
@@ -89,10 +91,10 @@ private fun TabManagementList(
             modifier.fillMaxSize(),
         state = listState,
     ) {
-        items(
+        itemsIndexed(
             items = customTabState.itemList,
-            key = { it.hashCode() },
-        ) { item ->
+            key = { index, item -> item.hashCode() },
+        ) { index, item ->
             ReorderableItem(
                 state = customTabState.reorderableLazyListState,
                 key = item.hashCode(),
@@ -124,7 +126,10 @@ private fun ReorderableCollectionItemScope.CustomTabItem(
     ) {
         Box(modifier = Modifier.size(48.dp)) {
             IconButton(
-                modifier = Modifier.padding(start = 10.dp),
+                modifier =
+                    Modifier
+                        .testTag("delete")
+                        .padding(start = 10.dp),
                 onClick = onDeleteItem,
             ) {
                 Icon(

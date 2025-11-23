@@ -23,7 +23,7 @@ import kotlinx.coroutines.sync.withLock
 
 private const val TAG = "PopupController"
 
-class PopupControllerImpl :
+internal class PopupControllerImpl :
     PopupController,
     RetainObserver {
     private val mutex = Mutex()

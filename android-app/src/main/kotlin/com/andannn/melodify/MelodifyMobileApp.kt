@@ -21,7 +21,6 @@ import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.core.LaunchNavigationRequestHandlerEffect
-import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.RootNavigator
 import com.andannn.melodify.ui.core.rememberPopupControllerNavEntryDecorator
@@ -59,45 +58,41 @@ fun MelodifyMobileApp(modifier: Modifier = Modifier) {
             eventSink = navigatorEventSink,
         )
 
-        CompositionLocalProvider(
-            LocalNavigationRequestEventSink provides navigatorEventSink,
-        ) {
-            NavDisplay(
-                modifier = Modifier,
-                backStack = backStack,
-                sceneStrategy = DialogSceneStrategy<NavKey>() then SinglePaneSceneStrategy(),
-                entryDecorators =
-                    listOf(
-                        rememberSaveableStateHolderNavEntryDecorator(),
-                        rememberRetainedValueStoreNavEntryDecorator(),
-                        rememberPopupControllerNavEntryDecorator(),
-                    ),
-                entryProvider =
-                    entryProvider {
-                        entry<Screen.Home> {
-                            HomeUiScreen(navigator)
-                        }
+        NavDisplay(
+            modifier = Modifier,
+            backStack = backStack,
+            sceneStrategy = DialogSceneStrategy<NavKey>() then SinglePaneSceneStrategy(),
+            entryDecorators =
+                listOf(
+                    rememberSaveableStateHolderNavEntryDecorator(),
+                    rememberRetainedValueStoreNavEntryDecorator(),
+                    rememberPopupControllerNavEntryDecorator(),
+                ),
+            entryProvider =
+                entryProvider {
+                    entry<Screen.Home> {
+                        HomeUiScreen(navigator)
+                    }
 
-                        entry<Screen.TabManage> {
-                            TabManagementScreen(navigator)
-                        }
+                    entry<Screen.TabManage> {
+                        TabManagementScreen(navigator)
+                    }
 
-                        entry<Screen.Library> {
-                            Library(navigator)
-                        }
+                    entry<Screen.Library> {
+                        Library(navigator)
+                    }
 
-                        entry<Screen.LibraryDetail> { screen ->
-                            LibraryDetail(
-                                navigator = navigator,
-                                dataSource = screen.datasource,
-                            )
-                        }
+                    entry<Screen.LibraryDetail> { screen ->
+                        LibraryDetail(
+                            navigator = navigator,
+                            dataSource = screen.datasource,
+                        )
+                    }
 
-                        entry<Screen.Search> {
-                            SearchScreen(navigator = navigator)
-                        }
-                    },
-            )
-        }
+                    entry<Screen.Search> {
+                        SearchScreen(navigator = navigator)
+                    }
+                },
+        )
     }
 }

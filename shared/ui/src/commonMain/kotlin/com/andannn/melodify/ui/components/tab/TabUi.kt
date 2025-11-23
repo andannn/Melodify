@@ -24,9 +24,24 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.util.getCategoryResource
+
+@Composable
+fun TabUi(
+    modifier: Modifier = Modifier,
+    presenter: Presenter<TabUiState> = retainTabUiPresenter(),
+    onTabManagementClick: () -> Unit = {},
+) {
+    TabUi(
+        modifier = modifier,
+        state = presenter.present(),
+        onTabManagementClick = onTabManagementClick,
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +65,7 @@ fun TabUi(
             ) {
                 tabs.forEachIndexed { index, item ->
                     Tab(
-                        modifier = Modifier,
+                        modifier = Modifier.testTag("TabItem"),
                         selected = index == selectedIndex,
                         selectedContentColor = MaterialTheme.colorScheme.primary,
                         unselectedContentColor = MaterialTheme.colorScheme.onSurface,
