@@ -17,6 +17,7 @@ import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
+import com.andannn.melodify.core.database.entity.CrossRefWithVideoRelation
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.CustomTabType
 import com.andannn.melodify.core.database.entity.GenreEntity
@@ -127,6 +128,8 @@ internal fun PlayListWithMediaCount.toAppItem() =
         id = playListEntity.id.toString(),
         name = playListEntity.name,
         artWorkUri = playListEntity.artworkUri ?: "",
+        isFavoritePlayList = playListEntity.isFavoritePlayList == true,
+        isAudioPlayList = playListEntity.isAudioPlayList == true,
         trackCount = mediaCount,
     )
 
@@ -156,6 +159,32 @@ internal fun CrossRefWithMediaRelation.mapToAppItem(): AudioItemModel {
     }
 }
 
+internal fun CrossRefWithVideoRelation.mapToAppItem(): VideoItemModel {
+    val entity = this
+    val media = entity.media
+    return if (media.valid) {
+        media.toAppItem()
+    } else {
+        VideoItemModel(
+            id = AudioItemModel.INVALID_ID_PREFIX + entity.playListWithMediaCrossRef.mediaStoreId,
+            name = entity.playListWithMediaCrossRef.title,
+            modifiedDate = 0,
+            artWorkUri = "",
+            bucketId = "",
+            bucketName = "",
+            path = "",
+            duration = 0,
+            size = 0,
+            mimeType = "",
+            width = 0,
+            height = 0,
+            resolution = "",
+            relativePath = "",
+            source = "",
+        )
+    }
+}
+
 internal fun List<CustomTabEntity>.mapToCustomTabModel() =
     map {
         it.toAppItem()
@@ -168,7 +197,8 @@ internal fun CustomTabEntity.toAppItem() =
         CustomTabType.ALBUM_DETAIL -> CustomTab.AlbumDetail(tabId = id, externalId!!, name!!)
         CustomTabType.ARTIST_DETAIL -> CustomTab.ArtistDetail(tabId = id, externalId!!, name!!)
         CustomTabType.GENRE_DETAIL -> CustomTab.GenreDetail(tabId = id, externalId!!, name!!)
-        CustomTabType.PLAYLIST_DETAIL -> CustomTab.PlayListDetail(tabId = id, externalId!!, name!!)
+        CustomTabType.AUDIO_PLAYLIST_DETAIL -> CustomTab.PlayListDetail(tabId = id, externalId!!, name!!, isAudio = true)
+        CustomTabType.VIDEO_PLAYLIST_DETAIL -> CustomTab.PlayListDetail(tabId = id, externalId!!, name!!, isAudio = false)
         CustomTabType.VIDEO_BUCKET -> CustomTab.BucketDetail(tabId = id, externalId!!, name!!)
 
         else -> null

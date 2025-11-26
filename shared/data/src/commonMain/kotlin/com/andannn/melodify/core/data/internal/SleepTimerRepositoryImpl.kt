@@ -7,11 +7,14 @@ package com.andannn.melodify.core.data.internal
 import com.andannn.melodify.core.data.SleepTimerRepository
 import com.andannn.melodify.core.player.SleepTimeCounterState
 import com.andannn.melodify.core.player.SleepTimerController
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.takeWhile
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+
+private const val TAG = "SleepTimerRepository"
 
 internal class SleepTimerRepositoryImpl(
     private val sleepTimerController: SleepTimerController,
@@ -42,6 +45,7 @@ internal class SleepTimerRepositoryImpl(
     }
 
     override fun cancelSleepTimer() {
+        Napier.d(tag = TAG) { "cancelSleepTimer" }
         sleepTimerController.cancelTimer()
     }
 }

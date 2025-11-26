@@ -112,12 +112,13 @@ class DatabaseTest {
                             createdDate = 1,
                             artworkUri = null,
                             name = "name",
+                            isAudioPlayList = true,
                         ),
                     ),
             )
 
-            val playLists = playListDao.getAllPlayListFlow().first()
-            assertEquals(2, playLists.size)
+            val playLists = playListDao.getAllPlayListFlow(true).first()
+            assertEquals(1, playLists.size)
         }
 
     @Test
@@ -131,21 +132,28 @@ class DatabaseTest {
                             createdDate = 1,
                             artworkUri = null,
                             name = "name",
+                            isAudioPlayList = true,
                         ),
                         PlayListEntity(
                             createdDate = 3,
                             artworkUri = null,
                             name = "name",
+                            isAudioPlayList = true,
                         ),
                         PlayListEntity(
                             createdDate = 2,
                             artworkUri = null,
                             name = "name",
+                            isAudioPlayList = false,
                         ),
                     ),
             )
-            val playLists = playListDao.getAllPlayListFlow().first()
-            assertEquals(4, playLists.size)
+            playListDao.getAllPlayListFlow(true).first().also {
+                assertEquals(2, it.size)
+            }
+            playListDao.getAllPlayListFlow(false).first().also {
+                assertEquals(1, it.size)
+            }
         }
 
     @Test
@@ -250,6 +258,7 @@ class DatabaseTest {
                             createdDate = 1,
                             artworkUri = null,
                             name = "name",
+                            isAudioPlayList = true,
                         ),
                     ),
             )
@@ -274,7 +283,7 @@ class DatabaseTest {
                     ),
             )
 
-            val playLists = playListDao.getAllPlayListFlow().first()
+            val playLists = playListDao.getAllPlayListFlow(true).first()
             assertEquals(2, playLists.first().mediaCount)
 
             playListDao.insertPlayListWithMediaCrossRef(
@@ -414,7 +423,7 @@ class DatabaseTest {
     fun insert_play_lists_test() =
         testScope.runTest {
             val ids =
-                playListDao.inertPlayLists(
+                playListDao.insertPlayListEntities(
                     entities =
                         listOf(
                             PlayListEntity(
@@ -445,6 +454,7 @@ class DatabaseTest {
                             createdDate = 1,
                             artworkUri = null,
                             name = "name",
+                            isAudioPlayList = true,
                         ),
                     ),
             )
@@ -456,6 +466,7 @@ class DatabaseTest {
                             createdDate = 1,
                             artworkUri = null,
                             name = "name",
+                            isAudioPlayList = true,
                         ),
                     ),
             )
@@ -467,12 +478,13 @@ class DatabaseTest {
                             createdDate = 1,
                             artworkUri = null,
                             name = "name",
+                            isAudioPlayList = true,
                         ),
                     ),
             )
             playListDao.deletePlayListById(2)
-            val playLists = playListDao.getAllPlayListFlow().first()
-            assertEquals(3, playLists.size)
+            val playLists = playListDao.getAllPlayListFlow(true).first()
+            assertEquals(2, playLists.size)
         }
 
     @Test
@@ -1012,47 +1024,25 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
-    fun `delete invalid play list ref item`() =
+    fun `get favorite play list`() =
         testScope.runTest {
-            libraryDao.insertDummyData()
             playListDao.insertPlayListEntities(
-                entities =
-                    listOf(
-                        PlayListEntity(
-                            id = 1,
-                            createdDate = 1,
-                            artworkUri = null,
-                            name = "name",
-                        ),
+                listOf(
+                    PlayListEntity(
+                        id = 1,
+                        createdDate = 1,
+                        artworkUri = null,
+                        name = "name",
+                        isFavoritePlayList = true,
+                        isAudioPlayList = true,
                     ),
+                ),
             )
-            playListDao.insertPlayListWithMediaCrossRef(
-                crossRefs =
-                    listOf(
-                        PlayListWithMediaCrossRef(
-                            playListId = 1,
-                            mediaStoreId = "1",
-                            addedDate = 1,
-                            artist = "",
-                            title = "",
-                        ),
-                        PlayListWithMediaCrossRef(
-                            playListId = 1,
-                            mediaStoreId = "3",
-                            addedDate = 2,
-                            artist = "",
-                            title = "",
-                        ),
-                    ),
-            )
-            playListDao.getMediasInPlayList(1).also {
-                assertEquals(2, it.size)
+            playListDao.getFavoritePlayListFlow(isAudio = true).first().let {
+                assertEquals(1, it?.id)
             }
-            libraryDao.deleteInvalidPlayListRefItem()
-            playListDao.getMediasInPlayList(1).also {
-                assertEquals(1, it.size)
-                assertEquals(1, it.first().media.id)
+            playListDao.getFavoritePlayListFlow(isAudio = false).first().let {
+                assertEquals(null, it)
             }
         }
 }

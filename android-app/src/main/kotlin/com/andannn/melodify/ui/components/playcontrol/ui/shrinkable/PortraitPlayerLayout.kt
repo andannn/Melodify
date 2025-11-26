@@ -142,7 +142,7 @@ internal fun PortraitPlayerLayout(
                         .aspectRatio(1f),
             ) {
                 AVPlayerView()
-                if (layoutState.isFullExpanded) {
+                if (layoutState.isFullExpanded && !layoutState.isBottomSheetExpanding) {
                     TouchToggleVisible(
                         modifier = Modifier.fillMaxSize(),
                     ) {

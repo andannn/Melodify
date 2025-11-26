@@ -23,6 +23,7 @@ fun CustomTab.contentFlow(
                 sorts.filterIsInstance<SortOption.AudioOption>(),
                 whereGroups,
             )
+
         is CustomTab.AllVideo ->
             repository.mediaContentRepository.getAllVideoItemsFlow(
                 sorts.filterIsInstance<SortOption.VideoOption>(),
@@ -51,11 +52,19 @@ fun CustomTab.contentFlow(
             )
 
         is CustomTab.PlayListDetail ->
-            repository.playListRepository.getAudiosOfPlayListFlow(
-                playListId.toLong(),
-                sorts.filterIsInstance<SortOption.AudioOption>(),
-                whereGroups,
-            )
+            if (isAudio) {
+                repository.playListRepository.getAudiosOfPlayListFlow(
+                    playListId.toLong(),
+                    sorts.filterIsInstance<SortOption.AudioOption>(),
+                    whereGroups,
+                )
+            } else {
+                repository.playListRepository.getVideosOfPlayListFlow(
+                    playListId.toLong(),
+                    sorts.filterIsInstance<SortOption.VideoOption>(),
+                    whereGroups,
+                )
+            }
 
         is CustomTab.BucketDetail ->
             repository.mediaContentRepository.getVideoBucketItemsFlow(
@@ -99,11 +108,19 @@ fun CustomTab.contentPagingDataFlow(
             )
 
         is CustomTab.PlayListDetail ->
-            repository.playListRepository.getAudioPagingFlowOfPlayList(
-                playListId.toLong(),
-                sorts.filterIsInstance<SortOption.AudioOption>(),
-                whereGroups,
-            )
+            if (isAudio) {
+                repository.playListRepository.getAudioPagingFlowOfPlayList(
+                    playListId.toLong(),
+                    sorts.filterIsInstance<SortOption.AudioOption>(),
+                    whereGroups,
+                )
+            } else {
+                repository.playListRepository.getVideoPagingFlowOfPlayList(
+                    playListId.toLong(),
+                    sorts.filterIsInstance<SortOption.VideoOption>(),
+                    whereGroups,
+                )
+            }
 
         is CustomTab.AllVideo ->
             repository.mediaContentRepository.getAllVideoItemsPagingFlow(

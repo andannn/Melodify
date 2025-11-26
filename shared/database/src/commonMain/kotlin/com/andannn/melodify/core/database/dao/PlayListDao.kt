@@ -18,6 +18,7 @@ import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.Where
 import com.andannn.melodify.core.database.appendOrCreateWith
 import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
+import com.andannn.melodify.core.database.entity.CrossRefWithVideoRelation
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListAndMedias
@@ -26,18 +27,28 @@ import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRefColumns
+import com.andannn.melodify.core.database.entity.VideoColumns
+import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.toSortString
 import com.andannn.melodify.core.database.toWhereString
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 
 private const val TAG = "PlayListDao"
 
 @Dao
 interface PlayListDao {
-    companion object {
-        const val FAVORITE_PLAY_LIST_ID = 0L
-    }
+    @Query(
+        """
+        select ${PlayListColumns.ID}, ${PlayListColumns.CREATED_DATE}, ${PlayListColumns.NAME}, ${PlayListColumns.ARTWORK_URI}, COUNT(${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}) as mediaCount
+        from ${Tables.PLAY_LIST}
+        left join ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
+            on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
+        where ${PlayListColumns.IS_AUDIO_PLAYLIST} = :isAudio
+        group by ${PlayListColumns.ID}
+        order by ${PlayListColumns.CREATED_DATE} desc
+    """,
+    )
+    fun getAllPlayListFlow(isAudio: Boolean): Flow<List<PlayListWithMediaCount>>
 
     @Query(
         """
@@ -98,7 +109,15 @@ interface PlayListDao {
     """,
     )
     @Transaction
-    suspend fun getPlayList(playListId: Long): PlayListAndMedias?
+    suspend fun getPlayListWithMedias(playListId: Long): PlayListAndMedias?
+
+    @Query(
+        """
+        select * from ${Tables.PLAY_LIST}
+        where ${PlayListColumns.ID} = :playListId
+    """,
+    )
+    suspend fun getPlayListEntity(playListId: Long): PlayListEntity?
 
     @Query(
         """
@@ -123,8 +142,24 @@ interface PlayListDao {
         mediaStoreId: String,
     ): Flow<Boolean>
 
-    @Insert(entity = PlayListEntity::class, onConflict = OnConflictStrategy.IGNORE)
-    suspend fun inertPlayLists(entities: List<PlayListEntity>): List<Long>
+    fun getFavoritePlayListFlow(isAudio: Boolean): Flow<PlayListEntity?> =
+        if (isAudio) getFavoriteAudioPlayListFlow() else getFavoriteVideoPlayListFlow()
+
+    @Query(
+        """
+        SELECT * FROM ${Tables.PLAY_LIST}
+        WHERE ${PlayListColumns.IS_FAVORITE_PLAYLIST} = 1 AND ${PlayListColumns.IS_AUDIO_PLAYLIST} = 1
+    """,
+    )
+    fun getFavoriteAudioPlayListFlow(): Flow<PlayListEntity?>
+
+    @Query(
+        """
+        SELECT * FROM ${Tables.PLAY_LIST}
+        WHERE ${PlayListColumns.IS_FAVORITE_PLAYLIST} = 1 AND ${PlayListColumns.IS_AUDIO_PLAYLIST} = 0
+    """,
+    )
+    fun getFavoriteVideoPlayListFlow(): Flow<PlayListEntity?>
 
     @Query(
         """
@@ -151,6 +186,23 @@ interface PlayListDao {
             ),
         )
 
+    fun getVideosInPlayListFlow(
+        playListId: Long,
+        wheres: MediaWheres?,
+        mediaSorts: MediaSorts?,
+    ): Flow<List<CrossRefWithVideoRelation>> =
+        getVideosInPlayListFlowRaw(
+            buildVideoRawQuery(
+                wheres.appendOrCreateWith {
+                    listOf(
+                        playListIdWhere(playListId.toString()),
+                        videoNotDeletedWhere(),
+                    )
+                },
+                mediaSorts,
+            ),
+        )
+
     fun getMediaPagingSourceInPlayList(
         playListId: Long,
         wheres: MediaWheres?,
@@ -162,6 +214,23 @@ interface PlayListDao {
                     listOf(
                         playListIdWhere(playListId.toString()),
                         audioNotDeletedWhere(),
+                    )
+                },
+                mediaSorts,
+            ),
+        )
+
+    fun getVideoPagingSourceInPlayList(
+        playListId: Long,
+        wheres: MediaWheres?,
+        mediaSorts: MediaSorts? = null,
+    ): PagingSource<Int, CrossRefWithVideoRelation> =
+        getVideosInPlayListFlowPagingSource(
+            buildVideoRawQuery(
+                wheres.appendOrCreateWith {
+                    listOf(
+                        playListIdWhere(playListId.toString()),
+                        videoNotDeletedWhere(),
                     )
                 },
                 mediaSorts,
@@ -182,9 +251,30 @@ interface PlayListDao {
         return RoomRawQuery(sql)
     }
 
+    private fun buildVideoRawQuery(
+        wheres: MediaWheres?,
+        sort: MediaSorts?,
+    ): RoomRawQuery {
+        val sql = """
+            SELECT * FROM ${Tables.PLAY_LIST}
+            JOIN ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF} ON ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
+            LEFT JOIN ${Tables.LIBRARY_VIDEO} ON ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${VideoColumns.ID}
+            ${wheres.toWhereString()}
+            ${sort.toSortString()}
+        """
+        return RoomRawQuery(sql)
+    }
+
     private fun audioNotDeletedWhere() =
         Where(
             MediaColumns.DELETED,
+            "IS NOT",
+            "1",
+        )
+
+    private fun videoNotDeletedWhere() =
+        Where(
+            VideoColumns.DELETED,
             "IS NOT",
             "1",
         )
@@ -199,17 +289,12 @@ interface PlayListDao {
     @RawQuery(observedEntities = [MediaEntity::class, PlayListEntity::class, PlayListWithMediaCrossRef::class])
     fun getMediasInPlayListFlowRaw(rawQuery: RoomRawQuery): Flow<List<CrossRefWithMediaRelation>>
 
+    @RawQuery(observedEntities = [VideoEntity::class, PlayListEntity::class, PlayListWithMediaCrossRef::class])
+    fun getVideosInPlayListFlowRaw(rawQuery: RoomRawQuery): Flow<List<CrossRefWithVideoRelation>>
+
     @RawQuery(observedEntities = [MediaEntity::class, PlayListEntity::class, PlayListWithMediaCrossRef::class])
     fun getMediasInPlayListFlowPagingSource(rawQuery: RoomRawQuery): PagingSource<Int, CrossRefWithMediaRelation>
 
-    @Query(
-        """
-            select * from ${Tables.PLAY_LIST}
-            join ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF} on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
-            left join ${Tables.LIBRARY_MEDIA} on ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${MediaColumns.ID}
-            where ${PlayListColumns.ID} = :playListId
-            order by ${MediaColumns.MODIFIED_DATE} desc
-        """,
-    )
-    suspend fun getMediasInPlayList(playListId: Long): List<CrossRefWithMediaRelation>
+    @RawQuery(observedEntities = [VideoEntity::class, PlayListEntity::class, PlayListWithMediaCrossRef::class])
+    fun getVideosInPlayListFlowPagingSource(rawQuery: RoomRawQuery): PagingSource<Int, CrossRefWithVideoRelation>
 }

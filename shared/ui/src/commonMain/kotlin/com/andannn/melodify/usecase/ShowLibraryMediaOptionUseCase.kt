@@ -39,7 +39,7 @@ suspend fun showLibraryMediaOption(
     val isPlayable = media is AudioItemModel || media is VideoItemModel
     val isAudio = media is AudioItemModel
     val isPlayList = media is PlayListItemModel
-    val isFavoritePlayList = media is PlayListItemModel && media.isFavorite
+    val isFavoritePlayList = media is PlayListItemModel && media.isFavoritePlayList
 
     suspend fun medias() =
         if (!isPlayable) {

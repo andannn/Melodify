@@ -186,7 +186,8 @@ private fun TabKind.toEntityName(): String =
         TabKind.ALBUM -> CustomTabType.ALBUM_DETAIL
         TabKind.ARTIST -> CustomTabType.ARTIST_DETAIL
         TabKind.GENRE -> CustomTabType.GENRE_DETAIL
-        TabKind.PLAYLIST -> CustomTabType.PLAYLIST_DETAIL
+        TabKind.VIDEO_PLAYLIST -> CustomTabType.VIDEO_PLAYLIST_DETAIL
+        TabKind.AUDIO_PLAYLIST -> CustomTabType.AUDIO_PLAYLIST_DETAIL
         TabKind.ALL_MUSIC -> CustomTabType.ALL_MUSIC
         TabKind.ALL_VIDEO -> CustomTabType.ALL_VIDEO
         TabKind.VIDEO_BUCKET -> CustomTabType.VIDEO_BUCKET

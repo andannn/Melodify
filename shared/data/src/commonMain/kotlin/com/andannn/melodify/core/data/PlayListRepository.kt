@@ -10,17 +10,15 @@ import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.SortOption
-import com.andannn.melodify.core.database.dao.PlayListDao
+import com.andannn.melodify.core.data.model.VideoItemModel
 import kotlinx.coroutines.flow.Flow
 
 interface PlayListRepository {
-    companion object {
-        const val FAVORITE_PLAY_LIST_ID = PlayListDao.FAVORITE_PLAY_LIST_ID
-    }
-
     /**
      * Return flow of all playLists
      */
+    fun getAllPlayListFlow(isAudio: Boolean): Flow<List<PlayListItemModel>>
+
     fun getAllPlayListFlow(): Flow<List<PlayListItemModel>>
 
     /**
@@ -32,16 +30,23 @@ interface PlayListRepository {
         wheres: List<GroupKey> = emptyList(),
     ): Flow<List<AudioItemModel>>
 
+    fun getVideosOfPlayListFlow(
+        playListId: Long,
+        sort: List<SortOption.VideoOption>,
+        wheres: List<GroupKey> = emptyList(),
+    ): Flow<List<VideoItemModel>>
+
     fun getAudioPagingFlowOfPlayList(
         playListId: Long,
         sort: List<SortOption.AudioOption>,
         wheres: List<GroupKey> = emptyList(),
     ): Flow<PagingData<AudioItemModel>>
 
-    /**
-     * Return audios of playList
-     */
-    suspend fun getAudiosOfPlayList(playListId: Long): List<AudioItemModel>
+    fun getVideoPagingFlowOfPlayList(
+        playListId: Long,
+        sort: List<SortOption.VideoOption>,
+        wheres: List<GroupKey> = emptyList(),
+    ): Flow<PagingData<VideoItemModel>>
 
     /**
      * Return playList by playListId
@@ -54,43 +59,35 @@ interface PlayListRepository {
     fun getPlayListFlowById(playListId: Long): Flow<PlayListItemModel?>
 
     /**
-     * Add musics to favorite playList
-     */
-    suspend fun addMusicToFavoritePlayList(musics: List<AudioItemModel>) = addMusicToPlayList(PlayListDao.FAVORITE_PLAY_LIST_ID, musics)
-
-    /**
      * Add musics to playList
      *
      * return index of musics that already exist
      */
-    suspend fun addMusicToPlayList(
+    suspend fun addItemsToPlayList(
         playListId: Long,
-        musics: List<AudioItemModel>,
+        items: List<MediaItemModel>,
     ): List<Long>
 
     /**
-     * Return indexes of [musics] which is duplicated in playList
+     * Return indexes of [items] which is duplicated in playList
      */
     suspend fun getDuplicatedMediaInPlayList(
         playListId: Long,
-        musics: List<AudioItemModel>,
+        items: List<MediaItemModel>,
     ): List<String>
 
     /**
      * Return flow of whether [mediaStoreId] is in favorite playList
      */
-    fun isMediaInFavoritePlayListFlow(mediaStoreId: String): Flow<Boolean>
+    fun isMediaInFavoritePlayListFlow(
+        mediaStoreId: String,
+        isAudio: Boolean,
+    ): Flow<Boolean>
 
     /**
      * Toggle favorite media
      */
     suspend fun toggleFavoriteMedia(audio: MediaItemModel)
-
-    /**
-     * Remove musics from favorite playList
-     */
-    suspend fun removeMusicFromFavoritePlayList(mediaIdList: List<String>) =
-        removeMusicFromPlayList(PlayListDao.FAVORITE_PLAY_LIST_ID, mediaIdList)
 
     /**
      * Remove musics from playList
@@ -103,7 +100,10 @@ interface PlayListRepository {
     /**
      * Create new playList
      */
-    suspend fun createNewPlayList(name: String): Long
+    suspend fun createNewPlayList(
+        name: String,
+        isAudio: Boolean,
+    ): Long
 
     /**
      * Delete playList by playListId

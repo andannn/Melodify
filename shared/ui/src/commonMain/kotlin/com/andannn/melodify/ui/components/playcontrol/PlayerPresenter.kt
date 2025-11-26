@@ -177,8 +177,8 @@ private class PlayerPresenter(
     private val isFavoriteFlow =
         interactingMusicItemFlow
             .flatMapLatest { interactingMusicItem ->
-// TODO: Implement Video favorite
-                getIsFavoriteFlow(interactingMusicItem as? AudioItemModel)
+                Napier.d(tag = TAG) { "interactingMusicItem $interactingMusicItem" }
+                getIsFavoriteFlow(interactingMusicItem)
             }.stateIn(
                 retainedScope,
                 started = SharingStarted.WhileSubscribed(),
@@ -216,9 +216,13 @@ private class PlayerPresenter(
 
                 PlayerUiEvent.OnTimerIconClick ->
                     retainedScope.launch {
-                        popupController.showDialog(
-                            DialogId.SleepCountingDialog,
-                        )
+                        val result =
+                            popupController.showDialog(
+                                DialogId.SleepCountingDialog,
+                            )
+                        if (result is DialogAction.SleepTimerCountingDialog.OnCancelTimer) {
+                            sleepTimerRepository.cancelSleepTimer()
+                        }
                     }
 
                 is PlayerUiEvent.OnOptionIconClick -> onOptionIconClick(it.mediaItem)
@@ -276,11 +280,14 @@ private class PlayerPresenter(
         }
     }
 
-    private fun getIsFavoriteFlow(interactingMusicItem: AudioItemModel?): Flow<Boolean> =
+    private fun getIsFavoriteFlow(interactingMusicItem: MediaItemModel?): Flow<Boolean> =
         if (interactingMusicItem == null) {
             flowOf(false)
         } else {
-            playListRepository.isMediaInFavoritePlayListFlow(interactingMusicItem.id)
+            playListRepository.isMediaInFavoritePlayListFlow(
+                interactingMusicItem.id,
+                interactingMusicItem is AudioItemModel,
+            )
         }
 
     private fun onFavoriteButtonClick(current: MediaItemModel?) {

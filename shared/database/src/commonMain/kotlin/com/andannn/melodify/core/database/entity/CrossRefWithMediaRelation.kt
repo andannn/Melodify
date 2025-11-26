@@ -10,3 +10,8 @@ data class CrossRefWithMediaRelation(
     @Embedded val playListWithMediaCrossRef: PlayListWithMediaCrossRef,
     @Embedded val media: MediaEntity,
 )
+
+data class CrossRefWithVideoRelation(
+    @Embedded val playListWithMediaCrossRef: PlayListWithMediaCrossRef,
+    @Embedded val media: VideoEntity,
+)

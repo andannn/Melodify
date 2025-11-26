@@ -34,9 +34,6 @@ sealed interface LibraryDataSource {
     data object AllPlaylist : LibraryDataSource
 
     @Serializable
-    data object Favorite : LibraryDataSource
-
-    @Serializable
     data class ArtistDetail(
         val id: String,
     ) : LibraryDataSource
@@ -54,6 +51,7 @@ sealed interface LibraryDataSource {
     @Serializable
     data class PlayListDetail(
         val id: String,
+        val isAudioPlayList: Boolean,
     ) : LibraryDataSource
 }
 
@@ -69,7 +67,6 @@ fun LibraryDataSource.browseable() =
         LibraryDataSource.AllSong,
         is LibraryDataSource.AlbumDetail,
         is LibraryDataSource.ArtistDetail,
-        LibraryDataSource.Favorite,
         is LibraryDataSource.GenreDetail,
         is LibraryDataSource.PlayListDetail,
         -> false
@@ -80,7 +77,7 @@ fun MediaItemModel.asLibraryDataSource() =
         is AlbumItemModel -> LibraryDataSource.AlbumDetail(id)
         is ArtistItemModel -> LibraryDataSource.ArtistDetail(id)
         is GenreItemModel -> LibraryDataSource.GenreDetail(id)
-        is PlayListItemModel -> LibraryDataSource.PlayListDetail(id)
+        is PlayListItemModel -> LibraryDataSource.PlayListDetail(id, isAudioPlayList = isAudioPlayList)
         is AudioItemModel -> error("AudioItemModel should not be converted to DataSource")
         is VideoItemModel -> error("VideoItemModel should not be converted to DataSource")
     }
@@ -91,7 +88,6 @@ fun ShortcutItem.toDataSource() =
         ShortcutItem.ALBUM -> LibraryDataSource.AllAlbum
         ShortcutItem.ARTIST -> LibraryDataSource.AllArtist
         ShortcutItem.GENRE -> LibraryDataSource.AllGenre
-        ShortcutItem.FAVORITE -> LibraryDataSource.Favorite
         ShortcutItem.PLAYLIST -> LibraryDataSource.AllPlaylist
         ShortcutItem.ALL_VIDEO -> LibraryDataSource.AllVideo
     }

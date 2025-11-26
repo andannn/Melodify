@@ -35,7 +35,7 @@ suspend fun MediaItemModel.pinToHomeTab() {
             is AlbumItemModel -> TabKind.ALBUM
             is ArtistItemModel -> TabKind.ARTIST
             is GenreItemModel -> TabKind.GENRE
-            is PlayListItemModel -> TabKind.PLAYLIST
+            is PlayListItemModel -> if (this.isAudioPlayList) TabKind.AUDIO_PLAYLIST else TabKind.VIDEO_PLAYLIST
             is AudioItemModel,
             is VideoItemModel,
             -> error("invalid")
@@ -72,11 +72,19 @@ suspend fun pinToHomeTab(
     tabKind: TabKind,
 ) {
     val exist =
-        userPreferenceRepository.isTabExist(externalId = externalId, tabName = tabName, tabKind = tabKind)
+        userPreferenceRepository.isTabExist(
+            externalId = externalId,
+            tabName = tabName,
+            tabKind = tabKind,
+        )
     if (exist) {
         popupController.showSnackBar(SnackBarMessage.TabAlreadyExist)
     } else {
-        userPreferenceRepository.addNewCustomTab(externalId = externalId, tabName = tabName, tabKind = tabKind)
+        userPreferenceRepository.addNewCustomTab(
+            externalId = externalId,
+            tabName = tabName,
+            tabKind = tabKind,
+        )
     }
 }
 
@@ -160,16 +168,23 @@ suspend fun openSleepTimer() {
 }
 
 context(repo: Repository, popupController: PopupController)
-suspend fun addToPlaylist(items: List<AudioItemModel>) {
+suspend fun addToPlaylist(items: List<MediaItemModel>) {
     Napier.d(tag = TAG) { "addToPlaylist E" }
-    val result = popupController.showDialog(DialogId.AddMusicsToPlayListDialog(items))
+    val audios = items.filterIsInstance<AudioItemModel>()
+    val videos = items.filterIsInstance<VideoItemModel>()
+    if (audios.isNotEmpty() && videos.isNotEmpty()) {
+        error("can not add audio and video at the same time")
+    }
+    val isAudio = audios.isNotEmpty()
+
+    val result = popupController.showDialog(DialogId.AddMusicsToPlayListDialog(items, isAudio))
 
     Napier.d(tag = TAG) { "AddMusicsToPlayListDialog result: $result" }
 
     if (result is DialogAction.AddToPlayListDialog.OnAddToPlayList) {
-        result.playList.addAll(audioList = result.audios)
+        result.playList.addAll(items = result.items)
     } else if (result is DialogAction.AddToPlayListDialog.OnCreateNewPlayList) {
-        createNewPlayList(items)
+        createNewPlayList(items, isAudio)
     }
 }
 
@@ -199,43 +214,46 @@ suspend fun deleteItems(items: List<MediaItemModel>) {
 }
 
 context(repo: Repository, popupController: PopupController)
-private suspend fun createNewPlayList(items: List<AudioItemModel>) {
+private suspend fun createNewPlayList(
+    items: List<MediaItemModel>,
+    isAudio: Boolean,
+) {
     val result = popupController.showDialog(DialogId.NewPlayListDialog)
     Napier.d(tag = TAG) { "result. name = $result" }
     if (result is DialogAction.InputDialog.Accept) {
         val name = result.input
-        Napier.d(tag = TAG) { "create new playlist start. name = $name" }
-        val playListId = repo.createNewPlayList(name)
+        Napier.d(tag = TAG) { "create new playlist start. name = $name, isAudio $isAudio" }
+        val playListId = repo.createNewPlayList(name, isAudio)
 
         Napier.d(tag = TAG) { "playlist created. id = $playListId" }
 
-        repo.addMusicToPlayList(
+        repo.addItemsToPlayList(
             playListId = playListId,
-            musics = items,
+            items = items,
         )
 
         repo.addNewCustomTab(
             externalId = playListId.toString(),
             tabName = name,
-            tabKind = TabKind.PLAYLIST,
+            tabKind = if (isAudio) TabKind.AUDIO_PLAYLIST else TabKind.VIDEO_PLAYLIST,
         )
     }
 }
 
 context(playListRepository: PlayListRepository, popupController: PopupController)
-private suspend fun PlayListItemModel.addAll(audioList: List<AudioItemModel>) {
+private suspend fun PlayListItemModel.addAll(items: List<MediaItemModel>) {
     val duplicatedMedias =
         playListRepository.getDuplicatedMediaInPlayList(
             playListId = id.toLong(),
-            musics = audioList,
+            items = items,
         )
 
     Napier.d(tag = TAG) { "onAddToPlayList. duplicated Medias: $duplicatedMedias" }
     when {
         duplicatedMedias.isEmpty() -> {
-            playListRepository.addMusicToPlayList(
+            playListRepository.addItemsToPlayList(
                 playListId = id.toLong(),
-                musics = audioList,
+                items = items,
             )
 
             popupController.showSnackBar(
@@ -254,9 +272,9 @@ private suspend fun PlayListItemModel.addAll(audioList: List<AudioItemModel>) {
                 popupController.showDialog(DialogId.DuplicatedAlert)
 
             if (result is DialogAction.AlertDialog.Accept) {
-                playListRepository.addMusicToPlayList(
+                playListRepository.addItemsToPlayList(
                     playListId = id.toLong(),
-                    musics = audioList.filter { it.id !in duplicatedMedias },
+                    items = items.filter { it.id !in duplicatedMedias },
                 )
             }
         }
