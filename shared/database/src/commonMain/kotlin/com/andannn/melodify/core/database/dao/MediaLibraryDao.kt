@@ -367,7 +367,6 @@ interface MediaLibraryDao {
     suspend fun deleteMediaByUris(uris: List<String>) {
         deleteMediaByUri(uris)
         deleteVideoByUri(uris)
-        deleteInvalidPlayListRefItem()
     }
 
     @Query(
@@ -402,16 +401,6 @@ interface MediaLibraryDao {
     """,
     )
     suspend fun searchArtist(keyword: String): List<ArtistEntity>
-
-    @Query(
-        """
-    DELETE FROM ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
-    WHERE ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} NOT IN (
-        SELECT ${MediaColumns.ID} FROM ${Tables.LIBRARY_MEDIA}
-    );
-    """,
-    )
-    suspend fun deleteInvalidPlayListRefItem()
 
     private fun bucketIdWhere(bucketId: String) =
         Where(
@@ -500,7 +489,6 @@ interface MediaLibraryDao {
         batchInsert(videos, DEFAULT_CHUNK_SIZE) { inserted, total ->
             onStep(MediaType.VIDEO, inserted, total)
         }
-        deleteInvalidPlayListRefItem()
     }
 
     private suspend fun <T> batchInsert(
