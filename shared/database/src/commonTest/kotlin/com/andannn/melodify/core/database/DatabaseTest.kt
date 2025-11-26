@@ -414,7 +414,7 @@ class DatabaseTest {
     fun insert_play_lists_test() =
         testScope.runTest {
             val ids =
-                playListDao.inertPlayLists(
+                playListDao.insertPlayListEntities(
                     entities =
                         listOf(
                             PlayListEntity(

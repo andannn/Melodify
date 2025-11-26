@@ -123,9 +123,6 @@ interface PlayListDao {
         mediaStoreId: String,
     ): Flow<Boolean>
 
-    @Insert(entity = PlayListEntity::class, onConflict = OnConflictStrategy.IGNORE)
-    suspend fun inertPlayLists(entities: List<PlayListEntity>): List<Long>
-
     @Query(
         """
         delete from ${Tables.PLAY_LIST}
