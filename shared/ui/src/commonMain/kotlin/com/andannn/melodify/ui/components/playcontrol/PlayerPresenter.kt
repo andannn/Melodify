@@ -216,9 +216,13 @@ private class PlayerPresenter(
 
                 PlayerUiEvent.OnTimerIconClick ->
                     retainedScope.launch {
-                        popupController.showDialog(
-                            DialogId.SleepCountingDialog,
-                        )
+                        val result =
+                            popupController.showDialog(
+                                DialogId.SleepCountingDialog,
+                            )
+                        if (result is DialogAction.SleepTimerCountingDialog.OnCancelTimer) {
+                            sleepTimerRepository.cancelSleepTimer()
+                        }
                     }
 
                 is PlayerUiEvent.OnOptionIconClick -> onOptionIconClick(it.mediaItem)

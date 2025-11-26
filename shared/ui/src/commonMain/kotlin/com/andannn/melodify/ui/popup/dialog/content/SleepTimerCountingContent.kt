@@ -20,10 +20,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.andannn.melodify.core.data.PlayListRepository
+import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.SleepTimerRepository
 import com.andannn.melodify.model.DialogAction
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import com.andannn.melodify.ui.util.durationString
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.stateIn
 import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.cancel_timer
 import melodify.shared.ui.generated.resources.sleep_timer
@@ -37,12 +45,10 @@ internal fun SleepTimerCountingContent(
     modifier: Modifier = Modifier,
     onAction: (DialogAction) -> Unit = {},
 ) {
-    val remainTime by getKoin()
-        .get<SleepTimerRepository>()
-        .observeRemainTime()
-        .collectAsState(0.seconds)
+    val state = retainCounterPresenter().present()
     SleepTimerCounterSheetContent(
-        remain = remainTime,
+        modifier = modifier,
+        remain = state.remainTime,
         onClickCancel = {
             onAction(DialogAction.SleepTimerCountingDialog.OnCancelTimer)
         },
@@ -100,6 +106,37 @@ private fun SleepTimerCounterSheetContent(
         }
     }
 }
+
+@Composable
+private fun retainCounterPresenter(repository: Repository = LocalRepository.current) =
+    retainPresenter(
+        repository,
+    ) {
+        CounterPresenter(repository)
+    }
+
+private class CounterPresenter(
+    repository: Repository,
+) : ScopedPresenter<CounterState>() {
+    private val remainedTimeFlow =
+        repository
+            .observeRemainTime()
+            .stateIn(
+                retainedScope,
+                initialValue = 0.seconds,
+                started = WhileSubscribed(5000),
+            )
+
+    @Composable
+    override fun present(): CounterState {
+        val remainTime by remainedTimeFlow.collectAsStateWithLifecycle()
+        return CounterState(remainTime)
+    }
+}
+
+private data class CounterState(
+    val remainTime: Duration,
+)
 
 @Preview
 @Composable

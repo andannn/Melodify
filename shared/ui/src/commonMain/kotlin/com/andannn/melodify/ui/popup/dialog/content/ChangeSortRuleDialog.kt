@@ -26,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -42,7 +41,9 @@ import com.andannn.melodify.core.data.model.isAscending
 import com.andannn.melodify.core.data.model.isAudio
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
-import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.util.getCategoryResource
 import com.andannn.melodify.ui.util.icon
 import com.andannn.melodify.ui.util.label
@@ -50,6 +51,8 @@ import com.andannn.melodify.ui.util.orderLabel
 import com.andannn.melodify.ui.widgets.DropDownMenuIconButton
 import com.andannn.melodify.ui.widgets.PresetSortOptionSelector
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.content_sort_by
@@ -60,7 +63,6 @@ import melodify.shared.ui.generated.resources.reset_settings
 import melodify.shared.ui.generated.resources.secondary_group_by
 import melodify.shared.ui.generated.resources.show_track_number
 import org.jetbrains.compose.resources.stringResource
-import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "ChangeSortRuleDialog"
 
@@ -70,7 +72,7 @@ fun ChangeSortRuleDialog(
     dialog: DialogId.ChangeSortRuleDialog,
     onAction: (DialogAction) -> Unit = {},
 ) {
-    val state = rememberChangeSortRulePresenter(dialog.tab).present()
+    val state = retainedChangeSortRulePresenter(dialog.tab).present()
 
     ChangeSortRuleDialogContent(
         modifier = modifier,
@@ -488,47 +490,55 @@ fun SortOptionType.createSortOption(isAscending: Boolean) =
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun rememberChangeSortRulePresenter(customTab: CustomTab) =
-    remember(
-        customTab,
-    ) {
-        ChangeSortRulePresenter(
-            customTab = customTab,
-        )
-    }
+private fun retainedChangeSortRulePresenter(
+    customTab: CustomTab,
+    repository: Repository = LocalRepository.current,
+) = retainPresenter(
+    customTab,
+    repository,
+) {
+    ChangeSortRulePresenter(
+        repository = repository,
+        customTab = customTab,
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 private class ChangeSortRulePresenter(
     private val customTab: CustomTab,
-    repository: Repository = getKoin().get<Repository>(),
-) : Presenter<UiState> {
-    private val userPreferences = repository.userPreferenceRepository
+    private val repository: Repository,
+) : ScopedPresenter<UiState>() {
+    private val displaySettingFlow =
+        repository
+            .getCurrentSortRule(customTab)
+            .stateIn(
+                retainedScope,
+                initialValue = DisplaySetting.Preset.Audio.DefaultPreset,
+                started = WhileSubscribed(5000),
+            )
 
     @Composable
     override fun present(): UiState {
-        val displaySetting by userPreferences
-            .getCurrentSortRule(customTab)
-            .collectAsStateWithLifecycle(DisplaySetting.Preset.Audio.DefaultPreset)
+        val displaySetting by displaySettingFlow.collectAsStateWithLifecycle()
 
-        val scope = rememberCoroutineScope()
         return UiState(displaySetting) { event ->
             when (event) {
                 is UiEvent.OnChangeSortRule -> {
-                    scope.launch {
-                        userPreferences.saveSortRuleForTab(customTab, event.displaySetting)
+                    retainedScope.launch {
+                        repository.saveSortRuleForTab(customTab, event.displaySetting)
                     }
                 }
 
                 UiEvent.OnCustomRadioButtonClick -> {
-                    scope.launch {
+                    retainedScope.launch {
                         val currentTab = customTab
-                        val customSortRule = userPreferences.getTabCustomSortRule(currentTab)
+                        val customSortRule = repository.getTabCustomSortRule(currentTab)
 
                         if (customSortRule != null && !customSortRule.isPreset) {
                             Napier.d(tag = TAG) { "Already has custom sort rule. $customSortRule" }
                         }
 
-                        userPreferences.saveSortRuleForTab(
+                        repository.saveSortRuleForTab(
                             currentTab,
                             DisplaySetting.getDefaultCustom(customTab.isAudio()),
                         )

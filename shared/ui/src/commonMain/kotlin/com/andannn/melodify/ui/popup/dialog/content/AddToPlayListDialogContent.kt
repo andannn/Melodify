@@ -45,6 +45,7 @@ import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.widgets.ActionType
 import com.andannn.melodify.ui.widgets.LargePreviewCard
 import com.andannn.melodify.ui.widgets.ListTileItemView
@@ -214,7 +215,7 @@ private fun retainedAddToPlayListSheetState(
     isAudio: Boolean,
     repository: Repository = LocalRepository.current,
 ): Presenter<AddToPlayListSheetState> =
-    retain(isAudio, repository) {
+    retainPresenter(isAudio, repository) {
         AddToPlayListSheetPresenter(isAudio, repository)
     }
 

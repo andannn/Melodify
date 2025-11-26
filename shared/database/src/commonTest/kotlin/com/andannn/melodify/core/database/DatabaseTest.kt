@@ -484,7 +484,7 @@ class DatabaseTest {
             )
             playListDao.deletePlayListById(2)
             val playLists = playListDao.getAllPlayListFlow(true).first()
-            assertEquals(3, playLists.size)
+            assertEquals(2, playLists.size)
         }
 
     @Test
