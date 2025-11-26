@@ -11,6 +11,8 @@ import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.dao.UserDataDao
 import com.andannn.melodify.core.database.setUpDatabase
+import com.andannn.melodify.core.database.setUpDummyData
+import com.andannn.melodify.core.database.util.inMemoryDatabaseBuilder
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -26,10 +28,32 @@ val databaseModule =
                         .setUpDatabase()
                         .build()
                 }
-                single<LyricDao> { get<MelodifyDataBase>().getLyricDao() }
-                single<PlayListDao> { get<MelodifyDataBase>().getPlayListDao() }
-                single<MediaLibraryDao> { get<MelodifyDataBase>().getMediaLibraryDao() }
-                single<UserDataDao> { get<MelodifyDataBase>().getUserDataDao() }
+                daoModule()
             },
         )
     }
+
+val dummyDatabaseModule =
+    module {
+        includes(
+            module {
+                single<RoomDatabase.Builder<MelodifyDataBase>> {
+                    inMemoryDatabaseBuilder()
+                }
+                single<MelodifyDataBase> {
+                    get<RoomDatabase.Builder<MelodifyDataBase>>()
+                        .setUpDatabase()
+                        .setUpDummyData()
+                        .build()
+                }
+                daoModule()
+            },
+        )
+    }
+
+private fun Module.daoModule() {
+    single<LyricDao> { get<MelodifyDataBase>().getLyricDao() }
+    single<PlayListDao> { get<MelodifyDataBase>().getPlayListDao() }
+    single<MediaLibraryDao> { get<MelodifyDataBase>().getMediaLibraryDao() }
+    single<UserDataDao> { get<MelodifyDataBase>().getUserDataDao() }
+}

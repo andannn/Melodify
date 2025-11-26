@@ -45,6 +45,10 @@ fun Project.configureKotlinMultiplatform(extension: KotlinMultiplatformExtension
                 implementation(libs.findLibrary("koin.android").get())
             }
 
+            androidInstrumentedTest.dependencies {
+                implementation(libs.findLibrary("koin.test.junit4").get())
+            }
+
             commonTest.dependencies {
                 implementation(libs.findLibrary("kotlin.test").get())
                 implementation(libs.findLibrary("kotlinx.coroutines.test").get())

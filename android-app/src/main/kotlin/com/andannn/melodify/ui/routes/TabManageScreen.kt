@@ -16,7 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.andannn.melodify.ui.components.tabmanagement.TabManagementContent
+import com.andannn.melodify.ui.components.tabmanagement.TabManagementUi
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
@@ -51,7 +51,7 @@ fun TabManagementScreen(
             )
         },
     ) {
-        TabManagementContent(
+        TabManagementUi(
             modifier = Modifier.padding(it),
         )
     }

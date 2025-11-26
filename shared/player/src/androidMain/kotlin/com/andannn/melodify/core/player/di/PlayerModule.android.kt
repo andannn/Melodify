@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.player.di
 
+import com.andannn.melodify.core.player.DummyMediaBrowserManager
 import com.andannn.melodify.core.player.MediaBrowserManager
 import com.andannn.melodify.core.player.MediaBrowserManagerImpl
 import com.andannn.melodify.core.player.PlayerWrapper
@@ -17,4 +18,9 @@ internal actual val platformPlayerModule: Module =
     module {
         singleOf(::PlayerWrapperImpl).bind(PlayerWrapper::class)
         singleOf(::MediaBrowserManagerImpl).bind(MediaBrowserManager::class)
+    }
+
+internal actual val dummyPlatformPlayerModule: Module =
+    module {
+        singleOf(::DummyMediaBrowserManager).bind(MediaBrowserManager::class)
     }

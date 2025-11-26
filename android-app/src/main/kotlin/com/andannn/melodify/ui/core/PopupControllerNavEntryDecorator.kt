@@ -9,7 +9,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
 import androidx.navigation3.runtime.NavEntryDecorator
-import com.andannn.melodify.ui.popup.PopupControllerImpl
 
 @Composable
 fun <T : Any> rememberPopupControllerNavEntryDecorator(): NavEntryDecorator<T> = remember { PopupControllerNavEntryDecorator() }
@@ -19,7 +18,7 @@ private class PopupControllerNavEntryDecorator<T : Any> :
         onPop = {
         },
         decorate = { entry ->
-            val holder = retain { PopupControllerImpl() }
+            val holder = retain { PopupController() }
             CompositionLocalProvider(
                 LocalPopupController provides holder,
             ) {

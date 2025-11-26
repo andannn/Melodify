@@ -13,8 +13,6 @@ import com.andannn.melodify.core.player.VlcPlayer
 internal class MediaControllerRepositoryImpl(
     private val vlcPlayer: VlcPlayer,
 ) : MediaControllerRepository {
-    override fun getCurrentPlayingItemDuration(): Long? = vlcPlayer.currentDurationMs
-
     override fun playMediaList(
         mediaList: List<MediaItemModel>,
         index: Int,

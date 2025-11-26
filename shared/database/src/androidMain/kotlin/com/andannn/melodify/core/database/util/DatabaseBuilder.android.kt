@@ -2,15 +2,16 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.core.database
+package com.andannn.melodify.core.database.util
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.test.core.app.ApplicationProvider
+import com.andannn.melodify.core.database.MelodifyDataBase
+import org.koin.mp.KoinPlatform.getKoin
 
-actual fun inMemoryDatabaseBuilder(): RoomDatabase.Builder<MelodifyDataBase> =
+internal actual fun inMemoryDatabaseBuilder(): RoomDatabase.Builder<MelodifyDataBase> =
     Room
         .inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
+            getKoin().get(),
             MelodifyDataBase::class.java,
         ).allowMainThreadQueries()

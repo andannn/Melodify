@@ -96,6 +96,7 @@ koin-core-viewmodel = { module = "io.insert-koin:koin-core-viewmodel" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-android = { module = "io.insert-koin:koin-android" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
+koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napierVersion" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinxCoroutines" }

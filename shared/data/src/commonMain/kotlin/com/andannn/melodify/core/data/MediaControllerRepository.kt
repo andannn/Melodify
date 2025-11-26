@@ -8,8 +8,6 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 
 interface MediaControllerRepository {
-    fun getCurrentPlayingItemDuration(): Long?
-
     fun playMediaList(
         mediaList: List<MediaItemModel>,
         index: Int = 0,

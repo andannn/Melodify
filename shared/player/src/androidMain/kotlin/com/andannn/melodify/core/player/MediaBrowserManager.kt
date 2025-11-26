@@ -26,6 +26,15 @@ interface MediaBrowserManager {
     fun disConnect()
 }
 
+class DummyMediaBrowserManager : MediaBrowserManager {
+    override val mediaBrowser: MediaBrowser
+        get() = throw IllegalStateException("MediaBrowser is not initialized")
+
+    override suspend fun connect() = Unit
+
+    override fun disConnect() = Unit
+}
+
 class MediaBrowserManagerImpl(
     private val application: Application,
 ) : MediaBrowserManager {

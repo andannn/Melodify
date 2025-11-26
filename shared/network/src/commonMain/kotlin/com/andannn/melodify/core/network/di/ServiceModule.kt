@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.network.di
 
+import com.andannn.melodify.core.network.DummyLrclibService
 import com.andannn.melodify.core.network.LrclibService
 import com.andannn.melodify.core.network.LrclibServiceImpl
 import com.andannn.melodify.core.network.clientBuilder
@@ -16,4 +17,9 @@ val serviceModule =
                 clientBuilder(),
             )
         }
+    }
+
+val dummyServiceModule =
+    module {
+        single<LrclibService> { DummyLrclibService() }
     }

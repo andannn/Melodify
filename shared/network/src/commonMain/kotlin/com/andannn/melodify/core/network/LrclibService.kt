@@ -28,6 +28,15 @@ interface LrclibService {
     ): LyricData
 }
 
+internal class DummyLrclibService : LrclibService {
+    override suspend fun getLyric(
+        trackName: String,
+        artistName: String,
+        albumName: String?,
+        duration: Long?,
+    ): LyricData = throw IllegalStateException("Not supported")
+}
+
 internal class LrclibServiceImpl(
     httpClient: HttpClient,
 ) : LrclibService {

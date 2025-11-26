@@ -22,8 +22,6 @@ class MediaControllerRepositoryImpl constructor(
 
     fun getPlayer(): Player = mediaBrowser
 
-    override fun getCurrentPlayingItemDuration(): Long = mediaBrowser.duration
-
     override fun playMediaList(
         mediaList: List<MediaItemModel>,
         index: Int,

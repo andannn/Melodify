@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
-import com.andannn.melodify.ui.components.tabmanagement.TabManagementContent
+import com.andannn.melodify.ui.components.tabmanagement.TabManagementUi
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.windows.CustomMenuBar
@@ -37,7 +37,7 @@ fun TabManageWindow(
                 )
             },
         ) {
-            TabManagementContent(
+            TabManagementUi(
                 modifier = Modifier.padding(it),
             )
         }
