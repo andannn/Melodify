@@ -127,7 +127,7 @@ class TabContentPresenter(
 
                     is TabContentEvent.OnShowMediaItemOption ->
                         retainedScope.launch {
-                            onShowMusicItemOption(eventSink.mediaItemModel)
+                            onShowMediaItemOption(eventSink.mediaItemModel)
                         }
 
                     is TabContentEvent.OnGroupItemClick ->
@@ -195,14 +195,14 @@ class TabContentPresenter(
     }
 
     context(_: Repository, popupController: PopupController, _: MediaFileDeleteHelper)
-    private suspend fun onShowMusicItemOption(item: MediaItemModel) {
+    private suspend fun onShowMediaItemOption(item: MediaItemModel) {
         Napier.d(message = "onShowMusicItemOption: $item")
         val isAudio = item is AudioItemModel
         val options =
             buildList {
                 add(OptionItem.PLAY_NEXT)
                 add(OptionItem.ADD_TO_QUEUE)
-                if (isAudio) add(OptionItem.ADD_TO_PLAYLIST)
+                add(OptionItem.ADD_TO_PLAYLIST)
                 if (isAudio) add(OptionItem.OPEN_LIBRARY_ALBUM)
                 if (isAudio) add(OptionItem.OPEN_LIBRARY_ARTIST)
                 add(OptionItem.DELETE_MEDIA_FILE)
@@ -213,7 +213,7 @@ class TabContentPresenter(
             when (result.optionItem) {
                 OptionItem.PLAY_NEXT -> addToNextPlay(listOf(item))
                 OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(item))
-                OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item as AudioItemModel))
+                OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item))
                 OptionItem.DELETE_MEDIA_FILE -> deleteItems(listOf(item))
                 OptionItem.OPEN_LIBRARY_ALBUM ->
                     navigationRequestEventSink.onRequestNavigate(

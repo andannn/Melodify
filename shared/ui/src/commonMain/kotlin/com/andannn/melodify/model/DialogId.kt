@@ -6,6 +6,7 @@ package com.andannn.melodify.model
 
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.model.MediaItemModel
 import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.confirm_delete_playlist_item
 import melodify.shared.ui.generated.resources.decline
@@ -65,8 +66,9 @@ sealed interface DialogId {
 
     data object DefaultSortRuleSettingDialog : DialogId
 
-    data class AddMusicsToPlayListDialog(
-        val items: List<AudioItemModel>,
+    data class AddMusicsToPlayListDialog constructor(
+        val items: List<MediaItemModel>,
+        val isAudio: Boolean,
     ) : DialogId
 
     data object SleepTimerOptionDialog : DialogId

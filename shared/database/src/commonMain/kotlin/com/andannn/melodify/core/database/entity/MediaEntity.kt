@@ -89,3 +89,4 @@ data class MediaEntity constructor(
 )
 
 val MediaEntity.valid: Boolean get() = id != 0L
+val VideoEntity.valid: Boolean get() = id != 0L

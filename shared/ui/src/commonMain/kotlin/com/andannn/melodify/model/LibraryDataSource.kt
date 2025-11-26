@@ -51,6 +51,7 @@ sealed interface LibraryDataSource {
     @Serializable
     data class PlayListDetail(
         val id: String,
+        val isAudioPlayList: Boolean,
     ) : LibraryDataSource
 }
 
@@ -76,7 +77,7 @@ fun MediaItemModel.asLibraryDataSource() =
         is AlbumItemModel -> LibraryDataSource.AlbumDetail(id)
         is ArtistItemModel -> LibraryDataSource.ArtistDetail(id)
         is GenreItemModel -> LibraryDataSource.GenreDetail(id)
-        is PlayListItemModel -> LibraryDataSource.PlayListDetail(id)
+        is PlayListItemModel -> LibraryDataSource.PlayListDetail(id, isAudioPlayList = isAudioPlayList)
         is AudioItemModel -> error("AudioItemModel should not be converted to DataSource")
         is VideoItemModel -> error("VideoItemModel should not be converted to DataSource")
     }

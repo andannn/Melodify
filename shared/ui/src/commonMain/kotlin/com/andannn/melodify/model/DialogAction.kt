@@ -5,6 +5,7 @@
 package com.andannn.melodify.model
 
 import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 
 sealed interface DialogAction {
@@ -33,7 +34,7 @@ sealed interface DialogAction {
     interface AddToPlayListDialog : DialogAction {
         data class OnAddToPlayList(
             val playList: PlayListItemModel,
-            val audios: List<AudioItemModel>,
+            val items: List<MediaItemModel>,
         ) : AddToPlayListDialog
 
         object OnCreateNewPlayList : AddToPlayListDialog

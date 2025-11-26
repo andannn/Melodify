@@ -117,6 +117,7 @@ data class PlayListItemModel constructor(
     override val artWorkUri: String?,
     override val trackCount: Int,
     val isFavoritePlayList: Boolean,
+    val isAudioPlayList: Boolean,
 ) : MediaItemModel
 
 /**

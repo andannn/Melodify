@@ -26,31 +26,31 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.model.AudioItemModel
+import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.ui.widgets.ActionType
 import com.andannn.melodify.ui.widgets.LargePreviewCard
 import com.andannn.melodify.ui.widgets.ListTileItemView
 import com.andannn.melodify.ui.widgets.SmpTextButton
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.stateIn
 import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.all_playlists
 import melodify.shared.ui.generated.resources.all_to_playlist_page_title
@@ -58,7 +58,6 @@ import melodify.shared.ui.generated.resources.new_playlist_dialog_title
 import melodify.shared.ui.generated.resources.selected_songs
 import melodify.shared.ui.generated.resources.track_count
 import org.jetbrains.compose.resources.stringResource
-import org.koin.mp.KoinPlatform.getKoin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,11 +66,11 @@ fun AddToPlayListDialogContent(
     dialog: DialogId.AddMusicsToPlayListDialog,
     onAction: (DialogAction) -> Unit,
 ) {
-    val state = rememberAddToPlayListSheetState()
+    val state = retainedAddToPlayListSheetState(dialog.isAudio).present()
     AddToPlayListRequestSheetContent(
         modifier = modifier.fillMaxWidth(),
-        audioList = dialog.items,
-        playLists = state.playListState,
+        items = dialog.items,
+        playLists = state.playLists,
         onRequestDismiss = {
             onAction(DialogAction.Dismissed)
         },
@@ -92,13 +91,13 @@ fun AddToPlayListDialogContent(
 @Composable
 internal fun AddToPlayListRequestSheetContent(
     modifier: Modifier = Modifier,
-    audioList: List<AudioItemModel>,
+    items: List<MediaItemModel>,
     playLists: List<PlayListItemModel>,
     onRequestDismiss: () -> Unit = {},
     onPlayListClick: (PlayListItemModel) -> Unit = {},
     onCreateNewClick: () -> Unit = {},
 ) {
-    val itemCount by rememberUpdatedState(audioList.size)
+    val itemCount by rememberUpdatedState(items.size)
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -144,7 +143,7 @@ internal fun AddToPlayListRequestSheetContent(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         items(
-                            items = audioList,
+                            items = items,
                             key = { it.id },
                         ) { audio ->
                             LargePreviewCard(
@@ -211,39 +210,36 @@ internal fun AddToPlayListRequestSheetContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun rememberAddToPlayListSheetState(
-    sheetState: SheetState =
-        rememberModalBottomSheetState(
-            skipPartiallyExpanded = true,
-        ),
-    scope: CoroutineScope = rememberCoroutineScope(),
-) = remember(
-    scope,
-    sheetState,
-) {
-    AddToPlayListSheetState(
-        scope = scope,
-        sheetState = sheetState,
-    )
-}
+private fun retainedAddToPlayListSheetState(
+    isAudio: Boolean,
+    repository: Repository = LocalRepository.current,
+): Presenter<AddToPlayListSheetState> =
+    retain(isAudio, repository) {
+        AddToPlayListSheetPresenter(isAudio, repository)
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
-private class AddToPlayListSheetState(
-    val scope: CoroutineScope,
-    repository: Repository = getKoin().get<Repository>(),
-    val sheetState: SheetState,
-) {
-    val playListState = mutableStateListOf<PlayListItemModel>()
+private class AddToPlayListSheetPresenter(
+    isAudio: Boolean,
+    repository: Repository,
+) : ScopedPresenter<AddToPlayListSheetState>() {
+    private val playListStateFlow =
+        repository
+            .getAllPlayListFlow(isAudio)
+            .stateIn(
+                retainedScope,
+                initialValue = emptyList(),
+                started = WhileSubscribed(),
+            )
 
-    init {
-        scope.launch {
-            repository.playListRepository
-                .getAllPlayListFlow()
-                .distinctUntilChanged()
-                .collect {
-                    playListState.clear()
-                    playListState.addAll(it)
-                }
-        }
+    @Composable
+    override fun present(): AddToPlayListSheetState {
+        val playLists by playListStateFlow.collectAsStateWithLifecycle()
+        return AddToPlayListSheetState(playLists)
     }
 }
+
+@Stable
+private data class AddToPlayListSheetState(
+    val playLists: List<PlayListItemModel>,
+)
