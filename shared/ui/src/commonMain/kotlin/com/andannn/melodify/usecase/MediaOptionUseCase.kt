@@ -209,9 +209,9 @@ private suspend fun createNewPlayList(items: List<AudioItemModel>) {
 
         Napier.d(tag = TAG) { "playlist created. id = $playListId" }
 
-        repo.addMusicToPlayList(
+        repo.addItemsToPlayList(
             playListId = playListId,
-            musics = items,
+            items = items,
         )
 
         repo.addNewCustomTab(
@@ -233,9 +233,9 @@ private suspend fun PlayListItemModel.addAll(audioList: List<AudioItemModel>) {
     Napier.d(tag = TAG) { "onAddToPlayList. duplicated Medias: $duplicatedMedias" }
     when {
         duplicatedMedias.isEmpty() -> {
-            playListRepository.addMusicToPlayList(
+            playListRepository.addItemsToPlayList(
                 playListId = id.toLong(),
-                musics = audioList,
+                items = audioList,
             )
 
             popupController.showSnackBar(
@@ -254,9 +254,9 @@ private suspend fun PlayListItemModel.addAll(audioList: List<AudioItemModel>) {
                 popupController.showDialog(DialogId.DuplicatedAlert)
 
             if (result is DialogAction.AlertDialog.Accept) {
-                playListRepository.addMusicToPlayList(
+                playListRepository.addItemsToPlayList(
                     playListId = id.toLong(),
-                    musics = audioList.filter { it.id !in duplicatedMedias },
+                    items = audioList.filter { it.id !in duplicatedMedias },
                 )
             }
         }

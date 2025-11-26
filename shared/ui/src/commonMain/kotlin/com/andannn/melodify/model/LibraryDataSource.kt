@@ -34,9 +34,6 @@ sealed interface LibraryDataSource {
     data object AllPlaylist : LibraryDataSource
 
     @Serializable
-    data object Favorite : LibraryDataSource
-
-    @Serializable
     data class ArtistDetail(
         val id: String,
     ) : LibraryDataSource
@@ -69,7 +66,6 @@ fun LibraryDataSource.browseable() =
         LibraryDataSource.AllSong,
         is LibraryDataSource.AlbumDetail,
         is LibraryDataSource.ArtistDetail,
-        LibraryDataSource.Favorite,
         is LibraryDataSource.GenreDetail,
         is LibraryDataSource.PlayListDetail,
         -> false
@@ -91,7 +87,6 @@ fun ShortcutItem.toDataSource() =
         ShortcutItem.ALBUM -> LibraryDataSource.AllAlbum
         ShortcutItem.ARTIST -> LibraryDataSource.AllArtist
         ShortcutItem.GENRE -> LibraryDataSource.AllGenre
-        ShortcutItem.FAVORITE -> LibraryDataSource.Favorite
         ShortcutItem.PLAYLIST -> LibraryDataSource.AllPlaylist
         ShortcutItem.ALL_VIDEO -> LibraryDataSource.AllVideo
     }

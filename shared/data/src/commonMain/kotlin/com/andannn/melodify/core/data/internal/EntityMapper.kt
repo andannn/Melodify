@@ -127,6 +127,7 @@ internal fun PlayListWithMediaCount.toAppItem() =
         id = playListEntity.id.toString(),
         name = playListEntity.name,
         artWorkUri = playListEntity.artworkUri ?: "",
+        isFavoritePlayList = playListEntity.isFavoritePlayList == true,
         trackCount = mediaCount,
     )
 

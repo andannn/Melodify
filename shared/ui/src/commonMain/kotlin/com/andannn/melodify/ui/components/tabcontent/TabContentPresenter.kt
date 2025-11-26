@@ -121,7 +121,7 @@ class TabContentPresenter(
                                 }
                             playMedia(
                                 eventSink.mediaItemModel,
-                                allAudios = items,
+                                items = items,
                             )
                         }
 
@@ -166,11 +166,11 @@ class TabContentPresenter(
 
     private fun playMedia(
         mediaItem: MediaItemModel,
-        allAudios: List<MediaItemModel>,
+        items: List<MediaItemModel>,
     ) {
         mediaControllerRepository.playMediaList(
-            allAudios.toList(),
-            allAudios.indexOf(mediaItem),
+            items.toList(),
+            items.indexOf(mediaItem),
         )
     }
 

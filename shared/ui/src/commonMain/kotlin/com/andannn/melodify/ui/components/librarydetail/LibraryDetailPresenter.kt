@@ -76,20 +76,26 @@ private class LibraryDetailPresenter(
     private val navigationRequestSink: NavigationRequestEventSink,
 ) : ScopedPresenter<LibraryContentState>() {
     private val dataSourceMediaItemFlow =
-        with(repository) { dataSource.item() }
-            .stateIn(
-                retainedScope,
-                started = WhileSubscribed(),
-                initialValue = null,
-            )
+        with(repository) {
+            dataSource
+                .item()
+                .stateIn(
+                    retainedScope,
+                    started = WhileSubscribed(),
+                    initialValue = null,
+                )
+        }
 
     private val contentListFlow =
-        with(repository) { dataSource.content() }
-            .stateIn(
-                retainedScope,
-                started = WhileSubscribed(),
-                initialValue = emptyList(),
-            )
+        with(repository) {
+            dataSource
+                .content()
+                .stateIn(
+                    retainedScope,
+                    started = WhileSubscribed(),
+                    initialValue = emptyList(),
+                )
+        }
 
     private var title by mutableStateOf("")
 
@@ -150,7 +156,6 @@ private suspend fun LibraryDataSource.getTitle(): String =
         LibraryDataSource.AllPlaylist -> getString(Res.string.playlist_page_title)
         LibraryDataSource.AllSong -> getString(Res.string.audio_page_title)
         LibraryDataSource.AllVideo -> getString(Res.string.video_page_title)
-        LibraryDataSource.Favorite -> getString(Res.string.favorite)
         is LibraryDataSource.AlbumDetail ->
             repository.mediaContentRepository.getAlbumByAlbumId(id)?.name
                 ?: ""

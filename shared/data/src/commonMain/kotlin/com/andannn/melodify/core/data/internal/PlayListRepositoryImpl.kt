@@ -12,6 +12,7 @@ import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.SortOption
+import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.core.data.model.toAudioSortMethod
 import com.andannn.melodify.core.data.model.toWheresMethod
 import com.andannn.melodify.core.database.dao.PlayListDao
@@ -20,6 +21,8 @@ import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 
@@ -32,12 +35,13 @@ internal class PlayListRepositoryImpl(
             .map(::mapPlayListToAudioList)
 
     override suspend fun getPlayListById(playListId: Long) =
-        playListDao.getPlayList(playListId)?.let {
+        playListDao.getPlayListWithMedias(playListId)?.let {
             PlayListItemModel(
                 id = it.playList.id.toString(),
                 name = it.playList.name,
                 artWorkUri = it.playList.artworkUri ?: "",
                 trackCount = it.medias.size,
+                isFavoritePlayList = it.playList.isFavoritePlayList == true,
             )
         }
 
@@ -51,26 +55,52 @@ internal class PlayListRepositoryImpl(
                     name = it.playList.name,
                     artWorkUri = it.playList.artworkUri ?: "",
                     trackCount = it.medias.size,
+                    isFavoritePlayList = it.playList.isFavoritePlayList == true,
                 )
             }
 
-    override suspend fun addMusicToPlayList(
+    override suspend fun addItemsToPlayList(
         playListId: Long,
-        musics: List<AudioItemModel>,
+        items: List<MediaItemModel>,
     ): List<Long> {
+        val playListEntity = playListDao.getPlayListEntity(playListId)
+        if (playListEntity == null) {
+            return emptyList()
+        }
+
+        val videos = items.filterIsInstance<VideoItemModel>()
+        val musics = items.filterIsInstance<AudioItemModel>()
+
         val insertedIndexList =
-            playListDao.insertPlayListWithMediaCrossRef(
-                crossRefs =
-                    musics.map {
-                        PlayListWithMediaCrossRef(
-                            playListId = playListId,
-                            mediaStoreId = it.id,
-                            artist = it.artist,
-                            title = it.name,
-                            addedDate = Clock.System.now().toEpochMilliseconds(),
-                        )
-                    },
-            )
+            if (playListEntity.isAudioPlayList == true) {
+                if (videos.isNotEmpty()) error("insert videos to audio playlist")
+                playListDao.insertPlayListWithMediaCrossRef(
+                    crossRefs =
+                        musics.map {
+                            PlayListWithMediaCrossRef(
+                                playListId = playListId,
+                                mediaStoreId = it.id,
+                                artist = it.artist,
+                                title = it.name,
+                                addedDate = Clock.System.now().toEpochMilliseconds(),
+                            )
+                        },
+                )
+            } else {
+                if (musics.isNotEmpty()) error("insert musics to video playlist")
+                playListDao.insertPlayListWithMediaCrossRef(
+                    crossRefs =
+                        videos.map {
+                            PlayListWithMediaCrossRef(
+                                playListId = playListId,
+                                mediaStoreId = it.id,
+                                artist = "",
+                                title = it.name,
+                                addedDate = Clock.System.now().toEpochMilliseconds(),
+                            )
+                        },
+                )
+            }
 
         return insertedIndexList
             .mapIndexed { index, insertedIndex ->
@@ -84,25 +114,39 @@ internal class PlayListRepositoryImpl(
         musics: List<AudioItemModel>,
     ): List<String> = playListDao.getDuplicateMediaInPlayList(playListId, musics.map { it.id })
 
-    override fun isMediaInFavoritePlayListFlow(mediaStoreId: String) =
-        playListDao.getIsMediaInPlayListFlow(
-            PlayListDao.FAVORITE_PLAY_LIST_ID.toString(),
-            mediaStoreId,
-        )
-
-    override suspend fun toggleFavoriteMedia(audio: MediaItemModel) {
-        val isFavorite =
-            playListDao
-                .getIsMediaInPlayListFlow(
-                    PlayListDao.FAVORITE_PLAY_LIST_ID.toString(),
-                    audio.id,
-                ).first()
-        if (isFavorite) {
-            removeMusicFromFavoritePlayList(listOf(audio.id))
+    override fun isMediaInFavoritePlayListFlow(
+        mediaStoreId: String,
+        isAudio: Boolean,
+    ) = playListDao.getFavoritePlayListFlow(isAudio).flatMapLatest { favoriteOrNull ->
+        if (favoriteOrNull == null) {
+            flow { emit(false) }
         } else {
-// TODO: Implement Video Playlist
-            audio as AudioItemModel
-            addMusicToFavoritePlayList(listOf(audio))
+            playListDao.getIsMediaInPlayListFlow(
+                favoriteOrNull.id.toString(),
+                mediaStoreId,
+            )
+        }
+    }
+
+    override suspend fun toggleFavoriteMedia(item: MediaItemModel) {
+        val isAudio = item is AudioItemModel
+        val favoritePlayListOrNull = playListDao.getFavoritePlayListFlow(isAudio = isAudio).first()
+
+        if (favoritePlayListOrNull == null) {
+            val newId = createFavoritePlayList(isAudio = isAudio)
+            addItemsToPlayList(newId, listOf(item))
+        } else {
+            val isFavorite =
+                playListDao
+                    .getIsMediaInPlayListFlow(
+                        favoritePlayListOrNull.id.toString(),
+                        item.id,
+                    ).first()
+            if (isFavorite) {
+                removeMusicFromPlayList(favoritePlayListOrNull.id, listOf(item.id))
+            } else {
+                addItemsToPlayList(favoritePlayListOrNull.id, listOf(item))
+            }
         }
     }
 
@@ -163,4 +207,18 @@ internal class PlayListRepositoryImpl(
             .map { it.mapToAppItem() }
 
     private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>) = list.map { it.toAppItem() }
+
+    private suspend fun createFavoritePlayList(isAudio: Boolean): Long =
+        playListDao
+            .insertPlayListEntities(
+                listOf(
+                    PlayListEntity(
+                        name = if (isAudio) "Favorite music" else "Favorite video",
+                        createdDate = Clock.System.now().toEpochMilliseconds(),
+                        artworkUri = null,
+                        isFavoritePlayList = true,
+                        isAudioPlayList = isAudio,
+                    ),
+                ),
+            ).first()
 }

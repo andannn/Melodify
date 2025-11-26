@@ -16,7 +16,6 @@ import androidx.sqlite.execSQL
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
-import com.andannn.melodify.core.database.dao.PlayListDao.Companion.FAVORITE_PLAY_LIST_ID
 import com.andannn.melodify.core.database.dao.UserDataDao
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
@@ -30,6 +29,7 @@ import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.LyricWithAudioCrossRef
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
+import com.andannn.melodify.core.database.entity.PlayListColumns
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
@@ -87,7 +87,7 @@ internal object Tables {
         AutoMigration(from = 8, to = 9),
         AutoMigration(from = 9, to = 10),
         AutoMigration(from = 10, to = 11),
-        AutoMigration(from = 11, to = 12),
+        AutoMigration(from = 11, to = 12, AutoMigration11To12Spec::class),
     ],
     version = 12,
 )
@@ -113,7 +113,6 @@ fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() =
     apply {
         setQueryCoroutineContext(Dispatchers.IO)
         addCallback(addTriggerCallback)
-        addCallback(addFavoritePlayListCallback)
         addCallback(addInitialCustomTabsCallback)
     }
 
@@ -123,19 +122,6 @@ internal val addTriggerCallback =
             super.onCreate(connection)
 
             createUpdateTrackCountTrigger(connection)
-        }
-    }
-
-internal val addFavoritePlayListCallback =
-    object : RoomDatabase.Callback() {
-        override fun onCreate(connection: SQLiteConnection) {
-            // Insert a default play list.
-            connection.execSQL(
-                """
-                INSERT OR IGNORE INTO play_list_table (play_list_id, play_list_created_date, play_list_name, play_list_artwork_uri)
-                VALUES ($FAVORITE_PLAY_LIST_ID, 0, 'My Favorite Songs', '');
-                """.trimIndent(),
-            )
         }
     }
 
@@ -241,6 +227,26 @@ class AutoMigration7To8Spec : AutoMigrationSpec {
             """
             UPDATE ${Tables.CUSTOM_TAB} 
             SET ${CustomTabColumns.SORT_ORDER} = ${CustomTabColumns.ID}
+            """.trimIndent(),
+        )
+    }
+}
+
+class AutoMigration11To12Spec : AutoMigrationSpec {
+    override fun onPostMigrate(connection: SQLiteConnection) {
+        // Set is_favorite_playlist column to true for favorite play list.
+        connection.execSQL(
+            """
+            UPDATE ${Tables.PLAY_LIST} 
+            SET ${PlayListColumns.IS_FAVORITE_PLAYLIST} = 1
+            WHERE ${PlayListColumns.ID} = 0
+            """.trimIndent(),
+        )
+
+        connection.execSQL(
+            """
+            UPDATE ${Tables.PLAY_LIST} 
+            SET ${PlayListColumns.IS_AUDIO_PLAYLIST} = 1
             """.trimIndent(),
         )
     }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 12,
-    "identityHash": "7407a32cef2fec6ce3c4cb1d9f7c71de",
+    "identityHash": "8d4400a6e636b90a67606b1a25d74172",
     "entities": [
       {
         "tableName": "lyric_table",
@@ -121,7 +121,7 @@
       },
       {
         "tableName": "play_list_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`play_list_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `play_list_created_date` INTEGER NOT NULL, `play_list_name` TEXT NOT NULL, `play_list_artwork_uri` TEXT, `is_audio_playlist` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`play_list_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `play_list_created_date` INTEGER NOT NULL, `play_list_name` TEXT NOT NULL, `play_list_artwork_uri` TEXT, `is_audio_playlist` INTEGER, `is_favorite_playlist` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -147,8 +147,13 @@
             "affinity": "TEXT"
           },
           {
-            "fieldPath": "isAudio",
+            "fieldPath": "isAudioPlayList",
             "columnName": "is_audio_playlist",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "isFavoritePlayList",
+            "columnName": "is_favorite_playlist",
             "affinity": "INTEGER"
           }
         ],
@@ -830,7 +835,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7407a32cef2fec6ce3c4cb1d9f7c71de')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8d4400a6e636b90a67606b1a25d74172')"
     ]
   }
 }

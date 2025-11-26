@@ -11,9 +11,10 @@ import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.CustomTabColumns
 import com.andannn.melodify.core.database.entity.CustomTabType.ALL_MUSIC
 import com.andannn.melodify.core.database.entity.MediaColumns
+import com.andannn.melodify.core.database.entity.PlayListColumns
+import com.andannn.melodify.core.database.entity.PlayListEntity
 import okio.FileSystem
 import okio.Path.Companion.toPath
-import okio.SYSTEM
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -277,6 +278,34 @@ class MigrationTest {
         newConnection.close()
         val migratedConnection =
             migrationTestHelper.runMigrationsAndValidate(11)
+        migratedConnection.close()
+    }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
+    fun migrate11To12SyncAlbumTableTest() {
+        val migrationTestHelper =
+            getMigrationTestHelper(
+                tempFile.toString(),
+            )
+        val newConnection = migrationTestHelper.createDatabase(11)
+        newConnection.execSQL(
+            """
+                INSERT OR IGNORE INTO play_list_table (play_list_id, play_list_created_date, play_list_name, play_list_artwork_uri)
+                VALUES (0, 0, 'My Favorite Songs', '');
+                """,
+        )
+        newConnection.close()
+        val migratedConnection =
+            migrationTestHelper.runMigrationsAndValidate(12)
+        migratedConnection
+            .prepare("SELECT ${PlayListColumns.IS_FAVORITE_PLAYLIST}, ${PlayListColumns.IS_AUDIO_PLAYLIST} FROM ${Tables.PLAY_LIST}")
+            .use { stm ->
+                stm.step()
+                assertEquals(true, stm.getBoolean(0))
+                assertEquals(true, stm.getBoolean(1))
+            }
         migratedConnection.close()
     }
 }

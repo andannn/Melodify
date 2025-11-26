@@ -1055,6 +1055,29 @@ class DatabaseTest {
                 assertEquals(1, it.first().media.id)
             }
         }
+
+    @Test
+    fun `get favorite play list`() =
+        testScope.runTest {
+            playListDao.insertPlayListEntities(
+                listOf(
+                    PlayListEntity(
+                        id = 1,
+                        createdDate = 1,
+                        artworkUri = null,
+                        name = "name",
+                        isFavoritePlayList = true,
+                        isAudioPlayList = true,
+                    ),
+                ),
+            )
+            playListDao.getFavoritePlayListFlow(isAudio = true).first().let {
+                assertEquals(1, it?.id)
+            }
+            playListDao.getFavoritePlayListFlow(isAudio = false).first().let {
+                assertEquals(null, it)
+            }
+        }
 }
 
 private suspend fun MediaLibraryDao.insertDummyData() {

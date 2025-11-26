@@ -4,7 +4,6 @@
  */
 package com.andannn.melodify.usecase
 
-import com.andannn.melodify.core.data.PlayListRepository.Companion.FAVORITE_PLAY_LIST_ID
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.MediaItemModel
@@ -52,14 +51,6 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
                     .filterIsInstance<SortOption.AudioOption>(),
             )
 
-        LibraryDataSource.Favorite ->
-            repository.playListRepository.getAudiosOfPlayListFlow(
-                FAVORITE_PLAY_LIST_ID,
-                DisplaySetting.Preset.Audio.TitleASC
-                    .sortOptions()
-                    .filterIsInstance<SortOption.AudioOption>(),
-            )
-
         is LibraryDataSource.GenreDetail ->
             repository.mediaContentRepository.getAudiosOfGenreFlow(
                 id,
@@ -88,11 +79,6 @@ fun LibraryDataSource.item(): Flow<MediaItemModel?> =
         is LibraryDataSource.ArtistDetail ->
             repository.mediaContentRepository.getArtistByArtistIdFlow(
                 id,
-            )
-
-        LibraryDataSource.Favorite ->
-            repository.playListRepository.getPlayListFlowById(
-                FAVORITE_PLAY_LIST_ID,
             )
 
         is LibraryDataSource.GenreDetail ->

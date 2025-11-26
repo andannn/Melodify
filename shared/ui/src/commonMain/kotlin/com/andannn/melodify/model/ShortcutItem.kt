@@ -43,11 +43,6 @@ enum class ShortcutItem(
         textRes = Res.string.genre_title,
     ),
 
-    FAVORITE(
-        iconRes = SimpleMusicIcons.AddFavorite,
-        textRes = Res.string.favorite,
-    ),
-
     PLAYLIST(
         iconRes = SimpleMusicIcons.PlayList,
         textRes = Res.string.playlist_page_title,

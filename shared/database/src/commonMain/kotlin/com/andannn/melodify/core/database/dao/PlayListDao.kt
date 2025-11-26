@@ -28,17 +28,12 @@ import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRefColumns
 import com.andannn.melodify.core.database.toSortString
 import com.andannn.melodify.core.database.toWhereString
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 
 private const val TAG = "PlayListDao"
 
 @Dao
 interface PlayListDao {
-    companion object {
-        const val FAVORITE_PLAY_LIST_ID = 0L
-    }
-
     @Query(
         """
         select ${PlayListColumns.ID}, ${PlayListColumns.CREATED_DATE}, ${PlayListColumns.NAME}, ${PlayListColumns.ARTWORK_URI}, COUNT(${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}) as mediaCount
@@ -98,7 +93,15 @@ interface PlayListDao {
     """,
     )
     @Transaction
-    suspend fun getPlayList(playListId: Long): PlayListAndMedias?
+    suspend fun getPlayListWithMedias(playListId: Long): PlayListAndMedias?
+
+    @Query(
+        """
+        select * from ${Tables.PLAY_LIST}
+        where ${PlayListColumns.ID} = :playListId
+    """,
+    )
+    suspend fun getPlayListEntity(playListId: Long): PlayListEntity?
 
     @Query(
         """
@@ -122,6 +125,25 @@ interface PlayListDao {
         playList: String,
         mediaStoreId: String,
     ): Flow<Boolean>
+
+    fun getFavoritePlayListFlow(isAudio: Boolean): Flow<PlayListEntity?> =
+        if (isAudio) getFavoriteAudioPlayListFlow() else getFavoriteVideoPlayListFlow()
+
+    @Query(
+        """
+        SELECT * FROM ${Tables.PLAY_LIST}
+        WHERE ${PlayListColumns.IS_FAVORITE_PLAYLIST} = 1 AND ${PlayListColumns.IS_AUDIO_PLAYLIST} = 1
+    """,
+    )
+    fun getFavoriteAudioPlayListFlow(): Flow<PlayListEntity?>
+
+    @Query(
+        """
+        SELECT * FROM ${Tables.PLAY_LIST}
+        WHERE ${PlayListColumns.IS_FAVORITE_PLAYLIST} = 1 AND ${PlayListColumns.IS_AUDIO_PLAYLIST} = 0
+    """,
+    )
+    fun getFavoriteVideoPlayListFlow(): Flow<PlayListEntity?>
 
     @Query(
         """

@@ -14,10 +14,6 @@ import com.andannn.melodify.core.database.dao.PlayListDao
 import kotlinx.coroutines.flow.Flow
 
 interface PlayListRepository {
-    companion object {
-        const val FAVORITE_PLAY_LIST_ID = PlayListDao.FAVORITE_PLAY_LIST_ID
-    }
-
     /**
      * Return flow of all playLists
      */
@@ -54,18 +50,13 @@ interface PlayListRepository {
     fun getPlayListFlowById(playListId: Long): Flow<PlayListItemModel?>
 
     /**
-     * Add musics to favorite playList
-     */
-    suspend fun addMusicToFavoritePlayList(musics: List<AudioItemModel>) = addMusicToPlayList(PlayListDao.FAVORITE_PLAY_LIST_ID, musics)
-
-    /**
      * Add musics to playList
      *
      * return index of musics that already exist
      */
-    suspend fun addMusicToPlayList(
+    suspend fun addItemsToPlayList(
         playListId: Long,
-        musics: List<AudioItemModel>,
+        items: List<MediaItemModel>,
     ): List<Long>
 
     /**
@@ -79,18 +70,15 @@ interface PlayListRepository {
     /**
      * Return flow of whether [mediaStoreId] is in favorite playList
      */
-    fun isMediaInFavoritePlayListFlow(mediaStoreId: String): Flow<Boolean>
+    fun isMediaInFavoritePlayListFlow(
+        mediaStoreId: String,
+        isAudio: Boolean,
+    ): Flow<Boolean>
 
     /**
      * Toggle favorite media
      */
     suspend fun toggleFavoriteMedia(audio: MediaItemModel)
-
-    /**
-     * Remove musics from favorite playList
-     */
-    suspend fun removeMusicFromFavoritePlayList(mediaIdList: List<String>) =
-        removeMusicFromPlayList(PlayListDao.FAVORITE_PLAY_LIST_ID, mediaIdList)
 
     /**
      * Remove musics from playList
