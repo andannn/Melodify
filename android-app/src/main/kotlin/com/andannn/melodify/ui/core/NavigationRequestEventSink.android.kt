@@ -7,6 +7,9 @@ package com.andannn.melodify.ui.core
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.andannn.melodify.ui.Screen
+import io.github.aakira.napier.Napier
+
+private const val TAG = "NavigationRequestEvent"
 
 /**
  * Launch navigation request handler effects.
@@ -21,6 +24,7 @@ fun LaunchNavigationRequestHandlerEffect(
 ) {
     LaunchedEffect(navigator, eventSink) {
         for (event in eventSink.channel) {
+            Napier.d(tag = TAG) { "handle navigation request $event" }
             when (event) {
                 is NavigationRequest.GoToLibraryDetail ->
                     navigator.navigateTo(Screen.LibraryDetail(datasource = event.dataSource))

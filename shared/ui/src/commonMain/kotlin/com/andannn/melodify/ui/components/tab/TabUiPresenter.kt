@@ -127,10 +127,7 @@ class TabUiPresenter(
                                             add(OptionItem.ADD_TO_QUEUE)
                                             add(OptionItem.ADD_TO_PLAYLIST)
                                             add(OptionItem.DISPLAY_SETTING)
-
-                                            if (tab !is CustomTab.AllMusic) {
-                                                add(OptionItem.DELETE_TAB)
-                                            }
+                                            add(OptionItem.DELETE_TAB)
                                         },
                                 ),
                             )

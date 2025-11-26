@@ -24,7 +24,7 @@ interface NavigationRequestEventSink {
 
 val LocalNavigationRequestEventSink: ProvidableCompositionLocal<NavigationRequestEventSink> =
     staticCompositionLocalOf {
-        ChannelNavigationRequestEventChannel()
+        error("LocalNavigationRequestEventSink not provided")
     }
 
 fun NavigationRequestEventSink(): NavigationRequestEventSink = ChannelNavigationRequestEventChannel()
