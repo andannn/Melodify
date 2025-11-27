@@ -70,7 +70,6 @@ internal fun LargePlayerControlArea(
                         .fillMaxWidth()
                         .padding(horizontal = MaxImagePaddingStart),
                 text = titleState,
-                spacingBetweenCopies = 40.dp,
                 style = MaterialTheme.typography.headlineMedium,
             )
             Text(

@@ -156,7 +156,6 @@ fun AVPlayerCover(
                                 .fillMaxWidth()
                                 .padding(horizontal = MaxImagePaddingStart),
                         text = title,
-                        spacingBetweenCopies = 40.dp,
                         style = MaterialTheme.typography.headlineMedium,
                     )
                     Text(
