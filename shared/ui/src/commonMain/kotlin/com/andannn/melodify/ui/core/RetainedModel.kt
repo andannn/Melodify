@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.core
 
 import androidx.compose.runtime.Composable
@@ -16,7 +20,7 @@ abstract class RetainedModel {
         onClear()
     }
 
-    fun onClear() {}
+    open fun onClear() {}
 }
 
 @Composable
