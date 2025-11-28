@@ -24,7 +24,6 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.extraUniqueId
 import com.andannn.melodify.core.data.model.subTitle
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.ui.util.rememberSwapListState
 import com.andannn.melodify.ui.widgets.ActionType
 import com.andannn.melodify.ui.widgets.ListTileItemView

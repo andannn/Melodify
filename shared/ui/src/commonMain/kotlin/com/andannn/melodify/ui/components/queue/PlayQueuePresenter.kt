@@ -12,7 +12,7 @@ import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -25,7 +25,7 @@ fun rememberPlayQueuePresenter(repository: Repository = LocalRepository.current)
 
 class PlayQueuePresenter(
     private val repository: Repository,
-) : ScopedPresenter<PlayQueueState>() {
+) : RetainedPresenter<PlayQueueState>() {
     private val playListQueueFlow =
         repository.playerStateMonitoryRepository
             .getPlayListQueueStateFlow()

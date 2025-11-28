@@ -16,7 +16,7 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.LyricModel
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -45,7 +45,7 @@ fun retainLyricPresenter(repository: Repository = LocalRepository.current): Pres
 
 private class LyricPresenter(
     private val repository: Repository,
-) : ScopedPresenter<LyricState>() {
+) : RetainedPresenter<LyricState>() {
     private val currentPlayingAudioFlow =
         repository.playerStateMonitoryRepository
             .getPlayingMediaStateFlow()

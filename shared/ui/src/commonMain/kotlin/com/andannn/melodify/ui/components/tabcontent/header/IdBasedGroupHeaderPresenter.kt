@@ -26,7 +26,7 @@ import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
@@ -89,7 +89,7 @@ private class GroupHeaderPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
-) : ScopedPresenter<GroupHeaderState>() {
+) : RetainedPresenter<GroupHeaderState>() {
     private val mediaContentRepository = repository.mediaContentRepository
 
     private var mediaItem by mutableStateOf<MediaItemModel?>(null)

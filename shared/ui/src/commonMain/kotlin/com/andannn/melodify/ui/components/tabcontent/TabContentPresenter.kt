@@ -30,7 +30,7 @@ import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.NavigationRequest
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
@@ -80,7 +80,7 @@ class TabContentPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
-) : ScopedPresenter<TabContentState>() {
+) : RetainedPresenter<TabContentState>() {
     private val mediaControllerRepository = repository.mediaControllerRepository
     private val userPreferenceRepository = repository.userPreferenceRepository
 

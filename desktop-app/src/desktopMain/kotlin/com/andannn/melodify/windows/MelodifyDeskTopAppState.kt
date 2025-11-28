@@ -10,7 +10,7 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.window.ApplicationScope
 import com.andannn.melodify.core.syncer.SyncLibraryService
 import com.andannn.melodify.model.LibraryDataSource
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
@@ -41,7 +41,7 @@ internal fun rememberMelodifyDeskTopAppState(applicationScope: ApplicationScope)
 
 internal class MelodifyDeskTopAppState(
     private val applicationScope: ApplicationScope,
-) : ScopedPresenter<Unit>(),
+) : RetainedPresenter<Unit>(),
     WindowNavigator {
     val windowStack = mutableStateSetOf<WindowType>(WindowType.Home)
 

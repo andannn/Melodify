@@ -21,7 +21,7 @@ import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
@@ -48,7 +48,7 @@ fun retainTabUiPresenter(
 class TabUiPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
-) : ScopedPresenter<TabUiState>() {
+) : RetainedPresenter<TabUiState>() {
     private val userPreferenceRepository = repository.userPreferenceRepository
 
     var currentTabList by mutableStateOf<List<CustomTab>>(

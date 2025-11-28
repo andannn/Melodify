@@ -12,7 +12,7 @@ import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import kotlinx.coroutines.launch
 
@@ -33,7 +33,7 @@ internal fun retainSuggestionsPresenter(
 internal class SuggestionsPresenter(
     private val query: String,
     private val repository: Repository,
-) : ScopedPresenter<SuggestionsUiState>() {
+) : RetainedPresenter<SuggestionsUiState>() {
     private val userPreferenceRepository = repository.userPreferenceRepository
     val initialState =
         if (query.isEmpty()) SuggestionsState.LoadingHistory else SuggestionsState.LoadingSuggestion

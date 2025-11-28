@@ -22,7 +22,7 @@ import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -45,7 +45,7 @@ class SearchUiPresenter(
     private val userPreferenceRepository: UserPreferenceRepository,
     private val mediaControllerRepository: MediaControllerRepository,
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
-) : ScopedPresenter<SearchUiState>() {
+) : RetainedPresenter<SearchUiState>() {
     private var searchTextField by mutableStateOf(TextFieldState())
     private var searchResult by mutableStateOf<SearchState>(SearchState.Init)
 

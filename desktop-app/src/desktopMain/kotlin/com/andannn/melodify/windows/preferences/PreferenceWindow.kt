@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.WindowNavigator

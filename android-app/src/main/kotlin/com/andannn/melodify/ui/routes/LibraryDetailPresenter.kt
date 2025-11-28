@@ -21,7 +21,7 @@ import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.usecase.pinAllMusicToHomeTab
 import com.andannn.melodify.usecase.pinAllVideoToHomeTab
@@ -76,7 +76,7 @@ private class LibraryDetailScreenPresenter(
     private val popupController: PopupController,
     private val fileDeleteHelper: MediaFileDeleteHelper,
     private val navigationRequestEventSink: NavigationRequestEventSink,
-) : ScopedPresenter<LibraryDetailScreenState>() {
+) : RetainedPresenter<LibraryDetailScreenState>() {
     @Composable
     override fun present(): LibraryDetailScreenState {
         val presenter = retainLibraryDetailPresenter(dataSource)

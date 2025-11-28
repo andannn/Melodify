@@ -42,7 +42,7 @@ import com.andannn.melodify.core.data.model.isAudio
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.util.getCategoryResource
 import com.andannn.melodify.ui.util.icon
@@ -507,7 +507,7 @@ private fun retainedChangeSortRulePresenter(
 private class ChangeSortRulePresenter(
     private val customTab: CustomTab,
     private val repository: Repository,
-) : ScopedPresenter<UiState>() {
+) : RetainedPresenter<UiState>() {
     private val displaySettingFlow =
         repository
             .getCurrentSortRule(customTab)

@@ -10,7 +10,7 @@ import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 
 @Composable
@@ -23,7 +23,7 @@ fun retainLibraryPresenter(navigator: Navigator): Presenter<LibraryState> =
 
 private class LibraryPresenter(
     private val navigator: Navigator,
-) : ScopedPresenter<LibraryState>() {
+) : RetainedPresenter<LibraryState>() {
     @Composable
     override fun present(): LibraryState =
         LibraryState { eventSink ->

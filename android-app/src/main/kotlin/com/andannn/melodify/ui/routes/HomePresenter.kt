@@ -20,7 +20,7 @@ import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
@@ -93,7 +93,7 @@ private class HomePresenter(
     private val navigator: Navigator,
     private val popController: PopupController,
     private val syncMediaStoreHandler: SyncMediaStoreHandler,
-) : ScopedPresenter<HomeState>() {
+) : RetainedPresenter<HomeState>() {
     @Composable
     override fun present(): HomeState {
         val tabUiState = retainTabUiPresenter().present()
