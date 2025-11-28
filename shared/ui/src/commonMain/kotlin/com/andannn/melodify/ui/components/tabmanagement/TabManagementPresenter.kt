@@ -11,7 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -34,7 +34,7 @@ fun retainTabManagementPresenter(repository: Repository = LocalRepository.curren
 
 class TabManagementPresenter(
     repository: Repository,
-) : ScopedPresenter<TabManagementState>() {
+) : RetainedPresenter<TabManagementState>() {
     private val userPreferenceRepository = repository.userPreferenceRepository
 
     private val currentTabListFlow =

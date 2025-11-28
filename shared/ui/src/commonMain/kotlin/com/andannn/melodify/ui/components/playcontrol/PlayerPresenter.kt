@@ -25,7 +25,7 @@ import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToQueue
@@ -101,7 +101,7 @@ private const val TAG = "PlayerPresenter"
 private class PlayerPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
-) : ScopedPresenter<PlayerUiState>() {
+) : RetainedPresenter<PlayerUiState>() {
     private val playListRepository: PlayListRepository = repository.playListRepository
     private val mediaControllerRepository: MediaControllerRepository =
         repository.mediaControllerRepository

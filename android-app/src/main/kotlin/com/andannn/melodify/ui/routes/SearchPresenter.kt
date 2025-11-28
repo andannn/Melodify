@@ -11,7 +11,7 @@ import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 
 @Composable
 fun rememberSearchScreenPresenter(navigator: Navigator): Presenter<SearchScreenState> =
@@ -34,7 +34,7 @@ sealed interface SearchScreenEvent {
 
 private class SearchScreenPresenter(
     private val navigator: Navigator,
-) : ScopedPresenter<SearchScreenState>() {
+) : RetainedPresenter<SearchScreenState>() {
     @Composable
     override fun present(): SearchScreenState =
         SearchScreenState { event ->

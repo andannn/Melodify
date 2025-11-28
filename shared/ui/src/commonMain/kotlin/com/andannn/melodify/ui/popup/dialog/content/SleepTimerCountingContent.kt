@@ -14,19 +14,16 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.andannn.melodify.core.data.PlayListRepository
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.SleepTimerRepository
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import com.andannn.melodify.ui.util.durationString
@@ -36,7 +33,6 @@ import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.cancel_timer
 import melodify.shared.ui.generated.resources.sleep_timer
 import org.jetbrains.compose.resources.stringResource
-import org.koin.mp.KoinPlatform.getKoin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -117,7 +113,7 @@ private fun retainCounterPresenter(repository: Repository = LocalRepository.curr
 
 private class CounterPresenter(
     repository: Repository,
-) : ScopedPresenter<CounterState>() {
+) : RetainedPresenter<CounterState>() {
     private val remainedTimeFlow =
         repository
             .observeRemainTime()

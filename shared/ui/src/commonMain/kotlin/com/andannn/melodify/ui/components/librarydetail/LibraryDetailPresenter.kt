@@ -21,7 +21,7 @@ import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.NavigationRequest
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.usecase.content
 import com.andannn.melodify.usecase.item
@@ -33,7 +33,6 @@ import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.album_page_title
 import melodify.shared.ui.generated.resources.artist_page_title
 import melodify.shared.ui.generated.resources.audio_page_title
-import melodify.shared.ui.generated.resources.favorite
 import melodify.shared.ui.generated.resources.genre_title
 import melodify.shared.ui.generated.resources.playlist_page_title
 import melodify.shared.ui.generated.resources.video_page_title
@@ -74,7 +73,7 @@ private class LibraryDetailPresenter(
     private val repository: Repository,
     private val dataSource: LibraryDataSource,
     private val navigationRequestSink: NavigationRequestEventSink,
-) : ScopedPresenter<LibraryContentState>() {
+) : RetainedPresenter<LibraryContentState>() {
     private val dataSourceMediaItemFlow =
         with(repository) {
             dataSource

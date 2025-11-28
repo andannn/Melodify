@@ -25,7 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.PresetDisplaySetting
 import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.widgets.PresetSortOptionSelector
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -123,7 +123,7 @@ private fun retainDefaultSortRulePresenter() =
 @OptIn(ExperimentalMaterial3Api::class)
 private class DefaultSortRulePresenter(
     repository: Repository = getKoin().get<Repository>(),
-) : ScopedPresenter<DefaultSortRuleState>() {
+) : RetainedPresenter<DefaultSortRuleState>() {
     private val userPreferences = repository.userPreferenceRepository
 
     private val audioDefaultDisplaySetting =

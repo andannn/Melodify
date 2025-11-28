@@ -18,46 +18,16 @@ interface Presenter<UiState> {
     fun present(): UiState
 }
 
-interface RetainedScopeOwner {
-    val retainedScope: CoroutineScope
-
-    fun onClear() = {}
-}
-
-abstract class ScopedPresenter<UiState> :
-    Presenter<UiState>,
-    RetainedScopeOwner {
-    override val retainedScope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-}
+abstract class RetainedPresenter<UiState> :
+    RetainedModel(),
+    Presenter<UiState>
 
 @Composable
-inline fun <reified T> retainPresenter(
+fun <T> retainPresenter(
     vararg keys: Any?,
-    noinline factory: () -> ScopedPresenter<T>,
+    factory: () -> RetainedPresenter<T>,
 ): Presenter<T> =
-    retain(keys = keys) {
-        val presenter = factory()
-        Napier.d(tag = "Presenter") { "presenter init $presenter" }
-        object : RetainObserver, Presenter<T> {
-            override fun onRetained() {}
-
-            override fun onEnteredComposition() {}
-
-            override fun onExitedComposition() {}
-
-            override fun onRetired() {
-                Napier.d(tag = "Presenter") { "presenter close $presenter" }
-                presenter.retainedScope.cancel()
-                presenter.onClear()
-            }
-
-            override fun onUnused() {
-                Napier.d(tag = "Presenter") { "presenter close $presenter" }
-                presenter.retainedScope.cancel()
-                presenter.onClear()
-            }
-
-            @Composable
-            override fun present(): T = presenter.present()
-        }
-    }
+    retainRetainedModel(
+        keys = keys,
+        factory = factory,
+    )

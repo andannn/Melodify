@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,7 +43,7 @@ import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.widgets.ActionType
 import com.andannn.melodify.ui.widgets.LargePreviewCard
@@ -223,7 +222,7 @@ private fun retainedAddToPlayListSheetState(
 private class AddToPlayListSheetPresenter(
     isAudio: Boolean,
     repository: Repository,
-) : ScopedPresenter<AddToPlayListSheetState>() {
+) : RetainedPresenter<AddToPlayListSheetState>() {
     private val playListStateFlow =
         repository
             .getAllPlayListFlow(isAudio)

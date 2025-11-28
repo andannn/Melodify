@@ -7,8 +7,6 @@ package com.andannn.melodify.windows.preferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.UserPreferenceRepository
@@ -17,7 +15,7 @@ import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -54,7 +52,7 @@ sealed interface LibraryPreferenceUiEvent {
 class LibraryPreferencePresenter(
     private val popUpController: PopupController,
     private val userPreferenceRepository: UserPreferenceRepository,
-) : ScopedPresenter<LibraryPreferenceUiState>() {
+) : RetainedPresenter<LibraryPreferenceUiState>() {
     private val libraryPathFlow =
         userPreferenceRepository.userSettingFlow
             .map {

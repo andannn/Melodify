@@ -6,7 +6,6 @@ package com.andannn.melodify.ui.components.mediaitem
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.andannn.melodify.MediaFileDeleteHelper
@@ -23,7 +22,7 @@ import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.core.ScopedPresenter
+import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.widgets.ListTileItemView
 import com.andannn.melodify.usecase.showLibraryMediaOption
@@ -121,7 +120,7 @@ private class MediaLibraryItemPresenter(
     private val repository: Repository,
     private val fileDeleteHelper: MediaFileDeleteHelper,
     private val navigationRequestEventSink: NavigationRequestEventSink,
-) : ScopedPresenter<UiState>() {
+) : RetainedPresenter<UiState>() {
     @Composable
     override fun present(): UiState =
         UiState { event ->
