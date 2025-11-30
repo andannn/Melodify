@@ -17,14 +17,17 @@ import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.asLibraryDataSource
 import com.andannn.melodify.model.browseable
 import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
+import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.NavigationRequest
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
+import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.usecase.content
 import com.andannn.melodify.usecase.item
+import com.andannn.melodify.usecase.playMediaItems
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
@@ -43,9 +46,10 @@ fun retainLibraryDetailPresenter(
     dataSource: LibraryDataSource,
     navigationRequestSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
     repository: Repository = LocalRepository.current,
+    popupController: PopupController = LocalPopupController.current,
 ): Presenter<LibraryContentState> =
-    retainPresenter(repository, dataSource, navigationRequestSink) {
-        LibraryDetailPresenter(repository, dataSource, navigationRequestSink)
+    retainPresenter(repository, dataSource, navigationRequestSink, popupController) {
+        LibraryDetailPresenter(repository, dataSource, navigationRequestSink, popupController)
     }
 
 @Stable
@@ -73,6 +77,7 @@ private class LibraryDetailPresenter(
     private val repository: Repository,
     private val dataSource: LibraryDataSource,
     private val navigationRequestSink: NavigationRequestEventSink,
+    private val popupController: PopupController,
 ) : RetainedPresenter<LibraryContentState>() {
     private val dataSourceMediaItemFlow =
         with(repository) {
@@ -139,10 +144,18 @@ private class LibraryDetailPresenter(
         audioItemModel: MediaItemModel,
         contentList: List<MediaItemModel>,
     ) {
-        repository.mediaControllerRepository.playMediaList(
-            contentList.toList(),
-            contentList.indexOf(audioItemModel),
-        )
+        retainedScope.launch {
+            context(
+                repository.mediaControllerRepository,
+                repository.playerStateMonitoryRepository,
+                popupController,
+            ) {
+                playMediaItems(
+                    audioItemModel,
+                    contentList.toList(),
+                )
+            }
+        }
     }
 }
 

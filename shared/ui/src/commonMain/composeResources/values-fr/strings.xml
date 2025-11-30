@@ -100,4 +100,6 @@
     <string name="video_page_title">Toutes les vidéos</string>
     <string name="sort_sub_bucket_name_asc">Regrouper les éléments par nom de groupe vidéo par ordre croissant.</string>
     <string name="sort_by_video_bucket_name">Trier par nom de groupe vidéo</string>
+
+    <string name="change_play_list_alert_dialog_content">Êtes-vous sûr de vouloir modifier la liste de lecture actuelle ?</string>
 </resources>

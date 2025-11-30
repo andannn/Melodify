@@ -101,4 +101,6 @@
     <string name="video_page_title">모든 비디오</string>
     <string name="sort_sub_bucket_name_asc">비디오 그룹 이름 기준으로 오름차순 정렬합니다.</string>
     <string name="sort_by_video_bucket_name">비디오 그룹 이름으로 정렬</string>
+
+    <string name="change_play_list_alert_dialog_content">Tem certeza de que deseja alterar a lista de reprodução atual?</string>
 </resources>

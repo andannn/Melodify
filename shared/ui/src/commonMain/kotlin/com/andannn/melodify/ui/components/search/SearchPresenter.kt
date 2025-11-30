@@ -21,30 +21,37 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
+import com.andannn.melodify.usecase.playMediaItems
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun rememberSearchUiPresenter(repository: Repository = LocalRepository.current) =
-    retainPresenter(
-        repository,
-    ) {
-        SearchUiPresenter(
-            repository.mediaContentRepository,
-            repository.userPreferenceRepository,
-            repository.mediaControllerRepository,
-            repository.playerStateMonitoryRepository,
-        )
-    }
+fun rememberSearchUiPresenter(
+    repository: Repository = LocalRepository.current,
+    popupController: PopupController = LocalPopupController.current,
+) = retainPresenter(
+    repository,
+) {
+    SearchUiPresenter(
+        repository.mediaContentRepository,
+        repository.userPreferenceRepository,
+        repository.mediaControllerRepository,
+        repository.playerStateMonitoryRepository,
+        popupController,
+    )
+}
 
 class SearchUiPresenter(
     private val contentLibrary: MediaContentRepository,
     private val userPreferenceRepository: UserPreferenceRepository,
     private val mediaControllerRepository: MediaControllerRepository,
     private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
+    private val popupController: PopupController,
 ) : RetainedPresenter<SearchUiState>() {
     private var searchTextField by mutableStateOf(TextFieldState())
     private var searchResult by mutableStateOf<SearchState>(SearchState.Init)
@@ -107,17 +114,11 @@ class SearchUiPresenter(
 
     private fun onPlayAudio(audioItemModel: AudioItemModel) {
         retainedScope.launch {
-            val isQueueEmpty = playerStateMonitoryRepository.getPlayListQueue().isEmpty()
-            if (!isQueueEmpty) {
-                // add audio item to queue and play this audio item
-                val currentIndex = playerStateMonitoryRepository.getPlayingIndexInQueue()
-                val newToPlayIndex = currentIndex + 1
-                mediaControllerRepository.addMediaItems(newToPlayIndex, listOf(audioItemModel))
-                mediaControllerRepository.seekMediaItem(newToPlayIndex)
-                mediaControllerRepository.play()
-            } else {
-                // play audio item
-                mediaControllerRepository.playMediaList(listOf(audioItemModel))
+            context(mediaControllerRepository, playerStateMonitoryRepository, popupController) {
+                playMediaItems(
+                    audioItemModel,
+                    listOf(audioItemModel),
+                )
             }
         }
     }

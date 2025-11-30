@@ -102,4 +102,6 @@
     <string name="video_page_title">動画</string>
     <string name="sort_sub_bucket_name_asc">動画グループ名の昇順で項目をグループ化します。</string>
     <string name="sort_by_video_bucket_name">動画グループ名で並べ替え</string>
+
+    <string name="change_play_list_alert_dialog_content">現在のプレイリストを変更してもよろしいですか？</string>
 </resources>

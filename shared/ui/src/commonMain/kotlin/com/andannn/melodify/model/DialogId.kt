@@ -8,6 +8,7 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
 import melodify.shared.ui.generated.resources.Res
+import melodify.shared.ui.generated.resources.change_play_list_alert_dialog_content
 import melodify.shared.ui.generated.resources.confirm_delete_playlist_item
 import melodify.shared.ui.generated.resources.decline
 import melodify.shared.ui.generated.resources.duplicated_alert_dialog_title
@@ -42,6 +43,12 @@ sealed interface DialogId {
         title = Res.string.duplicated_alert_dialog_title,
         message = Res.string.having_registered_track_in_playlist,
         positive = Res.string.skip_registered_songs,
+    )
+
+    data object ChangePlayListAlert : AlertDialog(
+        message = Res.string.change_play_list_alert_dialog_content,
+        positive = Res.string.ok,
+        negative = Res.string.decline,
     )
 
     data object NewPlayListDialog : DialogId {
