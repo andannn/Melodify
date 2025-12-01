@@ -146,8 +146,7 @@ private class LibraryDetailPresenter(
     ) {
         retainedScope.launch {
             context(
-                repository.mediaControllerRepository,
-                repository.playerStateMonitoryRepository,
+                repository,
                 popupController,
             ) {
                 playMediaItems(
@@ -169,18 +168,18 @@ private suspend fun LibraryDataSource.getTitle(): String =
         LibraryDataSource.AllSong -> getString(Res.string.audio_page_title)
         LibraryDataSource.AllVideo -> getString(Res.string.video_page_title)
         is LibraryDataSource.AlbumDetail ->
-            repository.mediaContentRepository.getAlbumByAlbumId(id)?.name
+            repository.getAlbumByAlbumId(id)?.name
                 ?: ""
 
         is LibraryDataSource.ArtistDetail ->
-            repository.mediaContentRepository.getArtistByArtistId(id)?.name
+            repository.getArtistByArtistId(id)?.name
                 ?: ""
 
         is LibraryDataSource.GenreDetail ->
-            repository.mediaContentRepository.getGenreByGenreId(id)?.name
+            repository.getGenreByGenreId(id)?.name
                 ?: ""
 
         is LibraryDataSource.PlayListDetail ->
-            repository.playListRepository.getPlayListById(id.toLong())?.name
+            repository.getPlayListById(id.toLong())?.name
                 ?: ""
     }

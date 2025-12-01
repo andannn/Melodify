@@ -10,6 +10,7 @@ import com.andannn.melodify.core.data.MediaControllerRepository
 import com.andannn.melodify.core.data.PlayListRepository
 import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.RepositoryImpl
 import com.andannn.melodify.core.data.SleepTimerRepository
 import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.data.internal.FakeMediaControllerRepository
@@ -35,7 +36,7 @@ import org.koin.dsl.module
 
 val dataModule =
     module {
-        singleOf(::Repository)
+        singleOf(::RepositoryImpl).bind(Repository::class)
         singleOf(::PlayListRepositoryImpl).bind(PlayListRepository::class)
         singleOf(::LyricRepositoryImpl).bind(LyricRepository::class)
         singleOf(::UserPreferenceRepositoryImpl).bind(UserPreferenceRepository::class)
@@ -54,7 +55,7 @@ val dataModule =
 
 val dummyDataModel =
     module {
-        singleOf(::Repository)
+        singleOf(::RepositoryImpl).bind(Repository::class)
         singleOf(::PlayListRepositoryImpl).bind(PlayListRepository::class)
         singleOf(::LyricRepositoryImpl).bind(LyricRepository::class)
         singleOf(::UserPreferenceRepositoryImpl).bind(UserPreferenceRepository::class)

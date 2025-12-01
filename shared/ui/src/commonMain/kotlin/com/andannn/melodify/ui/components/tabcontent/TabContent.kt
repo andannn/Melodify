@@ -228,7 +228,6 @@ private fun LazyListContent(
                                             ),
                                         playable = item.browsableOrPlayable,
                                         isActive = false,
-// TODO: hide video thumbnail
                                         thumbnailSourceUri = null,
                                         title = item.name,
                                         onItemClick = {

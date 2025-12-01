@@ -32,7 +32,7 @@ interface PopupController {
     suspend fun showDialog(dialogId: DialogId): DialogAction
 }
 
-private class NoOpPopupController : PopupController {
+class NoOpPopupController : PopupController {
     override val currentDialog: DialogData?
         get() = null
 

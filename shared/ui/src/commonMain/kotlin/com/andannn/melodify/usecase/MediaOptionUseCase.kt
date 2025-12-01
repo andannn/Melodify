@@ -261,11 +261,6 @@ private suspend fun PlayListItemModel.addAll(items: List<MediaItemModel>) {
             )
         }
 
-        duplicatedMedias.size == 1 -> {
-            // Show error toast message
-            popupController.showSnackBar(SnackBarMessage.AddPlayListFailed)
-        }
-
         else -> {
             // invalidList.size > 1, Show alert message
             val result =
@@ -275,6 +270,9 @@ private suspend fun PlayListItemModel.addAll(items: List<MediaItemModel>) {
                 playListRepository.addItemsToPlayList(
                     playListId = id.toLong(),
                     items = items.filter { it.id !in duplicatedMedias },
+                )
+                popupController.showSnackBar(
+                    message = SnackBarMessage.AddPlayListSuccess(name),
                 )
             }
         }

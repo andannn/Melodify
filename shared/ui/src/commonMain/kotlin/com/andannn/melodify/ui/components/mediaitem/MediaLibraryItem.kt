@@ -79,7 +79,7 @@ private fun MediaLibraryItemContent(
     ListTileItemView(
         modifier = modifier,
         title = title,
-        thumbnailSourceUri = cover,
+        thumbnailSourceUri = cover.takeIf { mediaItemModel is AudioItemModel },
         subTitle = subTitle,
         defaultColor = Color.Transparent,
         onOptionButtonClick = onOptionButtonClick,

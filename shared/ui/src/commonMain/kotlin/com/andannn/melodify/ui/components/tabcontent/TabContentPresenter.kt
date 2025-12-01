@@ -83,10 +83,6 @@ class TabContentPresenter(
     private val popupController: PopupController,
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
 ) : RetainedPresenter<TabContentState>() {
-    private val mediaControllerRepository = repository.mediaControllerRepository
-    private val playerStateMonitoryRepository = repository.playerStateMonitoryRepository
-    private val userPreferenceRepository = repository.userPreferenceRepository
-
     private var displaySetting =
         getDisplaySettingFlow().stateIn(
             scope = retainedScope,
@@ -162,7 +158,7 @@ class TabContentPresenter(
 
     private fun getDisplaySettingFlow() =
         if (selectedTab != null) {
-            userPreferenceRepository.getCurrentSortRule(selectedTab)
+            repository.getCurrentSortRule(selectedTab)
         } else {
             flowOf(null)
         }
@@ -172,7 +168,7 @@ class TabContentPresenter(
         items: List<MediaItemModel>,
     ) {
         retainedScope.launch {
-            context(mediaControllerRepository, playerStateMonitoryRepository, popupController) {
+            context(repository, popupController) {
                 playMediaItems(
                     mediaItem,
                     items,

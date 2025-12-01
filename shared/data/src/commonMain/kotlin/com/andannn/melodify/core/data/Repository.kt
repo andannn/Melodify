@@ -4,7 +4,35 @@
  */
 package com.andannn.melodify.core.data
 
-class Repository constructor(
+fun Repository(
+    lyricRepository: LyricRepository,
+    mediaContentRepository: MediaContentRepository,
+    mediaControllerRepository: MediaControllerRepository,
+    playerStateMonitoryRepository: PlayerStateMonitoryRepository,
+    playListRepository: PlayListRepository,
+    sleepTimerRepository: SleepTimerRepository,
+    userPreferenceRepository: UserPreferenceRepository,
+): Repository =
+    RepositoryImpl(
+        lyricRepository = lyricRepository,
+        mediaContentRepository = mediaContentRepository,
+        mediaControllerRepository = mediaControllerRepository,
+        playerStateMonitoryRepository = playerStateMonitoryRepository,
+        playListRepository = playListRepository,
+        sleepTimerRepository = sleepTimerRepository,
+        userPreferenceRepository = userPreferenceRepository,
+    )
+
+interface Repository :
+    LyricRepository,
+    MediaContentRepository,
+    MediaControllerRepository,
+    PlayerStateMonitoryRepository,
+    PlayListRepository,
+    SleepTimerRepository,
+    UserPreferenceRepository
+
+internal class RepositoryImpl(
     val lyricRepository: LyricRepository,
     val mediaContentRepository: MediaContentRepository,
     val mediaControllerRepository: MediaControllerRepository,
@@ -12,7 +40,8 @@ class Repository constructor(
     val playListRepository: PlayListRepository,
     val sleepTimerRepository: SleepTimerRepository,
     val userPreferenceRepository: UserPreferenceRepository,
-) : LyricRepository by lyricRepository,
+) : Repository,
+    LyricRepository by lyricRepository,
     MediaContentRepository by mediaContentRepository,
     MediaControllerRepository by mediaControllerRepository,
     PlayerStateMonitoryRepository by playerStateMonitoryRepository,

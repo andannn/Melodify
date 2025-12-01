@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.PresetDisplaySetting
 import com.andannn.melodify.model.DialogAction
+import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.widgets.PresetSortOptionSelector
@@ -115,19 +116,17 @@ private fun DefaultSortRuleSettingDialogContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun retainDefaultSortRulePresenter() =
-    retainPresenter {
-        DefaultSortRulePresenter()
+private fun retainDefaultSortRulePresenter(repository: Repository = LocalRepository.current) =
+    retainPresenter(repository) {
+        DefaultSortRulePresenter(repository)
     }
 
 @OptIn(ExperimentalMaterial3Api::class)
 private class DefaultSortRulePresenter(
-    repository: Repository = getKoin().get<Repository>(),
+    private val repository: Repository,
 ) : RetainedPresenter<DefaultSortRuleState>() {
-    private val userPreferences = repository.userPreferenceRepository
-
     private val audioDefaultDisplaySetting =
-        userPreferences
+        repository
             .getDefaultPresetSortRule(isAudio = true)
             .stateIn(
                 retainedScope,
@@ -135,7 +134,7 @@ private class DefaultSortRulePresenter(
                 started = WhileSubscribed(5000),
             )
     private val videoDefaultDisplaySetting =
-        userPreferences
+        repository
             .getDefaultPresetSortRule(isAudio = false)
             .stateIn(
                 retainedScope,
@@ -168,7 +167,7 @@ private class DefaultSortRulePresenter(
             when (event) {
                 is DefaultSortRuleStateEvent.ChangeAudioSortRule ->
                     retainedScope.launch {
-                        userPreferences.saveDefaultSortRule(
+                        repository.saveDefaultSortRule(
                             isAudio = true,
                             event.sortRule,
                         )
@@ -176,7 +175,7 @@ private class DefaultSortRulePresenter(
 
                 is DefaultSortRuleStateEvent.ChangeVideoSortRule ->
                     retainedScope.launch {
-                        userPreferences.saveDefaultSortRule(
+                        repository.saveDefaultSortRule(
                             isAudio = false,
                             event.sortRule,
                         )
