@@ -109,7 +109,6 @@ internal fun ArtistEntity.toAppItem() =
     ArtistItemModel(
         id = artistId.toString(),
         name = name,
-        // TODO:
         artWorkUri = null,
         trackCount = trackCount,
     )
@@ -118,7 +117,6 @@ internal fun GenreEntity.toAppItem() =
     GenreItemModel(
         id = genreId.toString(),
         name = name ?: "V.A.",
-        // TODO:
         artWorkUri = null,
         trackCount = 0,
     )

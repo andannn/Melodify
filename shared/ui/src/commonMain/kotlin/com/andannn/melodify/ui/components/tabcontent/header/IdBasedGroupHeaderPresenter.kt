@@ -194,8 +194,7 @@ private class GroupHeaderPresenter(
                 )?.first() ?: emptyList()
         when (optionItem) {
             OptionItem.PLAY_NEXT -> addToNextPlay(items)
-// TODO: Video Playlist impl
-            OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items as List<AudioItemModel>)
+            OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items)
             OptionItem.ADD_TO_QUEUE -> addToQueue(items)
             OptionItem.DELETE_MEDIA_FILE -> deleteItems(items)
             else -> {}

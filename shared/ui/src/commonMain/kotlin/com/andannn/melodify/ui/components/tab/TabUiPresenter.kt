@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
@@ -42,15 +43,15 @@ fun retainTabUiPresenter(
     TabUiPresenter(
         repository,
         popupController,
+        repository.userPreferenceRepository,
     )
 }
 
 class TabUiPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
+    private val userPreferenceRepository: UserPreferenceRepository,
 ) : RetainedPresenter<TabUiState>() {
-    private val userPreferenceRepository = repository.userPreferenceRepository
-
     var currentTabList by mutableStateOf<List<CustomTab>>(
         emptyList(),
     )
@@ -141,10 +142,7 @@ class TabUiPresenter(
                                     OptionItem.PLAY_NEXT -> currentItems().also { addToNextPlay(it) }
                                     OptionItem.ADD_TO_QUEUE -> currentItems().also { addToQueue(it) }
                                     OptionItem.ADD_TO_PLAYLIST ->
-                                        currentItems().also { list ->
-// TODO: Video playlist impl
-                                            addToPlaylist(list as List<AudioItemModel>)
-                                        }
+                                        currentItems().also { list -> addToPlaylist(list) }
 
                                     OptionItem.DISPLAY_SETTING ->
                                         popupController.showDialog(DialogId.ChangeSortRuleDialog(tab))

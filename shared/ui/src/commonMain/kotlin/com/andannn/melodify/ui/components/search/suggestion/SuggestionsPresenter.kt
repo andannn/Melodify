@@ -53,7 +53,6 @@ internal class SuggestionsPresenter(
                 if (result.isEmpty()) {
                     state = SuggestionsState.NoSuggestion
                 } else {
-                    // TODO: use string similarity to find best matched items
                     val bestMatchedItems =
                         result.filter {
                             it.name == query
