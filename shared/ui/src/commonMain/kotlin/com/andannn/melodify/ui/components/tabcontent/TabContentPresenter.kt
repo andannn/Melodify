@@ -38,8 +38,10 @@ import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.contentFlow
 import com.andannn.melodify.usecase.contentPagingDataFlow
 import com.andannn.melodify.usecase.deleteItems
+import com.andannn.melodify.usecase.playMediaItems
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -82,6 +84,7 @@ class TabContentPresenter(
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
 ) : RetainedPresenter<TabContentState>() {
     private val mediaControllerRepository = repository.mediaControllerRepository
+    private val playerStateMonitoryRepository = repository.playerStateMonitoryRepository
     private val userPreferenceRepository = repository.userPreferenceRepository
 
     private var displaySetting =
@@ -168,10 +171,14 @@ class TabContentPresenter(
         mediaItem: MediaItemModel,
         items: List<MediaItemModel>,
     ) {
-        mediaControllerRepository.playMediaList(
-            items.toList(),
-            items.indexOf(mediaItem),
-        )
+        retainedScope.launch {
+            context(mediaControllerRepository, playerStateMonitoryRepository, popupController) {
+                playMediaItems(
+                    mediaItem,
+                    items,
+                )
+            }
+        }
     }
 
     context(repository: Repository, popupController: PopupController)

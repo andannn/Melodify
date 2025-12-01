@@ -9,6 +9,7 @@ package com.andannn.melodify.ui.core
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -97,6 +98,47 @@ class RetainedModelTest {
 
         rule.waitForIdle()
         assertFalse(model.isCleared)
+    }
+
+    @Test
+    fun retainModel_canceled_while_remove_retainedStore() {
+        var model: MockRetainedModel? = null
+        val tag = "tag"
+        rule.setContent {
+            val registry = retainRetainedValuesStoreRegistry()
+            var showModel by remember {
+                mutableStateOf(true)
+            }
+            Button(
+                modifier =
+                    Modifier.testTag(tag),
+                onClick = {
+                    showModel = !showModel
+                },
+            ) {
+                if (showModel) {
+                    DisposableEffect(Unit) {
+                        onDispose {
+                            registry.clearChild("Test")
+                        }
+                    }
+                    registry.LocalRetainedValuesStoreProvider("Test") {
+                        Surface {
+                            model =
+                                retainRetainedModel {
+                                    MockRetainedModel()
+                                }
+                        }
+                    }
+                }
+            }
+        }
+        rule.waitForIdle()
+        assertFalse(model!!.isCleared)
+        rule.onNodeWithTag(tag).performClick()
+
+        rule.waitForIdle()
+        assertTrue(model.isCleared)
     }
 }
 
