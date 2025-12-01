@@ -31,7 +31,7 @@ internal fun retainLibraryPreferenceState(
 ) {
     LibraryPreferencePresenter(
         popUpController,
-        repository.userPreferenceRepository,
+        repository,
     )
 }
 
@@ -51,10 +51,10 @@ sealed interface LibraryPreferenceUiEvent {
 
 class LibraryPreferencePresenter(
     private val popUpController: PopupController,
-    private val userPreferenceRepository: UserPreferenceRepository,
+    private val repository: Repository,
 ) : RetainedPresenter<LibraryPreferenceUiState>() {
     private val libraryPathFlow =
-        userPreferenceRepository.userSettingFlow
+        repository.userSettingFlow
             .map {
                 it.libraryPath
             }.stateIn(
@@ -81,7 +81,7 @@ class LibraryPreferencePresenter(
             val result = popUpController.showDialog(DialogId.NewPlayListDialog)
 
             if (result is DialogAction.InputDialog.Accept) {
-                val success = userPreferenceRepository.addLibraryPath(result.input)
+                val success = repository.addLibraryPath(result.input)
 
                 if (!success) {
                     popUpController.showDialog(DialogId.InvalidPathAlert)
@@ -92,7 +92,7 @@ class LibraryPreferencePresenter(
 
     private fun onDeleteLibraryPath(pathToDelete: String) {
         retainedScope.launch {
-            userPreferenceRepository.deleteLibraryPath(pathToDelete)
+            repository.deleteLibraryPath(pathToDelete)
         }
     }
 }
