@@ -102,16 +102,8 @@ private class PlayerPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
 ) : RetainedPresenter<PlayerUiState>() {
-    private val playListRepository: PlayListRepository = repository.playListRepository
-    private val mediaControllerRepository: MediaControllerRepository =
-        repository.mediaControllerRepository
-    private val playerStateMonitoryRepository: PlayerStateMonitoryRepository =
-        repository.playerStateMonitoryRepository
-    private val sleepTimerRepository: SleepTimerRepository =
-        repository.sleepTimerRepository
-
     private val interactingMusicItemFlow =
-        playerStateMonitoryRepository
+        repository
             .getPlayingMediaStateFlow()
             .stateIn(
                 retainedScope,
@@ -120,7 +112,7 @@ private class PlayerPresenter(
             )
 
     private val isPlayingFlow =
-        playerStateMonitoryRepository
+        repository
             .observeIsPlaying()
             .stateIn(
                 retainedScope,
@@ -129,7 +121,7 @@ private class PlayerPresenter(
             )
 
     private val progressFactorFlow =
-        playerStateMonitoryRepository
+        repository
             .observeProgressFactor()
             .stateIn(
                 retainedScope,
@@ -138,7 +130,7 @@ private class PlayerPresenter(
             )
 
     private val playModeFlow =
-        playerStateMonitoryRepository
+        repository
             .observePlayMode()
             .stateIn(
                 retainedScope,
@@ -147,7 +139,7 @@ private class PlayerPresenter(
             )
 
     private val isShuffleFlow =
-        playerStateMonitoryRepository
+        repository
             .observeIsShuffle()
             .stateIn(
                 retainedScope,
@@ -156,7 +148,7 @@ private class PlayerPresenter(
             )
 
     private val durationFlow =
-        playerStateMonitoryRepository
+        repository
             .observeCurrentPositionMs()
             .stateIn(
                 retainedScope,
@@ -165,7 +157,7 @@ private class PlayerPresenter(
             )
 
     private val isSleepTimerCountingFlow =
-        sleepTimerRepository
+        repository
             .observeIsCounting()
             .stateIn(
                 retainedScope,
@@ -211,7 +203,7 @@ private class PlayerPresenter(
                 PlayerUiEvent.OnPreviousButtonClick -> previous()
                 PlayerUiEvent.OnPlayButtonClick -> togglePlayState(isPlaying)
                 PlayerUiEvent.OnShuffleButtonClick -> {
-                    mediaControllerRepository.setShuffleModeEnabled(!isShuffle)
+                    repository.setShuffleModeEnabled(!isShuffle)
                 }
 
                 PlayerUiEvent.OnTimerIconClick ->
@@ -221,14 +213,14 @@ private class PlayerPresenter(
                                 DialogId.SleepCountingDialog,
                             )
                         if (result is DialogAction.SleepTimerCountingDialog.OnCancelTimer) {
-                            sleepTimerRepository.cancelSleepTimer()
+                            repository.cancelSleepTimer()
                         }
                     }
 
                 is PlayerUiEvent.OnOptionIconClick -> onOptionIconClick(it.mediaItem)
                 PlayerUiEvent.OnPlayModeButtonClick -> {
-                    val nextPlayMode = playerStateMonitoryRepository.getCurrentPlayMode().next()
-                    mediaControllerRepository.setPlayMode(nextPlayMode)
+                    val nextPlayMode = repository.getCurrentPlayMode().next()
+                    repository.setPlayMode(nextPlayMode)
                 }
 
                 is PlayerUiEvent.OnProgressChange -> {
@@ -284,7 +276,7 @@ private class PlayerPresenter(
         if (interactingMusicItem == null) {
             flowOf(false)
         } else {
-            playListRepository.isMediaInFavoritePlayListFlow(
+            repository.isMediaInFavoritePlayListFlow(
                 interactingMusicItem.id,
                 interactingMusicItem is AudioItemModel,
             )
@@ -294,27 +286,27 @@ private class PlayerPresenter(
         if (current == null) return
 
         retainedScope.launch {
-            playListRepository.toggleFavoriteMedia(current)
+            repository.toggleFavoriteMedia(current)
         }
     }
 
     private fun togglePlayState(isPlaying: Boolean) {
         if (isPlaying) {
-            mediaControllerRepository.pause()
+            repository.pause()
         } else {
-            mediaControllerRepository.play()
+            repository.play()
         }
     }
 
     private fun next() {
-        mediaControllerRepository.seekToNext()
+        repository.seekToNext()
     }
 
     private fun previous() {
-        mediaControllerRepository.seekToPrevious()
+        repository.seekToPrevious()
     }
 
     private fun seekToTime(time: Long) {
-        mediaControllerRepository.seekToTime(time)
+        repository.seekToTime(time)
     }
 }

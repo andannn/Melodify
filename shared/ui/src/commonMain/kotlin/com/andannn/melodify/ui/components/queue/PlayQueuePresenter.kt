@@ -27,7 +27,7 @@ class PlayQueuePresenter(
     private val repository: Repository,
 ) : RetainedPresenter<PlayQueueState>() {
     private val playListQueueFlow =
-        repository.playerStateMonitoryRepository
+        repository
             .getPlayListQueueStateFlow()
             .stateIn(
                 retainedScope,
@@ -35,7 +35,7 @@ class PlayQueuePresenter(
                 initialValue = emptyList(),
             )
     private val interactingMusicItemFlow =
-        repository.playerStateMonitoryRepository
+        repository
             .getPlayingMediaStateFlow()
             .stateIn(
                 retainedScope,
@@ -68,7 +68,7 @@ class PlayQueuePresenter(
         playListQueue: List<MediaItemModel>,
         item: MediaItemModel,
     ) {
-        repository.mediaControllerRepository.seekMediaItem(
+        repository.seekMediaItem(
             mediaItemIndex = playListQueue.indexOf(item),
         )
     }
@@ -77,11 +77,11 @@ class PlayQueuePresenter(
         from: Int,
         to: Int,
     ) {
-        repository.mediaControllerRepository.moveMediaItem(from, to)
+        repository.moveMediaItem(from, to)
     }
 
     private fun onDeleteFinished(deleted: Int) {
-        repository.mediaControllerRepository.removeMediaItem(deleted)
+        repository.removeMediaItem(deleted)
     }
 }
 

@@ -38,19 +38,13 @@ fun rememberSearchUiPresenter(
     repository,
 ) {
     SearchUiPresenter(
-        repository.mediaContentRepository,
-        repository.userPreferenceRepository,
-        repository.mediaControllerRepository,
-        repository.playerStateMonitoryRepository,
+        repository,
         popupController,
     )
 }
 
 class SearchUiPresenter(
-    private val contentLibrary: MediaContentRepository,
-    private val userPreferenceRepository: UserPreferenceRepository,
-    private val mediaControllerRepository: MediaControllerRepository,
-    private val playerStateMonitoryRepository: PlayerStateMonitoryRepository,
+    private val repository: Repository,
     private val popupController: PopupController,
 ) : RetainedPresenter<SearchUiState>() {
     private var searchTextField by mutableStateOf(TextFieldState())
@@ -88,7 +82,7 @@ class SearchUiPresenter(
 
                         searchResult =
                             if (isValid(searchText)) {
-                                val result = contentLibrary.searchContent(searchText)
+                                val result = repository.searchContent(searchText)
                                 if (result.isEmpty()) {
                                     SearchState.NoObject
                                 } else {
@@ -100,7 +94,7 @@ class SearchUiPresenter(
                     }
 
                     retainedScope.launch {
-                        userPreferenceRepository.addSearchHistory(eventSink.text)
+                        repository.addSearchHistory(eventSink.text)
                     }
                 }
 
@@ -114,7 +108,7 @@ class SearchUiPresenter(
 
     private fun onPlayAudio(audioItemModel: AudioItemModel) {
         retainedScope.launch {
-            context(mediaControllerRepository, playerStateMonitoryRepository, popupController) {
+            context(repository, popupController) {
                 playMediaItems(
                     audioItemModel,
                     listOf(audioItemModel),

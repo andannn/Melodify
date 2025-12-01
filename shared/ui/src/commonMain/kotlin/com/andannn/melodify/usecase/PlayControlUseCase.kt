@@ -4,19 +4,18 @@
  */
 package com.andannn.melodify.usecase
 
-import com.andannn.melodify.core.data.MediaControllerRepository
-import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
+import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.PopupController
 
-context(control: MediaControllerRepository, monitor: PlayerStateMonitoryRepository, popupController: PopupController)
+context(repo: Repository, popupController: PopupController)
 suspend fun playMediaItems(
     mediaItem: MediaItemModel,
     newItems: List<MediaItemModel>,
 ) {
-    val currentPlayListIds = monitor.getPlayListQueue().map { it.id }
+    val currentPlayListIds = repo.getPlayListQueue().map { it.id }
     val newPlayListIds = newItems.map { it.id }
 
     val allowPlay =
@@ -28,7 +27,7 @@ suspend fun playMediaItems(
         }
 
     if (allowPlay) {
-        control.playMediaList(
+        repo.playMediaList(
             newItems.toList(),
             newItems.indexOf(mediaItem),
         )

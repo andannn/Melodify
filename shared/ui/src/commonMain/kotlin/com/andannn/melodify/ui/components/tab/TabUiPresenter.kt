@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.UserPreferenceRepository
-import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.sortOptions
@@ -43,14 +42,12 @@ fun retainTabUiPresenter(
     TabUiPresenter(
         repository,
         popupController,
-        repository.userPreferenceRepository,
     )
 }
 
 class TabUiPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
-    private val userPreferenceRepository: UserPreferenceRepository,
 ) : RetainedPresenter<TabUiState>() {
     var currentTabList by mutableStateOf<List<CustomTab>>(
         emptyList(),
@@ -59,13 +56,13 @@ class TabUiPresenter(
 
     init {
         retainedScope.launch {
-            userPreferenceRepository.currentCustomTabsFlow.collect {
+            repository.currentCustomTabsFlow.collect {
                 currentTabList = it
             }
         }
 
         retainedScope.launch {
-            userPreferenceRepository.currentCustomTabsFlow
+            repository.currentCustomTabsFlow
                 .scan<List<CustomTab>, Pair<List<CustomTab>?, List<CustomTab>?>>(null to null) { pre, next ->
                     pre.second to next
                 }.collect { (pre, next) ->
@@ -101,7 +98,7 @@ class TabUiPresenter(
         val currentTab =
             currentTabList.getOrNull(selectedIndex) ?: return emptyList()
         val groupSort =
-            userPreferenceRepository.getCurrentSortRule(currentTab).first()
+            repository.getCurrentSortRule(currentTab).first()
         return with(repository) {
             currentTab.contentFlow(sorts = groupSort.sortOptions()).first()
         }
@@ -137,7 +134,7 @@ class TabUiPresenter(
                             context(repository, popupController) {
                                 when (result.optionItem) {
                                     OptionItem.DELETE_TAB ->
-                                        repository.userPreferenceRepository.deleteCustomTab(tab)
+                                        repository.deleteCustomTab(tab)
 
                                     OptionItem.PLAY_NEXT -> currentItems().also { addToNextPlay(it) }
                                     OptionItem.ADD_TO_QUEUE -> currentItems().also { addToQueue(it) }

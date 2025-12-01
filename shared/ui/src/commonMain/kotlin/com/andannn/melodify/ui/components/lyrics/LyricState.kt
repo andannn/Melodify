@@ -47,7 +47,7 @@ private class LyricPresenter(
     private val repository: Repository,
 ) : RetainedPresenter<LyricState>() {
     private val currentPlayingAudioFlow =
-        repository.playerStateMonitoryRepository
+        repository
             .getPlayingMediaStateFlow()
             .stateIn(
                 retainedScope,
@@ -65,7 +65,7 @@ private class LyricPresenter(
 
                 val audio = currentPlayingAudio as? AudioItemModel
                 if (audio != null) {
-                    repository.lyricRepository
+                    repository
                         .getLyricByMediaIdFlow(
                             mediaId = audio.id,
                             trackName = audio.name,

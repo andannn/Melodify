@@ -16,13 +16,13 @@ import kotlinx.coroutines.flow.flowOf
 context(repository: Repository)
 fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
     when (this) {
-        LibraryDataSource.AllAlbum -> repository.mediaContentRepository.getAllAlbumsFlow()
-        LibraryDataSource.AllArtist -> repository.mediaContentRepository.getAllArtistFlow()
-        LibraryDataSource.AllGenre -> repository.mediaContentRepository.getAllGenreFlow()
-        LibraryDataSource.AllPlaylist -> repository.playListRepository.getAllPlayListFlow()
+        LibraryDataSource.AllAlbum -> repository.getAllAlbumsFlow()
+        LibraryDataSource.AllArtist -> repository.getAllArtistFlow()
+        LibraryDataSource.AllGenre -> repository.getAllGenreFlow()
+        LibraryDataSource.AllPlaylist -> repository.getAllPlayListFlow()
 
         is LibraryDataSource.AlbumDetail ->
-            repository.mediaContentRepository.getAudiosOfAlbumFlow(
+            repository.getAudiosOfAlbumFlow(
                 id,
                 DisplaySetting.Preset.Audio.TitleASC
                     .sortOptions()
@@ -30,21 +30,21 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
             )
 
         LibraryDataSource.AllSong ->
-            repository.mediaContentRepository.getAllMediaItemsFlow(
+            repository.getAllMediaItemsFlow(
                 DisplaySetting.Preset.Audio.TitleASC
                     .sortOptions()
                     .filterIsInstance<SortOption.AudioOption>(),
             )
 
         LibraryDataSource.AllVideo ->
-            repository.mediaContentRepository.getAllVideoItemsFlow(
+            repository.getAllVideoItemsFlow(
                 DisplaySetting.Preset.Video.BucketNameASC
                     .sortOptions()
                     .filterIsInstance<SortOption.VideoOption>(),
             )
 
         is LibraryDataSource.ArtistDetail ->
-            repository.mediaContentRepository.getAudiosOfArtistFlow(
+            repository.getAudiosOfArtistFlow(
                 id,
                 DisplaySetting.Preset.Audio.TitleASC
                     .sortOptions()
@@ -52,7 +52,7 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
             )
 
         is LibraryDataSource.GenreDetail ->
-            repository.mediaContentRepository.getAudiosOfGenreFlow(
+            repository.getAudiosOfGenreFlow(
                 id,
                 DisplaySetting.Preset.Audio.TitleASC
                     .sortOptions()
@@ -61,14 +61,14 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
 
         is LibraryDataSource.PlayListDetail ->
             if (isAudioPlayList) {
-                repository.playListRepository.getAudiosOfPlayListFlow(
+                repository.getAudiosOfPlayListFlow(
                     id.toLong(),
                     DisplaySetting.Preset.Audio.TitleASC
                         .sortOptions()
                         .filterIsInstance<SortOption.AudioOption>(),
                 )
             } else {
-                repository.playListRepository.getVideosOfPlayListFlow(
+                repository.getVideosOfPlayListFlow(
                     id.toLong(),
                     DisplaySetting.Preset.Video.BucketNameASC
                         .sortOptions()
@@ -81,17 +81,17 @@ context(repository: Repository)
 fun LibraryDataSource.item(): Flow<MediaItemModel?> =
     when (this) {
         is LibraryDataSource.AlbumDetail ->
-            repository.mediaContentRepository.getAlbumByAlbumIdFlow(
+            repository.getAlbumByAlbumIdFlow(
                 id,
             )
 
         is LibraryDataSource.ArtistDetail ->
-            repository.mediaContentRepository.getArtistByArtistIdFlow(
+            repository.getArtistByArtistIdFlow(
                 id,
             )
 
         is LibraryDataSource.GenreDetail ->
-            repository.mediaContentRepository.getGenreByGenreIdFlow(
+            repository.getGenreByGenreIdFlow(
                 id,
             )
 

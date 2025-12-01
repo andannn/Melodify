@@ -34,7 +34,6 @@ internal class SuggestionsPresenter(
     private val query: String,
     private val repository: Repository,
 ) : RetainedPresenter<SuggestionsUiState>() {
-    private val userPreferenceRepository = repository.userPreferenceRepository
     val initialState =
         if (query.isEmpty()) SuggestionsState.LoadingHistory else SuggestionsState.LoadingSuggestion
     private var state by mutableStateOf(initialState)
@@ -44,12 +43,12 @@ internal class SuggestionsPresenter(
             retainedScope.launch {
                 state =
                     SuggestionsState.HistoryLoaded(
-                        userPreferenceRepository.getAllSearchHistory(),
+                        repository.getAllSearchHistory(),
                     )
             }
         } else {
             retainedScope.launch {
-                val result = repository.mediaContentRepository.searchContent("$query*")
+                val result = repository.searchContent("$query*")
                 if (result.isEmpty()) {
                     state = SuggestionsState.NoSuggestion
                 } else {

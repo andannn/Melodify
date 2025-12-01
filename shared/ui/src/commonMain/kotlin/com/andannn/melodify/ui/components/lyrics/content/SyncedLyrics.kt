@@ -256,10 +256,8 @@ private fun retainSyncedLyricsPresenter(
 private class SyncedLyricsPresenter(
     private val syncedLyrics: String,
     val lazyListState: LazyListState,
-    repository: Repository,
+    private val repository: Repository,
 ) : RetainedPresenter<SyncedLyricsState>() {
-    private val playControlRepository = repository.mediaControllerRepository
-    private val playerStateMonitoryRepository = repository.playerStateMonitoryRepository
     private var waitingToCancelSeekJob: Job? = null
 
     @Composable
@@ -294,8 +292,8 @@ private class SyncedLyricsPresenter(
                 Napier.d(tag = TAG) { "onPositionChanged: $currentPositionMs, currentIndex $currentPlayingIndex" }
             }
 
-            playerStateMonitoryRepository.observeProgressFactor().collect {
-                onPositionChanged(playerStateMonitoryRepository.getCurrentPositionMs())
+            repository.observeProgressFactor().collect {
+                onPositionChanged(repository.getCurrentPositionMs())
             }
         }
 
@@ -376,7 +374,7 @@ private class SyncedLyricsPresenter(
                     Napier.d(tag = TAG) { "onSeekTimeClick: ${it.time}" }
 
                     lyricsState = LyricsState.WaitingSeekingResult(it.time)
-                    playControlRepository.seekToTime(it.time)
+                    repository.seekToTime(it.time)
                 }
             }
         }

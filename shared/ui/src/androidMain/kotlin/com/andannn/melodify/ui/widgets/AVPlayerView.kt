@@ -30,8 +30,8 @@ import com.andannn.melodify.ui.core.LocalRepository
 @Composable
 fun AVPlayerView(
     modifier: Modifier = Modifier,
-    playerController: MediaControllerRepository = LocalRepository.current.mediaControllerRepository,
-    playerStateMonitoryRepository: PlayerStateMonitoryRepository = LocalRepository.current.playerStateMonitoryRepository,
+    playerController: MediaControllerRepository = LocalRepository.current,
+    playerStateMonitoryRepository: PlayerStateMonitoryRepository = LocalRepository.current,
 ) {
     val playingMedia by playerStateMonitoryRepository
         .getPlayingMediaStateFlow()

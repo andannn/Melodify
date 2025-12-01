@@ -90,17 +90,15 @@ private class GroupHeaderPresenter(
     private val popupController: PopupController,
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
 ) : RetainedPresenter<GroupHeaderState>() {
-    private val mediaContentRepository = repository.mediaContentRepository
-
     private var mediaItem by mutableStateOf<MediaItemModel?>(null)
 
     init {
         retainedScope.launch {
             mediaItem =
                 when (val groupKey = groupInfo.groupKey) {
-                    is GroupKey.Artist -> mediaContentRepository.getArtistByArtistId(artistId = groupKey.artistId)
-                    is GroupKey.Album -> mediaContentRepository.getAlbumByAlbumId(albumId = groupKey.albumId)
-                    is GroupKey.Genre -> mediaContentRepository.getGenreByGenreId(genreId = groupKey.genreId)
+                    is GroupKey.Artist -> repository.getArtistByArtistId(artistId = groupKey.artistId)
+                    is GroupKey.Album -> repository.getAlbumByAlbumId(albumId = groupKey.albumId)
+                    is GroupKey.Genre -> repository.getGenreByGenreId(genreId = groupKey.genreId)
                     else -> null
                 }
         }

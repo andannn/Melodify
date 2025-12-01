@@ -33,12 +33,10 @@ fun retainTabManagementPresenter(repository: Repository = LocalRepository.curren
     }
 
 class TabManagementPresenter(
-    repository: Repository,
+    private val repository: Repository,
 ) : RetainedPresenter<TabManagementState>() {
-    private val userPreferenceRepository = repository.userPreferenceRepository
-
     private val currentTabListFlow =
-        userPreferenceRepository.currentCustomTabsFlow
+        repository.currentCustomTabsFlow
             .stateIn(
                 retainedScope,
                 started = WhileSubscribed(),
@@ -55,7 +53,10 @@ class TabManagementPresenter(
                 is TabManagementEvent.OnSwapFinished -> {
                     retainedScope.launch {
                         val (from, to) = event
-                        userPreferenceRepository.swapTabOrder(from = currentTabList[from], to = currentTabList[to])
+                        repository.swapTabOrder(
+                            from = currentTabList[from],
+                            to = currentTabList[to],
+                        )
                     }
                 }
 
@@ -63,7 +64,7 @@ class TabManagementPresenter(
                     retainedScope.launch {
                         val toDelete =
                             currentTabList[event.index]
-                        userPreferenceRepository.deleteCustomTab(toDelete)
+                        repository.deleteCustomTab(toDelete)
                     }
                 }
             }
