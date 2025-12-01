@@ -40,10 +40,10 @@ sealed class LyricState {
 @Composable
 fun retainLyricPresenter(repository: Repository = LocalRepository.current): Presenter<LyricState> =
     retainPresenter(repository) {
-        LyricPresenter(repository)
+        LyricsPresenter(repository)
     }
 
-private class LyricPresenter(
+class LyricsPresenter(
     private val repository: Repository,
 ) : RetainedPresenter<LyricState>() {
     private val currentPlayingAudioFlow =

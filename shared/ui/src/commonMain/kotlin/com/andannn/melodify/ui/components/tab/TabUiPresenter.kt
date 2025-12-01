@@ -7,11 +7,8 @@ package com.andannn.melodify.ui.components.tab
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.sortOptions
@@ -28,8 +25,10 @@ import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.contentFlow
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 private const val TAG = "TabUiState"
@@ -49,18 +48,17 @@ class TabUiPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
 ) : RetainedPresenter<TabUiState>() {
-    var currentTabList by mutableStateOf<List<CustomTab>>(
-        emptyList(),
-    )
-    var selectedIndex by mutableIntStateOf(0)
+    val currentTabListFlow =
+        repository.currentCustomTabsFlow
+            .stateIn(
+                retainedScope,
+                initialValue = emptyList(),
+                started = kotlinx.coroutines.flow.SharingStarted.Eagerly,
+            )
+
+    val selectedIndexFlow = MutableStateFlow(0)
 
     init {
-        retainedScope.launch {
-            repository.currentCustomTabsFlow.collect {
-                currentTabList = it
-            }
-        }
-
         retainedScope.launch {
             repository.currentCustomTabsFlow
                 .scan<List<CustomTab>, Pair<List<CustomTab>?, List<CustomTab>?>>(null to null) { pre, next ->
@@ -71,7 +69,7 @@ class TabUiPresenter(
                         return@collect
                     }
 
-                    val currentIndex = selectedIndex
+                    val currentIndex = selectedIndexFlow.value
 
                     val newIndex: Int =
                         if (next.size < pre.size) {
@@ -88,7 +86,7 @@ class TabUiPresenter(
                             next.indexOf(pre.getOrNull(currentIndex))
                         }
                     if (newIndex != -1) {
-                        selectedIndex = newIndex
+                        selectedIndexFlow.value = newIndex
                     }
                 }
         }
@@ -96,7 +94,7 @@ class TabUiPresenter(
 
     private suspend fun currentItems(): List<MediaItemModel> {
         val currentTab =
-            currentTabList.getOrNull(selectedIndex) ?: return emptyList()
+            currentTabListFlow.value.getOrNull(selectedIndexFlow.value) ?: return emptyList()
         val groupSort =
             repository.getCurrentSortRule(currentTab).first()
         return with(repository) {
@@ -107,12 +105,14 @@ class TabUiPresenter(
     @Composable
     override fun present(): TabUiState {
         Napier.d(tag = TAG) { "TabUiPresenter present" }
+        val currentTabList by currentTabListFlow.collectAsStateWithLifecycle()
+        val selectedIndex by selectedIndexFlow.collectAsStateWithLifecycle()
         return TabUiState(
             selectedIndex.coerceAtMost(currentTabList.size - 1),
             currentTabList,
         ) { eventSink ->
             when (eventSink) {
-                is TabUiEvent.OnClickTab -> selectedIndex = eventSink.index
+                is TabUiEvent.OnClickTab -> selectedIndexFlow.value = eventSink.index
                 is TabUiEvent.OnShowTabOption ->
                     retainedScope.launch {
                         val tab = eventSink.tab

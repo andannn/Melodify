@@ -11,9 +11,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class RetainedModel {
-    val retainedScope: CoroutineScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+    val retainedScope: CoroutineScope = createViewModelScope()
 
     internal fun clear() {
         retainedScope.cancel()
@@ -21,6 +22,18 @@ abstract class RetainedModel {
     }
 
     open fun onClear() {}
+}
+
+internal fun createViewModelScope(): CoroutineScope {
+    val dispatcher =
+        try {
+            Dispatchers.Main.immediate
+        } catch (_: NotImplementedError) {
+            EmptyCoroutineContext
+        } catch (_: IllegalStateException) {
+            EmptyCoroutineContext
+        }
+    return CoroutineScope(context = dispatcher + SupervisorJob())
 }
 
 @Composable
