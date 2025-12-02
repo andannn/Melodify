@@ -16,6 +16,7 @@ kotlin {
             implementation(project(":shared:platform"))
 
             implementation(libs.coil3.compose)
+            api(libs.retainedmodel)
             implementation(libs.reorderable)
             implementation(libs.androidx.paging.compose)
             implementation(libs.kotlinx.serialization.json)
