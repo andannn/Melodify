@@ -47,8 +47,9 @@ benchmarkMacroJunit4 = "1.4.1"
 uiautomator = "2.4.0-alpha06"
 testRules = "1.7.0"
 jbComposeMaterial3Version = "1.10.0-alpha05"
-compose-plugin = "1.10.0-beta02"
+compose-plugin = "1.10.0-rc01"
 turbine = "1.2.1"
+retainedmodel = "1.0.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -134,6 +135,7 @@ jetbrains-compose-desktop = { module = "org.jetbrains.compose.desktop:desktop", 
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+retainedmodel = { group = "io.github.andannn", name = "retainedmodel", version.ref = "retainedmodel" }
 
 # dependecy in build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
