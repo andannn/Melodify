@@ -30,7 +30,6 @@ import com.andannn.melodify.ui.components.tabcontent.TabContent
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.widgets.DropDownMenuIconButton
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,5 +110,4 @@ internal fun HomeUiScreen(
     }
 
     Player()
-    ActionDialogContainer()
 }

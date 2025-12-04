@@ -28,7 +28,6 @@ import com.andannn.melodify.model.toDataSource
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.widgets.ShortcutItem
 
@@ -122,6 +121,4 @@ internal fun LibraryContent(
             }
         }
     }
-
-    ActionDialogContainer()
 }
