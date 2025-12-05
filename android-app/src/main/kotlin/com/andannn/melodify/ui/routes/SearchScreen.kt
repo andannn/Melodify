@@ -15,7 +15,6 @@ import com.andannn.melodify.ui.components.search.Search
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 
 @Composable
 fun SearchScreen(
@@ -46,5 +45,4 @@ fun SearchScreen(
     }
 
     Player()
-    ActionDialogContainer()
 }

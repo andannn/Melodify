@@ -20,7 +20,6 @@ import com.andannn.melodify.ui.components.tabmanagement.TabManagementUi
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +54,4 @@ fun TabManagementScreen(
             modifier = Modifier.padding(it),
         )
     }
-
-    ActionDialogContainer()
 }

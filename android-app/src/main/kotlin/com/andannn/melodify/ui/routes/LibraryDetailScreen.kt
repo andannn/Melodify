@@ -32,7 +32,6 @@ import com.andannn.melodify.ui.components.playcontrol.Player
 import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 
 @Composable
 fun LibraryDetail(
@@ -129,5 +128,4 @@ private fun LibraryDetailContent(
     }
 
     Player()
-    ActionDialogContainer()
 }
