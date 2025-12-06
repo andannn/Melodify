@@ -23,7 +23,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 internal class UserPreferenceRepositoryImpl(
     private val preferences: UserSettingPreferences,
@@ -68,7 +69,10 @@ internal class UserPreferenceRepositoryImpl(
         when (tabKind) {
             TabKind.ALL_MUSIC,
             TabKind.ALL_VIDEO,
-            -> userDataDao.isTabKindExist(tabKind.toEntityName())
+            -> {
+                userDataDao.isTabKindExist(tabKind.toEntityName())
+            }
+
             else -> {
                 userDataDao.isTabExist(
                     externalId = externalId,
@@ -101,6 +105,7 @@ internal class UserPreferenceRepositoryImpl(
         return true
     }
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun addSearchHistory(searchHistory: String) {
         userDataDao.upsertSearchHistory(
             listOf(
@@ -198,6 +203,7 @@ expect fun isPathValid(path: String): Boolean
 private fun Int.toMediaPreviewMode(): MediaPreviewMode =
     when (this) {
         PreviewModeValues.LIST_PREVIEW_VALUE -> MediaPreviewMode.LIST_PREVIEW
+
         PreviewModeValues.GRID_PREVIEW_VALUE -> MediaPreviewMode.GRID_PREVIEW
 
         // Default

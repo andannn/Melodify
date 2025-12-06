@@ -38,7 +38,6 @@ fun Project.configureKotlinMultiplatform(extension: KotlinMultiplatformExtension
                 implementation(libs.findLibrary("kotlinx.collections.immutable").get())
                 implementation(libs.findLibrary("kotlinx.coroutines.core").get())
                 implementation(libs.findLibrary("napier").get())
-                implementation(libs.findLibrary("kotlinx.datetime").get())
             }
 
             androidMain.dependencies {
