@@ -25,8 +25,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Clock
 import kotlin.collections.map
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 internal class PlayListRepositoryImpl(
     private val playListDao: PlayListDao,
@@ -68,6 +69,7 @@ internal class PlayListRepositoryImpl(
                 )
             }
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun addItemsToPlayList(
         playListId: Long,
         items: List<MediaItemModel>,
@@ -164,6 +166,7 @@ internal class PlayListRepositoryImpl(
         mediaIdList: List<String>,
     ) = playListDao.deleteMediaFromPlayList(playListId, mediaIdList)
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun createNewPlayList(
         name: String,
         isAudio: Boolean,
@@ -245,6 +248,7 @@ internal class PlayListRepositoryImpl(
 
     private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>) = list.map { it.toAppItem() }
 
+    @OptIn(ExperimentalTime::class)
     private suspend fun createFavoritePlayList(isAudio: Boolean): Long =
         playListDao
             .insertPlayListEntities(
