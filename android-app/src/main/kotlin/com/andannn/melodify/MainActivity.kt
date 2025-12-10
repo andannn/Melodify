@@ -55,17 +55,12 @@ class MainActivity : ComponentActivity() {
     private val deleteHelper: MediaFileDeleteHelperImpl
         get() = mediaFileDeleteHelper as MediaFileDeleteHelperImpl
 
-    private val pictureParamsUpdater: PipParamUpdater by lazy {
-        PipParamUpdater(this)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         Napier.d(tag = TAG) { "onCreate() savedInstanceState $savedInstanceState" }
-        pictureParamsUpdater.isAutoEnterEnabled = true
 
         SyncJobService.scheduleSyncLibraryJob(this)
         SyncWorkHelper.registerPeriodicSyncWork(this)
@@ -141,6 +136,10 @@ class MainActivity : ComponentActivity() {
                         SyncWorkHelper.doOneTimeSyncWork(this@MainActivity)
                     }
                 }
+            }
+
+            if (uiState is MainUiState.Ready) {
+                PipParamUpdateEffect()
             }
 
             MelodifyTheme {

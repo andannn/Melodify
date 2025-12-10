@@ -6,6 +6,7 @@ package com.andannn.melodify.core.player.util
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Size
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaItem.RequestMetadata
 import androidx.media3.common.MediaMetadata
@@ -13,6 +14,8 @@ import androidx.media3.common.MediaMetadata
 const val UNIQUE_ID_KEY = "unique_id"
 const val EXTRA_ALBUM_COVER_ART_KEY = "extra_album_cover_art_key"
 const val IS_AUDIO_KEY = "is_audio"
+const val VIDEO_WIDTH_KEY = "video_width"
+const val VIDEO_HEIGHT_KEY = "video_height"
 const val VIDEO_BUCKET_NAME = "video_bucket_name"
 
 fun buildMediaItem(
@@ -23,6 +26,8 @@ fun buildMediaItem(
     isBrowsable: Boolean,
     mediaType: @MediaMetadata.MediaType Int,
     subtitleConfigurations: List<MediaItem.SubtitleConfiguration> = mutableListOf(),
+    videoHeight: Int? = null,
+    videoWidth: Int? = null,
     bucketName: String? = null,
     album: String? = null,
     artist: String? = null,
@@ -55,6 +60,8 @@ fun buildMediaItem(
                     uniqueId?.let { putString(UNIQUE_ID_KEY, it) }
                     imageUri?.let { putString(EXTRA_ALBUM_COVER_ART_KEY, it.toString()) }
                     bucketName?.let { putString(VIDEO_BUCKET_NAME, it) }
+                    videoWidth?.let { putInt(VIDEO_WIDTH_KEY, it) }
+                    videoHeight?.let { putInt(VIDEO_HEIGHT_KEY, it) }
                     putBoolean(IS_AUDIO_KEY, isAudio)
                 },
             ).build()

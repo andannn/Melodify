@@ -16,6 +16,8 @@ import com.andannn.melodify.core.player.util.EXTRA_ALBUM_COVER_ART_KEY
 import com.andannn.melodify.core.player.util.IS_AUDIO_KEY
 import com.andannn.melodify.core.player.util.UNIQUE_ID_KEY
 import com.andannn.melodify.core.player.util.VIDEO_BUCKET_NAME
+import com.andannn.melodify.core.player.util.VIDEO_HEIGHT_KEY
+import com.andannn.melodify.core.player.util.VIDEO_WIDTH_KEY
 import com.andannn.melodify.core.player.util.buildMediaItem
 
 fun MediaItem.toAppItem(): MediaItemModel =
@@ -53,13 +55,13 @@ fun MediaItem.toAppItem(): MediaItemModel =
             modifiedDate = 0,
             artWorkUri = "",
             bucketId = "",
+            width = mediaMetadata.extras?.getInt(VIDEO_WIDTH_KEY) ?: 0,
+            height = mediaMetadata.extras?.getInt(VIDEO_HEIGHT_KEY) ?: 0,
             bucketName = mediaMetadata.extras?.getString(VIDEO_BUCKET_NAME).orEmpty(),
             path = "",
             duration = 0,
             size = 0,
             mimeType = "",
-            width = 0,
-            height = 0,
             resolution = "",
             relativePath = "",
             source =
@@ -90,6 +92,8 @@ fun VideoItemModel.toMediaItem(generateUniqueId: Boolean = false): MediaItem =
         title = name,
         sourceUri = source.toUri(),
         imageUri = artWorkUri?.toUri(),
+        videoWidth = width,
+        videoHeight = height,
         isPlayable = true,
         isBrowsable = false,
         mediaType = MediaMetadata.MEDIA_TYPE_MUSIC,
