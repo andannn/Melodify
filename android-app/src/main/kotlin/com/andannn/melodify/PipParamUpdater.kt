@@ -46,7 +46,6 @@ fun PipParamUpdateEffect(playerStateMonitoryRepository: PlayerStateMonitoryRepos
                 }
             }
         }
-    Napier.d { "Jqn videoSize $videoSize" }
     LaunchedEffect(pipParamUpdater, videoSize, isPlaying) {
         delay(50)
         pipParamUpdater.isAutoEnterEnabled = isPlaying
@@ -111,9 +110,7 @@ private class PipParamUpdater(
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         setAutoEnterEnabled(isAutoEnterEnabled)
                     }
-                }
-//                .setSourceRectHint(sourceRectHint)
-                .build(),
+                }.build(),
         )
     }
 }
