@@ -15,12 +15,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
@@ -30,6 +32,7 @@ import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.core.syncer.SyncWorkHelper
 import com.andannn.melodify.ui.theme.MelodifyTheme
+import com.andannn.melodify.ui.widgets.AVPlayerView
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -52,10 +55,17 @@ class MainActivity : ComponentActivity() {
     private val deleteHelper: MediaFileDeleteHelperImpl
         get() = mediaFileDeleteHelper as MediaFileDeleteHelperImpl
 
+    private val pictureParamsUpdater: PipParamUpdater by lazy {
+        PipParamUpdater(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        Napier.d(tag = TAG) { "onCreate() savedInstanceState $savedInstanceState" }
+        pictureParamsUpdater.isAutoEnterEnabled = true
 
         SyncJobService.scheduleSyncLibraryJob(this)
         SyncWorkHelper.registerPeriodicSyncWork(this)
@@ -133,24 +143,30 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            CompositionLocalProvider(
-                LocalScreenController provides ScreenOrientationController(this),
-            ) {
-                MelodifyTheme {
-                    when (uiState) {
-                        is MainUiState.Error -> {
-                            ConnectFailedAlertDialog(
-                                onDismiss = { finish() },
-                            )
-                        }
+            MelodifyTheme {
+                val isPipMode = rememberIsInPipMode()
 
-                        MainUiState.Ready -> {
-                            if (permissionGranted) {
-                                MelodifyMobileApp()
+                if (isPipMode) {
+                    AVPlayerView(modifier = Modifier.fillMaxSize())
+                } else {
+                    CompositionLocalProvider(
+                        LocalScreenController provides ScreenOrientationController(this),
+                    ) {
+                        when (uiState) {
+                            is MainUiState.Error -> {
+                                ConnectFailedAlertDialog(
+                                    onDismiss = { finish() },
+                                )
                             }
-                        }
 
-                        MainUiState.Init -> {}
+                            MainUiState.Ready -> {
+                                if (permissionGranted) {
+                                    MelodifyMobileApp()
+                                }
+                            }
+
+                            MainUiState.Init -> {}
+                        }
                     }
                 }
             }
