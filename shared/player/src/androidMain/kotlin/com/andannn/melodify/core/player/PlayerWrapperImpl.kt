@@ -26,10 +26,10 @@ internal class PlayerWrapperImpl : PlayerWrapper {
     private val playerModeFlow = MutableStateFlow(Player.REPEAT_MODE_ALL)
     private val isShuffleFlow = MutableStateFlow(false)
 
-    private val playingMediaItemStateFlow = MutableSharedFlow<MediaItem?>(1)
+    private val playingMediaItemStateFlow = MutableStateFlow<MediaItem?>(null)
     private val playingIndexInQueueFlow = MutableStateFlow<Int?>(null)
 
-    private val playListFlow = MutableSharedFlow<List<MediaItem>>(1)
+    private val playListFlow = MutableStateFlow<List<MediaItem>>(emptyList())
 
     private val playerProgressUpdater: CoroutineTimer =
         CoroutineTimer(delayMs = 1000 / 30L) {
@@ -45,7 +45,9 @@ internal class PlayerWrapperImpl : PlayerWrapper {
                     -> old
 
                     is PlayerState.Buffering -> PlayerState.Paused(player!!.currentPosition)
+
                     is PlayerState.Paused -> PlayerState.Paused(player!!.currentPosition)
+
                     is PlayerState.Playing -> PlayerState.Playing(player!!.currentPosition)
                 }
             }
@@ -58,8 +60,14 @@ internal class PlayerWrapperImpl : PlayerWrapper {
                     val position = old.currentPositionMs
 
                     when (playbackState) {
-                        Player.STATE_IDLE -> PlayerState.Idle
-                        Player.STATE_BUFFERING -> PlayerState.Buffering(position)
+                        Player.STATE_IDLE -> {
+                            PlayerState.Idle
+                        }
+
+                        Player.STATE_BUFFERING -> {
+                            PlayerState.Buffering(position)
+                        }
+
                         Player.STATE_READY -> {
                             if (player!!.isPlaying) {
                                 PlayerState.Playing(position)
@@ -68,8 +76,13 @@ internal class PlayerWrapperImpl : PlayerWrapper {
                             }
                         }
 
-                        Player.STATE_ENDED -> PlayerState.PlayBackEnd(position)
-                        else -> error("Impossible")
+                        Player.STATE_ENDED -> {
+                            PlayerState.PlayBackEnd(position)
+                        }
+
+                        else -> {
+                            error("Impossible")
+                        }
                     }
                 }
             }
@@ -112,7 +125,7 @@ internal class PlayerWrapperImpl : PlayerWrapper {
             ) {
                 Napier.d(tag = TAG) { "onMediaItemTransition: $mediaItem" }
                 playingIndexInQueueFlow.value = player!!.currentMediaItemIndex
-                playingMediaItemStateFlow.tryEmit(mediaItem)
+                playingMediaItemStateFlow.value = mediaItem
             }
 
             override fun onPositionDiscontinuity(
@@ -130,7 +143,9 @@ internal class PlayerWrapperImpl : PlayerWrapper {
                             state.copy(currentPositionMs = newPosition.contentPositionMs)
                         }
 
-                        else -> state
+                        else -> {
+                            state
+                        }
                     }
                 }
             }
@@ -144,7 +159,7 @@ internal class PlayerWrapperImpl : PlayerWrapper {
                 MutableList(timeline.windowCount) { index ->
                     timeline.getWindow(index, Timeline.Window()).mediaItem
                 }.also { mediaItems ->
-                    playListFlow.tryEmit(mediaItems.toList())
+                    playListFlow.value = mediaItems
                 }
             }
 
@@ -206,7 +221,7 @@ internal class PlayerWrapperImpl : PlayerWrapper {
         playListFlow
             .onStart { playList }
 
-    override fun observePlayingMedia() = playingMediaItemStateFlow.onStart { emit(null) }
+    override fun observePlayingMedia() = playingMediaItemStateFlow
 
     override fun observeIsShuffle() = isShuffleFlow
 

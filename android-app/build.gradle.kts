@@ -59,6 +59,7 @@ dependencies {
     implementation(project(":shared:platform"))
 
     implementation(libs.coil3.compose)
+    implementation(libs.androidx.media3.ui.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.activity.compose)

@@ -6,6 +6,7 @@ package com.andannn.melodify.core.player
 
 import android.app.Application
 import android.content.ComponentName
+import androidx.media3.common.Player
 import androidx.media3.session.MediaBrowser
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
@@ -18,7 +19,7 @@ import kotlin.jvm.Throws
 private const val TAG = "MediaBrowserManager"
 
 interface MediaBrowserManager {
-    val mediaBrowser: MediaBrowser
+    val mediaBrowser: Player
 
     @Throws(TimeoutCancellationException::class)
     suspend fun connect()
@@ -27,7 +28,7 @@ interface MediaBrowserManager {
 }
 
 class DummyMediaBrowserManager : MediaBrowserManager {
-    override val mediaBrowser: MediaBrowser
+    override val mediaBrowser: Player
         get() = throw IllegalStateException("MediaBrowser is not initialized")
 
     override suspend fun connect() = Unit
@@ -40,7 +41,7 @@ class MediaBrowserManagerImpl(
 ) : MediaBrowserManager {
     private var _mediaBrowser: MediaBrowser? = null
 
-    override val mediaBrowser: MediaBrowser
+    override val mediaBrowser: Player
         get() {
             return _mediaBrowser ?: throw IllegalStateException("MediaBrowser is not initialized")
         }
