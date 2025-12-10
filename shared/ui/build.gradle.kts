@@ -14,6 +14,7 @@ kotlin {
             implementation(project(":shared:data"))
             implementation(project(":shared:syncer"))
             implementation(project(":shared:platform"))
+            implementation(project(":shared:player"))
 
             implementation(libs.coil3.compose)
             api(libs.retainedmodel)
