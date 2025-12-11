@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.routes
+package com.andannn.melodify.ui.routes.library
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -14,7 +14,7 @@ import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 
 @Composable
-fun retainLibraryPresenter(navigator: Navigator): Presenter<LibraryState> =
+internal fun retainLibraryPresenter(navigator: Navigator): Presenter<LibraryState> =
     retainPresenter {
         LibraryPresenter(
             navigator = navigator,
@@ -46,11 +46,11 @@ private class LibraryPresenter(
 }
 
 @Stable
-data class LibraryState(
+internal data class LibraryState(
     val evenSink: (LibraryUiEvent) -> Unit = {},
 )
 
-sealed interface LibraryUiEvent {
+internal sealed interface LibraryUiEvent {
     data class OnNavigateToLibraryContentList(
         val source: LibraryDataSource,
     ) : LibraryUiEvent

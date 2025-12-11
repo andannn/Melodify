@@ -24,10 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import androidx.navigation3.runtime.EntryProviderScope
-import androidx.navigation3.runtime.NavKey
 import com.andannn.melodify.ui.Navigator
-import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.components.tab.TabUi
 import com.andannn.melodify.ui.components.tabcontent.TabContent
 import com.andannn.melodify.ui.core.Presenter
@@ -35,15 +32,9 @@ import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.player.Player
 import com.andannn.melodify.ui.widgets.DropDownMenuIconButton
 
-fun EntryProviderScope<NavKey>.entryBuilder(navigator: Navigator) {
-    entry<Screen.Home> {
-        HomeUiScreen(navigator)
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeUiScreen(
+internal fun HomeUiScreen(
     navigator: Navigator,
     modifier: Modifier = Modifier,
     homePresenter: Presenter<HomeState> = retainHomeUiPresenter(navigator = navigator),

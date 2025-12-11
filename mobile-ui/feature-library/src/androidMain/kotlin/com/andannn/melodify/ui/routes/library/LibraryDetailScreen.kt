@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.routes
+package com.andannn.melodify.ui.routes.library
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +34,7 @@ import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.player.Player
 
 @Composable
-fun LibraryDetail(
+internal fun LibraryDetail(
     dataSource: LibraryDataSource,
     navigator: Navigator,
     modifier: Modifier = Modifier,

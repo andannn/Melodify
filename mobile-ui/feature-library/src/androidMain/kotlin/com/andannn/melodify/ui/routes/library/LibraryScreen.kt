@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.routes
+package com.andannn.melodify.ui.routes.library
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
@@ -32,7 +32,7 @@ import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
 import com.andannn.melodify.ui.widgets.ShortcutItem
 
 @Composable
-fun Library(
+internal fun Library(
     navigator: Navigator,
     modifier: Modifier = Modifier,
     presenter: Presenter<LibraryState> = retainLibraryPresenter(navigator),

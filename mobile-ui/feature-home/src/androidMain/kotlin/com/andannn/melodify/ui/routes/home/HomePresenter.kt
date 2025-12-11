@@ -57,7 +57,7 @@ internal fun retainHomeUiPresenter(
         )
     }
 
-enum class MenuOption(
+internal enum class MenuOption(
     val textRes: StringResource,
 ) {
     DEFAULT_SORT(
@@ -69,13 +69,13 @@ enum class MenuOption(
 }
 
 @Stable
-data class HomeState(
+internal data class HomeState(
     val tabUiState: TabUiState,
     val tabContentState: TabContentState,
     val eventSink: (HomeUiEvent) -> Unit = {},
 )
 
-sealed interface HomeUiEvent {
+internal sealed interface HomeUiEvent {
     data object SearchButtonClick : HomeUiEvent
 
     data object LibraryButtonClick : HomeUiEvent

@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.routes
+package com.andannn.melodify.ui.routes.library
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun retainLibraryDetailScreenPresenter(
+internal fun retainLibraryDetailScreenPresenter(
     dataSource: LibraryDataSource,
     navigator: Navigator,
     repository: Repository = LocalRepository.current,
