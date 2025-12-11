@@ -12,6 +12,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":shared:data"))
+            api(project(":shared:compose:common"))
+            api(project(":shared:compose:popup"))
+            api(project(":shared:compose:usecase"))
             implementation(project(":shared:syncer"))
             implementation(project(":shared:platform"))
             implementation(project(":shared:player"))

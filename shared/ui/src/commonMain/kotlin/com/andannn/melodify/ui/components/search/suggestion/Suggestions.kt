@@ -22,7 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.andannn.melodify.ui.core.Presenter
+import com.andannn.melodify.shared.compose.common.Presenter
 
 /**
  * Content of the search bar when expanded.
@@ -75,7 +75,9 @@ private fun SuggestionsContent(
             is SuggestionsState.LoadingHistory,
             is SuggestionsState.NoSuggestion,
             is SuggestionsState.LoadingSuggestion,
-            -> Spacer(modifier = Modifier)
+            -> {
+                Spacer(modifier = Modifier)
+            }
 
             is SuggestionsState.SuggestionLoaded -> {
                 state.suggestions.forEach {

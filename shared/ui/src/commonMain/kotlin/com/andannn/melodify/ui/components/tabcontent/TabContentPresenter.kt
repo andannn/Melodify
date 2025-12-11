@@ -12,7 +12,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.andannn.melodify.MediaFileDeleteHelper
+import com.andannn.melodify.core.data.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
@@ -20,30 +20,28 @@ import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.sortOptions
-import com.andannn.melodify.model.LibraryDataSource
-import com.andannn.melodify.model.OptionItem
-import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
-import com.andannn.melodify.ui.core.LocalPopupController
-import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.NavigationRequest
-import com.andannn.melodify.ui.core.NavigationRequestEventSink
-import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.core.RetainedPresenter
-import com.andannn.melodify.ui.core.retainPresenter
-import com.andannn.melodify.ui.core.showDialogAndWaitAction
-import com.andannn.melodify.ui.popup.DialogAction
-import com.andannn.melodify.ui.popup.DialogId
-import com.andannn.melodify.ui.popup.OptionDialog
-import com.andannn.melodify.usecase.addToNextPlay
-import com.andannn.melodify.usecase.addToPlaylist
-import com.andannn.melodify.usecase.addToQueue
-import com.andannn.melodify.usecase.contentFlow
-import com.andannn.melodify.usecase.contentPagingDataFlow
-import com.andannn.melodify.usecase.deleteItems
-import com.andannn.melodify.usecase.playMediaItems
+import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.LocalRepository
+import com.andannn.melodify.shared.compose.common.NavigationRequest
+import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
+import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.popup.DialogAction
+import com.andannn.melodify.shared.compose.popup.LocalPopupController
+import com.andannn.melodify.shared.compose.popup.OptionDialog
+import com.andannn.melodify.shared.compose.popup.OptionItem
+import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
+import com.andannn.melodify.shared.compose.usecase.addToNextPlay
+import com.andannn.melodify.shared.compose.usecase.addToPlaylist
+import com.andannn.melodify.shared.compose.usecase.addToQueue
+import com.andannn.melodify.shared.compose.usecase.contentFlow
+import com.andannn.melodify.shared.compose.usecase.contentPagingDataFlow
+import com.andannn.melodify.shared.compose.usecase.deleteItems
+import com.andannn.melodify.shared.compose.usecase.playMediaItems
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -78,7 +76,7 @@ fun retainTabContentPresenter(
     )
 }
 
-class TabContentPresenter(
+private class TabContentPresenter(
     private val selectedTab: CustomTab?,
     private val navigationRequestEventSink: NavigationRequestEventSink,
     private val repository: Repository,

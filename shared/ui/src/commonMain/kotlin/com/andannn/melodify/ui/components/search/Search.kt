@@ -25,11 +25,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.browsable
-import com.andannn.melodify.model.LibraryDataSource
-import com.andannn.melodify.model.asLibraryDataSource
+import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
+import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource
 import com.andannn.melodify.ui.components.search.result.SearchPageView
 import com.andannn.melodify.ui.components.search.suggestion.Suggestions
-import com.andannn.melodify.ui.core.Presenter
 
 @Composable
 fun Search(

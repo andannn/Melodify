@@ -6,12 +6,12 @@ package com.andannn.melodify.ui.routes.library
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import com.andannn.melodify.model.LibraryDataSource
+import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
+import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
-import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.RetainedPresenter
-import com.andannn.melodify.ui.core.retainPresenter
 
 @Composable
 internal fun retainLibraryPresenter(navigator: Navigator): Presenter<LibraryState> =

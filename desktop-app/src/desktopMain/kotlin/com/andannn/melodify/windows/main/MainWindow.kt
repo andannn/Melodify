@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
+import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
+import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.components.lyrics.Lyrics
 import com.andannn.melodify.ui.components.playcontrol.DesktopPlayerUi
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
@@ -42,9 +44,6 @@ import com.andannn.melodify.ui.components.tab.retainTabUiPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContent
 import com.andannn.melodify.ui.components.tabcontent.TabContentState
 import com.andannn.melodify.ui.components.tabcontent.retainTabContentPresenter
-import com.andannn.melodify.ui.core.NavigationRequestEventSink
-import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.popup.dialog.ActionDialog
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.WindowNavigator
 import com.andannn.melodify.windows.WindowType

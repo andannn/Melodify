@@ -11,9 +11,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.RetainedPresenter
-import com.andannn.melodify.ui.core.retainPresenter
+import com.andannn.melodify.shared.compose.common.LocalRepository
+import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.retainPresenter
 import kotlinx.coroutines.launch
 
 @Composable

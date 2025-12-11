@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.andannn.melodify.MediaFileDeleteHelper
+import com.andannn.melodify.core.data.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
@@ -17,18 +17,18 @@ import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.VideoItemModel
-import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
-import com.andannn.melodify.ui.core.LocalPopupController
-import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.NavigationRequestEventSink
-import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.core.RetainedPresenter
-import com.andannn.melodify.ui.core.retainPresenter
-import com.andannn.melodify.ui.widgets.ListTileItemView
-import com.andannn.melodify.usecase.showLibraryMediaOption
+import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.LocalRepository
+import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
+import com.andannn.melodify.shared.compose.popup.LocalPopupController
+import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.usecase.showLibraryMediaOption
 import kotlinx.coroutines.launch
-import melodify.shared.ui.generated.resources.Res
-import melodify.shared.ui.generated.resources.track_count
+import melodify.shared.compose.resource.generated.resources.Res
+import melodify.shared.compose.resource.generated.resources.track_count
 import org.jetbrains.compose.resources.stringResource
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -63,17 +63,32 @@ private fun MediaLibraryItemContent(
     val cover = mediaItemModel.artWorkUri
     val subTitle =
         when (mediaItemModel) {
-            is AlbumItemModel -> stringResource(Res.string.track_count, mediaItemModel.trackCount)
-            is ArtistItemModel -> stringResource(Res.string.track_count, mediaItemModel.trackCount)
-            is AudioItemModel -> mediaItemModel.album
-            is GenreItemModel -> stringResource(Res.string.track_count, mediaItemModel.trackCount)
-            is PlayListItemModel ->
+            is AlbumItemModel -> {
+                stringResource(Res.string.track_count, mediaItemModel.trackCount)
+            }
+
+            is ArtistItemModel -> {
+                stringResource(Res.string.track_count, mediaItemModel.trackCount)
+            }
+
+            is AudioItemModel -> {
+                mediaItemModel.album
+            }
+
+            is GenreItemModel -> {
+                stringResource(Res.string.track_count, mediaItemModel.trackCount)
+            }
+
+            is PlayListItemModel -> {
                 stringResource(
                     Res.string.track_count,
                     mediaItemModel.trackCount,
                 )
+            }
 
-            is VideoItemModel -> mediaItemModel.bucketName
+            is VideoItemModel -> {
+                mediaItemModel.bucketName
+            }
         }
 
     ListTileItemView(
@@ -126,13 +141,14 @@ private class MediaLibraryItemPresenter(
         UiState { event ->
             context(popupController, repository, fileDeleteHelper, navigationRequestEventSink) {
                 when (event) {
-                    UiEvent.OnOptionButtonClick ->
+                    UiEvent.OnOptionButtonClick -> {
                         retainedScope.launch {
                             showLibraryMediaOption(
                                 media = mediaItemModel,
                                 playListId = playListId,
                             )
                         }
+                    }
                 }
             }
         }

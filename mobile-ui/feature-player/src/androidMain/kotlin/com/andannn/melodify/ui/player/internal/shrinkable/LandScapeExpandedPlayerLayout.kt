@@ -13,7 +13,7 @@ import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.ui.ImmersiveModeEffect
 import com.andannn.melodify.ui.KeepScreenOnEffect
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
-import com.andannn.melodify.ui.widgets.AVPlayerView
+import com.andannn.melodify.ui.player.internal.AVPlayerView
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

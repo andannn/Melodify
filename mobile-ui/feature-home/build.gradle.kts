@@ -12,6 +12,7 @@ kotlin {
         androidMain.dependencies {
             implementation(project(":shared:ui"))
             implementation(project(":shared:syncer"))
+            implementation(project(":shared:compose:components:tab"))
             implementation(project(":mobile-ui:common"))
         }
     }

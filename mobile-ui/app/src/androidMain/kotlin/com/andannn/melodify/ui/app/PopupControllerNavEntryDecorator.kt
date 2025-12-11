@@ -9,9 +9,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
 import androidx.navigation3.runtime.NavEntryDecorator
-import com.andannn.melodify.ui.core.LocalPopupController
-import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.popup.dialog.ActionDialog
+import com.andannn.melodify.shared.compose.popup.ActionDialog
+import com.andannn.melodify.shared.compose.popup.LocalPopupController
+import com.andannn.melodify.shared.compose.popup.PopupController
 
 @Composable
 internal fun <T : Any> rememberPopupControllerNavEntryDecorator(): NavEntryDecorator<T> = remember { PopupControllerNavEntryDecorator() }

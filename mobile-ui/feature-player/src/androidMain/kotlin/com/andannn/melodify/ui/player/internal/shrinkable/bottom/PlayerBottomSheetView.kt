@@ -44,16 +44,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationEventHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
-import com.andannn.melodify.ui.components.lyrics.Lyrics
-import com.andannn.melodify.ui.components.queue.PlayQueue
+import com.andannn.melodify.shared.compose.components.lyrics.Lyrics
+import com.andannn.melodify.shared.compose.components.queue.PlayQueue
 import com.andannn.melodify.ui.player.internal.BottomSheetState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import melodify.shared.ui.generated.resources.Res
-import melodify.shared.ui.generated.resources.lyrics
-import melodify.shared.ui.generated.resources.play_queue
+import melodify.shared.compose.resource.generated.resources.Res
+import melodify.shared.compose.resource.generated.resources.lyrics
+import melodify.shared.compose.resource.generated.resources.play_queue
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.roundToInt
 

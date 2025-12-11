@@ -10,9 +10,9 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.RetainedPresenter
-import com.andannn.melodify.ui.core.retainPresenter
+import com.andannn.melodify.shared.compose.common.LocalRepository
+import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.retainPresenter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList

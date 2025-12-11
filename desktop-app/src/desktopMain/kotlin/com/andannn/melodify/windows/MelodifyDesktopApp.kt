@@ -10,10 +10,10 @@ import androidx.compose.runtime.retain.RetainedValuesStoreRegistry
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.retain.retainRetainedValuesStoreRegistry
 import androidx.compose.ui.window.ApplicationScope
-import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
-import com.andannn.melodify.ui.core.LocalPopupController
-import com.andannn.melodify.ui.core.NavigationRequestEventSink
-import com.andannn.melodify.ui.core.PopupController
+import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
+import com.andannn.melodify.shared.compose.popup.LocalPopupController
+import com.andannn.melodify.shared.compose.popup.PopupController
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import com.andannn.melodify.windows.librarydetail.LibraryDetailWindow
 import com.andannn.melodify.windows.main.MainWindow
@@ -56,23 +56,25 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
                             LocalPopupController provides retain { PopupController() },
                         ) {
                             when (windowType) {
-                                WindowType.Home ->
+                                WindowType.Home -> {
                                     MainWindow(
                                         navigator = navigator,
                                         onCloseRequest = {
                                             onCloseRequest(windowType)
                                         },
                                     )
+                                }
 
-                                WindowType.SettingPreference ->
+                                WindowType.SettingPreference -> {
                                     PreferenceWindow(
                                         navigator = navigator,
                                         onCloseRequest = {
                                             onCloseRequest(windowType)
                                         },
                                     )
+                                }
 
-                                is WindowType.MediaLibrary ->
+                                is WindowType.MediaLibrary -> {
                                     LibraryDetailWindow(
                                         navigator = navigator,
                                         dataSource = windowType.datasource,
@@ -80,22 +82,25 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
                                             onCloseRequest(windowType)
                                         },
                                     )
+                                }
 
-                                WindowType.TabManage ->
+                                WindowType.TabManage -> {
                                     TabManageWindow(
                                         navigator = navigator,
                                         onCloseRequest = {
                                             onCloseRequest(windowType)
                                         },
                                     )
+                                }
 
-                                WindowType.Search ->
+                                WindowType.Search -> {
                                     SearchWindow(
                                         navigator = navigator,
                                         onCloseRequest = {
                                             onCloseRequest(windowType)
                                         },
                                     )
+                                }
                             }
                         }
                     }

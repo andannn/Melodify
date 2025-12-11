@@ -75,6 +75,7 @@ dependencies {
     implementation(project(":shared:syncer"))
     implementation(project(":shared:platform"))
     implementation(project(":mobile-ui:common"))
+    implementation(project(":mobile-ui:feature-player"))
     implementation(project(":mobile-ui:app"))
 
     implementation(libs.jetbrains.compose.material3)

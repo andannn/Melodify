@@ -17,12 +17,12 @@ import com.andannn.melodify.core.data.model.AlbumItemModel
 import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.ui.core.LocalPopupController
-import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.core.RetainedPresenter
-import com.andannn.melodify.ui.core.retainPresenter
-import com.andannn.melodify.usecase.playMediaItems
+import com.andannn.melodify.shared.compose.common.LocalRepository
+import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.popup.LocalPopupController
+import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.usecase.playMediaItems
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -94,7 +94,10 @@ class SearchUiPresenter(
                     }
                 }
 
-                is SearchUiEvent.OnPlayAudio -> onPlayAudio(eventSink.audioItemModel)
+                is SearchUiEvent.OnPlayAudio -> {
+                    onPlayAudio(eventSink.audioItemModel)
+                }
+
                 is SearchUiEvent.OnExpandChange -> {
                     expanded = eventSink.isExpand
                 }

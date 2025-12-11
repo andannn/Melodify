@@ -17,11 +17,11 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
+import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.ui.LaunchNavigationRequestHandlerEffect
 import com.andannn.melodify.ui.RootNavigator
 import com.andannn.melodify.ui.Screen
-import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
-import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.player.rememberPlayerProviderNavEntryDecorator
 import com.andannn.melodify.ui.routes.home.homeEntryBuilder
 import com.andannn.melodify.ui.routes.library.libraryEntryBuilder

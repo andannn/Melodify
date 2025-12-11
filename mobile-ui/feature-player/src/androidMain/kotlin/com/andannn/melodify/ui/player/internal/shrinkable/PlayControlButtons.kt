@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Repeat
+import androidx.compose.material.icons.rounded.RepeatOn
+import androidx.compose.material.icons.rounded.RepeatOneOn
 import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material.icons.rounded.ShuffleOn
 import androidx.compose.material.icons.rounded.SkipNext
@@ -20,10 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
+import com.andannn.melodify.shared.compose.common.widgets.SmpMainIconButton
+import com.andannn.melodify.shared.compose.common.widgets.SmpSubIconButton
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
-import com.andannn.melodify.ui.util.getIcon
-import com.andannn.melodify.ui.widgets.SmpMainIconButton
-import com.andannn.melodify.ui.widgets.SmpSubIconButton
 
 @Composable
 internal fun PlayControlButtons(
@@ -97,3 +99,10 @@ internal fun PlayControlButtons(
         )
     }
 }
+
+private fun PlayMode.getIcon() =
+    when (this) {
+        PlayMode.REPEAT_ONE -> Icons.Rounded.RepeatOneOn
+        PlayMode.REPEAT_OFF -> Icons.Rounded.Repeat
+        PlayMode.REPEAT_ALL -> Icons.Rounded.RepeatOn
+    }

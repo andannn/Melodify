@@ -6,8 +6,8 @@ package com.andannn.melodify.windows
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.andannn.melodify.ui.core.NavigationRequest
-import com.andannn.melodify.ui.core.NavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.NavigationRequest
+import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 
 interface WindowNavigator {
     fun openWindow(windowType: WindowType)

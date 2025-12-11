@@ -63,14 +63,14 @@ import com.andannn.melodify.core.data.model.SortOption
 import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.core.data.model.browsableOrPlayable
 import com.andannn.melodify.core.data.model.keyOf
+import com.andannn.melodify.shared.compose.common.widgets.ExtraPaddingBottom
+import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import com.andannn.melodify.ui.components.tabcontent.header.GroupHeader
 import com.andannn.melodify.ui.components.tabcontent.header.GroupInfo
-import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
-import com.andannn.melodify.ui.widgets.ListTileItemView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import melodify.shared.ui.generated.resources.Res
-import melodify.shared.ui.generated.resources.outline_arrow_range_24
+import melodify.shared.compose.resource.generated.resources.Res
+import melodify.shared.compose.resource.generated.resources.outline_arrow_range_24
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -199,7 +199,7 @@ private fun LazyListContent(
                                 )
                             }
                             when (item) {
-                                is AudioItemModel ->
+                                is AudioItemModel -> {
                                     ListTileItemView(
                                         paddingValues =
                                             PaddingValues(
@@ -218,8 +218,9 @@ private fun LazyListContent(
                                             onShowMediaItemOption(item)
                                         },
                                     )
+                                }
 
-                                is VideoItemModel ->
+                                is VideoItemModel -> {
                                     ListTileItemView(
                                         paddingValues =
                                             PaddingValues(
@@ -237,8 +238,11 @@ private fun LazyListContent(
                                             onShowMediaItemOption(item)
                                         },
                                     )
+                                }
 
-                                else -> error("not supported")
+                                else -> {
+                                    error("not supported")
+                                }
                             }
                         }
                     }

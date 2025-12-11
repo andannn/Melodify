@@ -13,32 +13,32 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.model.LibraryDataSource
-import com.andannn.melodify.model.asLibraryDataSource
-import com.andannn.melodify.model.browseable
-import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
-import com.andannn.melodify.ui.core.LocalPopupController
-import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.NavigationRequest
-import com.andannn.melodify.ui.core.NavigationRequestEventSink
-import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.RetainedPresenter
-import com.andannn.melodify.ui.core.retainPresenter
-import com.andannn.melodify.usecase.content
-import com.andannn.melodify.usecase.item
-import com.andannn.melodify.usecase.playMediaItems
+import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.LocalRepository
+import com.andannn.melodify.shared.compose.common.NavigationRequest
+import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
+import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource
+import com.andannn.melodify.shared.compose.common.model.browseable
+import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.popup.LocalPopupController
+import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.usecase.content
+import com.andannn.melodify.shared.compose.usecase.item
+import com.andannn.melodify.shared.compose.usecase.playMediaItems
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import melodify.shared.ui.generated.resources.Res
-import melodify.shared.ui.generated.resources.album_page_title
-import melodify.shared.ui.generated.resources.artist_page_title
-import melodify.shared.ui.generated.resources.audio_page_title
-import melodify.shared.ui.generated.resources.genre_title
-import melodify.shared.ui.generated.resources.playlist_page_title
-import melodify.shared.ui.generated.resources.video_page_title
+import melodify.shared.compose.resource.generated.resources.Res
+import melodify.shared.compose.resource.generated.resources.album_page_title
+import melodify.shared.compose.resource.generated.resources.artist_page_title
+import melodify.shared.compose.resource.generated.resources.audio_page_title
+import melodify.shared.compose.resource.generated.resources.genre_title
+import melodify.shared.compose.resource.generated.resources.playlist_page_title
+import melodify.shared.compose.resource.generated.resources.video_page_title
 import org.jetbrains.compose.resources.getString
 
 @Composable
@@ -121,8 +121,9 @@ private class LibraryDetailPresenter(
             title = title,
         ) { event ->
             when (event) {
-                is LibraryContentEvent.OnRequestPlay ->
+                is LibraryContentEvent.OnRequestPlay -> {
                     playMedia(event.mediaItem, contentList)
+                }
 
                 is LibraryContentEvent.OnMediaItemClick -> {
                     if (dataSource.browseable()) {
@@ -161,25 +162,47 @@ private class LibraryDetailPresenter(
 context(repository: Repository)
 private suspend fun LibraryDataSource.getTitle(): String =
     when (this) {
-        LibraryDataSource.AllAlbum -> getString(Res.string.album_page_title)
-        LibraryDataSource.AllArtist -> getString(Res.string.artist_page_title)
-        LibraryDataSource.AllGenre -> getString(Res.string.genre_title)
-        LibraryDataSource.AllPlaylist -> getString(Res.string.playlist_page_title)
-        LibraryDataSource.AllSong -> getString(Res.string.audio_page_title)
-        LibraryDataSource.AllVideo -> getString(Res.string.video_page_title)
-        is LibraryDataSource.AlbumDetail ->
+        LibraryDataSource.AllAlbum -> {
+            getString(Res.string.album_page_title)
+        }
+
+        LibraryDataSource.AllArtist -> {
+            getString(Res.string.artist_page_title)
+        }
+
+        LibraryDataSource.AllGenre -> {
+            getString(Res.string.genre_title)
+        }
+
+        LibraryDataSource.AllPlaylist -> {
+            getString(Res.string.playlist_page_title)
+        }
+
+        LibraryDataSource.AllSong -> {
+            getString(Res.string.audio_page_title)
+        }
+
+        LibraryDataSource.AllVideo -> {
+            getString(Res.string.video_page_title)
+        }
+
+        is LibraryDataSource.AlbumDetail -> {
             repository.getAlbumByAlbumId(id)?.name
                 ?: ""
+        }
 
-        is LibraryDataSource.ArtistDetail ->
+        is LibraryDataSource.ArtistDetail -> {
             repository.getArtistByArtistId(id)?.name
                 ?: ""
+        }
 
-        is LibraryDataSource.GenreDetail ->
+        is LibraryDataSource.GenreDetail -> {
             repository.getGenreByGenreId(id)?.name
                 ?: ""
+        }
 
-        is LibraryDataSource.PlayListDetail ->
+        is LibraryDataSource.PlayListDetail -> {
             repository.getPlayListById(id.toLong())?.name
                 ?: ""
+        }
     }

@@ -35,10 +35,10 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
+import com.andannn.melodify.ui.player.internal.AVPlayerView
 import com.andannn.melodify.ui.player.internal.MinImageSize
 import com.andannn.melodify.ui.player.internal.PlayerViewState
 import com.andannn.melodify.ui.player.internal.shrinkable.bottom.PlayerBottomSheetView
-import com.andannn.melodify.ui.widgets.AVPlayerView
 
 internal val MinImagePaddingTop = 5.dp
 

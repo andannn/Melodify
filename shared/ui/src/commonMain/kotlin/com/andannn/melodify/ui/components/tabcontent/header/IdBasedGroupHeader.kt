@@ -29,9 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.andannn.melodify.ui.core.Presenter
-import melodify.shared.ui.generated.resources.Res
-import melodify.shared.ui.generated.resources.default_image_icon
+import com.andannn.melodify.shared.compose.common.Presenter
+import melodify.shared.compose.resource.generated.resources.Res
+import melodify.shared.compose.resource.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 

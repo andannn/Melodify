@@ -9,8 +9,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.retain.RetainObserver
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import com.andannn.melodify.ui.core.NavigationRequest
-import com.andannn.melodify.ui.core.NavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.NavigationRequest
+import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 
 /**
  * Navigator interface for navigation between screens.

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -29,11 +28,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.util.getCategoryResource
-import com.andannn.melodify.ui.util.rememberSwapListState
-import com.andannn.melodify.ui.widgets.ActionType
-import com.andannn.melodify.ui.widgets.ListTileItemView
+import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.getCategoryResource
+import com.andannn.melodify.shared.compose.common.util.rememberSwapListState
+import com.andannn.melodify.shared.compose.common.widgets.ActionType
+import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableCollectionItemScope

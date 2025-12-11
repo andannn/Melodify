@@ -24,12 +24,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.widgets.DropDownMenuIconButton
+import com.andannn.melodify.shared.compose.components.tab.TabUi
+import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.Navigator
-import com.andannn.melodify.ui.components.tab.TabUi
 import com.andannn.melodify.ui.components.tabcontent.TabContent
-import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.widgets.DropDownMenuIconButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
