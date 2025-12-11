@@ -159,7 +159,6 @@ firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "androidxRoom" }
-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 licensee = { id = "app.cash.licensee", version.ref = "licensee" }
