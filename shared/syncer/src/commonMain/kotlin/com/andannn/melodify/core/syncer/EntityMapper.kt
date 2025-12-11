@@ -14,7 +14,6 @@ import com.andannn.melodify.core.syncer.model.ArtistData
 import com.andannn.melodify.core.syncer.model.AudioData
 import com.andannn.melodify.core.syncer.model.GenreData
 import com.andannn.melodify.core.syncer.model.VideoData
-import com.sun.jndi.toolkit.url.Uri
 
 fun List<AlbumData>.toAlbumEntity(): List<AlbumEntity> =
     map {
