@@ -13,7 +13,6 @@ kotlin {
         androidMain.dependencies {
             implementation(project(":shared:ui"))
             implementation(project(":mobile-ui:common"))
-            implementation(project(":mobile-ui:feature-player"))
         }
     }
 }

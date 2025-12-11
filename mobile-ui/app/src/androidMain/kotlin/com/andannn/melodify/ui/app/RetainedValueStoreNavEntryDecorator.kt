@@ -11,7 +11,7 @@ import androidx.compose.runtime.retain.retainRetainedValuesStoreRegistry
 import androidx.navigation3.runtime.NavEntryDecorator
 
 @Composable
-fun <T : Any> rememberRetainedValueStoreNavEntryDecorator(
+internal fun <T : Any> rememberRetainedValueStoreNavEntryDecorator(
     retainedValuesStoreRegistry: RetainedValuesStoreRegistry = retainRetainedValuesStoreRegistry(),
 ): NavEntryDecorator<T> =
     remember(

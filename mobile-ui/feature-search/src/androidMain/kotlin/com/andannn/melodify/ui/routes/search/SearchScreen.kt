@@ -14,7 +14,6 @@ import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.components.search.Search
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.player.Player
 
 @Composable
 internal fun SearchScreen(
@@ -43,6 +42,4 @@ internal fun SearchScreen(
             },
         )
     }
-
-    Player()
 }

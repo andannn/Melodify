@@ -2,12 +2,13 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify
+package com.andannn.melodify.util
 
 import android.app.Activity
 import android.app.PictureInPictureParams
 import android.os.Build
 import android.util.Rational
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -58,7 +59,7 @@ fun PipParamUpdateEffect(playerStateMonitoryRepository: PlayerStateMonitoryRepos
 
 @Composable
 fun rememberIsInPipMode(): Boolean {
-    val activity = LocalActivity.current as? androidx.activity.ComponentActivity ?: return false
+    val activity = LocalActivity.current as? ComponentActivity ?: return false
     var pipMode by remember { mutableStateOf(activity.isInPictureInPictureMode) }
     DisposableEffect(activity) {
         val observer =

@@ -42,8 +42,8 @@ import com.andannn.melodify.ui.player.internal.shrinkable.LandScapeShrinkPlayerL
 import com.andannn.melodify.ui.player.internal.shrinkable.PortraitPlayerLayout
 import com.andannn.melodify.ui.player.internal.theme.DynamicThemePrimaryColorsFromImage
 import com.andannn.melodify.ui.player.internal.theme.rememberDominantColorState
+import com.andannn.melodify.ui.player.internal.util.contrastAgainst
 import com.andannn.melodify.ui.theme.MIN_CONTRAST_OF_PRIMARY_VS_SURFACE
-import com.andannn.melodify.ui.util.contrastAgainst
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable

@@ -2,10 +2,9 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify
+package com.andannn.melodify.util
 
 import android.app.Activity
-import android.content.ContentUris
 import android.content.Context
 import android.media.MediaScannerConnection
 import android.provider.MediaStore
@@ -13,13 +12,10 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.core.net.toUri
+import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.MediaContentRepository
-import com.andannn.melodify.core.data.model.AlbumItemModel
-import com.andannn.melodify.core.data.model.ArtistItemModel
 import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.GenreItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.VideoItemModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CompletableDeferred

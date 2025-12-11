@@ -31,7 +31,6 @@ import com.andannn.melodify.ui.components.librarydetail.LibraryContentEvent
 import com.andannn.melodify.ui.components.mediaitem.MediaLibraryItem
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.player.Player
 
 @Composable
 internal fun LibraryDetail(
@@ -126,6 +125,4 @@ private fun LibraryDetailContent(
             }
         }
     }
-
-    Player()
 }

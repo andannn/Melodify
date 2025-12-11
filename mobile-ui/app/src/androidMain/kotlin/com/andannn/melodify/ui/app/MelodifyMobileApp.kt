@@ -22,6 +22,7 @@ import com.andannn.melodify.ui.RootNavigator
 import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
+import com.andannn.melodify.ui.player.rememberPlayerProviderNavEntryDecorator
 import com.andannn.melodify.ui.routes.home.homeEntryBuilder
 import com.andannn.melodify.ui.routes.library.libraryEntryBuilder
 import com.andannn.melodify.ui.routes.search.searchEntryBuilder
@@ -63,6 +64,7 @@ fun MelodifyMobileApp(modifier: Modifier = Modifier) {
                     rememberSaveableStateHolderNavEntryDecorator(),
                     rememberRetainedValueStoreNavEntryDecorator(),
                     rememberPopupControllerNavEntryDecorator(),
+                    rememberPlayerProviderNavEntryDecorator(),
                 ),
             entryProvider =
                 entryProvider {

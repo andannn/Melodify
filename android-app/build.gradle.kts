@@ -1,10 +1,11 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    id("melodify.kmp.application")
-    id("melodify.compose.multiplatform.application")
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.android.application)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.google.service)
     alias(libs.plugins.firebase.crashlytics)
-    alias(libs.plugins.serialization)
 }
 
 android {
@@ -17,7 +18,17 @@ android {
         versionCode = 54
         versionName = "1.2.6"
 
+        compileSdk = 36
+        targetSdk = 36
+        minSdk = 30
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         signingConfig = signingConfigs.getByName("debug")
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildTypes {
@@ -51,6 +62,12 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+    }
+}
+
 dependencies {
     implementation(project(":shared:ui"))
     implementation(project(":shared:data"))
@@ -59,6 +76,13 @@ dependencies {
     implementation(project(":shared:platform"))
     implementation(project(":mobile-ui:common"))
     implementation(project(":mobile-ui:app"))
+
+    implementation(libs.jetbrains.compose.material3)
+
+    implementation(project.dependencies.platform(libs.koin.bom))
+    implementation(libs.koin.android)
+
+    implementation(libs.napier)
 
     implementation(libs.androidx.media3.ui.compose)
     implementation(libs.androidx.core.ktx)

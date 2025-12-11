@@ -14,7 +14,7 @@ import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 
 @Composable
-fun <T : Any> rememberPopupControllerNavEntryDecorator(): NavEntryDecorator<T> = remember { PopupControllerNavEntryDecorator() }
+internal fun <T : Any> rememberPopupControllerNavEntryDecorator(): NavEntryDecorator<T> = remember { PopupControllerNavEntryDecorator() }
 
 private class PopupControllerNavEntryDecorator<T : Any> :
     NavEntryDecorator<T>(

@@ -13,7 +13,6 @@ kotlin {
             implementation(project(":shared:ui"))
             implementation(project(":shared:syncer"))
             implementation(project(":mobile-ui:common"))
-            implementation(project(":mobile-ui:feature-player"))
         }
     }
 }
