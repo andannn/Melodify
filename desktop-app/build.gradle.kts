@@ -1,23 +1,38 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    id("melodify.kmp.application")
-    id("melodify.compose.multiplatform.application")
-}
-
-android {
-    namespace = "com.andannn.melodify"
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
+    jvm("desktop")
+
     sourceSets {
+        val desktopMain = getByName("desktopMain")
         desktopMain.dependencies {
             implementation(project(":shared:ui"))
             implementation(project(":shared:data"))
             implementation(project(":shared:syncer"))
             implementation(project(":shared:platform"))
+            implementation(compose.desktop.currentOs)
 
+            implementation(libs.napier)
+            implementation(libs.jetbrains.compose.desktop)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.jetbrains.compose.resources)
+            implementation(libs.jetbrains.compose.material3)
+            implementation(libs.jetbrains.material.icons.extended)
+            implementation(libs.lifecycle.runtime.compose)
+
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+        }
+
+        val desktopTest = getByName("desktopTest")
+        desktopTest.dependencies {
+            implementation(compose.desktop.currentOs)
         }
     }
 }

@@ -31,8 +31,15 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.core.syncer.SyncWorkHelper
+import com.andannn.melodify.ui.LocalScreenController
+import com.andannn.melodify.ui.ScreenOrientationController
+import com.andannn.melodify.ui.app.MelodifyMobileApp
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import com.andannn.melodify.ui.widgets.AVPlayerView
+import com.andannn.melodify.util.ConnectFailedAlertDialog
+import com.andannn.melodify.util.MediaFileDeleteHelperImpl
+import com.andannn.melodify.util.PipParamUpdateEffect
+import com.andannn.melodify.util.rememberIsInPipMode
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -116,9 +123,7 @@ class MainActivity : ComponentActivity() {
                     runTimePermissions
                         .filter { permission ->
                             ContextCompat.checkSelfPermission(
-                                // context =
                                 this@MainActivity,
-                                // permission =
                                 permission,
                             ) == PackageManager.PERMISSION_DENIED
                         }.let {
