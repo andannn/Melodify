@@ -69,12 +69,12 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":shared:ui"))
     implementation(project(":shared:data"))
     implementation(project(":shared:player"))
     implementation(project(":shared:syncer"))
     implementation(project(":shared:platform"))
     implementation(project(":mobile-ui:common"))
+    implementation(project(":mobile-ui:feature-player"))
     implementation(project(":mobile-ui:app"))
 
     implementation(libs.jetbrains.compose.material3)

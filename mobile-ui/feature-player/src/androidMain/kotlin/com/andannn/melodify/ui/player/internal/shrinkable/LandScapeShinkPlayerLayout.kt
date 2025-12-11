@@ -24,8 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
-import com.andannn.melodify.ui.widgets.AVPlayerView
+import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
+import com.andannn.melodify.ui.player.internal.AVPlayerView
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

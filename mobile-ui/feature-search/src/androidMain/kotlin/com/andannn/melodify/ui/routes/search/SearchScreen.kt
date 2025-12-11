@@ -10,10 +10,10 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.components.search.Search
+import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.Navigator
-import com.andannn.melodify.ui.components.search.Search
-import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 
 @Composable
 internal fun SearchScreen(

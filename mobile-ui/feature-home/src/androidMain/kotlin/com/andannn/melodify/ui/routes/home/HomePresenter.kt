@@ -9,32 +9,33 @@ import androidx.compose.runtime.Stable
 import com.andannn.melodify.core.syncer.SyncMediaStoreHandler
 import com.andannn.melodify.core.syncer.SyncStatus
 import com.andannn.melodify.core.syncer.SyncType
-import com.andannn.melodify.model.DialogId
-import com.andannn.melodify.model.SnackBarMessage
+import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.components.tab.TabUiState
+import com.andannn.melodify.shared.compose.components.tab.content.TabContentState
+import com.andannn.melodify.shared.compose.components.tab.content.retainTabContentPresenter
+import com.andannn.melodify.shared.compose.components.tab.retainTabUiPresenter
+import com.andannn.melodify.shared.compose.popup.DefaultSortRuleSettingDialog
+import com.andannn.melodify.shared.compose.popup.LocalPopupController
+import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.SnackBarMessage
+import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
-import com.andannn.melodify.ui.components.tab.TabUiState
-import com.andannn.melodify.ui.components.tab.retainTabUiPresenter
-import com.andannn.melodify.ui.components.tabcontent.TabContentState
-import com.andannn.melodify.ui.components.tabcontent.retainTabContentPresenter
-import com.andannn.melodify.ui.core.LocalPopupController
-import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.RetainedPresenter
-import com.andannn.melodify.ui.core.retainPresenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import melodify.shared.ui.generated.resources.Res
-import melodify.shared.ui.generated.resources.default_sort_order
-import melodify.shared.ui.generated.resources.re_sync_media_library
-import melodify.shared.ui.generated.resources.sync_progress_album
-import melodify.shared.ui.generated.resources.sync_progress_artist
-import melodify.shared.ui.generated.resources.sync_progress_genre
-import melodify.shared.ui.generated.resources.sync_progress_media
-import melodify.shared.ui.generated.resources.sync_progress_video
+import melodify.shared.compose.resource.generated.resources.Res
+import melodify.shared.compose.resource.generated.resources.default_sort_order
+import melodify.shared.compose.resource.generated.resources.re_sync_media_library
+import melodify.shared.compose.resource.generated.resources.sync_progress_album
+import melodify.shared.compose.resource.generated.resources.sync_progress_artist
+import melodify.shared.compose.resource.generated.resources.sync_progress_genre
+import melodify.shared.compose.resource.generated.resources.sync_progress_media
+import melodify.shared.compose.resource.generated.resources.sync_progress_video
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.koin.mp.KoinPlatform.getKoin
@@ -179,8 +180,8 @@ private suspend fun resyncAllSongs() =
 
 context(popupController: PopupController)
 private suspend fun changeSortRule() {
-    popupController.showDialog(
-        DialogId.DefaultSortRuleSettingDialog,
+    popupController.showDialogAndWaitAction(
+        DefaultSortRuleSettingDialog,
     )
 }
 

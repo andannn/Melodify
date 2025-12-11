@@ -31,20 +31,20 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
-import com.andannn.melodify.ui.components.lyrics.Lyrics
+import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
+import com.andannn.melodify.shared.compose.components.lyrics.Lyrics
+import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
+import com.andannn.melodify.shared.compose.components.play.control.rememberPlayerPresenter
+import com.andannn.melodify.shared.compose.components.queue.PlayQueue
+import com.andannn.melodify.shared.compose.components.tab.TabUi
+import com.andannn.melodify.shared.compose.components.tab.TabUiState
+import com.andannn.melodify.shared.compose.components.tab.content.TabContent
+import com.andannn.melodify.shared.compose.components.tab.content.TabContentState
+import com.andannn.melodify.shared.compose.components.tab.content.retainTabContentPresenter
+import com.andannn.melodify.shared.compose.components.tab.retainTabUiPresenter
+import com.andannn.melodify.shared.compose.popup.ActionDialog
+import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.components.playcontrol.DesktopPlayerUi
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
-import com.andannn.melodify.ui.components.playcontrol.rememberPlayerPresenter
-import com.andannn.melodify.ui.components.queue.PlayQueue
-import com.andannn.melodify.ui.components.tab.TabUi
-import com.andannn.melodify.ui.components.tab.TabUiState
-import com.andannn.melodify.ui.components.tab.retainTabUiPresenter
-import com.andannn.melodify.ui.components.tabcontent.TabContent
-import com.andannn.melodify.ui.components.tabcontent.TabContentState
-import com.andannn.melodify.ui.components.tabcontent.retainTabContentPresenter
-import com.andannn.melodify.ui.core.NavigationRequestEventSink
-import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.WindowNavigator
 import com.andannn.melodify.windows.WindowType
@@ -110,7 +110,7 @@ internal fun MainWindow(
             )
         }
 
-        ActionDialogContainer()
+        ActionDialog()
     }
 }
 
@@ -206,7 +206,6 @@ private fun RightPaneSector(modifier: Modifier) {
 
         when (selectedTab) {
             RightPageTab.Lyrics -> Lyrics()
-
             RightPageTab.PlayQueue -> PlayQueue()
         }
     }

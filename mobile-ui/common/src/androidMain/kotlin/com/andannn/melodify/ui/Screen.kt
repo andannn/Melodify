@@ -5,7 +5,7 @@
 package com.andannn.melodify.ui
 
 import androidx.navigation3.runtime.NavKey
-import com.andannn.melodify.model.LibraryDataSource
+import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import kotlinx.serialization.Serializable
 
 @Serializable

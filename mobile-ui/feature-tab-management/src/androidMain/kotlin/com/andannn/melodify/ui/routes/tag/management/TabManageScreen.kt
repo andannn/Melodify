@@ -16,10 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.components.tab.management.TabManagementUi
+import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.Navigator
-import com.andannn.melodify.ui.components.tabmanagement.TabManagementUi
-import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -23,7 +23,7 @@ import androidx.core.app.PictureInPictureModeChangedInfo
 import androidx.core.util.Consumer
 import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.model.VideoItemModel
-import com.andannn.melodify.ui.core.LocalRepository
+import com.andannn.melodify.shared.compose.common.LocalRepository
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 

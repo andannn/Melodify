@@ -1,7 +1,6 @@
 plugins {
     id("melodify.kmp.library")
     id("melodify.compose.multiplatform.library")
-    alias(libs.plugins.serialization)
 }
 
 android {
@@ -11,7 +10,8 @@ android {
 kotlin {
     sourceSets {
         androidMain.dependencies {
-            implementation(project(":shared:ui"))
+            implementation(project(":shared:compose:components:library-item"))
+            implementation(project(":shared:compose:components:library-detail"))
             implementation(project(":mobile-ui:common"))
         }
     }

@@ -37,8 +37,10 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.data.model.subTitle
 import com.andannn.melodify.core.platform.formatTime
-import com.andannn.melodify.ui.util.getIcon
-import com.andannn.melodify.ui.widgets.CircleBorderImage
+import com.andannn.melodify.shared.compose.common.getIcon
+import com.andannn.melodify.shared.compose.common.widgets.CircleBorderImage
+import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
+import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -47,7 +49,7 @@ fun DesktopPlayerUi(
     modifier: Modifier = Modifier,
 ) {
     when (state) {
-        is PlayerUiState.Active ->
+        is PlayerUiState.Active -> {
             PlayStateBar(
                 modifier = modifier,
                 coverUri = state.mediaItem.artWorkUri,
@@ -61,13 +63,15 @@ fun DesktopPlayerUi(
                 duration = state.duration,
                 onEvent = state.eventSink,
             )
+        }
 
-        is PlayerUiState.Inactive ->
+        is PlayerUiState.Inactive -> {
             PlayStateBar(
                 modifier = modifier,
                 coverUri = "",
                 enabled = false,
             )
+        }
     }
 }
 

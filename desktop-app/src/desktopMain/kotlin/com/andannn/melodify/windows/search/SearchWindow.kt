@@ -11,9 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
-import com.andannn.melodify.ui.components.search.Search
-import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
+import com.andannn.melodify.shared.compose.components.search.Search
+import com.andannn.melodify.shared.compose.popup.ActionDialog
+import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.WindowNavigator
 import com.andannn.melodify.windows.WindowType
@@ -47,6 +47,6 @@ fun SearchWindow(
             )
         }
 
-        ActionDialogContainer()
+        ActionDialog()
     }
 }

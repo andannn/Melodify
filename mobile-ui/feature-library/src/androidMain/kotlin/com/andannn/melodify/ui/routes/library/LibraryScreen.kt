@@ -23,13 +23,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.model.ShortcutItem
-import com.andannn.melodify.model.toDataSource
+import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.model.ShortcutItem
+import com.andannn.melodify.shared.compose.common.model.toDataSource
+import com.andannn.melodify.shared.compose.common.widgets.ExtraPaddingBottom
+import com.andannn.melodify.shared.compose.common.widgets.ShortcutItem
+import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.Navigator
-import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.widgets.ExtraPaddingBottom
-import com.andannn.melodify.ui.widgets.ShortcutItem
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun Library(
@@ -105,7 +106,8 @@ internal fun LibraryContent(
                 key = { it },
             ) { item ->
                 ShortcutItem(
-                    shortcutItem = item,
+                    icon = item.iconRes,
+                    text = stringResource(item.textRes),
                     onClick = {
                         onShortcutItemClick(item)
                     },

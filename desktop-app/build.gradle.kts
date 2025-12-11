@@ -12,10 +12,22 @@ kotlin {
     sourceSets {
         val desktopMain = getByName("desktopMain")
         desktopMain.dependencies {
-            implementation(project(":shared:ui"))
             implementation(project(":shared:data"))
             implementation(project(":shared:syncer"))
             implementation(project(":shared:platform"))
+
+            implementation(project(":shared:compose:common"))
+            implementation(project(":shared:compose:popup"))
+            implementation(project(":shared:compose:components:tab"))
+            implementation(project(":shared:compose:components:lyrics"))
+            implementation(project(":shared:compose:components:queue"))
+            implementation(project(":shared:compose:components:search"))
+            implementation(project(":shared:compose:components:library-item"))
+            implementation(project(":shared:compose:components:library-detail"))
+            implementation(project(":shared:compose:components:play-control"))
+            implementation(project(":shared:compose:components:tab-content"))
+            implementation(project(":shared:compose:components:tab-management"))
+
             implementation(compose.desktop.currentOs)
 
             implementation(libs.napier)

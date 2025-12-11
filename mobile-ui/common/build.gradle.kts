@@ -11,7 +11,9 @@ android {
 kotlin {
     sourceSets {
         androidMain.dependencies {
-            implementation(project(":shared:ui"))
+            api(project(":shared:compose:common"))
+            api(project(":shared:compose:usecase"))
+            api(project(":shared:compose:popup"))
         }
     }
 }

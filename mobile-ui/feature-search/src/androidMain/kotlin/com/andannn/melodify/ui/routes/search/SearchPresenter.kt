@@ -7,11 +7,11 @@ package com.andannn.melodify.ui.routes.search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.retain.retain
-import com.andannn.melodify.model.LibraryDataSource
+import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
-import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.RetainedPresenter
 
 @Composable
 internal fun rememberSearchScreenPresenter(navigator: Navigator): Presenter<SearchScreenState> =

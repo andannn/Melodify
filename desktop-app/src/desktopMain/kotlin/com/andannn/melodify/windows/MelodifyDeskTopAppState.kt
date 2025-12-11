@@ -9,8 +9,8 @@ import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.window.ApplicationScope
 import com.andannn.melodify.core.syncer.SyncLibraryService
-import com.andannn.melodify.model.LibraryDataSource
-import com.andannn.melodify.ui.core.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin

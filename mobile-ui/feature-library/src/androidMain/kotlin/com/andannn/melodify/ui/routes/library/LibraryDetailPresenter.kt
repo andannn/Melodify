@@ -6,26 +6,27 @@ package com.andannn.melodify.ui.routes.library
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import com.andannn.melodify.MediaFileDeleteHelper
+import com.andannn.melodify.core.data.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
-import com.andannn.melodify.model.LibraryDataSource
-import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.LocalRepository
+import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
+import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.components.library.detail.LibraryContentState
+import com.andannn.melodify.shared.compose.components.library.detail.retainLibraryDetailPresenter
+import com.andannn.melodify.shared.compose.popup.DialogAction
+import com.andannn.melodify.shared.compose.popup.LocalPopupController
+import com.andannn.melodify.shared.compose.popup.OptionDialog
+import com.andannn.melodify.shared.compose.popup.OptionItem
+import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
+import com.andannn.melodify.shared.compose.usecase.pinAllMusicToHomeTab
+import com.andannn.melodify.shared.compose.usecase.pinAllVideoToHomeTab
+import com.andannn.melodify.shared.compose.usecase.showLibraryMediaOption
 import com.andannn.melodify.ui.Navigator
-import com.andannn.melodify.ui.components.librarydetail.LibraryContentState
-import com.andannn.melodify.ui.components.librarydetail.retainLibraryDetailPresenter
-import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
-import com.andannn.melodify.ui.core.LocalPopupController
-import com.andannn.melodify.ui.core.LocalRepository
-import com.andannn.melodify.ui.core.NavigationRequestEventSink
-import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.core.Presenter
-import com.andannn.melodify.ui.core.RetainedPresenter
-import com.andannn.melodify.ui.core.retainPresenter
-import com.andannn.melodify.usecase.pinAllMusicToHomeTab
-import com.andannn.melodify.usecase.pinAllVideoToHomeTab
-import com.andannn.melodify.usecase.showLibraryMediaOption
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -99,8 +100,8 @@ private class LibraryDetailScreenPresenter(
                             -> {
                                 retainedScope.launch {
                                     val result =
-                                        popupController.showDialog(
-                                            DialogId.OptionDialog(
+                                        popupController.showDialogAndWaitAction(
+                                            OptionDialog(
                                                 listOf(
                                                     OptionItem.ADD_TO_HOME_TAB,
                                                 ),

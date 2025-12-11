@@ -28,14 +28,15 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.andannn.melodify.core.data.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.core.syncer.SyncWorkHelper
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.ui.LocalScreenController
 import com.andannn.melodify.ui.ScreenOrientationController
 import com.andannn.melodify.ui.app.MelodifyMobileApp
-import com.andannn.melodify.ui.theme.MelodifyTheme
-import com.andannn.melodify.ui.widgets.AVPlayerView
+import com.andannn.melodify.ui.player.PipPlayer
 import com.andannn.melodify.util.ConnectFailedAlertDialog
 import com.andannn.melodify.util.MediaFileDeleteHelperImpl
 import com.andannn.melodify.util.PipParamUpdateEffect
@@ -151,7 +152,7 @@ class MainActivity : ComponentActivity() {
                 val isPipMode = rememberIsInPipMode()
 
                 if (isPipMode) {
-                    AVPlayerView(modifier = Modifier.fillMaxSize())
+                    PipPlayer(modifier = Modifier.fillMaxSize())
                 } else {
                     CompositionLocalProvider(
                         LocalScreenController provides ScreenOrientationController(this),

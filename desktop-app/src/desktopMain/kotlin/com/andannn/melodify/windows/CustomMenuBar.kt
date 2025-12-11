@@ -4,12 +4,11 @@
  */
 package com.andannn.melodify.windows
 
-import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
-import com.andannn.melodify.model.ShortcutItem
-import com.andannn.melodify.model.toDataSource
+import com.andannn.melodify.shared.compose.common.model.ShortcutItem
+import com.andannn.melodify.shared.compose.common.model.toDataSource
 import org.jetbrains.compose.resources.stringResource
 
 sealed interface MenuEvent {
@@ -24,20 +23,23 @@ sealed interface MenuEvent {
 
 fun WindowNavigator.handleMenuEvent(menuEvent: MenuEvent) {
     when (menuEvent) {
-        MenuEvent.OnOpenMediaLibrarySettings ->
+        MenuEvent.OnOpenMediaLibrarySettings -> {
             openWindow(
                 WindowType.SettingPreference,
             )
+        }
 
-        is MenuEvent.OnOpenMediaLibrary ->
+        is MenuEvent.OnOpenMediaLibrary -> {
             openWindow(
                 WindowType.MediaLibrary(menuEvent.shortcutItem.toDataSource()),
             )
+        }
 
-        MenuEvent.OnOpenSearch ->
+        MenuEvent.OnOpenSearch -> {
             openWindow(
                 WindowType.Search,
             )
+        }
     }
 }
 

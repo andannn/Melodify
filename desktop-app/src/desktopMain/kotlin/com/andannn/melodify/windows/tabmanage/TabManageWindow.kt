@@ -11,9 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
-import com.andannn.melodify.ui.components.tabmanagement.TabManagementUi
-import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
+import com.andannn.melodify.shared.compose.components.tab.management.TabManagementUi
+import com.andannn.melodify.shared.compose.popup.ActionDialog
+import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.WindowNavigator
 import com.andannn.melodify.windows.handleMenuEvent
@@ -42,6 +42,6 @@ fun TabManageWindow(
             )
         }
 
-        ActionDialogContainer()
+        ActionDialog()
     }
 }
