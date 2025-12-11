@@ -20,8 +20,7 @@ import androidx.compose.runtime.Composable
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.data.model.PresetDisplaySetting
-import com.andannn.melodify.core.data.model.SortOption
-import com.andannn.melodify.ui.popup.dialog.content.SortOptionType
+import com.andannn.melodify.ui.popup.internal.content.SortOptionType
 import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.album_page_title
 import melodify.shared.ui.generated.resources.artist_page_title
@@ -96,39 +95,49 @@ fun getCategoryResource(category: CustomTab): String =
 @Composable
 fun PresetDisplaySetting.headerText(): String =
     when (this) {
-        PresetDisplaySetting.AlbumAsc ->
+        PresetDisplaySetting.AlbumAsc -> {
             stringResource(Res.string.sort_by_album)
+        }
 
-        PresetDisplaySetting.ArtistAsc ->
+        PresetDisplaySetting.ArtistAsc -> {
             stringResource(Res.string.sort_by_artist)
+        }
 
-        PresetDisplaySetting.TitleNameAsc ->
+        PresetDisplaySetting.TitleNameAsc -> {
             stringResource(Res.string.sort_by_title)
+        }
 
-        PresetDisplaySetting.ArtistAlbumASC ->
+        PresetDisplaySetting.ArtistAlbumASC -> {
             stringResource(Res.string.sort_by_artist_then_album)
+        }
 
-        PresetDisplaySetting.VideoBucketNameASC ->
+        PresetDisplaySetting.VideoBucketNameASC -> {
             stringResource(Res.string.sort_by_video_bucket)
+        }
     }
 
 @Composable
 fun PresetDisplaySetting.subTitle(): String =
     when (this) {
-        PresetDisplaySetting.AlbumAsc ->
+        PresetDisplaySetting.AlbumAsc -> {
             stringResource(Res.string.sort_sub_album_asc)
+        }
 
-        PresetDisplaySetting.ArtistAsc ->
+        PresetDisplaySetting.ArtistAsc -> {
             stringResource(Res.string.sort_sub_artist_asc)
+        }
 
-        PresetDisplaySetting.TitleNameAsc ->
+        PresetDisplaySetting.TitleNameAsc -> {
             stringResource(Res.string.sort_sub_title_name_asc)
+        }
 
-        PresetDisplaySetting.ArtistAlbumASC ->
+        PresetDisplaySetting.ArtistAlbumASC -> {
             stringResource(Res.string.sort_sub_artist_album_asc)
+        }
 
-        PresetDisplaySetting.VideoBucketNameASC ->
+        PresetDisplaySetting.VideoBucketNameASC -> {
             stringResource(Res.string.sort_sub_bucket_name_asc)
+        }
     }
 
 @Composable
@@ -140,57 +149,74 @@ fun SortOptionType.orderLabel(ascending: Boolean): String =
         SortOptionType.Album,
         SortOptionType.VideoBucket,
         SortOptionType.VideoTitle,
-        ->
+        -> {
             if (ascending) {
                 stringResource(Res.string.order_a_to_z)
             } else {
                 stringResource(Res.string.order_z_to_a)
             }
+        }
 
-        SortOptionType.TrackNum ->
+        SortOptionType.TrackNum -> {
             if (ascending) {
                 stringResource(Res.string.order_1_to_9)
             } else {
                 stringResource(Res.string.order_9_to_1)
             }
+        }
 
-        SortOptionType.ReleaseYear ->
+        SortOptionType.ReleaseYear -> {
             if (ascending) {
                 stringResource(Res.string.order_old_to_new)
             } else {
                 stringResource(Res.string.order_new_to_old)
             }
+        }
 
-        SortOptionType.None -> error("Never. This should not happen.")
+        SortOptionType.None -> {
+            error("Never. This should not happen.")
+        }
     }
 
 fun SortOptionType.label() =
     when (this) {
         SortOptionType.Album -> Res.string.album_page_title
+
         SortOptionType.Artist -> Res.string.artist_page_title
+
         SortOptionType.None -> Res.string.sort_by_none
+
         SortOptionType.VideoTitle,
         SortOptionType.Title,
         -> Res.string.sort_by_media_title
 
         SortOptionType.TrackNum -> Res.string.sort_by_track_number
+
         SortOptionType.Genre -> Res.string.sort_by_genre
+
         SortOptionType.ReleaseYear -> Res.string.sort_by_release_year
+
         SortOptionType.VideoBucket -> Res.string.sort_by_video_bucket
     }
 
 fun SortOptionType.icon() =
     when (this) {
         SortOptionType.Album -> Icons.Outlined.Album
+
         SortOptionType.Artist -> Icons.Outlined.Person
+
         SortOptionType.VideoTitle,
         SortOptionType.Title,
         -> Icons.Outlined.SortByAlpha
 
         SortOptionType.TrackNum -> Icons.Outlined.Audiotrack
+
         SortOptionType.None -> Icons.Outlined.Remove
+
         SortOptionType.Genre -> Icons.Outlined.Tag
+
         SortOptionType.ReleaseYear -> Icons.Outlined.Timeline
+
         SortOptionType.VideoBucket -> Icons.Outlined.Folder
     }
 

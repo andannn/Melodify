@@ -10,14 +10,14 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.UserPreferenceRepository
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.core.showDialogAndWaitAction
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.DialogId
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch

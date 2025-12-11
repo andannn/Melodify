@@ -4,6 +4,8 @@
  */
 package com.andannn.melodify.model
 
+import com.andannn.melodify.ui.popup.DialogId
+
 enum class DialogType {
     AlertDialog,
     ModalBottomSheet,

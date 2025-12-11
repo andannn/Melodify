@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.popup.dialog.content
+package com.andannn.melodify.ui.popup.internal.content
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,11 +39,10 @@ import com.andannn.melodify.core.data.model.PresetDisplaySetting
 import com.andannn.melodify.core.data.model.SortOption
 import com.andannn.melodify.core.data.model.isAscending
 import com.andannn.melodify.core.data.model.isAudio
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
+import com.andannn.melodify.ui.popup.ChangeSortRuleDialog
 import com.andannn.melodify.ui.util.getCategoryResource
 import com.andannn.melodify.ui.util.icon
 import com.andannn.melodify.ui.util.label
@@ -67,10 +66,9 @@ import org.jetbrains.compose.resources.stringResource
 private const val TAG = "ChangeSortRuleDialog"
 
 @Composable
-fun ChangeSortRuleDialog(
+internal fun ChangeSortRuleDialogContent(
     modifier: Modifier = Modifier,
-    dialog: DialogId.ChangeSortRuleDialog,
-    onAction: (DialogAction) -> Unit = {},
+    dialog: ChangeSortRuleDialog,
 ) {
     val state = retainedChangeSortRulePresenter(dialog.tab).present()
 

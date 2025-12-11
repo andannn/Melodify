@@ -18,12 +18,16 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.TabKind
 import com.andannn.melodify.core.data.model.VideoItemModel
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.SleepTimerOption
 import com.andannn.melodify.model.SnackBarMessage
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.showDialogAndWaitAction
+import com.andannn.melodify.ui.popup.AddMusicsToPlayListDialog
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.NewPlayListDialog
+import com.andannn.melodify.ui.popup.SleepCountingDialog
+import com.andannn.melodify.ui.popup.SleepTimerOptionDialog
+import com.andannn.melodify.ui.popup.internal.content.DuplicatedAlert
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 
@@ -146,12 +150,12 @@ suspend fun PlayListItemModel.delete() {
 context(sleepTimerRepository: SleepTimerRepository, popupController: PopupController)
 suspend fun openSleepTimer() {
     if (sleepTimerRepository.isCounting()) {
-        val result = popupController.showDialogAndWaitAction(DialogId.SleepCountingDialog)
+        val result = popupController.showDialogAndWaitAction(SleepCountingDialog)
         if (result is DialogAction.SleepTimerCountingDialog.OnCancelTimer) {
             sleepTimerRepository.cancelSleepTimer()
         }
     } else {
-        val result = popupController.showDialogAndWaitAction(DialogId.SleepTimerOptionDialog)
+        val result = popupController.showDialogAndWaitAction(SleepTimerOptionDialog)
         if (result is DialogAction.SleepTimerOptionDialog.OnOptionClick) {
             when (val option = result.option) {
                 SleepTimerOption.FIVE_MINUTES,
@@ -182,14 +186,20 @@ suspend fun addToPlaylist(items: List<MediaItemModel>) {
     }
     val isAudio = audios.isNotEmpty()
 
-    val result = popupController.showDialogAndWaitAction(DialogId.AddMusicsToPlayListDialog(items, isAudio))
+    val result = popupController.showDialogAndWaitAction(AddMusicsToPlayListDialog(items, isAudio))
 
     Napier.d(tag = TAG) { "AddMusicsToPlayListDialog result: $result" }
 
-    if (result is DialogAction.AddToPlayListDialog.OnAddToPlayList) {
-        result.playList.addAll(items = result.items)
-    } else if (result is DialogAction.AddToPlayListDialog.OnCreateNewPlayList) {
-        createNewPlayList(items, isAudio)
+    when (result) {
+        is DialogAction.AddToPlayListDialog.OnAddToPlayList -> {
+            result.playList.addAll(items = result.items)
+        }
+
+        DialogAction.AddToPlayListDialog.OnCreateNewPlayList -> {
+            createNewPlayList(items, isAudio)
+        }
+
+        else -> {}
     }
 }
 
@@ -223,7 +233,7 @@ private suspend fun createNewPlayList(
     items: List<MediaItemModel>,
     isAudio: Boolean,
 ) {
-    val result = popupController.showDialogAndWaitAction(DialogId.NewPlayListDialog)
+    val result = popupController.showDialogAndWaitAction(NewPlayListDialog)
     Napier.d(tag = TAG) { "result. name = $result" }
     if (result is DialogAction.InputDialog.Accept) {
         val name = result.input
@@ -269,7 +279,7 @@ private suspend fun PlayListItemModel.addAll(items: List<MediaItemModel>) {
         else -> {
             // invalidList.size > 1, Show alert message
             val result =
-                popupController.showDialogAndWaitAction(DialogId.DuplicatedAlert)
+                popupController.showDialogAndWaitAction(DuplicatedAlert)
 
             if (result is DialogAction.AlertDialog.Accept) {
                 playListRepository.addItemsToPlayList(

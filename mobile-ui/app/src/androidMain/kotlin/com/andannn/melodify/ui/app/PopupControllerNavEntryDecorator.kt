@@ -11,7 +11,7 @@ import androidx.compose.runtime.retain.retain
 import androidx.navigation3.runtime.NavEntryDecorator
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
+import com.andannn.melodify.ui.popup.dialog.ActionDialog
 
 @Composable
 internal fun <T : Any> rememberPopupControllerNavEntryDecorator(): NavEntryDecorator<T> = remember { PopupControllerNavEntryDecorator() }
@@ -27,7 +27,7 @@ private class PopupControllerNavEntryDecorator<T : Any> :
             ) {
                 entry.Content()
 
-                ActionDialogContainer()
+                ActionDialog()
             }
         },
     )

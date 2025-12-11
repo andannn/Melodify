@@ -44,7 +44,7 @@ import com.andannn.melodify.ui.components.tabcontent.TabContentState
 import com.andannn.melodify.ui.components.tabcontent.retainTabContentPresenter
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.popup.dialog.ActionDialogContainer
+import com.andannn.melodify.ui.popup.dialog.ActionDialog
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.WindowNavigator
 import com.andannn.melodify.windows.WindowType
@@ -110,7 +110,7 @@ internal fun MainWindow(
             )
         }
 
-        ActionDialogContainer()
+        ActionDialog()
     }
 }
 
@@ -206,7 +206,6 @@ private fun RightPaneSector(modifier: Modifier) {
 
         when (selectedTab) {
             RightPageTab.Lyrics -> Lyrics()
-
             RightPageTab.PlayQueue -> PlayQueue()
         }
     }

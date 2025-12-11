@@ -11,11 +11,10 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.SnackBarMessage
-import com.andannn.melodify.ui.popup.PopupControllerImpl
-import com.andannn.melodify.ui.popup.dialog.DialogData
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.DialogId
+import com.andannn.melodify.ui.popup.internal.PopupControllerImpl
 
 val LocalPopupController: ProvidableCompositionLocal<PopupController> =
     compositionLocalOf { NoOpPopupController() }
@@ -23,8 +22,6 @@ val LocalPopupController: ProvidableCompositionLocal<PopupController> =
 fun PopupController(): PopupController = PopupControllerImpl()
 
 interface PopupController {
-    val currentDialog: DialogData?
-
     var snackBarController: SnackbarHostState?
 
     suspend fun showSnackBar(message: SnackBarMessage): SnackbarResult
@@ -34,17 +31,6 @@ interface PopupController {
 
 suspend inline fun <reified T : DialogAction> PopupController.showDialogAndWaitAction(dialogId: DialogId<T>): T? =
     showDialog(dialogId) as T?
-
-class NoOpPopupController : PopupController {
-    override val currentDialog: DialogData?
-        get() = null
-
-    override var snackBarController: SnackbarHostState? = null
-
-    override suspend fun showSnackBar(message: SnackBarMessage): SnackbarResult = SnackbarResult.Dismissed
-
-    override suspend fun showDialog(dialogId: DialogId<*>): DialogAction? = null
-}
 
 @Composable
 fun rememberAndSetupSnackBarHostState(holder: PopupController = LocalPopupController.current): SnackbarHostState {
@@ -59,4 +45,12 @@ fun rememberAndSetupSnackBarHostState(holder: PopupController = LocalPopupContro
     }
 
     return snackbarHostState
+}
+
+private class NoOpPopupController : PopupController {
+    override var snackBarController: SnackbarHostState? = null
+
+    override suspend fun showSnackBar(message: SnackBarMessage): SnackbarResult = SnackbarResult.Dismissed
+
+    override suspend fun showDialog(dialogId: DialogId<*>): DialogAction? = null
 }

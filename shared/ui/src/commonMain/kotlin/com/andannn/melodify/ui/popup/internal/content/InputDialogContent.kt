@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.popup.dialog.content
+package com.andannn.melodify.ui.popup.internal.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,31 +27,39 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
+import com.andannn.melodify.ui.popup.AddLibraryPathDialog
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.NewPlayListDialog
+import melodify.shared.ui.generated.resources.Res
+import melodify.shared.ui.generated.resources.decline
+import melodify.shared.ui.generated.resources.ok
 import org.jetbrains.compose.resources.stringResource
 
+private val positive = Res.string.ok
+
+private val negative = Res.string.decline
+
 @Composable
-fun AddLibraryPathDialog(
+internal fun AddLibraryPathDialog(
     modifier: Modifier = Modifier,
-    onAction: (DialogAction) -> Unit = {},
+    onAction: (DialogAction.InputDialog) -> Unit = {},
 ) {
     SimpleInputDialogContent(
         modifier = modifier,
-        title = stringResource(DialogId.AddLibraryPathDialog.title),
+        title = stringResource(AddLibraryPathDialog.title),
         onAction = onAction,
     )
 }
 
 @Composable
-fun NewPlayListDialogContent(
+internal fun NewPlayListDialogContent(
     modifier: Modifier = Modifier,
-    onAction: (DialogAction) -> Unit = {},
+    onAction: (DialogAction.InputDialog) -> Unit = {},
 ) {
     SimpleInputDialogContent(
         modifier = modifier,
-        title = stringResource(DialogId.NewPlayListDialog.title),
-        inputHint = stringResource(DialogId.NewPlayListDialog.playListNameInputHint),
+        title = stringResource(NewPlayListDialog.title),
+        inputHint = stringResource(NewPlayListDialog.playListNameInputHint),
         onAction = onAction,
     )
 }
@@ -61,7 +69,7 @@ private fun SimpleInputDialogContent(
     modifier: Modifier = Modifier,
     title: String = "",
     inputHint: String = "",
-    onAction: (DialogAction) -> Unit = {},
+    onAction: (DialogAction.InputDialog) -> Unit = {},
 ) {
     Surface(
         modifier = modifier.wrapContentSize(),
@@ -104,7 +112,7 @@ private fun SimpleInputDialogContent(
                         onAction(DialogAction.InputDialog.Decline)
                     },
                 ) {
-                    Text(stringResource(DialogId.NewPlayListDialog.negative))
+                    Text(stringResource(negative))
                 }
 
                 TextButton(
@@ -113,7 +121,7 @@ private fun SimpleInputDialogContent(
                         onAction(DialogAction.InputDialog.Accept(input = inputName))
                     },
                 ) {
-                    Text(stringResource(DialogId.NewPlayListDialog.positive))
+                    Text(stringResource(positive))
                 }
                 Spacer(modifier = Modifier.width(8.dp))
             }

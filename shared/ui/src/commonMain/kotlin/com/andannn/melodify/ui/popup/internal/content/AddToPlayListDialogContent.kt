@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.popup.dialog.content
+package com.andannn.melodify.ui.popup.internal.content
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,12 +39,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
+import com.andannn.melodify.ui.popup.AddMusicsToPlayListDialog
+import com.andannn.melodify.ui.popup.DialogAction
 import com.andannn.melodify.ui.widgets.ActionType
 import com.andannn.melodify.ui.widgets.LargePreviewCard
 import com.andannn.melodify.ui.widgets.ListTileItemView
@@ -61,10 +61,10 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddToPlayListDialogContent(
+internal fun AddToPlayListDialogContent(
     modifier: Modifier = Modifier,
-    dialog: DialogId.AddMusicsToPlayListDialog,
-    onAction: (DialogAction?) -> Unit,
+    dialog: AddMusicsToPlayListDialog,
+    onAction: (DialogAction.AddToPlayListDialog) -> Unit,
 ) {
     val state = retainedAddToPlayListSheetState(dialog.isAudio).present()
     AddToPlayListRequestSheetContent(
@@ -72,7 +72,7 @@ fun AddToPlayListDialogContent(
         items = dialog.items,
         playLists = state.playLists,
         onRequestDismiss = {
-            onAction(null)
+            onAction(DialogAction.AddToPlayListDialog.OnDismiss)
         },
         onPlayListClick = { playList ->
             onAction(

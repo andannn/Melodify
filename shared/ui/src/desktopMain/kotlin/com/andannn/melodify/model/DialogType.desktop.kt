@@ -4,17 +4,19 @@
  */
 package com.andannn.melodify.model
 
-actual val DialogId<*>.dialogType: DialogType
+import com.andannn.melodify.ui.popup.*
+
+internal actual val DialogId<*>.dialogType: DialogType
     get() =
         when (this) {
-            is DialogId.SleepTimerOptionDialog,
-            DialogId.NewPlayListDialog,
-            DialogId.SleepCountingDialog,
-            is DialogId.AlertDialog,
-            DialogId.AddLibraryPathDialog,
-            is DialogId.AddMusicsToPlayListDialog,
-            is DialogId.ChangeSortRuleDialog,
-            is DialogId.OptionDialog,
-            DialogId.DefaultSortRuleSettingDialog,
+            is SleepTimerOptionDialog,
+            NewPlayListDialog,
+            SleepCountingDialog,
+            is AlertDialog,
+            AddLibraryPathDialog,
+            is AddMusicsToPlayListDialog,
+            is ChangeSortRuleDialog,
+            is OptionDialog,
+            DefaultSortRuleSettingDialog,
             -> DialogType.AlertDialog
         }

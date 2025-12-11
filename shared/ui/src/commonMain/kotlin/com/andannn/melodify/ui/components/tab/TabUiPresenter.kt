@@ -12,8 +12,6 @@ import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.sortOptions
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
@@ -21,6 +19,9 @@ import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.core.showDialogAndWaitAction
+import com.andannn.melodify.ui.popup.ChangeSortRuleDialog
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.OptionDialog
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
@@ -122,7 +123,7 @@ class TabUiPresenter(
                         val tab = eventSink.tab
                         val result =
                             popupController.showDialogAndWaitAction(
-                                DialogId.OptionDialog(
+                                OptionDialog(
                                     options =
                                         buildList {
                                             add(OptionItem.PLAY_NEXT)
@@ -154,7 +155,9 @@ class TabUiPresenter(
                                     }
 
                                     OptionItem.DISPLAY_SETTING -> {
-                                        popupController.showDialogAndWaitAction(DialogId.ChangeSortRuleDialog(tab))
+                                        popupController.showDialogAndWaitAction(
+                                            ChangeSortRuleDialog(tab),
+                                        )
                                     }
 
                                     else -> {}

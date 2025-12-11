@@ -9,7 +9,6 @@ import androidx.compose.runtime.Stable
 import com.andannn.melodify.core.syncer.SyncMediaStoreHandler
 import com.andannn.melodify.core.syncer.SyncStatus
 import com.andannn.melodify.core.syncer.SyncType
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.SnackBarMessage
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
@@ -23,6 +22,7 @@ import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.core.showDialogAndWaitAction
+import com.andannn.melodify.ui.popup.DefaultSortRuleSettingDialog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -181,7 +181,7 @@ private suspend fun resyncAllSongs() =
 context(popupController: PopupController)
 private suspend fun changeSortRule() {
     popupController.showDialogAndWaitAction(
-        DialogId.DefaultSortRuleSettingDialog,
+        DefaultSortRuleSettingDialog,
     )
 }
 

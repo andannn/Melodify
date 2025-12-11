@@ -6,10 +6,10 @@ package com.andannn.melodify.usecase
 
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.showDialogAndWaitAction
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.internal.content.ChangePlayListAlert
 
 context(repo: Repository, popupController: PopupController)
 suspend fun playMediaItems(
@@ -36,6 +36,6 @@ suspend fun playMediaItems(
 }
 
 private suspend fun PopupController.confirmChangePlayList(): Boolean {
-    val result = showDialogAndWaitAction(DialogId.ChangePlayListAlert)
+    val result = showDialogAndWaitAction(ChangePlayListAlert)
     return result == DialogAction.AlertDialog.Accept
 }

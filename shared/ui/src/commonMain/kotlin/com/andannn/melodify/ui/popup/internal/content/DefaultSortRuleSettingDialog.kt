@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.popup.dialog.content
+package com.andannn.melodify.ui.popup.internal.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
 import com.andannn.melodify.core.data.model.PresetDisplaySetting
-import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
@@ -35,15 +34,11 @@ import kotlinx.coroutines.launch
 import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.change_default_sort_order
 import org.jetbrains.compose.resources.stringResource
-import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "DefaultSortRuleSettingDialog"
 
 @Composable
-fun DefaultSortRuleSettingDialog(
-    modifier: Modifier = Modifier,
-    onAction: (DialogAction) -> Unit = {},
-) {
+internal fun DefaultSortRuleSettingDialog(modifier: Modifier = Modifier) {
     val state = retainDefaultSortRulePresenter().present()
 
     DefaultSortRuleSettingDialogContent(
@@ -165,21 +160,23 @@ private class DefaultSortRulePresenter(
             selectedVideoPresetOption,
         ) { event ->
             when (event) {
-                is DefaultSortRuleStateEvent.ChangeAudioSortRule ->
+                is DefaultSortRuleStateEvent.ChangeAudioSortRule -> {
                     retainedScope.launch {
                         repository.saveDefaultSortRule(
                             isAudio = true,
                             event.sortRule,
                         )
                     }
+                }
 
-                is DefaultSortRuleStateEvent.ChangeVideoSortRule ->
+                is DefaultSortRuleStateEvent.ChangeVideoSortRule -> {
                     retainedScope.launch {
                         repository.saveDefaultSortRule(
                             isAudio = false,
                             event.sortRule,
                         )
                     }
+                }
             }
         }
     }

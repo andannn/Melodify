@@ -20,8 +20,6 @@ import com.andannn.melodify.core.data.model.DisplaySetting
 import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.sortOptions
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
@@ -33,6 +31,9 @@ import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.core.showDialogAndWaitAction
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.DialogId
+import com.andannn.melodify.ui.popup.OptionDialog
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
@@ -214,7 +215,7 @@ class TabContentPresenter(
                 if (isAudio) add(OptionItem.OPEN_LIBRARY_ARTIST)
                 add(OptionItem.DELETE_MEDIA_FILE)
             }
-        val result = popupController.showDialogAndWaitAction(DialogId.OptionDialog(options = options))
+        val result = popupController.showDialogAndWaitAction(OptionDialog(options = options))
 
         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
             when (result.optionItem) {

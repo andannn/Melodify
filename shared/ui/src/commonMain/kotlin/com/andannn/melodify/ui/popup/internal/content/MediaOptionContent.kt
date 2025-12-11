@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.popup.dialog.content
+package com.andannn.melodify.ui.popup.internal.content
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,17 +19,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.OptionDialog
 import com.andannn.melodify.ui.widgets.SmpIcon
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun MediaOptionContent(
-    dialogId: DialogId.OptionDialog,
+    dialogId: OptionDialog,
     modifier: Modifier = Modifier,
-    onAction: (DialogAction) -> Unit = {},
+    onAction: (DialogAction.MediaOptionDialog) -> Unit = {},
 ) {
     Column(modifier.navigationBarsPadding().fillMaxWidth()) {
         dialogId.options.mapIndexed { index, item ->

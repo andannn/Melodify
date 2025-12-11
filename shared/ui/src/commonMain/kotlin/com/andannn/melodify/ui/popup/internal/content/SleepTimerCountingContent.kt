@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.popup.dialog.content
+package com.andannn.melodify.ui.popup.internal.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,15 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
-import com.andannn.melodify.ui.theme.MelodifyTheme
+import com.andannn.melodify.ui.popup.DialogAction
 import com.andannn.melodify.ui.util.durationString
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
@@ -39,7 +37,7 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 internal fun SleepTimerCountingContent(
     modifier: Modifier = Modifier,
-    onAction: (DialogAction) -> Unit = {},
+    onAction: (DialogAction.SleepTimerCountingDialog) -> Unit = {},
 ) {
     val state = retainCounterPresenter().present()
     SleepTimerCounterSheetContent(

@@ -18,8 +18,6 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.data.model.next
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
@@ -28,6 +26,9 @@ import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.core.showDialogAndWaitAction
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.OptionDialog
+import com.andannn.melodify.ui.popup.SleepCountingDialog
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.openSleepTimer
@@ -221,7 +222,7 @@ private class PlayerPresenter(
                     retainedScope.launch {
                         val result =
                             popupController.showDialogAndWaitAction(
-                                DialogId.SleepCountingDialog,
+                                SleepCountingDialog,
                             )
                         if (result is DialogAction.SleepTimerCountingDialog.OnCancelTimer) {
                             repository.cancelSleepTimer()
@@ -265,7 +266,7 @@ private class PlayerPresenter(
         retainedScope.launch {
             val result =
                 popupController.showDialogAndWaitAction(
-                    DialogId.OptionDialog(
+                    OptionDialog(
                         options =
                             listOf(
                                 OptionItem.PLAY_NEXT,

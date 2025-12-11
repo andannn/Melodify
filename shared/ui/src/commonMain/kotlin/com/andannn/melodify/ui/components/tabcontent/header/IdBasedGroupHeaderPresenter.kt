@@ -19,8 +19,6 @@ import com.andannn.melodify.core.data.model.GroupKey
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.TabKind
 import com.andannn.melodify.core.data.model.sortOptions
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
@@ -29,6 +27,9 @@ import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.core.showDialogAndWaitAction
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.DialogId
+import com.andannn.melodify.ui.popup.OptionDialog
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
@@ -128,7 +129,7 @@ private class GroupHeaderPresenter(
                 GroupHeaderEvent.OnOptionClick -> {
                     retainedScope.launch {
                         val dialog =
-                            DialogId.OptionDialog(
+                            OptionDialog(
                                 options =
                                     buildList {
                                         if (groupKey.canPinToHome()) add(OptionItem.ADD_TO_HOME_TAB)

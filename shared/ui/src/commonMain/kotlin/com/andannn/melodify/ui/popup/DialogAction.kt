@@ -1,22 +1,20 @@
-/*
- * Copyright 2025, the Melodify project contributors
- * SPDX-License-Identifier: Apache-2.0
- */
-package com.andannn.melodify.model
+package com.andannn.melodify.ui.popup
 
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.model.SleepTimerOption
 
 sealed interface DialogAction {
     data object None : DialogAction
 
-    interface AlertDialog : DialogAction {
+    sealed interface AlertDialog : DialogAction {
         data object Accept : AlertDialog
 
         data object Decline : AlertDialog
     }
 
-    interface InputDialog : DialogAction {
+    sealed interface InputDialog : DialogAction {
         data class Accept(
             val input: String,
         ) : InputDialog
@@ -24,28 +22,30 @@ sealed interface DialogAction {
         object Decline : InputDialog
     }
 
-    interface MediaOptionDialog : DialogAction {
+    sealed interface MediaOptionDialog : DialogAction {
         data class ClickOptionItem(
             val optionItem: OptionItem,
         ) : MediaOptionDialog
     }
 
-    interface AddToPlayListDialog : DialogAction {
+    sealed interface AddToPlayListDialog : DialogAction {
         data class OnAddToPlayList(
             val playList: PlayListItemModel,
             val items: List<MediaItemModel>,
         ) : AddToPlayListDialog
 
         object OnCreateNewPlayList : AddToPlayListDialog
+
+        object OnDismiss : AddToPlayListDialog
     }
 
-    interface SleepTimerOptionDialog : DialogAction {
+    sealed interface SleepTimerOptionDialog : DialogAction {
         data class OnOptionClick(
             val option: SleepTimerOption,
         ) : SleepTimerOptionDialog
     }
 
-    interface SleepTimerCountingDialog : DialogAction {
+    sealed interface SleepTimerCountingDialog : DialogAction {
         data object OnCancelTimer : SleepTimerCountingDialog
     }
 }

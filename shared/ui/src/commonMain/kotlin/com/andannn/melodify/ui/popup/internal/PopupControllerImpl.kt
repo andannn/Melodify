@@ -2,34 +2,67 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.popup
+package com.andannn.melodify.ui.popup.internal
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.retain.RetainObserver
 import androidx.compose.runtime.setValue
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.SnackBarMessage
 import com.andannn.melodify.ui.core.PopupController
-import com.andannn.melodify.ui.popup.dialog.DialogData
-import com.andannn.melodify.ui.popup.dialog.DialogDataImpl
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.DialogId
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlin.coroutines.resume
 
 private const val TAG = "PopupController"
+
+internal interface DialogData {
+    val dialogId: DialogId<*>
+
+    /**
+     * Perform the user action. [action] is null if the user dismiss the dialog.
+     */
+    fun performAction(action: DialogAction?)
+}
+
+internal class DialogDataImpl constructor(
+    override val dialogId: DialogId<*>,
+    private val continuation: CancellableContinuation<DialogAction?>,
+) : DialogData {
+    override fun performAction(action: DialogAction?) {
+        if (continuation.isActive) continuation.resume(action)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as DialogDataImpl
+
+        if (dialogId != other.dialogId) return false
+        if (continuation != other.continuation) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = dialogId.hashCode()
+        result = 31 * result + continuation.hashCode()
+        return result
+    }
+}
 
 internal class PopupControllerImpl : PopupController {
     private val mutex = Mutex()
 
-    private var _currentDialog by mutableStateOf<DialogData?>(null)
-
-    override val currentDialog: DialogData?
-        get() = _currentDialog
+    var currentDialog by mutableStateOf<DialogData?>(null)
+        private set
 
     override var snackBarController: SnackbarHostState? = null
 
@@ -56,11 +89,11 @@ internal class PopupControllerImpl : PopupController {
             Napier.d(tag = TAG) { "show dialog. dialogId = $dialogId" }
             try {
                 return suspendCancellableCoroutine { continuation ->
-                    _currentDialog = DialogDataImpl(dialogId, continuation)
+                    currentDialog = DialogDataImpl(dialogId, continuation)
                 }
             } finally {
                 Napier.d(tag = TAG) { "currentDialog closed = $dialogId" }
-                _currentDialog = null
+                currentDialog = null
             }
         }
 }

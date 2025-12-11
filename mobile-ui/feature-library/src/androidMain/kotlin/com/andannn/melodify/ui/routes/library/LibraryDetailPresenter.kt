@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import com.andannn.melodify.MediaFileDeleteHelper
 import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.ui.Navigator
@@ -24,6 +22,8 @@ import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
 import com.andannn.melodify.ui.core.showDialogAndWaitAction
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.OptionDialog
 import com.andannn.melodify.usecase.pinAllMusicToHomeTab
 import com.andannn.melodify.usecase.pinAllVideoToHomeTab
 import com.andannn.melodify.usecase.showLibraryMediaOption
@@ -101,7 +101,7 @@ private class LibraryDetailScreenPresenter(
                                 retainedScope.launch {
                                     val result =
                                         popupController.showDialogAndWaitAction(
-                                            DialogId.OptionDialog(
+                                            OptionDialog(
                                                 listOf(
                                                     OptionItem.ADD_TO_HOME_TAB,
                                                 ),

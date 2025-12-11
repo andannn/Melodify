@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.popup.dialog.content
+package com.andannn.melodify.ui.popup.internal.content
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -18,8 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.SleepTimerOption
+import com.andannn.melodify.ui.popup.DialogAction
 import com.andannn.melodify.ui.util.durationString
 import melodify.shared.ui.generated.resources.Res
 import melodify.shared.ui.generated.resources.end_of_song
@@ -27,7 +27,7 @@ import melodify.shared.ui.generated.resources.sleep_timer
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-internal fun SleepTimerOptionDialogContent(onAction: (DialogAction) -> Unit = {}) {
+internal fun SleepTimerOptionDialogContent(onAction: (DialogAction.SleepTimerOptionDialog) -> Unit = {}) {
     SleepTimerOptionSheetContent(
         onSelectOption = {
             onAction(DialogAction.SleepTimerOptionDialog.OnOptionClick(it))

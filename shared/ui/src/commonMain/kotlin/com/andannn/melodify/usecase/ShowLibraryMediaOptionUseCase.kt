@@ -10,8 +10,6 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 import com.andannn.melodify.core.data.model.VideoItemModel
-import com.andannn.melodify.model.DialogAction
-import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.OptionItem
 import com.andannn.melodify.model.asLibraryDataSource
@@ -19,6 +17,8 @@ import com.andannn.melodify.ui.core.NavigationRequest
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.showDialogAndWaitAction
+import com.andannn.melodify.ui.popup.DialogAction
+import com.andannn.melodify.ui.popup.OptionDialog
 import kotlinx.coroutines.flow.first
 
 /**
@@ -61,7 +61,7 @@ suspend fun showLibraryMediaOption(
             if (isPlayList && !isFavoritePlayList) add(OptionItem.DELETE_PLAYLIST)
             if (playListId != null && isPlayable) add(OptionItem.DELETE_FROM_PLAYLIST)
         }
-    val result = popController.showDialogAndWaitAction(DialogId.OptionDialog(options = options))
+    val result = popController.showDialogAndWaitAction(OptionDialog(options = options))
     if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
         when (result.optionItem) {
             OptionItem.PLAY_NEXT -> {
