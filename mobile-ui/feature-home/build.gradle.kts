@@ -9,7 +9,7 @@ android {
 
 kotlin {
     sourceSets {
-        androidMain.dependencies {
+        commonMain.dependencies {
             implementation(project(":shared:syncer"))
             implementation(project(":shared:compose:components:tab"))
             implementation(project(":shared:compose:components:tab-content"))

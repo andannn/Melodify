@@ -27,6 +27,11 @@ fun Project.configureKotlinMultiplatform(extension: KotlinMultiplatformExtension
             }
         }
 
+        listOf(
+            iosArm64(),
+            iosSimulatorArm64(),
+        )
+
         jvm("desktop")
 
         sourceSets.apply {

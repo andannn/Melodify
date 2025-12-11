@@ -25,11 +25,11 @@ fun Project.configureComposeMultiplatform(extension: KotlinMultiplatformExtensio
                 implementation(libs.findLibrary("jetbrains.compose.runtime").get())
                 implementation(libs.findLibrary("jetbrains.compose.ui").get())
                 implementation(libs.findLibrary("jetbrains.compose.ui.util").get())
-                implementation(libs.findLibrary("jetbrains.compose.ui.tooling").get())
                 implementation(libs.findLibrary("jetbrains.compose.ui.tooling.preview").get())
-                implementation(libs.findLibrary("androidx.navigationevent").get())
+                implementation(libs.findLibrary("navigationevent.compose").get())
                 implementation(libs.findLibrary("jetbrains.material.icons.extended").get())
                 implementation(libs.findLibrary("lifecycle.runtime.compose").get())
+                implementation(libs.findLibrary("navigation3.runtime").get())
             }
 
             commonTest.dependencies {
@@ -37,7 +37,6 @@ fun Project.configureComposeMultiplatform(extension: KotlinMultiplatformExtensio
             }
 
             androidMain.dependencies {
-                implementation(libs.findLibrary("androidx.navigation3.ui").get())
             }
 
             androidInstrumentedTest.dependencies {

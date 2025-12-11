@@ -1,0 +1,35 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+@file:Suppress("ktlint:standard:filename")
+
+package com.andannn.melodify.ui.player.internal.theme
+
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+
+interface DominantColorState {
+    val color: Color
+
+    suspend fun updateColorsFromImageUrl(url: String)
+
+    fun setDynamicThemeEnable(enable: Boolean)
+}
+
+@Composable
+expect fun DynamicThemePrimaryColorsFromImage(
+    dominantColorState: DominantColorState,
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable (() -> Unit),
+)
+
+@Composable
+expect fun rememberDominantColorState(
+    defaultColor: Color = MaterialTheme.colorScheme.primary,
+    defaultOnColor: Color = MaterialTheme.colorScheme.onPrimary,
+    cacheSize: Int = 12,
+    isColorValid: (Color) -> Boolean = { true },
+): DominantColorState

@@ -1,10 +1,5 @@
-/*
- * Copyright 2025, the Melodify project contributors
- * SPDX-License-Identifier: Apache-2.0
- */
 package com.andannn.melodify.ui.player.internal
 
-import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -27,11 +22,9 @@ import org.koin.mp.KoinPlatform.getKoin
 
 @OptIn(UnstableApi::class)
 @Composable
-internal fun AVPlayerView(
-    modifier: Modifier = Modifier,
-    mediaBrowserManager: MediaBrowserManager = getKoin().get(),
-    playerStateMonitoryRepository: PlayerStateMonitoryRepository = LocalRepository.current,
-) {
+internal actual fun AVPlayerView(modifier: Modifier) {
+    val playerStateMonitoryRepository: PlayerStateMonitoryRepository = LocalRepository.current
+    val mediaBrowserManager: MediaBrowserManager = getKoin().get()
     val playingMedia by playerStateMonitoryRepository
         .getPlayingMediaStateFlow()
         .collectAsStateWithLifecycle(null)
@@ -54,7 +47,7 @@ internal fun AVPlayerView(
                     }
                 val presentationState = rememberPresentationState(player)
                 val scaledModifier =
-                    Modifier.Companion.resizeWithContentScale(ContentScale.Fit, presentationState.videoSizeDp)
+                    Modifier.resizeWithContentScale(ContentScale.Fit, presentationState.videoSizeDp)
                 PlayerSurface(
                     modifier = scaledModifier,
                     player = player,

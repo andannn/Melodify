@@ -9,7 +9,8 @@ android {
 
 kotlin {
     sourceSets {
-        androidMain.dependencies {
+        commonMain.dependencies {
+            implementation(libs.navigation3.ui)
             implementation(project(":mobile-ui:common"))
             implementation(project(":mobile-ui:feature-player"))
             implementation(project(":mobile-ui:feature-home"))
