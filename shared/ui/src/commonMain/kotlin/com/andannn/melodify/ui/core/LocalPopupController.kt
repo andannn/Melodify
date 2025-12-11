@@ -29,8 +29,11 @@ interface PopupController {
 
     suspend fun showSnackBar(message: SnackBarMessage): SnackbarResult
 
-    suspend fun showDialog(dialogId: DialogId): DialogAction
+    suspend fun showDialog(dialogId: DialogId<*>): DialogAction?
 }
+
+suspend inline fun <reified T : DialogAction> PopupController.showDialogAndWaitAction(dialogId: DialogId<T>): T? =
+    showDialog(dialogId) as T?
 
 class NoOpPopupController : PopupController {
     override val currentDialog: DialogData?
@@ -40,7 +43,7 @@ class NoOpPopupController : PopupController {
 
     override suspend fun showSnackBar(message: SnackBarMessage): SnackbarResult = SnackbarResult.Dismissed
 
-    override suspend fun showDialog(dialogId: DialogId): DialogAction = DialogAction.Dismissed
+    override suspend fun showDialog(dialogId: DialogId<*>): DialogAction? = null
 }
 
 @Composable

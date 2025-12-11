@@ -20,6 +20,7 @@ import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
+import com.andannn.melodify.ui.core.showDialogAndWaitAction
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
@@ -112,12 +113,15 @@ class TabUiPresenter(
             currentTabList,
         ) { eventSink ->
             when (eventSink) {
-                is TabUiEvent.OnClickTab -> selectedIndexFlow.value = eventSink.index
-                is TabUiEvent.OnShowTabOption ->
+                is TabUiEvent.OnClickTab -> {
+                    selectedIndexFlow.value = eventSink.index
+                }
+
+                is TabUiEvent.OnShowTabOption -> {
                     retainedScope.launch {
                         val tab = eventSink.tab
                         val result =
-                            popupController.showDialog(
+                            popupController.showDialogAndWaitAction(
                                 DialogId.OptionDialog(
                                     options =
                                         buildList {
@@ -133,22 +137,32 @@ class TabUiPresenter(
                         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
                             context(repository, popupController) {
                                 when (result.optionItem) {
-                                    OptionItem.DELETE_TAB ->
+                                    OptionItem.DELETE_TAB -> {
                                         repository.deleteCustomTab(tab)
+                                    }
 
-                                    OptionItem.PLAY_NEXT -> currentItems().also { addToNextPlay(it) }
-                                    OptionItem.ADD_TO_QUEUE -> currentItems().also { addToQueue(it) }
-                                    OptionItem.ADD_TO_PLAYLIST ->
+                                    OptionItem.PLAY_NEXT -> {
+                                        currentItems().also { addToNextPlay(it) }
+                                    }
+
+                                    OptionItem.ADD_TO_QUEUE -> {
+                                        currentItems().also { addToQueue(it) }
+                                    }
+
+                                    OptionItem.ADD_TO_PLAYLIST -> {
                                         currentItems().also { list -> addToPlaylist(list) }
+                                    }
 
-                                    OptionItem.DISPLAY_SETTING ->
-                                        popupController.showDialog(DialogId.ChangeSortRuleDialog(tab))
+                                    OptionItem.DISPLAY_SETTING -> {
+                                        popupController.showDialogAndWaitAction(DialogId.ChangeSortRuleDialog(tab))
+                                    }
 
                                     else -> {}
                                 }
                             }
                         }
                     }
+                }
             }
         }
     }

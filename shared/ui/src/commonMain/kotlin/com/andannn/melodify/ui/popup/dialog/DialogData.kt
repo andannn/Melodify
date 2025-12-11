@@ -10,16 +10,19 @@ import kotlinx.coroutines.CancellableContinuation
 import kotlin.coroutines.resume
 
 interface DialogData {
-    val dialogId: DialogId
+    val dialogId: DialogId<*>
 
-    fun performAction(action: DialogAction)
+    /**
+     * Perform the user action. [action] is null if the user dismiss the dialog.
+     */
+    fun performAction(action: DialogAction?)
 }
 
 class DialogDataImpl(
-    override val dialogId: DialogId,
-    private val continuation: CancellableContinuation<DialogAction>,
+    override val dialogId: DialogId<*>,
+    private val continuation: CancellableContinuation<DialogAction?>,
 ) : DialogData {
-    override fun performAction(action: DialogAction) {
+    override fun performAction(action: DialogAction?) {
         if (continuation.isActive) continuation.resume(action)
     }
 

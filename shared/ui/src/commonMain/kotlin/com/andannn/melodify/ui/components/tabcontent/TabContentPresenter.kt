@@ -32,6 +32,7 @@ import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
+import com.andannn.melodify.ui.core.showDialogAndWaitAction
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
@@ -109,7 +110,7 @@ class TabContentPresenter(
         ) { eventSink ->
             context(repository, popupController, mediaFileDeleteHelper) {
                 when (eventSink) {
-                    is TabContentEvent.OnPlayMedia ->
+                    is TabContentEvent.OnPlayMedia -> {
                         retainedScope.launch {
                             val items =
                                 with(repository) {
@@ -123,13 +124,15 @@ class TabContentPresenter(
                                 items = items,
                             )
                         }
+                    }
 
-                    is TabContentEvent.OnShowMediaItemOption ->
+                    is TabContentEvent.OnShowMediaItemOption -> {
                         retainedScope.launch {
                             onShowMediaItemOption(eventSink.mediaItemModel)
                         }
+                    }
 
-                    is TabContentEvent.OnGroupItemClick ->
+                    is TabContentEvent.OnGroupItemClick -> {
                         retainedScope.launch {
                             handleGroupItemClick(
                                 eventSink.groupKeys,
@@ -137,6 +140,7 @@ class TabContentPresenter(
                                 selectedTab,
                             )
                         }
+                    }
                 }
             }
         }
@@ -210,27 +214,41 @@ class TabContentPresenter(
                 if (isAudio) add(OptionItem.OPEN_LIBRARY_ARTIST)
                 add(OptionItem.DELETE_MEDIA_FILE)
             }
-        val result = popupController.showDialog(DialogId.OptionDialog(options = options))
+        val result = popupController.showDialogAndWaitAction(DialogId.OptionDialog(options = options))
 
         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
             when (result.optionItem) {
-                OptionItem.PLAY_NEXT -> addToNextPlay(listOf(item))
-                OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(item))
-                OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(listOf(item))
-                OptionItem.DELETE_MEDIA_FILE -> deleteItems(listOf(item))
-                OptionItem.OPEN_LIBRARY_ALBUM ->
+                OptionItem.PLAY_NEXT -> {
+                    addToNextPlay(listOf(item))
+                }
+
+                OptionItem.ADD_TO_QUEUE -> {
+                    addToQueue(listOf(item))
+                }
+
+                OptionItem.ADD_TO_PLAYLIST -> {
+                    addToPlaylist(listOf(item))
+                }
+
+                OptionItem.DELETE_MEDIA_FILE -> {
+                    deleteItems(listOf(item))
+                }
+
+                OptionItem.OPEN_LIBRARY_ALBUM -> {
                     navigationRequestEventSink.onRequestNavigate(
                         NavigationRequest.GoToLibraryDetail(
                             LibraryDataSource.AlbumDetail(id = (item as AudioItemModel).albumId),
                         ),
                     )
+                }
 
-                OptionItem.OPEN_LIBRARY_ARTIST ->
+                OptionItem.OPEN_LIBRARY_ARTIST -> {
                     navigationRequestEventSink.onRequestNavigate(
                         NavigationRequest.GoToLibraryDetail(
                             LibraryDataSource.ArtistDetail(id = (item as AudioItemModel).artistId),
                         ),
                     )
+                }
 
                 else -> {}
             }

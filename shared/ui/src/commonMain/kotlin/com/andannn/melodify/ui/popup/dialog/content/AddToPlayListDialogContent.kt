@@ -64,7 +64,7 @@ import org.jetbrains.compose.resources.stringResource
 fun AddToPlayListDialogContent(
     modifier: Modifier = Modifier,
     dialog: DialogId.AddMusicsToPlayListDialog,
-    onAction: (DialogAction) -> Unit,
+    onAction: (DialogAction?) -> Unit,
 ) {
     val state = retainedAddToPlayListSheetState(dialog.isAudio).present()
     AddToPlayListRequestSheetContent(
@@ -72,7 +72,7 @@ fun AddToPlayListDialogContent(
         items = dialog.items,
         playLists = state.playLists,
         onRequestDismiss = {
-            onAction(DialogAction.Dismissed)
+            onAction(null)
         },
         onPlayListClick = { playList ->
             onAction(

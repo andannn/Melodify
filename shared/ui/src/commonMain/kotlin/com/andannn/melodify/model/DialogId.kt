@@ -4,7 +4,6 @@
  */
 package com.andannn.melodify.model
 
-import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.CustomTab
 import com.andannn.melodify.core.data.model.MediaItemModel
 import melodify.shared.ui.generated.resources.Res
@@ -20,13 +19,13 @@ import melodify.shared.ui.generated.resources.ok
 import melodify.shared.ui.generated.resources.skip_registered_songs
 import org.jetbrains.compose.resources.StringResource
 
-sealed interface DialogId {
+sealed interface DialogId<ACTION : DialogAction> {
     abstract class AlertDialog(
         val title: StringResource? = null,
         val message: StringResource? = null,
         val positive: StringResource,
         val negative: StringResource? = null,
-    ) : DialogId
+    ) : DialogId<DialogAction.AlertDialog>
 
     data object ConfirmDeletePlaylist : AlertDialog(
         message = Res.string.confirm_delete_playlist_item,
@@ -51,14 +50,14 @@ sealed interface DialogId {
         negative = Res.string.decline,
     )
 
-    data object NewPlayListDialog : DialogId {
+    data object NewPlayListDialog : DialogId<DialogAction.InputDialog> {
         val title = Res.string.new_playlist_dialog_title
         val playListNameInputHint = Res.string.new_playlist_dialog_input_hint
         val positive = Res.string.ok
         val negative = Res.string.decline
     }
 
-    data object AddLibraryPathDialog : DialogId {
+    data object AddLibraryPathDialog : DialogId<DialogAction.InputDialog> {
         val title = Res.string.new_playlist_dialog_title
         val positive = Res.string.ok
         val negative = Res.string.decline
@@ -69,20 +68,20 @@ sealed interface DialogId {
      */
     data class ChangeSortRuleDialog(
         val tab: CustomTab,
-    ) : DialogId
+    ) : DialogId<DialogAction.None>
 
-    data object DefaultSortRuleSettingDialog : DialogId
+    data object DefaultSortRuleSettingDialog : DialogId<DialogAction.None>
 
     data class AddMusicsToPlayListDialog constructor(
         val items: List<MediaItemModel>,
         val isAudio: Boolean,
-    ) : DialogId
+    ) : DialogId<DialogAction.AddToPlayListDialog>
 
-    data object SleepTimerOptionDialog : DialogId
+    data object SleepTimerOptionDialog : DialogId<DialogAction.SleepTimerOptionDialog>
 
-    data object SleepCountingDialog : DialogId
+    data object SleepCountingDialog : DialogId<DialogAction.SleepTimerCountingDialog>
 
     data class OptionDialog(
         val options: List<OptionItem>,
-    ) : DialogId
+    ) : DialogId<DialogAction.MediaOptionDialog>
 }

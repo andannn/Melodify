@@ -9,6 +9,7 @@ import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.ui.core.PopupController
+import com.andannn.melodify.ui.core.showDialogAndWaitAction
 
 context(repo: Repository, popupController: PopupController)
 suspend fun playMediaItems(
@@ -35,6 +36,6 @@ suspend fun playMediaItems(
 }
 
 private suspend fun PopupController.confirmChangePlayList(): Boolean {
-    val result = showDialog(DialogId.ChangePlayListAlert)
+    val result = showDialogAndWaitAction(DialogId.ChangePlayListAlert)
     return result == DialogAction.AlertDialog.Accept
 }

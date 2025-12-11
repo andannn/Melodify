@@ -14,10 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
-import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.DialogType
-import com.andannn.melodify.model.dialogIdType
+import com.andannn.melodify.model.dialogType
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.popup.dialog.content.AddLibraryPathDialog
@@ -40,7 +39,7 @@ fun ActionDialogContainer(
         ActionDialogContent(
             data = dataState.value!!,
             onRequestDismiss = {
-                dataState.value?.performAction(DialogAction.Dismissed)
+                dataState.value?.performAction(null)
             },
         )
     }
@@ -52,8 +51,8 @@ fun ActionDialogContent(
     data: DialogData,
     onRequestDismiss: () -> Unit,
 ) {
-    when (data.dialogId.dialogIdType) {
-        DialogType.AlertDialog ->
+    when (data.dialogId.dialogType) {
+        DialogType.AlertDialog -> {
             Dialog(
                 onDismissRequest = onRequestDismiss,
                 content = {
@@ -66,6 +65,7 @@ fun ActionDialogContent(
                     }
                 },
             )
+        }
 
         DialogType.DropDownDialog -> {
 //            DropDownOptionMenu(
@@ -76,7 +76,7 @@ fun ActionDialogContent(
 //            )
         }
 
-        DialogType.ModalBottomSheet ->
+        DialogType.ModalBottomSheet -> {
             ModalBottomSheet(
                 sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
                 onDismissRequest = onRequestDismiss,
@@ -84,76 +84,87 @@ fun ActionDialogContent(
                     DialogContent(data)
                 },
             )
+        }
     }
 }
 
 @Composable
 fun DialogContent(data: DialogData) {
     when (val dialog = data.dialogId) {
-        is DialogId.AlertDialog ->
+        is DialogId.AlertDialog -> {
             AlertMessageDialogContent(
                 dialogId = dialog,
                 onAction = {
                     data.performAction(it)
                 },
             )
+        }
 
-        DialogId.AddLibraryPathDialog ->
+        DialogId.AddLibraryPathDialog -> {
             AddLibraryPathDialog(
                 onAction = {
                     data.performAction(it)
                 },
             )
+        }
 
-        DialogId.NewPlayListDialog ->
+        DialogId.NewPlayListDialog -> {
             NewPlayListDialogContent(
                 onAction = {
                     data.performAction(it)
                 },
             )
-        is DialogId.OptionDialog ->
+        }
+
+        is DialogId.OptionDialog -> {
             MediaOptionContent(
                 dialogId = dialog,
                 onAction = {
                     data.performAction(it)
                 },
             )
+        }
 
-        is DialogId.AddMusicsToPlayListDialog ->
+        is DialogId.AddMusicsToPlayListDialog -> {
             AddToPlayListDialogContent(
                 dialog = dialog,
                 onAction = {
                     data.performAction(it)
                 },
             )
+        }
 
-        is DialogId.SleepTimerOptionDialog ->
+        is DialogId.SleepTimerOptionDialog -> {
             SleepTimerOptionDialogContent(
                 onAction = {
                     data.performAction(it)
                 },
             )
+        }
 
-        DialogId.SleepCountingDialog ->
+        DialogId.SleepCountingDialog -> {
             SleepTimerCountingContent(
                 onAction = {
                     data.performAction(it)
                 },
             )
+        }
 
-        is DialogId.ChangeSortRuleDialog ->
+        is DialogId.ChangeSortRuleDialog -> {
             ChangeSortRuleDialog(
                 dialog = dialog,
                 onAction = {
                     data.performAction(it)
                 },
             )
+        }
 
-        DialogId.DefaultSortRuleSettingDialog ->
+        DialogId.DefaultSortRuleSettingDialog -> {
             DefaultSortRuleSettingDialog(
                 onAction = {
                     data.performAction(it)
                 },
             )
+        }
     }
 }

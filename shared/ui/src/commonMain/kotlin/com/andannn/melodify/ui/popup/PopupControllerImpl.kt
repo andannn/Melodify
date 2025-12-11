@@ -23,9 +23,7 @@ import kotlinx.coroutines.sync.withLock
 
 private const val TAG = "PopupController"
 
-internal class PopupControllerImpl :
-    PopupController,
-    RetainObserver {
+internal class PopupControllerImpl : PopupController {
     private val mutex = Mutex()
 
     private var _currentDialog by mutableStateOf<DialogData?>(null)
@@ -53,7 +51,7 @@ internal class PopupControllerImpl :
      *
      * Dialog show at most one snackbar at a time.
      */
-    override suspend fun showDialog(dialogId: DialogId): DialogAction =
+    override suspend fun showDialog(dialogId: DialogId<*>): DialogAction? =
         mutex.withLock {
             Napier.d(tag = TAG) { "show dialog. dialogId = $dialogId" }
             try {
@@ -65,20 +63,4 @@ internal class PopupControllerImpl :
                 _currentDialog = null
             }
         }
-
-    override fun onRetained() {}
-
-    override fun onEnteredComposition() {}
-
-    override fun onExitedComposition() {}
-
-    override fun onRetired() {
-        _currentDialog = null
-        snackBarController = null
-    }
-
-    override fun onUnused() {
-        _currentDialog = null
-        snackBarController = null
-    }
 }

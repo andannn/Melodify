@@ -28,6 +28,7 @@ import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
+import com.andannn.melodify.ui.core.showDialogAndWaitAction
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToPlaylist
 import com.andannn.melodify.usecase.addToQueue
@@ -137,11 +138,11 @@ private class GroupHeaderPresenter(
                                         add(OptionItem.DELETE_MEDIA_FILE)
                                     },
                             )
-                        val result = popupController.showDialog(dialog)
+                        val result = popupController.showDialogAndWaitAction(dialog)
                         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
                             context(repository, popupController, mediaFileDeleteHelper) {
                                 when (result.optionItem) {
-                                    OptionItem.ADD_TO_HOME_TAB ->
+                                    OptionItem.ADD_TO_HOME_TAB -> {
                                         launch {
                                             if (groupInfo.groupKey is GroupKey.BucketId) {
                                                 pinToHomeTab(
@@ -153,11 +154,13 @@ private class GroupHeaderPresenter(
                                                 mediaItem?.pinToHomeTab()
                                             }
                                         }
+                                    }
+
                                     OptionItem.PLAY_NEXT,
                                     OptionItem.ADD_TO_QUEUE,
                                     OptionItem.ADD_TO_PLAYLIST,
                                     OptionItem.DELETE_MEDIA_FILE,
-                                    ->
+                                    -> {
                                         launch {
                                             handleGroupOption(
                                                 result.optionItem,
@@ -166,6 +169,7 @@ private class GroupHeaderPresenter(
                                                 groupInfo.selectedTab,
                                             )
                                         }
+                                    }
 
                                     else -> {}
                                 }
@@ -191,10 +195,22 @@ private class GroupHeaderPresenter(
                     whereGroups = groupKeys.filterNotNull(),
                 )?.first() ?: emptyList()
         when (optionItem) {
-            OptionItem.PLAY_NEXT -> addToNextPlay(items)
-            OptionItem.ADD_TO_PLAYLIST -> addToPlaylist(items)
-            OptionItem.ADD_TO_QUEUE -> addToQueue(items)
-            OptionItem.DELETE_MEDIA_FILE -> deleteItems(items)
+            OptionItem.PLAY_NEXT -> {
+                addToNextPlay(items)
+            }
+
+            OptionItem.ADD_TO_PLAYLIST -> {
+                addToPlaylist(items)
+            }
+
+            OptionItem.ADD_TO_QUEUE -> {
+                addToQueue(items)
+            }
+
+            OptionItem.DELETE_MEDIA_FILE -> {
+                deleteItems(items)
+            }
+
             else -> {}
         }
     }

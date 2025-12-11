@@ -23,6 +23,7 @@ import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
+import com.andannn.melodify.ui.core.showDialogAndWaitAction
 import com.andannn.melodify.usecase.pinAllMusicToHomeTab
 import com.andannn.melodify.usecase.pinAllVideoToHomeTab
 import com.andannn.melodify.usecase.showLibraryMediaOption
@@ -99,7 +100,7 @@ private class LibraryDetailScreenPresenter(
                             -> {
                                 retainedScope.launch {
                                     val result =
-                                        popupController.showDialog(
+                                        popupController.showDialogAndWaitAction(
                                             DialogId.OptionDialog(
                                                 listOf(
                                                     OptionItem.ADD_TO_HOME_TAB,

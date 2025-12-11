@@ -17,6 +17,7 @@ import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
+import com.andannn.melodify.ui.core.showDialogAndWaitAction
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -78,13 +79,13 @@ class LibraryPreferencePresenter(
 
     private fun onAddLibraryButtonClick() {
         retainedScope.launch {
-            val result = popUpController.showDialog(DialogId.NewPlayListDialog)
+            val result = popUpController.showDialogAndWaitAction(DialogId.NewPlayListDialog)
 
             if (result is DialogAction.InputDialog.Accept) {
                 val success = repository.addLibraryPath(result.input)
 
                 if (!success) {
-                    popUpController.showDialog(DialogId.InvalidPathAlert)
+                    popUpController.showDialogAndWaitAction(DialogId.InvalidPathAlert)
                 }
             }
         }

@@ -27,6 +27,7 @@ import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
+import com.andannn.melodify.ui.core.showDialogAndWaitAction
 import com.andannn.melodify.usecase.addToNextPlay
 import com.andannn.melodify.usecase.addToQueue
 import com.andannn.melodify.usecase.openSleepTimer
@@ -194,30 +195,44 @@ private class PlayerPresenter(
 
         val eventSink: (PlayerUiEvent) -> Unit by rememberUpdatedState {
             when (it) {
-                PlayerUiEvent.OnFavoriteButtonClick ->
+                PlayerUiEvent.OnFavoriteButtonClick -> {
                     onFavoriteButtonClick(
                         interactingMusicItem,
                     )
+                }
 
-                PlayerUiEvent.OnNextButtonClick -> next()
-                PlayerUiEvent.OnPreviousButtonClick -> previous()
-                PlayerUiEvent.OnPlayButtonClick -> togglePlayState(isPlaying)
+                PlayerUiEvent.OnNextButtonClick -> {
+                    next()
+                }
+
+                PlayerUiEvent.OnPreviousButtonClick -> {
+                    previous()
+                }
+
+                PlayerUiEvent.OnPlayButtonClick -> {
+                    togglePlayState(isPlaying)
+                }
+
                 PlayerUiEvent.OnShuffleButtonClick -> {
                     repository.setShuffleModeEnabled(!isShuffle)
                 }
 
-                PlayerUiEvent.OnTimerIconClick ->
+                PlayerUiEvent.OnTimerIconClick -> {
                     retainedScope.launch {
                         val result =
-                            popupController.showDialog(
+                            popupController.showDialogAndWaitAction(
                                 DialogId.SleepCountingDialog,
                             )
                         if (result is DialogAction.SleepTimerCountingDialog.OnCancelTimer) {
                             repository.cancelSleepTimer()
                         }
                     }
+                }
 
-                is PlayerUiEvent.OnOptionIconClick -> onOptionIconClick(it.mediaItem)
+                is PlayerUiEvent.OnOptionIconClick -> {
+                    onOptionIconClick(it.mediaItem)
+                }
+
                 PlayerUiEvent.OnPlayModeButtonClick -> {
                     val nextPlayMode = repository.getCurrentPlayMode().next()
                     repository.setPlayMode(nextPlayMode)
@@ -249,7 +264,7 @@ private class PlayerPresenter(
     private fun onOptionIconClick(mediaItem: MediaItemModel) {
         retainedScope.launch {
             val result =
-                popupController.showDialog(
+                popupController.showDialogAndWaitAction(
                     DialogId.OptionDialog(
                         options =
                             listOf(
@@ -262,9 +277,18 @@ private class PlayerPresenter(
             if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
                 context(repository, popupController) {
                     when (result.optionItem) {
-                        OptionItem.PLAY_NEXT -> addToNextPlay(listOf(mediaItem))
-                        OptionItem.ADD_TO_QUEUE -> addToQueue(listOf(mediaItem))
-                        OptionItem.SLEEP_TIMER -> openSleepTimer()
+                        OptionItem.PLAY_NEXT -> {
+                            addToNextPlay(listOf(mediaItem))
+                        }
+
+                        OptionItem.ADD_TO_QUEUE -> {
+                            addToQueue(listOf(mediaItem))
+                        }
+
+                        OptionItem.SLEEP_TIMER -> {
+                            openSleepTimer()
+                        }
+
                         else -> {}
                     }
                 }

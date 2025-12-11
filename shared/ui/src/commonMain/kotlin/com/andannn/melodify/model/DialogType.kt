@@ -10,4 +10,4 @@ enum class DialogType {
     DropDownDialog,
 }
 
-internal expect val DialogId.dialogIdType: DialogType
+internal expect val DialogId<*>.dialogType: DialogType

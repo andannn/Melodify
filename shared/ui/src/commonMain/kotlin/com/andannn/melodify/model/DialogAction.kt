@@ -4,12 +4,11 @@
  */
 package com.andannn.melodify.model
 
-import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayListItemModel
 
 sealed interface DialogAction {
-    data object Dismissed : DialogAction
+    data object None : DialogAction
 
     interface AlertDialog : DialogAction {
         data object Accept : AlertDialog

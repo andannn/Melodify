@@ -4,7 +4,7 @@
  */
 package com.andannn.melodify.model
 
-actual val DialogId.dialogIdType: DialogType
+actual val DialogId<*>.dialogType: DialogType
     get() =
         when (this) {
             is DialogId.SleepTimerOptionDialog,

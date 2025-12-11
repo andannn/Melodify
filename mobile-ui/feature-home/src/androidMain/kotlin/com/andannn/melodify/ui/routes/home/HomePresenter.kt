@@ -22,6 +22,7 @@ import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter
+import com.andannn.melodify.ui.core.showDialogAndWaitAction
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -179,7 +180,7 @@ private suspend fun resyncAllSongs() =
 
 context(popupController: PopupController)
 private suspend fun changeSortRule() {
-    popupController.showDialog(
+    popupController.showDialogAndWaitAction(
         DialogId.DefaultSortRuleSettingDialog,
     )
 }

@@ -133,13 +133,3 @@ private class CounterPresenter(
 private data class CounterState(
     val remainTime: Duration,
 )
-
-@Preview
-@Composable
-private fun SleepTimerCounterSheetContentPreview() {
-    MelodifyTheme(content = {
-        SleepTimerCounterSheetContent(
-            remain = 121234.seconds,
-        )
-    })
-}
