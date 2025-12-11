@@ -32,6 +32,11 @@ kotlin {
             implementation(libs.okio)
             implementation(libs.room.paging)
         }
+
+        iosMain.dependencies {
+            implementation(libs.androidx.sqlite.bundled)
+        }
+
         androidInstrumentedTest.dependencies {
             implementation(libs.androidx.test.runner)
             implementation(libs.androidx.test.core.ktx)

@@ -22,5 +22,9 @@ kotlin {
         deskTopAndAndroidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
         }
+
+        appleMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
     }
 }
