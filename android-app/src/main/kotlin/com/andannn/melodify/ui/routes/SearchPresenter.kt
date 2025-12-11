@@ -39,12 +39,15 @@ private class SearchScreenPresenter(
     override fun present(): SearchScreenState =
         SearchScreenState { event ->
             when (event) {
-                SearchScreenEvent.OnBack -> navigator.popBackStack()
+                SearchScreenEvent.OnBack -> {
+                    navigator.popBackStack()
+                }
 
-                is SearchScreenEvent.OnNavigateToLibraryContentList ->
+                is SearchScreenEvent.OnNavigateToLibraryContentList -> {
                     navigator.navigateTo(
                         Screen.LibraryDetail(event.source),
                     )
+                }
             }
         }
 }

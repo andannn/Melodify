@@ -17,6 +17,7 @@ rootProject.name = "Melodify"
 include(":desktop-app")
 include(":android-app")
 include(":android-benchmark")
+include(":mobile-ui:common")
 include(":shared:ui")
 include(":shared:data")
 include(":shared:player")

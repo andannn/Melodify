@@ -107,8 +107,14 @@ private class HomePresenter(
             with(popController) {
                 with(syncMediaStoreHandler) {
                     when (eventSink) {
-                        HomeUiEvent.LibraryButtonClick -> navigator.navigateTo(Screen.Library)
-                        HomeUiEvent.SearchButtonClick -> navigator.navigateTo(Screen.Search)
+                        HomeUiEvent.LibraryButtonClick -> {
+                            navigator.navigateTo(Screen.Library)
+                        }
+
+                        HomeUiEvent.SearchButtonClick -> {
+                            navigator.navigateTo(Screen.Search)
+                        }
+
                         is HomeUiEvent.OnMenuSelected -> {
                             when (eventSink.selected) {
                                 MenuOption.DEFAULT_SORT -> retainedScope.launch { changeSortRule() }
@@ -116,7 +122,9 @@ private class HomePresenter(
                             }
                         }
 
-                        HomeUiEvent.OnTabManagementClick -> navigator.navigateTo(Screen.TabManage)
+                        HomeUiEvent.OnTabManagementClick -> {
+                            navigator.navigateTo(Screen.TabManage)
+                        }
                     }
                 }
             }
@@ -141,15 +149,17 @@ private suspend fun resyncAllSongs() =
                     delay(50)
 
                     when (it) {
-                        SyncStatus.Complete ->
+                        SyncStatus.Complete -> {
                             popController.showSnackBar(
                                 SnackBarMessage.SyncCompleted(mediaCount ?: 0),
                             )
+                        }
 
-                        SyncStatus.Failed ->
+                        SyncStatus.Failed -> {
                             popController.showSnackBar(
                                 SnackBarMessage.SyncFailed,
                             )
+                        }
 
                         is SyncStatus.Progress -> {
                             popController.showSnackBar(
@@ -157,10 +167,11 @@ private suspend fun resyncAllSongs() =
                             )
                         }
 
-                        SyncStatus.Start ->
+                        SyncStatus.Start -> {
                             popController.showSnackBar(
                                 SnackBarMessage.SyncStatusStart,
                             )
+                        }
                     }
                 }
         }

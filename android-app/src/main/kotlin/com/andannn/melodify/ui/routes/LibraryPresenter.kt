@@ -28,13 +28,19 @@ private class LibraryPresenter(
     override fun present(): LibraryState =
         LibraryState { eventSink ->
             when (eventSink) {
-                is LibraryUiEvent.OnNavigateToLibraryContentList ->
+                is LibraryUiEvent.OnNavigateToLibraryContentList -> {
                     navigator.navigateTo(
                         Screen.LibraryDetail(eventSink.source),
                     )
+                }
 
-                LibraryUiEvent.Back -> navigator.popBackStack()
-                LibraryUiEvent.OnNavigateToSearch -> navigator.navigateTo(Screen.Search)
+                LibraryUiEvent.Back -> {
+                    navigator.popBackStack()
+                }
+
+                LibraryUiEvent.OnNavigateToSearch -> {
+                    navigator.navigateTo(Screen.Search)
+                }
             }
         }
 }

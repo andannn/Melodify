@@ -26,8 +26,9 @@ fun LaunchNavigationRequestHandlerEffect(
         for (event in eventSink.channel) {
             Napier.d(tag = TAG) { "handle navigation request $event" }
             when (event) {
-                is NavigationRequest.GoToLibraryDetail ->
+                is NavigationRequest.GoToLibraryDetail -> {
                     navigator.navigateTo(Screen.LibraryDetail(datasource = event.dataSource))
+                }
             }
         }
     }

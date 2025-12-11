@@ -57,6 +57,7 @@ dependencies {
     implementation(project(":shared:player"))
     implementation(project(":shared:syncer"))
     implementation(project(":shared:platform"))
+    implementation(project(":mobile-ui:common"))
 
     implementation(libs.coil3.compose)
     implementation(libs.androidx.media3.ui.compose)
