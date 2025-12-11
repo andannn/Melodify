@@ -7,7 +7,9 @@ package com.andannn.melodify.shared.compose.popup
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
@@ -35,47 +37,47 @@ private fun ActionDialogContent(
     data: DialogData,
     onRequestDismiss: () -> Unit,
 ) {
-//    when (data.dialogId.dialogType) {
-//        DialogType.AlertDialog -> {
-    Dialog(
-        onDismissRequest = onRequestDismiss,
-        content = {
-            Surface(
-                modifier = Modifier.wrapContentSize(),
-                shape = AlertDialogDefaults.shape,
-                tonalElevation = AlertDialogDefaults.TonalElevation,
-            ) {
-                data.dialogId.Content(
-                    onAction = {
-                        data.performAction(it)
-                    },
-                )
-            }
-        },
-    )
-//        }
-//
-//        DialogType.DropDownDialog -> {
-// //            DropDownOptionMenu(
-// //                onRequestDismiss = onRequestDismiss,
-// //                content = {
-// //                    DialogContent(data)
-// //                },
-// //            )
-//        }
-//
-//        DialogType.ModalBottomSheet -> {
-//            ModalBottomSheet(
-//                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-//                onDismissRequest = onRequestDismiss,
-//                content = {
-//                    data.dialogId.Content(
-//                        onAction = {
-//                            data.performAction(it)
-//                        },
-//                    )
-//                },
-//            )
-//        }
-//    }
+    when (data.dialogId.dialogType) {
+        DialogType.AlertDialog -> {
+            Dialog(
+                onDismissRequest = onRequestDismiss,
+                content = {
+                    Surface(
+                        modifier = Modifier.wrapContentSize(),
+                        shape = AlertDialogDefaults.shape,
+                        tonalElevation = AlertDialogDefaults.TonalElevation,
+                    ) {
+                        data.dialogId.Content(
+                            onAction = {
+                                data.performAction(it)
+                            },
+                        )
+                    }
+                },
+            )
+        }
+
+        DialogType.DropDownDialog -> {
+            //            DropDownOptionMenu(
+            //                onRequestDismiss = onRequestDismiss,
+            //                content = {
+            //                    DialogContent(data)
+            //                },
+            //            )
+        }
+
+        DialogType.ModalBottomSheet -> {
+            ModalBottomSheet(
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                onDismissRequest = onRequestDismiss,
+                content = {
+                    data.dialogId.Content(
+                        onAction = {
+                            data.performAction(it)
+                        },
+                    )
+                },
+            )
+        }
+    }
 }

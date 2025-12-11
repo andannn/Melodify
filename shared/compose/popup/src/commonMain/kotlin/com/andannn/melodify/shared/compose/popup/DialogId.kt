@@ -20,6 +20,8 @@ import melodify.shared.compose.resource.generated.resources.new_playlist_dialog_
 import melodify.shared.compose.resource.generated.resources.new_playlist_dialog_title
 
 interface DialogId<ACTION : DialogAction> {
+    val dialogType: DialogType
+
     /**
      * Dialog content
      */
@@ -28,6 +30,8 @@ interface DialogId<ACTION : DialogAction> {
 }
 
 data object SleepTimerOptionDialog : DialogId<DialogAction.SleepTimerOptionDialog> {
+    override val dialogType: DialogType = DialogType.ModalBottomSheet
+
     @Composable
     override fun Content(onAction: (DialogAction.SleepTimerOptionDialog) -> Unit) {
         SleepTimerOptionDialogContent(onAction)
@@ -38,6 +42,8 @@ data class AddMusicsToPlayListDialog(
     val items: List<MediaItemModel>,
     val isAudio: Boolean,
 ) : DialogId<DialogAction.AddToPlayListDialog> {
+    override val dialogType: DialogType = DialogType.ModalBottomSheet
+
     @Composable
     override fun Content(onAction: (DialogAction.AddToPlayListDialog) -> Unit) {
         AddToPlayListDialogContent(
@@ -53,6 +59,8 @@ data class AddMusicsToPlayListDialog(
 data class ChangeSortRuleDialog(
     val tab: CustomTab,
 ) : DialogId<DialogAction.None> {
+    override val dialogType: DialogType = DialogType.ModalBottomSheet
+
     @Composable
     override fun Content(onAction: (DialogAction.None) -> Unit) {
         ChangeSortRuleDialogContent(
@@ -62,6 +70,8 @@ data class ChangeSortRuleDialog(
 }
 
 data object DefaultSortRuleSettingDialog : DialogId<DialogAction.None> {
+    override val dialogType: DialogType = DialogType.ModalBottomSheet
+
     @Composable
     override fun Content(onAction: (DialogAction.None) -> Unit) {
         DefaultSortRuleSettingDialog()
@@ -69,6 +79,7 @@ data object DefaultSortRuleSettingDialog : DialogId<DialogAction.None> {
 }
 
 data object NewPlayListDialog : DialogId<DialogAction.InputDialog> {
+    override val dialogType: DialogType = DialogType.AlertDialog
     val title = Res.string.new_playlist_dialog_title
     val playListNameInputHint = Res.string.new_playlist_dialog_input_hint
 
@@ -79,6 +90,7 @@ data object NewPlayListDialog : DialogId<DialogAction.InputDialog> {
 }
 
 data object AddLibraryPathDialog : DialogId<DialogAction.InputDialog> {
+    override val dialogType: DialogType = DialogType.AlertDialog
     val title = Res.string.new_playlist_dialog_title
 
     @Composable
@@ -90,6 +102,8 @@ data object AddLibraryPathDialog : DialogId<DialogAction.InputDialog> {
 data class OptionDialog(
     val options: List<OptionItem>,
 ) : DialogId<DialogAction.MediaOptionDialog> {
+    override val dialogType: DialogType = DialogType.ModalBottomSheet
+
     @Composable
     override fun Content(onAction: (DialogAction.MediaOptionDialog) -> Unit) {
         MediaOptionContent(
@@ -100,6 +114,8 @@ data class OptionDialog(
 }
 
 data object SleepCountingDialog : DialogId<DialogAction.SleepTimerCountingDialog> {
+    override val dialogType: DialogType = DialogType.ModalBottomSheet
+
     @Composable
     override fun Content(onAction: (DialogAction.SleepTimerCountingDialog) -> Unit) {
         SleepTimerCountingContent(onAction = onAction)

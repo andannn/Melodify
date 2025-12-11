@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.DialogId
+import com.andannn.melodify.shared.compose.popup.DialogType
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.change_play_list_alert_dialog_content
 import melodify.shared.compose.resource.generated.resources.confirm_delete_playlist_item
@@ -59,6 +60,8 @@ abstract class AlertDialog(
     val positive: StringResource,
     val negative: StringResource? = null,
 ) : DialogId<DialogAction.AlertDialog> {
+    override val dialogType: DialogType = DialogType.AlertDialog
+
     @Composable
     override fun Content(onAction: (DialogAction.AlertDialog) -> Unit) {
         AlertMessageDialogContent(
