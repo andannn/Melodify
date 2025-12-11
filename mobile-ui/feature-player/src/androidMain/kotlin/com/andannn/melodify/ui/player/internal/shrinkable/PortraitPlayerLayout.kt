@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.components.playcontrol.ui.shrinkable
+package com.andannn.melodify.ui.player.internal.shrinkable
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -32,23 +32,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.LocalScreenController
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
-import com.andannn.melodify.ui.components.playcontrol.ui.MinImageSize
-import com.andannn.melodify.ui.components.playcontrol.ui.PlayerViewState
-import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.bottom.PlayerBottomSheetView
+import com.andannn.melodify.ui.player.internal.MinImageSize
+import com.andannn.melodify.ui.player.internal.PlayerViewState
+import com.andannn.melodify.ui.player.internal.shrinkable.bottom.PlayerBottomSheetView
 import com.andannn.melodify.ui.widgets.AVPlayerView
 
-val MinImagePaddingTop = 5.dp
+internal val MinImagePaddingTop = 5.dp
 
-val MinImagePaddingStart = 5.dp
-val MaxImagePaddingStart = 20.dp
+internal val MinImagePaddingStart = 5.dp
+internal val MaxImagePaddingStart = 20.dp
 
-val MinFadeoutWithExpandAreaPaddingTop = 15.dp
+internal val MinFadeoutWithExpandAreaPaddingTop = 15.dp
 
-val BottomSheetDragAreaHeight = 110.dp
+internal val BottomSheetDragAreaHeight = 110.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify
+package com.andannn.melodify.ui
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
@@ -28,7 +28,7 @@ val LocalScreenController: ProvidableCompositionLocal<ScreenController> =
     }
 
 @Suppress("ktlint:standard:function-naming")
-fun ScreenOrientationController(activity: MainActivity): ScreenController = ScreenControllerImpl(activity)
+fun ScreenOrientationController(activity: Activity): ScreenController = ScreenControllerImpl(activity)
 
 interface ScreenController {
     val isCurrentPortrait: Boolean

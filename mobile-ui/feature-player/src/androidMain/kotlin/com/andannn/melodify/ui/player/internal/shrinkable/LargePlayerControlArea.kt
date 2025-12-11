@@ -2,44 +2,30 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.components.playcontrol.ui.shrinkable
+package com.andannn.melodify.ui.player.internal.shrinkable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Pause
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Shuffle
-import androidx.compose.material.icons.rounded.ShuffleOn
-import androidx.compose.material.icons.rounded.SkipNext
-import androidx.compose.material.icons.rounded.SkipPrevious
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
-import com.andannn.melodify.core.platform.formatTime
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
-import com.andannn.melodify.ui.util.formatDuration
-import com.andannn.melodify.ui.util.getIcon
+import com.andannn.melodify.ui.player.internal.util.formatDuration
 import com.andannn.melodify.ui.widgets.LinerWaveSlider
 import com.andannn.melodify.ui.widgets.MarqueeText
-import com.andannn.melodify.ui.widgets.SmpMainIconButton
-import com.andannn.melodify.ui.widgets.SmpSubIconButton
 import kotlin.math.roundToLong
-import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun LargePlayerControlArea(

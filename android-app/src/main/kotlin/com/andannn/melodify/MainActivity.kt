@@ -31,6 +31,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.core.syncer.SyncWorkHelper
+import com.andannn.melodify.ui.LocalScreenController
+import com.andannn.melodify.ui.ScreenOrientationController
 import com.andannn.melodify.ui.theme.MelodifyTheme
 import com.andannn.melodify.ui.widgets.AVPlayerView
 import io.github.aakira.napier.Napier

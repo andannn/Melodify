@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.components.playcontrol.ui.shrinkable
+package com.andannn.melodify.ui.player.internal.shrinkable
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -41,14 +41,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
-import com.andannn.melodify.ui.util.formatDuration
+import com.andannn.melodify.ui.player.internal.util.formatDuration
 import com.andannn.melodify.ui.widgets.LinerWaveSlider
 import com.andannn.melodify.ui.widgets.MarqueeText
 import kotlinx.coroutines.delay
 import kotlin.math.roundToLong
 
 @Composable
-fun TouchToggleVisible(
+internal fun TouchToggleVisible(
     modifier: Modifier = Modifier,
     showDurationMs: Long = 4000,
     content: @Composable () -> Unit,

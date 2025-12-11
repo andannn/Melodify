@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.bottom
+package com.andannn.melodify.ui.player.internal.shrinkable.bottom
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -10,7 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
-enum class SheetTab {
+internal enum class SheetTab {
     NEXT_SONG,
     LYRICS,
 }

@@ -2,16 +2,16 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.components.playcontrol.ui.shrinkable
+package com.andannn.melodify.ui.player.internal.shrinkable
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.andannn.melodify.ImmersiveModeEffect
-import com.andannn.melodify.KeepScreenOnEffect
 import com.andannn.melodify.core.data.model.PlayMode
+import com.andannn.melodify.ui.ImmersiveModeEffect
+import com.andannn.melodify.ui.KeepScreenOnEffect
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.widgets.AVPlayerView
 

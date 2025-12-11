@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.components.playcontrol.ui.shrinkable
+package com.andannn.melodify.ui.player.internal.shrinkable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -26,7 +26,7 @@ import com.andannn.melodify.ui.widgets.SmpMainIconButton
 import com.andannn.melodify.ui.widgets.SmpSubIconButton
 
 @Composable
-fun PlayControlButtons(
+internal fun PlayControlButtons(
     isShuffle: Boolean,
     isPlaying: Boolean,
     playMode: PlayMode,

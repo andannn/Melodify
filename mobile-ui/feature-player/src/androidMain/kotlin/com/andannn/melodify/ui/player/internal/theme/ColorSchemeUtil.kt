@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.util
+package com.andannn.melodify.ui.player.internal.theme
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
@@ -148,67 +148,76 @@ private fun buildDynamicScheme(
 ): DynamicScheme {
     val sourceColorHct: Hct = Hct.fromInt(seedColor.toArgb())
     return when (schemeVariant) {
-        DynamicSchemeVariant.TONAL_SPOT ->
+        DynamicSchemeVariant.TONAL_SPOT -> {
             SchemeTonalSpot(
                 sourceColorHct,
                 isDark,
                 contrastLevel,
             )
+        }
 
-        DynamicSchemeVariant.FIDELITY ->
+        DynamicSchemeVariant.FIDELITY -> {
             SchemeFidelity(
                 sourceColorHct,
                 isDark,
                 contrastLevel,
             )
+        }
 
-        DynamicSchemeVariant.CONTENT ->
+        DynamicSchemeVariant.CONTENT -> {
             SchemeContent(
                 sourceColorHct,
                 isDark,
                 contrastLevel,
             )
+        }
 
-        DynamicSchemeVariant.MONOCHROME ->
+        DynamicSchemeVariant.MONOCHROME -> {
             SchemeMonochrome(
                 sourceColorHct,
                 isDark,
                 contrastLevel,
             )
+        }
 
-        DynamicSchemeVariant.NEUTRAL ->
+        DynamicSchemeVariant.NEUTRAL -> {
             SchemeNeutral(
                 sourceColorHct,
                 isDark,
                 contrastLevel,
             )
+        }
 
-        DynamicSchemeVariant.VIBRANT ->
+        DynamicSchemeVariant.VIBRANT -> {
             SchemeVibrant(
                 sourceColorHct,
                 isDark,
                 contrastLevel,
             )
+        }
 
-        DynamicSchemeVariant.EXPRESSIVE ->
+        DynamicSchemeVariant.EXPRESSIVE -> {
             SchemeExpressive(
                 sourceColorHct,
                 isDark,
                 contrastLevel,
             )
+        }
 
-        DynamicSchemeVariant.RAINBOW ->
+        DynamicSchemeVariant.RAINBOW -> {
             SchemeRainbow(
                 sourceColorHct,
                 isDark,
                 contrastLevel,
             )
+        }
 
-        DynamicSchemeVariant.FRUIT_SALAD ->
+        DynamicSchemeVariant.FRUIT_SALAD -> {
             SchemeFruitSalad(
                 sourceColorHct,
                 isDark,
                 contrastLevel,
             )
+        }
     }
 }

@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.components.playcontrol.ui
+package com.andannn.melodify.ui.player.internal
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -33,21 +33,21 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationEventHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
-import com.andannn.melodify.LocalScreenController
 import com.andannn.melodify.core.data.model.subTitle
+import com.andannn.melodify.ui.LocalScreenController
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
 import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
-import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.LandScapeExpandedPlayerLayout
-import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.LandScapeShrinkPlayerLayout
-import com.andannn.melodify.ui.components.playcontrol.ui.shrinkable.PortraitPlayerLayout
-import com.andannn.melodify.ui.theme.DynamicThemePrimaryColorsFromImage
+import com.andannn.melodify.ui.player.internal.shrinkable.LandScapeExpandedPlayerLayout
+import com.andannn.melodify.ui.player.internal.shrinkable.LandScapeShrinkPlayerLayout
+import com.andannn.melodify.ui.player.internal.shrinkable.PortraitPlayerLayout
+import com.andannn.melodify.ui.player.internal.theme.DynamicThemePrimaryColorsFromImage
+import com.andannn.melodify.ui.player.internal.theme.rememberDominantColorState
 import com.andannn.melodify.ui.theme.MIN_CONTRAST_OF_PRIMARY_VS_SURFACE
-import com.andannn.melodify.ui.theme.rememberDominantColorState
 import com.andannn.melodify.ui.util.contrastAgainst
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
-internal fun PlayerViewContent(
+internal fun PlayerView(
     state: PlayerUiState.Active,
     modifier: Modifier = Modifier,
     onEvent: (PlayerUiEvent) -> Unit,

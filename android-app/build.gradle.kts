@@ -58,15 +58,12 @@ dependencies {
     implementation(project(":shared:syncer"))
     implementation(project(":shared:platform"))
     implementation(project(":mobile-ui:common"))
+    implementation(project(":mobile-ui:feature-player"))
 
-    implementation(libs.coil3.compose)
     implementation(libs.androidx.media3.ui.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.activity.compose)
-
-    implementation(libs.androidx.palette)
-    implementation(libs.material.color.utilities.android)
 
     // Firebase
     implementation(project.dependencies.platform(libs.firebase.bom))

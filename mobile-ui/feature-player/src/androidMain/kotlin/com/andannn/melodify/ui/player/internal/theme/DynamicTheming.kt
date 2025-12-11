@@ -4,7 +4,7 @@
  */
 @file:Suppress("ktlint:standard:filename")
 
-package com.andannn.melodify.ui.theme
+package com.andannn.melodify.ui.player.internal.theme
 
 import android.content.Context
 import androidx.collection.LruCache
@@ -21,7 +21,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,7 +33,6 @@ import coil3.request.SuccessResult
 import coil3.request.allowHardware
 import coil3.size.Scale
 import coil3.toBitmap
-import com.andannn.melodify.ui.util.createThemeFromSeed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
