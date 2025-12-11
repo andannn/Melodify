@@ -12,13 +12,13 @@ import com.andannn.melodify.model.DialogAction
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.OptionItem
+import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.components.librarydetail.LibraryContentState
 import com.andannn.melodify.ui.components.librarydetail.retainLibraryDetailPresenter
 import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
 import com.andannn.melodify.ui.core.LocalPopupController
 import com.andannn.melodify.ui.core.LocalRepository
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
-import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
@@ -88,13 +88,15 @@ private class LibraryDetailScreenPresenter(
         ) { event ->
             context(repository, popupController, fileDeleteHelper, navigationRequestEventSink) {
                 when (event) {
-                    LibraryDetailScreenEvent.OnBackKeyPressed -> navigator.popBackStack()
+                    LibraryDetailScreenEvent.OnBackKeyPressed -> {
+                        navigator.popBackStack()
+                    }
 
                     LibraryDetailScreenEvent.OnOptionClick -> {
                         when (dataSource) {
                             LibraryDataSource.AllSong,
                             LibraryDataSource.AllVideo,
-                            ->
+                            -> {
                                 retainedScope.launch {
                                     val result =
                                         popupController.showDialog(
@@ -119,6 +121,7 @@ private class LibraryDetailScreenPresenter(
                                         }
                                     }
                                 }
+                            }
 
                             else -> {
                                 state.mediaItem?.let { item ->

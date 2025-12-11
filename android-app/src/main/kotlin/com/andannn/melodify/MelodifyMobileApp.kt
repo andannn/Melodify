@@ -19,18 +19,18 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
+import com.andannn.melodify.ui.LaunchNavigationRequestHandlerEffect
+import com.andannn.melodify.ui.RootNavigator
 import com.andannn.melodify.ui.Screen
-import com.andannn.melodify.ui.core.LaunchNavigationRequestHandlerEffect
 import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
-import com.andannn.melodify.ui.core.RootNavigator
 import com.andannn.melodify.ui.core.rememberPopupControllerNavEntryDecorator
 import com.andannn.melodify.ui.core.rememberRetainedValueStoreNavEntryDecorator
-import com.andannn.melodify.ui.routes.HomeUiScreen
 import com.andannn.melodify.ui.routes.Library
 import com.andannn.melodify.ui.routes.LibraryDetail
 import com.andannn.melodify.ui.routes.SearchScreen
 import com.andannn.melodify.ui.routes.TabManagementScreen
+import com.andannn.melodify.ui.routes.home.entryBuilder
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -75,9 +75,7 @@ fun MelodifyMobileApp(modifier: Modifier = Modifier) {
                     ),
                 entryProvider =
                     entryProvider {
-                        entry<Screen.Home> {
-                            HomeUiScreen(navigator)
-                        }
+                        entryBuilder(navigator)
 
                         entry<Screen.TabManage> {
                             TabManagementScreen(navigator)

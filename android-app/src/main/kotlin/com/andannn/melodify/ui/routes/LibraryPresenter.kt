@@ -7,8 +7,8 @@ package com.andannn.melodify.ui.routes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import com.andannn.melodify.model.LibraryDataSource
+import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
-import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
 import com.andannn.melodify.ui.core.retainPresenter

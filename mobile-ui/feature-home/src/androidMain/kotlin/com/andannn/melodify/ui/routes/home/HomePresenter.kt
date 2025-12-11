@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.routes
+package com.andannn.melodify.ui.routes.home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -11,13 +11,13 @@ import com.andannn.melodify.core.syncer.SyncStatus
 import com.andannn.melodify.core.syncer.SyncType
 import com.andannn.melodify.model.DialogId
 import com.andannn.melodify.model.SnackBarMessage
+import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
 import com.andannn.melodify.ui.components.tab.TabUiState
 import com.andannn.melodify.ui.components.tab.retainTabUiPresenter
 import com.andannn.melodify.ui.components.tabcontent.TabContentState
 import com.andannn.melodify.ui.components.tabcontent.retainTabContentPresenter
 import com.andannn.melodify.ui.core.LocalPopupController
-import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.PopupController
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
@@ -40,7 +40,7 @@ import org.jetbrains.compose.resources.getString
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun retainHomeUiPresenter(
+internal fun retainHomeUiPresenter(
     navigator: Navigator,
     popController: PopupController = LocalPopupController.current,
     syncMediaStoreHandler: SyncMediaStoreHandler = getKoin().get(),

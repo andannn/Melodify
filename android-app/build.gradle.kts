@@ -59,6 +59,7 @@ dependencies {
     implementation(project(":shared:platform"))
     implementation(project(":mobile-ui:common"))
     implementation(project(":mobile-ui:feature-player"))
+    implementation(project(":mobile-ui:feature-home"))
 
     implementation(libs.androidx.media3.ui.compose)
     implementation(libs.androidx.core.ktx)

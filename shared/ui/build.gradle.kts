@@ -11,7 +11,7 @@ android {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":shared:data"))
+            api(project(":shared:data"))
             implementation(project(":shared:syncer"))
             implementation(project(":shared:platform"))
             implementation(project(":shared:player"))

@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.model.ShortcutItem
 import com.andannn.melodify.model.toDataSource
-import com.andannn.melodify.ui.core.Navigator
+import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.widgets.ExtraPaddingBottom

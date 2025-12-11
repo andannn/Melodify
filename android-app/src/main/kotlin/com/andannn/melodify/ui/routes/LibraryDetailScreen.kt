@@ -26,9 +26,9 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.model.LibraryDataSource
 import com.andannn.melodify.model.browseable
+import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.components.librarydetail.LibraryContentEvent
 import com.andannn.melodify.ui.components.mediaitem.MediaLibraryItem
-import com.andannn.melodify.ui.core.Navigator
 import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.player.Player
