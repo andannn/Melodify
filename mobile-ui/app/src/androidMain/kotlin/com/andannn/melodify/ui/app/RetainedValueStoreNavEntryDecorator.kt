@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.core
+package com.andannn.melodify.ui.app
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

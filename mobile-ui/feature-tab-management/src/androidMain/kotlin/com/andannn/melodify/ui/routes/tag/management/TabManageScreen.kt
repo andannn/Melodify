@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.routes
+package com.andannn.melodify.ui.routes.tag.management
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -23,7 +23,7 @@ import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TabManagementScreen(
+internal fun TabManagementScreen(
     navigator: Navigator,
     modifier: Modifier = Modifier,
     presenter: Presenter<TabManagementScreenState> = rememberTabManagementScreenPresenter(navigator),

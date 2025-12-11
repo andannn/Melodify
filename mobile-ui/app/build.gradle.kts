@@ -1,0 +1,22 @@
+plugins {
+    id("melodify.kmp.library")
+    id("melodify.compose.multiplatform.library")
+}
+
+android {
+    namespace = "com.andannn.melodify.ui.app"
+}
+
+kotlin {
+    sourceSets {
+        androidMain.dependencies {
+            implementation(project(":shared:ui"))
+            implementation(project(":mobile-ui:common"))
+            implementation(project(":mobile-ui:feature-player"))
+            implementation(project(":mobile-ui:feature-home"))
+            implementation(project(":mobile-ui:feature-library"))
+            implementation(project(":mobile-ui:feature-search"))
+            implementation(project(":mobile-ui:feature-tab-management"))
+        }
+    }
+}
