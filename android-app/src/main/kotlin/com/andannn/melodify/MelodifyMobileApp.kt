@@ -26,10 +26,10 @@ import com.andannn.melodify.ui.core.LocalNavigationRequestEventSink
 import com.andannn.melodify.ui.core.NavigationRequestEventSink
 import com.andannn.melodify.ui.core.rememberPopupControllerNavEntryDecorator
 import com.andannn.melodify.ui.core.rememberRetainedValueStoreNavEntryDecorator
-import com.andannn.melodify.ui.routes.SearchScreen
 import com.andannn.melodify.ui.routes.TabManagementScreen
 import com.andannn.melodify.ui.routes.home.homeEntryBuilder
 import com.andannn.melodify.ui.routes.library.libraryEntryBuilder
+import com.andannn.melodify.ui.routes.search.searchEntryBuilder
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -76,12 +76,10 @@ fun MelodifyMobileApp(modifier: Modifier = Modifier) {
                     entryProvider {
                         homeEntryBuilder(navigator)
                         libraryEntryBuilder(navigator)
+                        searchEntryBuilder(navigator)
 
                         entry<Screen.TabManage> {
                             TabManagementScreen(navigator)
-                        }
-                        entry<Screen.Search> {
-                            SearchScreen(navigator = navigator)
                         }
                     },
             )

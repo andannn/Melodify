@@ -61,6 +61,7 @@ dependencies {
     implementation(project(":mobile-ui:feature-player"))
     implementation(project(":mobile-ui:feature-home"))
     implementation(project(":mobile-ui:feature-library"))
+    implementation(project(":mobile-ui:feature-search"))
 
     implementation(libs.androidx.media3.ui.compose)
     implementation(libs.androidx.core.ktx)

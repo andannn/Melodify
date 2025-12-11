@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.routes
+package com.andannn.melodify.ui.routes.search
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -17,7 +17,7 @@ import com.andannn.melodify.ui.core.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.player.Player
 
 @Composable
-fun SearchScreen(
+internal fun SearchScreen(
     navigator: Navigator,
     modifier: Modifier = Modifier,
     presenter: Presenter<SearchScreenState> = rememberSearchScreenPresenter(navigator),

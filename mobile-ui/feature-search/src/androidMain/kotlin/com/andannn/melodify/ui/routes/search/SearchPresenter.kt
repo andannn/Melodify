@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.routes
+package com.andannn.melodify.ui.routes.search
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -14,17 +14,17 @@ import com.andannn.melodify.ui.core.Presenter
 import com.andannn.melodify.ui.core.RetainedPresenter
 
 @Composable
-fun rememberSearchScreenPresenter(navigator: Navigator): Presenter<SearchScreenState> =
+internal fun rememberSearchScreenPresenter(navigator: Navigator): Presenter<SearchScreenState> =
     retain(navigator) {
         SearchScreenPresenter(navigator)
     }
 
 @Stable
-data class SearchScreenState(
+internal data class SearchScreenState(
     val eventSink: (SearchScreenEvent) -> Unit,
 )
 
-sealed interface SearchScreenEvent {
+internal sealed interface SearchScreenEvent {
     data object OnBack : SearchScreenEvent
 
     data class OnNavigateToLibraryContentList(
