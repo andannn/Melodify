@@ -69,7 +69,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":shared:ui"))
     implementation(project(":shared:data"))
     implementation(project(":shared:player"))
     implementation(project(":shared:syncer"))

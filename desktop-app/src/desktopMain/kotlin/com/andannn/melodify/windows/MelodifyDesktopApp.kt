@@ -12,9 +12,9 @@ import androidx.compose.runtime.retain.retainRetainedValuesStoreRegistry
 import androidx.compose.ui.window.ApplicationScope
 import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
 import com.andannn.melodify.shared.compose.popup.PopupController
-import com.andannn.melodify.ui.theme.MelodifyTheme
 import com.andannn.melodify.windows.librarydetail.LibraryDetailWindow
 import com.andannn.melodify.windows.main.MainWindow
 import com.andannn.melodify.windows.preferences.PreferenceWindow

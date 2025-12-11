@@ -13,6 +13,8 @@ import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.components.tab.TabUiState
+import com.andannn.melodify.shared.compose.components.tab.content.TabContentState
+import com.andannn.melodify.shared.compose.components.tab.content.retainTabContentPresenter
 import com.andannn.melodify.shared.compose.components.tab.retainTabUiPresenter
 import com.andannn.melodify.shared.compose.popup.DefaultSortRuleSettingDialog
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
@@ -21,8 +23,6 @@ import com.andannn.melodify.shared.compose.popup.SnackBarMessage
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
-import com.andannn.melodify.ui.components.tabcontent.TabContentState
-import com.andannn.melodify.ui.components.tabcontent.retainTabContentPresenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope

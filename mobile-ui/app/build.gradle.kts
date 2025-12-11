@@ -10,7 +10,6 @@ android {
 kotlin {
     sourceSets {
         androidMain.dependencies {
-            implementation(project(":shared:ui"))
             implementation(project(":mobile-ui:common"))
             implementation(project(":mobile-ui:feature-player"))
             implementation(project(":mobile-ui:feature-home"))

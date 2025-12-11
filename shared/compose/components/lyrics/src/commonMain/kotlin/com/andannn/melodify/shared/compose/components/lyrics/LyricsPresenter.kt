@@ -43,7 +43,7 @@ fun retainLyricPresenter(repository: Repository = LocalRepository.current): Pres
         LyricsPresenter(repository)
     }
 
-private class LyricsPresenter(
+class LyricsPresenter(
     private val repository: Repository,
 ) : RetainedPresenter<LyricState>() {
     private val currentPlayingAudioFlow =

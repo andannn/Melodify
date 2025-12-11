@@ -7,8 +7,8 @@ package com.andannn.melodify.ui.player.internal
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.andannn.melodify.shared.compose.common.Presenter
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
-import com.andannn.melodify.ui.components.playcontrol.rememberPlayerPresenter
+import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
+import com.andannn.melodify.shared.compose.components.play.control.rememberPlayerPresenter
 
 @Composable
 internal fun Player(

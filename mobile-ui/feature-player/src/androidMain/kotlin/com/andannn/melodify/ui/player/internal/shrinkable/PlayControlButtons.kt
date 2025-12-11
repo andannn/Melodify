@@ -23,9 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
+import com.andannn.melodify.shared.compose.common.getIcon
 import com.andannn.melodify.shared.compose.common.widgets.SmpMainIconButton
 import com.andannn.melodify.shared.compose.common.widgets.SmpSubIconButton
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
+import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 
 @Composable
 internal fun PlayControlButtons(
@@ -99,10 +100,3 @@ internal fun PlayControlButtons(
         )
     }
 }
-
-private fun PlayMode.getIcon() =
-    when (this) {
-        PlayMode.REPEAT_ONE -> Icons.Rounded.RepeatOneOn
-        PlayMode.REPEAT_OFF -> Icons.Rounded.Repeat
-        PlayMode.REPEAT_ALL -> Icons.Rounded.RepeatOn
-    }

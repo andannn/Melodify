@@ -20,10 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
+import com.andannn.melodify.shared.compose.components.library.detail.LibraryContentEvent
+import com.andannn.melodify.shared.compose.components.library.detail.retainLibraryDetailPresenter
+import com.andannn.melodify.shared.compose.components.library.item.MediaLibraryItem
+import com.andannn.melodify.shared.compose.popup.ActionDialog
 import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.components.librarydetail.LibraryContentEvent
-import com.andannn.melodify.ui.components.librarydetail.retainLibraryDetailPresenter
-import com.andannn.melodify.ui.components.mediaitem.MediaLibraryItem
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.WindowNavigator
 import com.andannn.melodify.windows.handleMenuEvent

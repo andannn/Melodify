@@ -7,7 +7,7 @@ package com.andannn.melodify.windows
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
-import com.andannn.melodify.model.ShortcutItem
+import com.andannn.melodify.shared.compose.common.model.ShortcutItem
 import com.andannn.melodify.shared.compose.common.model.toDataSource
 import org.jetbrains.compose.resources.stringResource
 

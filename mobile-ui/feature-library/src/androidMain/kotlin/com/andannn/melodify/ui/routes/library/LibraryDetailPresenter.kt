@@ -15,6 +15,8 @@ import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.components.library.detail.LibraryContentState
+import com.andannn.melodify.shared.compose.components.library.detail.retainLibraryDetailPresenter
 import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
 import com.andannn.melodify.shared.compose.popup.OptionDialog
@@ -25,8 +27,6 @@ import com.andannn.melodify.shared.compose.usecase.pinAllMusicToHomeTab
 import com.andannn.melodify.shared.compose.usecase.pinAllVideoToHomeTab
 import com.andannn.melodify.shared.compose.usecase.showLibraryMediaOption
 import com.andannn.melodify.ui.Navigator
-import com.andannn.melodify.ui.components.librarydetail.LibraryContentState
-import com.andannn.melodify.ui.components.librarydetail.retainLibraryDetailPresenter
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 

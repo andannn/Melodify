@@ -27,9 +27,9 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.widgets.DropDownMenuIconButton
 import com.andannn.melodify.shared.compose.components.tab.TabUi
+import com.andannn.melodify.shared.compose.components.tab.content.TabContent
 import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.Navigator
-import com.andannn.melodify.ui.components.tabcontent.TabContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

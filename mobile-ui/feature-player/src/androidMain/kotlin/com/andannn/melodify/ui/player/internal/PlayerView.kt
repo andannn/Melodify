@@ -34,9 +34,9 @@ import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationEventHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import com.andannn.melodify.core.data.model.subTitle
+import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
+import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
 import com.andannn.melodify.ui.LocalScreenController
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiState
 import com.andannn.melodify.ui.player.internal.shrinkable.LandScapeExpandedPlayerLayout
 import com.andannn.melodify.ui.player.internal.shrinkable.LandScapeShrinkPlayerLayout
 import com.andannn.melodify.ui.player.internal.shrinkable.PortraitPlayerLayout

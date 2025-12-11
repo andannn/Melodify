@@ -11,7 +11,7 @@ android {
 kotlin {
     sourceSets {
         androidMain.dependencies {
-            implementation(project(":shared:ui"))
+            implementation(project(":shared:compose:components:search"))
             implementation(project(":mobile-ui:common"))
         }
     }

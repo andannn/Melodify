@@ -4,8 +4,13 @@
  */
 package com.andannn.melodify.shared.compose.common
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Repeat
+import androidx.compose.material.icons.rounded.RepeatOn
+import androidx.compose.material.icons.rounded.RepeatOneOn
 import androidx.compose.runtime.Composable
 import com.andannn.melodify.core.data.model.CustomTab
+import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.data.model.PresetDisplaySetting
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.audio_page_title
@@ -111,4 +116,11 @@ fun PresetDisplaySetting.subTitle(): String =
         PresetDisplaySetting.VideoBucketNameASC -> {
             stringResource(Res.string.sort_sub_bucket_name_asc)
         }
+    }
+
+fun PlayMode.getIcon() =
+    when (this) {
+        PlayMode.REPEAT_ONE -> Icons.Rounded.RepeatOneOn
+        PlayMode.REPEAT_OFF -> Icons.Rounded.Repeat
+        PlayMode.REPEAT_ALL -> Icons.Rounded.RepeatOn
     }

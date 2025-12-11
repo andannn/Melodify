@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.shared.compose.common.widgets.LinerWaveSlider
 import com.andannn.melodify.shared.compose.common.widgets.MarqueeText
-import com.andannn.melodify.ui.components.playcontrol.PlayerUiEvent
+import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.player.internal.util.formatDuration
 import kotlinx.coroutines.delay
 import kotlin.math.roundToLong
