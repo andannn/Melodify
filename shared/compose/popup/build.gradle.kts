@@ -11,7 +11,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":shared:compose:common"))
-            implementation(project(":shared:data"))
+            implementation(project(":shared:domain:api"))
 
             implementation(libs.coil3.compose)
         }

@@ -36,9 +36,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.PlayListItemModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter

@@ -11,7 +11,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":shared:compose:common"))
-            implementation(project(":shared:player"))
             implementation(project(":shared:platform"))
             implementation(project(":shared:compose:components:lyrics"))
             implementation(project(":shared:compose:components:queue"))
@@ -22,6 +21,7 @@ kotlin {
         }
 
         androidMain.dependencies {
+            implementation(project(":shared:player:impl-android"))
             implementation(libs.androidx.media3.ui.compose)
             implementation(libs.androidx.palette)
             implementation(libs.material.color.utilities.android)

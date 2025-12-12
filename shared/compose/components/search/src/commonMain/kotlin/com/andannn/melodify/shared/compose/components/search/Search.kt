@@ -22,9 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.browsable
+import com.andannn.melodify.domain.model.AudioItemModel
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.browsable
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource

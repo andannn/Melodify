@@ -5,9 +5,9 @@
 package com.andannn.melodify
 
 import android.app.Application
-import com.andannn.melodify.core.data.MediaFileDeleteHelper
-import com.andannn.melodify.core.data.di.dataModule
+import com.andannn.melodify.core.data.domainImpl
 import com.andannn.melodify.core.syncer.di.syncerModule
+import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.util.MediaFileDeleteHelperImpl
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -32,7 +32,7 @@ class MelodifyApplication : Application() {
             modules(
                 listOf(
                     extraModel,
-                    dataModule,
+                    domainImpl,
                     syncerModule,
                 ),
             )

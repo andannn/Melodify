@@ -33,7 +33,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationEventHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
-import com.andannn.melodify.core.data.model.subTitle
+import com.andannn.melodify.domain.model.subTitle
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
 import com.andannn.melodify.ui.LocalScreenOrientationController

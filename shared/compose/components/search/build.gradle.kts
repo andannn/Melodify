@@ -12,7 +12,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":shared:compose:usecase"))
             implementation(project(":shared:compose:components:library-item"))
-            implementation(project(":shared:data"))
+            implementation(project(":shared:domain:api"))
         }
     }
 }

@@ -20,9 +20,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.extraUniqueId
-import com.andannn.melodify.core.data.model.subTitle
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.extraUniqueId
+import com.andannn.melodify.domain.model.subTitle
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.util.rememberSwapListState
 import com.andannn.melodify.shared.compose.common.widgets.ActionType

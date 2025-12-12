@@ -6,8 +6,8 @@ package com.andannn.melodify.ui.routes.library
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import com.andannn.melodify.core.data.MediaFileDeleteHelper
-import com.andannn.melodify.core.data.Repository
+import com.andannn.melodify.domain.MediaFileDeleteHelper
+import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink

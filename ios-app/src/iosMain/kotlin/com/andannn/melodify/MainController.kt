@@ -7,12 +7,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.ComposeUIViewController
-import com.andannn.melodify.core.syncer.MPMediaScanner
 import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.core.syncer.MusicLibraryPermissionHandler
 import com.andannn.melodify.ui.LocalScreenOrientationController
 import com.andannn.melodify.ui.app.MelodifyMobileApp
-import com.andannn.melodify.util.orientation.ScreenOrientationController
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.collect

@@ -16,15 +16,15 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
 import androidx.media3.ui.compose.state.rememberPresentationState
-import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.core.player.MediaBrowserManager
+import com.andannn.melodify.domain.PlayerStateMonitoryRepository
+import com.andannn.melodify.domain.model.AudioItemModel
+import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.widgets.CircleBorderImage
 import org.koin.mp.KoinPlatform.getKoin
 
-@OptIn(UnstableApi::class)
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 internal actual fun AVPlayerView(modifier: Modifier) {
     val playerStateMonitoryRepository: PlayerStateMonitoryRepository = LocalRepository.current

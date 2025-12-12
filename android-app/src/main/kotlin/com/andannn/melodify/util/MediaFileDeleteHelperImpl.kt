@@ -12,11 +12,11 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.core.net.toUri
-import com.andannn.melodify.core.data.MediaContentRepository
-import com.andannn.melodify.core.data.MediaFileDeleteHelper
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.VideoItemModel
+import com.andannn.melodify.domain.MediaContentRepository
+import com.andannn.melodify.domain.MediaFileDeleteHelper
+import com.andannn.melodify.domain.model.AudioItemModel
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.VideoItemModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.sync.Mutex

@@ -4,20 +4,20 @@
  */
 package com.andannn.melodify.shared.compose.usecase
 
-import com.andannn.melodify.core.data.MediaFileDeleteHelper
-import com.andannn.melodify.core.data.PlayListRepository
-import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.SleepTimerRepository
-import com.andannn.melodify.core.data.UserPreferenceRepository
-import com.andannn.melodify.core.data.model.AlbumItemModel
-import com.andannn.melodify.core.data.model.ArtistItemModel
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.model.GenreItemModel
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.core.data.model.TabKind
-import com.andannn.melodify.core.data.model.VideoItemModel
+import com.andannn.melodify.domain.MediaFileDeleteHelper
+import com.andannn.melodify.domain.PlayListRepository
+import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.SleepTimerRepository
+import com.andannn.melodify.domain.UserPreferenceRepository
+import com.andannn.melodify.domain.model.AlbumItemModel
+import com.andannn.melodify.domain.model.ArtistItemModel
+import com.andannn.melodify.domain.model.AudioItemModel
+import com.andannn.melodify.domain.model.CustomTab
+import com.andannn.melodify.domain.model.GenreItemModel
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.PlayListItemModel
+import com.andannn.melodify.domain.model.TabKind
+import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.popup.AddMusicsToPlayListDialog
 import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.NewPlayListDialog

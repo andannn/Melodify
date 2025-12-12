@@ -21,8 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Size
 import androidx.core.app.PictureInPictureModeChangedInfo
 import androidx.core.util.Consumer
-import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
-import com.andannn.melodify.core.data.model.VideoItemModel
+import com.andannn.melodify.domain.PlayerStateMonitoryRepository
+import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay

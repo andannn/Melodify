@@ -4,8 +4,8 @@
  */
 package com.andannn.melodify.shared.compose.popup
 
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.PlayListItemModel
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.PlayListItemModel
 
 sealed interface DialogAction {
     data object None : DialogAction

@@ -10,10 +10,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.andannn.melodify.core.data.LyricRepository
-import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.LyricModel
+import com.andannn.melodify.domain.LyricRepository
+import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.AudioItemModel
+import com.andannn.melodify.domain.model.LyricModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter

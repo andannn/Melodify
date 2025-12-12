@@ -4,13 +4,13 @@
  */
 package com.andannn.melodify.shared.compose.common.model
 
-import com.andannn.melodify.core.data.model.AlbumItemModel
-import com.andannn.melodify.core.data.model.ArtistItemModel
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.GenreItemModel
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.core.data.model.VideoItemModel
+import com.andannn.melodify.domain.model.AlbumItemModel
+import com.andannn.melodify.domain.model.ArtistItemModel
+import com.andannn.melodify.domain.model.AudioItemModel
+import com.andannn.melodify.domain.model.GenreItemModel
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.PlayListItemModel
+import com.andannn.melodify.domain.model.VideoItemModel
 import kotlinx.serialization.Serializable
 
 @Serializable

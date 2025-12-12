@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Repeat
-import androidx.compose.material.icons.rounded.RepeatOn
-import androidx.compose.material.icons.rounded.RepeatOneOn
 import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material.icons.rounded.ShuffleOn
 import androidx.compose.material.icons.rounded.SkipNext
@@ -22,7 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.PlayMode
+import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.common.getIcon
 import com.andannn.melodify.shared.compose.common.widgets.SmpMainIconButton
 import com.andannn.melodify.shared.compose.common.widgets.SmpSubIconButton

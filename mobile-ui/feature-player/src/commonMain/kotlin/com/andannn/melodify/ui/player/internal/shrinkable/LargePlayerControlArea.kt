@@ -20,7 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.PlayMode
+import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.common.widgets.LinerWaveSlider
 import com.andannn.melodify.shared.compose.common.widgets.MarqueeText
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent

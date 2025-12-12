@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.shared.compose.components.library.item.MediaLibraryItem
 import com.andannn.melodify.shared.compose.components.search.SearchState
 

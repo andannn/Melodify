@@ -32,8 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.PlayMode
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.player.internal.AVPlayerView
 import com.andannn.melodify.ui.player.internal.MinImageSize

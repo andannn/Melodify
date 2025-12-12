@@ -39,7 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.PlayMode
+import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.common.widgets.LinerWaveSlider
 import com.andannn.melodify.shared.compose.common.widgets.MarqueeText
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent

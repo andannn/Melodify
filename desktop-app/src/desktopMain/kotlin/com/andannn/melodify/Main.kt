@@ -5,9 +5,9 @@
 package com.andannn.melodify
 
 import androidx.compose.ui.window.application
-import com.andannn.melodify.core.data.MediaFileDeleteHelper
-import com.andannn.melodify.core.data.di.dataModule
+import com.andannn.melodify.core.data.domainImpl
 import com.andannn.melodify.core.syncer.di.syncerModule
+import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.windows.MelodifyDeskTopApp
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -23,7 +23,7 @@ fun main() =
         startKoin {
             modules(
                 listOf(
-                    dataModule,
+                    domainImpl,
                     syncerModule,
                     extraModel,
                 ),

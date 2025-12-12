@@ -28,10 +28,10 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.andannn.melodify.core.data.MediaFileDeleteHelper
-import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.core.syncer.SyncWorkHelper
+import com.andannn.melodify.domain.MediaFileDeleteHelper
+import com.andannn.melodify.domain.UserPreferenceRepository
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.ui.LocalScreenOrientationController
 import com.andannn.melodify.ui.app.MelodifyMobileApp

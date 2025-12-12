@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.andannn.melodify.core.data.model.PlayMode
+import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.KeepScreenOnEffect
 import com.andannn.melodify.ui.player.internal.AVPlayerView

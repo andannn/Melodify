@@ -1,8 +1,8 @@
 package com.andannn.melodify
 
-import com.andannn.melodify.core.data.MediaFileDeleteHelper
-import com.andannn.melodify.core.data.di.dataModule
+import com.andannn.melodify.core.data.domainImpl
 import com.andannn.melodify.core.syncer.di.syncerModule
+import com.andannn.melodify.domain.MediaFileDeleteHelper
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -12,7 +12,7 @@ import org.koin.dsl.module
 fun startKoinWithPlatformModule(platformModuleProvider: () -> Module) {
     startKoin {
         modules(
-            dataModule,
+            domainImpl,
             syncerModule,
             extraModel,
             platformModuleProvider(),

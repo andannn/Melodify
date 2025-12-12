@@ -69,10 +69,10 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":shared:data"))
-    implementation(project(":shared:player"))
-    implementation(project(":shared:syncer"))
+    implementation(project(":shared:domain:impl"))
+    implementation(project(":shared:syncer:impl"))
     implementation(project(":shared:platform"))
+    implementation(project(":shared:player:impl-android"))
     implementation(project(":mobile-ui:common"))
     implementation(project(":mobile-ui:app"))
     implementation(project(":mobile-ui:feature-player"))

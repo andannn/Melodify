@@ -4,12 +4,12 @@
  */
 package com.andannn.melodify.shared.compose.usecase
 
-import com.andannn.melodify.core.data.MediaFileDeleteHelper
-import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.PlayListItemModel
-import com.andannn.melodify.core.data.model.VideoItemModel
+import com.andannn.melodify.domain.MediaFileDeleteHelper
+import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.AudioItemModel
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.PlayListItemModel
+import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.common.NavigationRequest
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
