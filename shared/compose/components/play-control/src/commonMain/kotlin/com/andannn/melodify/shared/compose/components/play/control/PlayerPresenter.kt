@@ -147,7 +147,7 @@ private class PlayerPresenter(
 
     private val durationFlow =
         repository
-            .observeCurrentPositionMs()
+            .observeCurrentDurationMs()
             .stateIn(
                 retainedScope,
                 started = SharingStarted.WhileSubscribed(),

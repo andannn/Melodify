@@ -18,7 +18,7 @@ class PlayerStateMonitoryRepositoryImpl(
 ) : PlayerStateMonitoryRepository {
     override fun getCurrentPositionMs(): Long = playerWrapper.currentPositionMs
 
-    override fun observeCurrentPositionMs() =
+    override fun observeCurrentDurationMs() =
         playerWrapper
             .observePlayerState()
             .map { playerWrapper.currentDurationMs }

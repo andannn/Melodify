@@ -93,7 +93,7 @@ class FakeMediaControllerRepository :
 
     override fun getCurrentPositionMs(): Long = 0
 
-    override fun observeCurrentPositionMs(): Flow<Long> = MutableStateFlow(0)
+    override fun observeCurrentDurationMs(): Flow<Long> = MutableStateFlow(0)
 
     override fun getPlayingIndexInQueue(): Int = currentIndexFlow.value
 

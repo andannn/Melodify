@@ -26,10 +26,10 @@ internal class PlayerStateMonitoryRepositoryImpl(
 ) : PlayerStateMonitoryRepository {
     override fun getCurrentPositionMs(): Long = queuePlayer.currentPositionMs
 
-    override fun observeCurrentPositionMs() =
+    override fun observeCurrentDurationMs() =
         queuePlayer
             .observeProgressFactor()
-            .map { queuePlayer.currentPositionMs }
+            .map { queuePlayer.currentDurationMs }
             .distinctUntilChanged()
 
     override fun getPlayingIndexInQueue(): Int = queuePlayer.playingIndexInQueue
@@ -55,7 +55,7 @@ internal class PlayerStateMonitoryRepositoryImpl(
             .observePlayListQueue()
             .mapLatest { urls ->
                 val idToEntityMap =
-                    libraryDao.getMediaByMediaIds(urls).associateBy { it.id.toString() }
+                    libraryDao.getMediaByMediaSourceUrl(urls).associateBy { it.sourceUri.toString() }
                 urls.mapNotNull { idToEntityMap[it]?.toAppItem() }
             }
 

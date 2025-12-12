@@ -123,7 +123,7 @@ class AVPlayerWrapperImpl: NSObject, AVPlayerWrapper {
             
             self.currentPositionMs = posMs
             self.currentDurationMs = durMs
-            
+
             // 回调给 Kotlin
             if let progressCallback = self.onProgress {
                 // KotlinLong 的构造方法可能是 init(value:) 或 init(_:)

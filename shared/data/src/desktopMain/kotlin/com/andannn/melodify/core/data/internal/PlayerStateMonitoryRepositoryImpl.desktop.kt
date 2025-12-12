@@ -27,7 +27,7 @@ internal class PlayerStateMonitoryRepositoryImpl(
 ) : PlayerStateMonitoryRepository {
     override fun getCurrentPositionMs(): Long = vlcPlayer.currentPositionMs
 
-    override fun observeCurrentPositionMs() =
+    override fun observeCurrentDurationMs() =
         vlcPlayer
             .observeProgressFactor()
             .map { vlcPlayer.currentPositionMs }

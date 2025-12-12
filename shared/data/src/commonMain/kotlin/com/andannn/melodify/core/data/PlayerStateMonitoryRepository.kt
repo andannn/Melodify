@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface PlayerStateMonitoryRepository {
     fun getCurrentPositionMs(): Long
 
-    fun observeCurrentPositionMs(): Flow<Long>
+    fun observeCurrentDurationMs(): Flow<Long>
 
     fun getPlayingIndexInQueue(): Int
 
