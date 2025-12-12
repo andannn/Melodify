@@ -10,4 +10,8 @@ data class MediaDataModel(
     val artistData: List<ArtistData>,
     val genreData: List<GenreData>,
     val videoData: List<VideoData> = emptyList(),
-)
+) {
+    companion object {
+        fun emptyModel() = MediaDataModel(emptyList(), emptyList(), emptyList(), emptyList())
+    }
+}

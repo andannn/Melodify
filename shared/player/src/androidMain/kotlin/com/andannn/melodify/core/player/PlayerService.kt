@@ -23,7 +23,7 @@ private const val TAG = "PlayerService"
 class PlayerService :
     MediaSessionService(),
     CoroutineScope {
-    private val playerWrapper: PlayerWrapper by inject()
+    private val playerWrapper: ExoPlayerWrapper by inject()
 
     private val sleepCounterController: SleepTimerController by inject()
 

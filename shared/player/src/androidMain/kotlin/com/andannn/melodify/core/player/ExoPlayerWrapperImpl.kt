@@ -10,7 +10,6 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.getAndUpdate
@@ -18,7 +17,7 @@ import kotlinx.coroutines.flow.onStart
 
 private const val TAG = "PlayerWrapper"
 
-internal class PlayerWrapperImpl : PlayerWrapper {
+internal class ExoPlayerWrapperImpl : ExoPlayerWrapper {
     private var player: Player? = null
 
     private val playerStateFlow = MutableStateFlow<PlayerState>(PlayerState.Idle)

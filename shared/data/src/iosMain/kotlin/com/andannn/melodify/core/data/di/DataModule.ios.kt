@@ -7,11 +7,18 @@ package com.andannn.melodify.core.data.di
 import com.andannn.melodify.core.data.MediaControllerRepository
 import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
 import com.andannn.melodify.core.data.internal.FakeMediaControllerRepository
+import com.andannn.melodify.core.data.internal.MediaControllerRepositoryImpl
+import com.andannn.melodify.core.data.internal.PlayerStateMonitoryRepositoryImpl
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 internal actual val platformDataModule: org.koin.core.module.Module =
     module {
-        val fakeRepo = FakeMediaControllerRepository()
-        single<MediaControllerRepository> { fakeRepo }
-        single<PlayerStateMonitoryRepository> { fakeRepo }
+        singleOf(::MediaControllerRepositoryImpl).bind(
+            MediaControllerRepository::class,
+        )
+        singleOf(::PlayerStateMonitoryRepositoryImpl).bind(
+            PlayerStateMonitoryRepository::class,
+        )
     }

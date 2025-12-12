@@ -4,5 +4,7 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+    <string>アプリで音楽ライブラリの楽曲を再生するために使用します。</string>
 </dict>
 </plist>

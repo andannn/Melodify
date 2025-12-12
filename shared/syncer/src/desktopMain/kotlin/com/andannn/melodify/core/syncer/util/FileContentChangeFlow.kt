@@ -32,7 +32,7 @@ private const val TAG = "FileContentChangeFlow"
  * @param dictionaries the directory to watch.
  * @return the flow of file content change.
  */
-fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType> {
+internal fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType> {
     Napier.d(tag = TAG) { "getDirectoryChangeFlow: $dictionaries" }
     return callbackFlow {
         withContext(Dispatchers.IO) {

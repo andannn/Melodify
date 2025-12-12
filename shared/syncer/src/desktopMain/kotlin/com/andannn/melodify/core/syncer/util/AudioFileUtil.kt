@@ -9,11 +9,11 @@ import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 
-fun isAudioFile(fileName: String): Boolean = getMineType(fileName)?.split("/")?.firstOrNull() == "audio"
+internal fun isAudioFile(fileName: String): Boolean = getMineType(fileName)?.split("/")?.firstOrNull() == "audio"
 
-fun isImageFile(fileName: String): Boolean = getMineType(fileName)?.split("/")?.firstOrNull() == "image"
+internal fun isImageFile(fileName: String): Boolean = getMineType(fileName)?.split("/")?.firstOrNull() == "image"
 
-fun getMineType(fileName: String): String? =
+internal fun getMineType(fileName: String): String? =
     try {
         Files.probeContentType(File(fileName).toPath())
     } catch (e: IOException) {

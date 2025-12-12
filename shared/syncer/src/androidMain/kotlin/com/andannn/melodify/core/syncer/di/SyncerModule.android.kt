@@ -5,9 +5,7 @@
 package com.andannn.melodify.core.syncer.di
 
 import com.andannn.melodify.core.syncer.MediaLibraryScanner
-import com.andannn.melodify.core.syncer.MediaLibraryScannerImpl
-import com.andannn.melodify.core.syncer.MediaLibrarySyncer
-import com.andannn.melodify.core.syncer.MediaLibrarySyncerWrapper
+import com.andannn.melodify.core.syncer.MediaStoreScanner
 import com.andannn.melodify.core.syncer.ReSyncMediaStoreHandlerHandlerImpl
 import com.andannn.melodify.core.syncer.SyncMediaStoreHandler
 import org.koin.core.module.Module
@@ -15,9 +13,8 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-actual val syncerModule: Module =
+actual val platformSyncerModule: Module =
     module {
-        singleOf(::MediaLibrarySyncerWrapper).bind(MediaLibrarySyncer::class)
-        singleOf(::MediaLibraryScannerImpl).bind(MediaLibraryScanner::class)
+        singleOf(::MediaStoreScanner).bind(MediaLibraryScanner::class)
         singleOf(::ReSyncMediaStoreHandlerHandlerImpl).bind(SyncMediaStoreHandler::class)
     }

@@ -7,10 +7,7 @@ package com.andannn.melodify.core.syncer
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.datastore.UserSettingPreferences
-import com.andannn.melodify.core.syncer.model.AlbumData
-import com.andannn.melodify.core.syncer.model.ArtistData
 import com.andannn.melodify.core.syncer.model.AudioData
-import com.andannn.melodify.core.syncer.model.GenreData
 import com.andannn.melodify.core.syncer.model.MediaDataModel
 import com.andannn.melodify.core.syncer.util.extractTagFromAudioFile
 import com.andannn.melodify.core.syncer.util.generateHashKey
@@ -29,7 +26,7 @@ import kotlin.io.path.toPath
 
 private const val TAG = "MediaLibraryScanner"
 
-class MediaLibraryScannerImpl(
+internal class LocalMediaLibraryScanner(
     private val mediaLibraryDao: MediaLibraryDao,
     private val userSettingPreferences: UserSettingPreferences,
 ) : MediaLibraryScanner {
@@ -104,63 +101,6 @@ private fun CoroutineScope.asyncTaskForExtractTag(filePath: Path) =
         Napier.d(tag = TAG) { "extract tag from audio file X: $result, ${Thread.currentThread().name}" }
         result
     }
-
-private fun List<AudioData>.mapToMediaData(): MediaDataModel {
-    val audioData = this
-    val albumMap = audioData.groupBy { it.album }
-
-    val albumDataList =
-        albumMap.map { (album, audioDataList) ->
-            val title = album ?: ""
-            AlbumData(
-                albumId = title.hashCode().toLong(),
-                title = title,
-                trackCount = audioDataList.size,
-                coverUri = audioDataList.firstOrNull()?.cover,
-            )
-        }
-
-    val artistMap = audioData.groupBy { it.artist }
-
-    val artistDataList =
-        artistMap.map { (artist, audioDataList) ->
-            val title = artist ?: "Unknown Artist"
-            ArtistData(
-                artistId = title.hashCode().toLong(),
-                name = title,
-                trackCount = audioDataList.size,
-                artistCoverUri = audioDataList.firstOrNull()?.cover,
-            )
-        }
-
-    val genreMap = audioData.groupBy { it.genre }
-
-    val genreDataList =
-        genreMap.map { (genre, _) ->
-            val title = genre ?: "Unknown Genre"
-
-            GenreData(
-                genreId = title.hashCode().toLong(),
-                name = title,
-            )
-        }
-
-    val audioDataListWitId =
-        audioData.map { audio ->
-            audio.copy(
-                albumId = albumDataList.firstOrNull { it.title == audio.album }?.albumId ?: -1,
-                artistId = artistDataList.firstOrNull { it.name == audio.artist }?.artistId ?: -1,
-                genreId = genreDataList.firstOrNull { it.name == audio.genre }?.genreId ?: -1,
-            )
-        }
-
-    return MediaDataModel(
-        audioData = audioDataListWitId,
-        albumData = albumDataList,
-        artistData = artistDataList,
-        genreData = genreDataList,
-    )
-}
 
 private fun MediaEntity.toAudioData() =
     AudioData(

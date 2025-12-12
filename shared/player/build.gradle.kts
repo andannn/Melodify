@@ -9,6 +9,7 @@ android {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            api(project(":shared:player-api"))
         }
 
         androidMain.dependencies {

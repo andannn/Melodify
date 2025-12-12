@@ -7,13 +7,13 @@ package com.andannn.melodify.core.syncer
 import android.net.Uri
 import android.provider.MediaStore
 
-fun Uri.isAudioUri(): Boolean =
+internal fun Uri.isAudioUri(): Boolean =
     this.toString().startsWith(
         MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
             .toString(),
     )
 
-fun Uri.isVideoUri(): Boolean =
+internal fun Uri.isVideoUri(): Boolean =
     this.toString().startsWith(
         MediaStore.Video.Media.EXTERNAL_CONTENT_URI
             .toString(),

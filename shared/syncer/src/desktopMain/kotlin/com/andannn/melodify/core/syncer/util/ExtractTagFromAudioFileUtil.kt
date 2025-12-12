@@ -19,7 +19,7 @@ import kotlin.io.path.nameWithoutExtension
 /**
  * Extract tag from audio file
  */
-fun extractTagFromAudioFile(filePath: Path): AudioData? {
+internal fun extractTagFromAudioFile(filePath: Path): AudioData? {
     return try {
         val file = File(filePath.toString())
         val audioFile: AudioFile

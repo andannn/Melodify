@@ -20,7 +20,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 
-class MediaLibraryScannerImpl(
+internal class MediaStoreScanner(
     private val app: Application,
 ) : MediaLibraryScanner {
     override suspend fun scanAllMedia(): MediaDataModel =

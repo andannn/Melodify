@@ -9,7 +9,7 @@ import androidx.media3.common.Player
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-interface PlayerWrapper {
+interface ExoPlayerWrapper {
     fun setUpPlayer(player: Player)
 
     fun release()

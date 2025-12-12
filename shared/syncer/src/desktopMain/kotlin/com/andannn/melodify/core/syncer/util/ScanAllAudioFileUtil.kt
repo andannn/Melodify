@@ -13,7 +13,7 @@ import java.nio.file.Paths
  *
  * @param pathSet the library path set.
  */
-fun scanAllAudioFile(pathSet: Set<String>): List<Path> =
+internal fun scanAllAudioFile(pathSet: Set<String>): List<Path> =
     pathSet.fold(emptyList()) { acc, libraryPath ->
         val data =
             Files

@@ -9,6 +9,7 @@ android {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":shared:syncer-api"))
             implementation(project(":shared:database"))
             implementation(project(":shared:datastore"))
         }
