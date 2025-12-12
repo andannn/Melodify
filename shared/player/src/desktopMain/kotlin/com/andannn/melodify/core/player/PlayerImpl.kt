@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
@@ -23,7 +24,7 @@ import java.util.concurrent.Executors
 private const val TAG = "PlayerImpl"
 
 internal class PlayerImpl :
-    VlcPlayer,
+    AvPlayerQueuePlayer,
     CoroutineScope {
     private val nativeApiDispatcher = Executors.newFixedThreadPool(1).asCoroutineDispatcher()
     override val coroutineContext = nativeApiDispatcher + Job()
@@ -118,7 +119,9 @@ internal class PlayerImpl :
                         -> old
 
                         is PlayerState.Buffering -> PlayerState.Paused(currentPosition)
+
                         is PlayerState.Paused -> PlayerState.Paused(currentPosition)
+
                         is PlayerState.Playing -> PlayerState.Playing(currentPosition)
                     }
                 }
@@ -263,7 +266,7 @@ internal class PlayerImpl :
 
     override fun observePlayListQueue() = playListFlow
 
-    override fun observePlayingMediaMrl() = playingMrlFlow
+    override fun observePlayingMedia() = playingMrlFlow
 
     override fun observeProgressFactor() = currentPositionFlow
 

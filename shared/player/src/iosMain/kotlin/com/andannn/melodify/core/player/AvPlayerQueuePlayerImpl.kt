@@ -1,8 +1,5 @@
-package com.andannn.melodify.core.player.di
+package com.andannn.melodify.core.player
 
-import com.andannn.melodify.core.player.AVPlayerWrapper
-import com.andannn.melodify.core.player.AvPlayerQueuePlayer
-import com.andannn.melodify.core.player.PlayerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow

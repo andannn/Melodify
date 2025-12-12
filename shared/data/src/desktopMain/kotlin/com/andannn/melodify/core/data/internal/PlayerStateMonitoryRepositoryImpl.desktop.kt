@@ -9,7 +9,6 @@ import com.andannn.melodify.core.data.model.AudioItemModel
 import com.andannn.melodify.core.data.model.MediaItemModel
 import com.andannn.melodify.core.data.model.PlayMode
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
-import com.andannn.melodify.core.player.PlayerState
 import com.andannn.melodify.core.player.VlcPlayer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

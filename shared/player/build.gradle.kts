@@ -9,7 +9,7 @@ android {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":shared:player-api"))
+            api(project(":shared:player-common"))
         }
 
         androidMain.dependencies {
@@ -23,6 +23,12 @@ kotlin {
 
         desktopMain.dependencies {
             implementation(libs.vlcj)
+            api(project(":shared:player-none-android-api"))
+        }
+
+        iosMain.dependencies {
+            implementation(project(":shared:player-ios"))
+            api(project(":shared:player-none-android-api"))
         }
     }
 }

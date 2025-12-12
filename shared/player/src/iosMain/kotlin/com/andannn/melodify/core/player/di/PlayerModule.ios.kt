@@ -5,6 +5,7 @@
 package com.andannn.melodify.core.player.di
 
 import com.andannn.melodify.core.player.AvPlayerQueuePlayer
+import com.andannn.melodify.core.player.AvPlayerQueuePlayerImpl
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
