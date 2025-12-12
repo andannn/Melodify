@@ -1,5 +1,5 @@
 [versions]
-firebaseBom = "34.6.0"
+firebaseBom = "34.7.0"
 jaudiotagger = "2.0.3"
 kotlinxCollectionsImmutable = "0.4.0"
 ksp = "2.3.3"
