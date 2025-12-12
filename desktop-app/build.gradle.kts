@@ -12,8 +12,8 @@ kotlin {
     sourceSets {
         val desktopMain = getByName("desktopMain")
         desktopMain.dependencies {
-            implementation(project(":shared:data"))
-            implementation(project(":shared:syncer"))
+            implementation(project(":shared:domain:impl"))
+            implementation(project(":shared:syncer:impl"))
             implementation(project(":shared:platform"))
 
             implementation(project(":shared:compose:common"))

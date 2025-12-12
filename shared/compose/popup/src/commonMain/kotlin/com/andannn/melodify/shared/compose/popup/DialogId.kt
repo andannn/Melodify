@@ -5,8 +5,8 @@
 package com.andannn.melodify.shared.compose.popup
 
 import androidx.compose.runtime.Composable
-import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.domain.model.CustomTab
+import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.shared.compose.popup.internal.content.AddLibraryPathDialog
 import com.andannn.melodify.shared.compose.popup.internal.content.AddToPlayListDialogContent
 import com.andannn.melodify.shared.compose.popup.internal.content.ChangeSortRuleDialogContent

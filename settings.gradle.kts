@@ -14,10 +14,13 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Melodify"
-include(":desktop-app")
 
 include(":android-app")
 include(":android-benchmark")
+
+include(":ios-app")
+
+include(":desktop-app")
 
 include(":mobile-ui:common")
 include(":mobile-ui:app")
@@ -41,11 +44,27 @@ include(":shared:compose:components:play-control")
 include(":shared:compose:components:tab-content")
 include(":shared:compose:components:tab-management")
 
-include(":shared:data")
+include(":shared:domain:api")
+include(":shared:domain:shared")
+include(":shared:domain:impl")
+include(":shared:domain:impl-player-none-android")
+include(":shared:domain:impl-player-android")
 
-include(":shared:player")
+include(":shared:player:common")
+include(":shared:player:sleep-timer")
+include(":shared:player:platform-player-ios")
+include(":shared:player:impl-none-android")
+include(":shared:player:impl-android")
+
 include(":shared:datastore")
 include(":shared:network")
 include(":shared:database")
-include(":shared:syncer")
+
+include(":shared:syncer:impl")
+include(":shared:syncer:scanner")
+include(":shared:syncer:model")
+include(":shared:syncer:platform-ios")
+
 include(":shared:platform")
+include(":shared:util:orientation")
+include(":shared:util:immersive")

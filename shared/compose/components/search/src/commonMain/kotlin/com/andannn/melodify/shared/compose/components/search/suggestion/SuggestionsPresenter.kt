@@ -9,8 +9,8 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter

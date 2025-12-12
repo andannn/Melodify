@@ -28,18 +28,18 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.andannn.melodify.core.data.MediaFileDeleteHelper
-import com.andannn.melodify.core.data.UserPreferenceRepository
 import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.core.syncer.SyncWorkHelper
+import com.andannn.melodify.domain.MediaFileDeleteHelper
+import com.andannn.melodify.domain.UserPreferenceRepository
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
-import com.andannn.melodify.ui.LocalScreenController
-import com.andannn.melodify.ui.ScreenOrientationController
+import com.andannn.melodify.ui.LocalScreenOrientationController
 import com.andannn.melodify.ui.app.MelodifyMobileApp
 import com.andannn.melodify.ui.player.PipPlayer
 import com.andannn.melodify.util.ConnectFailedAlertDialog
 import com.andannn.melodify.util.MediaFileDeleteHelperImpl
 import com.andannn.melodify.util.PipParamUpdateEffect
+import com.andannn.melodify.util.orientation.ScreenOrientationController
 import com.andannn.melodify.util.rememberIsInPipMode
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
@@ -155,7 +155,7 @@ class MainActivity : ComponentActivity() {
                     PipPlayer(modifier = Modifier.fillMaxSize())
                 } else {
                     CompositionLocalProvider(
-                        LocalScreenController provides ScreenOrientationController(this),
+                        LocalScreenOrientationController provides ScreenOrientationController(this),
                     ) {
                         when (uiState) {
                             is MainUiState.Error -> {

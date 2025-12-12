@@ -9,9 +9,9 @@ import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.RepeatOn
 import androidx.compose.material.icons.rounded.RepeatOneOn
 import androidx.compose.runtime.Composable
-import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.model.PlayMode
-import com.andannn.melodify.core.data.model.PresetDisplaySetting
+import com.andannn.melodify.domain.model.CustomTab
+import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.PresetDisplaySetting
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.audio_page_title
 import melodify.shared.compose.resource.generated.resources.number_hours

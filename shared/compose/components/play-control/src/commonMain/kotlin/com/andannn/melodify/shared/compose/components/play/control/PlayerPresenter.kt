@@ -9,11 +9,11 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.PlayMode
-import com.andannn.melodify.core.data.model.next
+import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.AudioItemModel
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.next
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
@@ -147,7 +147,7 @@ private class PlayerPresenter(
 
     private val durationFlow =
         repository
-            .observeCurrentPositionMs()
+            .observeCurrentDurationMs()
             .stateIn(
                 retainedScope,
                 started = SharingStarted.WhileSubscribed(),

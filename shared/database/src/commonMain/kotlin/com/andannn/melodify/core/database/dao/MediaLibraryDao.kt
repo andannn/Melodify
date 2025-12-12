@@ -354,6 +354,9 @@ interface MediaLibraryDao {
     @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ID} IN (:mediaIds)")
     suspend fun getMediaByMediaIds(mediaIds: List<String>): List<MediaEntity>
 
+    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.SOURCE_URI} IN (:sources)")
+    suspend fun getMediaByMediaSourceUrl(sources: List<String>): List<MediaEntity>
+
     @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ID} IN (:mediaIds)")
     fun getMediaByMediaIdsFlow(mediaIds: List<String>): Flow<List<MediaEntity>>
 

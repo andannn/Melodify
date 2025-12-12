@@ -5,11 +5,11 @@
 package com.andannn.melodify.shared.compose.usecase
 
 import androidx.paging.PagingData
-import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.model.CustomTab
-import com.andannn.melodify.core.data.model.GroupKey
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.SortOption
+import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.CustomTab
+import com.andannn.melodify.domain.model.GroupKey
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.SortOption
 import kotlinx.coroutines.flow.Flow
 
 context(repository: Repository)

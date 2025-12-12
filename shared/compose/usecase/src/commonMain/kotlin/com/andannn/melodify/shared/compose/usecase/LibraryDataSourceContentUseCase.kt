@@ -4,11 +4,11 @@
  */
 package com.andannn.melodify.shared.compose.usecase
 
-import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.model.DisplaySetting
-import com.andannn.melodify.core.data.model.MediaItemModel
-import com.andannn.melodify.core.data.model.SortOption
-import com.andannn.melodify.core.data.model.sortOptions
+import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.DisplaySetting
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.SortOption
+import com.andannn.melodify.domain.model.sortOptions
 import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf

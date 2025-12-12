@@ -34,9 +34,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.core.data.model.PlayMode
-import com.andannn.melodify.core.data.model.subTitle
 import com.andannn.melodify.core.platform.formatTime
+import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.subTitle
 import com.andannn.melodify.shared.compose.common.getIcon
 import com.andannn.melodify.shared.compose.common.widgets.CircleBorderImage
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent

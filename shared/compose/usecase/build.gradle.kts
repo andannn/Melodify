@@ -10,11 +10,9 @@ android {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":shared:data"))
+            api(project(":shared:domain:api"))
             api(project(":shared:compose:common"))
             api(project(":shared:compose:popup"))
-
-            implementation(libs.androidx.paging.common)
         }
     }
 }

@@ -10,7 +10,7 @@ android {
 
 kotlin {
     sourceSets {
-        androidMain.dependencies {
+        commonMain.dependencies {
             implementation(project(":shared:compose:components:tab-management"))
             implementation(project(":mobile-ui:common"))
         }

@@ -4,8 +4,8 @@
  */
 package com.andannn.melodify.shared.compose.usecase
 
-import com.andannn.melodify.core.data.Repository
-import com.andannn.melodify.core.data.model.MediaItemModel
+import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.PopupController
 import com.andannn.melodify.shared.compose.popup.internal.content.ChangePlayListAlert

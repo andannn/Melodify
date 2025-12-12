@@ -4,7 +4,6 @@
  */
 package com.andannn.melodify.ui.player.internal
 
-import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -17,21 +16,19 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
 import androidx.media3.ui.compose.state.rememberPresentationState
-import com.andannn.melodify.core.data.PlayerStateMonitoryRepository
-import com.andannn.melodify.core.data.model.AudioItemModel
-import com.andannn.melodify.core.data.model.VideoItemModel
 import com.andannn.melodify.core.player.MediaBrowserManager
+import com.andannn.melodify.domain.PlayerStateMonitoryRepository
+import com.andannn.melodify.domain.model.AudioItemModel
+import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.widgets.CircleBorderImage
 import org.koin.mp.KoinPlatform.getKoin
 
-@OptIn(UnstableApi::class)
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-internal fun AVPlayerView(
-    modifier: Modifier = Modifier,
-    mediaBrowserManager: MediaBrowserManager = getKoin().get(),
-    playerStateMonitoryRepository: PlayerStateMonitoryRepository = LocalRepository.current,
-) {
+internal actual fun AVPlayerView(modifier: Modifier) {
+    val playerStateMonitoryRepository: PlayerStateMonitoryRepository = LocalRepository.current
+    val mediaBrowserManager: MediaBrowserManager = getKoin().get()
     val playingMedia by playerStateMonitoryRepository
         .getPlayingMediaStateFlow()
         .collectAsStateWithLifecycle(null)
@@ -54,7 +51,7 @@ internal fun AVPlayerView(
                     }
                 val presentationState = rememberPresentationState(player)
                 val scaledModifier =
-                    Modifier.Companion.resizeWithContentScale(ContentScale.Fit, presentationState.videoSizeDp)
+                    Modifier.resizeWithContentScale(ContentScale.Fit, presentationState.videoSizeDp)
                 PlayerSurface(
                     modifier = scaledModifier,
                     player = player,

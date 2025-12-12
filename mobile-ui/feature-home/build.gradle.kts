@@ -9,8 +9,8 @@ android {
 
 kotlin {
     sourceSets {
-        androidMain.dependencies {
-            implementation(project(":shared:syncer"))
+        commonMain.dependencies {
+            implementation(project(":shared:syncer:impl"))
             implementation(project(":shared:compose:components:tab"))
             implementation(project(":shared:compose:components:tab-content"))
             implementation(project(":mobile-ui:common"))
