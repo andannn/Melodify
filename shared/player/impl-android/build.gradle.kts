@@ -1,5 +1,10 @@
 plugins {
-    id("melodify.kmp.library")
+    alias(libs.plugins.android.library)
+    id("kmp.ext")
+}
+
+kmpExt {
+    withAndroid()
 }
 
 android {

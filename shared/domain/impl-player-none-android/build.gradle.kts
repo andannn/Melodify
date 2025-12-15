@@ -1,10 +1,10 @@
 plugins {
-    id("melodify.kmp.library")
-    alias(libs.plugins.serialization)
+    id("kmp.ext")
 }
 
-android {
-    namespace = "com.andannn.melodify.domain.impl.none.android"
+kmpExt {
+    withDesktop()
+    withIOS()
 }
 
 kotlin {

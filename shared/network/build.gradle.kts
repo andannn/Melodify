@@ -1,6 +1,12 @@
 plugins {
-    id("melodify.kmp.library")
-    alias(libs.plugins.serialization)
+    alias(libs.plugins.android.library)
+    id("kmp.ext")
+}
+
+kmpExt {
+    withAndroid()
+    withDesktop()
+    withIOS()
 }
 
 android {
@@ -19,7 +25,11 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
         }
 
-        deskTopAndAndroidMain.dependencies {
+        androidMain.dependencies {
+            implementation(libs.ktor.client.okhttp)
+        }
+
+        getByName("desktopMain").dependencies {
             implementation(libs.ktor.client.okhttp)
         }
 

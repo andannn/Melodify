@@ -2,9 +2,16 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
-    id("melodify.kmp.library")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.android.library)
+    id("kmp.ext")
     alias(libs.plugins.room)
+    alias(libs.plugins.ksp)
+}
+
+kmpExt {
+    withAndroid()
+    withDesktop()
+    withIOS()
 }
 
 android {
@@ -50,7 +57,7 @@ kotlin {
             implementation(libs.okio)
         }
 
-        desktopMain.dependencies {
+        getByName("desktopMain").dependencies {
             implementation(libs.androidx.sqlite.bundled)
         }
     }

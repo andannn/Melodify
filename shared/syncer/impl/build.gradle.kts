@@ -1,9 +1,16 @@
 plugins {
-    id("melodify.kmp.library")
+    alias(libs.plugins.android.library)
+    id("kmp.ext")
 }
 
 android {
     namespace = "com.andannn.melodify.core.syncer"
+}
+
+kmpExt {
+    withAndroid()
+    withDesktop()
+    withIOS()
 }
 
 kotlin {
@@ -24,7 +31,7 @@ kotlin {
             implementation(libs.androidx.test.core.ktx)
         }
 
-        desktopMain.dependencies {
+        getByName("desktopMain").dependencies {
             // https://mvnrepository.com/artifact/org/jaudiotagger
             implementation(libs.jaudiotagger)
             implementation(project(":shared:datastore"))

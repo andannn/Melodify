@@ -1,9 +1,9 @@
 plugins {
-    id("melodify.kmp.library")
+    id("kmp.ext")
 }
 
-android {
-    namespace = "com.andannn.melodify.core.syncer.platform.ios"
+kmpExt {
+    withIOS()
 }
 
 kotlin {

@@ -1,9 +1,10 @@
 plugins {
-    id("melodify.kmp.library")
+    id("kmp.ext")
 }
 
-android {
-    namespace = "com.andannn.melodify.ui.core.player"
+kmpExt {
+    withDesktop()
+    withIOS()
 }
 
 kotlin {
@@ -12,8 +13,10 @@ kotlin {
             api(project(":shared:player:common"))
         }
 
-        desktopMain.dependencies {
-            implementation(libs.vlcj)
+        afterEvaluate {
+            getByName("desktopMain").dependencies {
+                implementation(libs.vlcj)
+            }
         }
 
         iosMain.dependencies {
