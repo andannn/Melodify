@@ -10,18 +10,13 @@ dependencies {
     compileOnly(libs.composeCompiler.gradlePlugin)
     compileOnly(libs.ktlint.gradlePlugin)
     compileOnly(libs.spotless.gradlePlugin)
-    compileOnly(libs.licensee.gradlePlugin)
 }
 
 gradlePlugin {
     plugins {
-        register("kotlinMultiplatformLibrary") {
-            id = "melodify.kmp.library"
-            implementationClass = "KMPLibraryConventionPlugin"
-        }
-        register("composeMultiplatformLibraryConventionPlugin") {
-            id = "melodify.compose.multiplatform.library"
-            implementationClass = "ComposeMultiplatformLibraryConventionPlugin"
+        register("KmpBaseConventionPlugin") {
+            id = "kmp.ext"
+            implementationClass = "KmpBaseConventionPlugin"
         }
     }
 }

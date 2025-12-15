@@ -1,6 +1,14 @@
 plugins {
-    id("melodify.kmp.library")
-    id("melodify.compose.multiplatform.library")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.jetbrainsCompose)
+    id("kmp.ext")
+}
+
+kmpExt {
+    withAndroid()
+    withIOS()
+    withDesktop()
 }
 
 android {

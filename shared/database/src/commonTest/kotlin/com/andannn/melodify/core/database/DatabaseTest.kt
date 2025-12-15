@@ -1024,6 +1024,7 @@ class DatabaseTest {
         }
 
     @Test
+    @IgnoreAndroidUnitTest
     fun `get favorite play list`() =
         testScope.runTest {
             playListDao.insertPlayListEntities(

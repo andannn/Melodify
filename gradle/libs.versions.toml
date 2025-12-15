@@ -35,7 +35,6 @@ androidx-glance = "1.1.1"
 workRuntimeKtx = "2.11.0"
 ktlint = "12.2.0"
 spotless = "8.1.0"
-licensee = "1.14.1"
 pagingCommonVersion = "3.4.0-alpha04"
 lifecycle = "2.10.0"
 materialIconsExtended = "1.7.3"
@@ -141,7 +140,6 @@ composeCompiler-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 jetbrainsCompose-gradlePlugin = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "compose-plugin" }
 spotless-gradlePlugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
-licensee-gradlePlugin = { group = "app.cash.licensee", name = "licensee-gradle-plugin", version.ref = "licensee" }
 ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlint" }
 
 [plugins]
@@ -160,4 +158,3 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "androidxRoom" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-licensee = { id = "app.cash.licensee", version.ref = "licensee" }

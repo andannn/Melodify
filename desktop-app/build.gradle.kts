@@ -1,14 +1,16 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.jetbrainsCompose)
+    id("kmp.ext")
+}
+
+kmpExt {
+    withDesktop()
 }
 
 kotlin {
-    jvm("desktop")
-
     sourceSets {
         val desktopMain = getByName("desktopMain")
         desktopMain.dependencies {
@@ -28,23 +30,8 @@ kotlin {
             implementation(project(":shared:compose:components:tab-content"))
             implementation(project(":shared:compose:components:tab-management"))
 
-            implementation(compose.desktop.currentOs)
-
-            implementation(libs.napier)
             implementation(libs.jetbrains.compose.desktop)
             implementation(libs.kotlinx.coroutines.swing)
-            implementation(libs.jetbrains.compose.resources)
-            implementation(libs.jetbrains.compose.material3)
-            implementation(libs.jetbrains.material.icons.extended)
-            implementation(libs.lifecycle.runtime.compose)
-
-            implementation(project.dependencies.platform(libs.koin.bom))
-            implementation(libs.koin.core)
-        }
-
-        val desktopTest = getByName("desktopTest")
-        desktopTest.dependencies {
-            implementation(compose.desktop.currentOs)
         }
     }
 }

@@ -1,11 +1,17 @@
 plugins {
-    id("melodify.kmp.library")
-    id("melodify.compose.multiplatform.library")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
+    id("kmp.ext")
+}
+
+kmpExt {
+    withAndroid()
+    withIOS()
 }
 
 android {
-    namespace = "com.andannn.melodify.ui"
+    namespace = "com.andannn.melodify.ui.common"
 }
 
 kotlin {

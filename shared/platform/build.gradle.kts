@@ -1,10 +1,12 @@
 plugins {
-    id("melodify.kmp.library")
+    alias(libs.plugins.android.library)
+    id("kmp.ext")
 }
 
-kotlin {
-    sourceSets {
-    }
+kmpExt {
+    withAndroid()
+    withDesktop()
+    withIOS()
 }
 
 android {

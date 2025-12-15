@@ -1,8 +1,11 @@
-
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.jetbrainsCompose)
+    id("kmp.ext")
+}
+
+kmpExt {
+    withIOS()
 }
 
 kotlin {
@@ -30,10 +33,6 @@ kotlin {
             api(project(":shared:syncer:platform-ios"))
             api(project(":shared:player:platform-player-ios"))
             api(project(":shared:util:orientation"))
-
-            implementation(libs.napier)
-            implementation(project.dependencies.platform(libs.koin.bom))
-            implementation(libs.koin.core)
         }
     }
 }
