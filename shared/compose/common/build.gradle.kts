@@ -25,5 +25,10 @@ kotlin {
             implementation(libs.coil3.compose)
             implementation(libs.reorderable)
         }
+
+        iosMain.dependencies {
+            implementation(project(":shared:util:artwork-ios"))
+            implementation(project(":shared:syncer:platform-ios"))
+        }
     }
 }

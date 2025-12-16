@@ -4,6 +4,27 @@
  */
 package com.andannn.melodify.ui.player.internal
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.shared.compose.common.widgets.IOSMediaArtworkView
+import org.koin.mp.KoinPlatform.getKoin
+
 @androidx.compose.runtime.Composable
 internal actual fun AVPlayerView(modifier: androidx.compose.ui.Modifier) {
+    val repository = getKoin().get<Repository>()
+    val playingMedia by repository
+        .getPlayingMediaStateFlow()
+        .collectAsStateWithLifecycle(null)
+    val artworkUri = playingMedia?.artWorkUri
+
+    Box(modifier = modifier.clip(shape = RoundedCornerShape(8.dp))) {
+        if (artworkUri != null) {
+            IOSMediaArtworkView(coverUri = artworkUri)
+        }
+    }
 }

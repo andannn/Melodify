@@ -9,3 +9,9 @@ import com.andannn.melodify.core.syncer.model.AudioData
 interface MPMediaScanner {
     fun loadAllLocalSongs(): List<AudioData>
 }
+
+fun persistIdOfUri(uri: String) = uri.substringAfter("ios://mpmedia/cover/").toLong()
+
+fun String.isCustomMpLibraryUri() = startsWith("ios://mpmedia/cover/")
+
+fun createCustomArtworkUri(persistentID: Long): String = "ios://mpmedia/cover/$persistentID"

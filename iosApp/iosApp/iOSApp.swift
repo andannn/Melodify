@@ -8,7 +8,8 @@ struct iOSApp: App {
             SwiftInteropModuleKt.swiftInteropModule(mPMediaScanner: MPMediaScannerImpl(),
                                                     musicLibraryPermissionHandler: MusicLibraryPermissionHandlerImpl(),
                                                     avPlayerWrapper: AVPlayerWrapperImpl(),
-                                                    screenOrientationController: ScreenOrientationControllerImpl())
+                                                    screenOrientationController: ScreenOrientationControllerImpl(),
+                                                    mediaArtworkViewControllerFactory: MediaArtworkViewControllerFactoryImpl())
         }
     }
     

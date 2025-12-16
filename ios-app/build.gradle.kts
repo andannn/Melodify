@@ -21,6 +21,7 @@ kotlin {
             export(project(":shared:syncer:platform-ios"))
             export(project(":shared:player:platform-player-ios"))
             export(project(":shared:util:orientation"))
+            export(project(":shared:util:artwork-ios"))
         }
     }
 
@@ -33,6 +34,7 @@ kotlin {
             api(project(":shared:syncer:platform-ios"))
             api(project(":shared:player:platform-player-ios"))
             api(project(":shared:util:orientation"))
+            api(project(":shared:util:artwork-ios"))
         }
     }
 }

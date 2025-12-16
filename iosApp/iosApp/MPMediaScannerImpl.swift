@@ -1,7 +1,7 @@
 import ComposeApp
 import MediaPlayer
 
-class MPMediaScannerImpl : MPMediaScanner {
+final class MPMediaScannerImpl : MPMediaScanner {
     func loadAllLocalSongs() -> [AudioData] {
         let mpItems = loadAllMPMediaItems()
         let audioData = mpItems.compactMap { item in
@@ -31,6 +31,7 @@ extension MPMediaItem {
 
         print("url \(url)")
         let id = Int64(self.persistentID)
+        print("id \(id)")
 
         let durationSeconds = self.playbackDuration
         let durationMsInt32 = Int32(durationSeconds * 1000.0)
@@ -56,6 +57,8 @@ extension MPMediaItem {
         let yearString: String?
         yearString = nil
 
+        let coverUri = MPMediaScannerKt.createCustomArtworkUri(persistentID: id)
+
         return AudioData(
             id: id,
             path: url.path,
@@ -77,7 +80,7 @@ extension MPMediaItem {
             genreId: nil,
             year: yearString,
             composer: self.composer,
-            cover: nil
+            cover: coverUri
         )
     }
 }

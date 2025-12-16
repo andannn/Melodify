@@ -1,7 +1,7 @@
 
 import ComposeApp
 
-class ScreenOrientationControllerImpl: ScreenOrientationController {
+final class ScreenOrientationControllerImpl: ScreenOrientationController {
     func cancelRequest() {
     }
     
