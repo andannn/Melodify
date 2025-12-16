@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify
 
+import com.andannn.melodify.artwork.ios.MediaArtworkViewControllerFactory
 import com.andannn.melodify.core.player.AVPlayerWrapper
 import com.andannn.melodify.core.syncer.MPMediaScanner
 import com.andannn.melodify.core.syncer.MusicLibraryPermissionHandler
@@ -16,9 +17,11 @@ fun swiftInteropModule(
     musicLibraryPermissionHandler: MusicLibraryPermissionHandler,
     avPlayerWrapper: AVPlayerWrapper,
     screenOrientationController: ScreenOrientationController,
+    mediaArtworkViewControllerFactory: MediaArtworkViewControllerFactory,
 ) = module {
     single { mPMediaScanner }.bind(MPMediaScanner::class)
     single { musicLibraryPermissionHandler }.bind(MusicLibraryPermissionHandler::class)
     single { avPlayerWrapper }.bind(AVPlayerWrapper::class)
     single { screenOrientationController }.bind(ScreenOrientationController::class)
+    single { mediaArtworkViewControllerFactory }.bind(MediaArtworkViewControllerFactory::class)
 }

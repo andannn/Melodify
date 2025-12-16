@@ -29,19 +29,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.ImageRequest
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.default_image_icon
 import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 
 enum class ActionType {
     NONE,
@@ -116,21 +111,13 @@ fun ListTileItemView(
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     } else {
-                        AsyncImage(
-                            model =
-                                ImageRequest
-                                    .Builder(LocalPlatformContext.current)
-                                    .data(thumbnailSourceUri)
-                                    .size(256)
-                                    .build(),
+                        CircleBorderImage(
                             modifier =
                                 Modifier
                                     .size(50.dp)
-                                    .background(MaterialTheme.colorScheme.surfaceDim)
-                                    .clip(MaterialTheme.shapes.extraSmall),
-                            error = painterResource(errorPlaceholderRes),
+                                    .background(MaterialTheme.colorScheme.surfaceDim),
+                            model = thumbnailSourceUri,
                             contentScale = ContentScale.Crop,
-                            contentDescription = "",
                         )
                     }
                 }

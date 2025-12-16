@@ -1,7 +1,7 @@
 import ComposeApp
 import MediaPlayer
 
-class MusicLibraryPermissionHandlerImpl : MusicLibraryPermissionHandler {
+final class MusicLibraryPermissionHandlerImpl : MusicLibraryPermissionHandler {
     func mediaPermissionGranted() -> Bool {
         MPMediaLibrary.authorizationStatus() == .authorized
     }
