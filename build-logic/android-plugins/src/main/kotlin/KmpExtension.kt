@@ -60,7 +60,7 @@ abstract class KmpExtension
             }
         }
 
-        fun withAndroid() {
+        fun withAndroid(enableDeviceTest: Boolean = false) {
             isAndroidConfig = true
 
             // AGP config
@@ -75,11 +75,13 @@ abstract class KmpExtension
                         isIncludeAndroidResources = true
                     }
 
-                    withDeviceTestBuilder {
-                        sourceSetTreeName = "test"
-                    }.configure {
-                        instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+                    if (enableDeviceTest) {
+                        withDeviceTestBuilder {
+                            sourceSetTreeName = "test"
+                        }.configure {
+                            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                            execution = "ANDROIDX_TEST_ORCHESTRATOR"
+                        }
                     }
 
                     compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
@@ -94,14 +96,17 @@ abstract class KmpExtension
                         implementation(libs.findLibrary("koin.android").get())
                     }
                     getByName("androidHostTest").dependencies {}
-                    getByName("androidDeviceTest").dependencies {
-                        implementation(libs.findLibrary("koin.test.junit4").get())
-                        implementation(libs.findLibrary("androidx.test.runner").get())
-                        implementation(libs.findLibrary("androidx.test.core.ktx").get())
 
-                        if (composeEnabled) {
-                            implementation(libs.findLibrary("compose.ui.test.manifest").get())
-                            implementation(libs.findLibrary("compose.ui.test.junit4.android").get())
+                    if (enableDeviceTest) {
+                        getByName("androidDeviceTest").dependencies {
+                            implementation(libs.findLibrary("koin.test.junit4").get())
+                            implementation(libs.findLibrary("androidx.test.runner").get())
+                            implementation(libs.findLibrary("androidx.test.core.ktx").get())
+
+                            if (composeEnabled) {
+                                implementation(libs.findLibrary("compose.ui.test.manifest").get())
+                                implementation(libs.findLibrary("compose.ui.test.junit4.android").get())
+                            }
                         }
                     }
                 }

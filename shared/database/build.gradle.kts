@@ -10,7 +10,7 @@ plugins {
 }
 
 kmpExt {
-    withAndroid()
+    withAndroid(enableDeviceTest = true)
     withDesktop()
     withIOS()
 }
@@ -46,13 +46,10 @@ kotlin {
         }
 
         getByName("androidDeviceTest").dependencies {
-
             implementation(libs.room.runtime)
         }
 
         commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.kotlinx.coroutines.test)
             implementation(libs.androidx.room.testing)
             implementation(libs.okio)
         }
