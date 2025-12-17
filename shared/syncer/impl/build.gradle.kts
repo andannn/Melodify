@@ -1,10 +1,8 @@
-plugins {
-    alias(libs.plugins.android.library)
-    id("kmp.ext")
-}
+import com.android.build.api.dsl.androidLibrary
 
-android {
-    namespace = "com.andannn.melodify.core.syncer"
+plugins {
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    id("kmp.ext")
 }
 
 kmpExt {
@@ -14,6 +12,10 @@ kmpExt {
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "com.andannn.melodify.core.syncer"
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(project(":shared:syncer:scanner"))
@@ -24,11 +26,6 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
-        }
-
-        androidInstrumentedTest.dependencies {
-            implementation(libs.androidx.test.runner)
-            implementation(libs.androidx.test.core.ktx)
         }
 
         getByName("desktopMain").dependencies {

@@ -60,6 +60,9 @@ android {
             }
         }
     }
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 kotlin {

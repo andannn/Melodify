@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.ui.test.junit4.android)
+    implementation(libs.compose.ui.test.junit4.android)
     implementation(libs.androidx.benchmark.macro.junit4)
     implementation(libs.androidx.uiautomator)
     implementation(libs.androidx.test.rules)

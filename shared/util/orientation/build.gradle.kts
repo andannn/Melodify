@@ -1,9 +1,12 @@
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     id("kmp.ext")
 }
-android {
-    namespace = "com.andannn.melodify.util.orientation"
+
+kotlin {
+    androidLibrary {
+        namespace = "com.andannn.melodify.util.orientation"
+    }
 }
 
 kmpExt {

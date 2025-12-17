@@ -1,5 +1,7 @@
+import com.android.build.api.dsl.androidLibrary
+
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     id("kmp.ext")
 }
 
@@ -8,7 +10,8 @@ kmpExt {
     withDesktop()
     withIOS()
 }
-
-android {
-    namespace = "com.andannn.melodify.ui.core.player.common"
+kotlin {
+    androidLibrary {
+        namespace = "com.andannn.melodify.ui.core.player.common"
+    }
 }

@@ -1,10 +1,8 @@
-plugins {
-    alias(libs.plugins.android.library)
-    id("kmp.ext")
-}
+import com.android.build.api.dsl.androidLibrary
 
-android {
-    namespace = "com.andannn.melodify.core.syncer.scanner"
+plugins {
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    id("kmp.ext")
 }
 
 kmpExt {
@@ -12,7 +10,12 @@ kmpExt {
     withDesktop()
     withIOS()
 }
+
 kotlin {
+    androidLibrary {
+        namespace = "com.andannn.melodify.core.syncer.scanner"
+    }
+
     sourceSets {
         commonMain.dependencies {
             api(project(":shared:syncer:model"))

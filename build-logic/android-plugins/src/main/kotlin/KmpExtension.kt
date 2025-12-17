@@ -1,7 +1,8 @@
 import com.andanana.melodify.util.libs
-import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.dsl.androidLibrary
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.compose.ComposePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -33,9 +34,6 @@ abstract class KmpExtension
 
         fun withDesktop() {
             isDesktopConfig = true
-            project.extensions.configure<KotlinMultiplatformExtension> {
-                addJvmTargetIfNeeded()
-            }
 
             project.extensions.configure<KotlinMultiplatformExtension> {
                 jvm("desktop")
@@ -55,26 +53,44 @@ abstract class KmpExtension
                         }
                     }
                 }
+
+                addJvmTargetIfNeeded()
             }
         }
 
-        fun withAndroid() {
+        fun withAndroid(config: AndroidConfigParam.() -> Unit = {}) {
+            val config = AndroidConfigParam().apply(config)
+
             isAndroidConfig = true
-            project.extensions.configure<KotlinMultiplatformExtension> {
-                addJvmTargetIfNeeded()
-            }
 
             // AGP config
-            project.pluginManager.apply("com.android.library")
-            project.extensions.configure<LibraryExtension> {
-                configureKotlinAndroid()
-            }
+            project.pluginManager.apply("com.android.kotlin.multiplatform.library")
 
-            // Kmp config
             project.extensions.configure<KotlinMultiplatformExtension> {
-                androidTarget {
+                androidLibrary {
+                    compileSdk = 36
+                    minSdk = 30
+
+                    if (config.enableHostTest) {
+                        withHostTestBuilder {
+                            sourceSetTreeName = "test".takeIf { config.includeHostTestToCommonTest }
+                        }.configure {
+                            isIncludeAndroidResources = true
+                        }
+                    }
+
+                    if (config.enableDeviceTest) {
+                        withDeviceTestBuilder {
+                            sourceSetTreeName = "test".takeIf { config.includeDeviceTestToCommonTest }
+                        }.configure {
+                            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                        }
+                    }
+
                     compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
                 }
+
+                addJvmTargetIfNeeded()
 
                 configCommonDependencyIfNeeded()
 
@@ -83,10 +99,22 @@ abstract class KmpExtension
                         implementation(libs.findLibrary("koin.android").get())
                     }
 
-                    androidInstrumentedTest.dependencies {
-                        implementation(libs.findLibrary("koin.test.junit4").get())
-                        implementation(libs.findLibrary("ui.test.manifest").get())
-                        implementation(libs.findLibrary("ui.test.junit4.android").get())
+                    if (config.enableHostTest) {
+                        getByName("androidHostTest").dependencies {}
+                    }
+
+                    if (config.enableDeviceTest) {
+                        getByName("androidDeviceTest").dependencies {
+                            implementation(libs.findLibrary("koin.test.junit4").get())
+                            implementation(libs.findLibrary("androidx.test.runner").get())
+                            implementation(libs.findLibrary("androidx.test.core.ktx").get())
+                            implementation(libs.findLibrary("androidx.test.ext.junit").get())
+
+                            if (composeEnabled) {
+                                implementation(libs.findLibrary("compose.ui.test.manifest").get())
+                                implementation(libs.findLibrary("compose.ui.test.junit4.android").get())
+                            }
+                        }
                     }
                 }
             }
@@ -165,13 +193,24 @@ abstract class KmpExtension
 
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         private fun KotlinMultiplatformExtension.configJvmTarget() {
-            applyDefaultHierarchyTemplate {
-                common {
-                    group("deskTopAndAndroid") {
-                        withJvm()
-                        withAndroidTarget()
-                    }
-                }
-            }
+//
+// TODO: desktop and android Common source set can not be applied after migrate to Kmp agp plugin(https://developer.android.com/kotlin/multiplatform/plugin#features).
+//  probably because androidTarget() is deprecated.
+//  Uncomment this setting in the future
+//          applyDefaultHierarchyTemplate {
+//                common {
+//                    group("deskTopAndAndroid") {
+//                        withJvm()
+//                        withAndroidTarget()
+//                    }
+//                }
+//            }
         }
     }
+
+class AndroidConfigParam(
+    var enableHostTest: Boolean = true,
+    var includeHostTestToCommonTest: Boolean = true,
+    var enableDeviceTest: Boolean = false,
+    var includeDeviceTestToCommonTest: Boolean = false,
+)
