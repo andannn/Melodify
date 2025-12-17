@@ -72,11 +72,14 @@ tasks.withType<KotlinNativeLink>().configureEach {
         val inputSchemaDir = layout.projectDirectory.dir("schemas")
         val outputSchemaDir = destinationDirectory.dir("schemas")
         doLast {
-            project.copy {
-                from(inputSchemaDir)
-                into(outputSchemaDir)
+            val srcFile = inputSchemaDir.asFile
+            val destFile = outputSchemaDir.get().asFile
+
+            if (srcFile.exists()) {
+                srcFile.copyRecursively(target = destFile, overwrite = true)
+
+                println("[CopySchemas] Copied schemas to: ${outputSchemaDir.get().asFile.absolutePath}")
             }
-            println("[CopySchemas] Copied schemas to: ${outputSchemaDir.get().asFile.absolutePath}")
         }
     }
 }
