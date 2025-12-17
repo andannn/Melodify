@@ -1,5 +1,7 @@
+import com.android.build.api.dsl.androidLibrary
+
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
     id("kmp.ext")
@@ -10,11 +12,10 @@ kmpExt {
     withIOS()
 }
 
-android {
-    namespace = "com.andannn.melodify.ui.common"
-}
-
 kotlin {
+    androidLibrary {
+        namespace = "com.andannn.melodify.ui.common"
+    }
     sourceSets {
         commonMain.dependencies {
             api(project(":shared:compose:common"))

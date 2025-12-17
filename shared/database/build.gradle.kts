@@ -1,8 +1,9 @@
+import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     id("kmp.ext")
     alias(libs.plugins.room)
     alias(libs.plugins.ksp)
@@ -14,23 +15,23 @@ kmpExt {
     withIOS()
 }
 
-android {
-    namespace = "com.andannn.melodify.ui.database"
-}
-
 room {
     schemaDirectory("$projectDir/schemas")
 }
 
 kotlin {
-    androidTarget {
-        // this is experimental API and will likely change in the future into more robust DSL
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        instrumentedTestVariant {
-            // !!! this makes instrumented tests depends on commonTest source set.
-            sourceSetTree.set(KotlinSourceSetTree.test)
-        }
+    androidLibrary {
+        namespace = "com.andannn.melodify.ui.database"
     }
+// TODO:
+//    androidTarget {
+//        // this is experimental API and will likely change in the future into more robust DSL
+//        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+//        instrumentedTestVariant {
+//            // !!! this makes instrumented tests depends on commonTest source set.
+//            sourceSetTree.set(KotlinSourceSetTree.test)
+//        }
+//    }
 
     sourceSets {
         commonMain.dependencies {
@@ -44,9 +45,8 @@ kotlin {
             implementation(libs.androidx.sqlite.bundled)
         }
 
-        androidInstrumentedTest.dependencies {
-            implementation(libs.androidx.test.runner)
-            implementation(libs.androidx.test.core.ktx)
+        getByName("androidDeviceTest").dependencies {
+
             implementation(libs.room.runtime)
         }
 

@@ -1,5 +1,8 @@
 import com.andanana.melodify.util.libs
+import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.dsl.androidLibrary
+import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.compose.ComposePlugin
@@ -60,21 +63,30 @@ abstract class KmpExtension
 
         fun withAndroid() {
             isAndroidConfig = true
-            project.extensions.configure<KotlinMultiplatformExtension> {
-                addJvmTargetIfNeeded()
-            }
 
             // AGP config
-            project.pluginManager.apply("com.android.library")
-            project.extensions.configure<LibraryExtension> {
-                configureKotlinAndroid()
-            }
+            project.pluginManager.apply("com.android.kotlin.multiplatform.library")
 
-            // Kmp config
             project.extensions.configure<KotlinMultiplatformExtension> {
-                androidTarget {
+                androidLibrary {
+                    compileSdk = 36
+                    minSdk = 30
+
+                    withHostTestBuilder {}.configure {
+                        isIncludeAndroidResources = true
+                    }
+
+                    withDeviceTestBuilder {
+                        sourceSetTreeName = "test"
+                    }.configure {
+                        instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+                    }
+
                     compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
                 }
+
+                addJvmTargetIfNeeded()
 
                 configCommonDependencyIfNeeded()
 
@@ -82,11 +94,16 @@ abstract class KmpExtension
                     androidMain.dependencies {
                         implementation(libs.findLibrary("koin.android").get())
                     }
-
-                    androidInstrumentedTest.dependencies {
+                    getByName("androidHostTest").dependencies {}
+                    getByName("androidDeviceTest").dependencies {
                         implementation(libs.findLibrary("koin.test.junit4").get())
-                        implementation(libs.findLibrary("ui.test.manifest").get())
-                        implementation(libs.findLibrary("ui.test.junit4.android").get())
+                        implementation(libs.findLibrary("androidx.test.runner").get())
+                        implementation(libs.findLibrary("androidx.test.core.ktx").get())
+
+                        if (composeEnabled) {
+                            implementation(libs.findLibrary("compose.ui.test.manifest").get())
+                            implementation(libs.findLibrary("compose.ui.test.junit4.android").get())
+                        }
                     }
                 }
             }
@@ -172,6 +189,29 @@ abstract class KmpExtension
                         withAndroidTarget()
                     }
                 }
+            }
+        }
+
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        private fun KotlinMultiplatformExtension.configureAndroid() {
+            androidLibrary {
+            }
+        }
+
+        /**
+         * Configure base Kotlin with Android options
+         */
+        private fun CommonExtension<*, *, *, *, *, *>.configureKotlinAndroid() {
+            defaultConfig.apply {
+                minSdk = 30
+                testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+            }
+
+            compileSdk = 36
+
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
             }
         }
     }

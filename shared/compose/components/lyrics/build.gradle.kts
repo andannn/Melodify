@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrainsCompose)
     id("kmp.ext")
@@ -11,11 +11,11 @@ kmpExt {
     withDesktop()
 }
 
-android {
-    namespace = "com.andannn.melodify.shared.compose.components.lyrics"
-}
-
 kotlin {
+    androidLibrary {
+        namespace = "com.andannn.melodify.shared.compose.components.lyrics"
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(project(":shared:compose:usecase"))
