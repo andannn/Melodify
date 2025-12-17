@@ -27,7 +27,11 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
         }
 
-        getByName("desktopAndAndroidMain").dependencies {
+        androidMain.dependencies {
+            implementation(libs.ktor.client.okhttp)
+        }
+
+        getByName("desktopMain").dependencies {
             implementation(libs.ktor.client.okhttp)
         }
 

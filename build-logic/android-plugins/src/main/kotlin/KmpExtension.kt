@@ -205,21 +205,6 @@ abstract class KmpExtension
 //                    }
 //                }
 //            }
-
-            // add desktopAndAndroidMain source set as a workaround.
-            applyDefaultHierarchyTemplate {}
-            sourceSets {
-                val commonMain = getByName("commonMain")
-                val androidMain = getByName("androidMain")
-                val desktopMain = getByName("desktopMain")
-
-                val desktopAndAndroidMain = create("desktopAndAndroidMain")
-
-                desktopAndAndroidMain.dependsOn(commonMain)
-
-                androidMain.dependsOn(desktopAndAndroidMain)
-                desktopMain.dependsOn(desktopAndAndroidMain)
-            }
         }
     }
 
