@@ -26,6 +26,7 @@ room {
 kotlin {
     androidLibrary {
         namespace = "com.andannn.melodify.ui.database"
+        androidResources.enable = true
     }
 
     sourceSets {
