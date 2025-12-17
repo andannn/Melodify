@@ -8,16 +8,26 @@ import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import org.junit.Before
+import org.junit.Rule
 import org.junit.runner.RunWith
-import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 class AndroidMigrationTest : AbstractMigrationTest() {
-    override fun getMigrationTestHelper(fileName: String): MigrationTestHelper =
+    private val instrumentation = InstrumentationRegistry.getInstrumentation()
+    private val context = instrumentation.targetContext
+
+    @Before
+    fun setup() {
+        context.deleteDatabase(TEST_DB)
+    }
+
+    @get:Rule
+    override val helper: MigrationTestHelper =
         MigrationTestHelper(
-            instrumentation = InstrumentationRegistry.getInstrumentation(),
-            databaseClass = MelodifyDataBase::class,
-            file = File(fileName),
+            instrumentation = instrumentation,
+            file = context.getDatabasePath(TEST_DB),
             driver = AndroidSQLiteDriver(),
+            databaseClass = MelodifyDataBase::class,
         )
 }
