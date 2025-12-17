@@ -5,7 +5,4 @@
 package com.andannn.melodify.core.database
 
 @Target(allowedTargets = [AnnotationTarget.CLASS, AnnotationTarget.FUNCTION])
-actual annotation class IgnoreAndroidUnitTest actual constructor()
-
-@Target(allowedTargets = [AnnotationTarget.CLASS, AnnotationTarget.FUNCTION])
 actual annotation class IgnoreNativeTest actual constructor()

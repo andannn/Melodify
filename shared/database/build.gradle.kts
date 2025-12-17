@@ -10,7 +10,11 @@ plugins {
 }
 
 kmpExt {
-    withAndroid(enableDeviceTest = true)
+    withAndroid {
+        enableHostTest = false
+        enableDeviceTest = true
+        includeDeviceTestToCommonTest = true
+    }
     withDesktop()
     withIOS()
 }
@@ -23,15 +27,6 @@ kotlin {
     androidLibrary {
         namespace = "com.andannn.melodify.ui.database"
     }
-// TODO:
-//    androidTarget {
-//        // this is experimental API and will likely change in the future into more robust DSL
-//        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-//        instrumentedTestVariant {
-//            // !!! this makes instrumented tests depends on commonTest source set.
-//            sourceSetTree.set(KotlinSourceSetTree.test)
-//        }
-//    }
 
     sourceSets {
         commonMain.dependencies {

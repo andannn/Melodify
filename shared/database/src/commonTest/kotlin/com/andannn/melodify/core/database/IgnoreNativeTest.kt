@@ -5,7 +5,4 @@
 package com.andannn.melodify.core.database
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-expect annotation class IgnoreAndroidUnitTest()
-
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 expect annotation class IgnoreNativeTest()

@@ -60,7 +60,9 @@ abstract class KmpExtension
             }
         }
 
-        fun withAndroid(enableDeviceTest: Boolean = false) {
+        fun withAndroid(config: AndroidConfigParam.() -> Unit = {}) {
+            val config = AndroidConfigParam().apply(config)
+
             isAndroidConfig = true
 
             // AGP config
@@ -71,13 +73,17 @@ abstract class KmpExtension
                     compileSdk = 36
                     minSdk = 30
 
-                    withHostTestBuilder {}.configure {
-                        isIncludeAndroidResources = true
+                    if (config.enableHostTest) {
+                        withHostTestBuilder {
+                            sourceSetTreeName = "test".takeIf { config.includeHostTestToCommonTest }
+                        }.configure {
+                            isIncludeAndroidResources = true
+                        }
                     }
 
-                    if (enableDeviceTest) {
+                    if (config.enableDeviceTest) {
                         withDeviceTestBuilder {
-                            sourceSetTreeName = "test"
+                            sourceSetTreeName = "test".takeIf { config.includeDeviceTestToCommonTest }
                         }.configure {
                             instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                             execution = "ANDROIDX_TEST_ORCHESTRATOR"
@@ -95,9 +101,12 @@ abstract class KmpExtension
                     androidMain.dependencies {
                         implementation(libs.findLibrary("koin.android").get())
                     }
-                    getByName("androidHostTest").dependencies {}
 
-                    if (enableDeviceTest) {
+                    if (config.enableHostTest) {
+                        getByName("androidHostTest").dependencies {}
+                    }
+
+                    if (config.enableDeviceTest) {
                         getByName("androidDeviceTest").dependencies {
                             implementation(libs.findLibrary("koin.test.junit4").get())
                             implementation(libs.findLibrary("androidx.test.runner").get())
@@ -215,3 +224,10 @@ abstract class KmpExtension
             }
         }
     }
+
+class AndroidConfigParam(
+    var enableHostTest: Boolean = true,
+    var includeHostTestToCommonTest: Boolean = true,
+    var enableDeviceTest: Boolean = false,
+    var includeDeviceTestToCommonTest: Boolean = false,
+)

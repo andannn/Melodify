@@ -25,8 +25,6 @@ import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortOptionData
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -38,8 +36,6 @@ import kotlin.test.assertTrue
 internal expect fun inMemoryDatabaseBuilder(): RoomDatabase.Builder<MelodifyDataBase>
 
 class DatabaseTest {
-    private val dispatcher = StandardTestDispatcher()
-    private val testScope = TestScope(dispatcher)
     private lateinit var database: MelodifyDataBase
     private val lyricDao: LyricDao get() = database.getLyricDao()
     private val playListDao: PlayListDao get() = database.getPlayListDao()
@@ -82,9 +78,8 @@ class DatabaseTest {
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun get_lyric_by_media_store_id() =
-        testScope.runTest {
+        runTest {
             lyricDao.insertLyricOfMedia(mediaStoreId = "99", lyric = dummyLyricEntities[0])
 
             val lyric = lyricDao.getLyricByMediaIdFlow("99").first()
@@ -92,9 +87,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun get_lyric_by_media_store_id_not_exist() =
-        testScope.runTest {
+        runTest {
             lyricDao.insertLyricOfMedia(mediaStoreId = "99", lyric = dummyLyricEntities[0])
 
             val lyric = lyricDao.getLyricByMediaIdFlow("100").first()
@@ -102,9 +96,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun insert_play_list() =
-        testScope.runTest {
+        runTest {
             playListDao.insertPlayListEntities(
                 entities =
                     listOf(
@@ -122,9 +115,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun get_play_list_order_by_created_date() =
-        testScope.runTest {
+        runTest {
             playListDao.insertPlayListEntities(
                 entities =
                     listOf(
@@ -157,9 +149,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun insert_play_list_with_media_cross_ref() =
-        testScope.runTest {
+        runTest {
             playListDao.insertPlayListEntities(
                 entities =
                     listOf(
@@ -196,9 +187,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun insert_same_play_list_with_media_cross_ref() =
-        testScope.runTest {
+        runTest {
             playListDao.insertPlayListEntities(
                 entities =
                     listOf(
@@ -247,9 +237,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun get_play_list_with_media_count() =
-        testScope.runTest {
+        runTest {
             playListDao.insertPlayListEntities(
                 entities =
                     listOf(
@@ -301,9 +290,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun check_is_media_in_play_list() =
-        testScope.runTest {
+        runTest {
             val res =
                 playListDao.insertPlayListEntities(
                     entities =
@@ -341,9 +329,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun delete_media_from_play_list() =
-        testScope.runTest {
+        runTest {
             playListDao.insertPlayListEntities(
                 entities =
                     listOf(
@@ -387,9 +374,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun get_duplicate_media_in_play_list() =
-        testScope.runTest {
+        runTest {
             playListDao.insertPlayListEntities(
                 entities =
                     listOf(
@@ -419,9 +405,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun insert_play_lists_test() =
-        testScope.runTest {
+        runTest {
             val ids =
                 playListDao.insertPlayListEntities(
                     entities =
@@ -443,9 +428,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun delete_playlist_by_id_test() =
-        testScope.runTest {
+        runTest {
             playListDao.insertPlayListEntities(
                 entities =
                     listOf(
@@ -488,9 +472,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun cascade_delete_test() =
-        testScope.runTest {
+        runTest {
             libraryDao.insertMedias(
                 audios =
                     listOf(
@@ -542,9 +525,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun update_artist_count_test() =
-        testScope.runTest {
+        runTest {
             libraryDao.insertArtists(
                 artists =
                     listOf(
@@ -573,9 +555,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun update_album_count_test() =
-        testScope.runTest {
+        runTest {
             libraryDao.insertAlbums(
                 albums =
                     listOf(
@@ -604,9 +585,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun fts_table_sync_test() =
-        testScope.runTest {
+        runTest {
             libraryDao.insertDummyData()
             database.verifyFtsTableSync(
                 tableName = Tables.LIBRARY_ALBUM,
@@ -626,9 +606,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun match_keyword_test() =
-        testScope.runTest {
+        runTest {
             libraryDao.insertDummyData()
             assertEquals(1, libraryDao.searchAlbum("title 1").size)
             assertEquals(1, libraryDao.searchAlbum("title 1").first().albumId)
@@ -641,9 +620,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun upsert_search_history_test() =
-        testScope.runTest {
+        runTest {
             val searchHistoryDao = database.getUserDataDao()
             searchHistoryDao.upsertSearchHistory(
                 listOf(
@@ -672,9 +650,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun get_search_histories_order_test() =
-        testScope.runTest {
+        runTest {
             val searchHistoryDao = database.getUserDataDao()
             searchHistoryDao.upsertSearchHistory(
                 listOf(
@@ -698,9 +675,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun sort_media_by_album_test() =
-        testScope.runTest {
+        runTest {
             val dao = database.getMediaLibraryDao()
             dao.insertMedias(
                 audios =
@@ -743,9 +719,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun sort_media_by_title_test() =
-        testScope.runTest {
+        runTest {
             val dao = database.getMediaLibraryDao()
             dao.insertMedias(
                 audios =
@@ -787,9 +762,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun `is tab exist`() =
-        testScope.runTest {
+        runTest {
             val dao = database.getUserDataDao()
             dao.insertCustomTab(
                 CustomTabEntity(
@@ -808,9 +782,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun `swap tab order`() =
-        testScope.runTest {
+        runTest {
             val dao = database.getUserDataDao()
 
             val firstId =
@@ -864,7 +837,6 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun `insert sort rule`() =
         runTest {
             val dao = database.getUserDataDao()
@@ -907,9 +879,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun `get media list where album test`() =
-        testScope.runTest {
+        runTest {
             val dao = database.getMediaLibraryDao()
             dao.insertMedias(
                 audios =
@@ -955,9 +926,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun `get media list where title test`() =
-        testScope.runTest {
+        runTest {
             val dao = database.getMediaLibraryDao()
             dao.insertMedias(
                 audios =
@@ -1024,9 +994,8 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun `get favorite play list`() =
-        testScope.runTest {
+        runTest {
             playListDao.insertPlayListEntities(
                 listOf(
                     PlayListEntity(

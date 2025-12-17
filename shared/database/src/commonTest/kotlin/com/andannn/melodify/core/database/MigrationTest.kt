@@ -12,9 +12,9 @@ import com.andannn.melodify.core.database.entity.CustomTabColumns
 import com.andannn.melodify.core.database.entity.CustomTabType.ALL_MUSIC
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.PlayListColumns
-import com.andannn.melodify.core.database.entity.PlayListEntity
 import okio.FileSystem
 import okio.Path.Companion.toPath
+import okio.SYSTEM
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -41,7 +41,6 @@ class MigrationTest {
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     @IgnoreNativeTest
     fun migrate3To4() {
         val migrationTestHelper =
@@ -57,7 +56,6 @@ class MigrationTest {
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     @IgnoreNativeTest
     fun migrate4To5() {
         val migrationTestHelper =
@@ -77,7 +75,6 @@ class MigrationTest {
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     @IgnoreNativeTest
     fun migrate5To6() {
         val migrationTestHelper =
@@ -93,7 +90,6 @@ class MigrationTest {
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     @IgnoreNativeTest
     fun migrate6To7SyncMediaTableTest() {
         val migrationTestHelper =
@@ -129,7 +125,6 @@ class MigrationTest {
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     @IgnoreNativeTest
     fun migrate6To7SyncAlbumTableTest() {
         val migrationTestHelper =
@@ -165,7 +160,6 @@ class MigrationTest {
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     @IgnoreNativeTest
     fun migrate6To7SyncArtistTableTest() {
         val migrationTestHelper =
@@ -201,7 +195,6 @@ class MigrationTest {
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     @IgnoreNativeTest
     fun migrate7To8SyncAlbumTableTest() {
         val migrationTestHelper =
@@ -230,7 +223,6 @@ class MigrationTest {
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     @IgnoreNativeTest
     fun migrate8To9SyncAlbumTableTest() {
         val migrationTestHelper =
@@ -252,7 +244,6 @@ class MigrationTest {
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     @IgnoreNativeTest
     fun migrate9To10SyncAlbumTableTest() {
         val migrationTestHelper =
@@ -267,7 +258,6 @@ class MigrationTest {
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     @IgnoreNativeTest
     fun migrate10To11SyncAlbumTableTest() {
         val migrationTestHelper =
@@ -282,7 +272,6 @@ class MigrationTest {
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     @IgnoreNativeTest
     fun migrate11To12SyncAlbumTableTest() {
         val migrationTestHelper =
