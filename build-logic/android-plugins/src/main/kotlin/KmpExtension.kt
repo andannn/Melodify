@@ -1,10 +1,10 @@
 import com.andanana.melodify.util.libs
-import com.android.build.api.dsl.CommonExtension
-import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.dsl.androidLibrary
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.creating
+import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.compose.ComposePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -36,9 +36,6 @@ abstract class KmpExtension
 
         fun withDesktop() {
             isDesktopConfig = true
-            project.extensions.configure<KotlinMultiplatformExtension> {
-                addJvmTargetIfNeeded()
-            }
 
             project.extensions.configure<KotlinMultiplatformExtension> {
                 jvm("desktop")
@@ -58,6 +55,8 @@ abstract class KmpExtension
                         }
                     }
                 }
+
+                addJvmTargetIfNeeded()
             }
         }
 
@@ -182,36 +181,32 @@ abstract class KmpExtension
 
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         private fun KotlinMultiplatformExtension.configJvmTarget() {
-            applyDefaultHierarchyTemplate {
-                common {
-                    group("deskTopAndAndroid") {
-                        withJvm()
-                        withAndroidTarget()
-                    }
-                }
-            }
-        }
+//
+// TODO: desktop and android Common source set can not be applied after migrate to Kmp agp plugin(https://developer.android.com/kotlin/multiplatform/plugin#features).
+//  probably because androidTarget() is deprecated.
+//  Uncomment this setting in the future
+//          applyDefaultHierarchyTemplate {
+//                common {
+//                    group("deskTopAndAndroid") {
+//                        withJvm()
+//                        withAndroidTarget()
+//                    }
+//                }
+//            }
 
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        private fun KotlinMultiplatformExtension.configureAndroid() {
-            androidLibrary {
-            }
-        }
+            // add desktopAndAndroidMain source set as an workaround
+            applyDefaultHierarchyTemplate {}
+            sourceSets {
+                val commonMain = getByName("commonMain")
+                val androidMain = getByName("androidMain")
+                val desktopMain = getByName("desktopMain")
 
-        /**
-         * Configure base Kotlin with Android options
-         */
-        private fun CommonExtension<*, *, *, *, *, *>.configureKotlinAndroid() {
-            defaultConfig.apply {
-                minSdk = 30
-                testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-            }
+                val desktopAndAndroidMain = create("desktopAndAndroidMain")
 
-            compileSdk = 36
+                desktopAndAndroidMain.dependsOn(commonMain)
 
-            compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_17
-                targetCompatibility = JavaVersion.VERSION_17
+                androidMain.dependsOn(desktopAndAndroidMain)
+                desktopMain.dependsOn(desktopAndAndroidMain)
             }
         }
     }

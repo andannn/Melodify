@@ -15,6 +15,7 @@ kotlin {
     androidLibrary {
         namespace = "com.andannn.melodify.core.network"
     }
+
     sourceSets {
         commonMain.dependencies {
             implementation(libs.ktor.client.core)
@@ -26,11 +27,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
         }
 
-        androidMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
-        }
-
-        getByName("desktopMain").dependencies {
+        getByName("desktopAndAndroidMain").dependencies {
             implementation(libs.ktor.client.okhttp)
         }
 
