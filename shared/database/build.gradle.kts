@@ -1,6 +1,4 @@
 import com.android.build.api.dsl.androidLibrary
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -40,6 +38,10 @@ kotlin {
             implementation(libs.androidx.sqlite.bundled)
         }
 
+        getByName("desktopMain").dependencies {
+            implementation(libs.androidx.sqlite.bundled)
+        }
+
         getByName("androidDeviceTest").dependencies {
             implementation(libs.room.runtime)
         }
@@ -47,10 +49,6 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.androidx.room.testing)
             implementation(libs.okio)
-        }
-
-        getByName("desktopMain").dependencies {
-            implementation(libs.androidx.sqlite.bundled)
         }
     }
 }

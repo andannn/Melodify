@@ -22,11 +22,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-expect fun getMigrationTestHelper(fileName: String): MigrationTestHelper
-
-class MigrationTest {
+abstract class AbstractMigrationTest {
     private val tempFile =
         FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("test-${Random.nextInt()}.db")
+
+    abstract fun getMigrationTestHelper(fileName: String): MigrationTestHelper
 
     @BeforeTest
     fun before() {

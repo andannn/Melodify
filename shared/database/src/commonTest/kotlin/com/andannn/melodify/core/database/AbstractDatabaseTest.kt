@@ -33,9 +33,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-internal expect fun inMemoryDatabaseBuilder(): RoomDatabase.Builder<MelodifyDataBase>
-
-class DatabaseTest {
+abstract class AbstractDatabaseTest {
     private lateinit var database: MelodifyDataBase
     private val lyricDao: LyricDao get() = database.getLyricDao()
     private val playListDao: PlayListDao get() = database.getPlayListDao()
@@ -66,6 +64,8 @@ class DatabaseTest {
                 syncedLyrics = "syncedLyrics",
             ),
         )
+
+    abstract fun inMemoryDatabaseBuilder(): RoomDatabase.Builder<MelodifyDataBase>
 
     @BeforeTest
     fun openDatabase() {

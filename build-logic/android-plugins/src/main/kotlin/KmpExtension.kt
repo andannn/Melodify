@@ -2,9 +2,7 @@ import com.andanana.melodify.util.libs
 import com.android.build.api.dsl.androidLibrary
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.creating
 import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.compose.ComposePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -86,7 +84,6 @@ abstract class KmpExtension
                             sourceSetTreeName = "test".takeIf { config.includeDeviceTestToCommonTest }
                         }.configure {
                             instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                            execution = "ANDROIDX_TEST_ORCHESTRATOR"
                         }
                     }
 
@@ -111,6 +108,7 @@ abstract class KmpExtension
                             implementation(libs.findLibrary("koin.test.junit4").get())
                             implementation(libs.findLibrary("androidx.test.runner").get())
                             implementation(libs.findLibrary("androidx.test.core.ktx").get())
+                            implementation(libs.findLibrary("androidx.test.ext.junit").get())
 
                             if (composeEnabled) {
                                 implementation(libs.findLibrary("compose.ui.test.manifest").get())
@@ -208,7 +206,7 @@ abstract class KmpExtension
 //                }
 //            }
 
-            // add desktopAndAndroidMain source set as an workaround
+            // add desktopAndAndroidMain source set as a workaround.
             applyDefaultHierarchyTemplate {}
             sourceSets {
                 val commonMain = getByName("commonMain")

@@ -107,7 +107,7 @@ vlcj = { module = "uk.co.caprica:vlcj", version.ref = "vlcj" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "testRules" }
 androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtx" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "androidx-glance" }
 androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "pagingCommonVersion" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCommonVersion" }
