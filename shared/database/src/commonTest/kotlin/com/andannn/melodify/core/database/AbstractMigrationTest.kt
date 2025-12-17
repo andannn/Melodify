@@ -24,7 +24,6 @@ abstract class AbstractMigrationTest {
     abstract val helper: MigrationTestHelper
 
     @Test
-    @IgnoreNativeTest
     fun migrate3To4(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(3)
@@ -36,7 +35,6 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    @IgnoreNativeTest
     fun migrate4To5(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(4)
@@ -52,7 +50,6 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    @IgnoreNativeTest
     fun migrate5To6(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(5)
@@ -64,7 +61,6 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    @IgnoreNativeTest
     fun migrate6To7SyncMediaTableTest(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(6)
@@ -98,7 +94,6 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    @IgnoreNativeTest
     fun migrate6To7SyncAlbumTableTest(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(6)
@@ -132,7 +127,6 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    @IgnoreNativeTest
     fun migrate6To7SyncArtistTableTest(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(6)
@@ -166,7 +160,6 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    @IgnoreNativeTest
     fun migrate7To8SyncAlbumTableTest(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(7)
@@ -191,7 +184,6 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    @IgnoreNativeTest
     fun migrate8To9SyncAlbumTableTest(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(8)
@@ -209,7 +201,6 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    @IgnoreNativeTest
     fun migrate9To10SyncAlbumTableTest(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(9)
@@ -220,7 +211,6 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    @IgnoreNativeTest
     fun migrate10To11SyncAlbumTableTest(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(10)

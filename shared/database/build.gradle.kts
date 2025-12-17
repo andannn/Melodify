@@ -1,4 +1,6 @@
 import com.android.build.api.dsl.androidLibrary
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.kotlin.konan.target.Family
 
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -49,6 +51,31 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.androidx.room.testing)
             implementation(libs.okio)
+        }
+    }
+}
+
+// Copy Db schemas to apple os Main bundle folder
+tasks.withType<KotlinNativeLink>().configureEach {
+    val konanTarget = binary.target.konanTarget
+
+    val isAppleTarget =
+        konanTarget.family in
+            listOf(
+                Family.IOS,
+                Family.TVOS,
+                Family.WATCHOS,
+            )
+
+    if (isAppleTarget) {
+        val inputSchemaDir = layout.projectDirectory.dir("schemas")
+        val outputSchemaDir = destinationDirectory.dir("schemas")
+        doLast {
+            project.copy {
+                from(inputSchemaDir)
+                into(outputSchemaDir)
+            }
+            println("[CopySchemas] Copied schemas to: ${outputSchemaDir.get().asFile.absolutePath}")
         }
     }
 }
