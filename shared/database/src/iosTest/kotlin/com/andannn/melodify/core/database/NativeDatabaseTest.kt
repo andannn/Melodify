@@ -8,7 +8,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 
-class IOSDatabaseTest : AbstractDatabaseTest() {
+class NativeDatabaseTest : AbstractDatabaseTest() {
     override fun inMemoryDatabaseBuilder(): RoomDatabase.Builder<MelodifyDataBase> =
         Room
             .inMemoryDatabaseBuilder<MelodifyDataBase>()

@@ -1,4 +1,6 @@
 import com.android.build.api.dsl.androidLibrary
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.kotlin.konan.target.Family
 
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -24,6 +26,7 @@ room {
 kotlin {
     androidLibrary {
         namespace = "com.andannn.melodify.ui.database"
+        androidResources.enable = true
     }
 
     sourceSets {
@@ -49,6 +52,34 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.androidx.room.testing)
             implementation(libs.okio)
+        }
+    }
+}
+
+// Copy Db schemas to apple os Main bundle folder
+tasks.withType<KotlinNativeLink>().configureEach {
+    val konanTarget = binary.target.konanTarget
+
+    val isAppleTarget =
+        konanTarget.family in
+            listOf(
+                Family.IOS,
+                Family.TVOS,
+                Family.WATCHOS,
+            )
+
+    if (isAppleTarget) {
+        val inputSchemaDir = layout.projectDirectory.dir("schemas")
+        val outputSchemaDir = destinationDirectory.dir("schemas")
+        doLast {
+            val srcFile = inputSchemaDir.asFile
+            val destFile = outputSchemaDir.get().asFile
+
+            if (srcFile.exists()) {
+                srcFile.copyRecursively(target = destFile, overwrite = true)
+
+                println("[CopySchemas] Copied schemas to: ${outputSchemaDir.get().asFile.absolutePath}")
+            }
         }
     }
 }
