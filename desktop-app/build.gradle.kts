@@ -32,6 +32,7 @@ kotlin {
 
             implementation(libs.jetbrains.compose.desktop)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(compose.desktop.currentOs)
         }
     }
 }

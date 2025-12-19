@@ -2,8 +2,6 @@ import com.andanana.melodify.util.libs
 import com.android.build.api.dsl.androidLibrary
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.invoke
-import org.jetbrains.compose.ComposePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -26,12 +24,6 @@ abstract class KmpExtension
             composeEnabled = project.pluginManager.hasPlugin("org.jetbrains.kotlin.plugin.compose")
         }
 
-        private val compose: ComposePlugin.Dependencies
-            get() =
-                project.dependencies.extensions.getByType(
-                    ComposePlugin.Dependencies::class.java,
-                )
-
         fun withDesktop() {
             isDesktopConfig = true
 
@@ -43,14 +35,11 @@ abstract class KmpExtension
                     sourceSets.apply {
                         val desktopMain = getByName("desktopMain")
                         desktopMain.dependencies {
-                            implementation(compose.desktop.currentOs)
                             implementation(libs.findLibrary("jetbrains.compose.desktop").get())
                         }
 
                         val desktopTest = getByName("desktopTest")
-                        desktopTest.dependencies {
-                            implementation(compose.desktop.currentOs)
-                        }
+                        desktopTest.dependencies {}
                     }
                 }
 
