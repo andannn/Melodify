@@ -1,9 +1,8 @@
 import com.andanana.melodify.util.libs
-import com.android.build.api.dsl.androidLibrary
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import javax.inject.Inject
 
@@ -56,7 +55,7 @@ abstract class KmpExtension
             project.pluginManager.apply("com.android.kotlin.multiplatform.library")
 
             project.extensions.configure<KotlinMultiplatformExtension> {
-                androidLibrary {
+                this.configure<KotlinMultiplatformAndroidLibraryExtension> {
                     compileSdk = 36
                     minSdk = 30
 
@@ -75,8 +74,6 @@ abstract class KmpExtension
                             instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                         }
                     }
-
-                    compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
                 }
 
                 addJvmTargetIfNeeded()
