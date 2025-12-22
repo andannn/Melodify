@@ -45,4 +45,4 @@ jobs:
 
       # Run Desktop Tests
       - name: Run Jvm tests
-        run: ./gradlew desktopTest
+        run: ./gradlew jvmTest

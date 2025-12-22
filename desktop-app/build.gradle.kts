@@ -12,8 +12,7 @@ kmpExt {
 
 kotlin {
     sourceSets {
-        val desktopMain = getByName("desktopMain")
-        desktopMain.dependencies {
+        jvmMain.dependencies {
             implementation(project(":shared:domain:impl"))
             implementation(project(":shared:syncer:impl"))
             implementation(project(":shared:platform"))

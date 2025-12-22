@@ -1,4 +1,4 @@
-import com.android.build.api.dsl.androidLibrary
+
 
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -27,11 +27,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
         }
 
-        androidMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
-        }
-
-        getByName("desktopMain").dependencies {
+        getByName("jvmAndAndroidMain").dependencies {
             implementation(libs.ktor.client.okhttp)
         }
 

@@ -14,7 +14,7 @@ kotlin {
         }
 
         afterEvaluate {
-            getByName("desktopMain").dependencies {
+            jvmMain.dependencies {
                 implementation(libs.vlcj)
             }
         }
