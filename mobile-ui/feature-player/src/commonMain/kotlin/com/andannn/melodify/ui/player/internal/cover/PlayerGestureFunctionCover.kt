@@ -1,12 +1,16 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.player.internal.cover
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -35,7 +39,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
+import com.andannn.melodify.ui.player.internal.util.detectLongPressAndContinuousTap
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+
+private const val TAG = "PlayerGestureFunctionCover"
 
 @Composable
 internal fun PlayerGestureFunctionCover(
@@ -56,6 +65,7 @@ internal fun PlayerGestureFunctionCover(
     }
 
     fun togglePlayControl() {
+        Napier.d(tag = TAG) { "toggle play control" }
         uiState =
             when (uiState) {
                 UiState.Idle -> {
@@ -75,38 +85,42 @@ internal fun PlayerGestureFunctionCover(
     }
 
     fun startDoubleSpeedPlay() {
+        Napier.d(tag = TAG) { "start double speed play" }
+
         uiState = UiState.DoubleSpeedPlaying
         // send callback
         onEvent.invoke(PlayerUiEvent.OnSetDoublePlaySpeed)
     }
 
     fun endDoubleSpeedPlay() {
+        Napier.d(tag = TAG) { "end double speed play" }
         uiState = UiState.Idle
         // send callback
         onEvent.invoke(PlayerUiEvent.OnSetPlaySpeedToNormal)
     }
 
     fun seekBackward() {
+        Napier.d(tag = TAG) { "seek backward" }
         uiState = uiState.toNewSeekingState(isSeekForward = false)
         // send callback
         onEvent.invoke(PlayerUiEvent.OnSeekBackwardGesture)
-        // trigger animation
     }
 
     fun seekForward() {
+        Napier.d(tag = TAG) { "seek forward" }
         uiState = uiState.toNewSeekingState(isSeekForward = true)
         // send callback
         onEvent.invoke(PlayerUiEvent.OnSeekForwardGesture)
-        // trigger animation
     }
 
     fun endSeek() {
+        Napier.d(tag = TAG) { "seek end" }
         uiState = UiState.Idle
     }
 
     Box(modifier = modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxSize()) {
-            Box(
+            Spacer(
                 Modifier.weight(1f).fillMaxHeight().detectLongPressAndContinuousTap(
                     key = "control cover detector left",
                     onTap = ::togglePlayControl,
@@ -115,13 +129,9 @@ internal fun PlayerGestureFunctionCover(
                     onContinuousTap = ::seekBackward,
                     onContinuousTapEnd = ::endSeek,
                 ),
-                contentAlignment = Alignment.Center,
-            ) {
-                val label = (uiState as? UiState.Seeking)?.label() ?: ""
-                SeekHintLabel(text = label, isSeekNext = false)
-            }
+            )
 
-            Box(
+            Spacer(
                 Modifier.weight(1f).fillMaxHeight().detectLongPressAndContinuousTap(
                     key = "control cover detector right",
                     onTap = ::togglePlayControl,
@@ -130,37 +140,38 @@ internal fun PlayerGestureFunctionCover(
                     onContinuousTap = ::seekForward,
                     onContinuousTapEnd = ::endSeek,
                 ),
-                contentAlignment = Alignment.Center,
-            ) {
-                val label = (uiState as? UiState.Seeking)?.label() ?: ""
-                SeekHintLabel(text = label, isSeekNext = true)
-            }
+            )
         }
 
-        AnimatedContent(
+        Box(
             modifier = Modifier.fillMaxSize(),
-            targetState = uiState,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(220, delayMillis = 90))
-                    .togetherWith(fadeOut(animationSpec = tween(90)))
-            },
-        ) { uiState ->
-            Box(modifier = Modifier.fillMaxSize()) {
-                when (uiState) {
-                    UiState.DoubleSpeedPlaying -> {
-                        DoubleSpeedPlayLabel(modifier = Modifier.align(Alignment.Center))
-                    }
+            contentAlignment = Alignment.Center,
+        ) {
+            AnimatedVisibility(
+                uiState is UiState.ShowControl,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                controlWidget()
+            }
 
-                    UiState.ShowControl -> {
-                        controlWidget()
-                    }
+            AnimatedVisibility(
+                uiState is UiState.DoubleSpeedPlaying,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                DoubleSpeedPlayLabel()
+            }
 
-                    is UiState.Seeking -> {
-                    }
-
-                    UiState.Idle -> {
-                    }
+            val state = uiState
+            if (state is UiState.Seeking || state is UiState.Idle) {
+                var lastSeekingState by remember { mutableStateOf<UiState.Seeking?>(null) }
+                if (state is UiState.Seeking) {
+                    lastSeekingState = state
                 }
+                val label = lastSeekingState?.label()
+                val isPositive = lastSeekingState?.seekSeconds?.isPositive == true
+                SeekingIndicator(text = label, isPositive)
             }
         }
     }
@@ -206,26 +217,58 @@ private fun DoubleSpeedPlayLabel(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SeekHintLabel(
-    text: String,
-    isSeekNext: Boolean,
+private fun SeekingIndicator(
+    text: String?,
+    isPositive: Boolean,
     modifier: Modifier = Modifier,
-    showDurationMs: Long = 400,
 ) {
-    val alphaAnimatable = remember(text, isSeekNext) { Animatable(1f) }
-    LaunchedEffect(isSeekNext, text) {
-        alphaAnimatable.animateTo(
-            targetValue = 0f,
-            animationSpec = tween(durationMillis = showDurationMs.toInt()),
-        )
+    val scaleAnim = remember { Animatable(0.5f) }
+    val alphaAnim = remember { Animatable(0f) }
+
+    LaunchedEffect(text) {
+        // Show
+        scaleAnim.snapTo(0.5f)
+        alphaAnim.snapTo(0.5f)
+
+        val deffer1 =
+            async {
+                scaleAnim.animateTo(
+                    targetValue = 1f,
+                    animationSpec =
+                        spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessMediumLow,
+                        ),
+                )
+            }
+        val deffer2 =
+            async {
+                alphaAnim.animateTo(1f, tween(200))
+            }
+
+        deffer1.await()
+        deffer2.await()
+
+        delay(1000)
+
+        // Hide
+        async {
+            scaleAnim.animateTo(0.5f)
+        }
+        async {
+            alphaAnim.animateTo(0f)
+        }
     }
-    if (alphaAnimatable.value == 0f && text.isEmpty()) {
+
+    if (text != null) {
         Box(modifier = modifier) {
             Row(
                 modifier =
                     Modifier
                         .graphicsLayer {
-                            alpha = alphaAnimatable.value
+                            alpha = alphaAnim.value
+                            scaleX = scaleAnim.value
+                            scaleY = scaleAnim.value
                         }.clip(RoundedCornerShape(3.dp))
                         .background(Color.Black.copy(alpha = 0.5f))
                         .padding(horizontal = 6.dp, vertical = 3.dp),
@@ -237,7 +280,7 @@ private fun SeekHintLabel(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
-                    imageVector = if (isSeekNext) Icons.Default.SkipNext else Icons.Default.SkipPrevious,
+                    imageVector = if (isPositive) Icons.Default.SkipNext else Icons.Default.SkipPrevious,
                     tint = Color.White,
                     contentDescription = null,
                 )
@@ -245,3 +288,6 @@ private fun SeekHintLabel(
         }
     }
 }
+
+private val Int.isPositive: Boolean
+    get() = this > 0
