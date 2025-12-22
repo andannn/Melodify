@@ -13,6 +13,8 @@ import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.KeepScreenOnEffect
 import com.andannn.melodify.ui.player.internal.AVPlayerView
+import com.andannn.melodify.ui.player.internal.cover.AVPlayerControlCover
+import com.andannn.melodify.ui.player.internal.util.TouchToggleVisible
 import com.andannn.melodify.util.immersive.ImmersiveModeEffect
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -34,7 +36,7 @@ internal fun LandScapeExpandedPlayerLayout(
             modifier = Modifier.fillMaxSize(),
         )
         TouchToggleVisible {
-            AVPlayerCover(
+            AVPlayerControlCover(
                 title = title,
                 subTitle = subTitle,
                 duration = duration,

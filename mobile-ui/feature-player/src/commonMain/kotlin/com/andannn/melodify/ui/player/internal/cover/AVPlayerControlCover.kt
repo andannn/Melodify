@@ -2,13 +2,9 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.player.internal.shrinkable
+package com.andannn.melodify.ui.player.internal.cover
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,11 +24,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,79 +35,14 @@ import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.common.widgets.LinerWaveSlider
 import com.andannn.melodify.shared.compose.common.widgets.MarqueeText
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
+import com.andannn.melodify.ui.player.internal.shrinkable.MaxImagePaddingStart
+import com.andannn.melodify.ui.player.internal.shrinkable.PlayControlButtons
 import com.andannn.melodify.ui.player.internal.util.formatDuration
-import kotlinx.coroutines.delay
 import kotlin.math.roundToLong
-
-@Composable
-internal fun TouchToggleVisible(
-    modifier: Modifier = Modifier,
-    showDurationMs: Long = 4000,
-    content: @Composable () -> Unit,
-) {
-    var isShowing by remember {
-        mutableStateOf(false)
-    }
-
-    LaunchedEffect(isShowing) {
-        if (isShowing) {
-            delay(showDurationMs)
-            isShowing = false
-        }
-    }
-    Box(
-        modifier =
-            modifier
-                .clickable(
-                    indication = null,
-                    interactionSource = null,
-                    onClick = {
-                        isShowing = !isShowing
-                    },
-                ),
-    ) {
-        AnimatedVisibility(
-            visible = isShowing,
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            content()
-        }
-    }
-}
-
-@Composable
-fun FullScreenButtonCover(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    Box(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .clip(shape = RoundedCornerShape(8.dp))
-                .background(Color.Black.copy(alpha = 0.5f)),
-    ) {
-        IconButton(
-            modifier = Modifier.align(Alignment.BottomEnd),
-            onClick = onClick,
-            colors =
-                IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                ),
-        ) {
-            Icon(
-                imageVector = Icons.Default.Fullscreen,
-                contentDescription = "Play",
-            )
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AVPlayerCover(
+internal fun AVPlayerControlCover(
     title: String,
     subTitle: String,
     duration: Long,
