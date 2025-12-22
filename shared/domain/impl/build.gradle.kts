@@ -1,4 +1,4 @@
-import com.android.build.api.dsl.androidLibrary
+
 
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -20,7 +20,7 @@ kotlin {
         androidMain.dependencies {
             implementation(project(":shared:domain:impl-player-android"))
         }
-        getByName("desktopMain").dependencies {
+        jvmMain.dependencies {
             implementation(project(":shared:domain:impl-player-none-android"))
         }
         iosMain.dependencies {

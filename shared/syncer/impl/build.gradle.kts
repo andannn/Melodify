@@ -1,4 +1,4 @@
-import com.android.build.api.dsl.androidLibrary
+
 
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -28,7 +28,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
         }
 
-        getByName("desktopMain").dependencies {
+        jvmMain.dependencies {
             // https://mvnrepository.com/artifact/org/jaudiotagger
             implementation(libs.jaudiotagger)
             implementation(project(":shared:datastore"))

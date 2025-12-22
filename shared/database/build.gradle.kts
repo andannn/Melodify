@@ -1,4 +1,4 @@
-import com.android.build.api.dsl.androidLibrary
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.konan.target.Family
 
@@ -41,7 +41,7 @@ kotlin {
             implementation(libs.androidx.sqlite.bundled)
         }
 
-        getByName("desktopMain").dependencies {
+        jvmMain.dependencies {
             implementation(libs.androidx.sqlite.bundled)
         }
 
@@ -86,7 +86,7 @@ tasks.withType<KotlinNativeLink>().configureEach {
 
 dependencies {
     add("kspAndroid", libs.room.compiler)
-    add("kspDesktop", libs.room.compiler)
+    add("kspJvm", libs.room.compiler)
     add("kspIosSimulatorArm64", libs.room.compiler)
     add("kspIosArm64", libs.room.compiler)
 }
