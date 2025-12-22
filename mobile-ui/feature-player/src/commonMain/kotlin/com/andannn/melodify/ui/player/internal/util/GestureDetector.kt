@@ -45,6 +45,7 @@ internal fun Modifier.detectLongPressAndContinuousTap(
     onLongPressStart: () -> Unit = {},
     onLongPressEnd: () -> Unit = {},
     onContinuousTap: () -> Unit = {},
+    onContinuousTapEnd: () -> Unit = {},
 ) = pointerInput(key) {
     awaitEachGesture {
         val down = awaitFirstDown()
@@ -89,6 +90,7 @@ internal fun Modifier.detectLongPressAndContinuousTap(
                         onContinuousTap()
                     }
                 } while (upOrNull != null)
+                onContinuousTapEnd()
             }
         }
     }

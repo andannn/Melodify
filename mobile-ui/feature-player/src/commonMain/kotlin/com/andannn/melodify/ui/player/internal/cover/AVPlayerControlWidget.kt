@@ -42,7 +42,7 @@ import kotlin.math.roundToLong
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-internal fun AVPlayerControlCover(
+internal fun AVPlayerControlWidget(
     title: String,
     subTitle: String,
     duration: Long,

@@ -5,6 +5,7 @@
 package com.andannn.melodify.ui.player.internal.shrinkable
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -13,7 +14,9 @@ import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.KeepScreenOnEffect
 import com.andannn.melodify.ui.player.internal.AVPlayerView
-import com.andannn.melodify.ui.player.internal.cover.AVPlayerControlCover
+import com.andannn.melodify.ui.player.internal.cover.AVPlayerControlWidget
+import com.andannn.melodify.ui.player.internal.cover.PlayerGestureFunctionCover
+import com.andannn.melodify.ui.player.internal.cover.detectLongPressAndContinuousTap
 import com.andannn.melodify.ui.player.internal.util.TouchToggleVisible
 import com.andannn.melodify.util.immersive.ImmersiveModeEffect
 
@@ -35,8 +38,10 @@ internal fun LandScapeExpandedPlayerLayout(
         AVPlayerView(
             modifier = Modifier.fillMaxSize(),
         )
-        TouchToggleVisible {
-            AVPlayerControlCover(
+        PlayerGestureFunctionCover(
+            onEvent = onEvent,
+        ) {
+            AVPlayerControlWidget(
                 title = title,
                 subTitle = subTitle,
                 duration = duration,
