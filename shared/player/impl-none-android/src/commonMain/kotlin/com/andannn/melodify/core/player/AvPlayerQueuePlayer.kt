@@ -40,6 +40,8 @@ interface AvPlayerQueuePlayer {
 
     fun seekToTime(time: Long)
 
+    fun setPlaybackSpeed(speed: Float)
+
     fun setShuffleModeEnabled(enable: Boolean)
 
     fun play()

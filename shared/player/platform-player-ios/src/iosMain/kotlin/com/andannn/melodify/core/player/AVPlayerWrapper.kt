@@ -13,6 +13,8 @@ interface AVPlayerWrapper {
 
     fun stop()
 
+    fun setPlayBackSpeed(speed: Float)
+
     fun seekTo(positionMs: Long)
 
     val currentPositionMs: Long

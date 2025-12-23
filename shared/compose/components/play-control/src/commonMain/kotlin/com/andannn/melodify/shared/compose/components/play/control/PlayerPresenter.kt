@@ -87,6 +87,14 @@ sealed interface PlayerUiEvent {
 
     data object OnShuffleButtonClick : PlayerUiEvent
 
+    data object OnSetDoublePlaySpeed : PlayerUiEvent
+
+    data object OnSetPlaySpeedToNormal : PlayerUiEvent
+
+    data object OnSeekForwardGesture : PlayerUiEvent
+
+    data object OnSeekBackwardGesture : PlayerUiEvent
+
     data class OnProgressChange(
         val progress: Float,
     ) : PlayerUiEvent
@@ -237,6 +245,22 @@ private class PlayerPresenter(
 
                 is PlayerUiEvent.OnProgressChange -> {
                     seekToTime(duration.times(it.progress).toLong())
+                }
+
+                PlayerUiEvent.OnSetDoublePlaySpeed -> {
+                    repository.setPlaybackSpeed(2f)
+                }
+
+                PlayerUiEvent.OnSetPlaySpeedToNormal -> {
+                    repository.setPlaybackSpeed(1f)
+                }
+
+                PlayerUiEvent.OnSeekBackwardGesture -> {
+                    repository.seekBack()
+                }
+
+                PlayerUiEvent.OnSeekForwardGesture -> {
+                    repository.seekForward()
                 }
             }
         }

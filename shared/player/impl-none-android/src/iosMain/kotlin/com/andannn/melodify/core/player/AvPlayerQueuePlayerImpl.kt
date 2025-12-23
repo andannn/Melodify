@@ -172,6 +172,10 @@ internal class AvPlayerQueuePlayerImpl(
             }
     }
 
+    override fun setPlaybackSpeed(speed: Float) {
+        avPlayer.setPlayBackSpeed(speed)
+    }
+
     override fun play() {
         avPlayer.resume()
         val old = playerState.value

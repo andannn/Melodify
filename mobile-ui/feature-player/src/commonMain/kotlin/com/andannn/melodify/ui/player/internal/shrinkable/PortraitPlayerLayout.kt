@@ -38,7 +38,9 @@ import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.player.internal.AVPlayerView
 import com.andannn.melodify.ui.player.internal.MinImageSize
 import com.andannn.melodify.ui.player.internal.PlayerViewState
+import com.andannn.melodify.ui.player.internal.cover.FullScreenButtonCover
 import com.andannn.melodify.ui.player.internal.shrinkable.bottom.PlayerBottomSheetView
+import com.andannn.melodify.ui.player.internal.util.TouchToggleVisible
 
 internal val MinImagePaddingTop = 5.dp
 
