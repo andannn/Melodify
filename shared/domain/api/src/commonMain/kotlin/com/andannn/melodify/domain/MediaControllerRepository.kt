@@ -43,4 +43,10 @@ interface MediaControllerRepository {
     )
 
     fun removeMediaItem(index: Int)
+
+    fun seekForward()
+
+    fun seekBack()
+
+    fun setPlaybackSpeed(speed: Float)
 }

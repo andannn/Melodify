@@ -91,6 +91,15 @@ class FakeMediaControllerRepository :
             }
     }
 
+    override fun seekForward() {
+    }
+
+    override fun seekBack() {
+    }
+
+    override fun setPlaybackSpeed(speed: Float) {
+    }
+
     override fun getCurrentPositionMs(): Long = 0
 
     override fun observeCurrentDurationMs(): Flow<Long> = MutableStateFlow(0)

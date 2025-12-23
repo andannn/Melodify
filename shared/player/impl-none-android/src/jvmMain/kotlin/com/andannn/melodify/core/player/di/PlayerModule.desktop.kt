@@ -5,7 +5,7 @@
 package com.andannn.melodify.core.player.di
 
 import com.andannn.melodify.core.player.AvPlayerQueuePlayer
-import com.andannn.melodify.core.player.PlayerImpl
+import com.andannn.melodify.core.player.VlcPlayerImpl
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -13,5 +13,5 @@ import org.koin.dsl.module
 
 actual val platformPlayerModule: Module =
     module {
-        singleOf(::PlayerImpl).bind(AvPlayerQueuePlayer::class)
+        singleOf(::VlcPlayerImpl).bind(AvPlayerQueuePlayer::class)
     }

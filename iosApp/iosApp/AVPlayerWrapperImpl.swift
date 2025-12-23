@@ -64,6 +64,10 @@ class AVPlayerWrapperImpl: NSObject, AVPlayerWrapper {
     func resume() {
         player?.play()
     }
+
+    func setPlayBackSpeed(speed: Float) {
+        player?.rate = speed
+    }
     
     func seekTo(positionMs: Int64) {
         guard let player = player else { return }

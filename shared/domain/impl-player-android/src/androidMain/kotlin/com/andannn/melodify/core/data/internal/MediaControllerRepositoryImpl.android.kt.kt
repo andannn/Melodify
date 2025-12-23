@@ -96,4 +96,16 @@ class MediaControllerRepositoryImpl constructor(
     override fun removeMediaItem(index: Int) {
         mediaBrowser.removeMediaItem(index)
     }
+
+    override fun seekForward() {
+        mediaBrowser.seekForward()
+    }
+
+    override fun seekBack() {
+        mediaBrowser.seekBack()
+    }
+
+    override fun setPlaybackSpeed(speed: Float) {
+        mediaBrowser.setPlaybackSpeed(speed)
+    }
 }

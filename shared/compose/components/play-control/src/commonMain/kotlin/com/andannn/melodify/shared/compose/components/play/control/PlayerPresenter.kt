@@ -248,15 +248,19 @@ private class PlayerPresenter(
                 }
 
                 PlayerUiEvent.OnSetDoublePlaySpeed -> {
+                    repository.setPlaybackSpeed(2f)
                 }
 
                 PlayerUiEvent.OnSetPlaySpeedToNormal -> {
+                    repository.setPlaybackSpeed(1f)
                 }
 
                 PlayerUiEvent.OnSeekBackwardGesture -> {
+                    repository.seekBack()
                 }
 
                 PlayerUiEvent.OnSeekForwardGesture -> {
+                    repository.seekForward()
                 }
             }
         }

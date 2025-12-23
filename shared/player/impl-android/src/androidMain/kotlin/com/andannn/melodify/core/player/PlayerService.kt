@@ -37,6 +37,8 @@ class PlayerService :
 
     companion object {
         private const val IMMUTABLE_FLAG = PendingIntent.FLAG_IMMUTABLE
+        private const val DEFAULT_SEEK_INCREMENT_MS = 10_000L
+        private const val DEFAULT_SEEK_BACK_INCREMENT_MS = 10_000L
     }
 
     override fun onCreate() {
@@ -47,6 +49,8 @@ class PlayerService :
                 .Builder(application)
                 .setAudioAttributes(AudioAttributes.DEFAULT, true)
                 .setHandleAudioBecomingNoisy(true)
+                .setSeekForwardIncrementMs(DEFAULT_SEEK_INCREMENT_MS)
+                .setSeekBackIncrementMs(DEFAULT_SEEK_BACK_INCREMENT_MS)
                 .build()
 
         playerWrapper.setUpPlayer(player)
