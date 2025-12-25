@@ -5,10 +5,12 @@
 package com.andannn.melodify
 
 import android.app.Application
-import com.andannn.melodify.core.data.domainImpl
+import com.andannn.melodify.core.data.domainImplModule
 import com.andannn.melodify.core.syncer.di.syncerModule
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.util.MediaFileDeleteHelperImpl
+import com.andannn.melodify.util.volumn.AndroidVolumeController
+import com.andannn.melodify.util.volumn.VolumeController
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.android.ext.koin.androidContext
@@ -31,8 +33,8 @@ class MelodifyApplication : Application() {
             androidContext(this@MelodifyApplication)
             modules(
                 listOf(
-                    extraModel,
-                    domainImpl,
+                    extraModule,
+                    domainImplModule,
                     syncerModule,
                 ),
             )
@@ -40,8 +42,9 @@ class MelodifyApplication : Application() {
     }
 }
 
-private val extraModel =
+private val extraModule =
     module {
         singleOf(::MediaFileDeleteHelperImpl).bind(MediaFileDeleteHelper::class)
+        singleOf(::AndroidVolumeController).bind(VolumeController::class)
         viewModelOf(::MainActivityViewModel)
     }

@@ -5,7 +5,7 @@
 package com.andannn.melodify
 
 import androidx.compose.ui.window.application
-import com.andannn.melodify.core.data.domainImpl
+import com.andannn.melodify.core.data.domainImplModule
 import com.andannn.melodify.core.syncer.di.syncerModule
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.windows.MelodifyDeskTopApp
@@ -23,7 +23,7 @@ fun main() =
         startKoin {
             modules(
                 listOf(
-                    domainImpl,
+                    domainImplModule,
                     syncerModule,
                     extraModel,
                 ),
