@@ -32,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,12 +41,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
+import com.andannn.melodify.ui.player.internal.util.OffsetToStepHelper
 import com.andannn.melodify.ui.player.internal.util.detectLongPressAndContinuousTap
 import com.andannn.melodify.util.brightness.adjustBrightness
 import com.andannn.melodify.util.brightness.rememberBrightnessManager
+import com.andannn.melodify.util.volumn.VolumeController
+import com.andannn.melodify.util.volumn.adjustVolume
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "PlayerGestureFunctionCover"
 
@@ -63,6 +68,18 @@ internal fun PlayerGestureFunctionCover(
     }
 
     val brightnessController = rememberBrightnessManager()
+    val volumeController: VolumeController = remember { getKoin().get() }
+
+    val onVolumeStep: (isPositive: Boolean) -> Unit by rememberUpdatedState { isPositive ->
+        volumeController.adjustVolume(isPositive)
+    }
+
+    val volumeStepHelper: OffsetToStepHelper =
+        remember(onVolumeStep) {
+            OffsetToStepHelper(
+                onStep = onVolumeStep,
+            )
+        }
 
     LaunchedEffect(uiState) {
         if (uiState == UiState.ShowControl) {
@@ -136,6 +153,18 @@ internal fun PlayerGestureFunctionCover(
         uiState = UiState.Idle
     }
 
+    fun onAdjustVolume(offset: Float) {
+        Napier.d(tag = TAG) { "on adjust volume. $offset" }
+        uiState = UiState.AdjustingVolume
+        volumeStepHelper.onOffset(offset * -1)
+    }
+
+    fun onAdjustVolumeEnd() {
+        Napier.d(tag = TAG) { "on adjust volume end." }
+        uiState = UiState.Idle
+        volumeStepHelper.reset()
+    }
+
     // reset brightness when exit
     DisposableEffect(Unit) {
         onDispose {
@@ -162,6 +191,8 @@ internal fun PlayerGestureFunctionCover(
                 Modifier.weight(1f).fillMaxHeight().detectLongPressAndContinuousTap(
                     key = "control cover detector right",
                     onTap = ::togglePlayControl,
+                    onDrag = ::onAdjustVolume,
+                    onDragEnd = ::onAdjustVolumeEnd,
                     onLongPressStart = ::startDoubleSpeedPlay,
                     onLongPressEnd = ::endDoubleSpeedPlay,
                     onContinuousTap = ::seekForward,
@@ -201,6 +232,14 @@ internal fun PlayerGestureFunctionCover(
                 )
             }
 
+            AnimatedVisibility(
+                uiState is UiState.AdjustingVolume,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                VolumeIndicator(volumeController = volumeController)
+            }
+
             if (state is UiState.Seeking || state is UiState.Idle) {
                 var lastSeekingState by remember { mutableStateOf<UiState.Seeking?>(null) }
                 if (state is UiState.Seeking) {
@@ -222,6 +261,8 @@ private sealed interface UiState {
     data object DoubleSpeedPlaying : UiState
 
     data object AdjustingBrightness : UiState
+
+    data object AdjustingVolume : UiState
 
     data class Seeking(
         val seekSeconds: Int,

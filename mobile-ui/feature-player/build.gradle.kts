@@ -18,6 +18,7 @@ kotlin {
             implementation(project(":shared:compose:common"))
             implementation(project(":shared:platform"))
             implementation(project(":shared:util:brightness"))
+            implementation(project(":shared:util:volume"))
             implementation(project(":shared:compose:components:lyrics"))
             implementation(project(":shared:compose:components:queue"))
             implementation(project(":shared:compose:components:play-control"))
