@@ -1,5 +1,3 @@
-
-
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.compose.compiler)
@@ -19,6 +17,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":shared:compose:common"))
             implementation(project(":shared:platform"))
+            implementation(project(":shared:util:brightness"))
             implementation(project(":shared:compose:components:lyrics"))
             implementation(project(":shared:compose:components:queue"))
             implementation(project(":shared:compose:components:play-control"))

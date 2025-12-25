@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.util.brightness
 
 import android.app.Activity
@@ -5,6 +9,7 @@ import android.content.Context
 import android.provider.Settings
 import android.view.Window
 import android.view.WindowManager
+import com.andannn.melodify.util.brightness.BrightnessController.Companion.SYSTEM_BRIGHTNESS
 
 class AndroidBrightnessController(
     private val activity: Activity,
@@ -15,7 +20,8 @@ class AndroidBrightnessController(
     override fun getWindowBrightness(): Float {
         val currentBrightness = window.attributes.screenBrightness
         return if (currentBrightness == WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE) {
-            getSystemBrightnessFloat(activity)
+            // System brightness
+            SYSTEM_BRIGHTNESS
         } else {
             currentBrightness
         }
