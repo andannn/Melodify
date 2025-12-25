@@ -75,6 +75,7 @@ dependencies {
     implementation(project(":shared:domain:impl"))
     implementation(project(":shared:syncer:impl"))
     implementation(project(":shared:platform"))
+    implementation(project(":shared:util:brightness"))
     implementation(project(":shared:player:impl-android"))
     implementation(project(":mobile-ui:common"))
     implementation(project(":mobile-ui:app"))
