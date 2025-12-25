@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,11 +41,15 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.player.internal.util.detectLongPressAndContinuousTap
+import com.andannn.melodify.util.brightness.adjustBrightness
+import com.andannn.melodify.util.brightness.rememberBrightnessManager
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 
 private const val TAG = "PlayerGestureFunctionCover"
+
+private const val MAX_BRIGHTNESS_THRESHOLD = 400
 
 @Composable
 internal fun PlayerGestureFunctionCover(
@@ -56,6 +61,8 @@ internal fun PlayerGestureFunctionCover(
     var uiState: UiState by remember {
         mutableStateOf(UiState.Idle)
     }
+
+    val brightnessController = rememberBrightnessManager()
 
     LaunchedEffect(uiState) {
         if (uiState == UiState.ShowControl) {
@@ -76,10 +83,8 @@ internal fun PlayerGestureFunctionCover(
                     UiState.Idle
                 }
 
-                UiState.DoubleSpeedPlaying,
-                is UiState.Seeking,
-                -> {
-                    error("Never")
+                else -> {
+                    error("Never $uiState")
                 }
             }
     }
@@ -118,12 +123,34 @@ internal fun PlayerGestureFunctionCover(
         uiState = UiState.Idle
     }
 
+    fun onAdjustBrightness(offset: Float) {
+        Napier.d(tag = TAG) { "on adjust brightness. $offset" }
+        uiState = UiState.AdjustingBrightness
+        brightnessController.adjustBrightness(
+            offset = -1 * offset / MAX_BRIGHTNESS_THRESHOLD,
+        )
+    }
+
+    fun onAdjustBrightnessEnd() {
+        Napier.d(tag = TAG) { "on adjust brightness end." }
+        uiState = UiState.Idle
+    }
+
+    // reset brightness when exit
+    DisposableEffect(Unit) {
+        onDispose {
+            brightnessController.resetToSystemBrightness()
+        }
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxSize()) {
             Spacer(
                 Modifier.weight(1f).fillMaxHeight().detectLongPressAndContinuousTap(
                     key = "control cover detector left",
                     onTap = ::togglePlayControl,
+                    onDrag = ::onAdjustBrightness,
+                    onDragEnd = ::onAdjustBrightnessEnd,
                     onLongPressStart = ::startDoubleSpeedPlay,
                     onLongPressEnd = ::endDoubleSpeedPlay,
                     onContinuousTap = ::seekBackward,
@@ -147,6 +174,7 @@ internal fun PlayerGestureFunctionCover(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
+            val state = uiState
             AnimatedVisibility(
                 uiState is UiState.ShowControl,
                 enter = fadeIn(),
@@ -163,7 +191,16 @@ internal fun PlayerGestureFunctionCover(
                 DoubleSpeedPlayLabel()
             }
 
-            val state = uiState
+            AnimatedVisibility(
+                uiState is UiState.AdjustingBrightness,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                BrightnessIndicator(
+                    state = brightnessController.brightnessState.value,
+                )
+            }
+
             if (state is UiState.Seeking || state is UiState.Idle) {
                 var lastSeekingState by remember { mutableStateOf<UiState.Seeking?>(null) }
                 if (state is UiState.Seeking) {
@@ -184,6 +221,8 @@ private sealed interface UiState {
 
     data object DoubleSpeedPlaying : UiState
 
+    data object AdjustingBrightness : UiState
+
     data class Seeking(
         val seekSeconds: Int,
     ) : UiState {
@@ -198,7 +237,7 @@ private sealed interface UiState {
 
             is Seeking -> copy(seekSeconds = if (isSeekForward) seekSeconds + 10 else seekSeconds - 10)
 
-            DoubleSpeedPlaying -> error("tapped when long press, impossible.")
+            else -> error("impossible. $this")
         }
 }
 

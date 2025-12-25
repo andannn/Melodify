@@ -39,6 +39,8 @@ import com.andannn.melodify.ui.player.PipPlayer
 import com.andannn.melodify.util.ConnectFailedAlertDialog
 import com.andannn.melodify.util.MediaFileDeleteHelperImpl
 import com.andannn.melodify.util.PipParamUpdateEffect
+import com.andannn.melodify.util.brightness.AndroidBrightnessController
+import com.andannn.melodify.util.brightness.LocalBrightnessController
 import com.andannn.melodify.util.orientation.ScreenOrientationController
 import com.andannn.melodify.util.rememberIsInPipMode
 import io.github.aakira.napier.Napier
@@ -156,6 +158,7 @@ class MainActivity : ComponentActivity() {
                 } else {
                     CompositionLocalProvider(
                         LocalScreenOrientationController provides ScreenOrientationController(this),
+                        LocalBrightnessController provides AndroidBrightnessController(this),
                     ) {
                         when (uiState) {
                             is MainUiState.Error -> {
