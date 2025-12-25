@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.AudioItemModel
@@ -197,7 +199,7 @@ private class PlayerPresenter(
         val duration by durationFlow.collectAsStateWithLifecycle()
         val isSleepTimerCounting by isSleepTimerCountingFlow.collectAsStateWithLifecycle()
         val isFavorite by isFavoriteFlow.collectAsStateWithLifecycle()
-
+        val hapticFeedback = LocalHapticFeedback.current
         val eventSink: (PlayerUiEvent) -> Unit by rememberUpdatedState {
             when (it) {
                 PlayerUiEvent.OnFavoriteButtonClick -> {
@@ -249,6 +251,7 @@ private class PlayerPresenter(
 
                 PlayerUiEvent.OnSetDoublePlaySpeed -> {
                     repository.setPlaybackSpeed(2f)
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                 }
 
                 PlayerUiEvent.OnSetPlaySpeedToNormal -> {
