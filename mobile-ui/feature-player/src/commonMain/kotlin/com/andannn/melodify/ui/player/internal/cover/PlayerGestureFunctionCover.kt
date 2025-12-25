@@ -237,7 +237,7 @@ internal fun PlayerGestureFunctionCover(
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
-                VolumeIndicator(volumeController = volumeController)
+                VolumeIndicator()
             }
 
             if (state is UiState.Seeking || state is UiState.Idle) {

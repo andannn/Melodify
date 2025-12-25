@@ -28,19 +28,40 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.util.volumn.VolumeController
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 internal fun VolumeIndicator(
     modifier: Modifier = Modifier,
-    volumeController: VolumeController = getKoin().get(),
+    volumeStateModel: VolumeStateModel = retainedVolumeState(),
 ) {
-    val current =
+    val current = volumeStateModel.volumeStateFlow.collectAsStateWithLifecycle()
+    val maxVolume = volumeStateModel.maxVolume
+    VolumeIndicator(modifier = modifier, volume = current.value, maxVolume = maxVolume)
+}
+
+@Composable
+internal fun retainedVolumeState(volumeController: VolumeController = getKoin().get()) =
+    retainRetainedModel(volumeController) {
+        VolumeStateModel(volumeController)
+    }
+
+internal class VolumeStateModel(
+    volumeController: VolumeController,
+) : RetainedModel() {
+    val volumeStateFlow =
         volumeController
             .getCurrentVolumeFlow()
-            .collectAsStateWithLifecycle(volumeController.getCurrentVolume())
+            .stateIn(
+                retainedScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = volumeController.getCurrentVolume(),
+            )
     val maxVolume = volumeController.getMainVolumeIndex()
-    VolumeIndicator(modifier = modifier, volume = current.value, maxVolume = maxVolume)
 }
 
 @Composable
