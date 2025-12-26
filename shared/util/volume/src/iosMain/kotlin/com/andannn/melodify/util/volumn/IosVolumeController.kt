@@ -5,21 +5,15 @@
 package com.andannn.melodify.util.volumn
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 class IosVolumeController : VolumeController {
-    override fun getCurrentVolume(): Int {
-        TODO("Not yet implemented")
-    }
+    override fun getCurrentVolume(): Int = 0
 
-    override fun getCurrentVolumeFlow(): Flow<Int> {
-        TODO("Not yet implemented")
-    }
+    override fun getCurrentVolumeFlow(): Flow<Int> = flowOf(0)
 
-    override fun getMainVolumeIndex(): Int {
-        TODO("Not yet implemented")
-    }
+    override fun getMainVolumeIndex(): Int = 0
 
     override fun setVolume(volumeIndex: Int) {
-        TODO("Not yet implemented")
     }
 }

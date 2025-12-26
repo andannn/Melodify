@@ -7,6 +7,8 @@ package com.andannn.melodify
 import com.andannn.melodify.core.data.domainImplModule
 import com.andannn.melodify.core.syncer.di.syncerModule
 import com.andannn.melodify.domain.MediaFileDeleteHelper
+import com.andannn.melodify.util.volumn.IosVolumeController
+import com.andannn.melodify.util.volumn.VolumeController
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -27,4 +29,5 @@ fun startKoinWithPlatformModule(platformModuleProvider: () -> Module) {
 private val extraModel =
     module {
         singleOf(::MediaFileDeleteHelperImpl).bind(MediaFileDeleteHelper::class)
+        singleOf(::IosVolumeController).bind(VolumeController::class)
     }
