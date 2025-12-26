@@ -11,14 +11,14 @@ interface VolumeController {
 
     fun getCurrentVolumeFlow(): Flow<Int>
 
-    fun getMainVolumeIndex(): Int
+    fun getMaxVolume(): Int
 
     fun setVolume(volumeIndex: Int)
 }
 
 fun VolumeController.adjustVolume(isPositive: Boolean) {
     val current = getCurrentVolume()
-    val max = getMainVolumeIndex()
+    val max = getMaxVolume()
 
     val new = (current + (if (isPositive) 1 else -1)).coerceIn(0, max)
     if (new == current) return

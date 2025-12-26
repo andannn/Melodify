@@ -32,7 +32,9 @@ class AndroidBrightnessController(
 
         var newBrightness = brightness
         if (brightness > 1.0f) newBrightness = 1.0f
-        if (brightness < 0.0f && brightness != -1.0f) newBrightness = 0.0f
+        if (brightness < 0.0f && brightness != WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE) {
+            newBrightness = 0.0f
+        }
 
         layoutParams.screenBrightness = newBrightness
         window.attributes = layoutParams

@@ -61,7 +61,7 @@ internal class VolumeStateModel(
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = volumeController.getCurrentVolume(),
             )
-    val maxVolume = volumeController.getMainVolumeIndex()
+    val maxVolume = volumeController.getMaxVolume()
 }
 
 @Composable

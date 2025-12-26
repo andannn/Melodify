@@ -21,7 +21,7 @@ class AndroidVolumeController(
 ) : VolumeController {
     private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-    override fun getMainVolumeIndex(): Int = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+    override fun getMaxVolume(): Int = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
     override fun getCurrentVolume(): Int = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
 
@@ -56,7 +56,7 @@ class AndroidVolumeController(
         }
 
     override fun setVolume(volumeIndex: Int) {
-        val safeVolume = volumeIndex.coerceIn(0, getMainVolumeIndex())
+        val safeVolume = volumeIndex.coerceIn(0, getMaxVolume())
 
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, safeVolume, 0)
     }
