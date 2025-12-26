@@ -15,6 +15,8 @@ import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.core.syncer.MusicLibraryPermissionHandler
 import com.andannn.melodify.ui.LocalScreenOrientationController
 import com.andannn.melodify.ui.app.MelodifyMobileApp
+import com.andannn.melodify.util.brightness.IosBrightnessController
+import com.andannn.melodify.util.brightness.LocalBrightnessController
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.collect
@@ -47,6 +49,7 @@ fun MainViewController() =
 
         CompositionLocalProvider(
             LocalScreenOrientationController provides getKoin().get(),
+            LocalBrightnessController provides IosBrightnessController(),
         ) {
             if (haveMediaLibraryPermission) {
                 MelodifyMobileApp()

@@ -6,6 +6,7 @@ package com.andannn.melodify.ui.player.internal.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 
 @Composable
 actual fun DynamicThemePrimaryColorsFromImage(
@@ -13,7 +14,9 @@ actual fun DynamicThemePrimaryColorsFromImage(
     isDarkTheme: Boolean,
     content: @Composable (() -> Unit),
 ) {
-    content()
+    MelodifyTheme(darkTheme = isDarkTheme) {
+        content()
+    }
 }
 
 @Composable

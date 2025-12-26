@@ -29,6 +29,8 @@ kotlin {
             implementation(project(":shared:domain:impl"))
             implementation(project(":mobile-ui:common"))
             implementation(project(":mobile-ui:app"))
+            implementation(project(":shared:util:brightness"))
+            implementation(project(":shared:util:volume"))
             api(project(":shared:syncer:model"))
             api(project(":shared:syncer:platform-ios"))
             api(project(":shared:player:platform-player-ios"))
