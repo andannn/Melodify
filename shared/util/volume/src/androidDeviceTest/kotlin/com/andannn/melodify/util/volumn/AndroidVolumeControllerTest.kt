@@ -23,6 +23,6 @@ class AndroidVolumeControllerTest {
     @Test
     fun setVolumeTest() {
         controller.setVolume(10)
-        assertEquals(minOf(10, controller.getMainVolumeIndex()), controller.getCurrentVolume())
+        assertEquals(minOf(10, controller.getMaxVolume()), controller.getCurrentVolume())
     }
 }
