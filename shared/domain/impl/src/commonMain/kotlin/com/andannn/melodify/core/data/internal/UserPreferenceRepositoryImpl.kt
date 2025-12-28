@@ -185,6 +185,31 @@ internal class UserPreferenceRepositoryImpl(
     ) {
         userDataDao.swapTabOrder(from.tabId, toId = to.tabId)
     }
+
+    override suspend fun markVideoCompleted(videoId: Long) {
+        val isRecordExist = userDataDao.getPlayProgressFlow(videoId).first() != null
+        if (!isRecordExist) {
+            userDataDao.savePlayProgress(videoId, 0)
+        }
+        userDataDao.markVideoAsWatched(videoId)
+    }
+
+    override suspend fun savePlayProgress(
+        videoId: Long,
+        progressMs: Long,
+    ) {
+        userDataDao.savePlayProgress(videoId, progressMs)
+    }
+
+    override fun getResumePointMsFlow(videoId: Long): Flow<Pair<Long, Boolean>?> {
+        return userDataDao.getPlayProgressFlow(videoId).map {
+            if (it == null) {
+                return@map null
+            }
+
+            it.progressMs to it.getIsVideoFinished()
+        }
+    }
 }
 
 private fun TabKind.toEntityName(): String =

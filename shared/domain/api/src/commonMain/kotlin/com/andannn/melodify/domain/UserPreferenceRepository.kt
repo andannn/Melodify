@@ -115,4 +115,30 @@ interface UserPreferenceRepository {
         from: CustomTab,
         to: CustomTab,
     )
+
+    /**
+     * mark video as watched
+     *
+     * @param videoId video id
+     */
+    suspend fun markVideoCompleted(videoId: Long)
+
+    /**
+     * get play progress of video
+     *
+     * @param videoId video id
+     * @param progressMs progress in ms
+     */
+    suspend fun savePlayProgress(
+        videoId: Long,
+        progressMs: Long,
+    )
+
+    /**
+     * get play progress flow of video
+     *
+     * @param videoId video id
+     * @return flow of play progress and is finished
+     */
+    fun getResumePointMsFlow(videoId: Long): Flow<Pair<Long, Boolean>?>
 }

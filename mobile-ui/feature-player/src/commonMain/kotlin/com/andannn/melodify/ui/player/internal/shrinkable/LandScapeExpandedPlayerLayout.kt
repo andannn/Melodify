@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.KeepScreenOnEffect
@@ -21,6 +22,7 @@ import com.andannn.melodify.util.immersive.ImmersiveModeEffect
 @Composable
 internal fun LandScapeExpandedPlayerLayout(
     modifier: Modifier = Modifier,
+    interactingMediaItem: MediaItemModel,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
     isShuffle: Boolean = false,
     isPlaying: Boolean = false,
@@ -37,19 +39,20 @@ internal fun LandScapeExpandedPlayerLayout(
         )
         PlayerGestureFunctionCover(
             onEvent = onEvent,
-        ) {
-            AVPlayerControlWidget(
-                title = title,
-                subTitle = subTitle,
-                duration = duration,
-                isShuffle = isShuffle,
-                playMode = playMode,
-                isPlaying = isPlaying,
-                progress = progress,
-                onEvent = onEvent,
-                onShrink = onShrink,
-            )
-        }
+            controlWidget = {
+                AVPlayerControlWidget(
+                    title = title,
+                    subTitle = subTitle,
+                    duration = duration,
+                    isShuffle = isShuffle,
+                    playMode = playMode,
+                    isPlaying = isPlaying,
+                    progress = progress,
+                    onEvent = onEvent,
+                    onShrink = onShrink,
+                )
+            },
+        )
     }
 
     ImmersiveModeEffect()

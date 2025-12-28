@@ -24,12 +24,14 @@ import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortOptionData
 import com.andannn.melodify.core.database.entity.SortRuleEntity
+import com.andannn.melodify.core.database.entity.VideoEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -1014,6 +1016,52 @@ abstract class AbstractDatabaseTest {
             playListDao.getFavoritePlayListFlow(isAudio = false).first().let {
                 assertEquals(null, it)
             }
+        }
+
+    @Test
+    fun `update video progress failed when video not exist`() =
+        runTest {
+            assertFails {
+                database.getUserDataDao().savePlayProgress(
+                    videoId = 1L,
+                    100L,
+                )
+            }
+        }
+
+    @Test
+    fun `update video progress`() =
+        runTest {
+            database.getMediaLibraryDao().insertVideos(
+                listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
+            )
+            database.getUserDataDao().savePlayProgress(videoId = 1L, 100L)
+            database.getUserDataDao().getPlayProgressFlow(1L).first().also {
+                assertEquals(100, it?.progressMs)
+            }
+            database.getUserDataDao().savePlayProgress(videoId = 1L, 101L)
+            database.getUserDataDao().getPlayProgressFlow(1L).first().also {
+                assertEquals(101, it?.progressMs)
+            }
+        }
+
+    @Test
+    fun `can not mark video as watched when progress record not exist`() =
+        runTest {
+            database.getMediaLibraryDao().insertVideos(
+                listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
+            )
+            assertEquals(0, database.getUserDataDao().markVideoAsWatched(1L))
+        }
+
+    @Test
+    fun `mark video as watched success`() =
+        runTest {
+            database.getMediaLibraryDao().insertVideos(
+                listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
+            )
+            database.getUserDataDao().savePlayProgress(videoId = 1L, 100L)
+            assertEquals(1, database.getUserDataDao().markVideoAsWatched(1L))
         }
 }
 

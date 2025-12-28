@@ -177,6 +177,7 @@ internal fun PlayerView(
                     }
                     LandScapeExpandedPlayerLayout(
                         playMode = state.playMode,
+                        interactingMediaItem = state.mediaItem,
                         isShuffle = state.isShuffle,
                         isPlaying = state.isPlaying,
                         title = state.mediaItem.name,

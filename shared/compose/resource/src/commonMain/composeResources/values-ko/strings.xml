@@ -103,4 +103,5 @@
     <string name="sort_by_video_bucket_name">비디오 그룹 이름으로 정렬</string>
 
     <string name="change_play_list_alert_dialog_content">Tem certeza de que deseja alterar a lista de reprodução atual?</string>
+    <string name="last_watched_jump">마지막 시청: %1$s. 탭하여 이동</string>
 </resources>

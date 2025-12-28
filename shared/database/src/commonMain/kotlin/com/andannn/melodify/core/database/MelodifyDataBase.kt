@@ -36,6 +36,7 @@ import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortOptionJsonConverter
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
+import com.andannn.melodify.core.database.entity.VideoPlayProgressEntity
 import com.andannn.melodify.core.database.entity.fts.AlbumFtsEntity
 import com.andannn.melodify.core.database.entity.fts.ArtistFtsEntity
 import com.andannn.melodify.core.database.entity.fts.MediaFtsEntity
@@ -58,6 +59,7 @@ internal object Tables {
     const val CUSTOM_TAB = "custom_tab_table"
     const val SEARCH_HISTORY = "search_history_table"
     const val SORT_RULE = "sort_rule_table"
+    const val VIDEO_PLAY_PROGRESS = "video_play_progress_table"
 }
 
 @Database(
@@ -77,6 +79,7 @@ internal object Tables {
         SearchHistoryEntity::class,
         SortRuleEntity::class,
         VideoEntity::class,
+        VideoPlayProgressEntity::class,
     ],
     autoMigrations = [
         AutoMigration(from = 3, to = 4),
@@ -88,8 +91,9 @@ internal object Tables {
         AutoMigration(from = 9, to = 10),
         AutoMigration(from = 10, to = 11),
         AutoMigration(from = 11, to = 12, AutoMigration11To12Spec::class),
+        AutoMigration(from = 12, to = 13),
     ],
-    version = 12,
+    version = 13,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)

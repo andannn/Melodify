@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 
 class FakeMediaControllerRepository :
     MediaControllerRepository,
@@ -131,4 +132,6 @@ class FakeMediaControllerRepository :
     override fun observeIsPlaying(): Flow<Boolean> = isPlayFlow
 
     override fun observeProgressFactor(): Flow<Float> = MutableStateFlow(0f)
+
+    override fun observePlayBackEndEvent(): Flow<MediaItemModel> = flowOf()
 }

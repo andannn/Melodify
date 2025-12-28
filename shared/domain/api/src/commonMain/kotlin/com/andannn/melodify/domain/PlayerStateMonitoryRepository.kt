@@ -31,4 +31,6 @@ interface PlayerStateMonitoryRepository {
     fun observeIsPlaying(): Flow<Boolean>
 
     fun observeProgressFactor(): Flow<Float>
+
+    fun observePlayBackEndEvent(): Flow<MediaItemModel>
 }

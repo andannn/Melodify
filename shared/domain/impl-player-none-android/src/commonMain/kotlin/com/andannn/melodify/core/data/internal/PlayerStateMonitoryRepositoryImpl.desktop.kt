@@ -74,4 +74,9 @@ internal class PlayerStateMonitoryRepositoryImpl(
             }.distinctUntilChanged()
 
     override fun observeProgressFactor(): Flow<Float> = queuePlayer.observeProgressFactor()
+
+    override fun observePlayBackEndEvent(): Flow<MediaItemModel> {
+        // TODO: support play video
+        return flowOf()
+    }
 }
