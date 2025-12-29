@@ -105,4 +105,5 @@
 
     <string name="change_play_list_alert_dialog_content">Möchten Sie die aktuelle Wiedergabeliste wirklich ändern?</string>
     <string name="last_watched_jump">Zuletzt angesehen: %1$s. Antippen zum Springen.</string>
+    <string name="show_play_progress">Wiedergabefortschritt anzeigen</string>
 </resources>

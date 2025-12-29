@@ -78,6 +78,7 @@ import melodify.shared.compose.resource.generated.resources.preset_video
 import melodify.shared.compose.resource.generated.resources.primary_group_by
 import melodify.shared.compose.resource.generated.resources.reset_settings
 import melodify.shared.compose.resource.generated.resources.secondary_group_by
+import melodify.shared.compose.resource.generated.resources.show_play_progress
 import melodify.shared.compose.resource.generated.resources.show_track_number
 import melodify.shared.compose.resource.generated.resources.sort_by_genre
 import melodify.shared.compose.resource.generated.resources.sort_by_media_title
@@ -100,6 +101,7 @@ internal fun ChangeSortRuleDialogContent(
         modifier = modifier,
         tab = dialog.tab,
         displaySetting = state.displaySetting,
+        isShowVideoProgress = state.isShowVideoProgress,
         onChangePresetSortRule = {
             state.eventSink(UiEvent.OnChangeSortRule(it.displaySetting))
         },
@@ -109,17 +111,22 @@ internal fun ChangeSortRuleDialogContent(
         onChangeCustomSortRule = {
             state.eventSink(UiEvent.OnChangeSortRule(it))
         },
+        onToggleIsShowVideoProgress = {
+            state.eventSink(UiEvent.OnToggleIsShowVideoProgress)
+        },
     )
 }
 
 @Composable
 private fun ChangeSortRuleDialogContent(
     tab: CustomTab,
+    isShowVideoProgress: Boolean,
     displaySetting: DisplaySetting,
     modifier: Modifier = Modifier,
     onChangePresetSortRule: (PresetDisplaySetting) -> Unit = {},
     onChangeCustomSortRule: (DisplaySetting) -> Unit = {},
     onCustomRadioButtonClick: () -> Unit = {},
+    onToggleIsShowVideoProgress: () -> Unit = {},
 ) {
     val isAudio = tab.isAudio()
     val selectedPresetOption =
@@ -145,6 +152,25 @@ private fun ChangeSortRuleDialogContent(
             modifier = Modifier.weight(1f),
         ) {
             item {
+                if (!isAudio) {
+                    Row(
+                        modifier = Modifier.padding(top = 16.dp, start = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(stringResource(Res.string.show_play_progress))
+                        Spacer(Modifier.width(6.dp))
+                        Switch(
+                            checked = isShowVideoProgress,
+                            onCheckedChange = {
+                                onToggleIsShowVideoProgress()
+                            },
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                }
+            }
+
+            item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
@@ -159,6 +185,10 @@ private fun ChangeSortRuleDialogContent(
 
             item {
                 Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            // Custom sort rule
+            item {
                 Text(
                     modifier =
                         Modifier.padding(horizontal = 12.dp),
@@ -166,9 +196,13 @@ private fun ChangeSortRuleDialogContent(
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )
+            }
 
+            item {
                 Spacer(modifier = Modifier.height(10.dp))
+            }
 
+            item {
                 Row(
                     modifier =
                         Modifier
@@ -270,6 +304,8 @@ private fun ChangeSortRuleDialogContent(
                         onClick = onCustomRadioButtonClick,
                     )
                 }
+            }
+            item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
@@ -586,11 +622,24 @@ private class ChangeSortRulePresenter(
                 started = WhileSubscribed(5000),
             )
 
+    private val isShowVideoProgressFlow =
+        repository
+            .getIsShowVideoProgressFlow(customTab.tabId)
+            .stateIn(
+                retainedScope,
+                initialValue = false,
+                started = WhileSubscribed(5000),
+            )
+
     @Composable
     override fun present(): UiState {
         val displaySetting by displaySettingFlow.collectAsStateWithLifecycle()
+        val isShowVideoProgress by isShowVideoProgressFlow.collectAsStateWithLifecycle()
 
-        return UiState(displaySetting) { event ->
+        return UiState(
+            displaySetting = displaySetting,
+            isShowVideoProgress = isShowVideoProgress,
+        ) { event ->
             when (event) {
                 is UiEvent.OnChangeSortRule -> {
                     retainedScope.launch {
@@ -613,6 +662,15 @@ private class ChangeSortRulePresenter(
                         )
                     }
                 }
+
+                UiEvent.OnToggleIsShowVideoProgress -> {
+                    retainedScope.launch {
+                        repository.setIsShowVideoProgress(
+                            tabId = customTab.tabId,
+                            isShow = !isShowVideoProgress,
+                        )
+                    }
+                }
             }
         }
     }
@@ -621,6 +679,7 @@ private class ChangeSortRulePresenter(
 @Stable
 private data class UiState(
     val displaySetting: DisplaySetting,
+    val isShowVideoProgress: Boolean,
     val eventSink: (UiEvent) -> Unit = {},
 )
 
@@ -630,6 +689,8 @@ private sealed interface UiEvent {
     ) : UiEvent
 
     data object OnCustomRadioButtonClick : UiEvent
+
+    data object OnToggleIsShowVideoProgress : UiEvent
 }
 
 private fun SortOptionType.label() =

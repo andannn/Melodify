@@ -104,4 +104,5 @@
 
     <string name="change_play_list_alert_dialog_content">Tem certeza de que deseja alterar a lista de reprodução atual?</string>
     <string name="last_watched_jump">마지막 시청: %1$s. 탭하여 이동</string>
+    <string name="show_play_progress">재생 진행 상황 표시</string>
 </resources>

@@ -105,4 +105,5 @@
 
     <string name="change_play_list_alert_dialog_content">Вы уверены, что хотите изменить текущий плейлист?</string>
     <string name="last_watched_jump">Последний просмотр: %1$s. Нажмите, чтобы перейти.</string>
+    <string name="show_play_progress">Показывать прогресс воспроизведения</string>
 </resources>
