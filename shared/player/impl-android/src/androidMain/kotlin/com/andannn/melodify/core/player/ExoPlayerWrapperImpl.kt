@@ -10,6 +10,9 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.getAndUpdate
@@ -27,6 +30,11 @@ internal class ExoPlayerWrapperImpl : ExoPlayerWrapper {
 
     private val playingMediaItemStateFlow = MutableStateFlow<MediaItem?>(null)
     private val playingIndexInQueueFlow = MutableStateFlow<Int?>(null)
+    private val mediaPlaybackFinishedFlow =
+        MutableSharedFlow<MediaItem>(
+            extraBufferCapacity = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
 
     private val playListFlow = MutableStateFlow<List<MediaItem>>(emptyList())
 
@@ -84,6 +92,11 @@ internal class ExoPlayerWrapperImpl : ExoPlayerWrapper {
                         }
                     }
                 }
+
+                if (playbackState == Player.STATE_ENDED) {
+                    val playingItem = playingMediaItemStateFlow.value ?: error("playing item not exist")
+                    mediaPlaybackFinishedFlow.tryEmit(playingItem)
+                }
             }
 
             override fun onPlayWhenReadyChanged(
@@ -122,7 +135,12 @@ internal class ExoPlayerWrapperImpl : ExoPlayerWrapper {
                 mediaItem: MediaItem?,
                 reason: Int,
             ) {
-                Napier.d(tag = TAG) { "onMediaItemTransition: $mediaItem" }
+                Napier.d(tag = TAG) { "onMediaItemTransition: reason: $reason" }
+                if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO || reason == Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT) {
+                    val playingItem = playingMediaItemStateFlow.value ?: error("playing item not exist")
+                    mediaPlaybackFinishedFlow.tryEmit(playingItem)
+                }
+
                 playingIndexInQueueFlow.value = player!!.currentMediaItemIndex
                 playingMediaItemStateFlow.value = mediaItem
             }
@@ -225,4 +243,6 @@ internal class ExoPlayerWrapperImpl : ExoPlayerWrapper {
     override fun observeIsShuffle() = isShuffleFlow
 
     override fun observePlayMode() = playerModeFlow
+
+    override fun observePlayBackEndEvent(): Flow<MediaItem> = mediaPlaybackFinishedFlow
 }

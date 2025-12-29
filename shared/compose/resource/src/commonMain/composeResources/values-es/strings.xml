@@ -104,4 +104,6 @@
     <string name="sort_by_video_bucket_name">Ordenar por nombre del grupo de video</string>
 
     <string name="change_play_list_alert_dialog_content">¿Seguro que quieres cambiar la lista de reproducción actual?</string>
+
+    <string name="last_watched_jump">Visto por última vez: %1$s. Toca para saltar.</string>
 </resources>

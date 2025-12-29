@@ -33,4 +33,6 @@ interface ExoPlayerWrapper {
     fun observeIsShuffle(): StateFlow<Boolean>
 
     fun observePlayMode(): StateFlow<Int>
+
+    fun observePlayBackEndEvent(): Flow<MediaItem>
 }

@@ -19,6 +19,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":shared:compose:usecase"))
             implementation(project(":shared:domain:api"))
+            implementation(project(":shared:platform"))
         }
     }
 }

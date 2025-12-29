@@ -15,6 +15,8 @@ import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryColumns
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortRuleEntity
+import com.andannn.melodify.core.database.entity.VideoPlayProgressColumns
+import com.andannn.melodify.core.database.entity.VideoPlayProgressEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -113,4 +115,27 @@ interface UserDataDao {
 
     @Query("SELECT * FROM ${Tables.SEARCH_HISTORY} ORDER BY ${SearchHistoryColumns.SEARCH_DATE} DESC LIMIT :limit")
     suspend fun getSearchHistories(limit: Int): List<SearchHistoryEntity>
+
+    @Query("UPDATE ${Tables.VIDEO_PLAY_PROGRESS} SET is_finished = 1 WHERE ${VideoPlayProgressColumns.EXTERNAL_VIDEO_ID} = :videoId")
+    suspend fun markVideoAsWatched(videoId: Long): Int
+
+    @Query(
+        """
+    INSERT INTO ${Tables.VIDEO_PLAY_PROGRESS} (
+        external_video_id, 
+        progress
+    ) VALUES (
+        :videoId,
+        :progressMs
+    ) ON CONFLICT(external_video_id) DO UPDATE SET 
+        progress = excluded.progress
+    """,
+    )
+    suspend fun savePlayProgress(
+        videoId: Long,
+        progressMs: Long,
+    )
+
+    @Query("SELECT * FROM ${Tables.VIDEO_PLAY_PROGRESS} WHERE external_video_id = :videoId")
+    fun getPlayProgressFlow(videoId: Long): Flow<VideoPlayProgressEntity?>
 }

@@ -185,10 +185,6 @@ private class PlayerPresenter(
                 initialValue = false,
             )
 
-    init {
-        Napier.d(tag = TAG) { "init ${this.hashCode()}" }
-    }
-
     @Composable
     override fun present(): PlayerUiState {
         val interactingMusicItem by interactingMusicItemFlow.collectAsStateWithLifecycle()

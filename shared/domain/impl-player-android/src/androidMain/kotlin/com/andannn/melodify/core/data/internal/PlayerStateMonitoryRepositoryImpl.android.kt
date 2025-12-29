@@ -77,4 +77,11 @@ class PlayerStateMonitoryRepositoryImpl(
                         .coerceIn(0f, 1f)
                 }
             }.distinctUntilChanged()
+
+    override fun observePlayBackEndEvent(): Flow<MediaItemModel> =
+        playerWrapper
+            .observePlayBackEndEvent()
+            .map {
+                it.toAppItem()
+            }
 }

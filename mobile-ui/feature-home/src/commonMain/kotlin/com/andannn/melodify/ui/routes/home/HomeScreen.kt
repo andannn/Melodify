@@ -24,8 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.widgets.DropDownMenuIconButton
+import com.andannn.melodify.shared.compose.components.play.control.ResumePointIndicatorContainer
 import com.andannn.melodify.shared.compose.components.tab.TabUi
 import com.andannn.melodify.shared.compose.components.tab.content.TabContent
 import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
@@ -107,4 +109,10 @@ internal fun HomeUiScreen(
             TabContent(homeState.tabContentState, modifier = Modifier)
         }
     }
+
+    ResumePointIndicatorContainer(
+        modifier =
+            Modifier
+                .zIndex(1f),
+    )
 }
