@@ -15,6 +15,7 @@ import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.CustomTabEntity
+import com.andannn.melodify.core.database.entity.CustomTabType.ALL_VIDEO
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaColumns
@@ -25,6 +26,7 @@ import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortOptionData
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
+import com.andannn.melodify.core.database.entity.VideoTabSettingEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
@@ -1062,6 +1064,39 @@ abstract class AbstractDatabaseTest {
             )
             database.getUserDataDao().savePlayProgress(videoId = 1L, 100L)
             assertEquals(1, database.getUserDataDao().markVideoAsWatched(1L))
+        }
+
+    @Test
+    fun `set is show video progress setting failed when no video tab setting`() =
+        runTest {
+            assertFails {
+                database.getUserDataDao().upsertVideoTabSettingEntity(10, true)
+            }
+        }
+
+    @Test
+    fun `set is show video progress setting success`() =
+        runTest {
+            database.getUserDataDao().insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
+            database.getUserDataDao().upsertVideoTabSettingEntity(10, true)
+            database.getUserDataDao().getVideoSettingFlowOfTab(10).first().also {
+                assertEquals(true, it?.isShowProgress)
+            }
+            database.getUserDataDao().upsertVideoTabSettingEntity(10, false)
+            database.getUserDataDao().getVideoSettingFlowOfTab(10).first().also {
+                assertEquals(false, it?.isShowProgress)
+            }
+        }
+
+    @Test
+    fun `VideoTabSettingEntity is deleted when tab is deleted`() =
+        runTest {
+            database.getUserDataDao().insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
+            database.getUserDataDao().upsertVideoTabSettingEntity(10, true)
+            database.getUserDataDao().deleteCustomTab(10)
+            database.getUserDataDao().getVideoSettingFlowOfTab(10).first().also {
+                assertEquals(null, it)
+            }
         }
 }
 

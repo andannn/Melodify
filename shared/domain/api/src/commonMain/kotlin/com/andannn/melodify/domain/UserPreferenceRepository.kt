@@ -141,4 +141,17 @@ interface UserPreferenceRepository {
      * @return flow of play progress and is finished
      */
     fun getResumePointMsFlow(videoId: Long): Flow<Pair<Long, Boolean>?>
+
+    /**
+     * set is show video progress
+     *
+     * @param tabId tab id
+     * @param isShow true if show, false otherwise
+     */
+    suspend fun setIsShowVideoProgress(
+        tabId: Long,
+        isShow: Boolean,
+    )
+
+    fun getIsShowVideoProgressFlow(tabId: Long): Flow<Boolean>
 }
