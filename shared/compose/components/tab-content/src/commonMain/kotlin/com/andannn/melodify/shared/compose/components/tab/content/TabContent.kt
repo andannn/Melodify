@@ -67,6 +67,7 @@ import com.andannn.melodify.shared.compose.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import com.andannn.melodify.shared.compose.components.tab.content.header.GroupHeader
 import com.andannn.melodify.shared.compose.components.tab.content.header.GroupInfo
+import com.andannn.melodify.shared.compose.components.tab.content.video.VideoListTileItemView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import melodify.shared.compose.resource.generated.resources.Res
@@ -221,16 +222,9 @@ private fun LazyListContent(
                                 }
 
                                 is VideoItemModel -> {
-                                    ListTileItemView(
-                                        paddingValues =
-                                            PaddingValues(
-                                                top = 4.dp,
-                                                bottom = 4.dp,
-                                            ),
-                                        playable = item.browsableOrPlayable,
-                                        isActive = false,
-                                        thumbnailSourceUri = null,
-                                        title = item.name,
+                                    VideoListTileItemView(
+                                        item = item,
+                                        tabId = selectedTab?.tabId,
                                         onItemClick = {
                                             onMediaItemClick(item)
                                         },

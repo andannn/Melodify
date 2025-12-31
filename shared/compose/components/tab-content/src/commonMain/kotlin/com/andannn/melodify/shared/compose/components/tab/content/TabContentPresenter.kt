@@ -105,7 +105,7 @@ private class TabContentPresenter(
     private val popupController: PopupController,
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
 ) : RetainedPresenter<TabContentState>() {
-    private var displaySetting =
+    private val displaySetting =
         getDisplaySettingFlow().stateIn(
             scope = retainedScope,
             started = kotlinx.coroutines.flow.SharingStarted.Eagerly,

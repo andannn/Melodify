@@ -54,7 +54,6 @@ fun ListTileItemView(
     thumbnailSourceUri: String? = null,
     isActive: Boolean = false,
     defaultColor: Color = MaterialTheme.colorScheme.surface,
-    errorPlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
     title: String = "",
     subTitle: String = "",
     trackNum: Int? = null,
