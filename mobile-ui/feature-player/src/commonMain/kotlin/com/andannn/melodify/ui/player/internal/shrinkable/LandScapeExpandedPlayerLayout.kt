@@ -12,11 +12,11 @@ import androidx.compose.ui.Modifier
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
+import com.andannn.melodify.ui.ImmersiveModeEffect
 import com.andannn.melodify.ui.KeepScreenOnEffect
 import com.andannn.melodify.ui.player.internal.AVPlayerView
 import com.andannn.melodify.ui.player.internal.cover.AVPlayerControlWidget
 import com.andannn.melodify.ui.player.internal.cover.PlayerGestureFunctionCover
-import com.andannn.melodify.util.immersive.ImmersiveModeEffect
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

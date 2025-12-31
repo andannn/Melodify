@@ -77,6 +77,7 @@ dependencies {
     implementation(project(":shared:platform"))
     implementation(project(":shared:util:brightness"))
     implementation(project(":shared:util:volume"))
+    implementation(project(":shared:util:immersive"))
     implementation(project(":shared:player:impl-android"))
     implementation(project(":mobile-ui:common"))
     implementation(project(":mobile-ui:app"))
