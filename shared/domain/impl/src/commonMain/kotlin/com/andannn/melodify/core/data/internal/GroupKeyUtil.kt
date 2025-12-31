@@ -14,15 +14,23 @@ import com.andannn.melodify.core.database.entity.VideoColumns
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.SortOption
 
-internal fun List<GroupKey>.toWheresMethod() =
+internal fun List<GroupKey>.toAudioWheresMethod() =
     MediaWheres
         .buildMethod {
-            this@toWheresMethod.forEach {
-                addWhereOption(it)
+            this@toAudioWheresMethod.forEach {
+                addAudioWhereOption(it)
             }
         }.takeIf { this.isNotEmpty() }
 
-internal fun MutableList<Where>.addWhereOption(where: GroupKey) =
+internal fun List<GroupKey>.toVideoWheresMethod() =
+    MediaWheres
+        .buildMethod {
+            this@toVideoWheresMethod.forEach {
+                addVideoWhereOption(it)
+            }
+        }.takeIf { this.isNotEmpty() }
+
+private fun MutableList<Where>.addAudioWhereOption(where: GroupKey) =
     apply {
         val where =
             when (where) {
@@ -50,6 +58,14 @@ internal fun MutableList<Where>.addWhereOption(where: GroupKey) =
                     )
                 }
 
+                is GroupKey.Year -> {
+                    Where(
+                        MediaColumns.YEAR,
+                        Where.Operator.EQUALS,
+                        where.year,
+                    )
+                }
+
                 is GroupKey.Title -> {
                     Where(
                         MediaColumns.TITLE,
@@ -58,11 +74,22 @@ internal fun MutableList<Where>.addWhereOption(where: GroupKey) =
                     )
                 }
 
-                is GroupKey.Year -> {
+                else -> {
+                    error("not support")
+                }
+            }
+        add(where)
+    }
+
+private fun MutableList<Where>.addVideoWhereOption(where: GroupKey) =
+    apply {
+        val where =
+            when (where) {
+                is GroupKey.Title -> {
                     Where(
-                        MediaColumns.YEAR,
-                        Where.Operator.EQUALS,
-                        where.year,
+                        VideoColumns.TITLE,
+                        Where.Operator.GLOB,
+                        where.firstCharacterString + "*",
                     )
                 }
 
@@ -73,6 +100,10 @@ internal fun MutableList<Where>.addWhereOption(where: GroupKey) =
                         where.bucketId,
                     )
                 }
+
+                else -> {
+                    error("not support")
+                }
             }
         add(where)
     }
@@ -80,18 +111,18 @@ internal fun MutableList<Where>.addWhereOption(where: GroupKey) =
 internal fun List<SortOption.AudioOption>.toAudioSortMethod() =
     MediaSorts.buildMethod {
         this@toAudioSortMethod.forEach {
-            addAudioSortOption(it)
+            addSortOption(it)
         }
     }
 
 internal fun List<SortOption.VideoOption>.toVideoSortMethod() =
     MediaSorts.buildMethod {
         this@toVideoSortMethod.forEach {
-            addAudioSortOption(it)
+            addSortOption(it)
         }
     }
 
-private fun MutableList<Sort>.addAudioSortOption(sort: SortOption) {
+private fun MutableList<Sort>.addSortOption(sort: SortOption) {
     when (sort) {
         is SortOption.AudioOption.Album -> {
             apply {

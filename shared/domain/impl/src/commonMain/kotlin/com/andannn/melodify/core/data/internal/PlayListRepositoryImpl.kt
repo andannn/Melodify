@@ -195,7 +195,7 @@ internal class PlayListRepositoryImpl(
     ) = playListDao
         .getMediasInPlayListFlow(
             playListId,
-            wheres.toWheresMethod(),
+            wheres.toAudioWheresMethod(),
             sort.toAudioSortMethod(),
         ).map { it.map { it.mapToAppItem() } }
 
@@ -207,7 +207,7 @@ internal class PlayListRepositoryImpl(
         playListDao
             .getVideosInPlayListFlow(
                 playListId,
-                wheres.toWheresMethod(),
+                wheres.toVideoWheresMethod(),
                 sort.toVideoSortMethod(),
             ).map { it.map { it.mapToAppItem() } }
 
@@ -220,7 +220,7 @@ internal class PlayListRepositoryImpl(
         pagingSourceFactory = {
             playListDao.getMediaPagingSourceInPlayList(
                 playListId = playListId,
-                wheres = wheres.toWheresMethod(),
+                wheres = wheres.toAudioWheresMethod(),
                 mediaSorts = sort.toAudioSortMethod(),
             )
         },
@@ -237,7 +237,7 @@ internal class PlayListRepositoryImpl(
         pagingSourceFactory = {
             playListDao.getVideoPagingSourceInPlayList(
                 playListId = playListId,
-                wheres = wheres.toWheresMethod(),
+                wheres = wheres.toVideoWheresMethod(),
                 mediaSorts = sort.toVideoSortMethod(),
             )
         },

@@ -34,7 +34,7 @@ internal class MediaContentRepositoryImpl(
             config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
             pagingSourceFactory = {
                 mediaLibraryDao.getAllMediaPagingSource(
-                    whereGroup.toWheresMethod(),
+                    whereGroup.toAudioWheresMethod(),
                     sort.toAudioSortMethod(),
                 )
             },
@@ -51,7 +51,7 @@ internal class MediaContentRepositoryImpl(
             pagingSourceFactory = {
                 mediaLibraryDao.getAllVideoPagingSource(
                     sort = sort.toVideoSortMethod(),
-                    where = whereGroup.toWheresMethod(),
+                    where = whereGroup.toVideoWheresMethod(),
                 )
             },
         ).flow.map { pagingData ->
@@ -69,7 +69,7 @@ internal class MediaContentRepositoryImpl(
                 mediaLibraryDao.getVideoBucketPagingSource(
                     bucketId = bucketId,
                     sort = sort.toVideoSortMethod(),
-                    where = whereGroup.toWheresMethod(),
+                    where = whereGroup.toVideoWheresMethod(),
                 )
             },
         ).flow.map { pagingData ->
@@ -85,7 +85,7 @@ internal class MediaContentRepositoryImpl(
             .getVideoBucketFlow(
                 bucketId = bucketId,
                 sort = sort.toVideoSortMethod(),
-                where = whereGroup.toWheresMethod(),
+                where = whereGroup.toVideoWheresMethod(),
             ).map { it.mapToVideoItemModel() }
 
     override fun getAllMediaItemsFlow(
@@ -93,7 +93,7 @@ internal class MediaContentRepositoryImpl(
         whereGroup: List<GroupKey>,
     ) = mediaLibraryDao
         .getAllMediaFlow(
-            whereGroup.toWheresMethod(),
+            whereGroup.toAudioWheresMethod(),
             sort.toAudioSortMethod(),
         ).map { it.mapToAudioItemModel() }
 
@@ -103,7 +103,7 @@ internal class MediaContentRepositoryImpl(
     ): Flow<List<VideoItemModel>> =
         mediaLibraryDao
             .getAllVideoFlow(
-                where = whereGroup.toWheresMethod(),
+                where = whereGroup.toVideoWheresMethod(),
                 sort = sort.toVideoSortMethod(),
             ).map { it.mapToVideoItemModel() }
 
@@ -129,7 +129,7 @@ internal class MediaContentRepositoryImpl(
     ) = mediaLibraryDao
         .getMediasByAlbumIdFlow(
             albumId,
-            whereGroup.toWheresMethod(),
+            whereGroup.toAudioWheresMethod(),
             sort.toAudioSortMethod(),
         ).map { it.mapToAudioItemModel() }
 
@@ -143,7 +143,7 @@ internal class MediaContentRepositoryImpl(
             pagingSourceFactory = {
                 mediaLibraryDao.getMediasPagingSourceByAlbumId(
                     albumId = albumId,
-                    whereGroup.toWheresMethod(),
+                    whereGroup.toAudioWheresMethod(),
                     sort.toAudioSortMethod(),
                 )
             },
@@ -158,7 +158,7 @@ internal class MediaContentRepositoryImpl(
     ) = mediaLibraryDao
         .getMediasByArtistIdFlow(
             artistId,
-            whereGroup.toWheresMethod(),
+            whereGroup.toAudioWheresMethod(),
             sort.toAudioSortMethod(),
         ).map { it.mapToAudioItemModel() }
 
@@ -172,7 +172,7 @@ internal class MediaContentRepositoryImpl(
             pagingSourceFactory = {
                 mediaLibraryDao.getMediasPagingSourceByArtistId(
                     artistId = artistId,
-                    whereGroup.toWheresMethod(),
+                    whereGroup.toAudioWheresMethod(),
                     sort.toAudioSortMethod(),
                 )
             },
@@ -187,7 +187,7 @@ internal class MediaContentRepositoryImpl(
     ) = mediaLibraryDao
         .getMediasByGenreIdFlow(
             genreId,
-            whereGroup.toWheresMethod(),
+            whereGroup.toAudioWheresMethod(),
             sort.toAudioSortMethod(),
         ).map { it.mapToAudioItemModel() }
 
@@ -200,7 +200,7 @@ internal class MediaContentRepositoryImpl(
         pagingSourceFactory = {
             mediaLibraryDao.getMediasPagingSourceByGenreId(
                 genreId = genreId,
-                whereGroup.toWheresMethod(),
+                whereGroup.toAudioWheresMethod(),
                 sort.toAudioSortMethod(),
             )
         },
