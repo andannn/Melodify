@@ -92,6 +92,7 @@ internal fun VolumeIndicator(
         LinearProgressIndicator(
             modifier = Modifier.width(120.dp),
             progress = { progress },
+            drawStopIndicator = {},
         )
 
         Spacer(Modifier.width(4.dp))

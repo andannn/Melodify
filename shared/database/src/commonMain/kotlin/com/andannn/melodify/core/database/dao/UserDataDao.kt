@@ -17,6 +17,7 @@ import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoPlayProgressColumns
 import com.andannn.melodify.core.database.entity.VideoPlayProgressEntity
+import com.andannn.melodify.core.database.entity.VideoTabSettingEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -109,6 +110,26 @@ interface UserDataDao {
 
     @Query("SELECT * FROM ${Tables.SORT_RULE} WHERE custom_tab_foreign_key = :tabId")
     fun getDisplaySettingFlowOfTab(tabId: Long): Flow<SortRuleEntity?>
+
+    @Query(
+        """
+    INSERT INTO ${Tables.VIDEO_TAB_SETTING} (
+        custom_tab_foreign_key, 
+        is_show_progress
+    ) VALUES (
+        :tabId,
+        :isShowProgress
+    ) ON CONFLICT(custom_tab_foreign_key) DO UPDATE SET 
+        is_show_progress = excluded.is_show_progress
+    """,
+    )
+    suspend fun upsertVideoTabSettingEntity(
+        tabId: Long,
+        isShowProgress: Boolean,
+    )
+
+    @Query("SELECT * FROM ${Tables.VIDEO_TAB_SETTING} WHERE custom_tab_foreign_key = :tabId")
+    fun getVideoSettingFlowOfTab(tabId: Long): Flow<VideoTabSettingEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSearchHistory(searchHistories: List<SearchHistoryEntity>)

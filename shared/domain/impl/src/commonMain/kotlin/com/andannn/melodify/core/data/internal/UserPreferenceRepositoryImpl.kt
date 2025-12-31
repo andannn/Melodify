@@ -210,6 +210,18 @@ internal class UserPreferenceRepositoryImpl(
             it.progressMs to it.getIsVideoFinished()
         }
     }
+
+    override suspend fun setIsShowVideoProgress(
+        tabId: Long,
+        isShow: Boolean,
+    ) {
+        userDataDao.upsertVideoTabSettingEntity(tabId, isShow)
+    }
+
+    override fun getIsShowVideoProgressFlow(tabId: Long): Flow<Boolean> =
+        userDataDao.getVideoSettingFlowOfTab(tabId).map {
+            it?.isShowProgress ?: false
+        }
 }
 
 private fun TabKind.toEntityName(): String =

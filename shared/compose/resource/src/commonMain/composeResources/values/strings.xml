@@ -100,4 +100,5 @@
     <string name="change_play_list_alert_dialog_content">Are you sure you want to change the current playlist?</string>
 
     <string name="last_watched_jump">Last watched: %1$s. Tap to jump.</string>
+    <string name="show_play_progress">Show playback progress</string>
 </resources>

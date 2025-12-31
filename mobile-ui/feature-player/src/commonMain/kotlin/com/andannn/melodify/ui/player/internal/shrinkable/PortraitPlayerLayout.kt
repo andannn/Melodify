@@ -206,6 +206,7 @@ internal fun PortraitPlayerLayout(
                             .padding(bottom = with(LocalDensity.current) { layoutState.navigationBarHeightPx.toDp() })
                             .align(BottomStart),
                     progress = { progress },
+                    drawStopIndicator = {},
                 )
             }
         }

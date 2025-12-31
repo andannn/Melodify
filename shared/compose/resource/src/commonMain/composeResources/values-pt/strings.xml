@@ -104,4 +104,5 @@
 
     <string name="change_play_list_alert_dialog_content">Tem certeza de que deseja alterar a lista de reprodução atual?</string>
     <string name="last_watched_jump">Última visualização: %1$s. Toque para pular.</string>
+    <string name="show_play_progress">Mostrar progresso de reprodução</string>
 </resources>

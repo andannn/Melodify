@@ -57,6 +57,7 @@ internal fun BrightnessIndicator(
         LinearProgressIndicator(
             modifier = Modifier.width(120.dp),
             progress = { progress },
+            drawStopIndicator = {},
         )
 
         val text =

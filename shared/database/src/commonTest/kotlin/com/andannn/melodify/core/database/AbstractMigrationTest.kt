@@ -252,4 +252,14 @@ abstract class AbstractMigrationTest {
                 helper.runMigrationsAndValidate(13)
             migratedConnection.close()
         }
+
+    @Test
+    fun migrate13To14SyncAlbumTableTest(): Unit =
+        helper.let { helper ->
+            val newConnection = helper.createDatabase(13)
+            newConnection.close()
+            val migratedConnection =
+                helper.runMigrationsAndValidate(14)
+            migratedConnection.close()
+        }
 }
