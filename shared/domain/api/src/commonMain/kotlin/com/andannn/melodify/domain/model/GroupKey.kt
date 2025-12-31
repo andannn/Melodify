@@ -34,7 +34,7 @@ sealed interface GroupKey {
     ) : GroupKey
 }
 
-fun MediaItemModel.keyOf(sortOption: SortOption): GroupKey? =
+fun MediaItemModel.groupKeyOf(sortOption: SortOption): GroupKey? =
     when (this) {
         is AudioItemModel -> {
             when (sortOption) {

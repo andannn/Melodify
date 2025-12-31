@@ -62,7 +62,7 @@ import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.domain.model.browsableOrPlayable
-import com.andannn.melodify.domain.model.keyOf
+import com.andannn.melodify.domain.model.groupKeyOf
 import com.andannn.melodify.shared.compose.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import com.andannn.melodify.shared.compose.components.tab.content.header.GroupHeader
@@ -471,7 +471,7 @@ private fun List<MediaItemModel?>.groupByType(sortOption: SortOption): List<Seco
     this
         .filterNotNull()
         .groupBy {
-            it.keyOf(sortOption)
+            it.groupKeyOf(sortOption)
         }.map { (key, value) ->
             SecondaryGroup(
                 headerItem = key,
