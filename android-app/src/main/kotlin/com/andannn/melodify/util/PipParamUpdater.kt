@@ -77,7 +77,7 @@ fun rememberIsInPipMode(): Boolean {
 private class PipParamUpdater(
     val activity: Activity,
 ) {
-    var isAutoEnterEnabled: Boolean = false
+    var isAutoEnterEnabled: Boolean? = null
         set(value) {
             if (field != value) {
                 field = value
@@ -85,17 +85,13 @@ private class PipParamUpdater(
             }
         }
 
-    var aspectRatio: Rational = Rational(16, 9)
+    var aspectRatio: Rational? = null
         set(value) {
             if (field != value) {
                 field = value
                 updatePictureInPictureParams()
             }
         }
-
-    init {
-        updatePictureInPictureParams()
-    }
 
     private fun updatePictureInPictureParams() {
         Napier.d(tag = TAG) { "updatePictureInPictureParams() aspectRatio: $aspectRatio isAutoEnterEnabled: $isAutoEnterEnabled" }
@@ -103,13 +99,17 @@ private class PipParamUpdater(
             PictureInPictureParams
                 .Builder()
                 .apply {
-                    if (aspectRatio.toFloat() in 0.418410..2.390000) {
-                        setAspectRatio(aspectRatio)
-                    } else {
-                        Napier.w(tag = TAG) { "aspectRatio: $aspectRatio is not supported" }
+                    isAutoEnterEnabled?.let { isAutoEnterEnabled ->
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            setAutoEnterEnabled(isAutoEnterEnabled)
+                        }
                     }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        setAutoEnterEnabled(isAutoEnterEnabled)
+                    aspectRatio?.let { aspectRatio ->
+                        if (aspectRatio.toFloat() in 0.418410..2.390000) {
+                            setAspectRatio(aspectRatio)
+                        } else {
+                            Napier.w(tag = TAG) { "aspectRatio: $aspectRatio is not supported" }
+                        }
                     }
                 }.build(),
         )
