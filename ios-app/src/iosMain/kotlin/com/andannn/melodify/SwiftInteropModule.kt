@@ -8,6 +8,7 @@ import com.andannn.melodify.artwork.ios.MediaArtworkViewControllerFactory
 import com.andannn.melodify.core.player.AVPlayerWrapper
 import com.andannn.melodify.core.syncer.MPMediaScanner
 import com.andannn.melodify.core.syncer.MusicLibraryPermissionHandler
+import com.andannn.melodify.util.immersive.SystemUiController
 import com.andannn.melodify.util.orientation.ScreenOrientationController
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -18,10 +19,12 @@ fun swiftInteropModule(
     avPlayerWrapper: AVPlayerWrapper,
     screenOrientationController: ScreenOrientationController,
     mediaArtworkViewControllerFactory: MediaArtworkViewControllerFactory,
+    systemUiController: SystemUiController,
 ) = module {
     single { mPMediaScanner }.bind(MPMediaScanner::class)
     single { musicLibraryPermissionHandler }.bind(MusicLibraryPermissionHandler::class)
     single { avPlayerWrapper }.bind(AVPlayerWrapper::class)
     single { screenOrientationController }.bind(ScreenOrientationController::class)
     single { mediaArtworkViewControllerFactory }.bind(MediaArtworkViewControllerFactory::class)
+    single { systemUiController }.bind(SystemUiController::class)
 }

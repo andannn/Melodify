@@ -14,6 +14,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.core.syncer.MusicLibraryPermissionHandler
 import com.andannn.melodify.ui.LocalScreenOrientationController
+import com.andannn.melodify.ui.LocalSystemUiController
 import com.andannn.melodify.ui.app.MelodifyMobileApp
 import com.andannn.melodify.util.brightness.IosBrightnessController
 import com.andannn.melodify.util.brightness.LocalBrightnessController
@@ -50,6 +51,7 @@ fun MainViewController() =
         CompositionLocalProvider(
             LocalScreenOrientationController provides getKoin().get(),
             LocalBrightnessController provides IosBrightnessController(),
+            LocalSystemUiController provides getKoin().get(),
         ) {
             if (haveMediaLibraryPermission) {
                 MelodifyMobileApp()

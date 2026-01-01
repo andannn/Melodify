@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.filled.Fullscreen
@@ -24,10 +24,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -35,6 +35,7 @@ import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.common.widgets.LinerWaveSlider
 import com.andannn.melodify.shared.compose.common.widgets.MarqueeText
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
+import com.andannn.melodify.ui.LocalSystemUiController
 import com.andannn.melodify.ui.player.internal.shrinkable.MaxImagePaddingStart
 import com.andannn.melodify.ui.player.internal.shrinkable.PlayControlButtons
 import com.andannn.melodify.ui.player.internal.util.formatDuration
@@ -54,11 +55,20 @@ internal fun AVPlayerControlWidget(
     onEvent: (PlayerUiEvent) -> Unit,
     onShrink: () -> Unit,
 ) {
+    val systemUiController = LocalSystemUiController.current
+
+    DisposableEffect(systemUiController) {
+        systemUiController.setSystemUiDarkTheme(true)
+        onDispose {
+            systemUiController.setSystemUiStyleAuto()
+        }
+    }
+
     Box(
         modifier =
             modifier
-                .clip(shape = RoundedCornerShape(8.dp))
-                .background(Color.Black.copy(alpha = 0.5f)),
+                .background(Color.Black.copy(alpha = 0.5f))
+                .systemBarsPadding(),
     ) {
         Box(
             modifier =

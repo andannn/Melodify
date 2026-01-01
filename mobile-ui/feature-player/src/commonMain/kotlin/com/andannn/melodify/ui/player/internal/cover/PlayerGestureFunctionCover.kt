@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
+import com.andannn.melodify.ui.LocalSystemUiController
 import com.andannn.melodify.ui.player.internal.util.OffsetToStepHelper
 import com.andannn.melodify.ui.player.internal.util.detectLongPressAndContinuousTap
 import com.andannn.melodify.util.brightness.adjustBrightness
@@ -86,6 +87,12 @@ internal fun PlayerGestureFunctionCover(
             delay(showDurationMs)
             uiState = UiState.Idle
         }
+    }
+
+    val systemUiController = LocalSystemUiController.current
+    val isShowSystemUi = uiState is UiState.ShowControl
+    LaunchedEffect(systemUiController, isShowSystemUi) {
+        systemUiController.setSystemUiVisibility(isShowSystemUi)
     }
 
     fun togglePlayControl() {

@@ -3,16 +3,6 @@ import ComposeApp
 
 @main
 struct iOSApp: App {
-    init() {
-        StartKoinHelperKt.startKoinWithPlatformModule {
-            SwiftInteropModuleKt.swiftInteropModule(mPMediaScanner: MPMediaScannerImpl(),
-                                                    musicLibraryPermissionHandler: MusicLibraryPermissionHandlerImpl(),
-                                                    avPlayerWrapper: AVPlayerWrapperImpl(),
-                                                    screenOrientationController: ScreenOrientationControllerImpl(),
-                                                    mediaArtworkViewControllerFactory: MediaArtworkViewControllerFactoryImpl())
-        }
-    }
-    
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     
     var body: some Scene {
