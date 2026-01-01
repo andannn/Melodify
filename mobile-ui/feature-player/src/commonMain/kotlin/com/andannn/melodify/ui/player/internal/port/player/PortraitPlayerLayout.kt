@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.player.internal.shrinkable
+package com.andannn.melodify.ui.player.internal.port.player
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -36,10 +36,11 @@ import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.player.internal.AVPlayerView
-import com.andannn.melodify.ui.player.internal.MinImageSize
-import com.andannn.melodify.ui.player.internal.PlayerViewState
-import com.andannn.melodify.ui.player.internal.cover.FullScreenButtonCover
-import com.andannn.melodify.ui.player.internal.shrinkable.bottom.PlayerBottomSheetView
+import com.andannn.melodify.ui.player.internal.common.MiniPlayerLayout
+import com.andannn.melodify.ui.player.internal.port.player.bottom.PlayerBottomSheetView
+import com.andannn.melodify.ui.player.internal.port.player.control.LargePlayerControlArea
+import com.andannn.melodify.ui.player.internal.port.player.cover.FullScreenButtonCover
+import com.andannn.melodify.ui.player.internal.port.player.header.PlayerHeader
 import com.andannn.melodify.ui.player.internal.util.TouchToggleVisible
 
 internal val MinImagePaddingTop = 5.dp

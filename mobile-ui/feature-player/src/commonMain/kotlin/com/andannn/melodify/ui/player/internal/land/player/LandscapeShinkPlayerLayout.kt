@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.player.internal.shrinkable
+package com.andannn.melodify.ui.player.internal.land.player
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.player.internal.AVPlayerView
+import com.andannn.melodify.ui.player.internal.common.MiniPlayerLayout
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

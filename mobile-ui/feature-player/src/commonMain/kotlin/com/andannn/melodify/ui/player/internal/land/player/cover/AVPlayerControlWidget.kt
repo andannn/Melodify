@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.player.internal.cover
+package com.andannn.melodify.ui.player.internal.land.player.cover
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
+import androidx.compose.material.icons.automirrored.rounded.QueueMusic
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -36,8 +37,8 @@ import com.andannn.melodify.shared.compose.common.widgets.LinerWaveSlider
 import com.andannn.melodify.shared.compose.common.widgets.MarqueeText
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.LocalSystemUiController
-import com.andannn.melodify.ui.player.internal.shrinkable.MaxImagePaddingStart
-import com.andannn.melodify.ui.player.internal.shrinkable.PlayControlButtons
+import com.andannn.melodify.ui.player.internal.common.PlayControlButtons
+import com.andannn.melodify.ui.player.internal.port.player.MaxImagePaddingStart
 import com.andannn.melodify.ui.player.internal.util.formatDuration
 import kotlin.math.roundToLong
 
@@ -54,6 +55,7 @@ internal fun AVPlayerControlWidget(
     modifier: Modifier = Modifier,
     onEvent: (PlayerUiEvent) -> Unit,
     onShrink: () -> Unit,
+    onToggleShowPlayQueue: () -> Unit,
 ) {
     val systemUiController = LocalSystemUiController.current
 
@@ -86,7 +88,7 @@ internal fun AVPlayerControlWidget(
                         contentDescription = "Shrink",
                     )
                 }
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     MarqueeText(
                         modifier =
                             Modifier
@@ -100,6 +102,15 @@ internal fun AVPlayerControlWidget(
                         text = subTitle,
                         maxLines = 2,
                         style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+                IconButton(
+                    modifier = Modifier,
+                    onClick = onToggleShowPlayQueue,
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
+                        contentDescription = "Queue",
                     )
                 }
             }

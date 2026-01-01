@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.player.internal.shrinkable
+package com.andannn.melodify.ui.player.internal.port.player.control
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +24,8 @@ import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.shared.compose.common.widgets.LinerWaveSlider
 import com.andannn.melodify.shared.compose.common.widgets.MarqueeText
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
+import com.andannn.melodify.ui.player.internal.common.PlayControlButtons
+import com.andannn.melodify.ui.player.internal.port.player.MaxImagePaddingStart
 import com.andannn.melodify.ui.player.internal.util.formatDuration
 import kotlin.math.roundToLong
 
