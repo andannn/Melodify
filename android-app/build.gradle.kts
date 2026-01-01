@@ -15,8 +15,8 @@ android {
 
     defaultConfig {
         applicationId = "com.andannn.melodify"
-        versionCode = 57
-        versionName = "1.2.9"
+        versionCode = 58
+        versionName = "1.2.10"
 
         compileSdk = 36
         targetSdk = 36
