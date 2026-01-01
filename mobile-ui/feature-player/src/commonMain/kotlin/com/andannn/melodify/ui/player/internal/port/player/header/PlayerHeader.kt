@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.player.internal.shrinkable
+package com.andannn.melodify.ui.player.internal.port.player.header
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

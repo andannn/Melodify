@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.player.internal
+package com.andannn.melodify.ui.player.internal.port.player
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -19,14 +19,9 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import com.andannn.melodify.ui.player.internal.shrinkable.BottomSheetDragAreaHeight
-import com.andannn.melodify.ui.player.internal.shrinkable.MinFadeoutWithExpandAreaPaddingTop
-import com.andannn.melodify.ui.player.internal.shrinkable.MinImagePaddingStart
-import com.andannn.melodify.ui.player.internal.shrinkable.MinImagePaddingTop
+import com.andannn.melodify.ui.player.internal.PlayerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
-internal enum class PlayerState { Shrink, Expand }
 
 internal enum class BottomSheetState { Shrink, Expand }
 

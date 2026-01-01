@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.player.internal.shrinkable.bottom
+package com.andannn.melodify.ui.player.internal.port.player.bottom
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -46,7 +46,7 @@ import androidx.navigationevent.compose.NavigationEventHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import com.andannn.melodify.shared.compose.components.lyrics.Lyrics
 import com.andannn.melodify.shared.compose.components.queue.PlayQueue
-import com.andannn.melodify.ui.player.internal.BottomSheetState
+import com.andannn.melodify.ui.player.internal.port.player.BottomSheetState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope

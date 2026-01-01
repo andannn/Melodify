@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.shared.compose.components.queue
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -51,21 +52,24 @@ private fun PlayQueueUi(
     state: PlayQueueState,
     modifier: Modifier = Modifier,
 ) {
-    if (state.playListQueue.isNotEmpty()) {
-        PlayQueueContent(
-            modifier = modifier,
-            onItemClick = {
-                state.eventSink.invoke(PlayQueueEvent.OnItemClick(it))
-            },
-            onSwapFinished = { from, to ->
-                state.eventSink.invoke(PlayQueueEvent.OnSwapFinished(from = from, to = to))
-            },
-            onDeleteFinished = {
-                state.eventSink.invoke(PlayQueueEvent.OnDeleteFinished(it))
-            },
-            playListQueue = state.playListQueue.toImmutableList(),
-            activeMediaItem = state.interactingMusicItem,
-        )
+    Box(
+        modifier = modifier,
+    ) {
+        if (state.playListQueue.isNotEmpty()) {
+            PlayQueueContent(
+                onItemClick = {
+                    state.eventSink.invoke(PlayQueueEvent.OnItemClick(it))
+                },
+                onSwapFinished = { from, to ->
+                    state.eventSink.invoke(PlayQueueEvent.OnSwapFinished(from = from, to = to))
+                },
+                onDeleteFinished = {
+                    state.eventSink.invoke(PlayQueueEvent.OnDeleteFinished(it))
+                },
+                playListQueue = state.playListQueue.toImmutableList(),
+                activeMediaItem = state.interactingMusicItem,
+            )
+        }
     }
 }
 
@@ -100,8 +104,7 @@ private fun PlayQueueContent(
     }
 
     LazyColumn(
-        modifier =
-            modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         state = listState,
     ) {
         items(

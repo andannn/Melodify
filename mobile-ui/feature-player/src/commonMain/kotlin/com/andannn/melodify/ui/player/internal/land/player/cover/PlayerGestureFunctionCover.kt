@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.player.internal.cover
+package com.andannn.melodify.ui.player.internal.land.player.cover
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
