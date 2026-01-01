@@ -56,12 +56,7 @@ internal fun AVPlayerControlWidget(
     onShrink: () -> Unit,
 ) {
     val systemUiController = LocalSystemUiController.current
-    DisposableEffect(systemUiController) {
-        systemUiController.setSystemUiVisibility(true)
-        onDispose {
-            systemUiController.setSystemUiVisibility(false)
-        }
-    }
+
     DisposableEffect(systemUiController) {
         systemUiController.setSystemUiDarkTheme(true)
         onDispose {
