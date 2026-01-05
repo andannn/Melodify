@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import com.andannn.melodify.ui.player.internal.PlayerState
+import com.andannn.melodify.ui.player.internal.port.PlayerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

@@ -13,13 +13,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
 import com.andannn.melodify.ui.LocalScreenOrientationController
+import com.andannn.melodify.ui.player.LocalPlayerStateHolder
+import com.andannn.melodify.ui.player.PlayerLayoutState
 import com.andannn.melodify.ui.player.internal.land.LandscapePlayer
 import com.andannn.melodify.ui.player.internal.port.PortraitPlayer
 import com.andannn.melodify.ui.player.internal.theme.DynamicThemePrimaryColorsFromImage
@@ -40,11 +41,8 @@ internal fun PlayerView(
     modifier: Modifier = Modifier,
     onEvent: (PlayerUiEvent) -> Unit,
 ) {
+    val playerStateHolder = LocalPlayerStateHolder.current
     val screenController = LocalScreenOrientationController.current
-    var retainedPlayerState by
-        retain {
-            mutableStateOf(PlayerState.Shrink)
-        }
 
     val surfaceColor = MaterialTheme.colorScheme.surface
     val dominantColorState =
@@ -73,23 +71,23 @@ internal fun PlayerView(
 
             if (screenController.isCurrentPortrait) {
                 PortraitPlayer(
-                    initialPlayerState = retainedPlayerState,
+                    initialIsExpand = playerStateHolder.playerLayoutState == PlayerLayoutState.Expand,
                     state = state,
                     onEvent = onEvent,
-                    onReportPlayState = { state ->
-                        retainedPlayerState = state
-                    },
                 )
             } else {
                 LandscapePlayer(
-                    isShowFullScreenPlayer = retainedPlayerState == PlayerState.Expand,
+                    initialIsFullScreen = playerStateHolder.playerLayoutState == PlayerLayoutState.Expand,
                     state = state,
                     onEvent = onEvent,
                     onRequestDarkTheme = {
                         isRequestDarkTheme = it
                     },
-                    onReportPlayState = { state ->
-                        retainedPlayerState = state
+                    onReportPlayerShink = {
+                        playerStateHolder.onReportPlayState(PlayerLayoutState.Shrink)
+                    },
+                    onReportPlayerExpand = {
+                        playerStateHolder.onReportPlayState(PlayerLayoutState.Expand)
                     },
                 )
             }

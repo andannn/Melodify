@@ -7,6 +7,10 @@ package com.andannn.melodify.ui.player.internal.land
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationEventHandler
@@ -15,22 +19,25 @@ import com.andannn.melodify.domain.model.subTitle
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
 import com.andannn.melodify.ui.LocalScreenOrientationController
-import com.andannn.melodify.ui.player.internal.PlayerState
 import com.andannn.melodify.ui.player.internal.land.player.LandScapeExpandedPlayerLayout
 import com.andannn.melodify.ui.player.internal.land.player.LandScapeShrinkPlayerLayout
 
 @Composable
 internal fun LandscapePlayer(
     modifier: Modifier = Modifier,
-    isShowFullScreenPlayer: Boolean,
+    initialIsFullScreen: Boolean,
     state: PlayerUiState.Active,
     onEvent: (PlayerUiEvent) -> Unit,
     onRequestDarkTheme: (Boolean) -> Unit,
-    onReportPlayState: (PlayerState) -> Unit,
+    onReportPlayerExpand: () -> Unit,
+    onReportPlayerShink: () -> Unit,
 ) {
     val screenController = LocalScreenOrientationController.current
+    var isFullScreen by remember {
+        mutableStateOf(initialIsFullScreen)
+    }
     Box(modifier = modifier) {
-        if (isShowFullScreenPlayer) {
+        if (isFullScreen) {
             DisposableEffect(Unit) {
                 onRequestDarkTheme(true)
                 onDispose {
@@ -43,7 +50,8 @@ internal fun LandscapePlayer(
                     // Change to portrait screen if back from fullscreen Landscape layout.
                     screenController.cancelRequest()
                 } else {
-                    onReportPlayState(PlayerState.Shrink)
+                    isFullScreen = false
+                    onReportPlayerShink()
                 }
             }
             NavigationEventHandler(
@@ -75,7 +83,8 @@ internal fun LandscapePlayer(
                 isFavorite = state.isFavorite,
                 onEvent = onEvent,
                 onExpand = {
-                    onReportPlayState(PlayerState.Expand)
+                    isFullScreen = true
+                    onReportPlayerExpand()
                 },
             )
         }
