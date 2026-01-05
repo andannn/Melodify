@@ -6,9 +6,7 @@ package com.andannn.melodify.core.player
 
 import android.app.PendingIntent
 import android.content.Intent
-import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
@@ -43,7 +41,6 @@ class PlayerService :
         private const val DEFAULT_SEEK_BACK_INCREMENT_MS = 10_000L
     }
 
-    @OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
 
@@ -56,7 +53,6 @@ class PlayerService :
                 .setSeekBackIncrementMs(DEFAULT_SEEK_BACK_INCREMENT_MS)
                 .build()
 
-        player.isScrubbingModeEnabled = true
         playerWrapper.setUpPlayer(player)
         session =
             MediaSession
