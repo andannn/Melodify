@@ -46,6 +46,7 @@ import androidx.navigationevent.compose.NavigationEventHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import com.andannn.melodify.shared.compose.components.lyrics.Lyrics
 import com.andannn.melodify.shared.compose.components.queue.PlayQueue
+import com.andannn.melodify.ui.player.LocalPlayerStateHolder
 import com.andannn.melodify.ui.player.internal.port.player.BottomSheetState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -63,6 +64,7 @@ private const val TAG = "PlayQueueView"
 @Composable
 internal fun PlayerBottomSheetView(
     state: AnchoredDraggableState<BottomSheetState>,
+    initialSelectedTab: SheetTab?,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
     onRequestExpandSheet: () -> Unit = {},
@@ -83,7 +85,15 @@ internal fun PlayerBottomSheetView(
         }
     }
 
-    val sheetState = rememberPlayerBottomSheetState()
+    val sheetState = rememberPlayerBottomSheetState(initialSelectedTab)
+    val layoutStateHolder = LocalPlayerStateHolder.current
+    LaunchedEffect(sheetState.selectedTab, state.currentValue) {
+        if (sheetState.selectedTab == SheetTab.NEXT_SONG && state.currentValue == BottomSheetState.Expand) {
+            layoutStateHolder.isQueueOpened = true
+        } else {
+            layoutStateHolder.isQueueOpened = false
+        }
+    }
     NavigationEventHandler(
         state = rememberNavigationEventState(NavigationEventInfo.None),
         isBackEnabled = isExpand,

@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +43,7 @@ import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.shared.compose.components.queue.PlayQueue
 import com.andannn.melodify.ui.ImmersiveModeEffect
 import com.andannn.melodify.ui.KeepScreenOnEffect
+import com.andannn.melodify.ui.player.LocalPlayerStateHolder
 import com.andannn.melodify.ui.player.internal.AVPlayerView
 import com.andannn.melodify.ui.player.internal.land.player.cover.AVPlayerControlWidget
 import com.andannn.melodify.ui.player.internal.land.player.cover.PlayerGestureFunctionCover
@@ -53,7 +55,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun LandScapeExpandedPlayerLayout(
     modifier: Modifier = Modifier,
-    interactingMediaItem: MediaItemModel,
+    initialIsQueueOpened: Boolean,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
     isShuffle: Boolean = false,
     isPlaying: Boolean = false,
@@ -64,10 +66,15 @@ internal fun LandScapeExpandedPlayerLayout(
     onEvent: (PlayerUiEvent) -> Unit = {},
     onShrink: () -> Unit = {},
 ) {
+    var isQueueVisible by remember {
+        mutableStateOf(initialIsQueueOpened)
+    }
+    val playerLayoutStateHolder = LocalPlayerStateHolder.current
+    LaunchedEffect(isQueueVisible) {
+        playerLayoutStateHolder.isQueueOpened = isQueueVisible
+    }
+
     Surface(modifier = modifier.fillMaxSize()) {
-        var isQueueVisible by remember {
-            mutableStateOf(false)
-        }
         Row(modifier = Modifier.fillMaxSize()) {
             Box(modifier = Modifier.weight(1f)) {
                 AVPlayerView()

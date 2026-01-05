@@ -7,6 +7,7 @@ package com.andannn.melodify.ui.player.internal.land
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,23 +20,30 @@ import com.andannn.melodify.domain.model.subTitle
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
 import com.andannn.melodify.ui.LocalScreenOrientationController
+import com.andannn.melodify.ui.player.LocalPlayerStateHolder
 import com.andannn.melodify.ui.player.internal.land.player.LandScapeExpandedPlayerLayout
 import com.andannn.melodify.ui.player.internal.land.player.LandScapeShrinkPlayerLayout
 
 @Composable
 internal fun LandscapePlayer(
     modifier: Modifier = Modifier,
-    initialIsFullScreen: Boolean,
     state: PlayerUiState.Active,
     onEvent: (PlayerUiEvent) -> Unit,
     onRequestDarkTheme: (Boolean) -> Unit,
-    onReportPlayerExpand: () -> Unit,
-    onReportPlayerShink: () -> Unit,
 ) {
     val screenController = LocalScreenOrientationController.current
+    val playerStateHolder = LocalPlayerStateHolder.current
+    val initialIsExpand = playerStateHolder.isExpand
+    val initialIsQueueOpened = playerStateHolder.isQueueOpened
+
     var isFullScreen by remember {
-        mutableStateOf(initialIsFullScreen)
+        mutableStateOf(initialIsExpand)
     }
+
+    LaunchedEffect(isFullScreen) {
+        playerStateHolder.isExpand = isFullScreen
+    }
+
     Box(modifier = modifier) {
         if (isFullScreen) {
             DisposableEffect(Unit) {
@@ -51,7 +59,6 @@ internal fun LandscapePlayer(
                     screenController.cancelRequest()
                 } else {
                     isFullScreen = false
-                    onReportPlayerShink()
                 }
             }
             NavigationEventHandler(
@@ -63,7 +70,7 @@ internal fun LandscapePlayer(
 
             LandScapeExpandedPlayerLayout(
                 playMode = state.playMode,
-                interactingMediaItem = state.mediaItem,
+                initialIsQueueOpened = initialIsQueueOpened,
                 isShuffle = state.isShuffle,
                 isPlaying = state.isPlaying,
                 title = state.mediaItem.name,
@@ -84,7 +91,6 @@ internal fun LandscapePlayer(
                 onEvent = onEvent,
                 onExpand = {
                     isFullScreen = true
-                    onReportPlayerExpand()
                 },
             )
         }
