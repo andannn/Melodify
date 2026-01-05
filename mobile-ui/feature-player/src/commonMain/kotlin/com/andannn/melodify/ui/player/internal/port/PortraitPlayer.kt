@@ -29,8 +29,6 @@ import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
 import com.andannn.melodify.ui.LocalScreenOrientationController
 import com.andannn.melodify.ui.player.LocalPlayerStateHolder
-import com.andannn.melodify.ui.player.PlayerLayoutState
-import com.andannn.melodify.ui.player.PlayerStateHolder
 import com.andannn.melodify.ui.player.internal.port.player.BottomSheetState
 import com.andannn.melodify.ui.player.internal.port.player.PlayerViewState
 import com.andannn.melodify.ui.player.internal.port.player.PortraitPlayerLayout
@@ -39,11 +37,12 @@ import com.andannn.melodify.ui.player.internal.port.player.rememberPlayerViewSta
 @Composable
 internal fun PortraitPlayer(
     modifier: Modifier = Modifier,
-    initialIsExpand: Boolean,
     state: PlayerUiState.Active,
     onEvent: (PlayerUiEvent) -> Unit,
 ) {
     val playerStateHolder = LocalPlayerStateHolder.current
+    val initialIsExpand = playerStateHolder.isExpand
+    val initialIsQueueOpened = playerStateHolder.isQueueOpened
     BoxWithConstraints(
         modifier = modifier.fillMaxSize(),
     ) {
@@ -51,7 +50,7 @@ internal fun PortraitPlayer(
         val layoutState: PlayerViewState =
             rememberPlayerViewState(
                 initialPlayerState = if (initialIsExpand) PlayerState.Expand else PlayerState.Shrink,
-                initialBottomSheetState = BottomSheetState.Shrink,
+                initialBottomSheetState = if (initialIsQueueOpened) BottomSheetState.Expand else BottomSheetState.Shrink,
                 screenSize =
                     Size(
                         width = constraints.maxWidth.toFloat(),
@@ -63,7 +62,8 @@ internal fun PortraitPlayer(
             )
 
         LaunchedEffect(layoutState.playerState) {
-            playerStateHolder.onPlayerState(layoutState.playerState)
+            val isExpand = layoutState.playerState == PlayerState.Expand
+            playerStateHolder.isExpand = isExpand
         }
 
         NavigationEventHandler(
@@ -90,6 +90,7 @@ internal fun PortraitPlayer(
                         onClick = layoutState::expandPlayerLayout,
                     ),
             layoutState = layoutState,
+            initialIsQueueOpened = initialIsQueueOpened,
             playMode = state.playMode,
             isShuffle = state.isShuffle,
             isPlaying = state.isPlaying,
@@ -108,15 +109,3 @@ internal fun PortraitPlayer(
         )
     }
 }
-
-private fun PlayerStateHolder.onPlayerState(state: PlayerState) {
-    onReportPlayState(
-        state.toLayoutState(),
-    )
-}
-
-private fun PlayerState.toLayoutState() =
-    when (this) {
-        PlayerState.Shrink -> PlayerLayoutState.Shrink
-        PlayerState.Expand -> PlayerLayoutState.Expand
-    }

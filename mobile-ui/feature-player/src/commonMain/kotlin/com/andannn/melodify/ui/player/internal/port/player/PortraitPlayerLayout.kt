@@ -38,6 +38,7 @@ import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.player.internal.AVPlayerView
 import com.andannn.melodify.ui.player.internal.common.MiniPlayerLayout
 import com.andannn.melodify.ui.player.internal.port.player.bottom.PlayerBottomSheetView
+import com.andannn.melodify.ui.player.internal.port.player.bottom.SheetTab
 import com.andannn.melodify.ui.player.internal.port.player.control.LargePlayerControlArea
 import com.andannn.melodify.ui.player.internal.port.player.cover.FullScreenButtonCover
 import com.andannn.melodify.ui.player.internal.port.player.header.PlayerHeader
@@ -56,6 +57,7 @@ internal val BottomSheetDragAreaHeight = 110.dp
 @Composable
 internal fun PortraitPlayerLayout(
     layoutState: PlayerViewState,
+    initialIsQueueOpened: Boolean,
     activeMediaItem: MediaItemModel,
     modifier: Modifier = Modifier,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
@@ -193,6 +195,7 @@ internal fun PortraitPlayerLayout(
                 PlayerBottomSheetView(
                     modifier = Modifier.height(with(LocalDensity.current) { layoutState.bottomSheetHeight.toDp() }),
                     state = layoutState.bottomSheetState,
+                    initialSelectedTab = SheetTab.NEXT_SONG.takeIf { initialIsQueueOpened },
                     onRequestExpandSheet = {
                         layoutState.expandBottomSheet()
                     },

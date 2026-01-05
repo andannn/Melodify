@@ -10,12 +10,7 @@ import androidx.compose.runtime.compositionLocalOf
 val LocalPlayerStateHolder: ProvidableCompositionLocal<PlayerStateHolder> =
     compositionLocalOf { PlayerStateHolder() }
 
-class PlayerStateHolder(
-    var playerLayoutState: PlayerLayoutState = PlayerLayoutState.Shrink,
-) {
-    fun onReportPlayState(playerLayoutState: PlayerLayoutState) {
-        this.playerLayoutState = playerLayoutState
-    }
+class PlayerStateHolder {
+    var isExpand: Boolean = false
+    var isQueueOpened: Boolean = false
 }
-
-enum class PlayerLayoutState { Shrink, Expand }
