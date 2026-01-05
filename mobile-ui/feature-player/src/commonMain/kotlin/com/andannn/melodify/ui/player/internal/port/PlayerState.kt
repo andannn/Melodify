@@ -2,6 +2,6 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.ui.player.internal
+package com.andannn.melodify.ui.player.internal.port
 
 internal enum class PlayerState { Shrink, Expand }

@@ -28,7 +28,9 @@ import com.andannn.melodify.domain.model.subTitle
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
 import com.andannn.melodify.ui.LocalScreenOrientationController
-import com.andannn.melodify.ui.player.internal.PlayerState
+import com.andannn.melodify.ui.player.LocalPlayerStateHolder
+import com.andannn.melodify.ui.player.PlayerLayoutState
+import com.andannn.melodify.ui.player.PlayerStateHolder
 import com.andannn.melodify.ui.player.internal.port.player.BottomSheetState
 import com.andannn.melodify.ui.player.internal.port.player.PlayerViewState
 import com.andannn.melodify.ui.player.internal.port.player.PortraitPlayerLayout
@@ -37,18 +39,18 @@ import com.andannn.melodify.ui.player.internal.port.player.rememberPlayerViewSta
 @Composable
 internal fun PortraitPlayer(
     modifier: Modifier = Modifier,
-    initialPlayerState: PlayerState,
+    initialIsExpand: Boolean,
     state: PlayerUiState.Active,
     onEvent: (PlayerUiEvent) -> Unit,
-    onReportPlayState: (PlayerState) -> Unit,
 ) {
+    val playerStateHolder = LocalPlayerStateHolder.current
     BoxWithConstraints(
         modifier = modifier.fillMaxSize(),
     ) {
         val screenController = LocalScreenOrientationController.current
         val layoutState: PlayerViewState =
             rememberPlayerViewState(
-                initialPlayerState = initialPlayerState,
+                initialPlayerState = if (initialIsExpand) PlayerState.Expand else PlayerState.Shrink,
                 initialBottomSheetState = BottomSheetState.Shrink,
                 screenSize =
                     Size(
@@ -61,7 +63,7 @@ internal fun PortraitPlayer(
             )
 
         LaunchedEffect(layoutState.playerState) {
-            onReportPlayState(layoutState.playerState)
+            playerStateHolder.onPlayerState(layoutState.playerState)
         }
 
         NavigationEventHandler(
@@ -106,3 +108,15 @@ internal fun PortraitPlayer(
         )
     }
 }
+
+private fun PlayerStateHolder.onPlayerState(state: PlayerState) {
+    onReportPlayState(
+        state.toLayoutState(),
+    )
+}
+
+private fun PlayerState.toLayoutState() =
+    when (this) {
+        PlayerState.Shrink -> PlayerLayoutState.Shrink
+        PlayerState.Expand -> PlayerLayoutState.Expand
+    }

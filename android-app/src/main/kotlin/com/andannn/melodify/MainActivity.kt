@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
@@ -36,7 +37,9 @@ import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.ui.LocalScreenOrientationController
 import com.andannn.melodify.ui.LocalSystemUiController
 import com.andannn.melodify.ui.app.MelodifyMobileApp
+import com.andannn.melodify.ui.player.LocalPlayerStateHolder
 import com.andannn.melodify.ui.player.PipPlayer
+import com.andannn.melodify.ui.player.PlayerStateHolder
 import com.andannn.melodify.util.ConnectFailedAlertDialog
 import com.andannn.melodify.util.MediaFileDeleteHelperImpl
 import com.andannn.melodify.util.PipParamUpdateEffect
@@ -155,28 +158,32 @@ class MainActivity : ComponentActivity() {
             MelodifyTheme {
                 val isPipMode = rememberIsInPipMode()
 
-                if (isPipMode) {
-                    PipPlayer(modifier = Modifier.fillMaxSize())
-                } else {
-                    CompositionLocalProvider(
-                        LocalScreenOrientationController provides ScreenOrientationController(this),
-                        LocalBrightnessController provides AndroidBrightnessController(this),
-                        LocalSystemUiController provides AndroidSystemUiController(this),
-                    ) {
-                        when (uiState) {
-                            is MainUiState.Error -> {
-                                ConnectFailedAlertDialog(
-                                    onDismiss = { finish() },
-                                )
-                            }
-
-                            MainUiState.Ready -> {
-                                if (permissionGranted) {
-                                    MelodifyMobileApp()
+                CompositionLocalProvider(
+                    LocalPlayerStateHolder provides retain { PlayerStateHolder() },
+                ) {
+                    if (isPipMode) {
+                        PipPlayer(modifier = Modifier.fillMaxSize())
+                    } else {
+                        CompositionLocalProvider(
+                            LocalScreenOrientationController provides ScreenOrientationController(this),
+                            LocalBrightnessController provides AndroidBrightnessController(this),
+                            LocalSystemUiController provides AndroidSystemUiController(this),
+                        ) {
+                            when (uiState) {
+                                is MainUiState.Error -> {
+                                    ConnectFailedAlertDialog(
+                                        onDismiss = { finish() },
+                                    )
                                 }
-                            }
 
-                            MainUiState.Init -> {}
+                                MainUiState.Ready -> {
+                                    if (permissionGranted) {
+                                        MelodifyMobileApp()
+                                    }
+                                }
+
+                                MainUiState.Init -> {}
+                            }
                         }
                     }
                 }
