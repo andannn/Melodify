@@ -12,11 +12,15 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -182,31 +186,45 @@ internal fun PlayerGestureFunctionCover(
     Box(modifier = modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxSize()) {
             Spacer(
-                Modifier.weight(1f).fillMaxHeight().detectLongPressAndContinuousTap(
-                    key = "control cover detector left",
-                    onTap = ::togglePlayControl,
-                    onDrag = ::onAdjustBrightness,
-                    onDragEnd = ::onAdjustBrightnessEnd,
-                    onLongPressStart = ::startDoubleSpeedPlay,
-                    onLongPressEnd = ::endDoubleSpeedPlay,
-                    onContinuousTap = ::seekBackward,
-                    onContinuousTapEnd = ::endSeek,
+                Modifier.weight(1f).fillMaxHeight().draggable(
+                    state =
+                        rememberDraggableState(
+                            onDelta = {
+                                onAdjustBrightness(it)
+                            },
+                        ),
+                    onDragStopped = {
+                        onAdjustBrightnessEnd()
+                    },
+                    orientation = Orientation.Vertical,
                 ),
             )
-
             Spacer(
-                Modifier.weight(1f).fillMaxHeight().detectLongPressAndContinuousTap(
-                    key = "control cover detector right",
-                    onTap = ::togglePlayControl,
-                    onDrag = ::onAdjustVolume,
-                    onDragEnd = ::onAdjustVolumeEnd,
-                    onLongPressStart = ::startDoubleSpeedPlay,
-                    onLongPressEnd = ::endDoubleSpeedPlay,
-                    onContinuousTap = ::seekForward,
-                    onContinuousTapEnd = ::endSeek,
+                Modifier.weight(1f).fillMaxHeight().draggable(
+                    state =
+                        rememberDraggableState(
+                            onDelta = {
+                                onAdjustVolume(it)
+                            },
+                        ),
+                    onDragStopped = {
+                        onAdjustVolumeEnd()
+                    },
+                    orientation = Orientation.Vertical,
                 ),
             )
         }
+
+        Spacer(
+            Modifier.fillMaxWidth().detectLongPressAndContinuousTap(
+                key = "control cover detector left",
+                onTap = ::togglePlayControl,
+                onLongPressStart = ::startDoubleSpeedPlay,
+                onLongPressEnd = ::endDoubleSpeedPlay,
+                onContinuousTap = ::seekBackward,
+                onContinuousTapEnd = ::endSeek,
+            ),
+        )
 
         Box(
             modifier = Modifier.fillMaxSize(),
