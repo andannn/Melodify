@@ -25,7 +25,6 @@ ktor = "3.3.3"
 koin-bom = "4.1.1"
 napierVersion = "2.7.1"
 sqliteBundled = "2.6.2"
-uiTooling = "1.10.0"
 coreKtx = "1.7.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
@@ -49,6 +48,7 @@ retainedmodel = "1.0.2"
 nav3Ui = "1.1.0-alpha01"
 nav3Runtime = "1.0.0"
 navigationevent = "1.0.0-rc02"
+expresso = "3.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -98,9 +98,10 @@ koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napierVersion" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinxCoroutines" }
-compose-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTooling" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "uiTooling" }
+compose-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "compose-plugin" }
+compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "compose-plugin" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose-plugin" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "expresso" }
 paparazzi = { group = "app.cash.paparazzi", name = "paparazzi", version.ref = "paparazzi" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
 vlcj = { module = "uk.co.caprica:vlcj", version.ref = "vlcj" }

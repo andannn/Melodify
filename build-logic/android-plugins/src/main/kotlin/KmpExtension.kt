@@ -96,6 +96,7 @@ abstract class KmpExtension
                             implementation(libs.findLibrary("androidx.test.ext.junit").get())
 
                             if (composeEnabled) {
+                                implementation(libs.findLibrary("espresso.core").get())
                                 implementation(libs.findLibrary("compose.ui.test.manifest").get())
                                 implementation(libs.findLibrary("compose.ui.test.junit4.android").get())
                             }
