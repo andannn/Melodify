@@ -74,15 +74,35 @@ fun LibraryDataSource.browseable() =
 
 fun MediaItemModel.asLibraryDataSource() =
     when (this) {
-        is AlbumItemModel -> LibraryDataSource.AlbumDetail(id)
-        is ArtistItemModel -> LibraryDataSource.ArtistDetail(id)
-        is GenreItemModel -> LibraryDataSource.GenreDetail(id)
-        is PlayListItemModel -> LibraryDataSource.PlayListDetail(id, isAudioPlayList = isAudioPlayList)
-        is AudioItemModel -> error("AudioItemModel should not be converted to DataSource")
-        is VideoItemModel -> error("VideoItemModel should not be converted to DataSource")
+        is AlbumItemModel -> {
+            LibraryDataSource.AlbumDetail(id)
+        }
+
+        is ArtistItemModel -> {
+            LibraryDataSource.ArtistDetail(id)
+        }
+
+        is GenreItemModel -> {
+            LibraryDataSource.GenreDetail(id)
+        }
+
+        is PlayListItemModel -> {
+            LibraryDataSource.PlayListDetail(
+                id,
+                isAudioPlayList = isAudioPlayList,
+            )
+        }
+
+        is AudioItemModel -> {
+            error("AudioItemModel should not be converted to DataSource")
+        }
+
+        is VideoItemModel -> {
+            error("VideoItemModel should not be converted to DataSource")
+        }
     }
 
-fun ShortcutItem.toDataSource() =
+fun ShortcutItem.toDataSource(): LibraryDataSource =
     when (this) {
         ShortcutItem.ALL_SONG -> LibraryDataSource.AllSong
         ShortcutItem.ALBUM -> LibraryDataSource.AllAlbum
