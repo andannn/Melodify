@@ -68,12 +68,13 @@ class PlayerStateMonitoryRepositoryImpl(
         playerWrapper
             .observePlayerState()
             .map {
-                if (getCurrentPositionMs() == 0L) {
-                    return@map 0f
+                val currentDurationMs = playerWrapper.currentDurationMs
+                if (currentDurationMs == 0L) {
+                    0f
                 } else {
                     it.currentPositionMs
                         .toFloat()
-                        .div(playerWrapper.currentDurationMs)
+                        .div(currentDurationMs)
                         .coerceIn(0f, 1f)
                 }
             }.distinctUntilChanged()
