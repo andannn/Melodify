@@ -476,7 +476,7 @@ abstract class AbstractDatabaseTest {
         }
 
     @Test
-    fun cascade_delete_test() =
+    fun delete_test() =
         runTest {
             libraryDao.insertMedias(
                 audios =
@@ -522,7 +522,23 @@ abstract class AbstractDatabaseTest {
                 1,
                 libraryDao.getAllAlbumFlow().first().size,
             )
-            libraryDao.deleteAllMedias()
+            assertEquals(
+                listOf(2L),
+                libraryDao.getAllAlbumID(),
+            )
+            assertEquals(
+                listOf(3L),
+                libraryDao.getAllGenreID(),
+            )
+            assertEquals(
+                listOf(4L),
+                libraryDao.getAllArtistID(),
+            )
+            assertEquals(
+                listOf(1L),
+                libraryDao.getAllMediaID(),
+            )
+            libraryDao.deleteMediasByIds(listOf(1L))
             assertEquals(0, libraryDao.getAllAlbumFlow().first().size)
             assertEquals(0, libraryDao.getAllGenreFlow().first().size)
             assertEquals(0, libraryDao.getAllArtistFlow().first().size)
@@ -554,7 +570,7 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             assertEquals(1, libraryDao.getArtistByArtistId("4")?.trackCount)
-            libraryDao.deleteAllMedias()
+            libraryDao.deleteMediasByIds(listOf(1L))
             assertEquals(null, libraryDao.getArtistByArtistId("4"))
         }
 
@@ -584,7 +600,7 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             assertEquals(1, libraryDao.getAlbumByAlbumId("2")?.trackCount)
-            libraryDao.deleteAllMedias()
+            libraryDao.deleteMediasByIds(listOf(1L))
             assertEquals(null, libraryDao.getAlbumByAlbumId("2"))
         }
 

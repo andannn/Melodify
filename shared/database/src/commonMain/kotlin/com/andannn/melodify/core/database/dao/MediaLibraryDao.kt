@@ -25,15 +25,11 @@ import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
-import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRefColumns
 import com.andannn.melodify.core.database.entity.VideoColumns
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.toSortString
 import com.andannn.melodify.core.database.toWhereString
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
-
-private const val TAG = "MediaLibraryDao"
 
 private const val DEFAULT_CHUNK_SIZE = 500
 
@@ -71,26 +67,56 @@ interface MediaLibraryDao {
     @Query("DELETE FROM ${Tables.LIBRARY_ALBUM}")
     suspend fun deleteAllAlbums()
 
+    @Query("DELETE FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} IN (:ids)")
+    suspend fun deleteAlbumsByIds(ids: List<Long>)
+
     @Query("DELETE FROM ${Tables.LIBRARY_ARTIST}")
     suspend fun deleteAllArtists()
+
+    @Query("DELETE FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} IN (:ids)")
+    suspend fun deleteArtistsByIds(ids: List<Long>)
 
     @Query("DELETE FROM ${Tables.LIBRARY_GENRE}")
     suspend fun deleteAllGenres()
 
+    @Query("DELETE FROM ${Tables.LIBRARY_GENRE} WHERE ${GenreColumns.ID} IN (:ids)")
+    suspend fun deleteGenreByIds(ids: List<Long>)
+
+    @Query("DELETE FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ID} IN (:ids)")
+    suspend fun deleteMediasByIds(ids: List<Long>)
+
     @Query("DELETE FROM ${Tables.LIBRARY_MEDIA}")
     suspend fun deleteAllMedias()
+
+    @Query("DELETE FROM ${Tables.LIBRARY_VIDEO} WHERE ${VideoColumns.ID} IN (:ids)")
+    suspend fun deleteVideoByIds(ids: List<Long>)
 
     @Query("DELETE FROM ${Tables.LIBRARY_VIDEO}")
     suspend fun deleteAllVideos()
 
+    @Query("SELECT ${AlbumColumns.ID} FROM ${Tables.LIBRARY_ALBUM}")
+    suspend fun getAllAlbumID(): List<Long>
+
     @Query("SELECT * FROM ${Tables.LIBRARY_ALBUM}")
     fun getAllAlbumFlow(): Flow<List<AlbumEntity>>
+
+    @Query("SELECT ${GenreColumns.ID} FROM ${Tables.LIBRARY_GENRE}")
+    suspend fun getAllGenreID(): List<Long>
 
     @Query("SELECT * FROM ${Tables.LIBRARY_GENRE}")
     fun getAllGenreFlow(): Flow<List<GenreEntity>>
 
+    @Query("SELECT ${ArtistColumns.ID} FROM ${Tables.LIBRARY_ARTIST}")
+    suspend fun getAllArtistID(): List<Long>
+
     @Query("SELECT * FROM ${Tables.LIBRARY_ARTIST}")
     fun getAllArtistFlow(): Flow<List<ArtistEntity>>
+
+    @Query("SELECT ${MediaColumns.ID} FROM ${Tables.LIBRARY_MEDIA}")
+    suspend fun getAllMediaID(): List<Long>
+
+    @Query("SELECT ${VideoColumns.ID} FROM ${Tables.LIBRARY_VIDEO}")
+    suspend fun getAllVideoID(): List<Long>
 
     @RawQuery(observedEntities = [MediaEntity::class])
     fun getMediaFlowRaw(rawQuery: RoomRawQuery): Flow<List<MediaEntity>>
@@ -464,57 +490,143 @@ interface MediaLibraryDao {
 
     @Transaction
     suspend fun clearAndInsertLibrary(
-        albums: List<AlbumEntity>,
-        artists: List<ArtistEntity>,
-        genres: List<GenreEntity>,
-        audios: List<MediaEntity>,
+        albums: List<AlbumEntity> = emptyList(),
+        artists: List<ArtistEntity> = emptyList(),
+        genres: List<GenreEntity> = emptyList(),
+        audios: List<MediaEntity> = emptyList(),
         videos: List<VideoEntity> = emptyList(),
         onStep: (type: Int, inserted: Int, total: Int) -> Unit,
     ) {
-        deleteAllAlbums()
-        deleteAllArtists()
-        deleteAllGenres()
-        deleteAllMedias()
-        deleteAllVideos()
-
-        batchInsert(albums, DEFAULT_CHUNK_SIZE) { inserted, total ->
-            onStep(MediaType.ALBUM, inserted, total)
-        }
-        batchInsert(artists, DEFAULT_CHUNK_SIZE) { inserted, total ->
-            onStep(MediaType.ARTIST, inserted, total)
-        }
-        batchInsert(genres, DEFAULT_CHUNK_SIZE) { inserted, total ->
-            onStep(MediaType.GENRE, inserted, total)
-        }
-        batchInsert(audios, DEFAULT_CHUNK_SIZE) { inserted, total ->
-            onStep(MediaType.MEDIA, inserted, total)
-        }
-        batchInsert(videos, DEFAULT_CHUNK_SIZE) { inserted, total ->
-            onStep(MediaType.VIDEO, inserted, total)
-        }
+        syncAlbum(
+            albums,
+            onStep = { inserted, total ->
+                onStep(MediaType.ALBUM, inserted, total)
+            },
+        )
+        syncArtist(
+            artists,
+            onStep = { inserted, total ->
+                onStep(MediaType.ARTIST, inserted, total)
+            },
+        )
+        syncGenre(
+            genres,
+            onStep = { inserted, total ->
+                onStep(MediaType.GENRE, inserted, total)
+            },
+        )
+        syncMedia(
+            audios,
+            onStep = { inserted, total ->
+                onStep(MediaType.MEDIA, inserted, total)
+            },
+        )
+        syncVideo(
+            videos,
+            onStep = { inserted, total ->
+                onStep(MediaType.VIDEO, inserted, total)
+            },
+        )
     }
 
-    private suspend fun <T> batchInsert(
-        all: List<T>,
-        chunk: Int,
+    private suspend fun syncMedia(
+        audios: List<MediaEntity>,
         onStep: (inserted: Int, total: Int) -> Unit,
     ) {
-        val total = all.size.coerceAtLeast(1)
-        var done = 0
-        all
-            .asSequence()
-            .chunked(chunk)
-            .forEach { part ->
-                when (val first = part.firstOrNull()) {
-                    is AlbumEntity -> insertAlbums(part as List<AlbumEntity>)
-                    is ArtistEntity -> insertArtists(part as List<ArtistEntity>)
-                    is GenreEntity -> insertGenres(part as List<GenreEntity>)
-                    is MediaEntity -> insertMedias(part as List<MediaEntity>)
-                    is VideoEntity -> insertVideos(part as List<VideoEntity>)
-                    else -> Unit
-                }
-                done += part.size
-                onStep(done, total)
+        syncTable(
+            newItems = audios,
+            idSelector = { it.id },
+            fetchLocalIdsDao = { getAllMediaID() },
+            deleteDao = { deleteMediasByIds(it) },
+            upsertDao = { insertMedias(it) },
+            onStep = onStep,
+        )
+    }
+
+    private suspend fun syncVideo(
+        audios: List<VideoEntity>,
+        onStep: (inserted: Int, total: Int) -> Unit,
+    ) {
+        syncTable(
+            newItems = audios,
+            idSelector = { it.id },
+            fetchLocalIdsDao = { getAllVideoID() },
+            deleteDao = { deleteVideoByIds(it) },
+            upsertDao = { insertVideos(it) },
+            onStep = onStep,
+        )
+    }
+
+    private suspend fun syncAlbum(
+        albums: List<AlbumEntity>,
+        onStep: (inserted: Int, total: Int) -> Unit,
+    ) {
+        syncTable(
+            newItems = albums,
+            idSelector = { it.albumId },
+            fetchLocalIdsDao = { getAllAlbumID() },
+            deleteDao = { deleteAlbumsByIds(it) },
+            upsertDao = { insertAlbums(it) },
+            onStep = onStep,
+        )
+    }
+
+    private suspend fun syncArtist(
+        artists: List<ArtistEntity>,
+        onStep: (inserted: Int, total: Int) -> Unit,
+    ) {
+        syncTable(
+            newItems = artists,
+            idSelector = { it.artistId },
+            fetchLocalIdsDao = { getAllArtistID() },
+            deleteDao = { deleteArtistsByIds(it) },
+            upsertDao = { insertArtists(it) },
+            onStep = onStep,
+        )
+    }
+
+    private suspend fun syncGenre(
+        artists: List<GenreEntity>,
+        onStep: (inserted: Int, total: Int) -> Unit,
+    ) {
+        syncTable(
+            newItems = artists,
+            idSelector = { it.genreId },
+            fetchLocalIdsDao = { getAllGenreID() },
+            deleteDao = { deleteGenreByIds(it.filterNotNull()) },
+            upsertDao = { insertGenres(it) },
+            onStep = onStep,
+        )
+    }
+
+    private inline fun <T, K> syncTable(
+        newItems: List<T>,
+        idSelector: (T) -> K,
+        fetchLocalIdsDao: () -> List<K>,
+        deleteDao: (List<K>) -> Unit,
+        upsertDao: (List<T>) -> Unit,
+        onStep: (inserted: Int, total: Int) -> Unit,
+        chunkSize: Int = DEFAULT_CHUNK_SIZE,
+    ) {
+        val localIds = fetchLocalIdsDao().toHashSet()
+
+        val newIds = newItems.map(idSelector).toHashSet()
+
+        val idsToDelete = localIds - newIds
+
+        if (idsToDelete.isNotEmpty()) {
+            idsToDelete.chunked(chunkSize).forEach { batch ->
+                deleteDao(batch.toList())
             }
+        }
+
+        var currentCount = 0
+        if (newItems.isNotEmpty()) {
+            newItems.chunked(chunkSize).forEach { batch ->
+                upsertDao(batch)
+                currentCount += batch.size
+                onStep(currentCount, newItems.size)
+            }
+        }
     }
 }
