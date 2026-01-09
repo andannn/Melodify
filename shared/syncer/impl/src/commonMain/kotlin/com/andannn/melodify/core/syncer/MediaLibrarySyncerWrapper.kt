@@ -55,7 +55,7 @@ internal class MediaLibrarySyncerWrapper(
                 val mediaData = mediaLibraryScanner.scanAllMedia()
                 trySend(SyncStatus.Start)
 
-                mediaLibraryDao.clearAndInsertLibrary(
+                mediaLibraryDao.syncMediaLibrary(
                     albums = mediaData.albumData.toAlbumEntity(),
                     artists = mediaData.artistData.toArtistEntity(),
                     genres = mediaData.genreData.toGenreEntity(),

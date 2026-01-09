@@ -64,20 +64,11 @@ interface MediaLibraryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVideos(audios: List<VideoEntity>)
 
-    @Query("DELETE FROM ${Tables.LIBRARY_ALBUM}")
-    suspend fun deleteAllAlbums()
-
     @Query("DELETE FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} IN (:ids)")
     suspend fun deleteAlbumsByIds(ids: List<Long>)
 
-    @Query("DELETE FROM ${Tables.LIBRARY_ARTIST}")
-    suspend fun deleteAllArtists()
-
     @Query("DELETE FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} IN (:ids)")
     suspend fun deleteArtistsByIds(ids: List<Long>)
-
-    @Query("DELETE FROM ${Tables.LIBRARY_GENRE}")
-    suspend fun deleteAllGenres()
 
     @Query("DELETE FROM ${Tables.LIBRARY_GENRE} WHERE ${GenreColumns.ID} IN (:ids)")
     suspend fun deleteGenreByIds(ids: List<Long>)
@@ -85,14 +76,8 @@ interface MediaLibraryDao {
     @Query("DELETE FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ID} IN (:ids)")
     suspend fun deleteMediasByIds(ids: List<Long>)
 
-    @Query("DELETE FROM ${Tables.LIBRARY_MEDIA}")
-    suspend fun deleteAllMedias()
-
     @Query("DELETE FROM ${Tables.LIBRARY_VIDEO} WHERE ${VideoColumns.ID} IN (:ids)")
     suspend fun deleteVideoByIds(ids: List<Long>)
-
-    @Query("DELETE FROM ${Tables.LIBRARY_VIDEO}")
-    suspend fun deleteAllVideos()
 
     @Query("SELECT ${AlbumColumns.ID} FROM ${Tables.LIBRARY_ALBUM}")
     suspend fun getAllAlbumID(): List<Long>
@@ -489,13 +474,13 @@ interface MediaLibraryDao {
     }
 
     @Transaction
-    suspend fun clearAndInsertLibrary(
+    suspend fun syncMediaLibrary(
         albums: List<AlbumEntity> = emptyList(),
         artists: List<ArtistEntity> = emptyList(),
         genres: List<GenreEntity> = emptyList(),
         audios: List<MediaEntity> = emptyList(),
         videos: List<VideoEntity> = emptyList(),
-        onStep: (type: Int, inserted: Int, total: Int) -> Unit,
+        onStep: (type: Int, inserted: Int, total: Int) -> Unit = { _, _, _ -> },
     ) {
         syncAlbum(
             albums,

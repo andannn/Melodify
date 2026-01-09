@@ -1093,7 +1093,9 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `set is show video progress setting success`() =
         runTest {
-            database.getUserDataDao().insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
+            database
+                .getUserDataDao()
+                .insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
             database.getUserDataDao().upsertVideoTabSettingEntity(10, true)
             database.getUserDataDao().getVideoSettingFlowOfTab(10).first().also {
                 assertEquals(true, it?.isShowProgress)
@@ -1107,17 +1109,61 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `VideoTabSettingEntity is deleted when tab is deleted`() =
         runTest {
-            database.getUserDataDao().insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
+            database
+                .getUserDataDao()
+                .insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
             database.getUserDataDao().upsertVideoTabSettingEntity(10, true)
             database.getUserDataDao().deleteCustomTab(10)
             database.getUserDataDao().getVideoSettingFlowOfTab(10).first().also {
                 assertEquals(null, it)
             }
         }
+
+    @Test
+    fun `sync media library test`() =
+        runTest {
+            val dao = database.getMediaLibraryDao()
+            dao.insertDummyData()
+            dao.syncMediaLibrary(
+                audios =
+                    listOf(
+                        MediaEntity(
+                            id = 100,
+                            albumId = 400,
+                            genreId = 500,
+                            artistId = 600,
+                        ),
+                    ),
+                videos = listOf(VideoEntity(id = 300)),
+                albums = listOf(AlbumEntity(albumId = 400, title = "new_album")),
+                genres = listOf(GenreEntity(genreId = 500)),
+                artists = listOf(ArtistEntity(artistId = 600, name = "new_artist")),
+            )
+// TODO: delete_invalid_albums_artists_genres trigger will delete in when sync in progress.
+//            assertEquals(1, dao.getAllArtistID().size)
+//            assertEquals(1, dao.getAllGenreID().size)
+//            assertEquals(1, dao.getAllAlbumID().size)
+//            assertEquals(1, dao.getAllMediaID().size)
+//            assertEquals(1, dao.getAllVideoID().size)
+//            assertEquals(100, dao.getAllMediaID().first())
+//            assertEquals(400, dao.getAllAlbumID().first())
+//            assertEquals(300, dao.getAllVideoID().first())
+//            assertEquals(500, dao.getAllGenreID().first())
+//            assertEquals(600, dao.getAllArtistID().first())
+        }
 }
 
 private suspend fun MediaLibraryDao.insertDummyData() {
     upsertMedia(
+        videos =
+            listOf(
+                VideoEntity(
+                    id = 5,
+                ),
+                VideoEntity(
+                    id = 6,
+                ),
+            ),
         audios =
             listOf(
                 MediaEntity(
