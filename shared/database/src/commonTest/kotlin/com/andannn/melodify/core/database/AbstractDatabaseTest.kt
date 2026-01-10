@@ -1147,17 +1147,52 @@ abstract class AbstractDatabaseTest {
                 genres = listOf(GenreEntity(genreId = 500)),
                 artists = listOf(ArtistEntity(artistId = 600, name = "new_artist")),
             )
-// TODO: delete_invalid_albums_artists_genres trigger will delete in when sync in progress.
-//            assertEquals(1, dao.getAllArtistID().size)
-//            assertEquals(1, dao.getAllGenreID().size)
-//            assertEquals(1, dao.getAllAlbumID().size)
-//            assertEquals(1, dao.getAllMediaID().size)
-//            assertEquals(1, dao.getAllVideoID().size)
-//            assertEquals(100, dao.getAllMediaID().first())
-//            assertEquals(400, dao.getAllAlbumID().first())
-//            assertEquals(300, dao.getAllVideoID().first())
-//            assertEquals(500, dao.getAllGenreID().first())
-//            assertEquals(600, dao.getAllArtistID().first())
+            assertEquals(1, dao.getAllArtistID().size)
+            assertEquals(1, dao.getAllGenreID().size)
+            assertEquals(1, dao.getAllAlbumID().size)
+            assertEquals(1, dao.getAllMediaID().size)
+            assertEquals(1, dao.getAllVideoID().size)
+            assertEquals(100, dao.getAllMediaID().first())
+            assertEquals(400, dao.getAllAlbumID().first())
+            assertEquals(300, dao.getAllVideoID().first())
+            assertEquals(500, dao.getAllGenreID().first())
+            assertEquals(600, dao.getAllArtistID().first())
+        }
+
+    @Test
+    fun `delete orphan album test`() =
+        runTest {
+            val dao = database.getMediaLibraryDao()
+            dao.insertDummyData()
+
+            assertEquals(2, dao.getAllAlbumID().size)
+            dao.deleteOrphanAlbums()
+            assertEquals(1, dao.getAllAlbumID().size)
+            dao.deleteMediasByIds(listOf(1, 2))
+            dao.deleteOrphanAlbums()
+            assertEquals(0, dao.getAllAlbumID().size)
+        }
+
+    @Test
+    fun `delete orphan artist test`() =
+        runTest {
+            val dao = database.getMediaLibraryDao()
+            dao.insertDummyData()
+
+            assertEquals(2, dao.getAllArtistID().size)
+            dao.deleteOrphanArtists()
+            assertEquals(0, dao.getAllArtistID().size)
+        }
+
+    @Test
+    fun `delete orphan genre test`() =
+        runTest {
+            val dao = database.getMediaLibraryDao()
+            dao.insertDummyData()
+
+            assertEquals(2, dao.getAllGenreID().size)
+            dao.deleteOrphanGenres()
+            assertEquals(0, dao.getAllGenreID().size)
         }
 }
 

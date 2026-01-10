@@ -67,6 +67,42 @@ interface MediaLibraryDao {
     @Query("DELETE FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} IN (:ids)")
     suspend fun deleteAlbumsByIds(ids: List<Long>)
 
+    @Query(
+        """
+        DELETE FROM ${Tables.LIBRARY_ALBUM}
+        WHERE ${AlbumColumns.ID} NOT IN (
+            SELECT DISTINCT ${MediaColumns.ALBUM_ID} 
+            FROM ${Tables.LIBRARY_MEDIA} 
+            WHERE ${MediaColumns.ALBUM_ID} IS NOT NULL
+        )
+    """,
+    )
+    suspend fun deleteOrphanAlbums()
+
+    @Query(
+        """
+        DELETE FROM ${Tables.LIBRARY_ARTIST}
+        WHERE ${ArtistColumns.ID} NOT IN (
+            SELECT DISTINCT ${MediaColumns.ARTIST_ID} 
+            FROM ${Tables.LIBRARY_MEDIA} 
+            WHERE ${MediaColumns.ARTIST_ID} IS NOT NULL
+        )
+    """,
+    )
+    suspend fun deleteOrphanArtists()
+
+    @Query(
+        """
+        DELETE FROM ${Tables.LIBRARY_GENRE}
+        WHERE ${GenreColumns.ID} NOT IN (
+            SELECT DISTINCT ${MediaColumns.GENRE_ID} 
+            FROM ${Tables.LIBRARY_MEDIA} 
+            WHERE ${MediaColumns.GENRE_ID} IS NOT NULL
+        )
+    """,
+    )
+    suspend fun deleteOrphanGenres()
+
     @Query("DELETE FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} IN (:ids)")
     suspend fun deleteArtistsByIds(ids: List<Long>)
 
@@ -381,6 +417,10 @@ interface MediaLibraryDao {
     suspend fun deleteMediaByUris(uris: List<String>) {
         deleteMediaByUri(uris)
         deleteVideoByUri(uris)
+
+        deleteOrphanAlbums()
+        deleteOrphanGenres()
+        deleteOrphanArtists()
     }
 
     @Query(
@@ -512,6 +552,10 @@ interface MediaLibraryDao {
                 onStep(MediaType.VIDEO, inserted, total)
             },
         )
+
+        deleteOrphanAlbums()
+        deleteOrphanGenres()
+        deleteOrphanArtists()
     }
 
     private suspend fun syncMedia(
