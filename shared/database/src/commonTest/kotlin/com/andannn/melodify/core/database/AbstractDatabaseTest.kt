@@ -10,6 +10,7 @@ import androidx.room.useReaderConnection
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
+import com.andannn.melodify.core.database.dao.UserDataDao
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistColumns
@@ -26,7 +27,6 @@ import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortOptionData
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
-import com.andannn.melodify.core.database.entity.VideoTabSettingEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
@@ -42,6 +42,7 @@ abstract class AbstractDatabaseTest {
     private val lyricDao: LyricDao get() = database.getLyricDao()
     private val playListDao: PlayListDao get() = database.getPlayListDao()
     private val libraryDao: MediaLibraryDao get() = database.getMediaLibraryDao()
+    private val userDataDao: UserDataDao get() = database.getUserDataDao()
 
     private val dummyLyricEntities =
         listOf(
@@ -476,9 +477,36 @@ abstract class AbstractDatabaseTest {
         }
 
     @Test
-    fun cascade_delete_test() =
+    fun delete_test() =
         runTest {
-            libraryDao.insertMedias(
+            libraryDao.upsertAlbums(
+                albums =
+                    listOf(
+                        AlbumEntity(
+                            albumId = 2,
+                            title = "album 2",
+                        ),
+                    ),
+            )
+            libraryDao.upsertGenres(
+                genres =
+                    listOf(
+                        GenreEntity(
+                            genreId = 3,
+                            name = "genre 3",
+                        ),
+                    ),
+            )
+            libraryDao.upsertArtists(
+                artists =
+                    listOf(
+                        ArtistEntity(
+                            artistId = 4,
+                            name = "artist 4",
+                        ),
+                    ),
+            )
+            libraryDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -490,48 +518,45 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            libraryDao.insertAlbums(
-                albums =
-                    listOf(
-                        AlbumEntity(
-                            albumId = 2,
-                            title = "album 2",
-                        ),
-                    ),
-            )
-            libraryDao.insertGenres(
-                genres =
-                    listOf(
-                        GenreEntity(
-                            genreId = 3,
-                            name = "genre 3",
-                        ),
-                    ),
-            )
-            libraryDao.insertArtists(
-                artists =
-                    listOf(
-                        ArtistEntity(
-                            artistId = 4,
-                            name = "artist 4",
-                        ),
-                    ),
-            )
 
             assertEquals(
                 1,
                 libraryDao.getAllAlbumFlow().first().size,
             )
-            libraryDao.deleteAllMedias()
-            assertEquals(0, libraryDao.getAllAlbumFlow().first().size)
-            assertEquals(0, libraryDao.getAllGenreFlow().first().size)
-            assertEquals(0, libraryDao.getAllArtistFlow().first().size)
+            assertEquals(
+                listOf(2L),
+                libraryDao.getAllAlbumID(),
+            )
+            assertEquals(
+                listOf(3L),
+                libraryDao.getAllGenreID(),
+            )
+            assertEquals(
+                listOf(4L),
+                libraryDao.getAllArtistID(),
+            )
+            assertEquals(
+                listOf(1L),
+                libraryDao.getAllMediaID(),
+            )
+            libraryDao.deleteMediasByIds(listOf(1L))
+            libraryDao.getAllAlbumFlow().first().also { items ->
+                assertEquals(1, items.size)
+                assertEquals(0, items.first().trackCount)
+            }
+            libraryDao.getAllGenreFlow().first().also { items ->
+                assertEquals(1, items.size)
+            }
+            libraryDao.getAllArtistFlow().first().also { items ->
+                assertEquals(1, items.size)
+                assertEquals(0, items.first().trackCount)
+            }
         }
 
     @Test
     fun update_artist_count_test() =
         runTest {
-            libraryDao.insertArtists(
+            libraryDao.upsertArtists(
                 artists =
                     listOf(
                         ArtistEntity(
@@ -541,7 +566,7 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             assertEquals(0, libraryDao.getArtistByArtistId("4")?.trackCount)
-            libraryDao.insertMedias(
+            libraryDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -554,14 +579,14 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             assertEquals(1, libraryDao.getArtistByArtistId("4")?.trackCount)
-            libraryDao.deleteAllMedias()
-            assertEquals(null, libraryDao.getArtistByArtistId("4"))
+            libraryDao.deleteMediasByIds(listOf(1L))
+            assertEquals(0, libraryDao.getArtistByArtistId("4")?.trackCount)
         }
 
     @Test
     fun update_album_count_test() =
         runTest {
-            libraryDao.insertAlbums(
+            libraryDao.upsertAlbums(
                 albums =
                     listOf(
                         AlbumEntity(
@@ -571,7 +596,7 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             assertEquals(0, libraryDao.getAlbumByAlbumId("2")?.trackCount)
-            libraryDao.insertMedias(
+            libraryDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -584,8 +609,8 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             assertEquals(1, libraryDao.getAlbumByAlbumId("2")?.trackCount)
-            libraryDao.deleteAllMedias()
-            assertEquals(null, libraryDao.getAlbumByAlbumId("2"))
+            libraryDao.deleteMediasByIds(listOf(1L))
+            assertEquals(0, libraryDao.getAlbumByAlbumId("2")?.trackCount)
         }
 
     @Test
@@ -626,7 +651,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun upsert_search_history_test() =
         runTest {
-            val searchHistoryDao = database.getUserDataDao()
+            val searchHistoryDao = userDataDao
             searchHistoryDao.upsertSearchHistory(
                 listOf(
                     SearchHistoryEntity(
@@ -656,7 +681,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun get_search_histories_order_test() =
         runTest {
-            val searchHistoryDao = database.getUserDataDao()
+            val searchHistoryDao = userDataDao
             searchHistoryDao.upsertSearchHistory(
                 listOf(
                     SearchHistoryEntity(
@@ -682,7 +707,7 @@ abstract class AbstractDatabaseTest {
     fun sort_media_by_album_test() =
         runTest {
             val dao = database.getMediaLibraryDao()
-            dao.insertMedias(
+            dao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -726,7 +751,7 @@ abstract class AbstractDatabaseTest {
     fun sort_media_by_title_test() =
         runTest {
             val dao = database.getMediaLibraryDao()
-            dao.insertMedias(
+            dao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -768,7 +793,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `is tab exist`() =
         runTest {
-            val dao = database.getUserDataDao()
+            val dao = userDataDao
             dao.insertCustomTab(
                 CustomTabEntity(
                     id = 10,
@@ -788,7 +813,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `swap tab order`() =
         runTest {
-            val dao = database.getUserDataDao()
+            val dao = userDataDao
 
             val firstId =
                 dao.insertCustomTab(
@@ -843,7 +868,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `insert sort rule`() =
         runTest {
-            val dao = database.getUserDataDao()
+            val dao = userDataDao
             dao.insertCustomTab(
                 CustomTabEntity(
                     id = 1234,
@@ -886,7 +911,7 @@ abstract class AbstractDatabaseTest {
     fun `get media list where album test`() =
         runTest {
             val dao = database.getMediaLibraryDao()
-            dao.insertMedias(
+            dao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -933,7 +958,7 @@ abstract class AbstractDatabaseTest {
     fun `get media list where title test`() =
         runTest {
             val dao = database.getMediaLibraryDao()
-            dao.insertMedias(
+            dao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -1024,7 +1049,7 @@ abstract class AbstractDatabaseTest {
     fun `update video progress failed when video not exist`() =
         runTest {
             assertFails {
-                database.getUserDataDao().savePlayProgress(
+                userDataDao.savePlayProgress(
                     videoId = 1L,
                     100L,
                 )
@@ -1034,15 +1059,15 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `update video progress`() =
         runTest {
-            database.getMediaLibraryDao().insertVideos(
+            database.getMediaLibraryDao().upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
-            database.getUserDataDao().savePlayProgress(videoId = 1L, 100L)
-            database.getUserDataDao().getPlayProgressFlow(1L).first().also {
+            userDataDao.savePlayProgress(videoId = 1L, 100L)
+            userDataDao.getPlayProgressFlow(1L).first().also {
                 assertEquals(100, it?.progressMs)
             }
-            database.getUserDataDao().savePlayProgress(videoId = 1L, 101L)
-            database.getUserDataDao().getPlayProgressFlow(1L).first().also {
+            userDataDao.savePlayProgress(videoId = 1L, 101L)
+            userDataDao.getPlayProgressFlow(1L).first().also {
                 assertEquals(101, it?.progressMs)
             }
         }
@@ -1050,40 +1075,76 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `can not mark video as watched when progress record not exist`() =
         runTest {
-            database.getMediaLibraryDao().insertVideos(
+            database.getMediaLibraryDao().upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
-            assertEquals(0, database.getUserDataDao().markVideoAsWatched(1L))
+            assertEquals(0, userDataDao.markVideoAsWatched(1L))
         }
 
     @Test
     fun `mark video as watched success`() =
         runTest {
-            database.getMediaLibraryDao().insertVideos(
+            database.getMediaLibraryDao().upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
-            database.getUserDataDao().savePlayProgress(videoId = 1L, 100L)
-            assertEquals(1, database.getUserDataDao().markVideoAsWatched(1L))
+            userDataDao.savePlayProgress(videoId = 1L, 100L)
+            assertEquals(1, userDataDao.markVideoAsWatched(1L))
         }
 
     @Test
     fun `set is show video progress setting failed when no video tab setting`() =
         runTest {
             assertFails {
-                database.getUserDataDao().upsertVideoTabSettingEntity(10, true)
+                userDataDao.upsertVideoTabSettingEntity(10, true)
+            }
+        }
+
+    @Test
+    fun `progress record is deleted when video deleted`() =
+        runTest {
+            libraryDao.upsertVideos(
+                listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
+            )
+            userDataDao.savePlayProgress(videoId = 1L, 100L)
+            userDataDao.getPlayProgressFlow(1L).first().also {
+                assertEquals(100L, it?.progressMs)
+            }
+            libraryDao.deleteVideoByIds(listOf(1))
+            userDataDao.getPlayProgressFlow(1L).first().also {
+                assertEquals(null, it)
+            }
+        }
+
+    @Test
+    fun `progress record will not be deleted when video updated`() =
+        runTest {
+            libraryDao.upsertVideos(
+                listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
+            )
+            userDataDao.savePlayProgress(videoId = 1L, 100L)
+            userDataDao.getPlayProgressFlow(1L).first().also {
+                assertEquals(100L, it?.progressMs)
+            }
+            libraryDao.upsertVideos(
+                listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
+            )
+            userDataDao.getPlayProgressFlow(1L).first().also {
+                assertEquals(100L, it?.progressMs)
             }
         }
 
     @Test
     fun `set is show video progress setting success`() =
         runTest {
-            database.getUserDataDao().insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
-            database.getUserDataDao().upsertVideoTabSettingEntity(10, true)
-            database.getUserDataDao().getVideoSettingFlowOfTab(10).first().also {
+            database
+                .getUserDataDao()
+                .insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
+            userDataDao.upsertVideoTabSettingEntity(10, true)
+            userDataDao.getVideoSettingFlowOfTab(10).first().also {
                 assertEquals(true, it?.isShowProgress)
             }
-            database.getUserDataDao().upsertVideoTabSettingEntity(10, false)
-            database.getUserDataDao().getVideoSettingFlowOfTab(10).first().also {
+            userDataDao.upsertVideoTabSettingEntity(10, false)
+            userDataDao.getVideoSettingFlowOfTab(10).first().also {
                 assertEquals(false, it?.isShowProgress)
             }
         }
@@ -1091,17 +1152,96 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `VideoTabSettingEntity is deleted when tab is deleted`() =
         runTest {
-            database.getUserDataDao().insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
-            database.getUserDataDao().upsertVideoTabSettingEntity(10, true)
-            database.getUserDataDao().deleteCustomTab(10)
-            database.getUserDataDao().getVideoSettingFlowOfTab(10).first().also {
+            database
+                .getUserDataDao()
+                .insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
+            userDataDao.upsertVideoTabSettingEntity(10, true)
+            userDataDao.deleteCustomTab(10)
+            userDataDao.getVideoSettingFlowOfTab(10).first().also {
                 assertEquals(null, it)
             }
+        }
+
+    @Test
+    fun `sync media library test`() =
+        runTest {
+            val dao = database.getMediaLibraryDao()
+            dao.insertDummyData()
+            dao.syncMediaLibrary(
+                audios =
+                    listOf(
+                        MediaEntity(
+                            id = 100,
+                            albumId = 400,
+                            genreId = 500,
+                            artistId = 600,
+                        ),
+                    ),
+                videos = listOf(VideoEntity(id = 300)),
+                albums = listOf(AlbumEntity(albumId = 400, title = "new_album")),
+                genres = listOf(GenreEntity(genreId = 500)),
+                artists = listOf(ArtistEntity(artistId = 600, name = "new_artist")),
+            )
+            assertEquals(1, dao.getAllArtistID().size)
+            assertEquals(1, dao.getAllGenreID().size)
+            assertEquals(1, dao.getAllAlbumID().size)
+            assertEquals(1, dao.getAllMediaID().size)
+            assertEquals(1, dao.getAllVideoID().size)
+            assertEquals(100, dao.getAllMediaID().first())
+            assertEquals(400, dao.getAllAlbumID().first())
+            assertEquals(300, dao.getAllVideoID().first())
+            assertEquals(500, dao.getAllGenreID().first())
+            assertEquals(600, dao.getAllArtistID().first())
+        }
+
+    @Test
+    fun `delete orphan album test`() =
+        runTest {
+            val dao = database.getMediaLibraryDao()
+            dao.insertDummyData()
+
+            assertEquals(2, dao.getAllAlbumID().size)
+            dao.deleteOrphanAlbums()
+            assertEquals(1, dao.getAllAlbumID().size)
+            dao.deleteMediasByIds(listOf(1, 2))
+            dao.deleteOrphanAlbums()
+            assertEquals(0, dao.getAllAlbumID().size)
+        }
+
+    @Test
+    fun `delete orphan artist test`() =
+        runTest {
+            val dao = database.getMediaLibraryDao()
+            dao.insertDummyData()
+
+            assertEquals(2, dao.getAllArtistID().size)
+            dao.deleteOrphanArtists()
+            assertEquals(0, dao.getAllArtistID().size)
+        }
+
+    @Test
+    fun `delete orphan genre test`() =
+        runTest {
+            val dao = database.getMediaLibraryDao()
+            dao.insertDummyData()
+
+            assertEquals(2, dao.getAllGenreID().size)
+            dao.deleteOrphanGenres()
+            assertEquals(0, dao.getAllGenreID().size)
         }
 }
 
 private suspend fun MediaLibraryDao.insertDummyData() {
     upsertMedia(
+        videos =
+            listOf(
+                VideoEntity(
+                    id = 5,
+                ),
+                VideoEntity(
+                    id = 6,
+                ),
+            ),
         audios =
             listOf(
                 MediaEntity(

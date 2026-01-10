@@ -96,8 +96,9 @@ internal object Tables {
         AutoMigration(from = 11, to = 12, AutoMigration11To12Spec::class),
         AutoMigration(from = 12, to = 13),
         AutoMigration(from = 13, to = 14),
+        AutoMigration(from = 14, to = 15, AutoMigration14To15Spec::class),
     ],
-    version = 14,
+    version = 15,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)
@@ -129,7 +130,63 @@ internal val addTriggerCallback =
         override fun onCreate(connection: SQLiteConnection) {
             super.onCreate(connection)
 
-            createUpdateTrackCountTrigger(connection)
+            // update artist song count when insert or delete media.
+            connection.execSQL(
+                """
+                CREATE TRIGGER update_artist_song_count_on_insert
+                AFTER INSERT ON ${Tables.LIBRARY_MEDIA}
+                FOR EACH ROW
+                WHEN NEW.${MediaColumns.ARTIST_ID} IS NOT NULL
+                BEGIN
+                    UPDATE ${Tables.LIBRARY_ARTIST}
+                    SET ${ArtistColumns.TRACK_COUNT} = ${ArtistColumns.TRACK_COUNT} + 1
+                    WHERE ${ArtistColumns.ID} = NEW.${MediaColumns.ARTIST_ID};
+                END;
+                """.trimIndent(),
+            )
+
+            connection.execSQL(
+                """
+                CREATE TRIGGER update_artist_song_count_on_delete
+                AFTER DELETE ON ${Tables.LIBRARY_MEDIA}
+                FOR EACH ROW
+                WHEN OLD.${MediaColumns.ARTIST_ID} IS NOT NULL
+                BEGIN
+                    UPDATE ${Tables.LIBRARY_ARTIST}
+                    SET ${ArtistColumns.TRACK_COUNT} = ${ArtistColumns.TRACK_COUNT} - 1
+                    WHERE ${ArtistColumns.ID} = OLD.${MediaColumns.ARTIST_ID};
+                END;
+                """.trimIndent(),
+            )
+
+            // update album song count when insert or delete media.
+            connection.execSQL(
+                """
+                CREATE TRIGGER update_album_song_count_on_insert
+                AFTER INSERT ON ${Tables.LIBRARY_MEDIA}
+                FOR EACH ROW
+                WHEN NEW.${MediaColumns.ALBUM_ID} IS NOT NULL
+                BEGIN
+                    UPDATE ${Tables.LIBRARY_ALBUM}
+                    SET ${AlbumColumns.TRACK_COUNT} = ${AlbumColumns.TRACK_COUNT} + 1
+                    WHERE ${AlbumColumns.ID} = NEW.${MediaColumns.ALBUM_ID};
+                END;
+                """.trimIndent(),
+            )
+
+            connection.execSQL(
+                """
+                CREATE TRIGGER update_album_song_count_on_delete
+                AFTER DELETE ON ${Tables.LIBRARY_MEDIA}
+                FOR EACH ROW
+                WHEN OLD.${MediaColumns.ALBUM_ID} IS NOT NULL
+                BEGIN
+                    UPDATE ${Tables.LIBRARY_ALBUM}
+                    SET ${AlbumColumns.TRACK_COUNT} = ${AlbumColumns.TRACK_COUNT} - 1
+                    WHERE ${AlbumColumns.ID} = OLD.${MediaColumns.ALBUM_ID};
+                END;
+                """.trimIndent(),
+            )
         }
     }
 
@@ -154,79 +211,79 @@ class AutoMigration5To6Spec : AutoMigrationSpec {
     override fun onPostMigrate(connection: SQLiteConnection) {
         createUpdateTrackCountTrigger(connection)
     }
-}
 
-private fun createUpdateTrackCountTrigger(connection: SQLiteConnection) {
-    // delete invalid albums, artists, genres when delete media.
-    connection.execSQL(
-        """
-        CREATE TRIGGER IF NOT EXISTS delete_invalid_albums_artists_genres
-        AFTER DELETE ON ${Tables.LIBRARY_MEDIA}
-        BEGIN
-            DELETE FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} NOT IN (SELECT DISTINCT ${MediaColumns.ALBUM_ID} FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ALBUM_ID} IS NOT NULL);
-            DELETE FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} NOT IN (SELECT DISTINCT ${MediaColumns.ARTIST_ID} FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ARTIST_ID} IS NOT NULL);
-            DELETE FROM ${Tables.LIBRARY_GENRE} WHERE ${GenreColumns.ID} NOT IN (SELECT DISTINCT ${MediaColumns.GENRE_ID} FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.GENRE_ID} IS NOT NULL);
-        END;
-        """.trimIndent(),
-    )
+    private fun createUpdateTrackCountTrigger(connection: SQLiteConnection) {
+        // delete invalid albums, artists, genres when delete media.
+        connection.execSQL(
+            """
+            CREATE TRIGGER IF NOT EXISTS delete_invalid_albums_artists_genres
+            AFTER DELETE ON ${Tables.LIBRARY_MEDIA}
+            BEGIN
+                DELETE FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} NOT IN (SELECT DISTINCT ${MediaColumns.ALBUM_ID} FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ALBUM_ID} IS NOT NULL);
+                DELETE FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} NOT IN (SELECT DISTINCT ${MediaColumns.ARTIST_ID} FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ARTIST_ID} IS NOT NULL);
+                DELETE FROM ${Tables.LIBRARY_GENRE} WHERE ${GenreColumns.ID} NOT IN (SELECT DISTINCT ${MediaColumns.GENRE_ID} FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.GENRE_ID} IS NOT NULL);
+            END;
+            """.trimIndent(),
+        )
 
-    // update artist song count when insert or delete media.
-    connection.execSQL(
-        """
-        CREATE TRIGGER update_artist_song_count_on_insert
-        AFTER INSERT ON ${Tables.LIBRARY_MEDIA}
-        FOR EACH ROW
-        WHEN NEW.${MediaColumns.ARTIST_ID} IS NOT NULL
-        BEGIN
-            UPDATE ${Tables.LIBRARY_ARTIST}
-            SET ${ArtistColumns.TRACK_COUNT} = ${ArtistColumns.TRACK_COUNT} + 1
-            WHERE ${ArtistColumns.ID} = NEW.${MediaColumns.ARTIST_ID};
-        END;
-        """.trimIndent(),
-    )
+        // update artist song count when insert or delete media.
+        connection.execSQL(
+            """
+            CREATE TRIGGER update_artist_song_count_on_insert
+            AFTER INSERT ON ${Tables.LIBRARY_MEDIA}
+            FOR EACH ROW
+            WHEN NEW.${MediaColumns.ARTIST_ID} IS NOT NULL
+            BEGIN
+                UPDATE ${Tables.LIBRARY_ARTIST}
+                SET ${ArtistColumns.TRACK_COUNT} = ${ArtistColumns.TRACK_COUNT} + 1
+                WHERE ${ArtistColumns.ID} = NEW.${MediaColumns.ARTIST_ID};
+            END;
+            """.trimIndent(),
+        )
 
-    connection.execSQL(
-        """
-        CREATE TRIGGER update_artist_song_count_on_delete
-        AFTER DELETE ON ${Tables.LIBRARY_MEDIA}
-        FOR EACH ROW
-        WHEN OLD.${MediaColumns.ARTIST_ID} IS NOT NULL
-        BEGIN
-            UPDATE ${Tables.LIBRARY_ARTIST}
-            SET ${ArtistColumns.TRACK_COUNT} = ${ArtistColumns.TRACK_COUNT} - 1
-            WHERE ${ArtistColumns.ID} = OLD.${MediaColumns.ARTIST_ID};
-        END;
-        """.trimIndent(),
-    )
+        connection.execSQL(
+            """
+            CREATE TRIGGER update_artist_song_count_on_delete
+            AFTER DELETE ON ${Tables.LIBRARY_MEDIA}
+            FOR EACH ROW
+            WHEN OLD.${MediaColumns.ARTIST_ID} IS NOT NULL
+            BEGIN
+                UPDATE ${Tables.LIBRARY_ARTIST}
+                SET ${ArtistColumns.TRACK_COUNT} = ${ArtistColumns.TRACK_COUNT} - 1
+                WHERE ${ArtistColumns.ID} = OLD.${MediaColumns.ARTIST_ID};
+            END;
+            """.trimIndent(),
+        )
 
-    // update album song count when insert or delete media.
-    connection.execSQL(
-        """
-        CREATE TRIGGER update_album_song_count_on_insert
-        AFTER INSERT ON ${Tables.LIBRARY_MEDIA}
-        FOR EACH ROW
-        WHEN NEW.${MediaColumns.ALBUM_ID} IS NOT NULL
-        BEGIN
-            UPDATE ${Tables.LIBRARY_ALBUM}
-            SET ${AlbumColumns.TRACK_COUNT} = ${AlbumColumns.TRACK_COUNT} + 1
-            WHERE ${AlbumColumns.ID} = NEW.${MediaColumns.ALBUM_ID};
-        END;
-        """.trimIndent(),
-    )
+        // update album song count when insert or delete media.
+        connection.execSQL(
+            """
+            CREATE TRIGGER update_album_song_count_on_insert
+            AFTER INSERT ON ${Tables.LIBRARY_MEDIA}
+            FOR EACH ROW
+            WHEN NEW.${MediaColumns.ALBUM_ID} IS NOT NULL
+            BEGIN
+                UPDATE ${Tables.LIBRARY_ALBUM}
+                SET ${AlbumColumns.TRACK_COUNT} = ${AlbumColumns.TRACK_COUNT} + 1
+                WHERE ${AlbumColumns.ID} = NEW.${MediaColumns.ALBUM_ID};
+            END;
+            """.trimIndent(),
+        )
 
-    connection.execSQL(
-        """
-        CREATE TRIGGER update_album_song_count_on_delete
-        AFTER DELETE ON ${Tables.LIBRARY_MEDIA}
-        FOR EACH ROW
-        WHEN OLD.${MediaColumns.ALBUM_ID} IS NOT NULL
-        BEGIN
-            UPDATE ${Tables.LIBRARY_ALBUM}
-            SET ${AlbumColumns.TRACK_COUNT} = ${AlbumColumns.TRACK_COUNT} - 1
-            WHERE ${AlbumColumns.ID} = OLD.${MediaColumns.ALBUM_ID};
-        END;
-        """.trimIndent(),
-    )
+        connection.execSQL(
+            """
+            CREATE TRIGGER update_album_song_count_on_delete
+            AFTER DELETE ON ${Tables.LIBRARY_MEDIA}
+            FOR EACH ROW
+            WHEN OLD.${MediaColumns.ALBUM_ID} IS NOT NULL
+            BEGIN
+                UPDATE ${Tables.LIBRARY_ALBUM}
+                SET ${AlbumColumns.TRACK_COUNT} = ${AlbumColumns.TRACK_COUNT} - 1
+                WHERE ${AlbumColumns.ID} = OLD.${MediaColumns.ALBUM_ID};
+            END;
+            """.trimIndent(),
+        )
+    }
 }
 
 class AutoMigration7To8Spec : AutoMigrationSpec {
@@ -260,97 +317,10 @@ class AutoMigration11To12Spec : AutoMigrationSpec {
     }
 }
 
-// Trigger is created by Room Automatically.
-// class AutoMigration6To7Spec : AutoMigrationSpec {
-//    override fun onPostMigrate(connection: SQLiteConnection) {
-// //        createUpdateFtsTableTrigger(connection)
-//
-//        // Sync library to FTS table.
-// //        syncLibraryData(connection)
-//    }
-//
-//    private fun syncLibraryData(connection: SQLiteConnection) {
-//        connection.execSQL(
-//            """
-//            INSERT INTO ${Tables.LIBRARY_FTS_MEDIA}(rowid, ${MediaColumns.TITLE})
-//            SELECT ${MediaColumns.ID}, ${MediaColumns.TITLE} FROM ${Tables.LIBRARY_MEDIA}
-//        """.trimIndent()
-//        )
-//
-//        connection.execSQL(
-//            """
-//            INSERT INTO ${Tables.LIBRARY_FTS_ALBUM}(rowid, ${AlbumColumns.TITLE})
-//            SELECT ${AlbumColumns.ID}, ${AlbumColumns.TITLE} FROM ${Tables.LIBRARY_ALBUM}
-//        """.trimIndent()
-//        )
-//    }
-// }
-//
-// private fun createUpdateFtsTableTrigger(connection: SQLiteConnection) {
-//    connection.createFtsTableTrigger(
-//        tableName = Tables.LIBRARY_ALBUM,
-//        ftsTableName = Tables.LIBRARY_FTS_ALBUM,
-//        deleteRowString = {
-//            "DELETE FROM ${Tables.LIBRARY_FTS_ALBUM} WHERE rowid=old.${AlbumColumns.ID};"
-//        },
-//        insertRowString = {
-//            "INSERT INTO ${Tables.LIBRARY_FTS_ALBUM}(rowid, ${AlbumColumns.TITLE}) VALUES (new.${AlbumColumns.ID}, new.${AlbumColumns.TITLE});"
-//        }
-//    )
-//    connection.createFtsTableTrigger(
-//        tableName = Tables.LIBRARY_ARTIST,
-//        ftsTableName = Tables.LIBRARY_FTS_ARTIST,
-//        deleteRowString = {
-//            "DELETE FROM ${Tables.LIBRARY_FTS_ARTIST} WHERE rowid=old.${ArtistColumns.ID};"
-//        },
-//        insertRowString = {
-//            "INSERT INTO ${Tables.LIBRARY_FTS_ARTIST}(rowid, ${ArtistColumns.NAME}) VALUES (new.${ArtistColumns.ID}, new.${ArtistColumns.NAME});"
-//        }
-//    )
-//    connection.createFtsTableTrigger(
-//        tableName = Tables.LIBRARY_MEDIA,
-//        ftsTableName = Tables.LIBRARY_FTS_MEDIA,
-//        deleteRowString = {
-//            "DELETE FROM ${Tables.LIBRARY_FTS_MEDIA} WHERE rowid=old.${MediaColumns.ID};"
-//        },
-//        insertRowString = {
-//            "INSERT INTO ${Tables.LIBRARY_FTS_MEDIA}(rowid, ${MediaColumns.TITLE}) VALUES (new.${MediaColumns.ID}, new.${MediaColumns.TITLE});"
-//        }
-//    )
-// }
-//
-// private fun SQLiteConnection.createFtsTableTrigger(
-//    tableName: String,
-//    ftsTableName: String,
-//    deleteRowString: () -> String,
-//    insertRowString: () -> String
-// ) {
-//    execSQL(
-//        """
-//            CREATE TRIGGER IF NOT EXISTS delete_${ftsTableName}_before_insert BEFORE UPDATE ON $tableName BEGIN
-//              ${deleteRowString()}
-//            END;
-//        """.trimIndent()
-//    )
-//    execSQL(
-//        """
-//            CREATE TRIGGER IF NOT EXISTS insert_${ftsTableName}_after_update AFTER UPDATE ON $tableName BEGIN
-//              ${insertRowString()}
-//            END;
-//        """.trimIndent()
-//    )
-//    execSQL(
-//        """
-//            CREATE TRIGGER IF NOT EXISTS delete_${ftsTableName}_before_delete BEFORE DELETE ON $tableName BEGIN
-//              ${deleteRowString()}
-//            END;
-//        """.trimIndent()
-//    )
-//    execSQL(
-//        """
-//            CREATE TRIGGER IF NOT EXISTS insert_${ftsTableName}_after_insert AFTER INSERT ON $tableName BEGIN
-//              ${insertRowString()}
-//            END;
-//        """.trimIndent()
-//    )
-// }
+class AutoMigration14To15Spec : AutoMigrationSpec {
+    override fun onPostMigrate(connection: SQLiteConnection) {
+        connection.execSQL(
+            "DROP TRIGGER IF EXISTS delete_invalid_albums_artists_genres",
+        )
+    }
+}
