@@ -43,7 +43,7 @@ object MediaType {
 @Dao
 interface MediaLibraryDao {
     @Upsert
-    suspend fun insertAlbums(albums: List<AlbumEntity>)
+    suspend fun upsertAlbums(albums: List<AlbumEntity>)
 
     @Query("UPDATE ${Tables.LIBRARY_MEDIA} SET ${MediaColumns.DELETED} = 1 WHERE ${MediaColumns.ID} IN (:ids)")
     suspend fun markMediaAsDeleted(ids: List<String>)
@@ -52,16 +52,16 @@ interface MediaLibraryDao {
     suspend fun markVideoAsDeleted(ids: List<String>)
 
     @Upsert
-    suspend fun insertArtists(artists: List<ArtistEntity>)
+    suspend fun upsertArtists(artists: List<ArtistEntity>)
 
     @Upsert
-    suspend fun insertGenres(genres: List<GenreEntity>)
+    suspend fun upsertGenres(genres: List<GenreEntity>)
 
     @Upsert
-    suspend fun insertMedias(audios: List<MediaEntity>)
+    suspend fun upsertMedias(audios: List<MediaEntity>)
 
     @Upsert
-    suspend fun insertVideos(audios: List<VideoEntity>)
+    suspend fun upsertVideos(audios: List<VideoEntity>)
 
     @Query("DELETE FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} IN (:ids)")
     suspend fun deleteAlbumsByIds(ids: List<Long>)
@@ -505,11 +505,11 @@ interface MediaLibraryDao {
         audios: List<MediaEntity>,
         videos: List<VideoEntity> = emptyList(),
     ) {
-        insertAlbums(albums)
-        insertArtists(artists)
-        insertGenres(genres)
-        insertMedias(audios)
-        insertVideos(videos)
+        upsertAlbums(albums)
+        upsertArtists(artists)
+        upsertGenres(genres)
+        upsertMedias(audios)
+        upsertVideos(videos)
     }
 
     @Transaction
@@ -566,7 +566,7 @@ interface MediaLibraryDao {
             idSelector = { it.id },
             fetchLocalIdsDao = { getAllMediaID() },
             deleteDao = { deleteMediasByIds(it) },
-            upsertDao = { insertMedias(it) },
+            upsertDao = { upsertMedias(it) },
             onStep = onStep,
         )
     }
@@ -580,7 +580,7 @@ interface MediaLibraryDao {
             idSelector = { it.id },
             fetchLocalIdsDao = { getAllVideoID() },
             deleteDao = { deleteVideoByIds(it) },
-            upsertDao = { insertVideos(it) },
+            upsertDao = { upsertVideos(it) },
             onStep = onStep,
         )
     }
@@ -594,7 +594,7 @@ interface MediaLibraryDao {
             idSelector = { it.albumId },
             fetchLocalIdsDao = { getAllAlbumID() },
             deleteDao = { deleteAlbumsByIds(it) },
-            upsertDao = { insertAlbums(it) },
+            upsertDao = { upsertAlbums(it) },
             onStep = onStep,
         )
     }
@@ -608,7 +608,7 @@ interface MediaLibraryDao {
             idSelector = { it.artistId },
             fetchLocalIdsDao = { getAllArtistID() },
             deleteDao = { deleteArtistsByIds(it) },
-            upsertDao = { insertArtists(it) },
+            upsertDao = { upsertArtists(it) },
             onStep = onStep,
         )
     }
@@ -622,7 +622,7 @@ interface MediaLibraryDao {
             idSelector = { it.genreId },
             fetchLocalIdsDao = { getAllGenreID() },
             deleteDao = { deleteGenreByIds(it.filterNotNull()) },
-            upsertDao = { insertGenres(it) },
+            upsertDao = { upsertGenres(it) },
             onStep = onStep,
         )
     }

@@ -479,7 +479,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun delete_test() =
         runTest {
-            libraryDao.insertAlbums(
+            libraryDao.upsertAlbums(
                 albums =
                     listOf(
                         AlbumEntity(
@@ -488,7 +488,7 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            libraryDao.insertGenres(
+            libraryDao.upsertGenres(
                 genres =
                     listOf(
                         GenreEntity(
@@ -497,7 +497,7 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            libraryDao.insertArtists(
+            libraryDao.upsertArtists(
                 artists =
                     listOf(
                         ArtistEntity(
@@ -506,7 +506,7 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            libraryDao.insertMedias(
+            libraryDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -556,7 +556,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun update_artist_count_test() =
         runTest {
-            libraryDao.insertArtists(
+            libraryDao.upsertArtists(
                 artists =
                     listOf(
                         ArtistEntity(
@@ -566,7 +566,7 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             assertEquals(0, libraryDao.getArtistByArtistId("4")?.trackCount)
-            libraryDao.insertMedias(
+            libraryDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -586,7 +586,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun update_album_count_test() =
         runTest {
-            libraryDao.insertAlbums(
+            libraryDao.upsertAlbums(
                 albums =
                     listOf(
                         AlbumEntity(
@@ -596,7 +596,7 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             assertEquals(0, libraryDao.getAlbumByAlbumId("2")?.trackCount)
-            libraryDao.insertMedias(
+            libraryDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -707,7 +707,7 @@ abstract class AbstractDatabaseTest {
     fun sort_media_by_album_test() =
         runTest {
             val dao = database.getMediaLibraryDao()
-            dao.insertMedias(
+            dao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -751,7 +751,7 @@ abstract class AbstractDatabaseTest {
     fun sort_media_by_title_test() =
         runTest {
             val dao = database.getMediaLibraryDao()
-            dao.insertMedias(
+            dao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -911,7 +911,7 @@ abstract class AbstractDatabaseTest {
     fun `get media list where album test`() =
         runTest {
             val dao = database.getMediaLibraryDao()
-            dao.insertMedias(
+            dao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -958,7 +958,7 @@ abstract class AbstractDatabaseTest {
     fun `get media list where title test`() =
         runTest {
             val dao = database.getMediaLibraryDao()
-            dao.insertMedias(
+            dao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -1059,7 +1059,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `update video progress`() =
         runTest {
-            database.getMediaLibraryDao().insertVideos(
+            database.getMediaLibraryDao().upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
             userDataDao.savePlayProgress(videoId = 1L, 100L)
@@ -1075,7 +1075,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `can not mark video as watched when progress record not exist`() =
         runTest {
-            database.getMediaLibraryDao().insertVideos(
+            database.getMediaLibraryDao().upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
             assertEquals(0, userDataDao.markVideoAsWatched(1L))
@@ -1084,7 +1084,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `mark video as watched success`() =
         runTest {
-            database.getMediaLibraryDao().insertVideos(
+            database.getMediaLibraryDao().upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
             userDataDao.savePlayProgress(videoId = 1L, 100L)
@@ -1102,7 +1102,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `progress record is deleted when video deleted`() =
         runTest {
-            libraryDao.insertVideos(
+            libraryDao.upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
             userDataDao.savePlayProgress(videoId = 1L, 100L)
@@ -1118,14 +1118,14 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `progress record will not be deleted when video updated`() =
         runTest {
-            libraryDao.insertVideos(
+            libraryDao.upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
             userDataDao.savePlayProgress(videoId = 1L, 100L)
             userDataDao.getPlayProgressFlow(1L).first().also {
                 assertEquals(100L, it?.progressMs)
             }
-            libraryDao.insertVideos(
+            libraryDao.upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
             userDataDao.getPlayProgressFlow(1L).first().also {
