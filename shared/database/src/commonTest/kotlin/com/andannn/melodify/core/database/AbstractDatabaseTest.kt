@@ -10,6 +10,7 @@ import androidx.room.useReaderConnection
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
+import com.andannn.melodify.core.database.dao.UserDataDao
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistColumns
@@ -26,7 +27,6 @@ import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortOptionData
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
-import com.andannn.melodify.core.database.entity.VideoTabSettingEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
@@ -42,6 +42,7 @@ abstract class AbstractDatabaseTest {
     private val lyricDao: LyricDao get() = database.getLyricDao()
     private val playListDao: PlayListDao get() = database.getPlayListDao()
     private val libraryDao: MediaLibraryDao get() = database.getMediaLibraryDao()
+    private val userDataDao: UserDataDao get() = database.getUserDataDao()
 
     private val dummyLyricEntities =
         listOf(
@@ -650,7 +651,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun upsert_search_history_test() =
         runTest {
-            val searchHistoryDao = database.getUserDataDao()
+            val searchHistoryDao = userDataDao
             searchHistoryDao.upsertSearchHistory(
                 listOf(
                     SearchHistoryEntity(
@@ -680,7 +681,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun get_search_histories_order_test() =
         runTest {
-            val searchHistoryDao = database.getUserDataDao()
+            val searchHistoryDao = userDataDao
             searchHistoryDao.upsertSearchHistory(
                 listOf(
                     SearchHistoryEntity(
@@ -792,7 +793,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `is tab exist`() =
         runTest {
-            val dao = database.getUserDataDao()
+            val dao = userDataDao
             dao.insertCustomTab(
                 CustomTabEntity(
                     id = 10,
@@ -812,7 +813,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `swap tab order`() =
         runTest {
-            val dao = database.getUserDataDao()
+            val dao = userDataDao
 
             val firstId =
                 dao.insertCustomTab(
@@ -867,7 +868,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `insert sort rule`() =
         runTest {
-            val dao = database.getUserDataDao()
+            val dao = userDataDao
             dao.insertCustomTab(
                 CustomTabEntity(
                     id = 1234,
@@ -1048,7 +1049,7 @@ abstract class AbstractDatabaseTest {
     fun `update video progress failed when video not exist`() =
         runTest {
             assertFails {
-                database.getUserDataDao().savePlayProgress(
+                userDataDao.savePlayProgress(
                     videoId = 1L,
                     100L,
                 )
@@ -1061,12 +1062,12 @@ abstract class AbstractDatabaseTest {
             database.getMediaLibraryDao().insertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
-            database.getUserDataDao().savePlayProgress(videoId = 1L, 100L)
-            database.getUserDataDao().getPlayProgressFlow(1L).first().also {
+            userDataDao.savePlayProgress(videoId = 1L, 100L)
+            userDataDao.getPlayProgressFlow(1L).first().also {
                 assertEquals(100, it?.progressMs)
             }
-            database.getUserDataDao().savePlayProgress(videoId = 1L, 101L)
-            database.getUserDataDao().getPlayProgressFlow(1L).first().also {
+            userDataDao.savePlayProgress(videoId = 1L, 101L)
+            userDataDao.getPlayProgressFlow(1L).first().also {
                 assertEquals(101, it?.progressMs)
             }
         }
@@ -1077,7 +1078,7 @@ abstract class AbstractDatabaseTest {
             database.getMediaLibraryDao().insertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
-            assertEquals(0, database.getUserDataDao().markVideoAsWatched(1L))
+            assertEquals(0, userDataDao.markVideoAsWatched(1L))
         }
 
     @Test
@@ -1086,15 +1087,49 @@ abstract class AbstractDatabaseTest {
             database.getMediaLibraryDao().insertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
-            database.getUserDataDao().savePlayProgress(videoId = 1L, 100L)
-            assertEquals(1, database.getUserDataDao().markVideoAsWatched(1L))
+            userDataDao.savePlayProgress(videoId = 1L, 100L)
+            assertEquals(1, userDataDao.markVideoAsWatched(1L))
         }
 
     @Test
     fun `set is show video progress setting failed when no video tab setting`() =
         runTest {
             assertFails {
-                database.getUserDataDao().upsertVideoTabSettingEntity(10, true)
+                userDataDao.upsertVideoTabSettingEntity(10, true)
+            }
+        }
+
+    @Test
+    fun `progress record is deleted when video deleted`() =
+        runTest {
+            libraryDao.insertVideos(
+                listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
+            )
+            userDataDao.savePlayProgress(videoId = 1L, 100L)
+            userDataDao.getPlayProgressFlow(1L).first().also {
+                assertEquals(100L, it?.progressMs)
+            }
+            libraryDao.deleteVideoByIds(listOf(1))
+            userDataDao.getPlayProgressFlow(1L).first().also {
+                assertEquals(null, it)
+            }
+        }
+
+    @Test
+    fun `progress record will not be deleted when video updated`() =
+        runTest {
+            libraryDao.insertVideos(
+                listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
+            )
+            userDataDao.savePlayProgress(videoId = 1L, 100L)
+            userDataDao.getPlayProgressFlow(1L).first().also {
+                assertEquals(100L, it?.progressMs)
+            }
+            libraryDao.insertVideos(
+                listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
+            )
+            userDataDao.getPlayProgressFlow(1L).first().also {
+                assertEquals(100L, it?.progressMs)
             }
         }
 
@@ -1104,12 +1139,12 @@ abstract class AbstractDatabaseTest {
             database
                 .getUserDataDao()
                 .insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
-            database.getUserDataDao().upsertVideoTabSettingEntity(10, true)
-            database.getUserDataDao().getVideoSettingFlowOfTab(10).first().also {
+            userDataDao.upsertVideoTabSettingEntity(10, true)
+            userDataDao.getVideoSettingFlowOfTab(10).first().also {
                 assertEquals(true, it?.isShowProgress)
             }
-            database.getUserDataDao().upsertVideoTabSettingEntity(10, false)
-            database.getUserDataDao().getVideoSettingFlowOfTab(10).first().also {
+            userDataDao.upsertVideoTabSettingEntity(10, false)
+            userDataDao.getVideoSettingFlowOfTab(10).first().also {
                 assertEquals(false, it?.isShowProgress)
             }
         }
@@ -1120,9 +1155,9 @@ abstract class AbstractDatabaseTest {
             database
                 .getUserDataDao()
                 .insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
-            database.getUserDataDao().upsertVideoTabSettingEntity(10, true)
-            database.getUserDataDao().deleteCustomTab(10)
-            database.getUserDataDao().getVideoSettingFlowOfTab(10).first().also {
+            userDataDao.upsertVideoTabSettingEntity(10, true)
+            userDataDao.deleteCustomTab(10)
+            userDataDao.getVideoSettingFlowOfTab(10).first().also {
                 assertEquals(null, it)
             }
         }

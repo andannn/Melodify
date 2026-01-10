@@ -6,12 +6,11 @@ package com.andannn.melodify.core.database.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.room.RoomRawQuery
 import androidx.room.Transaction
+import androidx.room.Upsert
 import com.andannn.melodify.core.database.MediaSorts
 import com.andannn.melodify.core.database.MediaWheres
 import com.andannn.melodify.core.database.Tables
@@ -43,7 +42,7 @@ object MediaType {
 
 @Dao
 interface MediaLibraryDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertAlbums(albums: List<AlbumEntity>)
 
     @Query("UPDATE ${Tables.LIBRARY_MEDIA} SET ${MediaColumns.DELETED} = 1 WHERE ${MediaColumns.ID} IN (:ids)")
@@ -52,16 +51,16 @@ interface MediaLibraryDao {
     @Query("UPDATE ${Tables.LIBRARY_VIDEO} SET ${VideoColumns.DELETED} = 1 WHERE ${VideoColumns.ID} IN (:ids)")
     suspend fun markVideoAsDeleted(ids: List<String>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertArtists(artists: List<ArtistEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertGenres(genres: List<GenreEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertMedias(audios: List<MediaEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertVideos(audios: List<VideoEntity>)
 
     @Query("DELETE FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} IN (:ids)")
