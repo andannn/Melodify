@@ -22,12 +22,15 @@ import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.domain.model.TabKind
 import com.andannn.melodify.domain.model.UserSetting
 import com.andannn.melodify.domain.model.isAudio
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+
+private const val TAG = "UserPreferenceRepositor"
 
 internal class UserPreferenceRepositoryImpl(
     private val preferences: UserSettingPreferences,
@@ -189,7 +192,7 @@ internal class UserPreferenceRepositoryImpl(
     override suspend fun markVideoCompleted(videoId: Long) {
         val isRecordExist = userDataDao.getPlayProgressFlow(videoId).first() != null
         if (!isRecordExist) {
-            userDataDao.savePlayProgress(videoId, 0)
+            savePlayProgress(videoId, 0)
         }
         userDataDao.markVideoAsWatched(videoId)
     }
@@ -198,7 +201,13 @@ internal class UserPreferenceRepositoryImpl(
         videoId: Long,
         progressMs: Long,
     ) {
-        userDataDao.savePlayProgress(videoId, progressMs)
+        runCatching {
+            userDataDao.savePlayProgress(videoId, progressMs)
+        }.onFailure {
+            // when try to save progress of video which is not exist, it will throw exception.
+            // We can ignore this exception here.
+            Napier.e(tag = TAG) { "Failed to save play progress: $it " }
+        }
     }
 
     override fun getResumePointMsFlow(videoId: Long): Flow<Pair<Long, Boolean>?> {
