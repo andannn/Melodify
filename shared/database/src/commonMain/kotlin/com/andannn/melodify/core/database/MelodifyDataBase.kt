@@ -97,8 +97,9 @@ internal object Tables {
         AutoMigration(from = 12, to = 13),
         AutoMigration(from = 13, to = 14),
         AutoMigration(from = 14, to = 15, AutoMigration14To15Spec::class),
+        AutoMigration(from = 15, to = 16, AutoMigration15To16Spec::class),
     ],
-    version = 15,
+    version = 16,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)
@@ -321,6 +322,29 @@ class AutoMigration14To15Spec : AutoMigrationSpec {
     override fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL(
             "DROP TRIGGER IF EXISTS delete_invalid_albums_artists_genres",
+        )
+    }
+}
+
+class AutoMigration15To16Spec : AutoMigrationSpec {
+    override fun onPostMigrate(connection: SQLiteConnection) {
+        connection.execSQL(
+            """
+            UPDATE ${Tables.LIBRARY_ALBUM}
+            SET album_track_count = (
+                SELECT COUNT(*) FROM ${Tables.LIBRARY_MEDIA} 
+                WHERE ${Tables.LIBRARY_MEDIA}.${MediaColumns.ALBUM_ID} = ${Tables.LIBRARY_ALBUM}.${AlbumColumns.ID}
+            )
+            """.trimIndent(),
+        )
+        connection.execSQL(
+            """
+            UPDATE ${Tables.LIBRARY_ARTIST}
+            SET artist_track_count = (
+                SELECT COUNT(*) FROM ${Tables.LIBRARY_MEDIA} 
+                WHERE ${Tables.LIBRARY_MEDIA}.${MediaColumns.ARTIST_ID} = ${Tables.LIBRARY_ARTIST}.${ArtistColumns.ID}
+            )
+            """.trimIndent(),
         )
     }
 }
