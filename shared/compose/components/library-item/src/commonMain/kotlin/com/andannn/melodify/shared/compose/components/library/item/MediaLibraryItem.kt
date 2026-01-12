@@ -76,7 +76,7 @@ private fun MediaLibraryItemContent(
             }
 
             is GenreItemModel -> {
-                stringResource(Res.string.track_count, mediaItemModel.trackCount)
+                ""
             }
 
             is PlayListItemModel -> {

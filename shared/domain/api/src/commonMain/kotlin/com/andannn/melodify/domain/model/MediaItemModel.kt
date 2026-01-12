@@ -31,25 +31,6 @@ data class AudioItemModel constructor(
     override val trackCount: Int = -1,
 ) : MediaItemModel {
     companion object {
-        val DEFAULT =
-            AudioItemModel(
-                "0",
-                "",
-                "",
-                "",
-                0,
-                "",
-                "0",
-                "",
-                "0",
-                "",
-                "0",
-                releaseYear = "",
-                0,
-                0,
-                "",
-            )
-
         // prefix for invalid item which local file is deleted but still in playlist
         const val INVALID_ID_PREFIX = "invalid_id_"
     }
@@ -82,34 +63,21 @@ data class AlbumItemModel(
     override val name: String,
     override val artWorkUri: String?,
     override val trackCount: Int,
-) : MediaItemModel {
-    companion object {
-        val DEFAULT = AlbumItemModel("0", "", "", 0)
-    }
-}
+) : MediaItemModel
 
 data class ArtistItemModel constructor(
     override val id: String,
     override val name: String,
     override val artWorkUri: String?,
     override val trackCount: Int,
-) : MediaItemModel {
-    companion object {
-        val DEFAULT = ArtistItemModel("0", "", "", 0)
-    }
-}
+) : MediaItemModel
 
 data class GenreItemModel(
     override val id: String,
     override val name: String,
     override val artWorkUri: String?,
     override val trackCount: Int,
-) : MediaItemModel {
-    companion object {
-        val DEFAULT = GenreItemModel("0", "", "", 0)
-        val UNKNOWN = GenreItemModel("-1", "", "", 0)
-    }
-}
+) : MediaItemModel
 
 data class PlayListItemModel constructor(
     override val id: String,
