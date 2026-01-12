@@ -31,6 +31,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(libs.androidx.sqlite.api)
             implementation(project(":shared:platform"))
             implementation(libs.room.runtime)
             implementation(libs.okio)

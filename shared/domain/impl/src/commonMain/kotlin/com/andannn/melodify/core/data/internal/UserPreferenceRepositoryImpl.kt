@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.data.internal
 
+import androidx.sqlite.SQLiteException
 import com.andannn.melodify.core.database.dao.UserDataDao
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.CustomTabType
@@ -201,12 +202,12 @@ internal class UserPreferenceRepositoryImpl(
         videoId: Long,
         progressMs: Long,
     ) {
-        runCatching {
+        try {
             userDataDao.savePlayProgress(videoId, progressMs)
-        }.onFailure {
+        } catch (e: SQLiteException) {
             // when try to save progress of video which is not exist, it will throw exception.
             // We can ignore this exception here.
-            Napier.e(tag = TAG) { "Failed to save play progress: $it " }
+            Napier.e(tag = TAG) { "Failed to save play progress: $e" }
         }
     }
 
