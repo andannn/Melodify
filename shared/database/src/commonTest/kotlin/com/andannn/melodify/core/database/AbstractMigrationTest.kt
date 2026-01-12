@@ -262,4 +262,61 @@ abstract class AbstractMigrationTest {
                 helper.runMigrationsAndValidate(14)
             migratedConnection.close()
         }
+
+    @Test
+    fun migrate15To16SyncAlbumTableTest(): Unit =
+        helper.let { helper ->
+            val newConnection = helper.createDatabase(15)
+            val mediaSql = """
+            INSERT INTO ${Tables.LIBRARY_MEDIA} (
+                media_id, 
+                ${MediaColumns.ALBUM_ID}, 
+                ${MediaColumns.ARTIST_ID},
+                media_title
+            ) VALUES (?, 1, 10, ?)
+        """
+            listOf(
+                100L to "Song A",
+                101L to "Song B",
+            ).forEach {
+                newConnection
+                    .prepare(mediaSql)
+                    .apply {
+                        bindLong(1, it.first)
+                        bindText(2, it.second)
+                    }.use { it.step() }
+            }
+            newConnection.execSQL(
+                """
+            INSERT INTO ${Tables.LIBRARY_ALBUM} (
+                ${AlbumColumns.ID}, 
+                ${AlbumColumns.TITLE}, 
+                ${AlbumColumns.TRACK_COUNT}
+            ) VALUES (1, 'Test Album', 0)
+        """,
+            )
+            newConnection.execSQL(
+                """
+            INSERT INTO ${Tables.LIBRARY_ARTIST} (
+                ${ArtistColumns.ID}, 
+                artist_name, 
+                artist_track_count
+            ) VALUES (10, 'Test Artist', 0)
+        """,
+            )
+            newConnection.close()
+
+            val migratedConnection =
+                helper.runMigrationsAndValidate(16)
+
+            migratedConnection.prepare("SELECT ${AlbumColumns.TRACK_COUNT} FROM ${Tables.LIBRARY_ALBUM}").use {
+                it.step()
+                assertEquals(2, it.getInt(0))
+            }
+            migratedConnection.prepare("SELECT ${ArtistColumns.TRACK_COUNT} FROM ${Tables.LIBRARY_ARTIST}").use {
+                it.step()
+                assertEquals(2, it.getInt(0))
+            }
+            migratedConnection.close()
+        }
 }
