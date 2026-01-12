@@ -62,7 +62,7 @@ private class PlayQueuePresenter(
             .stateIn(
                 retainedScope,
                 started = SharingStarted.WhileSubscribed(),
-                initialValue = AudioItemModel.DEFAULT,
+                initialValue = null,
             )
 
     @Composable

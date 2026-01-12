@@ -24,7 +24,7 @@ kotlinxSerializationJson = "1.9.0"
 ktor = "3.3.3"
 koin-bom = "4.1.1"
 napierVersion = "2.7.1"
-sqliteBundled = "2.6.2"
+sqlite = "2.6.2"
 coreKtx = "1.7.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
@@ -55,7 +55,8 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-palette = { module = "androidx.palette:palette", version.ref = "androidx-palette" }
-androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqliteBundled" }
+androidx-sqlite-api = { module = "androidx.sqlite:sqlite", version.ref = "sqlite" }
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3Compose" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
