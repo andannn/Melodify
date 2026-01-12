@@ -6,6 +6,8 @@ package com.andannn.melodify.core.database.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.room.RoomRawQuery
@@ -42,9 +44,6 @@ object MediaType {
 
 @Dao
 interface MediaLibraryDao {
-    @Upsert
-    suspend fun upsertAlbums(albums: List<AlbumEntity>)
-
     @Query("UPDATE ${Tables.LIBRARY_MEDIA} SET ${MediaColumns.DELETED} = 1 WHERE ${MediaColumns.ID} IN (:ids)")
     suspend fun markMediaAsDeleted(ids: List<String>)
 
@@ -52,16 +51,19 @@ interface MediaLibraryDao {
     suspend fun markVideoAsDeleted(ids: List<String>)
 
     @Upsert
-    suspend fun upsertArtists(artists: List<ArtistEntity>)
-
-    @Upsert
-    suspend fun upsertGenres(genres: List<GenreEntity>)
-
-    @Upsert
     suspend fun upsertMedias(audios: List<MediaEntity>)
 
     @Upsert
     suspend fun upsertVideos(audios: List<VideoEntity>)
+
+    @Insert(entity = AlbumEntity::class, onConflict = OnConflictStrategy.IGNORE)
+    suspend fun upsertAlbums(albums: List<AlbumEntity>)
+
+    @Insert(entity = ArtistEntity::class, onConflict = OnConflictStrategy.IGNORE)
+    suspend fun upsertArtists(artists: List<ArtistEntity>)
+
+    @Insert(entity = GenreEntity::class, onConflict = OnConflictStrategy.IGNORE)
+    suspend fun upsertGenres(genres: List<GenreEntity>)
 
     @Query("DELETE FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} IN (:ids)")
     suspend fun deleteAlbumsByIds(ids: List<Long>)

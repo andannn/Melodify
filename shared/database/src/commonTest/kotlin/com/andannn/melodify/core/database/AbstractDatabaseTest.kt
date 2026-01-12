@@ -1167,31 +1167,35 @@ abstract class AbstractDatabaseTest {
         runTest {
             val dao = database.getMediaLibraryDao()
             dao.insertDummyData()
-            dao.syncMediaLibrary(
-                audios =
-                    listOf(
-                        MediaEntity(
-                            id = 100,
-                            albumId = 400,
-                            genreId = 500,
-                            artistId = 600,
+            repeat(2) {
+                dao.syncMediaLibrary(
+                    audios =
+                        listOf(
+                            MediaEntity(
+                                id = 100,
+                                albumId = 400,
+                                genreId = 500,
+                                artistId = 600,
+                            ),
                         ),
-                    ),
-                videos = listOf(VideoEntity(id = 300)),
-                albums = listOf(AlbumEntity(albumId = 400, title = "new_album")),
-                genres = listOf(GenreEntity(genreId = 500)),
-                artists = listOf(ArtistEntity(artistId = 600, name = "new_artist")),
-            )
-            assertEquals(1, dao.getAllArtistID().size)
-            assertEquals(1, dao.getAllGenreID().size)
-            assertEquals(1, dao.getAllAlbumID().size)
-            assertEquals(1, dao.getAllMediaID().size)
-            assertEquals(1, dao.getAllVideoID().size)
-            assertEquals(100, dao.getAllMediaID().first())
-            assertEquals(400, dao.getAllAlbumID().first())
-            assertEquals(300, dao.getAllVideoID().first())
-            assertEquals(500, dao.getAllGenreID().first())
-            assertEquals(600, dao.getAllArtistID().first())
+                    videos = listOf(VideoEntity(id = 300)),
+                    albums = listOf(AlbumEntity(albumId = 400, title = "new_album")),
+                    genres = listOf(GenreEntity(genreId = 500)),
+                    artists = listOf(ArtistEntity(artistId = 600, name = "new_artist")),
+                )
+                assertEquals(1, dao.getAllArtistID().size)
+                assertEquals(1, dao.getArtistByArtistId("600")?.trackCount)
+                assertEquals(1, dao.getAllGenreID().size)
+                assertEquals(1, dao.getAllAlbumID().size)
+                assertEquals(1, dao.getAlbumByAlbumId("400")?.trackCount)
+                assertEquals(1, dao.getAllMediaID().size)
+                assertEquals(1, dao.getAllVideoID().size)
+                assertEquals(100, dao.getAllMediaID().first())
+                assertEquals(400, dao.getAllAlbumID().first())
+                assertEquals(300, dao.getAllVideoID().first())
+                assertEquals(500, dao.getAllGenreID().first())
+                assertEquals(600, dao.getAllArtistID().first())
+            }
         }
 
     @Test
