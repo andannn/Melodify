@@ -98,8 +98,9 @@ internal object Tables {
         AutoMigration(from = 13, to = 14),
         AutoMigration(from = 14, to = 15, AutoMigration14To15Spec::class),
         AutoMigration(from = 15, to = 16, AutoMigration15To16Spec::class),
+        AutoMigration(from = 16, to = 17, AutoMigration16To17Spec::class),
     ],
-    version = 16,
+    version = 17,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)
@@ -346,5 +347,72 @@ class AutoMigration15To16Spec : AutoMigrationSpec {
             )
             """.trimIndent(),
         )
+    }
+}
+
+class AutoMigration16To17Spec : AutoMigrationSpec {
+    override fun onPostMigrate(connection: SQLiteConnection) {
+        connection.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `library_album_new` (
+                `album_id` INTEGER NOT NULL,
+                `album_title` TEXT NOT NULL,
+                `album_track_count` INTEGER NOT NULL DEFAULT 0, 
+                `album_number_of_songs_for_artist` INTEGER,
+                `album_cover_uri` TEXT,
+                PRIMARY KEY(`album_id`)
+            )
+        """,
+        )
+
+        connection.execSQL(
+            """
+            INSERT INTO `library_album_new` (
+                album_id, album_title, album_track_count, 
+                album_number_of_songs_for_artist, album_cover_uri
+            )
+            SELECT 
+                album_id, album_title, album_track_count, 
+                album_number_of_songs_for_artist, album_cover_uri 
+            FROM `library_album_table`
+        """,
+        )
+
+        connection.execSQL("DROP TABLE `library_album_table`")
+
+        connection.execSQL("ALTER TABLE `library_album_new` RENAME TO `library_album_table`")
+
+        connection.execSQL(
+            """
+                CREATE TABLE IF NOT EXISTS `library_artist_new` (
+                    `artist_id` INTEGER NOT NULL,
+                    `artist_name` TEXT NOT NULL,
+                    `artist_cover_uri` TEXT,
+                    `artist_track_count` INTEGER NOT NULL DEFAULT 0,
+                    PRIMARY KEY(`artist_id`)
+                )
+            """,
+        )
+
+        connection.execSQL(
+            """
+                INSERT INTO `library_artist_new` (
+                    artist_id, 
+                    artist_name, 
+                    artist_cover_uri, 
+                    artist_track_count
+                )
+                SELECT 
+                    artist_id, 
+                    artist_name, 
+                    artist_cover_uri, 
+                    artist_track_count
+                FROM `library_artist_table`
+            """,
+        )
+
+        connection.execSQL("DROP TABLE `library_artist_table`")
+
+        connection.execSQL("ALTER TABLE `library_artist_new` RENAME TO `library_artist_table`")
     }
 }

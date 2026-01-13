@@ -24,10 +24,21 @@ data class AlbumEntity(
     val albumId: Long,
     @ColumnInfo(name = AlbumColumns.TITLE)
     val title: String,
-    @ColumnInfo(name = AlbumColumns.TRACK_COUNT)
+    @ColumnInfo(name = AlbumColumns.TRACK_COUNT, defaultValue = "0")
     val trackCount: Int = 0,
     @ColumnInfo(name = AlbumColumns.NUMBER_OF_SONGS_FOR_ARTIST)
     val numberOfSongsForArtist: Int? = null,
+    @ColumnInfo(name = AlbumColumns.COVER_URI)
+    val coverUri: String? = null,
+)
+
+fun AlbumEntity.toAlbumWithoutTrackCount() = AlbumWithoutTrackCount(albumId, title, coverUri)
+
+data class AlbumWithoutTrackCount(
+    @ColumnInfo(name = AlbumColumns.ID)
+    val albumId: Long,
+    @ColumnInfo(name = AlbumColumns.TITLE)
+    val title: String,
     @ColumnInfo(name = AlbumColumns.COVER_URI)
     val coverUri: String? = null,
 )

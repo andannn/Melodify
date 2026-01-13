@@ -13,6 +13,7 @@ import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.dao.UserDataDao
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
+import com.andannn.melodify.core.database.entity.AlbumWithoutTrackCount
 import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.CustomTabEntity
@@ -479,10 +480,10 @@ abstract class AbstractDatabaseTest {
     @Test
     fun delete_test() =
         runTest {
-            libraryDao.upsertAlbums(
+            libraryDao.upsertAlbumsWithoutTrackCount(
                 albums =
                     listOf(
-                        AlbumEntity(
+                        AlbumWithoutTrackCount(
                             albumId = 2,
                             title = "album 2",
                         ),
@@ -586,10 +587,10 @@ abstract class AbstractDatabaseTest {
     @Test
     fun update_album_count_test() =
         runTest {
-            libraryDao.upsertAlbums(
+            libraryDao.upsertAlbumsWithoutTrackCount(
                 albums =
                     listOf(
-                        AlbumEntity(
+                        AlbumWithoutTrackCount(
                             albumId = 2,
                             title = "album 2",
                         ),

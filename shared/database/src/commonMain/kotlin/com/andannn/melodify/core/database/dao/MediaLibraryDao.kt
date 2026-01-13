@@ -20,14 +20,17 @@ import com.andannn.melodify.core.database.Where
 import com.andannn.melodify.core.database.appendOrCreateWith
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
+import com.andannn.melodify.core.database.entity.AlbumWithoutTrackCount
 import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.ArtistWithoutTrackCount
 import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.VideoColumns
 import com.andannn.melodify.core.database.entity.VideoEntity
+import com.andannn.melodify.core.database.entity.toAlbumWithoutTrackCount
 import com.andannn.melodify.core.database.toSortString
 import com.andannn.melodify.core.database.toWhereString
 import kotlinx.coroutines.flow.Flow
@@ -51,19 +54,22 @@ interface MediaLibraryDao {
     suspend fun markVideoAsDeleted(ids: List<String>)
 
     @Upsert
-    suspend fun upsertMedias(audios: List<MediaEntity>)
+    suspend fun upsertMedias(audios: List<MediaEntity>): List<Long>
 
     @Upsert
-    suspend fun upsertVideos(audios: List<VideoEntity>)
+    suspend fun upsertVideos(audios: List<VideoEntity>): List<Long>
 
-    @Insert(entity = AlbumEntity::class, onConflict = OnConflictStrategy.IGNORE)
-    suspend fun upsertAlbums(albums: List<AlbumEntity>)
+    @Upsert(entity = AlbumEntity::class)
+    suspend fun upsertAlbumsWithoutTrackCount(albums: List<AlbumWithoutTrackCount>): List<Long>
 
     @Insert(entity = ArtistEntity::class, onConflict = OnConflictStrategy.IGNORE)
-    suspend fun upsertArtists(artists: List<ArtistEntity>)
+    suspend fun upsertArtists(artists: List<ArtistEntity>): List<Long>
+
+    @Upsert(entity = ArtistEntity::class)
+    suspend fun upsertArtistWithoutTrackCount(albums: List<ArtistWithoutTrackCount>): List<Long>
 
     @Insert(entity = GenreEntity::class, onConflict = OnConflictStrategy.IGNORE)
-    suspend fun upsertGenres(genres: List<GenreEntity>)
+    suspend fun upsertGenres(genres: List<GenreEntity>): List<Long>
 
     @Query("DELETE FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} IN (:ids)")
     suspend fun deleteAlbumsByIds(ids: List<Long>)
@@ -507,7 +513,7 @@ interface MediaLibraryDao {
         audios: List<MediaEntity>,
         videos: List<VideoEntity> = emptyList(),
     ) {
-        upsertAlbums(albums)
+        upsertAlbumsWithoutTrackCount(albums.map { it.toAlbumWithoutTrackCount() })
         upsertArtists(artists)
         upsertGenres(genres)
         upsertMedias(audios)
@@ -596,7 +602,7 @@ interface MediaLibraryDao {
             idSelector = { it.albumId },
             fetchLocalIdsDao = { getAllAlbumID() },
             deleteDao = { deleteAlbumsByIds(it) },
-            upsertDao = { upsertAlbums(it) },
+            upsertDao = { upsertAlbumsWithoutTrackCount(it.map { it.toAlbumWithoutTrackCount() }) },
             onStep = onStep,
         )
     }
