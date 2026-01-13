@@ -309,14 +309,18 @@ abstract class AbstractMigrationTest {
             val migratedConnection =
                 helper.runMigrationsAndValidate(16)
 
-            migratedConnection.prepare("SELECT ${AlbumColumns.TRACK_COUNT} FROM ${Tables.LIBRARY_ALBUM}").use {
-                it.step()
-                assertEquals(2, it.getInt(0))
-            }
-            migratedConnection.prepare("SELECT ${ArtistColumns.TRACK_COUNT} FROM ${Tables.LIBRARY_ARTIST}").use {
-                it.step()
-                assertEquals(2, it.getInt(0))
-            }
+            migratedConnection
+                .prepare("SELECT ${AlbumColumns.TRACK_COUNT} FROM ${Tables.LIBRARY_ALBUM}")
+                .use {
+                    it.step()
+                    assertEquals(2, it.getInt(0))
+                }
+            migratedConnection
+                .prepare("SELECT ${ArtistColumns.TRACK_COUNT} FROM ${Tables.LIBRARY_ARTIST}")
+                .use {
+                    it.step()
+                    assertEquals(2, it.getInt(0))
+                }
             migratedConnection.close()
         }
 
@@ -343,8 +347,47 @@ abstract class AbstractMigrationTest {
         """,
             )
             newConnection.close()
+
             val migratedConnection =
                 helper.runMigrationsAndValidate(17)
+            migratedConnection.execSQL(
+                """
+            INSERT INTO ${Tables.LIBRARY_ARTIST} (
+                ${ArtistColumns.ID}, 
+                artist_name, 
+                artist_track_count
+            ) VALUES (11, 'Test Artist 2', 0)
+        """,
+            )
+            migratedConnection.execSQL(
+                """
+            INSERT INTO ${Tables.LIBRARY_ALBUM} (
+                ${AlbumColumns.ID}, 
+                ${AlbumColumns.TITLE}, 
+                ${AlbumColumns.TRACK_COUNT}
+            ) VALUES (2, 'Test Album 2', 0)
+        """,
+            )
+            migratedConnection
+                .prepare(
+                    "SELECT album_title FROM library_fts_album_table",
+                ).use {
+                    it.step()
+                    assertEquals("Test Album", it.getText(0))
+                    it.step()
+                    assertEquals("Test Album 2", it.getText(0))
+                    assertEquals(false, it.step())
+                }
+            migratedConnection
+                .prepare(
+                    "SELECT artist_name FROM library_fts_artist_table",
+                ).use {
+                    it.step()
+                    assertEquals("Test Artist", it.getText(0))
+                    it.step()
+                    assertEquals("Test Artist 2", it.getText(0))
+                    assertEquals(false, it.step())
+                }
             migratedConnection.close()
         }
 }

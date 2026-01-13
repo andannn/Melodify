@@ -353,66 +353,31 @@ class AutoMigration15To16Spec : AutoMigrationSpec {
 class AutoMigration16To17Spec : AutoMigrationSpec {
     override fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL(
-            """
-            CREATE TABLE IF NOT EXISTS `library_album_new` (
-                `album_id` INTEGER NOT NULL,
-                `album_title` TEXT NOT NULL,
-                `album_track_count` INTEGER NOT NULL DEFAULT 0, 
-                `album_number_of_songs_for_artist` INTEGER,
-                `album_cover_uri` TEXT,
-                PRIMARY KEY(`album_id`)
-            )
-        """,
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_BEFORE_UPDATE BEFORE UPDATE ON `library_artist_table` BEGIN DELETE FROM `library_fts_artist_table` WHERE `docid`=OLD.`rowid`; END",
         )
-
         connection.execSQL(
-            """
-            INSERT INTO `library_album_new` (
-                album_id, album_title, album_track_count, 
-                album_number_of_songs_for_artist, album_cover_uri
-            )
-            SELECT 
-                album_id, album_title, album_track_count, 
-                album_number_of_songs_for_artist, album_cover_uri 
-            FROM `library_album_table`
-        """,
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_BEFORE_DELETE BEFORE DELETE ON `library_artist_table` BEGIN DELETE FROM `library_fts_artist_table` WHERE `docid`=OLD.`rowid`; END",
         )
-
-        connection.execSQL("DROP TABLE `library_album_table`")
-
-        connection.execSQL("ALTER TABLE `library_album_new` RENAME TO `library_album_table`")
-
         connection.execSQL(
-            """
-                CREATE TABLE IF NOT EXISTS `library_artist_new` (
-                    `artist_id` INTEGER NOT NULL,
-                    `artist_name` TEXT NOT NULL,
-                    `artist_cover_uri` TEXT,
-                    `artist_track_count` INTEGER NOT NULL DEFAULT 0,
-                    PRIMARY KEY(`artist_id`)
-                )
-            """,
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_AFTER_UPDATE AFTER UPDATE ON `library_artist_table` BEGIN INSERT INTO `library_fts_artist_table`(`docid`, `artist_name`) VALUES (NEW.`rowid`, NEW.`artist_name`); END",
         )
-
         connection.execSQL(
-            """
-                INSERT INTO `library_artist_new` (
-                    artist_id, 
-                    artist_name, 
-                    artist_cover_uri, 
-                    artist_track_count
-                )
-                SELECT 
-                    artist_id, 
-                    artist_name, 
-                    artist_cover_uri, 
-                    artist_track_count
-                FROM `library_artist_table`
-            """,
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_AFTER_INSERT AFTER INSERT ON `library_artist_table` BEGIN INSERT INTO `library_fts_artist_table`(`docid`, `artist_name`) VALUES (NEW.`rowid`, NEW.`artist_name`); END",
+        )
+        connection.execSQL(
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_album_table_BEFORE_UPDATE BEFORE UPDATE ON `library_album_table` BEGIN DELETE FROM `library_fts_album_table` WHERE `docid`=OLD.`rowid`; END",
+        )
+        connection.execSQL(
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_album_table_BEFORE_DELETE BEFORE DELETE ON `library_album_table` BEGIN DELETE FROM `library_fts_album_table` WHERE `docid`=OLD.`rowid`; END",
+        )
+        connection.execSQL(
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_album_table_AFTER_UPDATE AFTER UPDATE ON `library_album_table` BEGIN INSERT INTO `library_fts_album_table`(`docid`, `album_title`) VALUES (NEW.`rowid`, NEW.`album_title`); END",
+        )
+        connection.execSQL(
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_album_table_AFTER_INSERT AFTER INSERT ON `library_album_table` BEGIN INSERT INTO `library_fts_album_table`(`docid`, `album_title`) VALUES (NEW.`rowid`, NEW.`album_title`); END",
         )
 
-        connection.execSQL("DROP TABLE `library_artist_table`")
-
-        connection.execSQL("ALTER TABLE `library_artist_new` RENAME TO `library_artist_table`")
+        connection.execSQL("INSERT INTO `library_fts_artist_table`(`library_fts_artist_table`) VALUES('rebuild')")
+        connection.execSQL("INSERT INTO `library_fts_album_table`(`library_fts_album_table`) VALUES('rebuild')")
     }
 }

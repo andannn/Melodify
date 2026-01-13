@@ -173,6 +173,10 @@ private suspend fun resyncAllSongs() =
                                 SnackBarMessage.SyncStatusStart,
                             )
                         }
+
+                        else -> {
+                            // TODO:
+                        }
                     }
                 }
         }

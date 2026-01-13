@@ -22,6 +22,16 @@ sealed interface SyncStatus {
         val total: Int,
     ) : SyncStatus
 
+    data class Insert(
+        val type: SyncType,
+        val items: List<String>,
+    ) : SyncStatus
+
+    data class Delete(
+        val type: SyncType,
+        val items: List<String>,
+    ) : SyncStatus
+
     data object Failed : SyncStatus
 
     data object Start : SyncStatus

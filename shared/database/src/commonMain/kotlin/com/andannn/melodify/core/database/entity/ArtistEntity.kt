@@ -29,6 +29,8 @@ data class ArtistEntity(
     val trackCount: Int = 0,
 )
 
+fun ArtistEntity.toArtistWithoutTrackCount() = ArtistWithoutTrackCount(artistId, name, artistCoverUri)
+
 data class ArtistWithoutTrackCount(
     @ColumnInfo(name = ArtistColumns.ID)
     val artistId: Long,

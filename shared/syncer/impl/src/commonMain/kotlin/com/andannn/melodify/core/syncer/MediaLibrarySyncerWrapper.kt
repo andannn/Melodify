@@ -61,10 +61,19 @@ internal class MediaLibrarySyncerWrapper(
                     genres = mediaData.genreData.toGenreEntity(),
                     audios = mediaData.audioData.toMediaEntity(),
                     videos = mediaData.videoData.toVideoEntity(),
-                ) { type, inserted, total ->
-                    Napier.d(tag = TAG) { "Media sync process $type: inserted: $inserted,  total: $total" }
-                    trySend(SyncStatus.Progress(type.toSyncType(), inserted, total))
-                }
+                    onProgress = { type, inserted, total ->
+                        Napier.d(tag = TAG) { "Media sync process $type: inserted: $inserted,  total: $total" }
+                        trySend(SyncStatus.Progress(type.toSyncType(), inserted, total))
+                    },
+                    onInsert = { type, items ->
+                        Napier.d(tag = TAG) { "Media insert process $type, items: $items" }
+                        trySend(SyncStatus.Insert(type.toSyncType(), items))
+                    },
+                    onDelete = { type, items ->
+                        Napier.d(tag = TAG) { "Media delete process $type, items: $items" }
+                        trySend(SyncStatus.Delete(type.toSyncType(), items))
+                    },
+                )
                 trySend(SyncStatus.Complete)
             } catch (e: Exception) {
                 Napier.d(tag = TAG) { "Failed to sync media library: $e" }

@@ -16,6 +16,7 @@ import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.AlbumWithoutTrackCount
 import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.ArtistWithoutTrackCount
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.CustomTabType.ALL_VIDEO
 import com.andannn.melodify.core.database.entity.GenreEntity
@@ -498,10 +499,10 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            libraryDao.upsertArtists(
+            libraryDao.upsertArtistWithoutTrackCount(
                 artists =
                     listOf(
-                        ArtistEntity(
+                        ArtistWithoutTrackCount(
                             artistId = 4,
                             name = "artist 4",
                         ),
@@ -557,10 +558,10 @@ abstract class AbstractDatabaseTest {
     @Test
     fun update_artist_count_test() =
         runTest {
-            libraryDao.upsertArtists(
+            libraryDao.upsertArtistWithoutTrackCount(
                 artists =
                     listOf(
-                        ArtistEntity(
+                        ArtistWithoutTrackCount(
                             artistId = 4,
                             name = "artist 4",
                         ),
@@ -1200,6 +1201,54 @@ abstract class AbstractDatabaseTest {
         }
 
     @Test
+    fun `sync media library insert delete CallBack event test`() =
+        runTest {
+            libraryDao.syncMediaLibrary(
+                audios = listOf(MediaEntity(id = 100, title = "Test")),
+                onInsert = { type, names ->
+                    assertEquals("Test", names[0])
+                },
+            )
+            libraryDao.syncMediaLibrary(
+                onDelete = { type, names ->
+                    assertEquals("Test", names[0])
+                },
+            )
+        }
+
+    @Test
+    fun `sync artist library insert delete CallBack event test`() =
+        runTest {
+            libraryDao.syncMediaLibrary(
+                artists = listOf(ArtistEntity(artistId = 100, name = "Test")),
+                onInsert = { type, names ->
+                    assertEquals("Test", names[0])
+                },
+            )
+            libraryDao.syncMediaLibrary(
+                onDelete = { type, names ->
+                    assertEquals("Test", names[0])
+                },
+            )
+        }
+
+    @Test
+    fun `sync album library insert delete CallBack event test`() =
+        runTest {
+            libraryDao.syncMediaLibrary(
+                albums = listOf(AlbumEntity(albumId = 100, title = "Test")),
+                onInsert = { type, names ->
+                    assertEquals("Test", names[0])
+                },
+            )
+            libraryDao.syncMediaLibrary(
+                onDelete = { type, names ->
+                    assertEquals("Test", names[0])
+                },
+            )
+        }
+
+    @Test
     fun `delete orphan album test`() =
         runTest {
             val dao = database.getMediaLibraryDao()
@@ -1233,6 +1282,23 @@ abstract class AbstractDatabaseTest {
             assertEquals(2, dao.getAllGenreID().size)
             dao.deleteOrphanGenres()
             assertEquals(0, dao.getAllGenreID().size)
+        }
+
+    @Test
+    fun `insert and update test`() =
+        runTest {
+            libraryDao
+                .upsertArtistWithoutTrackCount(listOf(ArtistWithoutTrackCount(10, "test")))
+                .also {
+                    assertEquals(1, it.size)
+                    assertEquals(10, it.first())
+                }
+            libraryDao
+                .upsertArtistWithoutTrackCount(listOf(ArtistWithoutTrackCount(10, "test")))
+                .also {
+                    assertEquals(1, it.size)
+                    assertEquals(-1, it.first())
+                }
         }
 }
 
