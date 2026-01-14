@@ -24,12 +24,12 @@ sealed interface SyncStatus {
 
     data class Insert(
         val type: SyncType,
-        val items: List<String>,
+        val item: String,
     ) : SyncStatus
 
     data class Delete(
         val type: SyncType,
-        val items: List<String>,
+        val item: String,
     ) : SyncStatus
 
     data object Failed : SyncStatus

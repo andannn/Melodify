@@ -38,11 +38,15 @@ internal class MediaLibrarySyncerWrapper(
                     },
                     onInsert = { type, items ->
                         Napier.d(tag = TAG) { "Media insert process $type, items: $items" }
-                        trySend(SyncStatus.Insert(type.toSyncType(), items))
+                        items.forEach {
+                            trySend(SyncStatus.Insert(type.toSyncType(), it))
+                        }
                     },
                     onDelete = { type, items ->
                         Napier.d(tag = TAG) { "Media delete process $type, items: $items" }
-                        trySend(SyncStatus.Delete(type.toSyncType(), items))
+                        items.forEach {
+                            trySend(SyncStatus.Delete(type.toSyncType(), it))
+                        }
                     },
                 )
                 trySend(SyncStatus.Complete)
