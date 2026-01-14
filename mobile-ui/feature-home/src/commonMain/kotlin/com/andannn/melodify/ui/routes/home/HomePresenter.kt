@@ -17,6 +17,7 @@ import com.andannn.melodify.shared.compose.components.tab.retainTabUiPresenter
 import com.andannn.melodify.shared.compose.popup.DefaultSortRuleSettingDialog
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
 import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.SyncStatusDialog
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
@@ -93,33 +94,29 @@ private class HomePresenter(
             tabContentState = tabContentPresenter.present(),
         ) { eventSink ->
             with(popController) {
-                with(mediaLibrarySyncRepository) {
-                    when (eventSink) {
-                        HomeUiEvent.LibraryButtonClick -> {
-                            navigator.navigateTo(Screen.Library)
-                        }
+                when (eventSink) {
+                    HomeUiEvent.LibraryButtonClick -> {
+                        navigator.navigateTo(Screen.Library)
+                    }
 
-                        HomeUiEvent.SearchButtonClick -> {
-                            navigator.navigateTo(Screen.Search)
-                        }
+                    HomeUiEvent.SearchButtonClick -> {
+                        navigator.navigateTo(Screen.Search)
+                    }
 
-                        is HomeUiEvent.OnMenuSelected -> {
-                            when (eventSink.selected) {
-                                MenuOption.DEFAULT_SORT -> {
-                                    retainedScope.launch { changeSortRule() }
-                                }
+                    is HomeUiEvent.OnMenuSelected -> {
+                        when (eventSink.selected) {
+                            MenuOption.DEFAULT_SORT -> {
+                                retainedScope.launch { changeSortRule() }
+                            }
 
-                                MenuOption.RE_SYNC_ALL_MEDIA -> {
-                                    retainedScope.launch {
-                                        // TODO
-                                    }
-                                }
+                            MenuOption.RE_SYNC_ALL_MEDIA -> {
+                                retainedScope.launch { showSyncDialog() }
                             }
                         }
+                    }
 
-                        HomeUiEvent.OnTabManagementClick -> {
-                            navigator.navigateTo(Screen.TabManage)
-                        }
+                    HomeUiEvent.OnTabManagementClick -> {
+                        navigator.navigateTo(Screen.TabManage)
                     }
                 }
             }
@@ -127,67 +124,16 @@ private class HomePresenter(
     }
 }
 
-// context(backgroundSyncMediaStoreHandler: BackgroundSyncMediaStoreHandler, popController: PopupController)
-// private suspend fun resyncAllSongs() =
-//    coroutineScope {
-//        var job: Job? = null
-//        var mediaCount: Int? = null
-//        backgroundSyncMediaStoreHandler.syncAllMedia().collect {
-//            Napier.d(tag = TAG) { "sync status update $it" }
-//            job?.cancel()
-//            job =
-//                launch {
-//                    if (it is SyncStatusEvent.Progress && it.type == ContentType.MEDIA) {
-//                        mediaCount = it.total
-//                    }
-//
-//                    delay(50)
-//
-//                    when (it) {
-//                        SyncStatusEvent.Complete -> {
-//                            popController.showSnackBar(
-//                                SnackBarMessage.SyncCompleted(mediaCount ?: 0),
-//                            )
-//                        }
-//
-//                        SyncStatusEvent.Failed -> {
-//                            popController.showSnackBar(
-//                                SnackBarMessage.SyncFailed,
-//                            )
-//                        }
-//
-//                        is SyncStatusEvent.Progress -> {
-//                            popController.showSnackBar(
-//                                SnackBarMessage.SyncProgress(it.toSnackBarInfoString()),
-//                            )
-//                        }
-//
-//                        SyncStatusEvent.Start -> {
-//                            popController.showSnackBar(
-//                                SnackBarMessage.SyncStatusStart,
-//                            )
-//                        }
-//
-//                        else -> {
-//                            // TODO:
-//                        }
-//                    }
-//                }
-//        }
-//    }
-
 context(popupController: PopupController)
 private suspend fun changeSortRule() {
     popupController.showDialogAndWaitAction(
         DefaultSortRuleSettingDialog,
     )
 }
-//
-// private suspend fun SyncStatusEvent.Progress.toSnackBarInfoString(): String =
-//    when (type) {
-//        ContentType.MEDIA -> getString(Res.string.sync_progress_media, progress, total)
-//        ContentType.ALBUM -> getString(Res.string.sync_progress_album, progress, total)
-//        ContentType.ARTIST -> getString(Res.string.sync_progress_artist, progress, total)
-//        ContentType.GENRE -> getString(Res.string.sync_progress_genre, progress, total)
-//        ContentType.VIDEO -> getString(Res.string.sync_progress_video, progress, total)
-//    }
+
+context(popupController: PopupController)
+private suspend fun showSyncDialog() {
+    popupController.showDialogAndWaitAction(
+        SyncStatusDialog,
+    )
+}

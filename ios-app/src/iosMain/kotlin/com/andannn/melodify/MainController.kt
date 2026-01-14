@@ -12,7 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.ComposeUIViewController
-import com.andannn.melodify.core.syncer.MediaLibrarySyncer
+import com.andannn.melodify.core.syncer.MediaLibrarySyncRepository
 import com.andannn.melodify.core.syncer.MusicLibraryPermissionHandler
 import com.andannn.melodify.ui.LocalScreenOrientationController
 import com.andannn.melodify.ui.LocalSystemUiController
@@ -35,11 +35,11 @@ fun MainViewController() =
         },
     ) {
         val permissionHandler: MusicLibraryPermissionHandler = getKoin().get()
-        val syncer: MediaLibrarySyncer = getKoin().get()
+        val syncer: MediaLibrarySyncRepository = getKoin().get()
         var haveMediaLibraryPermission by remember { mutableStateOf(permissionHandler.mediaPermissionGranted()) }
 // TEST
         LaunchedEffect(Unit) {
-            syncer.syncAllMediaLibrary().collect()
+            syncer.startSync()
         }
 // TEST
 

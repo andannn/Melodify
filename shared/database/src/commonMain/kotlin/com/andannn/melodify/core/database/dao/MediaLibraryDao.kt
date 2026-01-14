@@ -697,6 +697,7 @@ interface MediaLibraryDao {
 
         var currentCount = 0
         if (newItems.isNotEmpty()) {
+            onProgress(currentCount, newItems.size)
             newItems.chunked(chunkSize).forEach { batch ->
                 val ids = upsertDao(batch)
 

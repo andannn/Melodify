@@ -50,4 +50,6 @@ sealed interface DialogAction {
     sealed interface SleepTimerCountingDialog : DialogAction {
         data object OnCancelTimer : SleepTimerCountingDialog
     }
+
+    class SyncStatusDialog : DialogAction
 }

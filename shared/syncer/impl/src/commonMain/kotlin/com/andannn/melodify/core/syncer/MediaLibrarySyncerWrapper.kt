@@ -90,10 +90,10 @@ internal class MediaLibrarySyncerWrapper(
 
 private fun Int.toSyncType() =
     when (this) {
-        MediaType.ALBUM -> MediaLibrarySyncRepository.ContentType.ALBUM
-        MediaType.ARTIST -> MediaLibrarySyncRepository.ContentType.ARTIST
-        MediaType.GENRE -> MediaLibrarySyncRepository.ContentType.GENRE
-        MediaType.MEDIA -> MediaLibrarySyncRepository.ContentType.MEDIA
-        MediaType.VIDEO -> MediaLibrarySyncRepository.ContentType.VIDEO
+        MediaType.ALBUM -> ContentType.ALBUM
+        MediaType.ARTIST -> ContentType.ARTIST
+        MediaType.GENRE -> ContentType.GENRE
+        MediaType.MEDIA -> ContentType.MEDIA
+        MediaType.VIDEO -> ContentType.VIDEO
         else -> error("never")
     }

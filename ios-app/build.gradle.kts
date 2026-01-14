@@ -27,6 +27,7 @@ kotlin {
 
     sourceSets {
         iosMain.dependencies {
+            implementation(project(":shared:syncer:impl"))
             implementation(project(":shared:domain:impl"))
             implementation(project(":mobile-ui:common"))
             implementation(project(":mobile-ui:app"))

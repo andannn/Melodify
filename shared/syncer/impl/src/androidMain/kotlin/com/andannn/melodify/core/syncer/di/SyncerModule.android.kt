@@ -5,7 +5,7 @@
 package com.andannn.melodify.core.syncer.di
 
 import com.andannn.melodify.core.syncer.BackgroundSyncMediaStoreHandler
-import com.andannn.melodify.core.syncer.BackgroundSyncMediaStoreHandlerHandlerImpl
+import com.andannn.melodify.core.syncer.DefaultBackgroundSyncMediaStoreHandler
 import com.andannn.melodify.core.syncer.SyncWorkHelper
 import com.andannn.melodify.core.syncer.SyncWorkHelperImpl
 import org.koin.core.module.Module
@@ -15,6 +15,6 @@ import org.koin.dsl.module
 
 actual val platformSyncerModule: Module =
     module {
-        singleOf(::BackgroundSyncMediaStoreHandlerHandlerImpl).bind(BackgroundSyncMediaStoreHandler::class)
+        singleOf(::DefaultBackgroundSyncMediaStoreHandler).bind(BackgroundSyncMediaStoreHandler::class)
         singleOf(::SyncWorkHelperImpl).bind(SyncWorkHelper::class)
     }

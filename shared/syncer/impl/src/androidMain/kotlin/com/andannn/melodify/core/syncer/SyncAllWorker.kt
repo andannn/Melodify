@@ -144,7 +144,7 @@ internal fun Data.toSyncStatus() =
 
         EventTypeValue.EVENT_TYPE_VALUE_PROGRESS -> {
             SyncStatusEvent.Progress(
-                type = MediaLibrarySyncRepository.ContentType.valueOf(getString(DataKey.MEDIA_TYPE) ?: error("no media type")),
+                type = ContentType.valueOf(getString(DataKey.MEDIA_TYPE) ?: error("no media type")),
                 total = getInt(DataKey.TOTAL, 0),
                 progress = getInt(DataKey.PROGRESS, 0),
             )
@@ -152,14 +152,14 @@ internal fun Data.toSyncStatus() =
 
         EventTypeValue.EVENT_TYPE_VALUE_DELETE -> {
             SyncStatusEvent.Delete(
-                type = MediaLibrarySyncRepository.ContentType.valueOf(getString(DataKey.MEDIA_TYPE) ?: error("no media type")),
+                type = ContentType.valueOf(getString(DataKey.MEDIA_TYPE) ?: error("no media type")),
                 item = getString(DataKey.ITEMS) ?: error("no item"),
             )
         }
 
         EventTypeValue.EVENT_TYPE_VALUE_INSERT -> {
             SyncStatusEvent.Insert(
-                type = MediaLibrarySyncRepository.ContentType.valueOf(getString(DataKey.MEDIA_TYPE) ?: error("no media type")),
+                type = ContentType.valueOf(getString(DataKey.MEDIA_TYPE) ?: error("no media type")),
                 item = getString(DataKey.ITEMS) ?: error("no item"),
             )
         }

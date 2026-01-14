@@ -1,11 +1,13 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.syncer
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -14,7 +16,7 @@ internal class MediaLibrarySyncRepositoryImpl(
 ) : MediaLibrarySyncRepository {
     private val scope = CoroutineScope(Dispatchers.Default + Job())
 
-    private val status = MutableStateFlow<MediaLibrarySyncRepository.SyncState?>(null)
+    private val status = MutableStateFlow<SyncState?>(null)
 
     private var syncJob: Job? = null
 
@@ -28,7 +30,7 @@ internal class MediaLibrarySyncRepositoryImpl(
         syncJob?.cancel()
     }
 
-    override fun lastSyncStatusFlow(): Flow<MediaLibrarySyncRepository.SyncState> = status.filterNotNull()
+    override fun lastSyncStatusFlow() = status
 
     private fun launchSyncJob(): Job =
         scope.launch {
@@ -37,15 +39,15 @@ internal class MediaLibrarySyncRepositoryImpl(
 
     private fun onSyncEvent(event: SyncStatusEvent) {
         status.update { current ->
-            val state = current ?: MediaLibrarySyncRepository.SyncState()
+            val state = current ?: SyncState()
             when (event) {
                 is SyncStatusEvent.Progress -> {
-                    val typeSyncInfo = state.syncInfoMap[event.type] ?: MediaLibrarySyncRepository.SyncInfo()
+                    val typeSyncInfo = state.syncInfoMap[event.type] ?: SyncInfo()
 
                     val newTypeSyncInfo =
                         typeSyncInfo.copy(
                             progress =
-                                MediaLibrarySyncRepository.SyncInfo.Progress(
+                                SyncInfo.Progress(
                                     event.progress,
                                     event.total,
                                 ),
@@ -55,13 +57,13 @@ internal class MediaLibrarySyncRepositoryImpl(
                 }
 
                 is SyncStatusEvent.Insert -> {
-                    val typeSyncInfo = state.syncInfoMap[event.type] ?: MediaLibrarySyncRepository.SyncInfo()
+                    val typeSyncInfo = state.syncInfoMap[event.type] ?: SyncInfo()
                     state.copy(
                         syncInfoMap =
                             state.syncInfoMap + (
                                 event.type to
                                     typeSyncInfo.addNewInfo(
-                                        MediaLibrarySyncRepository.SyncInfo.Info(
+                                        SyncInfo.Info(
                                             true,
                                             event.item,
                                         ),
@@ -71,13 +73,13 @@ internal class MediaLibrarySyncRepositoryImpl(
                 }
 
                 is SyncStatusEvent.Delete -> {
-                    val typeSyncInfo = state.syncInfoMap[event.type] ?: MediaLibrarySyncRepository.SyncInfo()
+                    val typeSyncInfo = state.syncInfoMap[event.type] ?: SyncInfo()
                     state.copy(
                         syncInfoMap =
                             state.syncInfoMap + (
                                 event.type to
                                     typeSyncInfo.addNewInfo(
-                                        MediaLibrarySyncRepository.SyncInfo.Info(
+                                        SyncInfo.Info(
                                             false,
                                             event.item,
                                         ),
@@ -87,15 +89,15 @@ internal class MediaLibrarySyncRepositoryImpl(
                 }
 
                 SyncStatusEvent.Start -> {
-                    state.copy(status = MediaLibrarySyncRepository.Status.START)
+                    state.copy(syncStatus = SyncStatus.START)
                 }
 
                 SyncStatusEvent.Complete -> {
-                    state.copy(status = MediaLibrarySyncRepository.Status.COMPLETED)
+                    state.copy(syncStatus = SyncStatus.COMPLETED)
                 }
 
                 SyncStatusEvent.Failed -> {
-                    state.copy(status = MediaLibrarySyncRepository.Status.ERROR)
+                    state.copy(syncStatus = SyncStatus.ERROR)
                 }
             }
         }

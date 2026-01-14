@@ -15,6 +15,7 @@ import com.andannn.melodify.shared.compose.popup.internal.content.MediaOptionCon
 import com.andannn.melodify.shared.compose.popup.internal.content.NewPlayListDialogContent
 import com.andannn.melodify.shared.compose.popup.internal.content.SleepTimerCountingContent
 import com.andannn.melodify.shared.compose.popup.internal.content.SleepTimerOptionDialogContent
+import com.andannn.melodify.shared.compose.popup.internal.content.SyncStatusDialogContent
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.new_playlist_dialog_input_hint
 import melodify.shared.compose.resource.generated.resources.new_playlist_dialog_title
@@ -119,5 +120,14 @@ data object SleepCountingDialog : DialogId<DialogAction.SleepTimerCountingDialog
     @Composable
     override fun Content(onAction: (DialogAction.SleepTimerCountingDialog) -> Unit) {
         SleepTimerCountingContent(onAction = onAction)
+    }
+}
+
+data object SyncStatusDialog : DialogId<DialogAction.SyncStatusDialog> {
+    override val dialogType: DialogType = DialogType.ModalBottomSheet
+
+    @Composable
+    override fun Content(onAction: (DialogAction.SyncStatusDialog) -> Unit) {
+        SyncStatusDialogContent(onAction = onAction)
     }
 }

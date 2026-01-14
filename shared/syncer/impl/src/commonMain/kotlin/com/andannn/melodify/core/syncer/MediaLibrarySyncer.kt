@@ -9,18 +9,18 @@ import kotlinx.coroutines.flow.Flow
 
 internal sealed interface SyncStatusEvent {
     data class Progress(
-        val type: MediaLibrarySyncRepository.ContentType,
+        val type: ContentType,
         val progress: Int,
         val total: Int,
     ) : SyncStatusEvent
 
     data class Insert(
-        val type: MediaLibrarySyncRepository.ContentType,
+        val type: ContentType,
         val item: String,
     ) : SyncStatusEvent
 
     data class Delete(
-        val type: MediaLibrarySyncRepository.ContentType,
+        val type: ContentType,
         val item: String,
     ) : SyncStatusEvent
 

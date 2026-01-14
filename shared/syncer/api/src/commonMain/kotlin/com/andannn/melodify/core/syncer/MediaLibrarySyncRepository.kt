@@ -1,50 +1,54 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.syncer
 
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
-interface MediaLibrarySyncRepository {
-    enum class ContentType {
-        MEDIA,
-        ARTIST,
-        ALBUM,
-        GENRE,
-        VIDEO,
-    }
+data class SyncState(
+    val syncStatus: SyncStatus = SyncStatus.START,
+    val syncInfoMap: Map<ContentType, SyncInfo> = emptyMap(),
+)
 
-    enum class Status {
-        START,
-        COMPLETED,
-        ERROR,
-    }
+enum class ContentType {
+    MEDIA,
+    ARTIST,
+    ALBUM,
+    GENRE,
+    VIDEO,
+}
 
-    data class SyncState(
-        val status: Status = Status.START,
-        val syncInfoMap: Map<ContentType, SyncInfo> = emptyMap(),
+enum class SyncStatus {
+    START,
+    COMPLETED,
+    ERROR,
+}
+
+data class SyncInfo(
+    val progress: Progress? = null,
+    val insertDeleteInfo: List<Info> = emptyList(),
+) {
+    data class Progress(
+        val progress: Int,
+        val total: Int,
     )
 
-    data class SyncInfo(
-        val progress: Progress? = null,
-        val insertDeleteInfo: List<Info> = emptyList(),
-    ) {
-        data class Progress(
-            val progress: Int,
-            val total: Int,
+    data class Info(
+        val isInsert: Boolean,
+        val item: String,
+    )
+
+    fun addNewInfo(info: Info) =
+        copy(
+            insertDeleteInfo = insertDeleteInfo + info,
         )
+}
 
-        data class Info(
-            val isInsert: Boolean,
-            val item: String,
-        )
-
-        fun addNewInfo(info: Info) =
-            copy(
-                insertDeleteInfo = insertDeleteInfo + info,
-            )
-    }
-
+interface MediaLibrarySyncRepository {
     fun startSync()
 
     fun cancelCurrentSync()
 
-    fun lastSyncStatusFlow(): Flow<SyncState>
+    fun lastSyncStatusFlow(): StateFlow<SyncState?>
 }
