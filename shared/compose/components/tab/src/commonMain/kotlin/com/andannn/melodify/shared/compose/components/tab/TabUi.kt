@@ -105,15 +105,17 @@ fun TabUi(
 private fun TabUiPreview() {
     MelodifyTheme {
         TabUi(
-            state = TabUiState(
-                selectedIndex = 0,
-                customTabList = listOf(
-                    CustomTab.AllMusic(1),
-                    CustomTab.AllVideo(2),
-                    CustomTab.AlbumDetail(3, albumId = "1", label = "Album 1"),
-                    CustomTab.AlbumDetail(3, albumId = "2", label = "Album 2"),
-                )
-            )
+            state =
+                TabUiState(
+                    selectedIndex = 0,
+                    customTabList =
+                        listOf(
+                            CustomTab.AllMusic(1),
+                            CustomTab.AllVideo(2),
+                            CustomTab.AlbumDetail(3, albumId = "1", label = "Album 1"),
+                            CustomTab.AlbumDetail(3, albumId = "2", label = "Album 2"),
+                        ),
+                ),
         )
     }
 }

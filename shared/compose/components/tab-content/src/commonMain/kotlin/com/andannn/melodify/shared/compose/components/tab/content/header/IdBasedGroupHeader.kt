@@ -26,12 +26,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.domain.model.CustomTab
+import com.andannn.melodify.domain.model.DisplaySetting
+import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.CircleBorderImage
 
 @Composable
-internal fun GroupHeader(
+internal fun GroupHeaderContainer(
+    selectedTab: CustomTab?,
+    displaySetting: DisplaySetting?,
+    groupKey: GroupKey,
+    parentHeaderGroupKey: GroupKey? = null,
+    onGroupItemClick: (List<GroupKey?>) -> Unit = {},
+) {
+    val groupState =
+        GroupInfo(
+            groupKey = groupKey,
+            parentHeaderGroupKey = parentHeaderGroupKey,
+            displaySetting = displaySetting,
+            selectedTab = selectedTab,
+        )
+    GroupHeader(
+        groupInfo = groupState,
+        isPrimary = parentHeaderGroupKey == null,
+        onGroupHeaderClick = {
+            onGroupItemClick.invoke(groupState.selection)
+        },
+    )
+}
+
+@Composable
+private fun GroupHeader(
     isPrimary: Boolean,
     groupInfo: GroupInfo,
     modifier: Modifier = Modifier,
@@ -63,7 +92,6 @@ private fun HeaderInfo(
     Surface(
         modifier =
             modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium,
         onClick = onClick,
     ) {
         Row(
@@ -116,5 +144,29 @@ private fun HeaderInfo(
                 Spacer(modifier = Modifier.height(4.dp))
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PrimaryHeaderInfoPreview() {
+    MelodifyTheme {
+        HeaderInfo(
+            isPrimary = true,
+            coverArtUri = null,
+            title = "Primary Header",
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SecondaryHeaderInfoPreview() {
+    MelodifyTheme {
+        HeaderInfo(
+            isPrimary = false,
+            coverArtUri = null,
+            title = "Primary Header",
+        )
     }
 }
