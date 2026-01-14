@@ -47,7 +47,7 @@ turbine = "1.2.1"
 retainedmodel = "1.0.2"
 nav3Ui = "1.1.0-alpha01"
 nav3Runtime = "1.0.0"
-navigationevent = "1.0.0-rc02"
+navigationevent = "1.0.0"
 expresso = "3.7.0"
 
 [libraries]
