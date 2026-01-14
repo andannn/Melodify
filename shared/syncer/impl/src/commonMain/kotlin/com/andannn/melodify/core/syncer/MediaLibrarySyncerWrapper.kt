@@ -20,11 +20,11 @@ internal class MediaLibrarySyncerWrapper(
     private val mediaLibraryScanner: MediaLibraryScanner,
     private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaLibrarySyncer {
-    override fun syncAllMediaLibrary(): Flow<SyncStatus> =
+    override fun syncAllMediaLibrary(): Flow<SyncStatusEvent> =
         channelFlow {
             try {
                 val mediaData = mediaLibraryScanner.scanAllMedia()
-                trySend(SyncStatus.Start)
+                trySend(SyncStatusEvent.Start)
 
                 mediaLibraryDao.syncMediaLibrary(
                     albums = mediaData.albumData.toAlbumEntity(),
@@ -34,25 +34,25 @@ internal class MediaLibrarySyncerWrapper(
                     videos = mediaData.videoData.toVideoEntity(),
                     onProgress = { type, inserted, total ->
                         Napier.d(tag = TAG) { "Media sync process $type: inserted: $inserted,  total: $total" }
-                        trySend(SyncStatus.Progress(type.toSyncType(), inserted, total))
+                        trySend(SyncStatusEvent.Progress(type.toSyncType(), inserted, total))
                     },
                     onInsert = { type, items ->
                         Napier.d(tag = TAG) { "Media insert process $type, items: $items" }
                         items.forEach {
-                            trySend(SyncStatus.Insert(type.toSyncType(), it))
+                            trySend(SyncStatusEvent.Insert(type.toSyncType(), it))
                         }
                     },
                     onDelete = { type, items ->
                         Napier.d(tag = TAG) { "Media delete process $type, items: $items" }
                         items.forEach {
-                            trySend(SyncStatus.Delete(type.toSyncType(), it))
+                            trySend(SyncStatusEvent.Delete(type.toSyncType(), it))
                         }
                     },
                 )
-                trySend(SyncStatus.Complete)
+                trySend(SyncStatusEvent.Complete)
             } catch (e: Exception) {
                 Napier.d(tag = TAG) { "Failed to sync media library: $e" }
-                trySend(SyncStatus.Failed)
+                trySend(SyncStatusEvent.Failed)
             } finally {
                 close()
             }
@@ -90,10 +90,10 @@ internal class MediaLibrarySyncerWrapper(
 
 private fun Int.toSyncType() =
     when (this) {
-        MediaType.ALBUM -> SyncType.ALBUM
-        MediaType.ARTIST -> SyncType.ARTIST
-        MediaType.GENRE -> SyncType.GENRE
-        MediaType.MEDIA -> SyncType.MEDIA
-        MediaType.VIDEO -> SyncType.VIDEO
+        MediaType.ALBUM -> MediaLibrarySyncRepository.ContentType.ALBUM
+        MediaType.ARTIST -> MediaLibrarySyncRepository.ContentType.ARTIST
+        MediaType.GENRE -> MediaLibrarySyncRepository.ContentType.GENRE
+        MediaType.MEDIA -> MediaLibrarySyncRepository.ContentType.MEDIA
+        MediaType.VIDEO -> MediaLibrarySyncRepository.ContentType.VIDEO
         else -> error("never")
     }

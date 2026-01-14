@@ -4,6 +4,8 @@
  */
 package com.andannn.melodify.core.syncer.di
 
+import com.andannn.melodify.core.syncer.MediaLibrarySyncRepository
+import com.andannn.melodify.core.syncer.MediaLibrarySyncRepositoryImpl
 import com.andannn.melodify.core.syncer.MediaLibrarySyncer
 import com.andannn.melodify.core.syncer.MediaLibrarySyncerWrapper
 import com.andannn.melodify.core.syncer.platformScannerModule
@@ -19,4 +21,5 @@ val syncerModule: Module =
         includes(platformSyncerModule)
         includes(platformScannerModule)
         singleOf(::MediaLibrarySyncerWrapper).bind(MediaLibrarySyncer::class)
+        singleOf(::MediaLibrarySyncRepositoryImpl).bind(MediaLibrarySyncRepository::class)
     }

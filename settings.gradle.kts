@@ -60,6 +60,7 @@ include(":shared:datastore")
 include(":shared:network")
 include(":shared:database")
 
+include(":shared:syncer:api")
 include(":shared:syncer:impl")
 include(":shared:syncer:scanner")
 include(":shared:syncer:model")

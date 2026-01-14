@@ -19,15 +19,15 @@ import kotlin.io.path.isDirectory
 
 private const val TAG = "SyncLibraryService"
 
-class SyncLibraryService(
+internal class SyncLibraryServiceImpl(
     private val userSettingPreferences: UserSettingPreferences,
     private val syncer: MediaLibrarySyncer,
-) {
+) : SyncLibraryService {
     /**
      * Start watching the library for changes.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun startWatchingLibrary() {
+    override suspend fun startWatchingLibrary() {
         coroutineScope {
             launch {
                 // Scan all media because the library may be changed when app not running.

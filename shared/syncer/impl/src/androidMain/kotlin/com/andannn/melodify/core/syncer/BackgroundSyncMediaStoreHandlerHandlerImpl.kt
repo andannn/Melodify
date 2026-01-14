@@ -12,12 +12,13 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
 
-internal class ReSyncMediaStoreHandlerHandlerImpl(
+internal class BackgroundSyncMediaStoreHandlerHandlerImpl(
     private val context: Context,
-) : SyncMediaStoreHandler {
-    override fun reSyncAllMedia(): Flow<SyncStatus> =
+    private val syncWorkHelper: SyncWorkHelper,
+) : BackgroundSyncMediaStoreHandler {
+    override fun syncAllMedia(): Flow<SyncStatusEvent> =
         flow {
-            val requestId = SyncWorkHelper.doOneTimeSyncWork(context)
+            val requestId = syncWorkHelper.doOneTimeSyncWork(context)
 
             val statusFlow =
                 WorkManager
