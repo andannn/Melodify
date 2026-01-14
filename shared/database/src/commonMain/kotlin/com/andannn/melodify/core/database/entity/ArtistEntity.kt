@@ -25,6 +25,17 @@ data class ArtistEntity(
     val name: String,
     @ColumnInfo(name = ArtistColumns.COVER_URI)
     val artistCoverUri: String? = null,
-    @ColumnInfo(name = ArtistColumns.TRACK_COUNT)
+    @ColumnInfo(name = ArtistColumns.TRACK_COUNT, defaultValue = "0")
     val trackCount: Int = 0,
+)
+
+fun ArtistEntity.toArtistWithoutTrackCount() = ArtistWithoutTrackCount(artistId, name, artistCoverUri)
+
+data class ArtistWithoutTrackCount(
+    @ColumnInfo(name = ArtistColumns.ID)
+    val artistId: Long,
+    @ColumnInfo(name = ArtistColumns.NAME)
+    val name: String,
+    @ColumnInfo(name = ArtistColumns.COVER_URI)
+    val artistCoverUri: String? = null,
 )

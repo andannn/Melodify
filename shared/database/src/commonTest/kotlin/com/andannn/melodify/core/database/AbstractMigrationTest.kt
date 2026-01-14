@@ -50,7 +50,7 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    fun migrate5To6(): Unit =
+    fun migrate5To6Test(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(5)
             newConnection.close()
@@ -61,7 +61,7 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    fun migrate6To7SyncMediaTableTest(): Unit =
+    fun migrate6To7Test(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(6)
             newConnection.execSQL(
@@ -160,7 +160,7 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    fun migrate7To8SyncAlbumTableTest(): Unit =
+    fun migrate7To8Test(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(7)
             newConnection.execSQL(
@@ -184,7 +184,7 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    fun migrate8To9SyncAlbumTableTest(): Unit =
+    fun migrate8To9Test(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(8)
             newConnection.execSQL(
@@ -201,7 +201,7 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    fun migrate9To10SyncAlbumTableTest(): Unit =
+    fun migrate9To10Test(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(9)
             newConnection.close()
@@ -211,7 +211,7 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    fun migrate10To11SyncAlbumTableTest(): Unit =
+    fun migrate10To11Test(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(10)
             newConnection.close()
@@ -221,7 +221,7 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    fun migrate11To12SyncAlbumTableTest(): Unit =
+    fun migrate11To12Test(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(11)
             newConnection.execSQL(
@@ -244,7 +244,7 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    fun migrate12To13SyncAlbumTableTest(): Unit =
+    fun migrate12To13Test(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(12)
             newConnection.close()
@@ -254,7 +254,7 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    fun migrate13To14SyncAlbumTableTest(): Unit =
+    fun migrate13To14Test(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(13)
             newConnection.close()
@@ -264,7 +264,7 @@ abstract class AbstractMigrationTest {
         }
 
     @Test
-    fun migrate15To16SyncAlbumTableTest(): Unit =
+    fun migrate15To16Test(): Unit =
         helper.let { helper ->
             val newConnection = helper.createDatabase(15)
             val mediaSql = """
@@ -309,14 +309,85 @@ abstract class AbstractMigrationTest {
             val migratedConnection =
                 helper.runMigrationsAndValidate(16)
 
-            migratedConnection.prepare("SELECT ${AlbumColumns.TRACK_COUNT} FROM ${Tables.LIBRARY_ALBUM}").use {
-                it.step()
-                assertEquals(2, it.getInt(0))
-            }
-            migratedConnection.prepare("SELECT ${ArtistColumns.TRACK_COUNT} FROM ${Tables.LIBRARY_ARTIST}").use {
-                it.step()
-                assertEquals(2, it.getInt(0))
-            }
+            migratedConnection
+                .prepare("SELECT ${AlbumColumns.TRACK_COUNT} FROM ${Tables.LIBRARY_ALBUM}")
+                .use {
+                    it.step()
+                    assertEquals(2, it.getInt(0))
+                }
+            migratedConnection
+                .prepare("SELECT ${ArtistColumns.TRACK_COUNT} FROM ${Tables.LIBRARY_ARTIST}")
+                .use {
+                    it.step()
+                    assertEquals(2, it.getInt(0))
+                }
+            migratedConnection.close()
+        }
+
+    @Test
+    fun migrate16To17Test(): Unit =
+        helper.let { helper ->
+            val newConnection = helper.createDatabase(16)
+            newConnection.execSQL(
+                """
+            INSERT INTO ${Tables.LIBRARY_ARTIST} (
+                ${ArtistColumns.ID}, 
+                artist_name, 
+                artist_track_count
+            ) VALUES (10, 'Test Artist', 0)
+        """,
+            )
+            newConnection.execSQL(
+                """
+            INSERT INTO ${Tables.LIBRARY_ALBUM} (
+                ${AlbumColumns.ID}, 
+                ${AlbumColumns.TITLE}, 
+                ${AlbumColumns.TRACK_COUNT}
+            ) VALUES (1, 'Test Album', 0)
+        """,
+            )
+            newConnection.close()
+
+            val migratedConnection =
+                helper.runMigrationsAndValidate(17)
+            migratedConnection.execSQL(
+                """
+            INSERT INTO ${Tables.LIBRARY_ARTIST} (
+                ${ArtistColumns.ID}, 
+                artist_name, 
+                artist_track_count
+            ) VALUES (11, 'Test Artist 2', 0)
+        """,
+            )
+            migratedConnection.execSQL(
+                """
+            INSERT INTO ${Tables.LIBRARY_ALBUM} (
+                ${AlbumColumns.ID}, 
+                ${AlbumColumns.TITLE}, 
+                ${AlbumColumns.TRACK_COUNT}
+            ) VALUES (2, 'Test Album 2', 0)
+        """,
+            )
+            migratedConnection
+                .prepare(
+                    "SELECT album_title FROM library_fts_album_table",
+                ).use {
+                    it.step()
+                    assertEquals("Test Album", it.getText(0))
+                    it.step()
+                    assertEquals("Test Album 2", it.getText(0))
+                    assertEquals(false, it.step())
+                }
+            migratedConnection
+                .prepare(
+                    "SELECT artist_name FROM library_fts_artist_table",
+                ).use {
+                    it.step()
+                    assertEquals("Test Artist", it.getText(0))
+                    it.step()
+                    assertEquals("Test Artist 2", it.getText(0))
+                    assertEquals(false, it.step())
+                }
             migratedConnection.close()
         }
 }

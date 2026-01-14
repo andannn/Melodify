@@ -20,14 +20,18 @@ import com.andannn.melodify.core.database.Where
 import com.andannn.melodify.core.database.appendOrCreateWith
 import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
+import com.andannn.melodify.core.database.entity.AlbumWithoutTrackCount
 import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.ArtistWithoutTrackCount
 import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.VideoColumns
 import com.andannn.melodify.core.database.entity.VideoEntity
+import com.andannn.melodify.core.database.entity.toAlbumWithoutTrackCount
+import com.andannn.melodify.core.database.entity.toArtistWithoutTrackCount
 import com.andannn.melodify.core.database.toSortString
 import com.andannn.melodify.core.database.toWhereString
 import kotlinx.coroutines.flow.Flow
@@ -51,19 +55,31 @@ interface MediaLibraryDao {
     suspend fun markVideoAsDeleted(ids: List<String>)
 
     @Upsert
-    suspend fun upsertMedias(audios: List<MediaEntity>)
+    suspend fun upsertMedias(audios: List<MediaEntity>): List<Long>
+
+    @Query("SELECT ${MediaColumns.TITLE} FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ID} IN (:ids)")
+    suspend fun getNameOfMedia(ids: List<Long>): List<String?>
 
     @Upsert
-    suspend fun upsertVideos(audios: List<VideoEntity>)
+    suspend fun upsertVideos(audios: List<VideoEntity>): List<Long>
 
-    @Insert(entity = AlbumEntity::class, onConflict = OnConflictStrategy.IGNORE)
-    suspend fun upsertAlbums(albums: List<AlbumEntity>)
+    @Query("SELECT ${VideoColumns.TITLE} FROM ${Tables.LIBRARY_VIDEO} WHERE ${VideoColumns.ID} IN (:ids)")
+    suspend fun getNameOfVideo(ids: List<Long>): List<String?>
 
-    @Insert(entity = ArtistEntity::class, onConflict = OnConflictStrategy.IGNORE)
-    suspend fun upsertArtists(artists: List<ArtistEntity>)
+    @Upsert(entity = AlbumEntity::class)
+    suspend fun upsertAlbumsWithoutTrackCount(albums: List<AlbumWithoutTrackCount>): List<Long>
+
+    @Query("SELECT ${AlbumColumns.TITLE} FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} IN (:ids)")
+    suspend fun getNameOfAlbum(ids: List<Long>): List<String>
+
+    @Upsert(entity = ArtistEntity::class)
+    suspend fun upsertArtistWithoutTrackCount(artists: List<ArtistWithoutTrackCount>): List<Long>
+
+    @Query("SELECT ${ArtistColumns.NAME} FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} IN (:ids)")
+    suspend fun getNameOfArtist(ids: List<Long>): List<String>
 
     @Insert(entity = GenreEntity::class, onConflict = OnConflictStrategy.IGNORE)
-    suspend fun upsertGenres(genres: List<GenreEntity>)
+    suspend fun upsertGenres(genres: List<GenreEntity>): List<Long>
 
     @Query("DELETE FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} IN (:ids)")
     suspend fun deleteAlbumsByIds(ids: List<Long>)
@@ -507,8 +523,8 @@ interface MediaLibraryDao {
         audios: List<MediaEntity>,
         videos: List<VideoEntity> = emptyList(),
     ) {
-        upsertAlbums(albums)
-        upsertArtists(artists)
+        upsertAlbumsWithoutTrackCount(albums.map { it.toAlbumWithoutTrackCount() })
+        upsertArtistWithoutTrackCount(artists.map { it.toArtistWithoutTrackCount() })
         upsertGenres(genres)
         upsertMedias(audios)
         upsertVideos(videos)
@@ -521,37 +537,47 @@ interface MediaLibraryDao {
         genres: List<GenreEntity> = emptyList(),
         audios: List<MediaEntity> = emptyList(),
         videos: List<VideoEntity> = emptyList(),
-        onStep: (type: Int, inserted: Int, total: Int) -> Unit = { _, _, _ -> },
+        onInsert: (type: Int, items: List<String>) -> Unit = { _, _ -> },
+        onDelete: (type: Int, items: List<String>) -> Unit = { _, _ -> },
+        onProgress: (type: Int, inserted: Int, total: Int) -> Unit = { _, _, _ -> },
     ) {
         syncAlbum(
             albums,
-            onStep = { inserted, total ->
-                onStep(MediaType.ALBUM, inserted, total)
+            onProgress = { inserted, total ->
+                onProgress(MediaType.ALBUM, inserted, total)
             },
+            onInsert = { onInsert(MediaType.ALBUM, it) },
+            onDelete = { onDelete(MediaType.ALBUM, it) },
         )
         syncArtist(
             artists,
-            onStep = { inserted, total ->
-                onStep(MediaType.ARTIST, inserted, total)
+            onProgress = { inserted, total ->
+                onProgress(MediaType.ARTIST, inserted, total)
             },
+            onInsert = { onInsert(MediaType.ARTIST, it) },
+            onDelete = { onDelete(MediaType.ARTIST, it) },
         )
         syncGenre(
             genres,
-            onStep = { inserted, total ->
-                onStep(MediaType.GENRE, inserted, total)
+            onProgress = { inserted, total ->
+                onProgress(MediaType.GENRE, inserted, total)
             },
         )
         syncMedia(
             audios,
-            onStep = { inserted, total ->
-                onStep(MediaType.MEDIA, inserted, total)
+            onProgress = { inserted, total ->
+                onProgress(MediaType.MEDIA, inserted, total)
             },
+            onInsert = { onInsert(MediaType.MEDIA, it) },
+            onDelete = { onDelete(MediaType.MEDIA, it) },
         )
         syncVideo(
             videos,
-            onStep = { inserted, total ->
-                onStep(MediaType.VIDEO, inserted, total)
+            onProgress = { inserted, total ->
+                onProgress(MediaType.VIDEO, inserted, total)
             },
+            onInsert = { onInsert(MediaType.VIDEO, it) },
+            onDelete = { onDelete(MediaType.VIDEO, it) },
         )
 
         deleteOrphanAlbums()
@@ -561,7 +587,9 @@ interface MediaLibraryDao {
 
     private suspend fun syncMedia(
         audios: List<MediaEntity>,
-        onStep: (inserted: Int, total: Int) -> Unit,
+        onProgress: (inserted: Int, total: Int) -> Unit,
+        onInsert: (items: List<String>) -> Unit = {},
+        onDelete: (items: List<String>) -> Unit = {},
     ) {
         syncTable(
             newItems = audios,
@@ -569,13 +597,17 @@ interface MediaLibraryDao {
             fetchLocalIdsDao = { getAllMediaID() },
             deleteDao = { deleteMediasByIds(it) },
             upsertDao = { upsertMedias(it) },
-            onStep = onStep,
+            onProgress = onProgress,
+            onNewInsert = { onInsert(getNameOfMedia(it).filterNotNull()) },
+            onBeforeDelete = { onDelete(getNameOfMedia(it).filterNotNull()) },
         )
     }
 
     private suspend fun syncVideo(
         audios: List<VideoEntity>,
-        onStep: (inserted: Int, total: Int) -> Unit,
+        onProgress: (inserted: Int, total: Int) -> Unit,
+        onInsert: (items: List<String>) -> Unit = {},
+        onDelete: (items: List<String>) -> Unit = {},
     ) {
         syncTable(
             newItems = audios,
@@ -583,41 +615,51 @@ interface MediaLibraryDao {
             fetchLocalIdsDao = { getAllVideoID() },
             deleteDao = { deleteVideoByIds(it) },
             upsertDao = { upsertVideos(it) },
-            onStep = onStep,
+            onProgress = onProgress,
+            onNewInsert = { onInsert(getNameOfVideo(it).filterNotNull()) },
+            onBeforeDelete = { onDelete(getNameOfVideo(it).filterNotNull()) },
         )
     }
 
     private suspend fun syncAlbum(
         albums: List<AlbumEntity>,
-        onStep: (inserted: Int, total: Int) -> Unit,
+        onProgress: (inserted: Int, total: Int) -> Unit,
+        onInsert: (items: List<String>) -> Unit = {},
+        onDelete: (items: List<String>) -> Unit = {},
     ) {
         syncTable(
             newItems = albums,
             idSelector = { it.albumId },
             fetchLocalIdsDao = { getAllAlbumID() },
             deleteDao = { deleteAlbumsByIds(it) },
-            upsertDao = { upsertAlbums(it) },
-            onStep = onStep,
+            upsertDao = { upsertAlbumsWithoutTrackCount(it.map { it.toAlbumWithoutTrackCount() }) },
+            onProgress = onProgress,
+            onNewInsert = { onInsert(getNameOfAlbum(it)) },
+            onBeforeDelete = { onDelete(getNameOfAlbum(it)) },
         )
     }
 
     private suspend fun syncArtist(
         artists: List<ArtistEntity>,
-        onStep: (inserted: Int, total: Int) -> Unit,
+        onProgress: (inserted: Int, total: Int) -> Unit,
+        onInsert: (items: List<String>) -> Unit = {},
+        onDelete: (items: List<String>) -> Unit = {},
     ) {
         syncTable(
             newItems = artists,
             idSelector = { it.artistId },
             fetchLocalIdsDao = { getAllArtistID() },
             deleteDao = { deleteArtistsByIds(it) },
-            upsertDao = { upsertArtists(it) },
-            onStep = onStep,
+            upsertDao = { upsertArtistWithoutTrackCount(it.map { it.toArtistWithoutTrackCount() }) },
+            onProgress = onProgress,
+            onNewInsert = { onInsert(getNameOfArtist(it)) },
+            onBeforeDelete = { onDelete(getNameOfArtist(it)) },
         )
     }
 
     private suspend fun syncGenre(
         artists: List<GenreEntity>,
-        onStep: (inserted: Int, total: Int) -> Unit,
+        onProgress: (inserted: Int, total: Int) -> Unit,
     ) {
         syncTable(
             newItems = artists,
@@ -625,7 +667,7 @@ interface MediaLibraryDao {
             fetchLocalIdsDao = { getAllGenreID() },
             deleteDao = { deleteGenreByIds(it.filterNotNull()) },
             upsertDao = { upsertGenres(it) },
-            onStep = onStep,
+            onProgress = onProgress,
         )
     }
 
@@ -634,8 +676,10 @@ interface MediaLibraryDao {
         idSelector: (T) -> K,
         fetchLocalIdsDao: () -> List<K>,
         deleteDao: (List<K>) -> Unit,
-        upsertDao: (List<T>) -> Unit,
-        onStep: (inserted: Int, total: Int) -> Unit,
+        upsertDao: (List<T>) -> List<K>,
+        onBeforeDelete: (ids: List<K>) -> Unit = {},
+        onNewInsert: (ids: List<K>) -> Unit = {},
+        onProgress: (inserted: Int, total: Int) -> Unit,
         chunkSize: Int = DEFAULT_CHUNK_SIZE,
     ) {
         val localIds = fetchLocalIdsDao().toHashSet()
@@ -646,16 +690,24 @@ interface MediaLibraryDao {
 
         if (idsToDelete.isNotEmpty()) {
             idsToDelete.chunked(chunkSize).forEach { batch ->
+                onBeforeDelete(batch)
                 deleteDao(batch.toList())
             }
         }
 
         var currentCount = 0
         if (newItems.isNotEmpty()) {
+            onProgress(currentCount, newItems.size)
             newItems.chunked(chunkSize).forEach { batch ->
-                upsertDao(batch)
+                val ids = upsertDao(batch)
+
+                val newIds = ids.filter { it != -1 }
+                if (newIds.isNotEmpty()) {
+                    onNewInsert(newIds)
+                }
+
                 currentCount += batch.size
-                onStep(currentCount, newItems.size)
+                onProgress(currentCount, newItems.size)
             }
         }
     }

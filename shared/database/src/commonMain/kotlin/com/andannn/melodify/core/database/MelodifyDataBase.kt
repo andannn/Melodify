@@ -98,8 +98,9 @@ internal object Tables {
         AutoMigration(from = 13, to = 14),
         AutoMigration(from = 14, to = 15, AutoMigration14To15Spec::class),
         AutoMigration(from = 15, to = 16, AutoMigration15To16Spec::class),
+        AutoMigration(from = 16, to = 17, AutoMigration16To17Spec::class),
     ],
-    version = 16,
+    version = 17,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)
@@ -346,5 +347,37 @@ class AutoMigration15To16Spec : AutoMigrationSpec {
             )
             """.trimIndent(),
         )
+    }
+}
+
+class AutoMigration16To17Spec : AutoMigrationSpec {
+    override fun onPostMigrate(connection: SQLiteConnection) {
+        connection.execSQL(
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_BEFORE_UPDATE BEFORE UPDATE ON `library_artist_table` BEGIN DELETE FROM `library_fts_artist_table` WHERE `docid`=OLD.`rowid`; END",
+        )
+        connection.execSQL(
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_BEFORE_DELETE BEFORE DELETE ON `library_artist_table` BEGIN DELETE FROM `library_fts_artist_table` WHERE `docid`=OLD.`rowid`; END",
+        )
+        connection.execSQL(
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_AFTER_UPDATE AFTER UPDATE ON `library_artist_table` BEGIN INSERT INTO `library_fts_artist_table`(`docid`, `artist_name`) VALUES (NEW.`rowid`, NEW.`artist_name`); END",
+        )
+        connection.execSQL(
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_AFTER_INSERT AFTER INSERT ON `library_artist_table` BEGIN INSERT INTO `library_fts_artist_table`(`docid`, `artist_name`) VALUES (NEW.`rowid`, NEW.`artist_name`); END",
+        )
+        connection.execSQL(
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_album_table_BEFORE_UPDATE BEFORE UPDATE ON `library_album_table` BEGIN DELETE FROM `library_fts_album_table` WHERE `docid`=OLD.`rowid`; END",
+        )
+        connection.execSQL(
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_album_table_BEFORE_DELETE BEFORE DELETE ON `library_album_table` BEGIN DELETE FROM `library_fts_album_table` WHERE `docid`=OLD.`rowid`; END",
+        )
+        connection.execSQL(
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_album_table_AFTER_UPDATE AFTER UPDATE ON `library_album_table` BEGIN INSERT INTO `library_fts_album_table`(`docid`, `album_title`) VALUES (NEW.`rowid`, NEW.`album_title`); END",
+        )
+        connection.execSQL(
+            "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_album_table_AFTER_INSERT AFTER INSERT ON `library_album_table` BEGIN INSERT INTO `library_fts_album_table`(`docid`, `album_title`) VALUES (NEW.`rowid`, NEW.`album_title`); END",
+        )
+
+        connection.execSQL("INSERT INTO `library_fts_artist_table`(`library_fts_artist_table`) VALUES('rebuild')")
+        connection.execSQL("INSERT INTO `library_fts_album_table`(`library_fts_album_table`) VALUES('rebuild')")
     }
 }

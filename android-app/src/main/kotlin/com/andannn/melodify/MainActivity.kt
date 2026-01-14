@@ -67,6 +67,7 @@ class MainActivity : ComponentActivity() {
     private val mainViewModel: MainActivityViewModel by viewModel()
     private val userPreferenceRepository: UserPreferenceRepository by inject()
     private val mediaFileDeleteHelper: MediaFileDeleteHelper by inject()
+    private val syncWorkHelper: SyncWorkHelper by inject()
     private val deleteHelper: MediaFileDeleteHelperImpl
         get() = mediaFileDeleteHelper as MediaFileDeleteHelperImpl
 
@@ -78,7 +79,7 @@ class MainActivity : ComponentActivity() {
         Napier.d(tag = TAG) { "onCreate() savedInstanceState $savedInstanceState" }
 
         SyncJobService.scheduleSyncLibraryJob(this)
-        SyncWorkHelper.registerPeriodicSyncWork(this)
+        syncWorkHelper.registerPeriodicSyncWork(this)
 
         val deleteIntentSenderLauncher: ActivityResultLauncher<IntentSenderRequest> =
             registerForActivityResult(
@@ -146,7 +147,7 @@ class MainActivity : ComponentActivity() {
                     val notSynced = userPreferenceRepository.getLastSuccessfulSyncTime() == null
                     Napier.d(tag = TAG) { "permission granted. notSynced: $notSynced" }
                     if (notSynced) {
-                        SyncWorkHelper.doOneTimeSyncWork(this@MainActivity)
+                        syncWorkHelper.doOneTimeSyncWork(this@MainActivity)
                     }
                 }
             }

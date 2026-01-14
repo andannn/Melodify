@@ -9,7 +9,9 @@ import com.andannn.melodify.core.database.dao.MediaType
 import com.andannn.melodify.core.syncer.model.FileChangeEvent
 import com.andannn.melodify.core.syncer.model.FileChangeType
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.channelFlow
 
 private const val TAG = "MediaLibrarySyncer"
@@ -18,7 +20,43 @@ internal class MediaLibrarySyncerWrapper(
     private val mediaLibraryScanner: MediaLibraryScanner,
     private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaLibrarySyncer {
-    override suspend fun syncAllMediaLibrary(): Flow<SyncStatus> = syncMediaLibraryInternal()
+    override fun syncAllMediaLibrary(): Flow<SyncStatusEvent> =
+        channelFlow {
+            try {
+                val mediaData = mediaLibraryScanner.scanAllMedia()
+                trySend(SyncStatusEvent.Start)
+
+                mediaLibraryDao.syncMediaLibrary(
+                    albums = mediaData.albumData.toAlbumEntity(),
+                    artists = mediaData.artistData.toArtistEntity(),
+                    genres = mediaData.genreData.toGenreEntity(),
+                    audios = mediaData.audioData.toMediaEntity(),
+                    videos = mediaData.videoData.toVideoEntity(),
+                    onProgress = { type, inserted, total ->
+                        Napier.d(tag = TAG) { "Media sync process $type: inserted: $inserted,  total: $total" }
+                        trySend(SyncStatusEvent.Progress(type.toSyncType(), inserted, total))
+                    },
+                    onInsert = { type, items ->
+                        Napier.d(tag = TAG) { "Media insert process $type, items: $items" }
+                        items.forEach {
+                            trySend(SyncStatusEvent.Insert(type.toSyncType(), it))
+                        }
+                    },
+                    onDelete = { type, items ->
+                        Napier.d(tag = TAG) { "Media delete process $type, items: $items" }
+                        items.forEach {
+                            trySend(SyncStatusEvent.Delete(type.toSyncType(), it))
+                        }
+                    },
+                )
+                trySend(SyncStatusEvent.Complete)
+            } catch (e: Exception) {
+                Napier.d(tag = TAG) { "Failed to sync media library: $e" }
+                trySend(SyncStatusEvent.Failed)
+            } finally {
+                close()
+            }
+        }.buffer(capacity = Channel.UNLIMITED)
 
     override suspend fun syncMediaByChanges(changes: List<FileChangeEvent>): Boolean {
         changes
@@ -48,39 +86,14 @@ internal class MediaLibrarySyncerWrapper(
 
         return true
     }
-
-    private fun syncMediaLibraryInternal(): Flow<SyncStatus> =
-        channelFlow {
-            try {
-                val mediaData = mediaLibraryScanner.scanAllMedia()
-                trySend(SyncStatus.Start)
-
-                mediaLibraryDao.syncMediaLibrary(
-                    albums = mediaData.albumData.toAlbumEntity(),
-                    artists = mediaData.artistData.toArtistEntity(),
-                    genres = mediaData.genreData.toGenreEntity(),
-                    audios = mediaData.audioData.toMediaEntity(),
-                    videos = mediaData.videoData.toVideoEntity(),
-                ) { type, inserted, total ->
-                    Napier.d(tag = TAG) { "Media sync process $type: inserted: $inserted,  total: $total" }
-                    trySend(SyncStatus.Progress(type.toSyncType(), inserted, total))
-                }
-                trySend(SyncStatus.Complete)
-            } catch (e: Exception) {
-                Napier.d(tag = TAG) { "Failed to sync media library: $e" }
-                trySend(SyncStatus.Failed)
-            } finally {
-                close()
-            }
-        }
 }
 
 private fun Int.toSyncType() =
     when (this) {
-        MediaType.ALBUM -> SyncType.ALBUM
-        MediaType.ARTIST -> SyncType.ARTIST
-        MediaType.GENRE -> SyncType.GENRE
-        MediaType.MEDIA -> SyncType.MEDIA
-        MediaType.VIDEO -> SyncType.VIDEO
+        MediaType.ALBUM -> ContentType.ALBUM
+        MediaType.ARTIST -> ContentType.ARTIST
+        MediaType.GENRE -> ContentType.GENRE
+        MediaType.MEDIA -> ContentType.MEDIA
+        MediaType.VIDEO -> ContentType.VIDEO
         else -> error("never")
     }

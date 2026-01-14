@@ -21,6 +21,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":shared:compose:common"))
             implementation(project(":shared:domain:api"))
+            implementation(project(":shared:syncer:api"))
 
             implementation(libs.coil3.compose)
         }

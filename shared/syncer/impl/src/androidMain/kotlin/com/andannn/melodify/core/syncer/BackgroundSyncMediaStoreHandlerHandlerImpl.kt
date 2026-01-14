@@ -12,12 +12,15 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
 
-internal class ReSyncMediaStoreHandlerHandlerImpl(
+// TODO: some [WorkInfo] is not emitted to workInfo flow, event through it is send by [CoroutineWorker::setProgress].
+//       use [DefaultBackgroundSyncMediaStoreHandler] before this problem solved.
+internal class BackgroundSyncMediaStoreHandlerHandlerImpl(
     private val context: Context,
-) : SyncMediaStoreHandler {
-    override fun reSyncAllMedia(): Flow<SyncStatus> =
+    private val syncWorkHelper: SyncWorkHelper,
+) : BackgroundSyncMediaStoreHandler {
+    override fun syncAllMedia(): Flow<SyncStatusEvent> =
         flow {
-            val requestId = SyncWorkHelper.doOneTimeSyncWork(context)
+            val requestId = syncWorkHelper.doOneTimeSyncWork(context)
 
             val statusFlow =
                 WorkManager

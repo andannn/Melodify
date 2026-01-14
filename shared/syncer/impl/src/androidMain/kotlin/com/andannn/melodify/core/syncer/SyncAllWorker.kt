@@ -25,11 +25,13 @@ import org.koin.core.component.inject
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-object SyncWorkHelper {
-    private const val PERIODIC_SYNC_WORK_NAME = "periodic_sync_work_name"
-    private const val ONE_TIME_SYNC_WORK_NAME = "one_time_sync_work_name"
+internal class SyncWorkHelperImpl : SyncWorkHelper {
+    companion object {
+        private const val PERIODIC_SYNC_WORK_NAME = "periodic_sync_work_name"
+        private const val ONE_TIME_SYNC_WORK_NAME = "one_time_sync_work_name"
+    }
 
-    fun registerPeriodicSyncWork(context: Context) {
+    override fun registerPeriodicSyncWork(context: Context) {
         val periodicWorkRequest =
             PeriodicWorkRequestBuilder<SyncAllMediaWorker>(12, TimeUnit.HOURS)
                 .setInitialDelay(2, TimeUnit.HOURS)
@@ -43,10 +45,7 @@ object SyncWorkHelper {
         )
     }
 
-    /**
-     *
-     */
-    fun doOneTimeSyncWork(context: Context): UUID {
+    override fun doOneTimeSyncWork(context: Context): UUID {
         val oneTimeWorkRequest =
             OneTimeWorkRequestBuilder<SyncAllMediaWorker>()
                 .build()
@@ -60,32 +59,24 @@ object SyncWorkHelper {
     }
 }
 
-fun Data.toSyncStatus() =
-    when (getString(EVENT_TYPE)) {
-        EVENT_TYPE_VALUE_START -> SyncStatus.Start
-        EVENT_TYPE_VALUE_COMPLETE -> SyncStatus.Complete
-        EVENT_TYPE_VALUE_FAILED -> SyncStatus.Failed
-        EVENT_TYPE_VALUE_PROGRESS -> {
-            SyncStatus.Progress(
-                type = SyncType.valueOf(getString(MEDIA_TYPE) ?: error("no media type")),
-                total = getInt(TOTAL, 0),
-                progress = getInt(PROGRESS, 0),
-            )
-        }
-
-        else -> null
-    }
-
 private const val TAG = "SyncAllWorker"
 
-private const val MEDIA_TYPE = "MediaType"
-private const val TOTAL = "Total"
-private const val PROGRESS = "Progress"
-private const val EVENT_TYPE = "EventType"
-private const val EVENT_TYPE_VALUE_START = "VALUE_START"
-private const val EVENT_TYPE_VALUE_COMPLETE = "VALUE_COMPLETE"
-private const val EVENT_TYPE_VALUE_FAILED = "VALUE_FAILED"
-private const val EVENT_TYPE_VALUE_PROGRESS = "VALUE_PROGRESS"
+private object DataKey {
+    const val MEDIA_TYPE = "MediaType"
+    const val TOTAL = "Total"
+    const val PROGRESS = "Progress"
+    const val ITEMS = "Items"
+    const val EVENT_TYPE = "EventType"
+}
+
+private object EventTypeValue {
+    const val EVENT_TYPE_VALUE_START = 0
+    const val EVENT_TYPE_VALUE_COMPLETE = 1
+    const val EVENT_TYPE_VALUE_FAILED = 2
+    const val EVENT_TYPE_VALUE_PROGRESS = 3
+    const val EVENT_TYPE_VALUE_INSERT = 4
+    const val EVENT_TYPE_VALUE_DELETE = 5
+}
 
 internal class SyncAllMediaWorker(
     private val appContext: Context,
@@ -103,13 +94,13 @@ internal class SyncAllMediaWorker(
             return Result.failure()
         }
 
-        var status: SyncStatus? = null
+        var status: SyncStatusEvent? = null
         mediaLibrarySyncer.syncAllMediaLibrary().collect {
             status = it
             setProgress(it.toData())
         }
 
-        return if (status is SyncStatus.Complete) {
+        return if (status is SyncStatusEvent.Complete) {
             logSuccessSyncTimestamp()
             Result.success()
         } else {
@@ -135,30 +126,91 @@ internal class SyncAllMediaWorker(
             System.currentTimeMillis(),
         )
     }
-
-    private fun SyncStatus.toData() =
-        when (this) {
-            SyncStatus.Start ->
-                workDataOf(
-                    EVENT_TYPE to EVENT_TYPE_VALUE_START,
-                )
-
-            SyncStatus.Complete ->
-                workDataOf(
-                    EVENT_TYPE to EVENT_TYPE_VALUE_COMPLETE,
-                )
-
-            is SyncStatus.Failed ->
-                workDataOf(
-                    EVENT_TYPE to EVENT_TYPE_VALUE_FAILED,
-                )
-
-            is SyncStatus.Progress ->
-                workDataOf(
-                    EVENT_TYPE to EVENT_TYPE_VALUE_PROGRESS,
-                    MEDIA_TYPE to type.name,
-                    TOTAL to total,
-                    PROGRESS to progress,
-                )
-        }
 }
+
+internal fun Data.toSyncStatus() =
+    when (getInt(DataKey.EVENT_TYPE, -1)) {
+        EventTypeValue.EVENT_TYPE_VALUE_START -> {
+            SyncStatusEvent.Start
+        }
+
+        EventTypeValue.EVENT_TYPE_VALUE_COMPLETE -> {
+            SyncStatusEvent.Complete
+        }
+
+        EventTypeValue.EVENT_TYPE_VALUE_FAILED -> {
+            SyncStatusEvent.Failed
+        }
+
+        EventTypeValue.EVENT_TYPE_VALUE_PROGRESS -> {
+            SyncStatusEvent.Progress(
+                type = ContentType.valueOf(getString(DataKey.MEDIA_TYPE) ?: error("no media type")),
+                total = getInt(DataKey.TOTAL, 0),
+                progress = getInt(DataKey.PROGRESS, 0),
+            )
+        }
+
+        EventTypeValue.EVENT_TYPE_VALUE_DELETE -> {
+            SyncStatusEvent.Delete(
+                type = ContentType.valueOf(getString(DataKey.MEDIA_TYPE) ?: error("no media type")),
+                item = getString(DataKey.ITEMS) ?: error("no item"),
+            )
+        }
+
+        EventTypeValue.EVENT_TYPE_VALUE_INSERT -> {
+            SyncStatusEvent.Insert(
+                type = ContentType.valueOf(getString(DataKey.MEDIA_TYPE) ?: error("no media type")),
+                item = getString(DataKey.ITEMS) ?: error("no item"),
+            )
+        }
+
+        else -> {
+            null
+        }
+    }
+
+private fun SyncStatusEvent.toData() =
+    when (this) {
+        SyncStatusEvent.Start -> {
+            workDataOf(
+                DataKey.EVENT_TYPE to EventTypeValue.EVENT_TYPE_VALUE_START,
+            )
+        }
+
+        SyncStatusEvent.Complete -> {
+            workDataOf(
+                DataKey.EVENT_TYPE to EventTypeValue.EVENT_TYPE_VALUE_COMPLETE,
+            )
+        }
+
+        is SyncStatusEvent.Failed -> {
+            workDataOf(
+                DataKey.EVENT_TYPE to EventTypeValue.EVENT_TYPE_VALUE_FAILED,
+            )
+        }
+
+        is SyncStatusEvent.Progress -> {
+            workDataOf(
+                DataKey.EVENT_TYPE to EventTypeValue.EVENT_TYPE_VALUE_PROGRESS,
+                DataKey.MEDIA_TYPE to type.name,
+                DataKey.TOTAL to total,
+                DataKey.PROGRESS to progress,
+            )
+        }
+
+        is SyncStatusEvent.Delete -> {
+            workDataOf(
+                DataKey.EVENT_TYPE to EventTypeValue.EVENT_TYPE_VALUE_DELETE,
+                DataKey.MEDIA_TYPE to type.name,
+                DataKey.ITEMS to item,
+            )
+        }
+
+        is SyncStatusEvent.Insert -> {
+            workDataOf(
+                DataKey.EVENT_TYPE to EventTypeValue.EVENT_TYPE_VALUE_INSERT,
+                DataKey.MEDIA_TYPE to type.name,
+                DataKey.ITEMS to item,
+            )
+        }
+    }

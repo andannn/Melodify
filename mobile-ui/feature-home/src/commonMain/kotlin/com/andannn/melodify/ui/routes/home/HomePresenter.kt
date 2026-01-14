@@ -6,9 +6,7 @@ package com.andannn.melodify.ui.routes.home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import com.andannn.melodify.core.syncer.SyncMediaStoreHandler
-import com.andannn.melodify.core.syncer.SyncStatus
-import com.andannn.melodify.core.syncer.SyncType
+import com.andannn.melodify.core.syncer.MediaLibrarySyncRepository
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
@@ -19,42 +17,32 @@ import com.andannn.melodify.shared.compose.components.tab.retainTabUiPresenter
 import com.andannn.melodify.shared.compose.popup.DefaultSortRuleSettingDialog
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
 import com.andannn.melodify.shared.compose.popup.PopupController
-import com.andannn.melodify.shared.compose.popup.SnackBarMessage
+import com.andannn.melodify.shared.compose.popup.SyncStatusDialog
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
-import io.github.aakira.napier.Napier
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.default_sort_order
 import melodify.shared.compose.resource.generated.resources.re_sync_media_library
-import melodify.shared.compose.resource.generated.resources.sync_progress_album
-import melodify.shared.compose.resource.generated.resources.sync_progress_artist
-import melodify.shared.compose.resource.generated.resources.sync_progress_genre
-import melodify.shared.compose.resource.generated.resources.sync_progress_media
-import melodify.shared.compose.resource.generated.resources.sync_progress_video
 import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.getString
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 internal fun retainHomeUiPresenter(
     navigator: Navigator,
     popController: PopupController = LocalPopupController.current,
-    syncMediaStoreHandler: SyncMediaStoreHandler = getKoin().get(),
+    mediaLibrarySyncRepository: MediaLibrarySyncRepository = getKoin().get(),
 ): Presenter<HomeState> =
     retainPresenter(
         navigator,
         popController,
-        syncMediaStoreHandler,
+        mediaLibrarySyncRepository,
     ) {
         HomePresenter(
             navigator,
             popController,
-            syncMediaStoreHandler,
+            mediaLibrarySyncRepository,
         )
     }
 
@@ -93,7 +81,7 @@ private const val TAG = "HomeScreen"
 private class HomePresenter(
     private val navigator: Navigator,
     private val popController: PopupController,
-    private val syncMediaStoreHandler: SyncMediaStoreHandler,
+    private val mediaLibrarySyncRepository: MediaLibrarySyncRepository,
 ) : RetainedPresenter<HomeState>() {
     @Composable
     override fun present(): HomeState {
@@ -106,77 +94,35 @@ private class HomePresenter(
             tabContentState = tabContentPresenter.present(),
         ) { eventSink ->
             with(popController) {
-                with(syncMediaStoreHandler) {
-                    when (eventSink) {
-                        HomeUiEvent.LibraryButtonClick -> {
-                            navigator.navigateTo(Screen.Library)
-                        }
+                when (eventSink) {
+                    HomeUiEvent.LibraryButtonClick -> {
+                        navigator.navigateTo(Screen.Library)
+                    }
 
-                        HomeUiEvent.SearchButtonClick -> {
-                            navigator.navigateTo(Screen.Search)
-                        }
+                    HomeUiEvent.SearchButtonClick -> {
+                        navigator.navigateTo(Screen.Search)
+                    }
 
-                        is HomeUiEvent.OnMenuSelected -> {
-                            when (eventSink.selected) {
-                                MenuOption.DEFAULT_SORT -> retainedScope.launch { changeSortRule() }
-                                MenuOption.RE_SYNC_ALL_MEDIA -> retainedScope.launch { resyncAllSongs() }
+                    is HomeUiEvent.OnMenuSelected -> {
+                        when (eventSink.selected) {
+                            MenuOption.DEFAULT_SORT -> {
+                                retainedScope.launch { changeSortRule() }
+                            }
+
+                            MenuOption.RE_SYNC_ALL_MEDIA -> {
+                                retainedScope.launch { showSyncDialog() }
                             }
                         }
+                    }
 
-                        HomeUiEvent.OnTabManagementClick -> {
-                            navigator.navigateTo(Screen.TabManage)
-                        }
+                    HomeUiEvent.OnTabManagementClick -> {
+                        navigator.navigateTo(Screen.TabManage)
                     }
                 }
             }
         }
     }
 }
-
-context(syncMediaStoreHandler: SyncMediaStoreHandler, popController: PopupController)
-private suspend fun resyncAllSongs() =
-    coroutineScope {
-        var job: Job? = null
-        var mediaCount: Int? = null
-        syncMediaStoreHandler.reSyncAllMedia().collect {
-            Napier.d(tag = TAG) { "sync status update $it" }
-            job?.cancel()
-            job =
-                launch {
-                    if (it is SyncStatus.Progress && it.type == SyncType.MEDIA) {
-                        mediaCount = it.total
-                    }
-
-                    delay(50)
-
-                    when (it) {
-                        SyncStatus.Complete -> {
-                            popController.showSnackBar(
-                                SnackBarMessage.SyncCompleted(mediaCount ?: 0),
-                            )
-                        }
-
-                        SyncStatus.Failed -> {
-                            popController.showSnackBar(
-                                SnackBarMessage.SyncFailed,
-                            )
-                        }
-
-                        is SyncStatus.Progress -> {
-                            popController.showSnackBar(
-                                SnackBarMessage.SyncProgress(it.toSnackBarInfoString()),
-                            )
-                        }
-
-                        SyncStatus.Start -> {
-                            popController.showSnackBar(
-                                SnackBarMessage.SyncStatusStart,
-                            )
-                        }
-                    }
-                }
-        }
-    }
 
 context(popupController: PopupController)
 private suspend fun changeSortRule() {
@@ -185,11 +131,9 @@ private suspend fun changeSortRule() {
     )
 }
 
-private suspend fun SyncStatus.Progress.toSnackBarInfoString(): String =
-    when (type) {
-        SyncType.MEDIA -> getString(Res.string.sync_progress_media, progress, total)
-        SyncType.ALBUM -> getString(Res.string.sync_progress_album, progress, total)
-        SyncType.ARTIST -> getString(Res.string.sync_progress_artist, progress, total)
-        SyncType.GENRE -> getString(Res.string.sync_progress_genre, progress, total)
-        SyncType.VIDEO -> getString(Res.string.sync_progress_video, progress, total)
-    }
+context(popupController: PopupController)
+private suspend fun showSyncDialog() {
+    popupController.showDialogAndWaitAction(
+        SyncStatusDialog,
+    )
+}
