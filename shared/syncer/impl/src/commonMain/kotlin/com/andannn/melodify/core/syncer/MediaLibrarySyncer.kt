@@ -48,7 +48,7 @@ interface MediaLibrarySyncer {
      *
      * @return true if the sync was successful, false otherwise.
      */
-    suspend fun syncAllMediaLibrary(): Flow<SyncStatus>
+    fun syncAllMediaLibrary(): Flow<SyncStatus>
 
     suspend fun syncMediaByChanges(changes: List<FileChangeEvent>): Boolean
 }

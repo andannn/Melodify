@@ -9,7 +9,9 @@ import com.andannn.melodify.core.database.dao.MediaType
 import com.andannn.melodify.core.syncer.model.FileChangeEvent
 import com.andannn.melodify.core.syncer.model.FileChangeType
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.channelFlow
 
 private const val TAG = "MediaLibrarySyncer"
@@ -18,38 +20,7 @@ internal class MediaLibrarySyncerWrapper(
     private val mediaLibraryScanner: MediaLibraryScanner,
     private val mediaLibraryDao: MediaLibraryDao,
 ) : MediaLibrarySyncer {
-    override suspend fun syncAllMediaLibrary(): Flow<SyncStatus> = syncMediaLibraryInternal()
-
-    override suspend fun syncMediaByChanges(changes: List<FileChangeEvent>): Boolean {
-        changes
-            .groupBy { it.fileChangeType }
-            .forEach { (type, events) ->
-                Napier.d(tag = TAG) { "Processing ${events.size} events of type $type" }
-                when (type) {
-                    FileChangeType.MODIFY -> {
-                        val mediaData =
-                            mediaLibraryScanner.scanMediaByUri(events.map { it.fileUri })
-
-                        mediaLibraryDao.upsertMedia(
-                            mediaData.albumData.toAlbumEntity(),
-                            mediaData.artistData.toArtistEntity(),
-                            mediaData.genreData.toGenreEntity(),
-                            mediaData.audioData.toMediaEntity(),
-                            mediaData.videoData.toVideoEntity(),
-                        )
-                    }
-
-                    FileChangeType.DELETE -> {
-                        Napier.d(tag = TAG) { "Processing Delete event: ${events.map { it.fileUri }}" }
-                        mediaLibraryDao.deleteMediaByUris(events.map { it.fileUri })
-                    }
-                }
-            }
-
-        return true
-    }
-
-    private fun syncMediaLibraryInternal(): Flow<SyncStatus> =
+    override fun syncAllMediaLibrary(): Flow<SyncStatus> =
         channelFlow {
             try {
                 val mediaData = mediaLibraryScanner.scanAllMedia()
@@ -81,7 +52,36 @@ internal class MediaLibrarySyncerWrapper(
             } finally {
                 close()
             }
-        }
+        }.buffer(capacity = Channel.UNLIMITED)
+
+    override suspend fun syncMediaByChanges(changes: List<FileChangeEvent>): Boolean {
+        changes
+            .groupBy { it.fileChangeType }
+            .forEach { (type, events) ->
+                Napier.d(tag = TAG) { "Processing ${events.size} events of type $type" }
+                when (type) {
+                    FileChangeType.MODIFY -> {
+                        val mediaData =
+                            mediaLibraryScanner.scanMediaByUri(events.map { it.fileUri })
+
+                        mediaLibraryDao.upsertMedia(
+                            mediaData.albumData.toAlbumEntity(),
+                            mediaData.artistData.toArtistEntity(),
+                            mediaData.genreData.toGenreEntity(),
+                            mediaData.audioData.toMediaEntity(),
+                            mediaData.videoData.toVideoEntity(),
+                        )
+                    }
+
+                    FileChangeType.DELETE -> {
+                        Napier.d(tag = TAG) { "Processing Delete event: ${events.map { it.fileUri }}" }
+                        mediaLibraryDao.deleteMediaByUris(events.map { it.fileUri })
+                    }
+                }
+            }
+
+        return true
+    }
 }
 
 private fun Int.toSyncType() =
