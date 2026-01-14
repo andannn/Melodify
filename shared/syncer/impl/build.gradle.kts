@@ -13,7 +13,7 @@ kmpExt {
 
 kotlin {
     androidLibrary {
-        namespace = "com.andannn.melodify.core.syncer"
+        namespace = "com.andannn.melodify.core.syncer.impl"
     }
 
     sourceSets {
