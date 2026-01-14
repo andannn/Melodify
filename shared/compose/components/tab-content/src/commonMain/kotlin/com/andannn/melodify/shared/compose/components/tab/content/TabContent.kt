@@ -36,6 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.VerticalSlider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +54,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.DisplaySetting
@@ -81,7 +81,10 @@ fun TabContent(
 ) {
     LazyListContent(
         selectedTab = state.selectedTab,
-        pagingItems = state.pagingItems,
+        itemSnapshotList = state.pagingItems.itemSnapshotList,
+        onTriggerReadOfIndex = {
+            state.pagingItems[it]
+        },
         displaySetting = state.groupSort,
         modifier = modifier.fillMaxSize(),
         onMediaItemClick = {
@@ -101,16 +104,16 @@ fun TabContent(
 private fun LazyListContent(
     selectedTab: CustomTab?,
     displaySetting: DisplaySetting?,
-    pagingItems: LazyPagingItems<MediaItemModel>,
+    itemSnapshotList: List<MediaItemModel?>,
     modifier: Modifier = Modifier,
     onMediaItemClick: (MediaItemModel) -> Unit = {},
     onShowMediaItemOption: (MediaItemModel) -> Unit = {},
     onGroupItemClick: (List<GroupKey?>) -> Unit = {},
+    onTriggerReadOfIndex: (Int) -> Unit = {},
 ) {
-    val items = pagingItems.itemSnapshotList
     val primaryGroupList =
-        remember(items, displaySetting) {
-            displaySetting?.let { items.groupByType(displaySetting) } ?: emptyList()
+        remember(itemSnapshotList, displaySetting) {
+            displaySetting?.let { itemSnapshotList.groupByType(displaySetting) } ?: emptyList()
         }
 
     @Composable
@@ -171,13 +174,7 @@ private fun LazyListContent(
                         },
                     ) { index, item ->
                         // trigger item read event to load more.
-                        pagingItems[
-                            primaryGroupList.flattenIndex(
-                                primaryGroupIndex,
-                                secondaryGroupIndex,
-                                index,
-                            ),
-                        ]
+
                         var headerCount = 0
                         if (primaryGroupKey != null) headerCount++
                         if (secondaryGroupKey != null) headerCount++
@@ -238,6 +235,16 @@ private fun LazyListContent(
                                     error("not supported")
                                 }
                             }
+                        }
+
+                        SideEffect {
+                            onTriggerReadOfIndex(
+                                primaryGroupList.flattenIndex(
+                                    primaryGroupIndex,
+                                    secondaryGroupIndex,
+                                    index,
+                                ),
+                            )
                         }
                     }
                 }
