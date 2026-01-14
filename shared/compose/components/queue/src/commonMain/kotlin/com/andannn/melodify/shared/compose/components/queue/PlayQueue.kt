@@ -21,10 +21,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.extraUniqueId
 import com.andannn.melodify.domain.model.subTitle
 import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.mock.MockData
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.util.rememberSwapListState
 import com.andannn.melodify.shared.compose.common.widgets.ActionType
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
@@ -174,6 +177,20 @@ private fun ReorderableCollectionItemScope.QueueItem(
             subTitle = item.subTitle,
             actionType = ActionType.SWAP,
             onItemClick = onClick,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PlayQueueUiPreview() {
+    MelodifyTheme {
+        PlayQueueUi(
+            state =
+                PlayQueueState(
+                    interactingMusicItem = MockData.medias.first(),
+                    playListQueue = MockData.medias,
+                ),
         )
     }
 }

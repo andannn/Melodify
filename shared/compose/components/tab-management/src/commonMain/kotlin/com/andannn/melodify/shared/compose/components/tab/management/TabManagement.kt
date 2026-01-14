@@ -26,15 +26,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.getCategoryResource
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.util.rememberSwapListState
 import com.andannn.melodify.shared.compose.common.widgets.ActionType
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.immutableListOf
+import kotlinx.collections.immutable.persistentListOf
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
 
@@ -149,6 +153,22 @@ private fun ReorderableCollectionItemScope.CustomTabItem(
                     onDragStopped = onSwapFinish,
                 ),
             title = getCategoryResource(item),
+        )
+    }
+}
+
+@Preview
+@Composable
+fun TabManagementUiPreview() {
+    MelodifyTheme {
+        TabManagementList(
+            currentTabList =
+                persistentListOf(
+                    CustomTab.AllMusic(1),
+                    CustomTab.AllVideo(2),
+                    CustomTab.AlbumDetail(3, albumId = "1", label = "Album 1"),
+                    CustomTab.AlbumDetail(3, albumId = "2", label = "Album 2"),
+                )
         )
     }
 }
