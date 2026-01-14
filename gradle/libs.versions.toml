@@ -9,7 +9,7 @@ androidx-palette = "1.0.0"
 androidxCore = "1.17.0"
 androidxCoreSplashscreen = "1.2.0"
 androidxActivity = "1.12.2"
-androidGradlePlugin = "8.13.2"
+androidGradlePlugin = "9.0.0-rc03"
 kotlinxCoroutines = "1.10.2"
 coil3Compose = "3.3.0"
 androidxRoom = "2.8.4"
@@ -153,7 +153,6 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrains-comp
 google-service = { id = "com.google.gms.google-services", version.ref = "googleService" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "androidxRoom" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

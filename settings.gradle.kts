@@ -16,7 +16,7 @@ dependencyResolutionManagement {
 rootProject.name = "Melodify"
 
 include(":android-app")
-include(":android-benchmark")
+// include(":android-benchmark")
 
 include(":ios-app")
 
