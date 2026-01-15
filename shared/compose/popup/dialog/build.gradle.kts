@@ -1,5 +1,3 @@
-
-
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.compose.compiler)
@@ -14,15 +12,16 @@ kmpExt {
 
 kotlin {
     androidLibrary {
-        namespace = "com.andannn.melodify.shared.compose.usecase"
+        namespace = "com.andannn.melodify.shared.compose.popup"
     }
 
     sourceSets {
         commonMain.dependencies {
-            api(project(":shared:domain:api"))
-            api(project(":shared:compose:common"))
-            api(project(":shared:compose:popup:dialog"))
-            api(project(":shared:compose:popup:snack-bar"))
+            implementation(project(":shared:compose:common"))
+            implementation(project(":shared:domain:api"))
+            implementation(project(":shared:syncer:api"))
+
+            implementation(libs.coil3.compose)
         }
     }
 }

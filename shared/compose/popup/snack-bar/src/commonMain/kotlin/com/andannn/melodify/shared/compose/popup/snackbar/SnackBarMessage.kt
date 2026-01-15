@@ -2,22 +2,17 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.shared.compose.popup
+package com.andannn.melodify.shared.compose.popup.snackbar
 
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarVisuals
 import melodify.shared.compose.resource.generated.resources.Res
-import melodify.shared.compose.resource.generated.resources.add_to_playlist_failed_message
 import melodify.shared.compose.resource.generated.resources.add_to_playlist_success_message
 import melodify.shared.compose.resource.generated.resources.added_to_play_next
 import melodify.shared.compose.resource.generated.resources.added_to_play_queue
 import melodify.shared.compose.resource.generated.resources.delete_failed
 import melodify.shared.compose.resource.generated.resources.multiple_deleted
 import melodify.shared.compose.resource.generated.resources.one_deleted
-import melodify.shared.compose.resource.generated.resources.sync_completed
-import melodify.shared.compose.resource.generated.resources.sync_failed
-import melodify.shared.compose.resource.generated.resources.sync_progress
-import melodify.shared.compose.resource.generated.resources.sync_start
 import melodify.shared.compose.resource.generated.resources.tab_already_exist
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
@@ -36,32 +31,8 @@ sealed class SnackBarMessage(
         override fun getArgs(): List<Any> = listOf(playListName)
     }
 
-    data object AddPlayListFailed : SnackBarMessage(
-        message = Res.string.add_to_playlist_failed_message,
-    )
-
     data object TabAlreadyExist : SnackBarMessage(
         message = Res.string.tab_already_exist,
-    )
-
-    data object SyncStatusStart : SnackBarMessage(
-        message = Res.string.sync_start,
-    )
-
-    data class SyncProgress(
-        val info: String,
-    ) : SnackBarMessage(message = Res.string.sync_progress) {
-        override fun getArgs(): List<Any> = listOf(info)
-    }
-
-    data class SyncCompleted(
-        val num: Int,
-    ) : SnackBarMessage(message = Res.string.sync_completed) {
-        override fun getArgs(): List<Any> = listOf(num)
-    }
-
-    data object SyncFailed : SnackBarMessage(
-        message = Res.string.sync_failed,
     )
 
     data class MultipleDeleteSuccess(

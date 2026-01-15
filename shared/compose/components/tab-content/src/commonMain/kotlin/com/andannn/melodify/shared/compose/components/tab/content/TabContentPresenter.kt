@@ -33,6 +33,8 @@ import com.andannn.melodify.shared.compose.popup.OptionDialog
 import com.andannn.melodify.shared.compose.popup.OptionItem
 import com.andannn.melodify.shared.compose.popup.PopupController
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
+import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
+import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.addToNextPlay
 import com.andannn.melodify.shared.compose.usecase.addToPlaylist
 import com.andannn.melodify.shared.compose.usecase.addToQueue
@@ -59,6 +61,7 @@ fun retainTabContentPresenter(
     navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
+    snackBarController: SnackBarController = LocalSnackBarController.current,
     fileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
 ) = retainPresenter(
     selectedTab,
@@ -72,6 +75,7 @@ fun retainTabContentPresenter(
         navigationRequestEventSink = navigationRequestEventSink,
         repository = repository,
         popupController = popupController,
+        snackBarController = snackBarController,
         mediaFileDeleteHelper = fileDeleteHelper,
     )
 }
@@ -103,6 +107,7 @@ private class TabContentPresenter(
     private val navigationRequestEventSink: NavigationRequestEventSink,
     private val repository: Repository,
     private val popupController: PopupController,
+    private val snackBarController: SnackBarController,
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
 ) : RetainedPresenter<TabContentState>() {
     private val displaySetting =
@@ -129,7 +134,7 @@ private class TabContentPresenter(
             groupSort = displaySettingState,
             pagingItems = pagingItems,
         ) { eventSink ->
-            context(repository, popupController, mediaFileDeleteHelper) {
+            context(repository, snackBarController, popupController, mediaFileDeleteHelper) {
                 when (eventSink) {
                     is TabContentEvent.OnPlayMedia -> {
                         retainedScope.launch {
@@ -222,7 +227,7 @@ private class TabContentPresenter(
         }
     }
 
-    context(_: Repository, popupController: PopupController, _: MediaFileDeleteHelper)
+    context(_: Repository, popupController: PopupController, _: MediaFileDeleteHelper, snackBarController: SnackBarController)
     private suspend fun onShowMediaItemOption(item: MediaItemModel) {
         Napier.d(message = "onShowMusicItemOption: $item")
         val isAudio = item is AudioItemModel

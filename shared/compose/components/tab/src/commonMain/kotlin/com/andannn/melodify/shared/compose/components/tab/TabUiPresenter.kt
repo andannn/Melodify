@@ -22,6 +22,8 @@ import com.andannn.melodify.shared.compose.popup.OptionDialog
 import com.andannn.melodify.shared.compose.popup.OptionItem
 import com.andannn.melodify.shared.compose.popup.PopupController
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
+import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
+import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.addToNextPlay
 import com.andannn.melodify.shared.compose.usecase.addToPlaylist
 import com.andannn.melodify.shared.compose.usecase.addToQueue
@@ -40,16 +42,19 @@ private const val TAG = "TabUiState"
 fun retainTabUiPresenter(
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
-) = retainPresenter(repository, popupController) {
+    snackBarController: SnackBarController = LocalSnackBarController.current,
+) = retainPresenter(repository, popupController, snackBarController) {
     TabUiPresenter(
         repository,
         popupController,
+        snackBarController,
     )
 }
 
 class TabUiPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
+    private val snackBarController: SnackBarController,
 ) : RetainedPresenter<TabUiState>() {
     val currentTabListFlow =
         repository.currentCustomTabsFlow
@@ -137,7 +142,7 @@ class TabUiPresenter(
                             )
 
                         if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
-                            context(repository, popupController) {
+                            context(repository, popupController, snackBarController) {
                                 when (result.optionItem) {
                                     OptionItem.DELETE_TAB -> {
                                         repository.deleteCustomTab(tab)

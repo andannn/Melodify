@@ -4,15 +4,12 @@
  */
 package com.andannn.melodify.shared.compose.popup.internal
 
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.DialogId
 import com.andannn.melodify.shared.compose.popup.PopupController
-import com.andannn.melodify.shared.compose.popup.SnackBarMessage
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -64,26 +61,6 @@ internal class PopupControllerImpl : PopupController {
     var currentDialog by mutableStateOf<DialogData?>(null)
         private set
 
-    override var snackBarController: SnackbarHostState? = null
-
-    /**
-     * Show snackbar and wait for user interaction.
-     */
-    override suspend fun showSnackBar(message: SnackBarMessage): SnackbarResult {
-        Napier.d(tag = TAG) { "show snackbar. message = $message" }
-        return snackBarController
-            ?.showSnackbar(message.toSnackbarVisuals())
-            ?.also {
-                Napier.d(tag = TAG) { "showSnackBar. result = $it" }
-            }
-            ?: error("Snackbar HostState is not setup. ")
-    }
-
-    /**
-     * Show dialog and wait for user interaction.
-     *
-     * Dialog show at most one snackbar at a time.
-     */
     override suspend fun showDialog(dialogId: DialogId<*>): DialogAction? =
         mutex.withLock {
             Napier.d(tag = TAG) { "show dialog. dialogId = $dialogId" }

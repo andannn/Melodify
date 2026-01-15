@@ -27,6 +27,8 @@ import com.andannn.melodify.shared.compose.popup.OptionItem
 import com.andannn.melodify.shared.compose.popup.PopupController
 import com.andannn.melodify.shared.compose.popup.SleepCountingDialog
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
+import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
+import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.addToNextPlay
 import com.andannn.melodify.shared.compose.usecase.addToQueue
 import com.andannn.melodify.shared.compose.usecase.openSleepTimer
@@ -43,12 +45,14 @@ import kotlinx.coroutines.launch
 fun rememberPlayerPresenter(
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
+    snackBarController: SnackBarController = LocalSnackBarController.current,
 ): Presenter<PlayerUiState> =
     retainPresenter(
         repository,
         popupController,
+        snackBarController,
     ) {
-        PlayerPresenter(repository, popupController)
+        PlayerPresenter(repository, popupController, snackBarController)
     }
 
 @Stable
@@ -109,6 +113,7 @@ private const val TAG = "PlayerPresenter"
 private class PlayerPresenter(
     private val repository: Repository,
     private val popupController: PopupController,
+    private val snackBarController: SnackBarController,
 ) : RetainedPresenter<PlayerUiState>() {
     private val interactingMusicItemFlow =
         repository
@@ -295,7 +300,7 @@ private class PlayerPresenter(
                     ),
                 )
             if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
-                context(repository, popupController) {
+                context(repository, popupController, snackBarController) {
                     when (result.optionItem) {
                         OptionItem.PLAY_NEXT -> {
                             addToNextPlay(listOf(mediaItem))

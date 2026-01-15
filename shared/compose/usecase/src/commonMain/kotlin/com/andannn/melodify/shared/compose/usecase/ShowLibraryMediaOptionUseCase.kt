@@ -19,6 +19,7 @@ import com.andannn.melodify.shared.compose.popup.OptionDialog
 import com.andannn.melodify.shared.compose.popup.OptionItem
 import com.andannn.melodify.shared.compose.popup.PopupController
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
+import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import kotlinx.coroutines.flow.first
 
 /**
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.first
  */
 context(
     popController: PopupController,
+    _: SnackBarController,
     repository: Repository,
     fileDeleteHelper: MediaFileDeleteHelper,
     eventSink: NavigationRequestEventSink

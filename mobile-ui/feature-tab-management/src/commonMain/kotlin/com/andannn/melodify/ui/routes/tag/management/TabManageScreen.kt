@@ -18,7 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.components.tab.management.TabManagementUi
-import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
+import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.Navigator
 
 @OptIn(ExperimentalMaterial3Api::class)

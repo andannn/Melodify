@@ -15,6 +15,8 @@ import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
 import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
+import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.windows.librarydetail.LibraryDetailWindow
 import com.andannn.melodify.windows.main.MainWindow
 import com.andannn.melodify.windows.preferences.PreferenceWindow
@@ -54,6 +56,7 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
                     ) {
                         CompositionLocalProvider(
                             LocalPopupController provides retain { PopupController() },
+                            LocalSnackBarController provides retain { SnackBarController() },
                         ) {
                             when (windowType) {
                                 WindowType.Home -> {

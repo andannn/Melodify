@@ -65,6 +65,7 @@ fun MelodifyMobileApp(modifier: Modifier = Modifier) {
                     rememberSaveableStateHolderNavEntryDecorator(),
                     rememberRetainedValueStoreNavEntryDecorator(),
                     rememberPopupControllerNavEntryDecorator(),
+                    rememberSnackBarControllerNavEntryDecorator(),
                     rememberPlayerProviderNavEntryDecorator(),
                 ),
             entryProvider =

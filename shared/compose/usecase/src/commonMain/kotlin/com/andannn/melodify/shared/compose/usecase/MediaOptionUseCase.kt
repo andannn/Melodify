@@ -25,15 +25,16 @@ import com.andannn.melodify.shared.compose.popup.PopupController
 import com.andannn.melodify.shared.compose.popup.SleepCountingDialog
 import com.andannn.melodify.shared.compose.popup.SleepTimerOption
 import com.andannn.melodify.shared.compose.popup.SleepTimerOptionDialog
-import com.andannn.melodify.shared.compose.popup.SnackBarMessage
 import com.andannn.melodify.shared.compose.popup.internal.content.DuplicatedAlert
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
+import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
+import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarMessage
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 
 private const val TAG = "MediaOptionUseCase"
 
-context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
+context(userPreferenceRepository: UserPreferenceRepository, snackBarController: SnackBarController)
 suspend fun MediaItemModel.pinToHomeTab() {
     val tabKind =
         when (this) {
@@ -56,7 +57,7 @@ suspend fun MediaItemModel.pinToHomeTab() {
     )
 }
 
-context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
+context(userPreferenceRepository: UserPreferenceRepository, snackBarController: SnackBarController)
 suspend fun pinAllMusicToHomeTab() {
     pinToHomeTab(
         externalId = "all_music",
@@ -65,7 +66,7 @@ suspend fun pinAllMusicToHomeTab() {
     )
 }
 
-context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
+context(userPreferenceRepository: UserPreferenceRepository, snackBarController: SnackBarController)
 suspend fun pinAllVideoToHomeTab() {
     pinToHomeTab(
         externalId = "all_video",
@@ -74,7 +75,7 @@ suspend fun pinAllVideoToHomeTab() {
     )
 }
 
-context(userPreferenceRepository: UserPreferenceRepository, popupController: PopupController)
+context(userPreferenceRepository: UserPreferenceRepository, snackBarController: SnackBarController)
 suspend fun pinToHomeTab(
     externalId: String,
     tabName: String,
@@ -87,7 +88,7 @@ suspend fun pinToHomeTab(
             tabKind = tabKind,
         )
     if (exist) {
-        popupController.showSnackBar(SnackBarMessage.TabAlreadyExist)
+        snackBarController.showSnackBar(SnackBarMessage.TabAlreadyExist)
     } else {
         userPreferenceRepository.addNewCustomTab(
             externalId = externalId,
@@ -97,7 +98,7 @@ suspend fun pinToHomeTab(
     }
 }
 
-context(repo: Repository, popupController: PopupController)
+context(repo: Repository, snackBarController: SnackBarController)
 suspend fun addToNextPlay(items: List<MediaItemModel>) {
     val havePlayingQueue = repo.getPlayListQueue().isNotEmpty()
     if (havePlayingQueue) {
@@ -108,10 +109,10 @@ suspend fun addToNextPlay(items: List<MediaItemModel>) {
     } else {
         repo.playMediaList(items, 0)
     }
-    popupController.showSnackBar(SnackBarMessage.AddedToPlayNext)
+    snackBarController.showSnackBar(SnackBarMessage.AddedToPlayNext)
 }
 
-context(repo: Repository, popupController: PopupController)
+context(repo: Repository, snackBarController: SnackBarController)
 suspend fun addToQueue(items: List<MediaItemModel>) {
     val playListQueue = repo.getPlayListQueue()
     if (playListQueue.isNotEmpty()) {
@@ -122,7 +123,7 @@ suspend fun addToQueue(items: List<MediaItemModel>) {
     } else {
         repo.playMediaList(items, 0)
     }
-    popupController.showSnackBar(SnackBarMessage.AddedToPlayQueue)
+    snackBarController.showSnackBar(SnackBarMessage.AddedToPlayQueue)
 }
 
 context(playListRepository: PlayListRepository)
@@ -176,7 +177,7 @@ suspend fun openSleepTimer() {
     }
 }
 
-context(repo: Repository, popupController: PopupController)
+context(repo: Repository, popupController: PopupController, _: SnackBarController)
 suspend fun addToPlaylist(items: List<MediaItemModel>) {
     Napier.d(tag = TAG) { "addToPlaylist E" }
     val audios = items.filterIsInstance<AudioItemModel>()
@@ -203,7 +204,7 @@ suspend fun addToPlaylist(items: List<MediaItemModel>) {
     }
 }
 
-context(deleteHelper: MediaFileDeleteHelper, popupController: PopupController)
+context(deleteHelper: MediaFileDeleteHelper, snackBarController: SnackBarController)
 suspend fun deleteItems(items: List<MediaItemModel>) {
     if (items.isEmpty()) {
         return
@@ -212,14 +213,14 @@ suspend fun deleteItems(items: List<MediaItemModel>) {
     when (deleteHelper.deleteMedias(items)) {
         MediaFileDeleteHelper.Result.Success -> {
             if (items.size == 1) {
-                popupController.showSnackBar(SnackBarMessage.OneDeleteSuccess)
+                snackBarController.showSnackBar(SnackBarMessage.OneDeleteSuccess)
             } else {
-                popupController.showSnackBar(SnackBarMessage.MultipleDeleteSuccess(items.size))
+                snackBarController.showSnackBar(SnackBarMessage.MultipleDeleteSuccess(items.size))
             }
         }
 
         MediaFileDeleteHelper.Result.Failed -> {
-            popupController.showSnackBar(SnackBarMessage.DeleteFailed)
+            snackBarController.showSnackBar(SnackBarMessage.DeleteFailed)
         }
 
         MediaFileDeleteHelper.Result.Denied -> {
@@ -255,7 +256,7 @@ private suspend fun createNewPlayList(
     }
 }
 
-context(playListRepository: PlayListRepository, popupController: PopupController)
+context(playListRepository: PlayListRepository, popupController: PopupController, snackBarController: SnackBarController)
 private suspend fun PlayListItemModel.addAll(items: List<MediaItemModel>) {
     val duplicatedMedias =
         playListRepository.getDuplicatedMediaInPlayList(
@@ -271,7 +272,7 @@ private suspend fun PlayListItemModel.addAll(items: List<MediaItemModel>) {
                 items = items,
             )
 
-            popupController.showSnackBar(
+            snackBarController.showSnackBar(
                 message = SnackBarMessage.AddPlayListSuccess(name),
             )
         }
@@ -286,7 +287,7 @@ private suspend fun PlayListItemModel.addAll(items: List<MediaItemModel>) {
                     playListId = id.toLong(),
                     items = items.filter { it.id !in duplicatedMedias },
                 )
-                popupController.showSnackBar(
+                snackBarController.showSnackBar(
                     message = SnackBarMessage.AddPlayListSuccess(name),
                 )
             }

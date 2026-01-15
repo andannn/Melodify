@@ -28,7 +28,7 @@ import com.andannn.melodify.shared.compose.common.model.ShortcutItem
 import com.andannn.melodify.shared.compose.common.model.toDataSource
 import com.andannn.melodify.shared.compose.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.shared.compose.common.widgets.ShortcutItem
-import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
+import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.Navigator
 import org.jetbrains.compose.resources.stringResource
 

@@ -30,7 +30,7 @@ import com.andannn.melodify.shared.compose.common.widgets.DropDownMenuIconButton
 import com.andannn.melodify.shared.compose.components.play.control.ResumePointIndicatorContainer
 import com.andannn.melodify.shared.compose.components.tab.TabUi
 import com.andannn.melodify.shared.compose.components.tab.content.TabContent
-import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
+import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.Navigator
 
 @OptIn(ExperimentalMaterial3Api::class)
