@@ -5,6 +5,7 @@
 package com.andannn.melodify.shared.compose.common.mock
 
 import com.andannn.melodify.domain.model.AudioItemModel
+import com.andannn.melodify.domain.model.PlayListItemModel
 
 object MockData {
     val medias =
@@ -158,6 +159,50 @@ object MockData {
                 cdTrackNumber = 7,
                 discNumber = 1,
                 source = "local",
+            ),
+        )
+
+    val playLists =
+        listOf(
+            PlayListItemModel(
+                id = "pl_001",
+                name = "Weekly Top Hits",
+                artWorkUri = "https://picsum.photos/200/200?random=1",
+                trackCount = 50,
+                isFavoritePlayList = true,
+                isAudioPlayList = true,
+            ),
+            PlayListItemModel(
+                id = "pl_002",
+                name = "Deep Focus Coding",
+                artWorkUri = null,
+                trackCount = 120,
+                isFavoritePlayList = false,
+                isAudioPlayList = true,
+            ),
+            PlayListItemModel(
+                id = "pl_003",
+                name = "Tech Talk Highlights",
+                artWorkUri = "https://picsum.photos/200/200?random=2",
+                trackCount = 5,
+                isFavoritePlayList = true,
+                isAudioPlayList = false,
+            ),
+            PlayListItemModel(
+                id = "pl_004",
+                name = "The Ultimate Collection of Jazz, Blues, and Soul from the 1960s to 1980s Remastered",
+                artWorkUri = "https://picsum.photos/200/200?random=3",
+                trackCount = 89,
+                isFavoritePlayList = false,
+                isAudioPlayList = true,
+            ),
+            PlayListItemModel(
+                id = "pl_005",
+                name = "New Empty Playlist",
+                artWorkUri = null,
+                trackCount = 0,
+                isFavoritePlayList = false,
+                isAudioPlayList = true,
             ),
         )
 }

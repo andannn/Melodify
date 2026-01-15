@@ -125,7 +125,7 @@ private fun LargePlayerControlAreaPreview() {
                 title = "title",
                 artist = "artist",
                 progress = 0.5f,
-                duration = 10
+                duration = 10,
             )
         }
     }

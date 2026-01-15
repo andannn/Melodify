@@ -26,6 +26,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -34,6 +35,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
@@ -42,7 +44,9 @@ import com.andannn.melodify.domain.model.PlayListItemModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.mock.MockData
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.ActionType
 import com.andannn.melodify.shared.compose.common.widgets.LargePreviewCard
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
@@ -208,38 +212,15 @@ internal fun AddToPlayListRequestSheetContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Preview
 @Composable
-private fun retainedAddToPlayListSheetState(
-    isAudio: Boolean,
-    repository: Repository = LocalRepository.current,
-): Presenter<AddToPlayListSheetState> =
-    retainPresenter(isAudio, repository) {
-        AddToPlayListSheetPresenter(isAudio, repository)
-    }
-
-@OptIn(ExperimentalMaterial3Api::class)
-private class AddToPlayListSheetPresenter(
-    isAudio: Boolean,
-    repository: Repository,
-) : RetainedPresenter<AddToPlayListSheetState>() {
-    private val playListStateFlow =
-        repository
-            .getAllPlayListFlow(isAudio)
-            .stateIn(
-                retainedScope,
-                initialValue = emptyList(),
-                started = WhileSubscribed(),
+private fun AddToPlayListRequestSheetContentPreview() {
+    MelodifyTheme {
+        Surface {
+            AddToPlayListRequestSheetContent(
+                items = MockData.medias,
+                playLists = MockData.playLists,
             )
-
-    @Composable
-    override fun present(): AddToPlayListSheetState {
-        val playLists by playListStateFlow.collectAsStateWithLifecycle()
-        return AddToPlayListSheetState(playLists)
+        }
     }
 }
-
-@Stable
-private data class AddToPlayListSheetState(
-    val playLists: List<PlayListItemModel>,
-)
