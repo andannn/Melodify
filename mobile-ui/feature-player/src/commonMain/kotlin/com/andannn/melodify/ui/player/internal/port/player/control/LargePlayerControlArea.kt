@@ -13,14 +13,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.LinerWaveSlider
 import com.andannn.melodify.shared.compose.common.widgets.MarqueeText
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
@@ -39,8 +42,8 @@ internal fun LargePlayerControlArea(
     enable: Boolean = true,
     isPlaying: Boolean = false,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
-    onEvent: (PlayerUiEvent) -> Unit = {},
     isShuffle: Boolean = false,
+    onEvent: (PlayerUiEvent) -> Unit = {},
 ) {
     val titleState by rememberUpdatedState(newValue = title)
     Column(
@@ -110,5 +113,20 @@ internal fun LargePlayerControlArea(
             isShuffle = isShuffle,
             onEvent = onEvent,
         )
+    }
+}
+
+@Preview
+@Composable
+private fun LargePlayerControlAreaPreview() {
+    MelodifyTheme {
+        Surface(modifier = Modifier.height(300.dp)) {
+            LargePlayerControlArea(
+                title = "title",
+                artist = "artist",
+                progress = 0.5f,
+                duration = 10,
+            )
+        }
     }
 }

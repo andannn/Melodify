@@ -11,30 +11,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.PresetDisplaySetting
-import com.andannn.melodify.shared.compose.common.LocalRepository
-import com.andannn.melodify.shared.compose.common.RetainedPresenter
-import com.andannn.melodify.shared.compose.common.retainPresenter
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.change_default_sort_order
 import org.jetbrains.compose.resources.stringResource
-
-private const val TAG = "DefaultSortRuleSettingDialog"
 
 @Composable
 internal fun DefaultSortRuleSettingDialog(modifier: Modifier = Modifier) {
@@ -96,10 +85,9 @@ private fun DefaultSortRuleSettingDialogContent(
             }
 
             item {
-                val selectedPresetOption = selectedVideoPresetOption
                 PresetSortOptionSelector(
                     modifier = Modifier.fillMaxWidth(),
-                    selectedPresetOption = selectedPresetOption,
+                    selectedPresetOption = selectedVideoPresetOption,
                     isAudio = false,
                     onChangePresetSortRule = onChangeVideoSortRule,
                 )
@@ -108,92 +96,12 @@ private fun DefaultSortRuleSettingDialogContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Preview
 @Composable
-private fun retainDefaultSortRulePresenter(repository: Repository = LocalRepository.current) =
-    retainPresenter(repository) {
-        DefaultSortRulePresenter(repository)
-    }
-
-@OptIn(ExperimentalMaterial3Api::class)
-private class DefaultSortRulePresenter(
-    private val repository: Repository,
-) : RetainedPresenter<DefaultSortRuleState>() {
-    private val audioDefaultDisplaySetting =
-        repository
-            .getDefaultPresetSortRule(isAudio = true)
-            .stateIn(
-                retainedScope,
-                initialValue = null,
-                started = WhileSubscribed(5000),
-            )
-    private val videoDefaultDisplaySetting =
-        repository
-            .getDefaultPresetSortRule(isAudio = false)
-            .stateIn(
-                retainedScope,
-                initialValue = null,
-                started = WhileSubscribed(5000),
-            )
-
-    @Composable
-    override fun present(): DefaultSortRuleState {
-        val audioDisplaySetting by audioDefaultDisplaySetting.collectAsStateWithLifecycle()
-        val videoDisplaySetting by videoDefaultDisplaySetting.collectAsStateWithLifecycle()
-        val selectedAudioPresetOption =
-            remember(audioDisplaySetting) {
-                PresetDisplaySetting.entries.firstOrNull {
-                    audioDisplaySetting?.isPreset == true && it.displaySetting == audioDisplaySetting
-                }
-            }
-
-        val selectedVideoPresetOption =
-            remember(videoDisplaySetting) {
-                PresetDisplaySetting.entries.firstOrNull {
-                    videoDisplaySetting?.isPreset == true && it.displaySetting == videoDisplaySetting
-                }
-            }
-
-        return DefaultSortRuleState(
-            selectedAudioPresetOption,
-            selectedVideoPresetOption,
-        ) { event ->
-            when (event) {
-                is DefaultSortRuleStateEvent.ChangeAudioSortRule -> {
-                    retainedScope.launch {
-                        repository.saveDefaultSortRule(
-                            isAudio = true,
-                            event.sortRule,
-                        )
-                    }
-                }
-
-                is DefaultSortRuleStateEvent.ChangeVideoSortRule -> {
-                    retainedScope.launch {
-                        repository.saveDefaultSortRule(
-                            isAudio = false,
-                            event.sortRule,
-                        )
-                    }
-                }
-            }
+private fun DefaultSortRuleSettingDialogContentPreview() {
+    MelodifyTheme {
+        Surface {
+            DefaultSortRuleSettingDialogContent()
         }
     }
-}
-
-@Stable
-private data class DefaultSortRuleState(
-    val audioDisplaySetting: PresetDisplaySetting?,
-    val videoDisplaySetting: PresetDisplaySetting?,
-    val eventSink: (DefaultSortRuleStateEvent) -> Unit = {},
-)
-
-private sealed interface DefaultSortRuleStateEvent {
-    data class ChangeAudioSortRule(
-        val sortRule: PresetDisplaySetting,
-    ) : DefaultSortRuleStateEvent
-
-    data class ChangeVideoSortRule(
-        val sortRule: PresetDisplaySetting,
-    ) : DefaultSortRuleStateEvent
 }

@@ -35,9 +35,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.platform.formatTime
 import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -61,9 +63,9 @@ internal fun SyncedLyrics(
 @Stable
 internal data class SyncedLyricsState(
     val syncedLyricsLines: List<SyncedLyricsLine>,
-    val lyricsState: LyricsState,
-    val currentPlayingIndex: Int,
-    val eventSink: (SyncedLyricsEvent) -> Unit,
+    val lyricsState: LyricsState = LyricsState.AutoScrolling,
+    val currentPlayingIndex: Int = 0,
+    val eventSink: (SyncedLyricsEvent) -> Unit = {},
 )
 
 internal sealed interface SyncedLyricsEvent {
@@ -98,7 +100,7 @@ internal sealed interface LyricsState {
 @Composable
 private fun SyncedLyricsContent(
     state: SyncedLyricsState,
-    lazyListState: LazyListState,
+    lazyListState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier,
 ) {
     val activeIndex =
@@ -219,6 +221,76 @@ private fun LyricLine(
                     Icon(Icons.Default.PlayArrow, contentDescription = null)
                 }
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun LyricsViewContentSyncedLoadedPreview() {
+    MelodifyTheme {
+        Surface {
+            val lines =
+                remember {
+                    parseSyncedLyrics(
+                        """
+                        [00:00.05] Please hear me
+                        [00:03.45] I want to tell you
+                        [00:06.25] Please sing to me
+                        [00:10.35] I wanna hear your voice
+                        [00:16.27] 
+                        [00:27.94] 時の鼓動がまだ響く間
+                        [00:35.09] 裸の言葉胸に閉じこめた
+                        [00:40.55] 記憶の色が滲み始める
+                        [00:47.61] 破れた世界の隅で
+                        [00:55.08] 何も求めずにただ抱き寄せる
+                        [01:01.63] 今の僕にはそれしか出来ない
+                        [01:07.13] 震えた強がりでもプライドに見える
+                        [01:14.35] 逸れた子供のように
+                        [01:20.77] 最後の声さえも
+                        [01:27.78] 風がさまようせいで消された
+                        [01:34.19] 月に手を向けたまま
+                        [01:40.99] 君は空の星に消えた
+                        [01:49.53] 「側にいて」と抱きしめても
+                        [01:56.33] もう2度と聞こえない君の歌声は
+                        [02:02.99] 降り注いだ雨のサイレン
+                        [02:10.49] 僕の代わりに今この空が泣き続ける
+                        [02:25.08] 
+                        [02:31.40] これまで踏みつけてきた教えを
+                        [02:38.00] 今掻き集めこの胸に当てても
+                        [02:43.97] 救い求め歌うようなお遊戯に見える
+                        [02:50.84] 物語る大人のように
+                        [02:57.67] 言葉に寄り添うだけの
+                        [03:04.23] 空の愛と導きはいらない
+                        [03:10.86] 飾られた祈りでは
+                        [03:17.55] 明日の手掛かりに触れない
+                        [03:24.79] いつか君に届くはずの
+                        [03:31.28] 名も無き幼い詩(し)が描くわがままを
+                        [03:38.17] 忘れたいよ一度だけ
+                        [03:45.68] 眠れぬ悲しみがその詩(うた)を抱きしめてる
+                        [03:53.07] Freezing cold shatters my sorrow
+                        [03:59.42] And scorching sand puts it together again
+                        [04:06.32] Freezing cold shatters my sorrow
+                        [04:12.86] And scorching sand puts it together again
+                        [04:18.35] 投げ捨てられる正しさなら
+                        [04:24.79] 消える事ない間違いの方が良い
+                        [04:31.95] 臆病に隠してた声を今
+                        [04:38.50] この手でもう一度さらせば良い
+                        [04:47.83] 掴む軌道も咲く光も
+                        [04:54.79] 乾いた心のせいでモノクロに見えた
+                        [05:01.33] 忘れないよ今日の景色を
+                        [05:08.98] ありふれた願いが足元を照らしてくれる
+                        [05:17.06] 
+                        """.trimIndent(),
+                    )
+                }
+            SyncedLyricsContent(
+                state =
+                    SyncedLyricsState(
+                        syncedLyricsLines = lines,
+                        currentPlayingIndex = 0,
+                    ),
+            )
         }
     }
 }

@@ -173,7 +173,7 @@ private class SyncedLyricsPresenter(
     }
 }
 
-private fun parseSyncedLyrics(plainLyrics: String): List<SyncedLyricsLine> {
+internal fun parseSyncedLyrics(plainLyrics: String): List<SyncedLyricsLine> {
     val regex = Regex("""\[(\d{2}):(\d{2})\.(\d{2})\] (.*)""")
     val matches = regex.findAll(plainLyrics)
 

@@ -26,8 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.shared.compose.common.getCategoryResource
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,5 +97,25 @@ fun TabUi(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun TabUiPreview() {
+    MelodifyTheme {
+        TabUi(
+            state =
+                TabUiState(
+                    selectedIndex = 0,
+                    customTabList =
+                        listOf(
+                            CustomTab.AllMusic(1),
+                            CustomTab.AllVideo(2),
+                            CustomTab.AlbumDetail(3, albumId = "1", label = "Album 1"),
+                            CustomTab.AlbumDetail(3, albumId = "2", label = "Album 2"),
+                        ),
+                ),
+        )
     }
 }

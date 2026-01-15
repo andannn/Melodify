@@ -10,6 +10,7 @@ import com.andannn.melodify.domain.LyricRepository
 import com.andannn.melodify.domain.impl.toLyricEntity
 import com.andannn.melodify.domain.impl.toLyricModel
 import io.github.aakira.napier.Napier
+import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -49,7 +50,7 @@ internal class LyricRepositoryImpl(
                 )
                 val result = lyricDao.getLyricByMediaIdFlow(mediaId).first()?.toLyricModel()
                 emit(LyricRepository.State.Success(result ?: error("Lyric not found")))
-            } catch (e: Exception) {
+            } catch (e: ResponseException) {
                 Napier.d(tag = TAG) { "Error getting lyric: ${e.message}" }
                 emit(LyricRepository.State.Error(e))
             }

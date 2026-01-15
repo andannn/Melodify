@@ -23,16 +23,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.LinerWaveSlider
 import com.andannn.melodify.shared.compose.common.widgets.MarqueeText
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
@@ -40,6 +44,7 @@ import com.andannn.melodify.ui.LocalSystemUiController
 import com.andannn.melodify.ui.player.internal.common.PlayControlButtons
 import com.andannn.melodify.ui.player.internal.port.player.MaxImagePaddingStart
 import com.andannn.melodify.ui.player.internal.util.formatDuration
+import com.andannn.melodify.util.immersive.NoActionSystemUiController
 import kotlin.math.roundToLong
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -53,9 +58,9 @@ internal fun AVPlayerControlWidget(
     isPlaying: Boolean,
     playMode: PlayMode,
     modifier: Modifier = Modifier,
-    onEvent: (PlayerUiEvent) -> Unit,
-    onShrink: () -> Unit,
-    onToggleShowPlayQueue: () -> Unit,
+    onEvent: (PlayerUiEvent) -> Unit = {},
+    onShrink: () -> Unit = {},
+    onToggleShowPlayQueue: () -> Unit = {},
 ) {
     val systemUiController = LocalSystemUiController.current
 
@@ -174,6 +179,28 @@ internal fun AVPlayerControlWidget(
                 Icon(
                     imageVector = Icons.Default.Fullscreen,
                     contentDescription = "Play",
+                )
+            }
+        }
+    }
+}
+
+@Preview(widthDp = 2160, heightDp = 1080)
+@Composable
+private fun AVPlayerControlWidgetPreview() {
+    MelodifyTheme {
+        Surface {
+            CompositionLocalProvider(
+                LocalSystemUiController provides NoActionSystemUiController,
+            ) {
+                AVPlayerControlWidget(
+                    title = "title",
+                    subTitle = "subtitle",
+                    duration = 10000L,
+                    progress = 0.5f,
+                    isShuffle = false,
+                    isPlaying = true,
+                    playMode = PlayMode.REPEAT_ALL,
                 )
             }
         }

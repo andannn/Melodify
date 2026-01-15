@@ -15,10 +15,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.domain.model.CustomTab
+import com.andannn.melodify.domain.model.DisplaySetting
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.SmpIcon
 import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.OptionDialog
@@ -67,5 +72,25 @@ internal fun SheetItem(
             text = stringResource(item.text),
             style = MaterialTheme.typography.bodyLarge,
         )
+    }
+}
+
+@Preview
+@Composable
+private fun MediaOptionContentPreview() {
+    MelodifyTheme {
+        Surface {
+            MediaOptionContent(
+                OptionDialog(
+                    options =
+                        listOf(
+                            OptionItem.DELETE_MEDIA_FILE,
+                            OptionItem.DISPLAY_SETTING,
+                            OptionItem.SLEEP_TIMER,
+                            OptionItem.DELETE_PLAYLIST,
+                        ),
+                ),
+            )
+        }
     }
 }

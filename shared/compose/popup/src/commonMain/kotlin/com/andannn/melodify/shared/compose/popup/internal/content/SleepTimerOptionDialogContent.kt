@@ -17,8 +17,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.durationString
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.SleepTimerOption
 import melodify.shared.compose.resource.generated.resources.Res
@@ -91,5 +93,15 @@ private fun OptionItem(
             text = text,
             style = MaterialTheme.typography.bodyLarge,
         )
+    }
+}
+
+@Preview
+@Composable
+private fun SleepTimerOptionDialogContentPreview() {
+    MelodifyTheme {
+        Surface {
+            SleepTimerOptionDialogContent()
+        }
     }
 }

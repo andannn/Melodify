@@ -18,23 +18,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.core.syncer.ContentType
-import com.andannn.melodify.core.syncer.MediaLibrarySyncRepository
 import com.andannn.melodify.core.syncer.SyncInfo
-import com.andannn.melodify.core.syncer.SyncState
 import com.andannn.melodify.core.syncer.SyncStatus
-import com.andannn.melodify.shared.compose.common.RetainedPresenter
-import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.DialogAction
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.sync_progress_album
@@ -42,8 +37,7 @@ import melodify.shared.compose.resource.generated.resources.sync_progress_artist
 import melodify.shared.compose.resource.generated.resources.sync_progress_genre
 import melodify.shared.compose.resource.generated.resources.sync_progress_media
 import melodify.shared.compose.resource.generated.resources.sync_progress_video
-import org.jetbrains.compose.resources.getString
-import org.koin.mp.KoinPlatform.getKoin
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun SyncStatusDialogContent(
@@ -88,9 +82,8 @@ private fun SyncStatusDialog(
                     key = { it.key },
                 ) { (contentType, info) ->
                     val (progress, detail) = info
-                    val progressString by produceState("", info.progress, contentType) {
-                        value = progress?.toInfoString(contentType) ?: ""
-                    }
+
+                    val progressString = progress?.toInfoString(contentType) ?: ""
                     Column {
                         Text(progressString, style = MaterialTheme.typography.titleMedium)
 
@@ -122,7 +115,7 @@ private fun SyncStatusDialog(
                                     append(info.item)
                                 }
                             Text(
-                                modifier = Modifier.padding(top = 4.dp, start = 24.dp),
+                                modifier = Modifier.padding(top = 4.dp, start = 24.dp).fillMaxWidth(),
                                 text = text,
                                 maxLines = 1,
                                 overflow = TextOverflow.MiddleEllipsis,
@@ -157,53 +150,58 @@ private fun SyncStatusDialog(
     }
 }
 
-private suspend fun SyncInfo.Progress.toInfoString(type: ContentType): String =
-    when (type) {
-        ContentType.MEDIA -> getString(Res.string.sync_progress_media, progress, total)
-        ContentType.ALBUM -> getString(Res.string.sync_progress_album, progress, total)
-        ContentType.ARTIST -> getString(Res.string.sync_progress_artist, progress, total)
-        ContentType.GENRE -> getString(Res.string.sync_progress_genre, progress, total)
-        ContentType.VIDEO -> getString(Res.string.sync_progress_video, progress, total)
-    }
-
 @Composable
-private fun retainSyncStatusPresenter(repository: MediaLibrarySyncRepository = getKoin().get()) =
-    retainPresenter(
-        repository,
-    ) {
-        SyncStatusPresenter(repository)
+private fun SyncInfo.Progress.toInfoString(type: ContentType): String =
+    when (type) {
+        ContentType.MEDIA -> stringResource(Res.string.sync_progress_media, progress, total)
+        ContentType.ALBUM -> stringResource(Res.string.sync_progress_album, progress, total)
+        ContentType.ARTIST -> stringResource(Res.string.sync_progress_artist, progress, total)
+        ContentType.GENRE -> stringResource(Res.string.sync_progress_genre, progress, total)
+        ContentType.VIDEO -> stringResource(Res.string.sync_progress_video, progress, total)
     }
 
-private class SyncStatusPresenter(
-    private val repository: MediaLibrarySyncRepository,
-) : RetainedPresenter<SyncStatusDialogState>() {
-    init {
-        if (repository.lastSyncStatusFlow().value == null) {
-            repository.startSync()
+@Preview
+@Composable
+private fun SyncStatusDialogPreview() {
+    MelodifyTheme {
+        Surface {
+            SyncStatusDialog(
+                status = SyncStatus.START,
+                syncInfoMap =
+                    mapOf(
+                        ContentType.MEDIA to
+                            SyncInfo(
+                                progress = SyncInfo.Progress(10, 100),
+                                insertDeleteInfo =
+                                    listOf(
+                                        SyncInfo.Info(
+                                            isInsert = true,
+                                            item = "item1",
+                                        ),
+                                        SyncInfo.Info(
+                                            isInsert = false,
+                                            item = "item2",
+                                        ),
+                                    ),
+                            ),
+                        ContentType.VIDEO to
+                            SyncInfo(
+                                progress = SyncInfo.Progress(11, 100),
+                            ),
+                        ContentType.ARTIST to
+                            SyncInfo(
+                                progress = SyncInfo.Progress(12, 100),
+                            ),
+                        ContentType.ALBUM to
+                            SyncInfo(
+                                progress = SyncInfo.Progress(13, 100),
+                            ),
+                        ContentType.GENRE to
+                            SyncInfo(
+                                progress = SyncInfo.Progress(14, 100),
+                            ),
+                    ),
+            )
         }
     }
-
-    @Composable
-    override fun present(): SyncStatusDialogState {
-        val syncStatus by repository.lastSyncStatusFlow().collectAsStateWithLifecycle()
-        return SyncStatusDialogState(
-            syncStatus ?: SyncState(),
-        ) {
-            when (it) {
-                SyncStatusDialogEvent.OnCancel -> repository.cancelCurrentSync()
-                SyncStatusDialogEvent.OnReSync -> repository.startSync()
-            }
-        }
-    }
-}
-
-private data class SyncStatusDialogState(
-    val syncState: SyncState,
-    val eventSink: (SyncStatusDialogEvent) -> Unit = {},
-)
-
-private sealed interface SyncStatusDialogEvent {
-    data object OnCancel : SyncStatusDialogEvent
-
-    data object OnReSync : SyncStatusDialogEvent
 }

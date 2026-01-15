@@ -14,25 +14,19 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.andannn.melodify.domain.Repository
-import com.andannn.melodify.shared.compose.common.LocalRepository
-import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.durationString
-import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.DialogAction
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.stateIn
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.cancel_timer
 import melodify.shared.compose.resource.generated.resources.sleep_timer
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 internal fun SleepTimerCountingContent(
@@ -40,7 +34,7 @@ internal fun SleepTimerCountingContent(
     onAction: (DialogAction.SleepTimerCountingDialog) -> Unit = {},
 ) {
     val state = retainCounterPresenter().present()
-    SleepTimerCounterSheetContent(
+    SleepTimerCounterSheet(
         modifier = modifier,
         remain = state.remainTime,
         onClickCancel = {
@@ -50,7 +44,7 @@ internal fun SleepTimerCountingContent(
 }
 
 @Composable
-private fun SleepTimerCounterSheetContent(
+private fun SleepTimerCounterSheet(
     remain: Duration,
     modifier: Modifier = Modifier,
     onClickCancel: () -> Unit = {},
@@ -101,33 +95,14 @@ private fun SleepTimerCounterSheetContent(
     }
 }
 
+@Preview
 @Composable
-private fun retainCounterPresenter(repository: Repository = LocalRepository.current) =
-    retainPresenter(
-        repository,
-    ) {
-        CounterPresenter(repository)
-    }
-
-private class CounterPresenter(
-    repository: Repository,
-) : RetainedPresenter<CounterState>() {
-    private val remainedTimeFlow =
-        repository
-            .observeRemainTime()
-            .stateIn(
-                retainedScope,
-                initialValue = 0.seconds,
-                started = WhileSubscribed(5000),
+private fun SleepTimerCountingContentPreview() {
+    MelodifyTheme {
+        Surface {
+            SleepTimerCounterSheet(
+                remain = 12.minutes,
             )
-
-    @Composable
-    override fun present(): CounterState {
-        val remainTime by remainedTimeFlow.collectAsStateWithLifecycle()
-        return CounterState(remainTime)
+        }
     }
 }
-
-private data class CounterState(
-    val remainTime: Duration,
-)
