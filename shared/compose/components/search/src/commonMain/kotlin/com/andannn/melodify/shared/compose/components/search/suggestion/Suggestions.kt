@@ -18,11 +18,14 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 
 /**
  * Content of the search bar when expanded.
@@ -50,8 +53,8 @@ internal fun Suggestions(
 
 @Composable
 internal fun SuggestionUi(
-    modifier: Modifier,
     uiState: SuggestionsUiState,
+    modifier: Modifier = Modifier,
     onConfirmSearch: (String) -> Unit = {},
 ) {
     Box(
@@ -138,6 +141,28 @@ private fun SuggestionsContent(
                     )
                 }
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun SuggestionUiLoadingHistoryPreview() {
+    MelodifyTheme {
+        Surface {
+            SuggestionUi(
+                uiState =
+                    SuggestionsUiState(
+                        SuggestionsState.HistoryLoaded(
+                            listOf(
+                                "Suggestion 1",
+                                "Suggestion 2",
+                                "Suggestion 3",
+                                "Suggestion 4",
+                            ),
+                        ),
+                    ),
+            )
         }
     }
 }

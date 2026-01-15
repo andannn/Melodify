@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.BrightnessMedium
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -105,7 +106,9 @@ private fun BrightnessState.icon() =
 @Composable
 private fun BrightnessIndicatorPreview() {
     MelodifyTheme {
-        BrightnessIndicator(state = BrightnessState.Auto)
+        Surface {
+            BrightnessIndicator(state = BrightnessState.Auto)
+        }
     }
 }
 
@@ -113,6 +116,8 @@ private fun BrightnessIndicatorPreview() {
 @Composable
 private fun BrightnessIndicatorPreview2() {
     MelodifyTheme {
-        BrightnessIndicator(state = BrightnessState.Manual(0.6f))
+        Surface {
+            BrightnessIndicator(state = BrightnessState.Manual(0.6f))
+        }
     }
 }

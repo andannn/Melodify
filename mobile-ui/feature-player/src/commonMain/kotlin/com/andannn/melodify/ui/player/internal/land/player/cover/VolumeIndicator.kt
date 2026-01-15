@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -25,8 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.util.volumn.VolumeController
 import io.github.andannn.RetainedModel
 import io.github.andannn.retainRetainedModel
@@ -110,5 +113,35 @@ private fun getVolumeIcon(progress: Float): ImageVector {
         Icons.AutoMirrored.Filled.VolumeDown
     } else {
         Icons.AutoMirrored.Filled.VolumeUp
+    }
+}
+
+@Preview
+@Composable
+private fun VolumeIndicatorPreview1() {
+    MelodifyTheme {
+        Surface {
+            VolumeIndicator(volume = 0, maxVolume = 10)
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun VolumeIndicatorPreview2() {
+    MelodifyTheme {
+        Surface {
+            VolumeIndicator(volume = 4, maxVolume = 10)
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun VolumeIndicatorPreview3() {
+    MelodifyTheme {
+        Surface {
+            VolumeIndicator(volume = 6, maxVolume = 10)
+        }
     }
 }
