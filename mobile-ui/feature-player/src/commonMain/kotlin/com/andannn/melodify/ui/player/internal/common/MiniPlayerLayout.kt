@@ -99,7 +99,7 @@ internal fun MiniPlayerLayout(
 }
 
 @Composable
-internal fun PlayingInfo(
+private fun PlayingInfo(
     modifier: Modifier = Modifier,
     title: String,
     artist: String,

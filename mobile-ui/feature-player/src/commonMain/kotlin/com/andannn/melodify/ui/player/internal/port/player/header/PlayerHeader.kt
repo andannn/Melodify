@@ -14,18 +14,21 @@ import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 
 @Composable
 internal fun PlayerHeader(
     modifier: Modifier,
     showTimerIcon: Boolean = true,
-    onShrinkButtonClick: () -> Unit,
-    onOptionIconClick: () -> Unit,
-    onTimerIconClick: () -> Unit,
+    onShrinkButtonClick: () -> Unit = {},
+    onOptionIconClick: () -> Unit = {},
+    onTimerIconClick: () -> Unit = {},
 ) {
     Row(modifier = modifier) {
         IconButton(
@@ -59,6 +62,18 @@ internal fun PlayerHeader(
             onClick = onOptionIconClick,
         ) {
             Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Menu")
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PlayerHeaderPreview() {
+    MelodifyTheme {
+        Surface {
+            PlayerHeader(
+                modifier = Modifier,
+            )
         }
     }
 }

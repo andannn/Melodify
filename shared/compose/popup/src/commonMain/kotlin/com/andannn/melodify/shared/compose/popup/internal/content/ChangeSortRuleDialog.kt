@@ -25,42 +25,33 @@ import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material.icons.outlined.Timeline
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.isAscending
 import com.andannn.melodify.domain.model.isAudio
-import com.andannn.melodify.shared.compose.common.LocalRepository
-import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.getCategoryResource
 import com.andannn.melodify.shared.compose.common.headerText
-import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.common.subTitle
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.DropDownMenuIconButton
 import com.andannn.melodify.shared.compose.common.widgets.TransparentBackgroundListItem
 import com.andannn.melodify.shared.compose.popup.ChangeSortRuleDialog
-import io.github.aakira.napier.Napier
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.album_page_title
 import melodify.shared.compose.resource.generated.resources.artist_page_title
@@ -593,106 +584,6 @@ private fun SortOptionType.createSortOption(isAscending: Boolean) =
         SortOptionType.None -> SortOption.NONE
     }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun retainedChangeSortRulePresenter(
-    customTab: CustomTab,
-    repository: Repository = LocalRepository.current,
-) = retainPresenter(
-    customTab,
-    repository,
-) {
-    ChangeSortRulePresenter(
-        repository = repository,
-        customTab = customTab,
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-private class ChangeSortRulePresenter(
-    private val customTab: CustomTab,
-    private val repository: Repository,
-) : RetainedPresenter<UiState>() {
-    private val displaySettingFlow =
-        repository
-            .getCurrentSortRule(customTab)
-            .stateIn(
-                retainedScope,
-                initialValue = DisplaySetting.Preset.Audio.DefaultPreset,
-                started = WhileSubscribed(5000),
-            )
-
-    private val isShowVideoProgressFlow =
-        repository
-            .getIsShowVideoProgressFlow(customTab.tabId)
-            .stateIn(
-                retainedScope,
-                initialValue = false,
-                started = WhileSubscribed(5000),
-            )
-
-    @Composable
-    override fun present(): UiState {
-        val displaySetting by displaySettingFlow.collectAsStateWithLifecycle()
-        val isShowVideoProgress by isShowVideoProgressFlow.collectAsStateWithLifecycle()
-
-        return UiState(
-            displaySetting = displaySetting,
-            isShowVideoProgress = isShowVideoProgress,
-        ) { event ->
-            when (event) {
-                is UiEvent.OnChangeSortRule -> {
-                    retainedScope.launch {
-                        repository.saveSortRuleForTab(customTab, event.displaySetting)
-                    }
-                }
-
-                UiEvent.OnCustomRadioButtonClick -> {
-                    retainedScope.launch {
-                        val currentTab = customTab
-                        val customSortRule = repository.getTabCustomSortRule(currentTab)
-
-                        if (customSortRule != null && !customSortRule.isPreset) {
-                            Napier.d(tag = TAG) { "Already has custom sort rule. $customSortRule" }
-                        }
-
-                        repository.saveSortRuleForTab(
-                            currentTab,
-                            DisplaySetting.getDefaultCustom(customTab.isAudio()),
-                        )
-                    }
-                }
-
-                UiEvent.OnToggleIsShowVideoProgress -> {
-                    retainedScope.launch {
-                        repository.setIsShowVideoProgress(
-                            tabId = customTab.tabId,
-                            isShow = !isShowVideoProgress,
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Stable
-private data class UiState(
-    val displaySetting: DisplaySetting,
-    val isShowVideoProgress: Boolean,
-    val eventSink: (UiEvent) -> Unit = {},
-)
-
-private sealed interface UiEvent {
-    data class OnChangeSortRule(
-        val displaySetting: DisplaySetting,
-    ) : UiEvent
-
-    data object OnCustomRadioButtonClick : UiEvent
-
-    data object OnToggleIsShowVideoProgress : UiEvent
-}
-
 private fun SortOptionType.label() =
     when (this) {
         SortOptionType.Album -> Res.string.album_page_title
@@ -772,3 +663,45 @@ private fun SortOptionType.orderLabel(ascending: Boolean): String =
             error("Never. This should not happen.")
         }
     }
+
+@Preview
+@Composable
+private fun ChangeSortRuleDialogContentAudioPreview() {
+    MelodifyTheme {
+        Surface {
+            ChangeSortRuleDialogContent(
+                tab = CustomTab.AllMusic(tabId = 1),
+                isShowVideoProgress = true,
+                displaySetting = DisplaySetting.Preset.Audio.AlbumASC,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ChangeSortRuleDialogContentAudioCustomPreview() {
+    MelodifyTheme {
+        Surface {
+            ChangeSortRuleDialogContent(
+                tab = CustomTab.AllMusic(tabId = 1),
+                isShowVideoProgress = true,
+                displaySetting = DisplaySetting.Preset.Audio.DefaultCustom,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ChangeSortRuleDialogContentVideoPreview() {
+    MelodifyTheme {
+        Surface {
+            ChangeSortRuleDialogContent(
+                tab = CustomTab.AllVideo(tabId = 1),
+                isShowVideoProgress = true,
+                displaySetting = DisplaySetting.Preset.Video.BucketNameASC,
+            )
+        }
+    }
+}

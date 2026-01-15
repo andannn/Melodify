@@ -13,3 +13,17 @@ interface SystemUiController {
 
     fun setSystemUiStyleAuto()
 }
+
+object NoActionSystemUiController : SystemUiController {
+    override fun setSystemUiVisibility(visible: Boolean) {
+    }
+
+    override fun setImmersiveModeEnabled(enable: Boolean) {
+    }
+
+    override fun setSystemUiDarkTheme(isDark: Boolean) {
+    }
+
+    override fun setSystemUiStyleAuto() {
+    }
+}

@@ -8,11 +8,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.andannn.melodify.domain.model.LyricModel
 import com.andannn.melodify.shared.compose.common.Presenter
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.components.lyrics.content.PlainLyricsView
 import com.andannn.melodify.shared.compose.components.lyrics.content.SyncedLyrics
 
@@ -85,5 +89,58 @@ private fun LyricsViewContent(
         }
 
         LyricState.Idle -> {}
+    }
+}
+
+@Preview
+@Composable
+private fun LyricsViewContentLoadingPreview() {
+    MelodifyTheme {
+        LyricsViewContent(
+            lyricState = LyricState.Loading,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun LyricsViewContentErrorPreview() {
+    MelodifyTheme {
+        Surface {
+            LyricsViewContent(
+                lyricState = LyricState.Error,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun LyricsViewContentNoPlayingPreview() {
+    MelodifyTheme {
+        Surface {
+            LyricsViewContent(
+                lyricState = LyricState.NoPlaying,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun LyricsViewContentPlainLoadedPreview() {
+    MelodifyTheme {
+        Surface {
+            LyricsViewContent(
+                lyricState =
+                    LyricState.Loaded(
+                        lyric =
+                            LyricModel(
+                                syncedLyrics = "",
+                                plainLyrics = "AAAA",
+                            ),
+                    ),
+            )
+        }
     }
 }

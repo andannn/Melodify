@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.DialogId
 import com.andannn.melodify.shared.compose.popup.DialogType
@@ -74,7 +77,7 @@ abstract class AlertDialog(
 @Composable
 private fun AlertMessageDialogContent(
     dialogId: AlertDialog,
-    onAction: (DialogAction.AlertDialog) -> Unit,
+    onAction: (DialogAction.AlertDialog) -> Unit = {},
 ) {
     Column(modifier = Modifier.padding(16.dp)) {
         dialogId.title?.let {
@@ -115,6 +118,54 @@ private fun AlertMessageDialogContent(
                 Text(stringResource(dialogId.positive))
             }
             Spacer(modifier = Modifier.width(8.dp))
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun AlertMessageDialogContent() {
+    MelodifyTheme {
+        Surface {
+            AlertMessageDialogContent(
+                dialogId = ConfirmDeletePlaylist,
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun AlertMessageDialogContent1() {
+    MelodifyTheme {
+        Surface {
+            AlertMessageDialogContent(
+                dialogId = InvalidPathAlert,
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun AlertMessageDialogContent2() {
+    MelodifyTheme {
+        Surface {
+            AlertMessageDialogContent(
+                dialogId = DuplicatedAlert,
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun AlertMessageDialogContent3() {
+    MelodifyTheme {
+        Surface {
+            AlertMessageDialogContent(
+                dialogId = ConfirmDeletePlaylist,
+            )
         }
     }
 }
