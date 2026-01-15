@@ -1,5 +1,3 @@
-
-
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.compose.compiler)
@@ -22,6 +20,8 @@ kotlin {
             implementation(project(":shared:compose:components:play-control"))
             implementation(project(":shared:compose:components:tab-content"))
             implementation(project(":mobile-ui:common"))
+            implementation(project(":shared:compose:popup:dialog:entry:sync"))
+            implementation(project(":shared:compose:popup:dialog:entry:sort-rule"))
         }
     }
 }

@@ -20,12 +20,13 @@ import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
-import com.andannn.melodify.shared.compose.popup.OptionDialog
-import com.andannn.melodify.shared.compose.popup.OptionItem
 import com.andannn.melodify.shared.compose.popup.PopupController
-import com.andannn.melodify.shared.compose.popup.SleepCountingDialog
+import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialog
+import com.andannn.melodify.shared.compose.popup.entry.option.OptionDialog
+import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
+import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.SleepCountingDialog
+import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.SleepTimerCountingDialog
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
@@ -231,7 +232,7 @@ private class PlayerPresenter(
                             popupController.showDialogAndWaitAction(
                                 SleepCountingDialog,
                             )
-                        if (result is DialogAction.SleepTimerCountingDialog.OnCancelTimer) {
+                        if (result is SleepTimerCountingDialog.OnCancelTimer) {
                             repository.cancelSleepTimer()
                         }
                     }
@@ -299,7 +300,7 @@ private class PlayerPresenter(
                             ),
                     ),
                 )
-            if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
+            if (result is MediaOptionDialog.ClickOptionItem) {
                 context(repository, popupController, snackBarController) {
                     when (result.optionItem) {
                         OptionItem.PLAY_NEXT -> {

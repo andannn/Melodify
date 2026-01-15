@@ -27,8 +27,6 @@ private class SnackBarControllerNavEntryDecorator<T : Any> :
                 LocalSnackBarController provides holder,
             ) {
                 entry.Content()
-
-                ActionDialog()
             }
         },
     )

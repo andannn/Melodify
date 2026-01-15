@@ -21,8 +21,12 @@ kotlin {
         commonMain.dependencies {
             api(project(":shared:domain:api"))
             api(project(":shared:compose:common"))
-            api(project(":shared:compose:popup:dialog"))
+            api(project(":shared:compose:popup:dialog:controller"))
             api(project(":shared:compose:popup:snack-bar"))
+            implementation(project(":shared:compose:popup:dialog:entry:option"))
+            implementation(project(":shared:compose:popup:dialog:entry:sleep-timer"))
+            implementation(project(":shared:compose:popup:dialog:entry:alert"))
+            implementation(project(":shared:compose:popup:dialog:entry:play-list"))
         }
     }
 }

@@ -15,6 +15,17 @@ import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
 import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.common.entryProvider
+import com.andannn.melodify.shared.compose.popup.entry.alert.alertDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.library.addLibraryPathDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.option.addMediaOptionDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.play.list.addToPlayListDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.play.list.newPlayListDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.sleepTimerCountingDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.sleepTimerOptionDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.sort.rule.addChangeSortRuleDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.sort.rule.defaultSortRuleSettingDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.sync.syncStatusDialogEntry
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.windows.librarydetail.LibraryDetailWindow
@@ -112,3 +123,20 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
         )
     }
 }
+
+private fun PopupController(): PopupController =
+    PopupController(
+        entryProvider =
+            entryProvider {
+                addMediaOptionDialogEntry()
+                addChangeSortRuleDialogEntry()
+                newPlayListDialogEntry()
+                addToPlayListDialogEntry()
+                alertDialogEntry()
+                defaultSortRuleSettingDialogEntry()
+                sleepTimerCountingDialogEntry()
+                sleepTimerOptionDialogEntry()
+                syncStatusDialogEntry()
+                addLibraryPathDialogEntry()
+            },
+    )

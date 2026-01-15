@@ -12,6 +12,16 @@ import androidx.navigation3.runtime.NavEntryDecorator
 import com.andannn.melodify.shared.compose.popup.ActionDialog
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
 import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.common.entryProvider
+import com.andannn.melodify.shared.compose.popup.entry.alert.alertDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.option.addMediaOptionDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.play.list.addToPlayListDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.play.list.newPlayListDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.sleepTimerCountingDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.sleepTimerOptionDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.sort.rule.addChangeSortRuleDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.sort.rule.defaultSortRuleSettingDialogEntry
+import com.andannn.melodify.shared.compose.popup.entry.sync.syncStatusDialogEntry
 
 @Composable
 internal fun <T : Any> rememberPopupControllerNavEntryDecorator(): NavEntryDecorator<T> = remember { PopupControllerNavEntryDecorator() }
@@ -30,4 +40,20 @@ private class PopupControllerNavEntryDecorator<T : Any> :
                 ActionDialog()
             }
         },
+    )
+
+private fun PopupController(): PopupController =
+    PopupController(
+        entryProvider =
+            entryProvider {
+                addMediaOptionDialogEntry()
+                addChangeSortRuleDialogEntry()
+                newPlayListDialogEntry()
+                addToPlayListDialogEntry()
+                alertDialogEntry()
+                defaultSortRuleSettingDialogEntry()
+                sleepTimerCountingDialogEntry()
+                sleepTimerOptionDialogEntry()
+                syncStatusDialogEntry()
+            },
     )

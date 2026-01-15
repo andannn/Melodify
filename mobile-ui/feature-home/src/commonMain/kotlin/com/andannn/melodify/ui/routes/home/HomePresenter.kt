@@ -14,10 +14,10 @@ import com.andannn.melodify.shared.compose.components.tab.TabUiState
 import com.andannn.melodify.shared.compose.components.tab.content.TabContentState
 import com.andannn.melodify.shared.compose.components.tab.content.retainTabContentPresenter
 import com.andannn.melodify.shared.compose.components.tab.retainTabUiPresenter
-import com.andannn.melodify.shared.compose.popup.DefaultSortRuleSettingDialog
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
 import com.andannn.melodify.shared.compose.popup.PopupController
-import com.andannn.melodify.shared.compose.popup.SyncStatusDialog
+import com.andannn.melodify.shared.compose.popup.entry.sort.rule.DefaultSortRuleSettingDialog
+import com.andannn.melodify.shared.compose.popup.entry.sync.SyncStatusDialog
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen

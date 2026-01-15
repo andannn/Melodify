@@ -17,11 +17,11 @@ import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.components.library.detail.LibraryContentState
 import com.andannn.melodify.shared.compose.components.library.detail.retainLibraryDetailPresenter
-import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
-import com.andannn.melodify.shared.compose.popup.OptionDialog
-import com.andannn.melodify.shared.compose.popup.OptionItem
 import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialog
+import com.andannn.melodify.shared.compose.popup.entry.option.OptionDialog
+import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
@@ -120,7 +120,7 @@ private class LibraryDetailScreenPresenter(
                                             ),
                                         )
 
-                                    if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
+                                    if (result is MediaOptionDialog.ClickOptionItem) {
                                         when (result.optionItem) {
                                             OptionItem.ADD_TO_HOME_TAB -> {
                                                 if (dataSource == LibraryDataSource.AllSong) {

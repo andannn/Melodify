@@ -20,6 +20,8 @@ kotlin {
             implementation(project(":shared:compose:usecase"))
             implementation(project(":shared:domain:api"))
             implementation(project(":shared:platform"))
+            implementation(project(":shared:compose:popup:dialog:entry:option"))
+            implementation(project(":shared:compose:popup:dialog:entry:sleep-timer"))
         }
     }
 }
