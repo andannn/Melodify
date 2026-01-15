@@ -24,7 +24,7 @@ import com.andannn.melodify.shared.compose.components.library.detail.LibraryCont
 import com.andannn.melodify.shared.compose.components.library.detail.retainLibraryDetailPresenter
 import com.andannn.melodify.shared.compose.components.library.item.MediaLibraryItem
 import com.andannn.melodify.shared.compose.popup.ActionDialog
-import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
+import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.WindowNavigator
 import com.andannn.melodify.windows.handleMenuEvent

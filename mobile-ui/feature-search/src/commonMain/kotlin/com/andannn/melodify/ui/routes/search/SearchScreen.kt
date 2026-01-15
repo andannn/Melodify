@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.components.search.Search
-import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
+import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.Navigator
 
 @Composable

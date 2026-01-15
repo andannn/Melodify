@@ -21,6 +21,7 @@ kotlin {
             implementation(project(":shared:compose:components:library-item"))
             implementation(project(":shared:compose:components:library-detail"))
             implementation(project(":mobile-ui:common"))
+            implementation(project(":shared:compose:popup:dialog:entry:option"))
         }
     }
 }

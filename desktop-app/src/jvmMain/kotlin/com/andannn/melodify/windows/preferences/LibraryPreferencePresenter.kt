@@ -12,11 +12,11 @@ import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
-import com.andannn.melodify.shared.compose.popup.NewPlayListDialog
 import com.andannn.melodify.shared.compose.popup.PopupController
-import com.andannn.melodify.shared.compose.popup.internal.content.InvalidPathAlert
+import com.andannn.melodify.shared.compose.popup.entry.alert.InvalidPathAlert
+import com.andannn.melodify.shared.compose.popup.entry.play.list.InputDialogResult
+import com.andannn.melodify.shared.compose.popup.entry.play.list.NewPlayListDialog
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -81,7 +81,7 @@ class LibraryPreferencePresenter(
         retainedScope.launch {
             val result = popUpController.showDialogAndWaitAction(NewPlayListDialog)
 
-            if (result is DialogAction.InputDialog.Accept) {
+            if (result is InputDialogResult.Accept) {
                 val success = repository.addLibraryPath(result.input)
 
                 if (!success) {

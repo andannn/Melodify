@@ -17,12 +17,14 @@ import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.components.library.detail.LibraryContentState
 import com.andannn.melodify.shared.compose.components.library.detail.retainLibraryDetailPresenter
-import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
-import com.andannn.melodify.shared.compose.popup.OptionDialog
-import com.andannn.melodify.shared.compose.popup.OptionItem
 import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialog
+import com.andannn.melodify.shared.compose.popup.entry.option.OptionDialog
+import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
+import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
+import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.pinAllMusicToHomeTab
 import com.andannn.melodify.shared.compose.usecase.pinAllVideoToHomeTab
 import com.andannn.melodify.shared.compose.usecase.showLibraryMediaOption
@@ -36,6 +38,7 @@ internal fun retainLibraryDetailScreenPresenter(
     navigator: Navigator,
     repository: Repository = LocalRepository.current,
     popupController: PopupController = LocalPopupController.current,
+    snackBarController: SnackBarController = LocalSnackBarController.current,
     mediaFileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
     navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
 ): Presenter<LibraryDetailScreenState> =
@@ -44,6 +47,7 @@ internal fun retainLibraryDetailScreenPresenter(
         navigator,
         repository,
         popupController,
+        snackBarController,
         mediaFileDeleteHelper,
         navigationRequestEventSink,
     ) {
@@ -52,6 +56,7 @@ internal fun retainLibraryDetailScreenPresenter(
             navigator,
             repository,
             popupController,
+            snackBarController,
             mediaFileDeleteHelper,
             navigationRequestEventSink,
         )
@@ -75,6 +80,7 @@ private class LibraryDetailScreenPresenter(
     private val navigator: Navigator,
     private val repository: Repository,
     private val popupController: PopupController,
+    private val snackBarController: SnackBarController,
     private val fileDeleteHelper: MediaFileDeleteHelper,
     private val navigationRequestEventSink: NavigationRequestEventSink,
 ) : RetainedPresenter<LibraryDetailScreenState>() {
@@ -87,7 +93,13 @@ private class LibraryDetailScreenPresenter(
             dataSource = dataSource,
             state = state,
         ) { event ->
-            context(repository, popupController, fileDeleteHelper, navigationRequestEventSink) {
+            context(
+                repository,
+                popupController,
+                snackBarController,
+                fileDeleteHelper,
+                navigationRequestEventSink,
+            ) {
                 when (event) {
                     LibraryDetailScreenEvent.OnBackKeyPressed -> {
                         navigator.popBackStack()
@@ -108,7 +120,7 @@ private class LibraryDetailScreenPresenter(
                                             ),
                                         )
 
-                                    if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
+                                    if (result is MediaOptionDialog.ClickOptionItem) {
                                         when (result.optionItem) {
                                             OptionItem.ADD_TO_HOME_TAB -> {
                                                 if (dataSource == LibraryDataSource.AllSong) {

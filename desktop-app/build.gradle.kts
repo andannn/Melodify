@@ -18,7 +18,8 @@ kotlin {
             implementation(project(":shared:platform"))
 
             implementation(project(":shared:compose:common"))
-            implementation(project(":shared:compose:popup"))
+            implementation(project(":shared:compose:popup:dialog:controller"))
+            implementation(project(":shared:compose:popup:snack-bar"))
             implementation(project(":shared:compose:components:tab"))
             implementation(project(":shared:compose:components:lyrics"))
             implementation(project(":shared:compose:components:queue"))
@@ -28,6 +29,15 @@ kotlin {
             implementation(project(":shared:compose:components:play-control"))
             implementation(project(":shared:compose:components:tab-content"))
             implementation(project(":shared:compose:components:tab-management"))
+
+            implementation(project(":shared:compose:popup:dialog:entry:option"))
+            implementation(project(":shared:compose:popup:dialog:entry:sort-rule"))
+            implementation(project(":shared:compose:popup:dialog:entry:option"))
+            implementation(project(":shared:compose:popup:dialog:entry:sort-rule"))
+            implementation(project(":shared:compose:popup:dialog:entry:alert"))
+            implementation(project(":shared:compose:popup:dialog:entry:sleep-timer"))
+            implementation(project(":shared:compose:popup:dialog:entry:sync"))
+            implementation(project(":shared:compose:popup:dialog:entry:play-list"))
 
             implementation(libs.jetbrains.compose.desktop)
             implementation(libs.kotlinx.coroutines.swing)

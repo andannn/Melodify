@@ -25,6 +25,8 @@ import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import com.andannn.melodify.shared.compose.popup.LocalPopupController
 import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
+import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.showLibraryMediaOption
 import kotlinx.coroutines.launch
 import melodify.shared.compose.resource.generated.resources.Res
@@ -108,6 +110,7 @@ private fun retainMediaLibraryItemPresenter(
     playListId: String?,
     navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
     popupController: PopupController = LocalPopupController.current,
+    snackBarController: SnackBarController = LocalSnackBarController.current,
     repository: Repository = LocalRepository.current,
     fileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
 ) = retainPresenter(
@@ -115,6 +118,7 @@ private fun retainMediaLibraryItemPresenter(
     playListId,
     navigationRequestEventSink,
     popupController,
+    snackBarController,
     repository,
     fileDeleteHelper,
 ) {
@@ -122,6 +126,7 @@ private fun retainMediaLibraryItemPresenter(
         mediaItemModel = mediaItemModel,
         playListId = playListId,
         popupController = popupController,
+        snackBarController = snackBarController,
         repository = repository,
         fileDeleteHelper = fileDeleteHelper,
         navigationRequestEventSink = navigationRequestEventSink,
@@ -132,6 +137,7 @@ private class MediaLibraryItemPresenter(
     private val mediaItemModel: MediaItemModel,
     private val playListId: String?,
     private val popupController: PopupController,
+    private val snackBarController: SnackBarController,
     private val repository: Repository,
     private val fileDeleteHelper: MediaFileDeleteHelper,
     private val navigationRequestEventSink: NavigationRequestEventSink,
@@ -139,7 +145,7 @@ private class MediaLibraryItemPresenter(
     @Composable
     override fun present(): UiState =
         UiState { event ->
-            context(popupController, repository, fileDeleteHelper, navigationRequestEventSink) {
+            context(popupController, snackBarController, repository, fileDeleteHelper, navigationRequestEventSink) {
                 when (event) {
                     UiEvent.OnOptionButtonClick -> {
                         retainedScope.launch {

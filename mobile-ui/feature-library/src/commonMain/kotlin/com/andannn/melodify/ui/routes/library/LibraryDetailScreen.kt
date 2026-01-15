@@ -29,7 +29,7 @@ import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.model.browseable
 import com.andannn.melodify.shared.compose.components.library.detail.LibraryContentEvent
 import com.andannn.melodify.shared.compose.components.library.item.MediaLibraryItem
-import com.andannn.melodify.shared.compose.popup.rememberAndSetupSnackBarHostState
+import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.Navigator
 
 @Composable

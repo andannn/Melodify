@@ -18,7 +18,8 @@ kotlin {
         commonMain.dependencies {
             api(project(":shared:compose:common"))
             api(project(":shared:compose:usecase"))
-            api(project(":shared:compose:popup"))
+            api(project(":shared:compose:popup:dialog:controller"))
+            api(project(":shared:compose:popup:snack-bar"))
             api(project(":shared:util:orientation"))
             api(project(":shared:util:immersive"))
         }

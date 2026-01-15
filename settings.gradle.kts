@@ -32,7 +32,18 @@ include(":mobile-ui:feature-tab-management")
 
 include(":shared:compose:resource")
 include(":shared:compose:common")
-include(":shared:compose:popup")
+
+include(":shared:compose:popup:dialog:common")
+include(":shared:compose:popup:dialog:controller")
+include(":shared:compose:popup:dialog:entry:option")
+include(":shared:compose:popup:dialog:entry:sort-rule")
+include(":shared:compose:popup:dialog:entry:alert")
+include(":shared:compose:popup:dialog:entry:sleep-timer")
+include(":shared:compose:popup:dialog:entry:sync")
+include(":shared:compose:popup:dialog:entry:play-list")
+
+include(":shared:compose:popup:snack-bar")
+
 include(":shared:compose:usecase")
 include(":shared:compose:components:tab")
 include(":shared:compose:components:lyrics")

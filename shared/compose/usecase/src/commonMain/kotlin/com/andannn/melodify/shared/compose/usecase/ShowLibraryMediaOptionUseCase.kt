@@ -14,11 +14,12 @@ import com.andannn.melodify.shared.compose.common.NavigationRequest
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource
-import com.andannn.melodify.shared.compose.popup.DialogAction
-import com.andannn.melodify.shared.compose.popup.OptionDialog
-import com.andannn.melodify.shared.compose.popup.OptionItem
 import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialog
+import com.andannn.melodify.shared.compose.popup.entry.option.OptionDialog
+import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
+import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import kotlinx.coroutines.flow.first
 
 /**
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.first
  */
 context(
     popController: PopupController,
+    _: SnackBarController,
     repository: Repository,
     fileDeleteHelper: MediaFileDeleteHelper,
     eventSink: NavigationRequestEventSink
@@ -62,7 +64,7 @@ suspend fun showLibraryMediaOption(
             if (playListId != null && isPlayable) add(OptionItem.DELETE_FROM_PLAYLIST)
         }
     val result = popController.showDialogAndWaitAction(OptionDialog(options = options))
-    if (result is DialogAction.MediaOptionDialog.ClickOptionItem) {
+    if (result is MediaOptionDialog.ClickOptionItem) {
         when (result.optionItem) {
             OptionItem.PLAY_NEXT -> {
                 addToNextPlay(medias())

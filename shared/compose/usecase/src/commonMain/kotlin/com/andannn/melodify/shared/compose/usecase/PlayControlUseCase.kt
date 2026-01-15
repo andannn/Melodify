@@ -6,9 +6,9 @@ package com.andannn.melodify.shared.compose.usecase
 
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.MediaItemModel
-import com.andannn.melodify.shared.compose.popup.DialogAction
 import com.andannn.melodify.shared.compose.popup.PopupController
-import com.andannn.melodify.shared.compose.popup.internal.content.ChangePlayListAlert
+import com.andannn.melodify.shared.compose.popup.entry.alert.AlertDialogAction
+import com.andannn.melodify.shared.compose.popup.entry.alert.ChangePlayListAlert
 import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 
 context(repo: Repository, popupController: PopupController)
@@ -37,5 +37,5 @@ suspend fun playMediaItems(
 
 private suspend fun PopupController.confirmChangePlayList(): Boolean {
     val result = showDialogAndWaitAction(ChangePlayListAlert)
-    return result == DialogAction.AlertDialog.Accept
+    return result == AlertDialogAction.Accept
 }
