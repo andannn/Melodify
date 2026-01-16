@@ -4,35 +4,33 @@
  */
 package com.andannn.melodify.shared.compose.popup
 
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Surface
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.Dialog
+import androidx.compose.runtime.rememberUpdatedState
 import com.andannn.melodify.shared.compose.popup.common.DialogEntry
+import com.andannn.melodify.shared.compose.popup.common.DialogFactoryProvider
+import com.andannn.melodify.shared.compose.popup.common.DialogFactoryScope
 import com.andannn.melodify.shared.compose.popup.common.DialogId
-import com.andannn.melodify.shared.compose.popup.common.DialogType
 import com.andannn.melodify.shared.compose.popup.internal.DialogData
 
 @Composable
-fun ActionDialog(popupController: PopupController = LocalPopupController.current) {
-    val data: DialogData? = popupController.currentDialog
-    val entryProvider =
-        remember {
-            popupController.entryProvider
-        }
+fun ActionDialog(
+    dialogHostState: DialogHostState,
+    dialogFactoryProvider: List<DialogFactoryProvider> = emptyList(),
+    entryProvider: (DialogId<*>) -> DialogEntry<DialogId<*>>,
+) {
+    val data: DialogData? = dialogHostState.currentDialog
     if (data != null) {
         val entry =
             remember(data.dialogId) {
                 entryProvider(data.dialogId)
             }
+
         ActionDialogContent(
             entry = entry,
+            dialogFactoryProvider = dialogFactoryProvider,
             onPerformAction = {
                 data.performAction(it)
             },
@@ -47,50 +45,23 @@ fun ActionDialog(popupController: PopupController = LocalPopupController.current
 @Composable
 private fun ActionDialogContent(
     entry: DialogEntry<DialogId<*>>,
+    dialogFactoryProvider: List<DialogFactoryProvider>,
     onRequestDismiss: () -> Unit,
     onPerformAction: (Any?) -> Unit,
 ) {
-    when (entry.dialogType) {
-        DialogType.AlertDialog -> {
-            Dialog(
-                onDismissRequest = onRequestDismiss,
-                content = {
-                    Surface(
-                        modifier = Modifier.wrapContentSize(),
-                        shape = AlertDialogDefaults.shape,
-                        tonalElevation = AlertDialogDefaults.TonalElevation,
-                    ) {
-                        entry.Content(
-                            onAction = {
-                                onPerformAction(it)
-                            },
-                        )
-                    }
-                },
-            )
-        }
+    val dialogFactory =
+        dialogFactoryProvider.firstNotNullOfOrNull { provider ->
+            provider.create(entry)
+        } ?: return
 
-        DialogType.DropDownDialog -> {
-            //            DropDownOptionMenu(
-            //                onRequestDismiss = onRequestDismiss,
-            //                content = {
-            //                    DialogContent(data)
-            //                },
-            //            )
-        }
+    val dialogFactoryScope by rememberUpdatedState(
+        DialogFactoryScope(
+            onRequestDismiss,
+            onPerformAction,
+        ),
+    )
 
-        DialogType.ModalBottomSheet -> {
-            ModalBottomSheet(
-                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-                onDismissRequest = onRequestDismiss,
-                content = {
-                    entry.Content(
-                        onAction = {
-                            onPerformAction(it)
-                        },
-                    )
-                },
-            )
-        }
+    with(dialogFactory) {
+        dialogFactoryScope.Content()
     }
 }

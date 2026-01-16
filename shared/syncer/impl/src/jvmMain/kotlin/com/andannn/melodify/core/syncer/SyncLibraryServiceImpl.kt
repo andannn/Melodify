@@ -10,6 +10,7 @@ import com.andannn.melodify.core.syncer.util.getDirectoryChangeFlow
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -37,7 +38,7 @@ internal class SyncLibraryServiceImpl(
                         userSetting.libraryPath
                     }.distinctUntilChanged()
                     .collect { _ ->
-                        syncer.syncAllMediaLibrary()
+                        syncer.syncAllMediaLibrary().collect()
                     }
             }
 
@@ -54,7 +55,7 @@ internal class SyncLibraryServiceImpl(
                         Napier.d(tag = TAG) { "Library change detected: $refreshType" }
                         when (refreshType) {
                             RefreshType.All -> {
-                                syncer.syncAllMediaLibrary()
+                                syncer.syncAllMediaLibrary().collect()
                             }
 
                             is RefreshType.ByUri -> {

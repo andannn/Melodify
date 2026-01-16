@@ -14,21 +14,6 @@ class DialogEntryProviderScope<T : Any> {
     private val providers = mutableMapOf<Any, EntryProvider<out T>>()
     private val clazzProviders = mutableMapOf<KClass<out T>, EntryClassProvider<out T>>()
 
-    inline fun <reified K : T> entry(
-        dialogType: DialogType,
-        noinline content: @Composable (dialogId: K, onAction: (Any) -> Unit) -> Unit,
-    ) {
-        addEntryProvider(K::class, dialogType, content)
-    }
-
-    fun <K : T> DialogEntryProviderScope<T>.entry(
-        dialogId: K,
-        dialogType: DialogType,
-        content: @Composable (dialogId: K, onAction: (Any) -> Unit) -> Unit,
-    ) {
-        addEntryProvider(dialogId, dialogType, content)
-    }
-
     fun <K : T> addEntryProvider(
         dialogId: K,
         dialogType: DialogType,
@@ -65,6 +50,21 @@ class DialogEntryProviderScope<T : Any> {
                 ?: entryProvider?.run { DialogEntry(dialogId, dialogType, content) }
                 ?: error("no provider")
         }
+}
+
+inline fun <reified T : DialogId<R>, reified R : Any> DialogEntryProviderScope<DialogId<*>>.entry(
+    dialogType: DialogType,
+    noinline content: @Composable (dialogId: T, onAction: (R) -> Unit) -> Unit,
+) {
+    addEntryProvider(T::class, dialogType, content)
+}
+
+inline fun <reified T : DialogId<R>, reified R : Any> DialogEntryProviderScope<DialogId<*>>.entry(
+    dialogId: T,
+    dialogType: DialogType,
+    noinline content: @Composable (dialogId: T, onAction: (R) -> Unit) -> Unit,
+) {
+    addEntryProvider(dialogId, dialogType, content)
 }
 
 private data class EntryClassProvider<K : Any>(

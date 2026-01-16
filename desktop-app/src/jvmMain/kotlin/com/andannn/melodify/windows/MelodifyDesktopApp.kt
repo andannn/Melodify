@@ -13,8 +13,8 @@ import androidx.compose.ui.window.ApplicationScope
 import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
-import com.andannn.melodify.shared.compose.popup.LocalPopupController
-import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.DialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
 import com.andannn.melodify.shared.compose.popup.common.entryProvider
 import com.andannn.melodify.shared.compose.popup.entry.alert.alertDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.library.addLibraryPathDialogEntry
@@ -66,7 +66,7 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
                         windowType,
                     ) {
                         CompositionLocalProvider(
-                            LocalPopupController provides retain { PopupController() },
+                            LocalDialogHostState provides retain { DialogHostState() },
                             LocalSnackBarController provides retain { SnackBarController() },
                         ) {
                             when (windowType) {
@@ -123,20 +123,3 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
         )
     }
 }
-
-private fun PopupController(): PopupController =
-    PopupController(
-        entryProvider =
-            entryProvider {
-                addMediaOptionDialogEntry()
-                addChangeSortRuleDialogEntry()
-                newPlayListDialogEntry()
-                addToPlayListDialogEntry()
-                alertDialogEntry()
-                defaultSortRuleSettingDialogEntry()
-                sleepTimerCountingDialogEntry()
-                sleepTimerOptionDialogEntry()
-                syncStatusDialogEntry()
-                addLibraryPathDialogEntry()
-            },
-    )

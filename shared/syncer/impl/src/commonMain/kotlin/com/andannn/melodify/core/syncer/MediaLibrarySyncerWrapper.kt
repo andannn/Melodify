@@ -22,10 +22,12 @@ internal class MediaLibrarySyncerWrapper(
 ) : MediaLibrarySyncer {
     override fun syncAllMediaLibrary(): Flow<SyncStatusEvent> =
         channelFlow {
+            Napier.d(tag = TAG) { "syncAllMediaLibrary E" }
             try {
                 val mediaData = mediaLibraryScanner.scanAllMedia()
                 trySend(SyncStatusEvent.Start)
 
+                Napier.d(tag = TAG) { "sync database E. audio size: ${mediaData.audioData.size}" }
                 mediaLibraryDao.syncMediaLibrary(
                     albums = mediaData.albumData.toAlbumEntity(),
                     artists = mediaData.artistData.toArtistEntity(),
@@ -49,11 +51,13 @@ internal class MediaLibrarySyncerWrapper(
                         }
                     },
                 )
+                Napier.d(tag = TAG) { "sync database X" }
                 trySend(SyncStatusEvent.Complete)
             } catch (e: Exception) {
                 Napier.d(tag = TAG) { "Failed to sync media library: $e" }
                 trySend(SyncStatusEvent.Failed)
             } finally {
+                Napier.d(tag = TAG) { "syncAllMediaLibrary X" }
                 close()
             }
         }.buffer(capacity = Channel.UNLIMITED)

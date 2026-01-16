@@ -14,11 +14,10 @@ import com.andannn.melodify.shared.compose.common.NavigationRequest
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource
-import com.andannn.melodify.shared.compose.popup.PopupController
-import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialog
+import com.andannn.melodify.shared.compose.popup.DialogHostState
+import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionDialog
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
-import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import kotlinx.coroutines.flow.first
 
@@ -29,7 +28,7 @@ import kotlinx.coroutines.flow.first
  * @param playListId set playlist id when the [media] is from playlist. Default is null.
  */
 context(
-    popController: PopupController,
+    popController: DialogHostState,
     _: SnackBarController,
     repository: Repository,
     fileDeleteHelper: MediaFileDeleteHelper,
@@ -63,8 +62,8 @@ suspend fun showLibraryMediaOption(
             if (isPlayList && !isFavoritePlayList) add(OptionItem.DELETE_PLAYLIST)
             if (playListId != null && isPlayable) add(OptionItem.DELETE_FROM_PLAYLIST)
         }
-    val result = popController.showDialogAndWaitAction(OptionDialog(options = options))
-    if (result is MediaOptionDialog.ClickOptionItem) {
+    val result = popController.showDialog(OptionDialog(options = options))
+    if (result is MediaOptionDialogResult.ClickOptionItemResult) {
         when (result.optionItem) {
             OptionItem.PLAY_NEXT -> {
                 addToNextPlay(medias())

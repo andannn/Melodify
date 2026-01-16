@@ -17,12 +17,11 @@ import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.components.library.detail.LibraryContentState
 import com.andannn.melodify.shared.compose.components.library.detail.retainLibraryDetailPresenter
-import com.andannn.melodify.shared.compose.popup.LocalPopupController
-import com.andannn.melodify.shared.compose.popup.PopupController
-import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialog
+import com.andannn.melodify.shared.compose.popup.DialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
+import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionDialog
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
-import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.pinAllMusicToHomeTab
@@ -37,7 +36,7 @@ internal fun retainLibraryDetailScreenPresenter(
     dataSource: LibraryDataSource,
     navigator: Navigator,
     repository: Repository = LocalRepository.current,
-    popupController: PopupController = LocalPopupController.current,
+    dialogHostState: DialogHostState = LocalDialogHostState.current,
     snackBarController: SnackBarController = LocalSnackBarController.current,
     mediaFileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
     navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
@@ -46,7 +45,7 @@ internal fun retainLibraryDetailScreenPresenter(
         dataSource,
         navigator,
         repository,
-        popupController,
+        dialogHostState,
         snackBarController,
         mediaFileDeleteHelper,
         navigationRequestEventSink,
@@ -55,7 +54,7 @@ internal fun retainLibraryDetailScreenPresenter(
             dataSource,
             navigator,
             repository,
-            popupController,
+            dialogHostState,
             snackBarController,
             mediaFileDeleteHelper,
             navigationRequestEventSink,
@@ -79,7 +78,7 @@ private class LibraryDetailScreenPresenter(
     private val dataSource: LibraryDataSource,
     private val navigator: Navigator,
     private val repository: Repository,
-    private val popupController: PopupController,
+    private val dialogHostState: DialogHostState,
     private val snackBarController: SnackBarController,
     private val fileDeleteHelper: MediaFileDeleteHelper,
     private val navigationRequestEventSink: NavigationRequestEventSink,
@@ -95,7 +94,7 @@ private class LibraryDetailScreenPresenter(
         ) { event ->
             context(
                 repository,
-                popupController,
+                dialogHostState,
                 snackBarController,
                 fileDeleteHelper,
                 navigationRequestEventSink,
@@ -112,7 +111,7 @@ private class LibraryDetailScreenPresenter(
                             -> {
                                 retainedScope.launch {
                                     val result =
-                                        popupController.showDialogAndWaitAction(
+                                        dialogHostState.showDialog(
                                             OptionDialog(
                                                 listOf(
                                                     OptionItem.ADD_TO_HOME_TAB,
@@ -120,7 +119,7 @@ private class LibraryDetailScreenPresenter(
                                             ),
                                         )
 
-                                    if (result is MediaOptionDialog.ClickOptionItem) {
+                                    if (result is MediaOptionDialogResult.ClickOptionItemResult) {
                                         when (result.optionItem) {
                                             OptionItem.ADD_TO_HOME_TAB -> {
                                                 if (dataSource == LibraryDataSource.AllSong) {

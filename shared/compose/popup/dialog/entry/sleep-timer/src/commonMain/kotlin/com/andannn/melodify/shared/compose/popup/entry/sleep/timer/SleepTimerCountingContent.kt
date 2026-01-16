@@ -23,6 +23,7 @@ import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
 import com.andannn.melodify.shared.compose.popup.common.DialogId
 import com.andannn.melodify.shared.compose.popup.common.DialogType
+import com.andannn.melodify.shared.compose.popup.common.entry
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.cancel_timer
 import melodify.shared.compose.resource.generated.resources.sleep_timer
@@ -40,7 +41,7 @@ fun DialogEntryProviderScope<DialogId<*>>.sleepTimerCountingDialogEntry() {
     entry(
         dialogId = SleepCountingDialog,
         dialogType = DialogType.ModalBottomSheet,
-    ) { dialogId, onAction ->
+    ) { _, onAction ->
         SleepTimerCountingContent(onAction)
     }
 }

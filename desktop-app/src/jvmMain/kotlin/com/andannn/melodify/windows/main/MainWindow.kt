@@ -42,12 +42,12 @@ import com.andannn.melodify.shared.compose.components.tab.content.TabContent
 import com.andannn.melodify.shared.compose.components.tab.content.TabContentState
 import com.andannn.melodify.shared.compose.components.tab.content.retainTabContentPresenter
 import com.andannn.melodify.shared.compose.components.tab.retainTabUiPresenter
-import com.andannn.melodify.shared.compose.popup.ActionDialog
 import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.components.playcontrol.DesktopPlayerUi
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.WindowNavigator
 import com.andannn.melodify.windows.WindowType
+import com.andannn.melodify.windows.common.CommonActionDialog
 import com.andannn.melodify.windows.handleMenuEvent
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
@@ -110,7 +110,7 @@ internal fun MainWindow(
             )
         }
 
-        ActionDialog()
+        CommonActionDialog()
     }
 }
 

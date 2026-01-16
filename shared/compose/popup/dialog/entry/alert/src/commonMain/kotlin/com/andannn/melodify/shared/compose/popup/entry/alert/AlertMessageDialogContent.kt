@@ -22,6 +22,7 @@ import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
 import com.andannn.melodify.shared.compose.popup.common.DialogId
 import com.andannn.melodify.shared.compose.popup.common.DialogType
+import com.andannn.melodify.shared.compose.popup.common.entry
 import org.jetbrains.compose.resources.stringResource
 
 fun DialogEntryProviderScope<DialogId<*>>.alertDialogEntry() {

@@ -54,6 +54,7 @@ import com.andannn.melodify.shared.compose.common.widgets.TransparentBackgroundL
 import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
 import com.andannn.melodify.shared.compose.popup.common.DialogId
 import com.andannn.melodify.shared.compose.popup.common.DialogType
+import com.andannn.melodify.shared.compose.popup.common.entry
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.album_page_title
 import melodify.shared.compose.resource.generated.resources.artist_page_title
@@ -91,9 +92,9 @@ data class ChangeSortRuleDialog(
 ) : DialogId<Unit>
 
 fun DialogEntryProviderScope<DialogId<*>>.addChangeSortRuleDialogEntry() {
-    entry<ChangeSortRuleDialog>(
+    entry(
         dialogType = DialogType.ModalBottomSheet,
-    ) { dialogId, onAction ->
+    ) { dialogId, _ ->
         ChangeSortRuleDialogContent(
             dialogId,
         )

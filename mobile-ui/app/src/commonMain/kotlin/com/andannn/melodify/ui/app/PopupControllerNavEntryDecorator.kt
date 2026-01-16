@@ -10,8 +10,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
 import androidx.navigation3.runtime.NavEntryDecorator
 import com.andannn.melodify.shared.compose.popup.ActionDialog
-import com.andannn.melodify.shared.compose.popup.LocalPopupController
-import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.DialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
+import com.andannn.melodify.shared.compose.popup.common.AlertDialogFactoryProvider
+import com.andannn.melodify.shared.compose.popup.common.ModalBottomSheetFactoryProvider
 import com.andannn.melodify.shared.compose.popup.common.entryProvider
 import com.andannn.melodify.shared.compose.popup.entry.alert.alertDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.option.addMediaOptionDialogEntry
@@ -31,29 +33,32 @@ private class PopupControllerNavEntryDecorator<T : Any> :
         onPop = {
         },
         decorate = { entry ->
-            val holder = retain { PopupController() }
+            val dialogHostState = retain { DialogHostState() }
             CompositionLocalProvider(
-                LocalPopupController provides holder,
+                LocalDialogHostState provides dialogHostState,
             ) {
                 entry.Content()
 
-                ActionDialog()
+                ActionDialog(
+                    dialogHostState = dialogHostState,
+                    dialogFactoryProvider =
+                        listOf(
+                            AlertDialogFactoryProvider,
+                            ModalBottomSheetFactoryProvider,
+                        ),
+                    entryProvider =
+                        entryProvider {
+                            addMediaOptionDialogEntry()
+                            addChangeSortRuleDialogEntry()
+                            newPlayListDialogEntry()
+                            addToPlayListDialogEntry()
+                            alertDialogEntry()
+                            defaultSortRuleSettingDialogEntry()
+                            sleepTimerCountingDialogEntry()
+                            sleepTimerOptionDialogEntry()
+                            syncStatusDialogEntry()
+                        },
+                )
             }
         },
-    )
-
-private fun PopupController(): PopupController =
-    PopupController(
-        entryProvider =
-            entryProvider {
-                addMediaOptionDialogEntry()
-                addChangeSortRuleDialogEntry()
-                newPlayListDialogEntry()
-                addToPlayListDialogEntry()
-                alertDialogEntry()
-                defaultSortRuleSettingDialogEntry()
-                sleepTimerCountingDialogEntry()
-                sleepTimerOptionDialogEntry()
-                syncStatusDialogEntry()
-            },
     )
