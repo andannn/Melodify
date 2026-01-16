@@ -24,6 +24,7 @@ import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
 import com.andannn.melodify.shared.compose.popup.common.DialogId
 import com.andannn.melodify.shared.compose.popup.common.DialogType
+import com.andannn.melodify.shared.compose.popup.common.entry
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.change_default_sort_order
 import org.jetbrains.compose.resources.stringResource
@@ -34,7 +35,7 @@ fun DialogEntryProviderScope<DialogId<*>>.defaultSortRuleSettingDialogEntry() {
     entry(
         dialogId = DefaultSortRuleSettingDialog,
         dialogType = DialogType.ModalBottomSheet,
-    ) { dialogId, onAction ->
+    ) { _, _ ->
         DefaultSortRuleSettingDialog()
     }
 }

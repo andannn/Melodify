@@ -26,21 +26,22 @@ import com.andannn.melodify.shared.compose.common.widgets.SmpIcon
 import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
 import com.andannn.melodify.shared.compose.popup.common.DialogId
 import com.andannn.melodify.shared.compose.popup.common.DialogType
+import com.andannn.melodify.shared.compose.popup.common.entry
 import org.jetbrains.compose.resources.stringResource
 
 data class OptionDialog(
     val options: List<OptionItem>,
-) : DialogId<MediaOptionDialog>
+) : DialogId<MediaOptionDialogResult>
 
-sealed interface MediaOptionDialog {
-    data class ClickOptionItem(
+sealed interface MediaOptionDialogResult {
+    data class ClickOptionItemResult(
         val optionItem: OptionItem,
-    ) : MediaOptionDialog
+    ) : MediaOptionDialogResult
 }
 
 fun DialogEntryProviderScope<DialogId<*>>.addMediaOptionDialogEntry() {
-    entry<OptionDialog>(
-        dialogType = DialogType.ModalBottomSheet,
+    entry(
+        dialogType = optionDialogType,
     ) { dialogId, onAction ->
         MediaOptionContent(
             dialogId,
@@ -49,10 +50,12 @@ fun DialogEntryProviderScope<DialogId<*>>.addMediaOptionDialogEntry() {
     }
 }
 
+internal expect val optionDialogType: DialogType
+
 @Composable
 private fun MediaOptionContent(
     dialogId: OptionDialog,
-    onAction: (MediaOptionDialog) -> Unit = {},
+    onAction: (MediaOptionDialogResult) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.navigationBarsPadding().fillMaxWidth()) {
@@ -60,7 +63,7 @@ private fun MediaOptionContent(
             SheetItem(
                 item = item,
                 onClick = {
-                    onAction(MediaOptionDialog.ClickOptionItem(item))
+                    onAction(MediaOptionDialogResult.ClickOptionItemResult(item))
                 },
             )
 

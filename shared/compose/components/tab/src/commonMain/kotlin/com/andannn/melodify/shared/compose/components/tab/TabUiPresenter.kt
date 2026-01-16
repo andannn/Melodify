@@ -15,13 +15,12 @@ import com.andannn.melodify.domain.model.sortOptions
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import com.andannn.melodify.shared.compose.popup.LocalPopupController
-import com.andannn.melodify.shared.compose.popup.PopupController
-import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialog
+import com.andannn.melodify.shared.compose.popup.DialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
+import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionDialog
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
 import com.andannn.melodify.shared.compose.popup.entry.sort.rule.ChangeSortRuleDialog
-import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.addToNextPlay
@@ -41,19 +40,19 @@ private const val TAG = "TabUiState"
 @Composable
 fun retainTabUiPresenter(
     repository: Repository = LocalRepository.current,
-    popupController: PopupController = LocalPopupController.current,
+    dialogHostState: DialogHostState = LocalDialogHostState.current,
     snackBarController: SnackBarController = LocalSnackBarController.current,
-) = retainPresenter(repository, popupController, snackBarController) {
+) = retainPresenter(repository, dialogHostState, snackBarController) {
     TabUiPresenter(
         repository,
-        popupController,
+        dialogHostState,
         snackBarController,
     )
 }
 
 class TabUiPresenter(
     private val repository: Repository,
-    private val popupController: PopupController,
+    private val dialogHostState: DialogHostState,
     private val snackBarController: SnackBarController,
 ) : RetainedPresenter<TabUiState>() {
     val currentTabListFlow =
@@ -128,7 +127,7 @@ class TabUiPresenter(
                     retainedScope.launch {
                         val tab = eventSink.tab
                         val result =
-                            popupController.showDialogAndWaitAction(
+                            dialogHostState.showDialog(
                                 OptionDialog(
                                     options =
                                         buildList {
@@ -141,8 +140,8 @@ class TabUiPresenter(
                                 ),
                             )
 
-                        if (result is MediaOptionDialog.ClickOptionItem) {
-                            context(repository, popupController, snackBarController) {
+                        if (result is MediaOptionDialogResult.ClickOptionItemResult) {
+                            context(repository, dialogHostState, snackBarController) {
                                 when (result.optionItem) {
                                     OptionItem.DELETE_TAB -> {
                                         repository.deleteCustomTab(tab)
@@ -161,9 +160,7 @@ class TabUiPresenter(
                                     }
 
                                     OptionItem.DISPLAY_SETTING -> {
-                                        popupController.showDialogAndWaitAction(
-                                            ChangeSortRuleDialog(tab),
-                                        )
+                                        dialogHostState.showDialog(ChangeSortRuleDialog(tab))
                                     }
 
                                     else -> {}

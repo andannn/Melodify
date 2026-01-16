@@ -16,5 +16,8 @@ kotlin {
     }
 
     sourceSets {
+        commonMain.dependencies {
+            implementation(libs.navigation3.runtime)
+        }
     }
 }

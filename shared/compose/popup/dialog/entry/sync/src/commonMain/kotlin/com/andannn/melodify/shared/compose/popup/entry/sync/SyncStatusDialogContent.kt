@@ -33,6 +33,7 @@ import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
 import com.andannn.melodify.shared.compose.popup.common.DialogId
 import com.andannn.melodify.shared.compose.popup.common.DialogType
+import com.andannn.melodify.shared.compose.popup.common.entry
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.sync_progress_album
 import melodify.shared.compose.resource.generated.resources.sync_progress_artist
@@ -41,24 +42,19 @@ import melodify.shared.compose.resource.generated.resources.sync_progress_media
 import melodify.shared.compose.resource.generated.resources.sync_progress_video
 import org.jetbrains.compose.resources.stringResource
 
-data object SyncStatusDialog : DialogId<SyncStatusDialogAction>
-
-class SyncStatusDialogAction
+data object SyncStatusDialog : DialogId<Unit>
 
 fun DialogEntryProviderScope<DialogId<*>>.syncStatusDialogEntry() {
     entry(
         dialogId = SyncStatusDialog,
         dialogType = DialogType.ModalBottomSheet,
-    ) { dialogId, onAction ->
-        SyncStatusDialogContent(onAction)
+    ) { _, _ ->
+        SyncStatusDialogContent()
     }
 }
 
 @Composable
-internal fun SyncStatusDialogContent(
-    onAction: (SyncStatusDialog) -> Unit = {},
-    modifier: Modifier = Modifier,
-) {
+internal fun SyncStatusDialogContent(modifier: Modifier = Modifier) {
     val state = retainSyncStatusPresenter().present()
     SyncStatusDialog(
         modifier = modifier,

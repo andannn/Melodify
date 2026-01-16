@@ -47,6 +47,7 @@ import com.andannn.melodify.shared.compose.common.widgets.SmpTextButton
 import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
 import com.andannn.melodify.shared.compose.popup.common.DialogId
 import com.andannn.melodify.shared.compose.popup.common.DialogType
+import com.andannn.melodify.shared.compose.popup.common.entry
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.all_playlists
 import melodify.shared.compose.resource.generated.resources.all_to_playlist_page_title
@@ -58,21 +59,21 @@ import org.jetbrains.compose.resources.stringResource
 data class AddMusicsToPlayListDialog(
     val items: List<MediaItemModel>,
     val isAudio: Boolean,
-) : DialogId<AddToPlayListDialog>
+) : DialogId<AddToPlayListDialogResult>
 
-sealed interface AddToPlayListDialog {
-    data class OnAddToPlayList(
+sealed interface AddToPlayListDialogResult {
+    data class OnAddToPlayListResult(
         val playList: PlayListItemModel,
         val items: List<MediaItemModel>,
-    ) : AddToPlayListDialog
+    ) : AddToPlayListDialogResult
 
-    object OnCreateNewPlayList : AddToPlayListDialog
+    object OnCreateNewPlayListResult : AddToPlayListDialogResult
 
-    object OnDismiss : AddToPlayListDialog
+    object OnDismiss : AddToPlayListDialogResult
 }
 
 fun DialogEntryProviderScope<DialogId<*>>.addToPlayListDialogEntry() {
-    entry<AddMusicsToPlayListDialog>(
+    entry(
         dialogType = DialogType.ModalBottomSheet,
     ) { dialogId, onAction ->
         AddToPlayListDialogContent(
@@ -86,7 +87,7 @@ fun DialogEntryProviderScope<DialogId<*>>.addToPlayListDialogEntry() {
 @Composable
 internal fun AddToPlayListDialogContent(
     dialog: AddMusicsToPlayListDialog,
-    onAction: (AddToPlayListDialog) -> Unit,
+    onAction: (AddToPlayListDialogResult) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state = retainedAddToPlayListSheetState(dialog.isAudio).present()
@@ -95,18 +96,18 @@ internal fun AddToPlayListDialogContent(
         items = dialog.items,
         playLists = state.playLists,
         onRequestDismiss = {
-            onAction(AddToPlayListDialog.OnDismiss)
+            onAction(AddToPlayListDialogResult.OnDismiss)
         },
         onPlayListClick = { playList ->
             onAction(
-                AddToPlayListDialog.OnAddToPlayList(
+                AddToPlayListDialogResult.OnAddToPlayListResult(
                     playList,
                     dialog.items,
                 ),
             )
         },
         onCreateNewClick = {
-            onAction(AddToPlayListDialog.OnCreateNewPlayList)
+            onAction(AddToPlayListDialogResult.OnCreateNewPlayListResult)
         },
     )
 }

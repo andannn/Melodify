@@ -32,6 +32,7 @@ import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
 import com.andannn.melodify.shared.compose.popup.common.DialogId
 import com.andannn.melodify.shared.compose.popup.common.DialogType
+import com.andannn.melodify.shared.compose.popup.common.entry
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.decline
 import melodify.shared.compose.resource.generated.resources.new_playlist_dialog_input_hint
@@ -56,7 +57,7 @@ fun DialogEntryProviderScope<DialogId<*>>.newPlayListDialogEntry() {
     entry(
         dialogId = NewPlayListDialog,
         dialogType = DialogType.AlertDialog,
-    ) { dialogId, onAction ->
+    ) { _, onAction ->
         NewPlayListDialogContent(
             onAction,
         )

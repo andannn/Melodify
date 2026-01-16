@@ -32,6 +32,7 @@ import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
 import com.andannn.melodify.shared.compose.popup.common.DialogId
 import com.andannn.melodify.shared.compose.popup.common.DialogType
+import com.andannn.melodify.shared.compose.popup.common.entry
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.decline
 import melodify.shared.compose.resource.generated.resources.new_playlist_dialog_title
@@ -54,8 +55,8 @@ fun DialogEntryProviderScope<DialogId<*>>.addLibraryPathDialogEntry() {
     entry(
         dialogId = AddLibraryPathDialog,
         dialogType = DialogType.AlertDialog,
-    ) { dialogId, onAction ->
-        AddLibraryPathDialog()
+    ) { _, onAction ->
+        AddLibraryPathDialog(onAction)
     }
 }
 
@@ -65,8 +66,8 @@ private val negative = Res.string.decline
 
 @Composable
 internal fun AddLibraryPathDialog(
-    modifier: Modifier = Modifier,
     onAction: (InputDialog) -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     SimpleInputDialogContent(
         modifier = modifier,

@@ -14,11 +14,10 @@ import com.andannn.melodify.shared.compose.components.tab.TabUiState
 import com.andannn.melodify.shared.compose.components.tab.content.TabContentState
 import com.andannn.melodify.shared.compose.components.tab.content.retainTabContentPresenter
 import com.andannn.melodify.shared.compose.components.tab.retainTabUiPresenter
-import com.andannn.melodify.shared.compose.popup.LocalPopupController
-import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.DialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
 import com.andannn.melodify.shared.compose.popup.entry.sort.rule.DefaultSortRuleSettingDialog
 import com.andannn.melodify.shared.compose.popup.entry.sync.SyncStatusDialog
-import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
 import kotlinx.coroutines.launch
@@ -31,7 +30,7 @@ import org.koin.mp.KoinPlatform.getKoin
 @Composable
 internal fun retainHomeUiPresenter(
     navigator: Navigator,
-    popController: PopupController = LocalPopupController.current,
+    popController: DialogHostState = LocalDialogHostState.current,
     mediaLibrarySyncRepository: MediaLibrarySyncRepository = getKoin().get(),
 ): Presenter<HomeState> =
     retainPresenter(
@@ -80,7 +79,7 @@ private const val TAG = "HomeScreen"
 
 private class HomePresenter(
     private val navigator: Navigator,
-    private val popController: PopupController,
+    private val popController: DialogHostState,
     private val mediaLibrarySyncRepository: MediaLibrarySyncRepository,
 ) : RetainedPresenter<HomeState>() {
     @Composable
@@ -124,16 +123,16 @@ private class HomePresenter(
     }
 }
 
-context(popupController: PopupController)
+context(dialogHostState: DialogHostState)
 private suspend fun changeSortRule() {
-    popupController.showDialogAndWaitAction(
+    dialogHostState.showDialog(
         DefaultSortRuleSettingDialog,
     )
 }
 
-context(popupController: PopupController)
+context(dialogHostState: DialogHostState)
 private suspend fun showSyncDialog() {
-    popupController.showDialogAndWaitAction(
+    dialogHostState.showDialog(
         SyncStatusDialog,
     )
 }

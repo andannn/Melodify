@@ -12,19 +12,18 @@ import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import com.andannn.melodify.shared.compose.popup.LocalPopupController
-import com.andannn.melodify.shared.compose.popup.PopupController
+import com.andannn.melodify.shared.compose.popup.DialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
 import com.andannn.melodify.shared.compose.popup.entry.alert.InvalidPathAlert
 import com.andannn.melodify.shared.compose.popup.entry.play.list.InputDialogResult
 import com.andannn.melodify.shared.compose.popup.entry.play.list.NewPlayListDialog
-import com.andannn.melodify.shared.compose.popup.showDialogAndWaitAction
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun retainLibraryPreferenceState(
-    popUpController: PopupController = LocalPopupController.current,
+    popUpController: DialogHostState = LocalDialogHostState.current,
     repository: Repository = LocalRepository.current,
 ) = retainPresenter(
     popUpController,
@@ -51,7 +50,7 @@ sealed interface LibraryPreferenceUiEvent {
 }
 
 class LibraryPreferencePresenter(
-    private val popUpController: PopupController,
+    private val popUpController: DialogHostState,
     private val repository: Repository,
 ) : RetainedPresenter<LibraryPreferenceUiState>() {
     private val libraryPathFlow =
@@ -79,13 +78,13 @@ class LibraryPreferencePresenter(
 
     private fun onAddLibraryButtonClick() {
         retainedScope.launch {
-            val result = popUpController.showDialogAndWaitAction(NewPlayListDialog)
+            val result = popUpController.showDialog(NewPlayListDialog)
 
             if (result is InputDialogResult.Accept) {
                 val success = repository.addLibraryPath(result.input)
 
                 if (!success) {
-                    popUpController.showDialogAndWaitAction(InvalidPathAlert)
+                    popUpController.showDialog(InvalidPathAlert)
                 }
             }
         }

@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import com.andannn.melodify.shared.compose.common.Presenter
-import com.andannn.melodify.shared.compose.popup.ActionDialog
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.WindowNavigator
+import com.andannn.melodify.windows.common.CommonActionDialog
 import com.andannn.melodify.windows.handleMenuEvent
 
 @Composable
@@ -47,7 +47,7 @@ internal fun PreferenceWindow(
 
         PreferencesWindowContent()
 
-        ActionDialog()
+        CommonActionDialog()
     }
 }
 
