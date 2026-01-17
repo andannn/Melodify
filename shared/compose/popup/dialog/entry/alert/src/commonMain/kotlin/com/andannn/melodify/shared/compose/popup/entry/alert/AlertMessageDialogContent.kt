@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,13 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
-import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.common.DialogId
-import com.andannn.melodify.shared.compose.popup.common.DialogType
-import com.andannn.melodify.shared.compose.popup.common.entry
+import com.andannn.melodify.shared.compose.popup.DialogFactoryProvider
+import com.andannn.melodify.shared.compose.popup.PopupEntryProviderScope
+import com.andannn.melodify.shared.compose.popup.PopupId
 import org.jetbrains.compose.resources.stringResource
 
-fun DialogEntryProviderScope<DialogId<*>>.alertDialogEntry() {
+fun PopupEntryProviderScope<PopupId<*>>.alertDialogEntry() {
     listOf(
         ConfirmDeletePlaylist,
         InvalidPathAlert,
@@ -34,16 +35,22 @@ fun DialogEntryProviderScope<DialogId<*>>.alertDialogEntry() {
     ).forEach { id ->
         entry(
             dialogId = id,
-            dialogType = DialogType.AlertDialog,
+            metadata = DialogFactoryProvider.metadata(),
         ) { dialogId, onAction ->
-            AlertMessageDialogContent(dialogId, onAction)
+            Surface(
+                modifier = Modifier.wrapContentSize(),
+                shape = AlertDialogDefaults.shape,
+                tonalElevation = AlertDialogDefaults.TonalElevation,
+            ) {
+                AlertMessageDialogContent(dialogId, onAction)
+            }
         }
     }
 }
 
 @Composable
 private fun AlertMessageDialogContent(
-    dialogId: AlertDialog,
+    dialogId: AlertPopup,
     onAction: (AlertDialogAction) -> Unit = {},
 ) {
     Column(modifier = Modifier.padding(16.dp)) {

@@ -51,10 +51,9 @@ import com.andannn.melodify.shared.compose.common.subTitle
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.DropDownMenuIconButton
 import com.andannn.melodify.shared.compose.common.widgets.TransparentBackgroundListItem
-import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.common.DialogId
-import com.andannn.melodify.shared.compose.popup.common.DialogType
-import com.andannn.melodify.shared.compose.popup.common.entry
+import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
+import com.andannn.melodify.shared.compose.popup.PopupEntryProviderScope
+import com.andannn.melodify.shared.compose.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.album_page_title
 import melodify.shared.compose.resource.generated.resources.artist_page_title
@@ -87,13 +86,13 @@ private const val TAG = "ChangeSortRuleDialog"
 /**
  * Change the sort rule of the tab.
  */
-data class ChangeSortRuleDialog(
+data class ChangeSortRulePopup(
     val tab: CustomTab,
-) : DialogId<Unit>
+) : PopupId<Unit>
 
-fun DialogEntryProviderScope<DialogId<*>>.addChangeSortRuleDialogEntry() {
+fun PopupEntryProviderScope<PopupId<*>>.addChangeSortRuleDialogEntry() {
     entry(
-        dialogType = DialogType.ModalBottomSheet,
+        metadata = ModalBottomSheetFactoryProvider.bottomSheet(),
     ) { dialogId, _ ->
         ChangeSortRuleDialogContent(
             dialogId,
@@ -103,7 +102,7 @@ fun DialogEntryProviderScope<DialogId<*>>.addChangeSortRuleDialogEntry() {
 
 @Composable
 internal fun ChangeSortRuleDialogContent(
-    dialog: ChangeSortRuleDialog,
+    dialog: ChangeSortRulePopup,
     modifier: Modifier = Modifier,
 ) {
     val state = retainedChangeSortRulePresenter(dialog.tab).present()

@@ -21,16 +21,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.durationString
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
-import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.common.DialogId
-import com.andannn.melodify.shared.compose.popup.common.DialogType
-import com.andannn.melodify.shared.compose.popup.common.entry
+import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
+import com.andannn.melodify.shared.compose.popup.PopupEntryProviderScope
+import com.andannn.melodify.shared.compose.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.end_of_song
 import melodify.shared.compose.resource.generated.resources.sleep_timer
 import org.jetbrains.compose.resources.stringResource
 
-data object SleepTimerOptionDialog : DialogId<SleepTimerOptionDialogAction>
+data object SleepTimerOptionPopup : PopupId<SleepTimerOptionDialogAction>
 
 sealed interface SleepTimerOptionDialogAction {
     data class OnOptionClick(
@@ -38,10 +37,10 @@ sealed interface SleepTimerOptionDialogAction {
     ) : SleepTimerOptionDialogAction
 }
 
-fun DialogEntryProviderScope<DialogId<*>>.sleepTimerOptionDialogEntry() {
+fun PopupEntryProviderScope<PopupId<*>>.sleepTimerOptionDialogEntry() {
     entry(
-        dialogId = SleepTimerOptionDialog,
-        dialogType = DialogType.ModalBottomSheet,
+        dialogId = SleepTimerOptionPopup,
+        metadata = ModalBottomSheetFactoryProvider.bottomSheet(),
     ) { _, onAction ->
         SleepTimerOptionDialogContent(onAction)
     }

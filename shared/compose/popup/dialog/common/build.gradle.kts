@@ -14,10 +14,4 @@ kotlin {
     androidLibrary {
         namespace = "com.andannn.melodify.shared.compose.popup.entry.common"
     }
-
-    sourceSets {
-        commonMain.dependencies {
-            implementation(libs.navigation3.runtime)
-        }
-    }
 }

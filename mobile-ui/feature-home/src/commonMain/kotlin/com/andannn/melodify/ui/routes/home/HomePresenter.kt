@@ -14,10 +14,10 @@ import com.andannn.melodify.shared.compose.components.tab.TabUiState
 import com.andannn.melodify.shared.compose.components.tab.content.TabContentState
 import com.andannn.melodify.shared.compose.components.tab.content.retainTabContentPresenter
 import com.andannn.melodify.shared.compose.components.tab.retainTabUiPresenter
-import com.andannn.melodify.shared.compose.popup.DialogHostState
-import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
-import com.andannn.melodify.shared.compose.popup.entry.sort.rule.DefaultSortRuleSettingDialog
-import com.andannn.melodify.shared.compose.popup.entry.sync.SyncStatusDialog
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
+import com.andannn.melodify.shared.compose.popup.PopupHostState
+import com.andannn.melodify.shared.compose.popup.entry.sort.rule.DefaultSortRuleSettingPopup
+import com.andannn.melodify.shared.compose.popup.entry.sync.SyncStatusPopup
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
 import kotlinx.coroutines.launch
@@ -30,7 +30,7 @@ import org.koin.mp.KoinPlatform.getKoin
 @Composable
 internal fun retainHomeUiPresenter(
     navigator: Navigator,
-    popController: DialogHostState = LocalDialogHostState.current,
+    popController: PopupHostState = LocalPopupHostState.current,
     mediaLibrarySyncRepository: MediaLibrarySyncRepository = getKoin().get(),
 ): Presenter<HomeState> =
     retainPresenter(
@@ -79,7 +79,7 @@ private const val TAG = "HomeScreen"
 
 private class HomePresenter(
     private val navigator: Navigator,
-    private val popController: DialogHostState,
+    private val popController: PopupHostState,
     private val mediaLibrarySyncRepository: MediaLibrarySyncRepository,
 ) : RetainedPresenter<HomeState>() {
     @Composable
@@ -123,16 +123,16 @@ private class HomePresenter(
     }
 }
 
-context(dialogHostState: DialogHostState)
+context(popupHostState: PopupHostState)
 private suspend fun changeSortRule() {
-    dialogHostState.showDialog(
-        DefaultSortRuleSettingDialog,
+    popupHostState.showDialog(
+        DefaultSortRuleSettingPopup,
     )
 }
 
-context(dialogHostState: DialogHostState)
+context(popupHostState: PopupHostState)
 private suspend fun showSyncDialog() {
-    dialogHostState.showDialog(
-        SyncStatusDialog,
+    popupHostState.showDialog(
+        SyncStatusPopup,
     )
 }

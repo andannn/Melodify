@@ -4,7 +4,7 @@
  */
 package com.andannn.melodify.shared.compose.popup.entry.option
 
-import com.andannn.melodify.shared.compose.popup.common.DialogType
+import com.andannn.melodify.shared.compose.popup.common.CursorDropdownMenuFactoryProvider
 
-internal actual val optionDialogType: DialogType
-    get() = DialogType.DropDownDialog
+internal actual val optionDialogType
+    get() = CursorDropdownMenuFactoryProvider.cursorDropdownMenu()

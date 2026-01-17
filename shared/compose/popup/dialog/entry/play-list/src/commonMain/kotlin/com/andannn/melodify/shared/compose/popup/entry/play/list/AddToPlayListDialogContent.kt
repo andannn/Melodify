@@ -15,12 +15,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -44,10 +46,9 @@ import com.andannn.melodify.shared.compose.common.widgets.ActionType
 import com.andannn.melodify.shared.compose.common.widgets.LargePreviewCard
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import com.andannn.melodify.shared.compose.common.widgets.SmpTextButton
-import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.common.DialogId
-import com.andannn.melodify.shared.compose.popup.common.DialogType
-import com.andannn.melodify.shared.compose.popup.common.entry
+import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
+import com.andannn.melodify.shared.compose.popup.PopupEntryProviderScope
+import com.andannn.melodify.shared.compose.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.all_playlists
 import melodify.shared.compose.resource.generated.resources.all_to_playlist_page_title
@@ -56,10 +57,10 @@ import melodify.shared.compose.resource.generated.resources.selected_songs
 import melodify.shared.compose.resource.generated.resources.track_count
 import org.jetbrains.compose.resources.stringResource
 
-data class AddMusicsToPlayListDialog(
+data class AddMusicsToPlayListPopup(
     val items: List<MediaItemModel>,
     val isAudio: Boolean,
-) : DialogId<AddToPlayListDialogResult>
+) : PopupId<AddToPlayListDialogResult>
 
 sealed interface AddToPlayListDialogResult {
     data class OnAddToPlayListResult(
@@ -72,21 +73,27 @@ sealed interface AddToPlayListDialogResult {
     object OnDismiss : AddToPlayListDialogResult
 }
 
-fun DialogEntryProviderScope<DialogId<*>>.addToPlayListDialogEntry() {
+fun PopupEntryProviderScope<PopupId<*>>.addToPlayListDialogEntry() {
     entry(
-        dialogType = DialogType.ModalBottomSheet,
+        metadata = ModalBottomSheetFactoryProvider.bottomSheet(),
     ) { dialogId, onAction ->
-        AddToPlayListDialogContent(
-            dialogId,
-            onAction = onAction,
-        )
+        Surface(
+            modifier = Modifier.wrapContentSize(),
+            shape = AlertDialogDefaults.shape,
+            tonalElevation = AlertDialogDefaults.TonalElevation,
+        ) {
+            AddToPlayListDialogContent(
+                dialogId,
+                onAction = onAction,
+            )
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AddToPlayListDialogContent(
-    dialog: AddMusicsToPlayListDialog,
+    dialog: AddMusicsToPlayListPopup,
     onAction: (AddToPlayListDialogResult) -> Unit,
     modifier: Modifier = Modifier,
 ) {

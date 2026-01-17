@@ -22,11 +22,11 @@ import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import com.andannn.melodify.shared.compose.popup.DialogHostState
-import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
+import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
-import com.andannn.melodify.shared.compose.popup.entry.option.OptionDialog
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
+import com.andannn.melodify.shared.compose.popup.entry.option.OptionPopup
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.addToNextPlay
@@ -56,20 +56,20 @@ internal data class GroupInfo(
 internal fun retainGroupHeaderPresenter(
     groupInfo: GroupInfo,
     repository: Repository = LocalRepository.current,
-    dialogHostState: DialogHostState = LocalDialogHostState.current,
+    popupHostState: PopupHostState = LocalPopupHostState.current,
     snackBarController: SnackBarController = LocalSnackBarController.current,
     mediaFileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
 ): Presenter<GroupHeaderState> =
     retainPresenter(
         groupInfo,
         repository,
-        dialogHostState,
+        popupHostState,
         mediaFileDeleteHelper,
     ) {
         GroupHeaderPresenter(
             groupInfo,
             repository,
-            dialogHostState,
+            popupHostState,
             snackBarController,
             mediaFileDeleteHelper,
         )
@@ -90,7 +90,7 @@ internal sealed interface GroupHeaderEvent {
 private class GroupHeaderPresenter(
     private val groupInfo: GroupInfo,
     private val repository: Repository,
-    private val dialogHostState: DialogHostState,
+    private val popupHostState: PopupHostState,
     private val snackBarController: SnackBarController,
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
 ) : RetainedPresenter<GroupHeaderState>() {
@@ -131,7 +131,7 @@ private class GroupHeaderPresenter(
                 GroupHeaderEvent.OnOptionClick -> {
                     retainedScope.launch {
                         val dialog =
-                            OptionDialog(
+                            OptionPopup(
                                 options =
                                     buildList {
                                         if (groupKey.canPinToHome()) add(OptionItem.ADD_TO_HOME_TAB)
@@ -141,12 +141,12 @@ private class GroupHeaderPresenter(
                                         add(OptionItem.DELETE_MEDIA_FILE)
                                     },
                             )
-                        val result = dialogHostState.showDialog(dialog)
+                        val result = popupHostState.showDialog(dialog)
                         if (result is MediaOptionDialogResult.ClickOptionItemResult) {
                             context(
                                 repository,
                                 snackBarController,
-                                dialogHostState,
+                                popupHostState,
                                 mediaFileDeleteHelper,
                             ) {
                                 when (result.optionItem) {
@@ -189,7 +189,7 @@ private class GroupHeaderPresenter(
         }
     }
 
-    context(_: Repository, _: DialogHostState, _: SnackBarController, _: MediaFileDeleteHelper)
+    context(_: Repository, _: PopupHostState, _: SnackBarController, _: MediaFileDeleteHelper)
     private suspend fun handleGroupOption(
         optionItem: OptionItem,
         groupKeys: List<GroupKey?>,

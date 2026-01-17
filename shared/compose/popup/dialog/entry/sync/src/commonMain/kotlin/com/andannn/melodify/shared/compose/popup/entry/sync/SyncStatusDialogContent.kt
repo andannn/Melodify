@@ -30,10 +30,9 @@ import com.andannn.melodify.core.syncer.ContentType
 import com.andannn.melodify.core.syncer.SyncInfo
 import com.andannn.melodify.core.syncer.SyncStatus
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
-import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.common.DialogId
-import com.andannn.melodify.shared.compose.popup.common.DialogType
-import com.andannn.melodify.shared.compose.popup.common.entry
+import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
+import com.andannn.melodify.shared.compose.popup.PopupEntryProviderScope
+import com.andannn.melodify.shared.compose.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.sync_progress_album
 import melodify.shared.compose.resource.generated.resources.sync_progress_artist
@@ -42,12 +41,12 @@ import melodify.shared.compose.resource.generated.resources.sync_progress_media
 import melodify.shared.compose.resource.generated.resources.sync_progress_video
 import org.jetbrains.compose.resources.stringResource
 
-data object SyncStatusDialog : DialogId<Unit>
+data object SyncStatusPopup : PopupId<Unit>
 
-fun DialogEntryProviderScope<DialogId<*>>.syncStatusDialogEntry() {
+fun PopupEntryProviderScope<PopupId<*>>.syncStatusDialogEntry() {
     entry(
-        dialogId = SyncStatusDialog,
-        dialogType = DialogType.ModalBottomSheet,
+        dialogId = SyncStatusPopup,
+        metadata = ModalBottomSheetFactoryProvider.bottomSheet(),
     ) { _, _ ->
         SyncStatusDialogContent()
     }

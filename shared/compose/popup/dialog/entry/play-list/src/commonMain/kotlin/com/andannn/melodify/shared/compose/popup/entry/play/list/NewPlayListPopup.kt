@@ -29,10 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
-import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.common.DialogId
-import com.andannn.melodify.shared.compose.popup.common.DialogType
-import com.andannn.melodify.shared.compose.popup.common.entry
+import com.andannn.melodify.shared.compose.popup.DialogFactoryProvider
+import com.andannn.melodify.shared.compose.popup.PopupEntryProviderScope
+import com.andannn.melodify.shared.compose.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.decline
 import melodify.shared.compose.resource.generated.resources.new_playlist_dialog_input_hint
@@ -48,19 +47,25 @@ sealed interface InputDialogResult {
     object Decline : InputDialogResult
 }
 
-data object NewPlayListDialog : DialogId<InputDialogResult> {
+data object NewPlayListPopup : PopupId<InputDialogResult> {
     val title = Res.string.new_playlist_dialog_title
     val playListNameInputHint = Res.string.new_playlist_dialog_input_hint
 }
 
-fun DialogEntryProviderScope<DialogId<*>>.newPlayListDialogEntry() {
+fun PopupEntryProviderScope<PopupId<*>>.newPlayListDialogEntry() {
     entry(
-        dialogId = NewPlayListDialog,
-        dialogType = DialogType.AlertDialog,
+        dialogId = NewPlayListPopup,
+        metadata = DialogFactoryProvider.metadata(),
     ) { _, onAction ->
-        NewPlayListDialogContent(
-            onAction,
-        )
+        Surface(
+            modifier = Modifier.wrapContentSize(),
+            shape = AlertDialogDefaults.shape,
+            tonalElevation = AlertDialogDefaults.TonalElevation,
+        ) {
+            NewPlayListDialogContent(
+                onAction,
+            )
+        }
     }
 }
 
@@ -71,8 +76,8 @@ internal fun NewPlayListDialogContent(
 ) {
     SimpleInputDialogContent(
         modifier = modifier,
-        title = stringResource(NewPlayListDialog.title),
-        inputHint = stringResource(NewPlayListDialog.playListNameInputHint),
+        title = stringResource(NewPlayListPopup.title),
+        inputHint = stringResource(NewPlayListPopup.playListNameInputHint),
         onAction = onAction,
     )
 }

@@ -4,7 +4,7 @@
  */
 package com.andannn.melodify.shared.compose.popup.entry.option
 
-import com.andannn.melodify.shared.compose.popup.common.DialogType
+import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
 
-internal actual val optionDialogType: com.andannn.melodify.shared.compose.popup.common.DialogType
-    get() = DialogType.ModalBottomSheet
+internal actual val optionDialogType
+    get() = ModalBottomSheetFactoryProvider.bottomSheet()

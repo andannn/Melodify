@@ -27,11 +27,11 @@ import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import com.andannn.melodify.shared.compose.popup.DialogHostState
-import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
+import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
-import com.andannn.melodify.shared.compose.popup.entry.option.OptionDialog
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
+import com.andannn.melodify.shared.compose.popup.entry.option.OptionPopup
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.addToNextPlay
@@ -59,21 +59,21 @@ fun retainTabContentPresenter(
     selectedTab: CustomTab?,
     navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
     repository: Repository = LocalRepository.current,
-    dialogHostState: DialogHostState = LocalDialogHostState.current,
+    popupHostState: PopupHostState = LocalPopupHostState.current,
     snackBarController: SnackBarController = LocalSnackBarController.current,
     fileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
 ) = retainPresenter(
     selectedTab,
     navigationRequestEventSink,
     repository,
-    dialogHostState,
+    popupHostState,
     fileDeleteHelper,
 ) {
     TabContentPresenter(
         selectedTab = selectedTab,
         navigationRequestEventSink = navigationRequestEventSink,
         repository = repository,
-        dialogHostState = dialogHostState,
+        popupHostState = popupHostState,
         snackBarController = snackBarController,
         mediaFileDeleteHelper = fileDeleteHelper,
     )
@@ -105,7 +105,7 @@ private class TabContentPresenter(
     private val selectedTab: CustomTab?,
     private val navigationRequestEventSink: NavigationRequestEventSink,
     private val repository: Repository,
-    private val dialogHostState: DialogHostState,
+    private val popupHostState: PopupHostState,
     private val snackBarController: SnackBarController,
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
 ) : RetainedPresenter<TabContentState>() {
@@ -133,7 +133,7 @@ private class TabContentPresenter(
             groupSort = displaySettingState,
             pagingItems = pagingItems,
         ) { eventSink ->
-            context(repository, snackBarController, dialogHostState, mediaFileDeleteHelper) {
+            context(repository, snackBarController, popupHostState, mediaFileDeleteHelper) {
                 when (eventSink) {
                     is TabContentEvent.OnPlayMedia -> {
                         retainedScope.launch {
@@ -197,7 +197,7 @@ private class TabContentPresenter(
         items: List<MediaItemModel>,
     ) {
         retainedScope.launch {
-            context(repository, dialogHostState) {
+            context(repository, popupHostState) {
                 playMediaItems(
                     mediaItem,
                     items,
@@ -206,7 +206,7 @@ private class TabContentPresenter(
         }
     }
 
-    context(repository: Repository, dialogHostState: DialogHostState)
+    context(repository: Repository, popupHostState: PopupHostState)
     private suspend fun handleGroupItemClick(
         groupKeys: List<GroupKey?>,
         displaySetting: DisplaySetting,
@@ -226,7 +226,7 @@ private class TabContentPresenter(
         }
     }
 
-    context(_: Repository, dialogHostState: DialogHostState, _: MediaFileDeleteHelper, snackBarController: SnackBarController)
+    context(_: Repository, popupHostState: PopupHostState, _: MediaFileDeleteHelper, snackBarController: SnackBarController)
     private suspend fun onShowMediaItemOption(item: MediaItemModel) {
         Napier.d(message = "onShowMusicItemOption: $item")
         val isAudio = item is AudioItemModel
@@ -239,7 +239,7 @@ private class TabContentPresenter(
                 if (isAudio) add(OptionItem.OPEN_LIBRARY_ARTIST)
                 add(OptionItem.DELETE_MEDIA_FILE)
             }
-        val result = dialogHostState.showDialog(OptionDialog(options = options))
+        val result = popupHostState.showDialog(OptionPopup(options = options))
 
         if (result is MediaOptionDialogResult.ClickOptionItemResult) {
             when (result.optionItem) {

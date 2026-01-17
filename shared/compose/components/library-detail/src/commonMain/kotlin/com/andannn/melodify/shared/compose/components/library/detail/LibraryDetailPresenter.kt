@@ -23,8 +23,8 @@ import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource
 import com.andannn.melodify.shared.compose.common.model.browseable
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import com.andannn.melodify.shared.compose.popup.DialogHostState
-import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
+import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.usecase.content
 import com.andannn.melodify.shared.compose.usecase.item
 import com.andannn.melodify.shared.compose.usecase.playMediaItems
@@ -46,10 +46,10 @@ fun retainLibraryDetailPresenter(
     dataSource: LibraryDataSource,
     navigationRequestSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
     repository: Repository = LocalRepository.current,
-    dialogHostState: DialogHostState = LocalDialogHostState.current,
+    popupHostState: PopupHostState = LocalPopupHostState.current,
 ): Presenter<LibraryContentState> =
-    retainPresenter(repository, dataSource, navigationRequestSink, dialogHostState) {
-        LibraryDetailPresenter(repository, dataSource, navigationRequestSink, dialogHostState)
+    retainPresenter(repository, dataSource, navigationRequestSink, popupHostState) {
+        LibraryDetailPresenter(repository, dataSource, navigationRequestSink, popupHostState)
     }
 
 @Stable
@@ -77,7 +77,7 @@ private class LibraryDetailPresenter(
     private val repository: Repository,
     private val dataSource: LibraryDataSource,
     private val navigationRequestSink: NavigationRequestEventSink,
-    private val dialogHostState: DialogHostState,
+    private val popupHostState: PopupHostState,
 ) : RetainedPresenter<LibraryContentState>() {
     private val dataSourceMediaItemFlow =
         with(repository) {
@@ -148,7 +148,7 @@ private class LibraryDetailPresenter(
         retainedScope.launch {
             context(
                 repository,
-                dialogHostState,
+                popupHostState,
             ) {
                 playMediaItems(
                     audioItemModel,

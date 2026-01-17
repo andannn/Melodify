@@ -6,11 +6,11 @@ package com.andannn.melodify.shared.compose.usecase
 
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.MediaItemModel
-import com.andannn.melodify.shared.compose.popup.DialogHostState
+import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.alert.AlertDialogAction
 import com.andannn.melodify.shared.compose.popup.entry.alert.ChangePlayListAlert
 
-context(repo: Repository, dialogHostState: DialogHostState)
+context(repo: Repository, popupHostState: PopupHostState)
 suspend fun playMediaItems(
     mediaItem: MediaItemModel,
     newItems: List<MediaItemModel>,
@@ -20,7 +20,7 @@ suspend fun playMediaItems(
 
     val allowPlay =
         if (currentPlayListIds.isNotEmpty() && currentPlayListIds != newPlayListIds) {
-            dialogHostState.confirmChangePlayList()
+            popupHostState.confirmChangePlayList()
         } else {
             // playlist is not change, just play the media item
             true
@@ -34,4 +34,4 @@ suspend fun playMediaItems(
     }
 }
 
-private suspend fun DialogHostState.confirmChangePlayList(): Boolean = showDialog(ChangePlayListAlert) == AlertDialogAction.Accept
+private suspend fun PopupHostState.confirmChangePlayList(): Boolean = showDialog(ChangePlayListAlert) == AlertDialogAction.Accept

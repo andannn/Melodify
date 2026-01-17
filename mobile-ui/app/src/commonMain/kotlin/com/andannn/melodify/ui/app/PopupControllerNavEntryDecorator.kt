@@ -9,12 +9,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
 import androidx.navigation3.runtime.NavEntryDecorator
-import com.andannn.melodify.shared.compose.popup.ActionDialog
-import com.andannn.melodify.shared.compose.popup.DialogHostState
-import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
-import com.andannn.melodify.shared.compose.popup.common.AlertDialogFactoryProvider
-import com.andannn.melodify.shared.compose.popup.common.ModalBottomSheetFactoryProvider
-import com.andannn.melodify.shared.compose.popup.common.entryProvider
+import com.andannn.melodify.shared.compose.popup.DialogFactoryProvider
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
+import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
+import com.andannn.melodify.shared.compose.popup.PopupHost
+import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.alert.alertDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.option.addMediaOptionDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.play.list.addToPlayListDialogEntry
@@ -24,6 +23,7 @@ import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.sleepTimerOpt
 import com.andannn.melodify.shared.compose.popup.entry.sort.rule.addChangeSortRuleDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.sort.rule.defaultSortRuleSettingDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.sync.syncStatusDialogEntry
+import com.andannn.melodify.shared.compose.popup.entryProvider
 
 @Composable
 internal fun <T : Any> rememberPopupControllerNavEntryDecorator(): NavEntryDecorator<T> = remember { PopupControllerNavEntryDecorator() }
@@ -33,18 +33,18 @@ private class PopupControllerNavEntryDecorator<T : Any> :
         onPop = {
         },
         decorate = { entry ->
-            val dialogHostState = retain { DialogHostState() }
+            val popupHostState = retain { PopupHostState() }
             CompositionLocalProvider(
-                LocalDialogHostState provides dialogHostState,
+                LocalPopupHostState provides popupHostState,
             ) {
                 entry.Content()
 
-                ActionDialog(
-                    dialogHostState = dialogHostState,
-                    dialogFactoryProvider =
+                PopupHost(
+                    popupHostState = popupHostState,
+                    popupFactoryProvider =
                         listOf(
-                            AlertDialogFactoryProvider,
-                            ModalBottomSheetFactoryProvider,
+                            DialogFactoryProvider(),
+                            ModalBottomSheetFactoryProvider(),
                         ),
                     entryProvider =
                         entryProvider {
