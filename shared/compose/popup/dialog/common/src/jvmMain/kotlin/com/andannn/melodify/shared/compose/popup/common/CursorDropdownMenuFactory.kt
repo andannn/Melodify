@@ -6,17 +6,36 @@ package com.andannn.melodify.shared.compose.popup.common
 
 import androidx.compose.material.CursorDropdownMenu
 import androidx.compose.runtime.Composable
+import io.github.andannn.popup.PopupEntry
+import io.github.andannn.popup.PopupFactory
+import io.github.andannn.popup.PopupFactoryProvider
+import io.github.andannn.popup.PopupFactoryScope
 
 data class CursorDropdownMenuFactory(
-    private val entry: DialogEntry<*>,
-) : DialogFactory {
+    private val entry: PopupEntry<*>,
+) : PopupFactory {
     @Composable
-    override fun DialogFactoryScope.Content() {
+    override fun PopupFactoryScope.Content() {
         CursorDropdownMenu(
             expanded = true,
             onDismissRequest = onRequestDismiss,
         ) {
             entry.Content(onAction = onPerformAction)
         }
+    }
+}
+
+class CursorDropdownMenuFactoryProvider : PopupFactoryProvider {
+    override fun create(entry: PopupEntry<*>): PopupFactory? =
+        entry.metadata[CURSOR_DROPDOWN_MENU_KEY]?.let {
+            CursorDropdownMenuFactory(
+                entry = entry,
+            )
+        }
+
+    companion object {
+        internal const val CURSOR_DROPDOWN_MENU_KEY = "cursor_dropdown_menu"
+
+        fun cursorDropdownMenu(): Map<String, Any> = mapOf(CURSOR_DROPDOWN_MENU_KEY to Unit)
     }
 }

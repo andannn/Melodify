@@ -13,19 +13,7 @@ import androidx.compose.ui.window.ApplicationScope
 import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
-import com.andannn.melodify.shared.compose.popup.DialogHostState
-import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
-import com.andannn.melodify.shared.compose.popup.common.entryProvider
-import com.andannn.melodify.shared.compose.popup.entry.alert.alertDialogEntry
-import com.andannn.melodify.shared.compose.popup.entry.library.addLibraryPathDialogEntry
-import com.andannn.melodify.shared.compose.popup.entry.option.addMediaOptionDialogEntry
-import com.andannn.melodify.shared.compose.popup.entry.play.list.addToPlayListDialogEntry
-import com.andannn.melodify.shared.compose.popup.entry.play.list.newPlayListDialogEntry
-import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.sleepTimerCountingDialogEntry
-import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.sleepTimerOptionDialogEntry
-import com.andannn.melodify.shared.compose.popup.entry.sort.rule.addChangeSortRuleDialogEntry
-import com.andannn.melodify.shared.compose.popup.entry.sort.rule.defaultSortRuleSettingDialogEntry
-import com.andannn.melodify.shared.compose.popup.entry.sync.syncStatusDialogEntry
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.windows.librarydetail.LibraryDetailWindow
@@ -33,6 +21,7 @@ import com.andannn.melodify.windows.main.MainWindow
 import com.andannn.melodify.windows.preferences.PreferenceWindow
 import com.andannn.melodify.windows.search.SearchWindow
 import com.andannn.melodify.windows.tabmanage.TabManageWindow
+import io.github.andannn.popup.PopupHostState
 
 @Composable
 internal fun ApplicationScope.MelodifyDeskTopApp(
@@ -66,7 +55,7 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
                         windowType,
                     ) {
                         CompositionLocalProvider(
-                            LocalDialogHostState provides retain { DialogHostState() },
+                            LocalPopupHostState provides retain { PopupHostState() },
                             LocalSnackBarController provides retain { SnackBarController() },
                         ) {
                             when (windowType) {

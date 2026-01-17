@@ -5,12 +5,9 @@
 package com.andannn.melodify.windows.common
 
 import androidx.compose.runtime.Composable
-import com.andannn.melodify.shared.compose.popup.ActionDialog
-import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
-import com.andannn.melodify.shared.compose.popup.common.AlertDialogFactoryProvider
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
+import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
 import com.andannn.melodify.shared.compose.popup.common.CursorDropdownMenuFactoryProvider
-import com.andannn.melodify.shared.compose.popup.common.ModalBottomSheetFactoryProvider
-import com.andannn.melodify.shared.compose.popup.common.entryProvider
 import com.andannn.melodify.shared.compose.popup.entry.alert.alertDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.library.addLibraryPathDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.option.addMediaOptionDialogEntry
@@ -21,16 +18,19 @@ import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.sleepTimerOpt
 import com.andannn.melodify.shared.compose.popup.entry.sort.rule.addChangeSortRuleDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.sort.rule.defaultSortRuleSettingDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.sync.syncStatusDialogEntry
+import io.github.andannn.popup.DialogFactoryProvider
+import io.github.andannn.popup.PopupHost
+import io.github.andannn.popup.entryProvider
 
 @Composable
 fun CommonActionDialog() {
-    ActionDialog(
-        dialogHostState = LocalDialogHostState.current,
-        dialogFactoryProvider =
+    PopupHost(
+        popupHostState = LocalPopupHostState.current,
+        popupFactoryProvider =
             listOf(
-                AlertDialogFactoryProvider,
-                ModalBottomSheetFactoryProvider,
-                CursorDropdownMenuFactoryProvider,
+                DialogFactoryProvider(),
+                ModalBottomSheetFactoryProvider(),
+                CursorDropdownMenuFactoryProvider(),
             ),
         entryProvider =
             entryProvider {

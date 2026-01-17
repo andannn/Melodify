@@ -12,18 +12,18 @@ import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import com.andannn.melodify.shared.compose.popup.DialogHostState
-import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.alert.InvalidPathAlert
 import com.andannn.melodify.shared.compose.popup.entry.play.list.InputDialogResult
-import com.andannn.melodify.shared.compose.popup.entry.play.list.NewPlayListDialog
+import com.andannn.melodify.shared.compose.popup.entry.play.list.NewPlayListPopup
+import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun retainLibraryPreferenceState(
-    popUpController: DialogHostState = LocalDialogHostState.current,
+    popUpController: PopupHostState = LocalPopupHostState.current,
     repository: Repository = LocalRepository.current,
 ) = retainPresenter(
     popUpController,
@@ -50,7 +50,7 @@ sealed interface LibraryPreferenceUiEvent {
 }
 
 class LibraryPreferencePresenter(
-    private val popUpController: DialogHostState,
+    private val popUpController: PopupHostState,
     private val repository: Repository,
 ) : RetainedPresenter<LibraryPreferenceUiState>() {
     private val libraryPathFlow =
@@ -78,7 +78,7 @@ class LibraryPreferencePresenter(
 
     private fun onAddLibraryButtonClick() {
         retainedScope.launch {
-            val result = popUpController.showDialog(NewPlayListDialog)
+            val result = popUpController.showDialog(NewPlayListPopup)
 
             if (result is InputDialogResult.Accept) {
                 val success = repository.addLibraryPath(result.input)

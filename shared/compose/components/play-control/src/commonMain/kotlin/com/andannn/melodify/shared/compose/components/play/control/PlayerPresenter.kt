@@ -20,12 +20,11 @@ import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import com.andannn.melodify.shared.compose.popup.DialogHostState
-import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
-import com.andannn.melodify.shared.compose.popup.entry.option.OptionDialog
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
-import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.SleepCountingDialog
+import com.andannn.melodify.shared.compose.popup.entry.option.OptionPopup
+import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.SleepCountingPopup
 import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.SleepTimerCountingDialog
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
@@ -33,6 +32,7 @@ import com.andannn.melodify.shared.compose.usecase.addToNextPlay
 import com.andannn.melodify.shared.compose.usecase.addToQueue
 import com.andannn.melodify.shared.compose.usecase.openSleepTimer
 import io.github.aakira.napier.Napier
+import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -44,15 +44,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun rememberPlayerPresenter(
     repository: Repository = LocalRepository.current,
-    dialogHostState: DialogHostState = LocalDialogHostState.current,
+    popupHostState: PopupHostState = LocalPopupHostState.current,
     snackBarController: SnackBarController = LocalSnackBarController.current,
 ): Presenter<PlayerUiState> =
     retainPresenter(
         repository,
-        dialogHostState,
+        popupHostState,
         snackBarController,
     ) {
-        PlayerPresenter(repository, dialogHostState, snackBarController)
+        PlayerPresenter(repository, popupHostState, snackBarController)
     }
 
 @Stable
@@ -112,7 +112,7 @@ private const val TAG = "PlayerPresenter"
 
 private class PlayerPresenter(
     private val repository: Repository,
-    private val dialogHostState: DialogHostState,
+    private val popupHostState: PopupHostState,
     private val snackBarController: SnackBarController,
 ) : RetainedPresenter<PlayerUiState>() {
     private val interactingMusicItemFlow =
@@ -227,7 +227,7 @@ private class PlayerPresenter(
 
                 PlayerUiEvent.OnTimerIconClick -> {
                     retainedScope.launch {
-                        when (dialogHostState.showDialog(SleepCountingDialog)) {
+                        when (popupHostState.showDialog(SleepCountingPopup)) {
                             is SleepTimerCountingDialog.OnCancelTimer -> {
                                 repository.cancelSleepTimer()
                             }
@@ -289,8 +289,8 @@ private class PlayerPresenter(
     private fun onOptionIconClick(mediaItem: MediaItemModel) {
         retainedScope.launch {
             val result =
-                dialogHostState.showDialog(
-                    OptionDialog(
+                popupHostState.showDialog(
+                    OptionPopup(
                         options =
                             listOf(
                                 OptionItem.PLAY_NEXT,
@@ -300,7 +300,7 @@ private class PlayerPresenter(
                     ),
                 )
             if (result is MediaOptionDialogResult.ClickOptionItemResult) {
-                context(repository, dialogHostState, snackBarController) {
+                context(repository, popupHostState, snackBarController) {
                     when (result.optionItem) {
                         OptionItem.PLAY_NEXT -> {
                             addToNextPlay(listOf(mediaItem))

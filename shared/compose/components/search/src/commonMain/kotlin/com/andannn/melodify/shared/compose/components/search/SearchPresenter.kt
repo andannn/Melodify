@@ -20,22 +20,22 @@ import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import com.andannn.melodify.shared.compose.popup.DialogHostState
-import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.usecase.playMediaItems
+import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun rememberSearchUiPresenter(
     repository: Repository = LocalRepository.current,
-    dialogHostState: DialogHostState = LocalDialogHostState.current,
+    popupHostState: PopupHostState = LocalPopupHostState.current,
 ) = retainPresenter(
     repository,
 ) {
     SearchUiPresenter(
         repository,
-        dialogHostState,
+        popupHostState,
     )
 }
 
@@ -79,7 +79,7 @@ sealed interface SearchState {
 
 private class SearchUiPresenter(
     private val repository: Repository,
-    private val dialogHostState: DialogHostState,
+    private val popupHostState: PopupHostState,
 ) : RetainedPresenter<SearchUiState>() {
     private var searchTextField by mutableStateOf(TextFieldState())
     private var searchResult by mutableStateOf<SearchState>(SearchState.Init)
@@ -145,7 +145,7 @@ private class SearchUiPresenter(
 
     private fun onPlayAudio(audioItemModel: AudioItemModel) {
         retainedScope.launch {
-            context(repository, dialogHostState) {
+            context(repository, popupHostState) {
                 playMediaItems(
                     audioItemModel,
                     listOf(audioItemModel),

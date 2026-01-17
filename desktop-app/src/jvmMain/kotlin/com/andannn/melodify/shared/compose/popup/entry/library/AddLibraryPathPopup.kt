@@ -29,17 +29,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
-import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.common.DialogId
-import com.andannn.melodify.shared.compose.popup.common.DialogType
-import com.andannn.melodify.shared.compose.popup.common.entry
+import io.github.andannn.popup.DialogFactoryProvider
+import io.github.andannn.popup.PopupEntryProviderScope
+import io.github.andannn.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.decline
 import melodify.shared.compose.resource.generated.resources.new_playlist_dialog_title
 import melodify.shared.compose.resource.generated.resources.ok
 import org.jetbrains.compose.resources.stringResource
 
-data object AddLibraryPathDialog : DialogId<InputDialog> {
+data object AddLibraryPathPopup : PopupId<InputDialog> {
     val title = Res.string.new_playlist_dialog_title
 }
 
@@ -51,12 +50,18 @@ sealed interface InputDialog {
     object Decline : InputDialog
 }
 
-fun DialogEntryProviderScope<DialogId<*>>.addLibraryPathDialogEntry() {
+fun PopupEntryProviderScope<PopupId<*>>.addLibraryPathDialogEntry() {
     entry(
-        dialogId = AddLibraryPathDialog,
-        dialogType = DialogType.AlertDialog,
+        dialogId = AddLibraryPathPopup,
+        metadata = DialogFactoryProvider.metadata(),
     ) { _, onAction ->
-        AddLibraryPathDialog(onAction)
+        Surface(
+            modifier = Modifier.wrapContentSize(),
+            shape = AlertDialogDefaults.shape,
+            tonalElevation = AlertDialogDefaults.TonalElevation,
+        ) {
+            AddLibraryPathDialog(onAction)
+        }
     }
 }
 
@@ -71,7 +76,7 @@ internal fun AddLibraryPathDialog(
 ) {
     SimpleInputDialogContent(
         modifier = modifier,
-        title = stringResource(AddLibraryPathDialog.title),
+        title = stringResource(AddLibraryPathPopup.title),
         onAction = onAction,
     )
 }

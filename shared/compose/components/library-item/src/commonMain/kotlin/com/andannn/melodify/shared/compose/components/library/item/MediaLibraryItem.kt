@@ -23,11 +23,11 @@ import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
-import com.andannn.melodify.shared.compose.popup.DialogHostState
-import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.showLibraryMediaOption
+import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.launch
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.track_count
@@ -109,7 +109,7 @@ private fun retainMediaLibraryItemPresenter(
     mediaItemModel: MediaItemModel,
     playListId: String?,
     navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
-    dialogHostState: DialogHostState = LocalDialogHostState.current,
+    popupHostState: PopupHostState = LocalPopupHostState.current,
     snackBarController: SnackBarController = LocalSnackBarController.current,
     repository: Repository = LocalRepository.current,
     fileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
@@ -117,7 +117,7 @@ private fun retainMediaLibraryItemPresenter(
     mediaItemModel,
     playListId,
     navigationRequestEventSink,
-    dialogHostState,
+    popupHostState,
     snackBarController,
     repository,
     fileDeleteHelper,
@@ -125,7 +125,7 @@ private fun retainMediaLibraryItemPresenter(
     MediaLibraryItemPresenter(
         mediaItemModel = mediaItemModel,
         playListId = playListId,
-        dialogHostState = dialogHostState,
+        popupHostState = popupHostState,
         snackBarController = snackBarController,
         repository = repository,
         fileDeleteHelper = fileDeleteHelper,
@@ -136,7 +136,7 @@ private fun retainMediaLibraryItemPresenter(
 private class MediaLibraryItemPresenter(
     private val mediaItemModel: MediaItemModel,
     private val playListId: String?,
-    private val dialogHostState: DialogHostState,
+    private val popupHostState: PopupHostState,
     private val snackBarController: SnackBarController,
     private val repository: Repository,
     private val fileDeleteHelper: MediaFileDeleteHelper,
@@ -145,7 +145,7 @@ private class MediaLibraryItemPresenter(
     @Composable
     override fun present(): UiState =
         UiState { event ->
-            context(dialogHostState, snackBarController, repository, fileDeleteHelper, navigationRequestEventSink) {
+            context(popupHostState, snackBarController, repository, fileDeleteHelper, navigationRequestEventSink) {
                 when (event) {
                     UiEvent.OnOptionButtonClick -> {
                         retainedScope.launch {

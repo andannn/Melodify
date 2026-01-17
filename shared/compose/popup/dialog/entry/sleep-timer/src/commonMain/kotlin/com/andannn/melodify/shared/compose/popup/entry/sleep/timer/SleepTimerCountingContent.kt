@@ -20,10 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.durationString
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
-import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.common.DialogId
-import com.andannn.melodify.shared.compose.popup.common.DialogType
-import com.andannn.melodify.shared.compose.popup.common.entry
+import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
+import io.github.andannn.popup.PopupEntryProviderScope
+import io.github.andannn.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.cancel_timer
 import melodify.shared.compose.resource.generated.resources.sleep_timer
@@ -35,12 +34,12 @@ sealed interface SleepTimerCountingDialog {
     data object OnCancelTimer : SleepTimerCountingDialog
 }
 
-data object SleepCountingDialog : DialogId<SleepTimerCountingDialog>
+data object SleepCountingPopup : PopupId<SleepTimerCountingDialog>
 
-fun DialogEntryProviderScope<DialogId<*>>.sleepTimerCountingDialogEntry() {
+fun PopupEntryProviderScope<PopupId<*>>.sleepTimerCountingDialogEntry() {
     entry(
-        dialogId = SleepCountingDialog,
-        dialogType = DialogType.ModalBottomSheet,
+        dialogId = SleepCountingPopup,
+        metadata = ModalBottomSheetFactoryProvider.bottomSheet(),
     ) { _, onAction ->
         SleepTimerCountingContent(onAction)
     }

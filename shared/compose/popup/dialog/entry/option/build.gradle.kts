@@ -19,6 +19,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":shared:compose:common"))
             api(project(":shared:compose:popup:dialog:common"))
+            api(libs.popuphost)
         }
     }
 }

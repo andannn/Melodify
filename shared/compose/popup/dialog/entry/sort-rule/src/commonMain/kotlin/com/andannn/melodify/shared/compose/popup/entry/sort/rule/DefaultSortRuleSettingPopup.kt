@@ -21,20 +21,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
-import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.common.DialogId
-import com.andannn.melodify.shared.compose.popup.common.DialogType
-import com.andannn.melodify.shared.compose.popup.common.entry
+import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
+import io.github.andannn.popup.PopupEntryProviderScope
+import io.github.andannn.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.change_default_sort_order
 import org.jetbrains.compose.resources.stringResource
 
-data object DefaultSortRuleSettingDialog : DialogId<Unit>
+data object DefaultSortRuleSettingPopup : PopupId<Unit>
 
-fun DialogEntryProviderScope<DialogId<*>>.defaultSortRuleSettingDialogEntry() {
+fun PopupEntryProviderScope<PopupId<*>>.defaultSortRuleSettingDialogEntry() {
     entry(
-        dialogId = DefaultSortRuleSettingDialog,
-        dialogType = DialogType.ModalBottomSheet,
+        dialogId = DefaultSortRuleSettingPopup,
+        metadata = ModalBottomSheetFactoryProvider.bottomSheet(),
     ) { _, _ ->
         DefaultSortRuleSettingDialog()
     }

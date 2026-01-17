@@ -23,15 +23,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.SmpIcon
-import com.andannn.melodify.shared.compose.popup.common.DialogEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.common.DialogId
-import com.andannn.melodify.shared.compose.popup.common.DialogType
-import com.andannn.melodify.shared.compose.popup.common.entry
+import io.github.andannn.popup.PopupEntryProviderScope
+import io.github.andannn.popup.PopupId
 import org.jetbrains.compose.resources.stringResource
 
-data class OptionDialog(
+data class OptionPopup(
     val options: List<OptionItem>,
-) : DialogId<MediaOptionDialogResult>
+) : PopupId<MediaOptionDialogResult>
 
 sealed interface MediaOptionDialogResult {
     data class ClickOptionItemResult(
@@ -39,9 +37,9 @@ sealed interface MediaOptionDialogResult {
     ) : MediaOptionDialogResult
 }
 
-fun DialogEntryProviderScope<DialogId<*>>.addMediaOptionDialogEntry() {
+fun PopupEntryProviderScope<PopupId<*>>.addMediaOptionDialogEntry() {
     entry(
-        dialogType = optionDialogType,
+        metadata = optionDialogType,
     ) { dialogId, onAction ->
         MediaOptionContent(
             dialogId,
@@ -50,11 +48,11 @@ fun DialogEntryProviderScope<DialogId<*>>.addMediaOptionDialogEntry() {
     }
 }
 
-internal expect val optionDialogType: DialogType
+internal expect val optionDialogType: Map<String, Any>
 
 @Composable
 private fun MediaOptionContent(
-    dialogId: OptionDialog,
+    dialogId: OptionPopup,
     onAction: (MediaOptionDialogResult) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
@@ -103,7 +101,7 @@ private fun MediaOptionContentPreview() {
     MelodifyTheme {
         Surface {
             MediaOptionContent(
-                OptionDialog(
+                OptionPopup(
                     options =
                         listOf(
                             OptionItem.DELETE_MEDIA_FILE,

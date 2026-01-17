@@ -17,17 +17,17 @@ import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.components.library.detail.LibraryContentState
 import com.andannn.melodify.shared.compose.components.library.detail.retainLibraryDetailPresenter
-import com.andannn.melodify.shared.compose.popup.DialogHostState
-import com.andannn.melodify.shared.compose.popup.LocalDialogHostState
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
-import com.andannn.melodify.shared.compose.popup.entry.option.OptionDialog
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
+import com.andannn.melodify.shared.compose.popup.entry.option.OptionPopup
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.pinAllMusicToHomeTab
 import com.andannn.melodify.shared.compose.usecase.pinAllVideoToHomeTab
 import com.andannn.melodify.shared.compose.usecase.showLibraryMediaOption
 import com.andannn.melodify.ui.Navigator
+import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -36,7 +36,7 @@ internal fun retainLibraryDetailScreenPresenter(
     dataSource: LibraryDataSource,
     navigator: Navigator,
     repository: Repository = LocalRepository.current,
-    dialogHostState: DialogHostState = LocalDialogHostState.current,
+    popupHostState: PopupHostState = LocalPopupHostState.current,
     snackBarController: SnackBarController = LocalSnackBarController.current,
     mediaFileDeleteHelper: MediaFileDeleteHelper = getKoin().get(),
     navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
@@ -45,7 +45,7 @@ internal fun retainLibraryDetailScreenPresenter(
         dataSource,
         navigator,
         repository,
-        dialogHostState,
+        popupHostState,
         snackBarController,
         mediaFileDeleteHelper,
         navigationRequestEventSink,
@@ -54,7 +54,7 @@ internal fun retainLibraryDetailScreenPresenter(
             dataSource,
             navigator,
             repository,
-            dialogHostState,
+            popupHostState,
             snackBarController,
             mediaFileDeleteHelper,
             navigationRequestEventSink,
@@ -78,7 +78,7 @@ private class LibraryDetailScreenPresenter(
     private val dataSource: LibraryDataSource,
     private val navigator: Navigator,
     private val repository: Repository,
-    private val dialogHostState: DialogHostState,
+    private val popupHostState: PopupHostState,
     private val snackBarController: SnackBarController,
     private val fileDeleteHelper: MediaFileDeleteHelper,
     private val navigationRequestEventSink: NavigationRequestEventSink,
@@ -94,7 +94,7 @@ private class LibraryDetailScreenPresenter(
         ) { event ->
             context(
                 repository,
-                dialogHostState,
+                popupHostState,
                 snackBarController,
                 fileDeleteHelper,
                 navigationRequestEventSink,
@@ -111,8 +111,8 @@ private class LibraryDetailScreenPresenter(
                             -> {
                                 retainedScope.launch {
                                     val result =
-                                        dialogHostState.showDialog(
-                                            OptionDialog(
+                                        popupHostState.showDialog(
+                                            OptionPopup(
                                                 listOf(
                                                     OptionItem.ADD_TO_HOME_TAB,
                                                 ),
