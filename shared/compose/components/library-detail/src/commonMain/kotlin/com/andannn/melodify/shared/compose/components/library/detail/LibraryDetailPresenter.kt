@@ -24,11 +24,11 @@ import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource
 import com.andannn.melodify.shared.compose.common.model.browseable
 import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
-import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.usecase.content
 import com.andannn.melodify.shared.compose.usecase.item
 import com.andannn.melodify.shared.compose.usecase.playMediaItems
 import io.github.aakira.napier.Napier
+import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch

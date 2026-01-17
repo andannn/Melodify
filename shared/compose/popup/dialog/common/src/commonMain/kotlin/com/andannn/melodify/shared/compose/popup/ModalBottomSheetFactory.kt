@@ -1,9 +1,17 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.shared.compose.popup
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import io.github.andannn.popup.PopupEntry
+import io.github.andannn.popup.PopupFactory
+import io.github.andannn.popup.PopupFactoryProvider
+import io.github.andannn.popup.PopupFactoryScope
 
 class ModalBottomSheetFactoryProvider : PopupFactoryProvider {
     override fun create(entry: PopupEntry<*>): PopupFactory? =

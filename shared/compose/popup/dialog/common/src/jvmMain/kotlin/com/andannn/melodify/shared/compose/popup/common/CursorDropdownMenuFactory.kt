@@ -6,10 +6,10 @@ package com.andannn.melodify.shared.compose.popup.common
 
 import androidx.compose.material.CursorDropdownMenu
 import androidx.compose.runtime.Composable
-import com.andannn.melodify.shared.compose.popup.PopupEntry
-import com.andannn.melodify.shared.compose.popup.PopupFactory
-import com.andannn.melodify.shared.compose.popup.PopupFactoryProvider
-import com.andannn.melodify.shared.compose.popup.PopupFactoryScope
+import io.github.andannn.popup.PopupEntry
+import io.github.andannn.popup.PopupFactory
+import io.github.andannn.popup.PopupFactoryProvider
+import io.github.andannn.popup.PopupFactoryScope
 
 data class CursorDropdownMenuFactory(
     private val entry: PopupEntry<*>,

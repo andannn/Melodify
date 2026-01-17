@@ -23,8 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.SmpIcon
-import com.andannn.melodify.shared.compose.popup.PopupEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.PopupId
+import io.github.andannn.popup.PopupEntryProviderScope
+import io.github.andannn.popup.PopupId
 import org.jetbrains.compose.resources.stringResource
 
 data class OptionPopup(

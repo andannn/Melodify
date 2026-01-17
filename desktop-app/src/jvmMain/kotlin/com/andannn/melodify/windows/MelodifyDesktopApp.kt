@@ -14,7 +14,6 @@ import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSin
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
-import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.windows.librarydetail.LibraryDetailWindow
@@ -22,6 +21,7 @@ import com.andannn.melodify.windows.main.MainWindow
 import com.andannn.melodify.windows.preferences.PreferenceWindow
 import com.andannn.melodify.windows.search.SearchWindow
 import com.andannn.melodify.windows.tabmanage.TabManageWindow
+import io.github.andannn.popup.PopupHostState
 
 @Composable
 internal fun ApplicationScope.MelodifyDeskTopApp(

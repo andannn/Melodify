@@ -48,6 +48,7 @@ nav3Ui = "1.1.0-alpha01"
 nav3Runtime = "1.0.0"
 navigationevent = "1.0.0"
 expresso = "3.7.0"
+popuphost = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -131,6 +132,7 @@ androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchm
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 retainedmodel = { group = "io.github.andannn", name = "retainedmodel", version.ref = "retainedmodel" }
+popuphost = { group = "io.github.andannn", name = "popuphost", version.ref = "popuphost" }
 
 # dependecy in build-logic
 composeCompiler-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }

@@ -18,7 +18,6 @@ import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.components.library.detail.LibraryContentState
 import com.andannn.melodify.shared.compose.components.library.detail.retainLibraryDetailPresenter
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
-import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionPopup
@@ -28,6 +27,7 @@ import com.andannn.melodify.shared.compose.usecase.pinAllMusicToHomeTab
 import com.andannn.melodify.shared.compose.usecase.pinAllVideoToHomeTab
 import com.andannn.melodify.shared.compose.usecase.showLibraryMediaOption
 import com.andannn.melodify.ui.Navigator
+import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
 

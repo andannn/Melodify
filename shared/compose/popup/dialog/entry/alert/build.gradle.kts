@@ -17,6 +17,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(libs.popuphost)
             api(project(":shared:compose:popup:dialog:common"))
             implementation(project(":shared:compose:common"))
             implementation(project(":shared:domain:api"))

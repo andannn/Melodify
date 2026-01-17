@@ -34,7 +34,6 @@ include(":shared:compose:resource")
 include(":shared:compose:common")
 
 include(":shared:compose:popup:dialog:common")
-include(":shared:compose:popup:dialog:controller")
 include(":shared:compose:popup:dialog:entry:option")
 include(":shared:compose:popup:dialog:entry:sort-rule")
 include(":shared:compose:popup:dialog:entry:alert")

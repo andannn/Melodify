@@ -15,11 +15,11 @@ import com.andannn.melodify.shared.compose.components.tab.content.TabContentStat
 import com.andannn.melodify.shared.compose.components.tab.content.retainTabContentPresenter
 import com.andannn.melodify.shared.compose.components.tab.retainTabUiPresenter
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
-import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.sort.rule.DefaultSortRuleSettingPopup
 import com.andannn.melodify.shared.compose.popup.entry.sync.SyncStatusPopup
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
+import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.launch
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.default_sort_order

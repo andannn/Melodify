@@ -31,8 +31,8 @@ import com.andannn.melodify.core.syncer.SyncInfo
 import com.andannn.melodify.core.syncer.SyncStatus
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
-import com.andannn.melodify.shared.compose.popup.PopupEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.PopupId
+import io.github.andannn.popup.PopupEntryProviderScope
+import io.github.andannn.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.sync_progress_album
 import melodify.shared.compose.resource.generated.resources.sync_progress_artist

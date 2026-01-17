@@ -21,8 +21,8 @@ import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
-import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.usecase.playMediaItems
+import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

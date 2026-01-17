@@ -14,11 +14,11 @@ import com.andannn.melodify.shared.compose.common.NavigationRequest
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource
-import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionPopup
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
+import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.flow.first
 
 /**

@@ -4,7 +4,7 @@
  */
 package com.andannn.melodify.shared.compose.popup.entry.alert
 
-import com.andannn.melodify.shared.compose.popup.PopupId
+import io.github.andannn.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.change_play_list_alert_dialog_content
 import melodify.shared.compose.resource.generated.resources.confirm_delete_playlist_item

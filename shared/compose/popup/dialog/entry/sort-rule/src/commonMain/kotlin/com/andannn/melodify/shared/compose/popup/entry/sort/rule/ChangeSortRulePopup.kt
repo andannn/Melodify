@@ -52,8 +52,8 @@ import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.DropDownMenuIconButton
 import com.andannn.melodify.shared.compose.common.widgets.TransparentBackgroundListItem
 import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
-import com.andannn.melodify.shared.compose.popup.PopupEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.PopupId
+import io.github.andannn.popup.PopupEntryProviderScope
+import io.github.andannn.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.album_page_title
 import melodify.shared.compose.resource.generated.resources.artist_page_title

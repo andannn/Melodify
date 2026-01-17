@@ -6,9 +6,9 @@ package com.andannn.melodify.shared.compose.usecase
 
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.MediaItemModel
-import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.alert.AlertDialogAction
 import com.andannn.melodify.shared.compose.popup.entry.alert.ChangePlayListAlert
+import io.github.andannn.popup.PopupHostState
 
 context(repo: Repository, popupHostState: PopupHostState)
 suspend fun playMediaItems(

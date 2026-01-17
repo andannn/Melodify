@@ -29,9 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
-import com.andannn.melodify.shared.compose.popup.DialogFactoryProvider
-import com.andannn.melodify.shared.compose.popup.PopupEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.PopupId
+import io.github.andannn.popup.DialogFactoryProvider
+import io.github.andannn.popup.PopupEntryProviderScope
+import io.github.andannn.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.decline
 import melodify.shared.compose.resource.generated.resources.new_playlist_dialog_title

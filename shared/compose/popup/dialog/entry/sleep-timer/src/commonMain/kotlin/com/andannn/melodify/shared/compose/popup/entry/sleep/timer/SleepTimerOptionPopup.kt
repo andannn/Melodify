@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.durationString
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
-import com.andannn.melodify.shared.compose.popup.PopupEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.PopupId
+import io.github.andannn.popup.PopupEntryProviderScope
+import io.github.andannn.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.end_of_song
 import melodify.shared.compose.resource.generated.resources.sleep_timer

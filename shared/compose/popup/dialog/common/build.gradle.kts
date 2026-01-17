@@ -12,6 +12,12 @@ kmpExt {
 
 kotlin {
     androidLibrary {
-        namespace = "com.andannn.melodify.shared.compose.popup.entry.common"
+        namespace = "com.andannn.melodify.shared.compose.popup.controller"
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            api(libs.popuphost)
+        }
     }
 }

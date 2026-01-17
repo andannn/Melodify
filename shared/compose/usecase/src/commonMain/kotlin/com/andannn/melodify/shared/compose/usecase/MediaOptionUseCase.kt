@@ -18,7 +18,6 @@ import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayListItemModel
 import com.andannn.melodify.domain.model.TabKind
 import com.andannn.melodify.domain.model.VideoItemModel
-import com.andannn.melodify.shared.compose.popup.PopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.alert.AlertDialogAction
 import com.andannn.melodify.shared.compose.popup.entry.alert.DuplicatedAlert
 import com.andannn.melodify.shared.compose.popup.entry.play.list.AddMusicsToPlayListPopup
@@ -33,6 +32,7 @@ import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.SleepTimerOpt
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarMessage
 import io.github.aakira.napier.Napier
+import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.flow.first
 
 private const val TAG = "MediaOptionUseCase"

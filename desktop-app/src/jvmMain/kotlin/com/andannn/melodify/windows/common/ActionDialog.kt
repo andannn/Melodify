@@ -5,10 +5,8 @@
 package com.andannn.melodify.windows.common
 
 import androidx.compose.runtime.Composable
-import com.andannn.melodify.shared.compose.popup.DialogFactoryProvider
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
-import com.andannn.melodify.shared.compose.popup.PopupHost
 import com.andannn.melodify.shared.compose.popup.common.CursorDropdownMenuFactoryProvider
 import com.andannn.melodify.shared.compose.popup.entry.alert.alertDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.library.addLibraryPathDialogEntry
@@ -20,7 +18,9 @@ import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.sleepTimerOpt
 import com.andannn.melodify.shared.compose.popup.entry.sort.rule.addChangeSortRuleDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.sort.rule.defaultSortRuleSettingDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.sync.syncStatusDialogEntry
-import com.andannn.melodify.shared.compose.popup.entryProvider
+import io.github.andannn.popup.DialogFactoryProvider
+import io.github.andannn.popup.PopupHost
+import io.github.andannn.popup.entryProvider
 
 @Composable
 fun CommonActionDialog() {

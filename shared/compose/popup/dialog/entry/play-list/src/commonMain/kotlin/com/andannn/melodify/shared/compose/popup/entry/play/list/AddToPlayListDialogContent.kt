@@ -47,8 +47,8 @@ import com.andannn.melodify.shared.compose.common.widgets.LargePreviewCard
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import com.andannn.melodify.shared.compose.common.widgets.SmpTextButton
 import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
-import com.andannn.melodify.shared.compose.popup.PopupEntryProviderScope
-import com.andannn.melodify.shared.compose.popup.PopupId
+import io.github.andannn.popup.PopupEntryProviderScope
+import io.github.andannn.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.all_playlists
 import melodify.shared.compose.resource.generated.resources.all_to_playlist_page_title
