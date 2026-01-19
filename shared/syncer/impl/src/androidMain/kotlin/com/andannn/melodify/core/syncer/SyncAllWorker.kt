@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit
 internal class SyncWorkHelperImpl : SyncWorkHelper {
     companion object {
         private const val PERIODIC_SYNC_WORK_NAME = "periodic_sync_work_name"
-        private const val ONE_TIME_SYNC_WORK_NAME = "one_time_sync_work_name"
     }
 
     override fun registerPeriodicSyncWork(context: Context) {
@@ -43,19 +42,6 @@ internal class SyncWorkHelperImpl : SyncWorkHelper {
             ExistingPeriodicWorkPolicy.KEEP,
             periodicWorkRequest,
         )
-    }
-
-    override fun doOneTimeSyncWork(context: Context): UUID {
-        val oneTimeWorkRequest =
-            OneTimeWorkRequestBuilder<SyncAllMediaWorker>()
-                .build()
-        WorkManager.getInstance(context).enqueueUniqueWork(
-            ONE_TIME_SYNC_WORK_NAME,
-            ExistingWorkPolicy.KEEP,
-            oneTimeWorkRequest,
-        )
-
-        return oneTimeWorkRequest.id
     }
 }
 

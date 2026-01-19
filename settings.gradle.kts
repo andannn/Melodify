@@ -31,6 +31,7 @@ include(":mobile-ui:feature-search")
 include(":mobile-ui:feature-tab-management")
 
 include(":shared:compose:resource")
+
 include(":shared:compose:common")
 
 include(":shared:compose:popup:dialog:common")
@@ -44,6 +45,7 @@ include(":shared:compose:popup:dialog:entry:play-list")
 include(":shared:compose:popup:snack-bar")
 
 include(":shared:compose:usecase")
+
 include(":shared:compose:components:tab")
 include(":shared:compose:components:lyrics")
 include(":shared:compose:components:queue")
@@ -67,16 +69,21 @@ include(":shared:player:impl-none-android")
 include(":shared:player:impl-android")
 
 include(":shared:datastore")
-include(":shared:network")
+
 include(":shared:database")
+
+include(":shared:network:common")
+include(":shared:network:service:lrclib")
 
 include(":shared:syncer:api")
 include(":shared:syncer:impl")
-include(":shared:syncer:scanner")
-include(":shared:syncer:model")
-include(":shared:syncer:platform-ios")
+include(":shared:syncer:scanner:api")
+include(":shared:syncer:scanner:common")
+include(":shared:syncer:scanner:impl-local")
+include(":shared:syncer:scanner:platform-ios")
 
 include(":shared:platform")
+
 include(":shared:util:orientation")
 include(":shared:util:immersive")
 include(":shared:util:artwork-ios")

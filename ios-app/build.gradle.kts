@@ -16,8 +16,8 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
 
-            export(project(":shared:syncer:model"))
-            export(project(":shared:syncer:platform-ios"))
+            export(project(":shared:syncer:scanner:common"))
+            export(project(":shared:syncer:scanner:platform-ios"))
             export(project(":shared:player:platform-player-ios"))
             export(project(":shared:util:orientation"))
             export(project(":shared:util:immersive"))
@@ -33,8 +33,8 @@ kotlin {
             implementation(project(":mobile-ui:app"))
             implementation(project(":shared:util:brightness"))
             implementation(project(":shared:util:volume"))
-            api(project(":shared:syncer:model"))
-            api(project(":shared:syncer:platform-ios"))
+            api(project(":shared:syncer:scanner:common"))
+            api(project(":shared:syncer:scanner:platform-ios"))
             api(project(":shared:player:platform-player-ios"))
             api(project(":shared:util:orientation"))
             api(project(":shared:util:immersive"))

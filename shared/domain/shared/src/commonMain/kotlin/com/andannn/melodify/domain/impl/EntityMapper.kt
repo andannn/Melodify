@@ -18,7 +18,6 @@ import com.andannn.melodify.core.database.entity.SortOptionData
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.entity.valid
-import com.andannn.melodify.core.network.model.LyricData
 import com.andannn.melodify.domain.model.AlbumItemModel
 import com.andannn.melodify.domain.model.ArtistItemModel
 import com.andannn.melodify.domain.model.AudioItemModel
@@ -338,19 +337,6 @@ fun SortOption.toEntity() =
 
 fun LyricEntity.toLyricModel(): LyricModel =
     LyricModel(
-        plainLyrics = plainLyrics,
-        syncedLyrics = syncedLyrics,
-    )
-
-fun LyricData.toLyricEntity() =
-    LyricEntity(
-        id = id,
-        name = name,
-        trackName = trackName,
-        artistName = artistName,
-        albumName = albumName,
-        duration = duration,
-        instrumental = instrumental,
         plainLyrics = plainLyrics,
         syncedLyrics = syncedLyrics,
     )

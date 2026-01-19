@@ -27,12 +27,10 @@ kotlin {
             implementation(project(":shared:domain:impl-player-none-android"))
         }
         commonMain.dependencies {
-            api(project(":shared:domain:api"))
-
             implementation(project(":shared:player:sleep-timer"))
             implementation(project(":shared:domain:shared"))
+            implementation(project(":shared:network:service:lrclib"))
             implementation(project(":shared:datastore"))
-            implementation(project(":shared:network"))
             implementation(project(":shared:database"))
             implementation(project(":shared:platform"))
             implementation(libs.kotlinx.serialization.json)
