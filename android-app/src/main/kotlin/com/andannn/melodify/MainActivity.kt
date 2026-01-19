@@ -29,6 +29,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.andannn.melodify.core.syncer.MediaLibrarySyncRepository
 import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.core.syncer.SyncWorkHelper
 import com.andannn.melodify.domain.MediaFileDeleteHelper
@@ -53,6 +54,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "MainActivity"
 
@@ -68,6 +70,8 @@ class MainActivity : ComponentActivity() {
     private val userPreferenceRepository: UserPreferenceRepository by inject()
     private val mediaFileDeleteHelper: MediaFileDeleteHelper by inject()
     private val syncWorkHelper: SyncWorkHelper by inject()
+    private val syncer: MediaLibrarySyncRepository by inject()
+
     private val deleteHelper: MediaFileDeleteHelperImpl
         get() = mediaFileDeleteHelper as MediaFileDeleteHelperImpl
 
@@ -147,7 +151,7 @@ class MainActivity : ComponentActivity() {
                     val notSynced = userPreferenceRepository.getLastSuccessfulSyncTime() == null
                     Napier.d(tag = TAG) { "permission granted. notSynced: $notSynced" }
                     if (notSynced) {
-                        syncWorkHelper.doOneTimeSyncWork(this@MainActivity)
+                        syncer.startSync()
                     }
                 }
             }

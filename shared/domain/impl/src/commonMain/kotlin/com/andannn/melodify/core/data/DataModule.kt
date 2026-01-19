@@ -11,7 +11,8 @@ import com.andannn.melodify.core.data.internal.SleepTimerRepositoryImpl
 import com.andannn.melodify.core.data.internal.UserPreferenceRepositoryImpl
 import com.andannn.melodify.core.database.di.databaseModule
 import com.andannn.melodify.core.datastore.di.userPreferencesModule
-import com.andannn.melodify.core.network.di.serviceModule
+import com.andannn.melodify.core.network.di.lrcServiceModule
+import com.andannn.melodify.core.network.httpClientModule
 import com.andannn.melodify.core.platform.platformModule
 import com.andannn.melodify.domain.LyricRepository
 import com.andannn.melodify.domain.MediaContentRepository
@@ -46,7 +47,8 @@ val domainImplModule =
 
         includes(
             sleepTimerModule,
-            serviceModule,
+            httpClientModule,
+            lrcServiceModule,
             userPreferencesModule,
             databaseModule,
             platformModule,

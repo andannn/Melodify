@@ -19,7 +19,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":shared:syncer:api"))
-            implementation(project(":shared:syncer:scanner"))
+            implementation(project(":shared:syncer:scanner:impl-local"))
             implementation(project(":shared:database"))
             implementation(project(":shared:datastore"))
         }

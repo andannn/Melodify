@@ -27,7 +27,7 @@ kotlin {
 
         iosMain.dependencies {
             implementation(project(":shared:util:artwork-ios"))
-            implementation(project(":shared:syncer:platform-ios"))
+            implementation(project(":shared:syncer:scanner:platform-ios"))
         }
     }
 }
