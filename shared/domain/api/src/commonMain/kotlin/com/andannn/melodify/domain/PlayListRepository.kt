@@ -87,7 +87,7 @@ interface PlayListRepository {
     /**
      * Toggle favorite media
      */
-    suspend fun toggleFavoriteMedia(audio: MediaItemModel)
+    suspend fun toggleFavoriteMedia(item: MediaItemModel)
 
     /**
      * Remove musics from playList

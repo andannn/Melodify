@@ -33,13 +33,11 @@ import com.andannn.melodify.core.database.toSortString
 import com.andannn.melodify.core.database.toWhereString
 import kotlinx.coroutines.flow.Flow
 
-private const val TAG = "PlayListDao"
-
 @Dao
 interface PlayListDao {
     @Query(
         """
-        select ${PlayListColumns.ID}, ${PlayListColumns.CREATED_DATE}, ${PlayListColumns.NAME}, ${PlayListColumns.ARTWORK_URI}, COUNT(${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}) as mediaCount
+        select ${Tables.PLAY_LIST}.*, COUNT(${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}) as mediaCount
         from ${Tables.PLAY_LIST}
         left join ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
             on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
@@ -52,7 +50,7 @@ interface PlayListDao {
 
     @Query(
         """
-        select ${PlayListColumns.ID}, ${PlayListColumns.CREATED_DATE}, ${PlayListColumns.NAME}, ${PlayListColumns.ARTWORK_URI}, COUNT(${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}) as mediaCount
+        select ${Tables.PLAY_LIST}.*, COUNT(${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}) as mediaCount
         from ${Tables.PLAY_LIST}
         left join ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
             on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}

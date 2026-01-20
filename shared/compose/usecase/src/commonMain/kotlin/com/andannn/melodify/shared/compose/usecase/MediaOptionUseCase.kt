@@ -53,6 +53,7 @@ suspend fun MediaItemModel.pinToHomeTab() {
             is VideoItemModel,
             -> error("invalid")
         }
+    Napier.d(tag = TAG) { "pinToHomeTab tabKind:$tabKind" }
     pinToHomeTab(
         externalId = id,
         tabName = name,
