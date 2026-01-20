@@ -87,12 +87,14 @@ internal class SyncAllMediaWorker(
 ) : CoroutineWorker(appContext, params),
     KoinComponent {
     private val mediaLibrarySyncer: MediaLibrarySyncer by inject()
+    private val syncerProperty: SyncerSetupProperty by inject()
     private val userPreferenceRepository: UserSettingPreferences by inject()
 
     override suspend fun doWork(): Result {
         Napier.d(tag = TAG) { "doWork" }
 
-        if (!haveMediaPermission()) {
+        val needLocalMediaPermission = syncerProperty.needLocalMediaPermission
+        if (needLocalMediaPermission && !haveMediaPermission()) {
             Napier.d(tag = TAG) { "no permission finish task." }
             return Result.failure()
         }

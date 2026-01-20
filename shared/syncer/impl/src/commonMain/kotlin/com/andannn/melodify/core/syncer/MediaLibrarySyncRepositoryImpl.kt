@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
@@ -37,11 +38,15 @@ internal class MediaLibrarySyncRepositoryImpl(
 
     private fun launchSyncJob(): Job =
         scope.launch {
-            handler.syncAllMedia().collect(::onSyncEvent)
-
-            preferences.setLastSuccessfulSyncTime(
-                Clock.System.now().toEpochMilliseconds(),
-            )
+            handler
+                .syncAllMedia()
+                .onEach {
+                    if (it is SyncStatusEvent.Complete) {
+                        preferences.setLastSuccessfulSyncTime(
+                            Clock.System.now().toEpochMilliseconds(),
+                        )
+                    }
+                }.collect(::onSyncEvent)
         }
 
     private fun onSyncEvent(event: SyncStatusEvent) {
