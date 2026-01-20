@@ -9,10 +9,12 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
+import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -25,16 +27,31 @@ import org.koin.core.component.inject
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-internal class SyncWorkHelperImpl : SyncWorkHelper {
+internal class SyncWorkHelperImpl(
+    private val setupProperty: SyncerSetupProperty,
+) : SyncWorkHelper {
     companion object {
         private const val PERIODIC_SYNC_WORK_NAME = "periodic_sync_work_name"
     }
 
     override fun registerPeriodicSyncWork(context: Context) {
+        val isNeedNetwork = setupProperty.needNetwork
+        val backgroundSyncIntervalHour = setupProperty.backgroundSyncIntervalHour
+
         val periodicWorkRequest =
-            PeriodicWorkRequestBuilder<SyncAllMediaWorker>(12, TimeUnit.HOURS)
-                .setInitialDelay(2, TimeUnit.HOURS)
-                .build()
+            PeriodicWorkRequestBuilder<SyncAllMediaWorker>(backgroundSyncIntervalHour, TimeUnit.HOURS)
+                .apply {
+                    setInitialDelay(2, TimeUnit.HOURS)
+
+                    if (isNeedNetwork) {
+                        val networkConstraints =
+                            Constraints
+                                .Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build()
+                        setConstraints(networkConstraints)
+                    }
+                }.build()
 
         val workManager = WorkManager.getInstance(context = context)
         workManager.enqueueUniquePeriodicWork(
@@ -70,12 +87,14 @@ internal class SyncAllMediaWorker(
 ) : CoroutineWorker(appContext, params),
     KoinComponent {
     private val mediaLibrarySyncer: MediaLibrarySyncer by inject()
+    private val syncerProperty: SyncerSetupProperty by inject()
     private val userPreferenceRepository: UserSettingPreferences by inject()
 
     override suspend fun doWork(): Result {
         Napier.d(tag = TAG) { "doWork" }
 
-        if (!haveMediaPermission()) {
+        val needLocalMediaPermission = syncerProperty.needLocalMediaPermission
+        if (needLocalMediaPermission && !haveMediaPermission()) {
             Napier.d(tag = TAG) { "no permission finish task." }
             return Result.failure()
         }

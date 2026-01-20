@@ -5,6 +5,7 @@
 package com.andannn.melodify
 
 import com.andannn.melodify.core.data.domainImplModule
+import com.andannn.melodify.core.syncer.ScannerType
 import com.andannn.melodify.core.syncer.di.syncerModule
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.util.volumn.IosVolumeController
@@ -19,7 +20,7 @@ fun startKoinWithPlatformModule(platformModuleProvider: () -> Module) {
     startKoin {
         modules(
             domainImplModule,
-            syncerModule,
+            syncerModule(ScannerType.LOCAL),
             extraModel,
             platformModuleProvider(),
         )

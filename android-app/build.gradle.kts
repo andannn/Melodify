@@ -62,6 +62,23 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    flavorDimensions += "content"
+    productFlavors {
+        create("local") {
+            dimension = "content"
+
+            buildConfigField("String", "content", "\"local\"")
+        }
+
+        create("siren") {
+            dimension = "content"
+
+            buildConfigField("String", "content", "\"monster_siren\"")
+            applicationIdSuffix = ".siren"
+            versionNameSuffix = "-siren"
+        }
+    }
 }
 
 kotlin {

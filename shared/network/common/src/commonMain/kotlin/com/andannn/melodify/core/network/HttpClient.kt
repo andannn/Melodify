@@ -33,6 +33,7 @@ private fun HttpClientConfig<*>.commonConfig() {
         json(
             Json {
                 prettyPrint = true
+                ignoreUnknownKeys = true
             },
         )
     }

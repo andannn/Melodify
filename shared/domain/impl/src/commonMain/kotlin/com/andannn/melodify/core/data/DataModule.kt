@@ -13,6 +13,7 @@ import com.andannn.melodify.core.database.di.databaseModule
 import com.andannn.melodify.core.datastore.di.userPreferencesModule
 import com.andannn.melodify.core.network.di.lrcServiceModule
 import com.andannn.melodify.core.network.httpClientModule
+import com.andannn.melodify.core.network.service.siren.di.monsterSirenModule
 import com.andannn.melodify.core.platform.platformModule
 import com.andannn.melodify.domain.LyricRepository
 import com.andannn.melodify.domain.MediaContentRepository
@@ -48,6 +49,7 @@ val domainImplModule =
         includes(
             sleepTimerModule,
             httpClientModule,
+            monsterSirenModule,
             lrcServiceModule,
             userPreferencesModule,
             databaseModule,

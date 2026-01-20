@@ -4,15 +4,19 @@
  */
 package com.andannn.melodify.core.syncer
 
+import com.andannn.melodify.core.datastore.UserSettingPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Clock
 
 internal class MediaLibrarySyncRepositoryImpl(
     private val handler: BackgroundSyncMediaStoreHandler,
+    private val preferences: UserSettingPreferences,
 ) : MediaLibrarySyncRepository {
     private val scope = CoroutineScope(Dispatchers.Default + Job())
 
@@ -34,7 +38,15 @@ internal class MediaLibrarySyncRepositoryImpl(
 
     private fun launchSyncJob(): Job =
         scope.launch {
-            handler.syncAllMedia().collect(::onSyncEvent)
+            handler
+                .syncAllMedia()
+                .onEach {
+                    if (it is SyncStatusEvent.Complete) {
+                        preferences.setLastSuccessfulSyncTime(
+                            Clock.System.now().toEpochMilliseconds(),
+                        )
+                    }
+                }.collect(::onSyncEvent)
         }
 
     private fun onSyncEvent(event: SyncStatusEvent) {

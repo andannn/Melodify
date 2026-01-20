@@ -7,7 +7,7 @@ package com.andannn.melodify.core.syncer
 import kotlinx.coroutines.flow.StateFlow
 
 data class SyncState(
-    val syncStatus: SyncStatus = SyncStatus.START,
+    val syncStatus: SyncStatus = SyncStatus.COMPLETED,
     val syncInfoMap: Map<ContentType, SyncInfo> = emptyMap(),
 )
 

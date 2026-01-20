@@ -6,6 +6,7 @@ package com.andannn.melodify
 
 import android.app.Application
 import com.andannn.melodify.core.data.domainImplModule
+import com.andannn.melodify.core.syncer.SyncerSetupProperty
 import com.andannn.melodify.core.syncer.di.syncerModule
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.util.MediaFileDeleteHelperImpl
@@ -31,12 +32,21 @@ class MelodifyApplication : Application() {
 
         startKoin {
             androidContext(this@MelodifyApplication)
+
             modules(
-                listOf(
-                    extraModule,
-                    domainImplModule,
-                    syncerModule,
-                ),
+                buildList {
+                    add(extraModule)
+                    add(domainImplModule)
+
+                    val property = SyncerSetupProperty.buildPropertyByFlavor(BuildConfig.content)
+                    add(syncerModule(property.type))
+
+                    add(
+                        module {
+                            single { property }
+                        },
+                    )
+                },
             )
         }
     }

@@ -22,6 +22,7 @@ kotlin {
             api(project(":shared:domain:api"))
             api(libs.retainedmodel)
             implementation(libs.coil3.compose)
+            implementation(libs.coil3.network.ktor3)
             implementation(libs.reorderable)
         }
 

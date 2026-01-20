@@ -30,6 +30,7 @@ kotlin {
             implementation(project(":shared:player:sleep-timer"))
             implementation(project(":shared:domain:shared"))
             implementation(project(":shared:network:service:lrclib"))
+            implementation(project(":shared:network:service:siren"))
             implementation(project(":shared:datastore"))
             implementation(project(":shared:database"))
             implementation(project(":shared:platform"))

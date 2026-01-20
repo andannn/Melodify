@@ -6,10 +6,18 @@ package com.andannn.melodify.core.player
 
 import android.app.PendingIntent
 import android.content.Intent
+import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DataSpec
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import com.andannn.melodify.core.network.service.siren.MonsterSirenService
 import com.andannn.melodify.player.SleepTimeCounterState
 import com.andannn.melodify.player.SleepTimerController
 import io.github.aakira.napier.Napier
@@ -17,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 import kotlin.coroutines.CoroutineContext
 
@@ -28,6 +37,7 @@ class PlayerService :
     private val playerWrapper: ExoPlayerWrapper by inject()
 
     private val sleepCounterController: SleepTimerController by inject()
+    private val sirenService: MonsterSirenService by inject()
 
     private lateinit var session: MediaSession
 
@@ -35,12 +45,39 @@ class PlayerService :
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main + job
 
+    private val httpDataSourceFactory = DefaultHttpDataSource.Factory()
+
+    @UnstableApi
+    private val resolvingDataSourceFactory =
+        ResolvingDataSource.Factory(
+            httpDataSourceFactory,
+        ) { dataSpec ->
+            val originalUrl = dataSpec.uri.toString()
+            if (originalUrl.contains("monster-siren.hypergryph.com")) {
+                Napier.d(tag = TAG) { "resolve siren url: $originalUrl, currentThread: ${Thread.currentThread()}" }
+                val sourceUrl =
+                    runBlocking {
+                        val cid = originalUrl.substringAfterLast("/")
+                        sirenService.getSourceUrlOfSong(cid).getOrNull()
+                    } ?: return@Factory dataSpec
+
+                Napier.d(tag = TAG) { "setup source url $sourceUrl, currentThread: ${Thread.currentThread()}" }
+                return@Factory dataSpec
+                    .buildUpon()
+                    .setUri(sourceUrl)
+                    .build()
+            }
+
+            dataSpec
+        }
+
     companion object {
         private const val IMMUTABLE_FLAG = PendingIntent.FLAG_IMMUTABLE
         private const val DEFAULT_SEEK_INCREMENT_MS = 10_000L
         private const val DEFAULT_SEEK_BACK_INCREMENT_MS = 10_000L
     }
 
+    @OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
 
@@ -51,7 +88,10 @@ class PlayerService :
                 .setHandleAudioBecomingNoisy(true)
                 .setSeekForwardIncrementMs(DEFAULT_SEEK_INCREMENT_MS)
                 .setSeekBackIncrementMs(DEFAULT_SEEK_BACK_INCREMENT_MS)
-                .build()
+                .setMediaSourceFactory(
+                    DefaultMediaSourceFactory(this)
+                        .setDataSourceFactory(resolvingDataSourceFactory),
+                ).build()
 
         playerWrapper.setUpPlayer(player)
         session =
