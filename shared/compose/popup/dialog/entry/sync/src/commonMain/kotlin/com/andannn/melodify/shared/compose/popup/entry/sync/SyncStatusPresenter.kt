@@ -24,12 +24,6 @@ internal fun retainSyncStatusPresenter(repository: MediaLibrarySyncRepository = 
 private class SyncStatusPresenter(
     private val repository: MediaLibrarySyncRepository,
 ) : RetainedPresenter<SyncStatusDialogState>() {
-    init {
-        if (repository.lastSyncStatusFlow().value == null) {
-            repository.startSync()
-        }
-    }
-
     @Composable
     override fun present(): SyncStatusDialogState {
         val syncStatus by repository.lastSyncStatusFlow().collectAsStateWithLifecycle()
