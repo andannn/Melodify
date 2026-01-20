@@ -6,6 +6,7 @@ package com.andannn.melodify
 
 import androidx.compose.ui.window.application
 import com.andannn.melodify.core.data.domainImplModule
+import com.andannn.melodify.core.syncer.ScannerType
 import com.andannn.melodify.core.syncer.di.syncerModule
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.windows.MelodifyDeskTopApp
@@ -24,7 +25,7 @@ fun main() =
             modules(
                 listOf(
                     domainImplModule,
-                    syncerModule,
+                    syncerModule(ScannerType.LOCAL),
                     extraModel,
                 ),
             )
