@@ -21,6 +21,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
@@ -31,7 +33,10 @@ import com.andannn.melodify.shared.compose.components.play.control.ResumePointIn
 import com.andannn.melodify.shared.compose.components.tab.TabUi
 import com.andannn.melodify.shared.compose.components.tab.content.TabContent
 import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
+import com.andannn.melodify.ui.AppTitleHolder
+import com.andannn.melodify.ui.LocalAppTitleHolder
 import com.andannn.melodify.ui.Navigator
+import com.andannn.melodify.util.orientation.ScreenOrientationController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +44,7 @@ internal fun HomeUiScreen(
     navigator: Navigator,
     modifier: Modifier = Modifier,
     homePresenter: Presenter<HomeState> = retainHomeUiPresenter(navigator = navigator),
+    appTitleHolder: AppTitleHolder = LocalAppTitleHolder.current,
 ) {
     val homeState = homePresenter.present()
     val scrollBehavior = enterAlwaysScrollBehavior()
@@ -57,7 +63,7 @@ internal fun HomeUiScreen(
                         copy(scrolledContainerColor = containerColor)
                     },
                 title = {
-                    Text(text = "Melodify")
+                    Text(text = appTitleHolder.title)
                 },
                 navigationIcon = {
                     IconButton(

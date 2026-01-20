@@ -36,6 +36,8 @@ import com.andannn.melodify.core.syncer.SyncerSetupProperty
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.domain.UserPreferenceRepository
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
+import com.andannn.melodify.ui.AppTitleHolder
+import com.andannn.melodify.ui.LocalAppTitleHolder
 import com.andannn.melodify.ui.LocalScreenOrientationController
 import com.andannn.melodify.ui.LocalSystemUiController
 import com.andannn.melodify.ui.app.MelodifyMobileApp
@@ -53,6 +55,7 @@ import com.andannn.melodify.util.rememberIsInPipMode
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import melodify.shared.compose.resource.generated.resources.Res
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.mp.KoinPlatform.getKoin
@@ -182,6 +185,7 @@ class MainActivity : ComponentActivity() {
                                 ),
                             LocalBrightnessController provides AndroidBrightnessController(this),
                             LocalSystemUiController provides AndroidSystemUiController(this),
+                            LocalAppTitleHolder provides AppTitleHolder(resources.getString(R.string.app_name)),
                         ) {
                             when (uiState) {
                                 is MainUiState.Error -> {
