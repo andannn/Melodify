@@ -17,6 +17,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":shared:player:common"))
+            implementation(project(":shared:network:service:siren"))
         }
 
         androidMain.dependencies {

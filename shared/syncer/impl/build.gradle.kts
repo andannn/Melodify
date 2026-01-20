@@ -20,18 +20,8 @@ kotlin {
         commonMain.dependencies {
             api(project(":shared:syncer:api"))
             implementation(project(":shared:syncer:scanner:impl-local"))
+            implementation(project(":shared:syncer:scanner:impl-monster-siren"))
             implementation(project(":shared:database"))
-            implementation(project(":shared:datastore"))
-        }
-
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.kotlinx.coroutines.test)
-        }
-
-        jvmMain.dependencies {
-            // https://mvnrepository.com/artifact/org/jaudiotagger
-            implementation(libs.jaudiotagger)
             implementation(project(":shared:datastore"))
         }
 

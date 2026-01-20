@@ -42,6 +42,44 @@
           "other_platform_oauth_client": []
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:715705000594:android:795880ea937e87d466bc4b",
+        "android_client_info": {
+          "package_name": "com.andannn.melodify.siren"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5aLJ57jKMIDHwuHsWcJETKAJ4ZV0Kiis"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:715705000594:android:08339b265aeceaa766bc4b",
+        "android_client_info": {
+          "package_name": "com.andannn.melodify.siren.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5aLJ57jKMIDHwuHsWcJETKAJ4ZV0Kiis"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
     }
   ],
   "configuration_version": "1"
