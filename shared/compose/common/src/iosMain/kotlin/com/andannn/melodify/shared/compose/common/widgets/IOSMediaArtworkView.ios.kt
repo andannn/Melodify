@@ -14,15 +14,15 @@ import com.andannn.melodify.core.syncer.persistIdOfUri
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-actual fun IOSMediaArtworkView(
-    modifier: Modifier,
+internal fun IOSMediaArtworkView(
     coverUri: String,
+    modifier: Modifier = Modifier,
 ) {
     val factory =
         remember {
             getKoin().get<MediaArtworkViewControllerFactory>()
         }
-    val persistentID = persistIdOfUri(coverUri)
+    val persistentID = persistIdOfUri(coverUri) ?: return
     UIKitViewController(
         modifier = modifier,
         factory = {
@@ -31,4 +31,4 @@ actual fun IOSMediaArtworkView(
     )
 }
 
-internal actual fun isIOSCustomMPLibraryUri(uri: String): Boolean = uri.isCustomMpLibraryUri()
+internal fun isIOSCustomMPLibraryUri(uri: String): Boolean = uri.isCustomMpLibraryUri()

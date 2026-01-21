@@ -10,7 +10,7 @@ interface MPMediaScanner {
     fun loadAllLocalSongs(): List<AudioData>
 }
 
-fun persistIdOfUri(uri: String) = uri.substringAfter("ios://mpmedia/cover/").toLong()
+fun persistIdOfUri(uri: String) = uri.substringAfter("ios://mpmedia/cover/").toLongOrNull()
 
 fun String.isCustomMpLibraryUri() = startsWith("ios://mpmedia/cover/")
 

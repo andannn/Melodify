@@ -98,7 +98,6 @@
     <string name="sort_sub_bucket_name_asc">Group items by video group name in ascending order.</string>
     <string name="sort_by_video_bucket_name">Sort by Video group name</string>
     <string name="change_play_list_alert_dialog_content">Are you sure you want to change the current playlist?</string>
-
     <string name="last_watched_jump">Last watched: %1$s. Tap to jump.</string>
     <string name="show_play_progress">Show playback progress</string>
 </resources>

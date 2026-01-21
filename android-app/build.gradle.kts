@@ -7,6 +7,12 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
+}
+
 android {
     namespace = "com.andannn.melodify"
 
@@ -88,6 +94,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":shared:compose:usecase"))
     implementation(project(":shared:domain:impl"))
     implementation(project(":shared:syncer:impl"))
     implementation(project(":shared:platform"))

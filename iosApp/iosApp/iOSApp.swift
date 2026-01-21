@@ -12,7 +12,6 @@ struct iOSApp: App {
     }
 }
 
-
 class AppDelegate : NSObject, UIApplicationDelegate {
     static var orientation: UIInterfaceOrientationMask = .all
 

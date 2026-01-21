@@ -8,11 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-actual fun IOSMediaArtworkView(
+internal actual fun MediaCoverImage(
+    model: String?,
     modifier: Modifier,
-    coverUri: String,
-) {
-    error("IOSMediaArtworkView is not supported on android")
-}
-
-internal actual fun isIOSCustomMPLibraryUri(uri: String): Boolean = false
+) = AsyncImageImpl(model, modifier)

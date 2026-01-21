@@ -16,11 +16,14 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-fun startKoinWithPlatformModule(platformModuleProvider: () -> Module) {
+fun startKoinWithPlatformModule(
+    scannerType: ScannerType,
+    platformModuleProvider: () -> Module,
+) {
     startKoin {
         modules(
             domainImplModule,
-            syncerModule(ScannerType.LOCAL),
+            syncerModule(scannerType),
             extraModel,
             platformModuleProvider(),
         )

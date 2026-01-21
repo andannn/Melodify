@@ -25,7 +25,7 @@ abstract class KmpExtension
             composeEnabled = project.pluginManager.hasPlugin("org.jetbrains.kotlin.plugin.compose")
         }
 
-        fun withDesktop() {
+        fun withDesktopTarget() {
             isDesktopConfig = true
 
             project.extensions.configure<KotlinMultiplatformExtension> {
@@ -46,7 +46,7 @@ abstract class KmpExtension
             }
         }
 
-        fun withAndroid(config: AndroidConfigParam.() -> Unit = {}) {
+        fun withAndroidTarget(config: AndroidConfigParam.() -> Unit = {}) {
             val config = AndroidConfigParam().apply(config)
 
             isAndroidConfig = true
@@ -114,7 +114,7 @@ abstract class KmpExtension
             }
         }
 
-        fun withIOS() {
+        fun withIOSTarget() {
             project.extensions.configure<KotlinMultiplatformExtension> {
                 listOf(
                     iosArm64(),
@@ -150,7 +150,6 @@ abstract class KmpExtension
                     implementation(libs.findLibrary("navigationevent.compose").get())
                     implementation(libs.findLibrary("jetbrains.material.icons.extended").get())
                     implementation(libs.findLibrary("lifecycle.runtime.compose").get())
-                    implementation(libs.findLibrary("navigation3.runtime").get())
                 }
 
                 commonTest.dependencies {

@@ -4,11 +4,6 @@
  */
 package com.andannn.melodify.core.syncer
 
-enum class ScannerType {
-    LOCAL,
-    MONSTER_SIREN,
-}
-
 data class SyncerSetupProperty(
     val type: ScannerType,
     val needNetwork: Boolean,

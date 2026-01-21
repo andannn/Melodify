@@ -7,9 +7,9 @@ plugins {
 }
 
 kmpExt {
-    withAndroid()
-    withIOS()
-    withDesktop()
+    withAndroidTarget()
+    withIOSTarget()
+    withDesktopTarget()
 }
 
 kotlin {
@@ -23,6 +23,7 @@ kotlin {
             api(project(":shared:compose:common"))
             api(project(":shared:compose:popup:dialog:common"))
             api(project(":shared:compose:popup:snack-bar"))
+            implementation(project(":shared:syncer:api"))
             implementation(project(":shared:compose:popup:dialog:entry:option"))
             implementation(project(":shared:compose:popup:dialog:entry:sleep-timer"))
             implementation(project(":shared:compose:popup:dialog:entry:alert"))

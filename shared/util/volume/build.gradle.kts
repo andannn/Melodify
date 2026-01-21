@@ -5,10 +5,10 @@ plugins {
 }
 
 kmpExt {
-    withAndroid {
+    withAndroidTarget {
         enableDeviceTest = true
     }
-    withIOS()
+    withIOSTarget()
 }
 
 kotlin {

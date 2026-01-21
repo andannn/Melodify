@@ -7,7 +7,7 @@ plugins {
 }
 
 kmpExt {
-    withDesktop()
+    withDesktopTarget()
 }
 
 kotlin {

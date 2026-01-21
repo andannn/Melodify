@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.core.player
 
+import com.andannn.melodify.core.network.service.siren.MonsterSirenService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +17,7 @@ import kotlinx.coroutines.sync.withLock
 
 internal class AvPlayerQueuePlayerImpl(
     private val avPlayer: AVPlayerWrapper,
+    private val sirenService: MonsterSirenService,
 ) : AvPlayerQueuePlayer {
     private val scope: CoroutineScope = MainScope()
     private val mutex = Mutex()
@@ -91,7 +93,7 @@ internal class AvPlayerQueuePlayerImpl(
         }
     }
 
-    private fun playCurrent(startMs: Long) {
+    private suspend fun playCurrent(startMs: Long) {
         val list = _playList.value
         if (currentIndex !in list.indices) {
             stopPlayback()
@@ -103,7 +105,11 @@ internal class AvPlayerQueuePlayerImpl(
 
         playerState.value = PlayerState.Buffering(currentPosition)
 
-        avPlayer.playUrl(url)
+        with(sirenService) {
+            resolveUrl(url)
+        }.let { resolvedUrl ->
+            avPlayer.playUrl(resolvedUrl)
+        }
 
         if (startMs > 0) avPlayer.seekTo(startMs)
 
@@ -285,4 +291,14 @@ internal class AvPlayerQueuePlayerImpl(
             }
         }
     }
+}
+
+context(sirenService: MonsterSirenService)
+private suspend fun resolveUrl(url: String): String {
+    if (url.contains("monster-siren.hypergryph.com")) {
+        val cid = url.substringAfterLast("/")
+        val resolvedUrl = sirenService.getSourceUrlOfSong(cid).getOrNull() ?: return url
+        return resolvedUrl
+    }
+    return url
 }

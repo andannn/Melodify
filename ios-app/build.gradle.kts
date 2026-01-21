@@ -1,10 +1,11 @@
 plugins {
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.jetbrainsCompose)
     id("kmp.ext")
 }
 
 kmpExt {
-    withIOS()
+    withIOSTarget()
 }
 
 kotlin {

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="home">ホーム</string>
-    <string name="audio_page_title">曲</string>
+    <string name="audio_page_title">すべての曲</string>
     <string name="album_page_title">アルバム</string>
     <string name="artist_page_title">アーティスト</string>
-    <string name="genre_title">ジャンル</string>
     <string name="playlist_page_title">プレイリスト</string>
-    <string name="add_to_queue">キューに追加</string>
+    <string name="genre_title">ジャンル</string>
+    <string name="add_to_queue">再生キューに追加</string>
     <string name="delete">削除</string>
     <string name="play_next">次に再生</string>
-    <string name="play_queue">再生リスト</string>
+    <string name="play_queue">次に再生</string>
     <string name="lyrics">歌詞</string>
     <string name="play">再生</string>
     <string name="shuffle">シャッフル</string>
@@ -19,91 +19,85 @@
     <string name="number_hours">%1$s 時間</string>
     <string name="number_minutes">%1$s 分</string>
     <string name="number_seconds">%1$s 秒</string>
-    <string name="cancel_timer">タイマーをキャンセル</string>
+    <string name="cancel_timer">タイマーを解除</string>
     <string name="ok">OK</string>
     <string name="decline">キャンセル</string>
-    <string name="confirm_delete_playlist_item">プレイリストからこの曲を取り除きますか？</string>
+    <string name="confirm_delete_playlist_item">本当にこの曲をプレイリストから削除しますか？</string>
     <string name="delete_from_playlist">プレイリストから削除</string>
     <string name="add_to_playlist">プレイリストに追加</string>
     <string name="selected_songs">選択した曲</string>
     <string name="all_playlists">すべてのプレイリスト</string>
     <string name="all_to_playlist_page_title">%1$s 曲をプレイリストに追加</string>
     <string name="add_to_playlist_success_message">%1$s に保存しました</string>
-    <string name="add_to_playlist_failed_message">この曲はすでにプレイリストに存在します</string>
-    <string name="having_registered_track_in_playlist">すでにプレイリストに登録されている曲があります</string>
+    <string name="add_to_playlist_failed_message">この曲は既にプレイリストに存在します</string>
+    <string name="having_registered_track_in_playlist">プレイリスト内に重複した曲があります</string>
     <string name="duplicated_alert_dialog_title">重複</string>
     <string name="skip_registered_songs">重複をスキップ</string>
     <string name="new_playlist_dialog_title">新しいプレイリストを作成</string>
     <string name="new_playlist_dialog_input_hint">タイトル</string>
     <string name="remove_playlist">プレイリストを削除</string>
+    <string name="library_title">ライブラリ</string>
     <string name="delete_this_tab">このタブを削除</string>
+    <string name="add_library_path_dialog_title">新しいパスを追加</string>
+    <string name="invalid_path_alert_dialog_content">無効なパスです</string>
     <string name="favorite">お気に入り</string>
+    <string name="tab_already_exist">タブは既に存在します。</string>
     <string name="add_to_home_tab">ホームに固定</string>
-    <string name="default_sort_order">デフォルト順</string>
-    <string name="display_settings">表示設定</string>
+    <string name="default_sort_order">デフォルトの並び順</string>
+    <string name="display_settings">表示オプション</string>
     <string name="sort_by_media_title">タイトル</string>
-    <string name="sort_by_track_number">トラック</string>
+    <string name="sort_by_track_number">トラック番号</string>
     <string name="sort_by_genre">ジャンル</string>
     <string name="sort_by_none">なし</string>
-    <string name="sort_by_release_year">発売日</string>
+    <string name="sort_by_release_year">リリース日</string>
     <string name="sync_start">同期開始</string>
     <string name="sync_progress">同期中: %1$s</string>
     <string name="sync_completed">%1$s 曲を読み込みました</string>
-    <string name="sync_failed">同期失敗</string>
-    <string name="re_sync_media_library">ライブラリ更新</string>
+    <string name="sync_failed">同期に失敗しました</string>
+    <string name="re_sync_media_library">メディアライブラリを更新</string>
     <string name="change_default_sort_order">デフォルトの並び順を変更</string>
     <string name="display_setting_for">%1$s の表示設定</string>
-
-    <string name="sort_by_album">アルバム順に並べ替え</string>
-    <string name="sort_by_artist">アーティスト順に並べ替え</string>
-    <string name="sort_by_title">タイトル順に並べ替え</string>
-    <string name="sort_by_artist_then_album">アーティスト → アルバムの順に並べ替え</string>
-
+    <string name="sort_by_album">アルバム順</string>
+    <string name="sort_by_artist">アーティスト順</string>
+    <string name="sort_by_title">タイトル順</string>
+    <string name="sort_by_artist_then_album">アーティスト、アルバム順</string>
     <string name="sort_sub_album_asc">アルバムごとにグループ化し、トラックを昇順で並べ替えます。</string>
-    <string name="sort_sub_artist_asc">アーティストごとにアイテムを昇順で並べ替えます。</string>
-    <string name="sort_sub_title_name_asc">タイトルをアルファベット順に並べ替えます。</string>
-    <string name="sort_sub_artist_album_asc">アーティストごとにグループ化し、さらにアルバム単位でトラックを昇順に並べ替えます。</string>
-
-    <string name="order_a_to_z">A → Z</string>
-    <string name="order_z_to_a">Z → A</string>
-    <string name="order_1_to_9">1 → 9</string>
-    <string name="order_9_to_1">9 → 1</string>
+    <string name="sort_sub_artist_asc">アーティストごとに昇順でグループ化します。</string>
+    <string name="sort_sub_title_name_asc">タイトル（アルファベット順）でグループ化します。</string>
+    <string name="sort_sub_artist_album_asc">アーティスト、アルバムの順にグループ化し、トラックを昇順で並べ替えます。</string>
+    <string name="order_a_to_z">A → Z (昇順)</string>
+    <string name="order_z_to_a">Z → A (降順)</string>
+    <string name="order_1_to_9">1 → 9 (昇順)</string>
+    <string name="order_9_to_1">9 → 1 (降順)</string>
     <string name="order_old_to_new">古い順</string>
     <string name="order_new_to_old">新しい順</string>
-
     <string name="preset">プリセット</string>
     <string name="customize">カスタマイズ</string>
-
-    <string name="primary_group_by">第1グループ化項目</string>
-    <string name="secondary_group_by">第2グループ化項目</string>
+    <string name="primary_group_by">第1グループ化キー</string>
+    <string name="secondary_group_by">第2グループ化キー</string>
     <string name="content_sort_by">コンテンツの並び順</string>
     <string name="show_track_number">トラック番号を表示</string>
     <string name="reset_settings">設定をリセット</string>
-
     <string name="sync_progress_media">曲 %1$d / %2$d</string>
     <string name="sync_progress_album">アルバム %1$d / %2$d</string>
     <string name="sync_progress_artist">アーティスト %1$d / %2$d</string>
     <string name="sync_progress_genre">ジャンル %1$d / %2$d</string>
-
-    <string name="go_to_library_album">アルバムへ移動</string>
-    <string name="go_to_library_artist">アーティストへ移動</string>
-
+    <string name="sync_progress_video">動画 %1$d / %2$d</string>
+    <string name="go_to_library_album">アルバムに移動</string>
+    <string name="go_to_library_artist">アーティストに移動</string>
     <string name="delete_media_file">メディアファイルを削除</string>
-
-    <string name="one_deleted">1 曲を削除しました</string>
-    <string name="multiple_deleted">%1$d 曲を削除しました</string>
-    <string name="added_to_play_next">次に再生するリストに追加しました</string>
+    <string name="one_deleted">1曲削除しました</string>
+    <string name="multiple_deleted">%1$d 曲削除しました</string>
+    <string name="added_to_play_next">「次に再生」に追加しました</string>
     <string name="added_to_play_queue">再生キューに追加しました</string>
     <string name="delete_failed">削除に失敗しました</string>
-
-    <string name="sort_by_video_bucket">フォルダー</string>
-    <string name="preset_video">ビデオプリセット</string>
+    <string name="sort_by_video_bucket">フォルダ</string>
+    <string name="preset_video">動画プリセット</string>
     <string name="preset_audio">オーディオプリセット</string>
-    <string name="video_page_title">動画</string>
-    <string name="sort_sub_bucket_name_asc">動画グループ名の昇順で項目をグループ化します。</string>
-    <string name="sort_by_video_bucket_name">動画グループ名で並べ替え</string>
-
+    <string name="video_page_title">すべての動画</string>
+    <string name="sort_sub_bucket_name_asc">動画のグループ名（フォルダ）で昇順に並べ替えます。</string>
+    <string name="sort_by_video_bucket_name">動画グループ名順</string>
     <string name="change_play_list_alert_dialog_content">現在のプレイリストを変更してもよろしいですか？</string>
-    <string name="last_watched_jump">前回視聴：%1$s。タップして移動</string>
-    <string name="show_play_progress">再生進捗を表示</string>
+    <string name="last_watched_jump">前回再生: %1$s。タップしてジャンプ。</string>
+    <string name="show_play_progress">再生の進行状況を表示</string>
 </resources>

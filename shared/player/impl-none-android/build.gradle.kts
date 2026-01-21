@@ -3,8 +3,8 @@ plugins {
 }
 
 kmpExt {
-    withDesktop()
-    withIOS()
+    withDesktopTarget()
+    withIOSTarget()
 }
 
 kotlin {
@@ -21,6 +21,7 @@ kotlin {
 
         iosMain.dependencies {
             implementation(project(":shared:player:platform-player-ios"))
+            implementation(project(":shared:network:service:siren"))
         }
     }
 }

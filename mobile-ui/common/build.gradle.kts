@@ -6,8 +6,8 @@ plugins {
 }
 
 kmpExt {
-    withAndroid()
-    withIOS()
+    withAndroidTarget()
+    withIOSTarget()
 }
 
 kotlin {
@@ -16,6 +16,7 @@ kotlin {
     }
     sourceSets {
         commonMain.dependencies {
+            api(libs.navigation3.runtime)
             api(project(":shared:compose:common"))
             api(project(":shared:compose:usecase"))
             api(project(":shared:compose:popup:dialog:common"))

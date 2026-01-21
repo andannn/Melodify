@@ -110,13 +110,12 @@ fun ListTileItemView(
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     } else {
-                        CircleBorderImage(
+                        MediaCoverImageWidget(
                             modifier =
                                 Modifier
                                     .size(50.dp)
                                     .background(MaterialTheme.colorScheme.surfaceDim),
                             model = thumbnailSourceUri,
-                            contentScale = ContentScale.Crop,
                         )
                     }
                 }

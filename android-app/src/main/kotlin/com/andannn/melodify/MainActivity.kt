@@ -36,6 +36,7 @@ import com.andannn.melodify.core.syncer.SyncerSetupProperty
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.domain.UserPreferenceRepository
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
+import com.andannn.melodify.shared.compose.usecase.startSyncMediaLibraryIfNeeded
 import com.andannn.melodify.ui.AppTitleHolder
 import com.andannn.melodify.ui.LocalAppTitleHolder
 import com.andannn.melodify.ui.LocalScreenOrientationController
@@ -211,9 +212,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private suspend fun syncIfNeeded() {
-        val notSynced = userPreferenceRepository.getLastSuccessfulSyncTime() == null
-        if (notSynced) {
-            syncer.startSync()
+        context(syncer, userPreferenceRepository) {
+            startSyncMediaLibraryIfNeeded()
         }
     }
 

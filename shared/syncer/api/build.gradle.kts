@@ -1,14 +1,12 @@
-
-
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     id("kmp.ext")
 }
 
 kmpExt {
-    withAndroid()
-    withDesktop()
-    withIOS()
+    withAndroidTarget()
+    withDesktopTarget()
+    withIOSTarget()
 }
 
 kotlin {
