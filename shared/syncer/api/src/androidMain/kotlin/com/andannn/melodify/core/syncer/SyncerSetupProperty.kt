@@ -1,13 +1,4 @@
-/*
- * Copyright 2025, the Melodify project contributors
- * SPDX-License-Identifier: Apache-2.0
- */
 package com.andannn.melodify.core.syncer
-
-enum class ScannerType {
-    LOCAL,
-    MONSTER_SIREN,
-}
 
 data class SyncerSetupProperty(
     val type: ScannerType,
