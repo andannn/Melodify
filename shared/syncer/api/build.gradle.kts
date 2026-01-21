@@ -1,5 +1,3 @@
-
-
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     id("kmp.ext")

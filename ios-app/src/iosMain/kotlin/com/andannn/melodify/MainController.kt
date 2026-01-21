@@ -14,6 +14,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.ComposeUIViewController
 import com.andannn.melodify.core.syncer.MediaLibrarySyncRepository
 import com.andannn.melodify.core.syncer.MusicLibraryPermissionHandler
+import com.andannn.melodify.domain.UserPreferenceRepository
+import com.andannn.melodify.shared.compose.usecase.startSyncMediaLibraryIfNeeded
 import com.andannn.melodify.ui.AppTitleHolder
 import com.andannn.melodify.ui.LocalAppTitleHolder
 import com.andannn.melodify.ui.LocalScreenOrientationController
@@ -38,12 +40,14 @@ fun MainViewController() =
     ) {
         val permissionHandler: MusicLibraryPermissionHandler = getKoin().get()
         val syncer: MediaLibrarySyncRepository = getKoin().get()
+        val userPreferenceRepository: UserPreferenceRepository = getKoin().get()
         var haveMediaLibraryPermission by remember { mutableStateOf(permissionHandler.mediaPermissionGranted()) }
-// TEST
+
         LaunchedEffect(Unit) {
-            syncer.startSync()
+            context(syncer, userPreferenceRepository) {
+                startSyncMediaLibraryIfNeeded()
+            }
         }
-// TEST
 
         if (!haveMediaLibraryPermission) {
             LaunchedEffect(Unit) {
