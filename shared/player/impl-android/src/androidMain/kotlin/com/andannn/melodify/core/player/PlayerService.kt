@@ -10,8 +10,7 @@ import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DataSpec
-import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
@@ -45,32 +44,6 @@ class PlayerService :
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main + job
 
-    private val httpDataSourceFactory = DefaultHttpDataSource.Factory()
-
-    @UnstableApi
-    private val resolvingDataSourceFactory =
-        ResolvingDataSource.Factory(
-            httpDataSourceFactory,
-        ) { dataSpec ->
-            val originalUrl = dataSpec.uri.toString()
-            if (originalUrl.contains("monster-siren.hypergryph.com")) {
-                Napier.d(tag = TAG) { "resolve siren url: $originalUrl, currentThread: ${Thread.currentThread()}" }
-                val sourceUrl =
-                    runBlocking {
-                        val cid = originalUrl.substringAfterLast("/")
-                        sirenService.getSourceUrlOfSong(cid).getOrNull()
-                    } ?: return@Factory dataSpec
-
-                Napier.d(tag = TAG) { "setup source url $sourceUrl, currentThread: ${Thread.currentThread()}" }
-                return@Factory dataSpec
-                    .buildUpon()
-                    .setUri(sourceUrl)
-                    .build()
-            }
-
-            dataSpec
-        }
-
     companion object {
         private const val IMMUTABLE_FLAG = PendingIntent.FLAG_IMMUTABLE
         private const val DEFAULT_SEEK_INCREMENT_MS = 10_000L
@@ -80,6 +53,31 @@ class PlayerService :
     @OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
+        val upstreamDataSourceFactory: DataSource.Factory =
+            DefaultDataSource.Factory(this)
+
+        val resolvingDataSourceFactory =
+            ResolvingDataSource.Factory(
+                upstreamDataSourceFactory,
+            ) { dataSpec ->
+                val originalUrl = dataSpec.uri.toString()
+                if (originalUrl.contains("monster-siren.hypergryph.com")) {
+                    Napier.d(tag = TAG) { "resolve siren url: $originalUrl, currentThread: ${Thread.currentThread()}" }
+                    val sourceUrl =
+                        runBlocking {
+                            val cid = originalUrl.substringAfterLast("/")
+                            sirenService.getSourceUrlOfSong(cid).getOrNull()
+                        } ?: return@Factory dataSpec
+
+                    Napier.d(tag = TAG) { "setup source url $sourceUrl, currentThread: ${Thread.currentThread()}" }
+                    return@Factory dataSpec
+                        .buildUpon()
+                        .setUri(sourceUrl)
+                        .build()
+                }
+
+                dataSpec
+            }
 
         val player =
             ExoPlayer

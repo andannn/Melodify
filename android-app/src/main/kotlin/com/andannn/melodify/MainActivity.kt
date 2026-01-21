@@ -55,10 +55,8 @@ import com.andannn.melodify.util.rememberIsInPipMode
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import melodify.shared.compose.resource.generated.resources.Res
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "MainActivity"
 
