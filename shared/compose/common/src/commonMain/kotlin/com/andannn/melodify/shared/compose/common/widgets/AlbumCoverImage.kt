@@ -1,0 +1,60 @@
+package com.andannn.melodify.shared.compose.common.widgets
+
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import melodify.shared.compose.resource.generated.resources.Res
+import melodify.shared.compose.resource.generated.resources.default_image_icon
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
+
+@Composable
+fun MediaCoverImageWidget(
+    model: String?,
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(8.dp),
+) {
+    if (model == null) return
+
+    Surface(
+        modifier = modifier,
+        shape = shape,
+    ) {
+        MediaCoverImage(model)
+    }
+}
+
+@Composable
+internal expect fun MediaCoverImage(
+    model: String?,
+    modifier: Modifier = Modifier,
+)
+
+@Composable
+internal fun AsyncImageImpl(
+    model: String?,
+    modifier: Modifier = Modifier,
+    defaultImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
+    errorImagePlaceholderRes: DrawableResource = Res.drawable.default_image_icon,
+) {
+    AsyncImage(
+        modifier = modifier,
+        model =
+            ImageRequest
+                .Builder(LocalPlatformContext.current)
+                .data(model)
+                .size(Int.MAX_VALUE)
+                .build(),
+        contentScale = ContentScale.Crop,
+        placeholder = painterResource(defaultImagePlaceholderRes),
+        error = painterResource(errorImagePlaceholderRes),
+        contentDescription = "image",
+    )
+}

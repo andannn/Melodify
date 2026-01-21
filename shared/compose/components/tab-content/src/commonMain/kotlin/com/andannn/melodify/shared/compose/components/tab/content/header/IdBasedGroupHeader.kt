@@ -33,7 +33,7 @@ import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
-import com.andannn.melodify.shared.compose.common.widgets.CircleBorderImage
+import com.andannn.melodify.shared.compose.common.widgets.MediaCoverImageWidget
 
 @Composable
 internal fun GroupHeaderContainer(
@@ -100,13 +100,12 @@ private fun HeaderInfo(
                     .height(IntrinsicSize.Min),
         ) {
             if (coverArtUri != null) {
-                CircleBorderImage(
+                MediaCoverImageWidget(
                     modifier =
                         Modifier
                             .align(Alignment.CenterVertically)
                             .size(48.dp),
                     model = coverArtUri,
-                    contentScale = ContentScale.Crop,
                 )
                 Spacer(modifier = Modifier.width(10.dp))
             }

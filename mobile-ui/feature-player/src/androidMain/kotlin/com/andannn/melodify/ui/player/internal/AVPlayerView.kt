@@ -21,7 +21,7 @@ import com.andannn.melodify.domain.PlayerStateMonitoryRepository
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
-import com.andannn.melodify.shared.compose.common.widgets.CircleBorderImage
+import com.andannn.melodify.shared.compose.common.widgets.MediaCoverImageWidget
 import org.koin.mp.KoinPlatform.getKoin
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -37,10 +37,9 @@ internal actual fun AVPlayerView(modifier: Modifier) {
     ) {
         when (playingMedia) {
             is AudioItemModel -> {
-                CircleBorderImage(
+                MediaCoverImageWidget(
                     modifier = Modifier.fillMaxSize(),
                     model = playingMedia?.artWorkUri ?: "",
-                    contentScale = ContentScale.Crop,
                 )
             }
 

@@ -49,12 +49,11 @@ fun LargePreviewCard(
         shape = MaterialTheme.shapes.medium,
     ) {
         Column {
-            CircleBorderImage(
+            MediaCoverImageWidget(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f),
-                contentScale = ContentScale.Crop,
                 model = artCoverUri,
             )
 

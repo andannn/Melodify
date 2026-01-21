@@ -14,7 +14,7 @@ import com.andannn.melodify.core.syncer.persistIdOfUri
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-actual fun IOSMediaArtworkView(
+internal fun IOSMediaArtworkView(
     modifier: Modifier,
     coverUri: String,
 ) {
@@ -31,4 +31,4 @@ actual fun IOSMediaArtworkView(
     )
 }
 
-internal actual fun isIOSCustomMPLibraryUri(uri: String): Boolean = uri.isCustomMpLibraryUri()
+internal fun isIOSCustomMPLibraryUri(uri: String): Boolean = uri.isCustomMpLibraryUri()
