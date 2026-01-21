@@ -41,9 +41,11 @@ class AVPlayerWrapperImpl: NSObject, AVPlayerWrapper {
             return
         }
         
+        if player == nil { player = AVPlayer() }
+
         let item = AVPlayerItem(url: u)
-        player = AVPlayer(playerItem: item)
-        
+        player?.replaceCurrentItem(with: item)
+
         // 播放完成通知
         NotificationCenter.default.addObserver(
             self,
