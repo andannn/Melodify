@@ -15,14 +15,14 @@ import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 internal fun IOSMediaArtworkView(
-    modifier: Modifier,
     coverUri: String,
+    modifier: Modifier = Modifier,
 ) {
     val factory =
         remember {
             getKoin().get<MediaArtworkViewControllerFactory>()
         }
-    val persistentID = persistIdOfUri(coverUri)
+    val persistentID = persistIdOfUri(coverUri) ?: return
     UIKitViewController(
         modifier = modifier,
         factory = {
