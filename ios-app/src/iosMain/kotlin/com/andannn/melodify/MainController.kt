@@ -14,6 +14,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.ComposeUIViewController
 import com.andannn.melodify.core.syncer.MediaLibrarySyncRepository
 import com.andannn.melodify.core.syncer.MusicLibraryPermissionHandler
+import com.andannn.melodify.ui.AppTitleHolder
+import com.andannn.melodify.ui.LocalAppTitleHolder
 import com.andannn.melodify.ui.LocalScreenOrientationController
 import com.andannn.melodify.ui.LocalSystemUiController
 import com.andannn.melodify.ui.app.MelodifyMobileApp
@@ -56,6 +58,7 @@ fun MainViewController() =
             LocalBrightnessController provides IosBrightnessController(),
             LocalSystemUiController provides getKoin().get(),
             LocalPlayerStateHolder provides retain { PlayerStateHolder() },
+            LocalAppTitleHolder provides AppTitleHolder("Melodify"),
         ) {
             if (haveMediaLibraryPermission) {
                 MelodifyMobileApp()

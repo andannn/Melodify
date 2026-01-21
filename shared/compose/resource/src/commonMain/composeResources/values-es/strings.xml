@@ -1,110 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="home">Inicio</string>
-    <string name="audio_page_title">Canciones</string>
+    <string name="audio_page_title">Todas las canciones</string>
     <string name="album_page_title">Álbum</string>
     <string name="artist_page_title">Artista</string>
+    <string name="playlist_page_title">Listas de reproducción</string>
     <string name="genre_title">Género</string>
-    <string name="playlist_page_title">Playlist</string>
     <string name="add_to_queue">Añadir a la cola</string>
     <string name="delete">Eliminar</string>
     <string name="play_next">Reproducir siguiente</string>
-    <string name="play_queue">Próxima</string>
-    <string name="lyrics">LYRICS</string>
+    <string name="play_queue">A continuación</string>
+    <string name="lyrics">Letra</string>
     <string name="play">Reproducir</string>
     <string name="shuffle">Aleatorio</string>
-    <string name="track_count">%1$s canciones</string>
+    <string name="track_count">%1$s pistas</string>
     <string name="sleep_timer">Temporizador de apagado</string>
-    <string name="end_of_song">Fin de la canción</string>
+    <string name="end_of_song">Al finalizar canción</string>
     <string name="number_hours">%1$s horas</string>
     <string name="number_minutes">%1$s minutos</string>
     <string name="number_seconds">%1$s segundos</string>
     <string name="cancel_timer">Cancelar temporizador</string>
-    <string name="ok">Ok</string>
+    <string name="ok">Aceptar</string>
     <string name="decline">Cancelar</string>
-    <string name="confirm_delete_playlist_item">¿Está seguro de eliminar esta canción de la lista de reproducción?</string>
-    <string name="delete_from_playlist">Eliminar de la lista de reproducción</string>
-    <string name="add_to_playlist">Añadir a la lista de reproducción</string>
+    <string name="confirm_delete_playlist_item">¿Seguro que quieres eliminar esta canción de la lista?</string>
+    <string name="delete_from_playlist">Eliminar de la lista</string>
+    <string name="add_to_playlist">Añadir a lista de reproducción</string>
     <string name="selected_songs">Canciones seleccionadas</string>
-    <string name="all_playlists">Todas las listas de reproducción</string>
-    <string name="all_to_playlist_page_title">Añadir %1$s canciones a la lista de reproducción</string>
+    <string name="all_playlists">Todas las listas</string>
+    <string name="all_to_playlist_page_title">Añadir %1$s canciones a la lista</string>
     <string name="add_to_playlist_success_message">Guardado en %1$s</string>
-    <string name="add_to_playlist_failed_message">Esta canción ya existe en la lista de reproducción</string>
-    <string name="having_registered_track_in_playlist">Ya hay canciones registradas en la lista de reproducción</string>
-    <string name="duplicated_alert_dialog_title">Duplicado</string>
-    <string name="skip_registered_songs">Saltar duplicados</string>
-    <string name="new_playlist_dialog_title">Crear nueva lista de reproducción</string>
+    <string name="add_to_playlist_failed_message">Esta canción ya está en la lista</string>
+    <string name="having_registered_track_in_playlist">Ya hay canciones duplicadas en la lista</string>
+    <string name="duplicated_alert_dialog_title">Duplicados</string>
+    <string name="skip_registered_songs">Omitir duplicados</string>
+    <string name="new_playlist_dialog_title">Nueva lista de reproducción</string>
     <string name="new_playlist_dialog_input_hint">Título</string>
-    <string name="remove_playlist">Eliminar lista de reproducción</string>
+    <string name="remove_playlist">Eliminar lista</string>
+    <string name="library_title">Biblioteca</string>
     <string name="delete_this_tab">Eliminar esta pestaña</string>
+    <string name="add_library_path_dialog_title">Añadir nueva ruta</string>
+    <string name="invalid_path_alert_dialog_content">Ruta no válida</string>
     <string name="favorite">Favoritos</string>
-    <string name="add_to_home_tab">Fijar en inicio</string>
-    <string name="default_sort_order">Orden de clasificación predeterminado</string>
+    <string name="tab_already_exist">La pestaña ya existe.</string>
+    <string name="add_to_home_tab">Fijar en Inicio</string>
+    <string name="default_sort_order">Orden predeterminado</string>
     <string name="display_settings">Opciones de visualización</string>
     <string name="sort_by_media_title">Título</string>
-    <string name="sort_by_track_number">Pista del CD</string>
+    <string name="sort_by_track_number">N.º de pista</string>
     <string name="sort_by_genre">Género</string>
     <string name="sort_by_none">Ninguno</string>
     <string name="sort_by_release_year">Fecha de lanzamiento</string>
-    <string name="sync_start">Iniciar sincronización</string>
-    <string name="sync_progress">Progreso de sincronización: %1$s</string>
+    <string name="sync_start">Iniciando sincronización</string>
+    <string name="sync_progress">Progreso: %1$s</string>
     <string name="sync_completed">%1$s canciones cargadas</string>
-    <string name="sync_failed">Sincronización fallida</string>
-    <string name="re_sync_media_library">Actualizar biblioteca multimedia</string>
-    <string name="change_default_sort_order">Cambiar el orden de clasificación predeterminado</string>
-    <string name="display_setting_for">Opciones de visualización para %1$s</string>
-
-    <string name="sort_by_album">Ordenar por álbum</string>
-    <string name="sort_by_artist">Ordenar por artista</string>
-    <string name="sort_by_title">Ordenar por título</string>
-    <string name="sort_by_artist_then_album">Ordenar por artista y luego por álbum</string>
-
-    <string name="sort_sub_album_asc">Agrupar los elementos por álbum y ordenar las pistas en orden ascendente.</string>
-    <string name="sort_sub_artist_asc">Ordenar los elementos por artista en orden ascendente.</string>
-    <string name="sort_sub_title_name_asc">Ordenar los elementos alfabéticamente por título.</string>
-    <string name="sort_sub_artist_album_asc">Agrupar los elementos por artista y luego por álbum, ordenando las pistas en orden ascendente.</string>
-
+    <string name="sync_failed">Error de sincronización</string>
+    <string name="re_sync_media_library">Actualizar biblioteca</string>
+    <string name="change_default_sort_order">Cambiar orden predeterminado</string>
+    <string name="display_setting_for">Ajustes de visualización para %1$s</string>
+    <string name="sort_by_album">Ordenar por Álbum</string>
+    <string name="sort_by_artist">Ordenar por Artista</string>
+    <string name="sort_by_title">Ordenar por Título</string>
+    <string name="sort_by_artist_then_album">Por Artista, luego Álbum</string>
+    <string name="sort_sub_album_asc">Agrupar por álbum y ordenar pistas ascendentemente.</string>
+    <string name="sort_sub_artist_asc">Agrupar por artista ascendentemente.</string>
+    <string name="sort_sub_title_name_asc">Agrupar alfabéticamente por título.</string>
+    <string name="sort_sub_artist_album_asc">Agrupar por artista y luego álbum, pistas ordenadas ascendentemente.</string>
     <string name="order_a_to_z">A → Z</string>
     <string name="order_z_to_a">Z → A</string>
     <string name="order_1_to_9">1 → 9</string>
     <string name="order_9_to_1">9 → 1</string>
     <string name="order_old_to_new">Antiguo → Nuevo</string>
     <string name="order_new_to_old">Nuevo → Antiguo</string>
-
     <string name="preset">Preajuste</string>
     <string name="customize">Personalizar</string>
-
-    <string name="primary_group_by">Agrupación principal por</string>
-    <string name="secondary_group_by">Agrupación secundaria por</string>
-    <string name="content_sort_by">Ordenar contenido por</string>
+    <string name="primary_group_by">Agrupación principal</string>
+    <string name="secondary_group_by">Agrupación secundaria</string>
+    <string name="content_sort_by">Orden del contenido</string>
     <string name="show_track_number">Mostrar número de pista</string>
     <string name="reset_settings">Restablecer ajustes</string>
-
     <string name="sync_progress_media">Canción %1$d / %2$d</string>
     <string name="sync_progress_album">Álbum %1$d / %2$d</string>
     <string name="sync_progress_artist">Artista %1$d / %2$d</string>
     <string name="sync_progress_genre">Género %1$d / %2$d</string>
-
+    <string name="sync_progress_video">Vídeo %1$d / %2$d</string>
     <string name="go_to_library_album">Ir al álbum</string>
     <string name="go_to_library_artist">Ir al artista</string>
-
-    <string name="delete_media_file">Eliminar archivo multimedia</string>
-
-    <string name="one_deleted">1 canción eliminada correctamente</string>
-    <string name="multiple_deleted">%1$d canciones eliminadas correctamente</string>
-    <string name="added_to_play_next">Añadido para reproducir a continuación</string>
-    <string name="added_to_play_queue">Añadido a la cola de reproducción</string>
+    <string name="delete_media_file">Eliminar archivo</string>
+    <string name="one_deleted">1 canción eliminada</string>
+    <string name="multiple_deleted">%1$d canciones eliminadas</string>
+    <string name="added_to_play_next">Añadido a reproducir siguiente</string>
+    <string name="added_to_play_queue">Añadido a la cola</string>
     <string name="delete_failed">Error al eliminar</string>
-
     <string name="sort_by_video_bucket">Carpeta</string>
-    <string name="preset_video">Preajuste de video</string>
+    <string name="preset_video">Preajuste de vídeo</string>
     <string name="preset_audio">Preajuste de audio</string>
-    <string name="video_page_title">Todos los videos</string>
-    <string name="sort_sub_bucket_name_asc">Agrupar elementos por nombre del grupo de video en orden ascendente.</string>
-    <string name="sort_by_video_bucket_name">Ordenar por nombre del grupo de video</string>
-
+    <string name="video_page_title">Todos los vídeos</string>
+    <string name="sort_sub_bucket_name_asc">Agrupar por nombre de carpeta ascendentemente.</string>
+    <string name="sort_by_video_bucket_name">Ordenar por nombre de carpeta</string>
     <string name="change_play_list_alert_dialog_content">¿Seguro que quieres cambiar la lista de reproducción actual?</string>
-
-    <string name="last_watched_jump">Visto por última vez: %1$s. Toca para saltar.</string>
+    <string name="last_watched_jump">Visto por última vez: %1$s. Toca para ir.</string>
     <string name="show_play_progress">Mostrar progreso de reproducción</string>
 </resources>
