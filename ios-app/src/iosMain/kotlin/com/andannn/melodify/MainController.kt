@@ -15,6 +15,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import com.andannn.melodify.core.syncer.MediaLibrarySyncRepository
 import com.andannn.melodify.core.syncer.MusicLibraryPermissionHandler
 import com.andannn.melodify.domain.UserPreferenceRepository
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.usecase.startSyncMediaLibraryIfNeeded
 import com.andannn.melodify.ui.AppTitleHolder
 import com.andannn.melodify.ui.LocalAppTitleHolder
@@ -65,7 +66,9 @@ fun MainViewController() =
             LocalAppTitleHolder provides AppTitleHolder("Melodify"),
         ) {
             if (haveMediaLibraryPermission) {
-                MelodifyMobileApp()
+                MelodifyTheme {
+                    MelodifyMobileApp()
+                }
             }
         }
     }
