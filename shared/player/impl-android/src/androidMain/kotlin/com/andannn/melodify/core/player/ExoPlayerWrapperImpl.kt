@@ -207,6 +207,7 @@ internal class ExoPlayerWrapperImpl : ExoPlayerWrapper {
         playerModeFlow.value = Player.REPEAT_MODE_ALL
         isShuffleFlow.value = false
         playingIndexInQueueFlow.value = null
+        playingMediaItemStateFlow.value = null
         playerProgressUpdater.stopTicker()
 
         player?.release()
