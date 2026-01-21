@@ -38,7 +38,7 @@ import com.andannn.melodify.core.platform.formatTime
 import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.domain.model.subTitle
 import com.andannn.melodify.shared.compose.common.getIcon
-import com.andannn.melodify.shared.compose.common.widgets.CircleBorderImage
+import com.andannn.melodify.shared.compose.common.widgets.MediaCoverImageWidget
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
 import kotlin.time.Duration.Companion.milliseconds
@@ -219,7 +219,7 @@ private fun PlayInfoWithAlbumCover(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (coverUri != null) {
-            CircleBorderImage(
+            MediaCoverImageWidget(
                 modifier =
                     Modifier
                         .fillMaxHeight()
