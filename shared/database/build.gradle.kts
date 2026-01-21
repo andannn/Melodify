@@ -10,13 +10,13 @@ plugins {
 }
 
 kmpExt {
-    withAndroid {
+    withAndroidTarget {
         enableHostTest = false
         enableDeviceTest = true
         includeDeviceTestToCommonTest = true
     }
-    withDesktop()
-    withIOS()
+    withDesktopTarget()
+    withIOSTarget()
 }
 
 room {

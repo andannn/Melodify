@@ -4,7 +4,7 @@ plugins {
 }
 
 kmpExt {
-    withIOS()
+    withIOSTarget()
 }
 
 kotlin {

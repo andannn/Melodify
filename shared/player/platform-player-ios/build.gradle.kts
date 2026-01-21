@@ -3,5 +3,5 @@ plugins {
 }
 
 kmpExt {
-    withIOS()
+    withIOSTarget()
 }

@@ -6,7 +6,7 @@ plugins {
 }
 
 kmpExt {
-    withAndroid()
+    withAndroidTarget()
 }
 
 kotlin {
