@@ -12,7 +12,6 @@ expect fun LinerWaveSlider(
     value: Float,
     modifier: Modifier = Modifier,
     onValueChange: (Float) -> Unit,
-    onStartDrag: () -> Unit,
-    onEndDrag: () -> Unit,
+    onValueChangeFinished: () -> Unit,
     playing: Boolean = true,
 )

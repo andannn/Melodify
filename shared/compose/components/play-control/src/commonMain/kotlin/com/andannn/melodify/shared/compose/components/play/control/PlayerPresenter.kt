@@ -102,8 +102,6 @@ sealed interface PlayerUiEvent {
 
     data object OnSeekBackwardGesture : PlayerUiEvent
 
-    data object OnStartChangeProgress : PlayerUiEvent
-
     data class OnProgressChange(
         val progress: Float,
     ) : PlayerUiEvent
@@ -254,12 +252,12 @@ private class PlayerPresenter(
                     repository.setPlayMode(nextPlayMode)
                 }
 
-                PlayerUiEvent.OnStartChangeProgress -> {
-                    isPlayingWhenStartDrag = playerState == PlayerState.PLAYING
-                    repository.pause()
-                }
-
                 is PlayerUiEvent.OnProgressChange -> {
+                    if (isPlayingWhenStartDrag == null) {
+                        isPlayingWhenStartDrag =
+                            playerState == PlayerState.PLAYING || playerState == PlayerState.BUFFERING
+                        repository.pause()
+                    }
                     repository.seekToTime(duration.times(it.progress).toLong())
                 }
 
