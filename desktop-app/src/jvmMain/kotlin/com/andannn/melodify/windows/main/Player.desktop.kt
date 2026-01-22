@@ -36,9 +36,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.core.platform.formatTime
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.domain.model.subTitle
 import com.andannn.melodify.shared.compose.common.getIcon
 import com.andannn.melodify.shared.compose.common.widgets.MediaCoverImageWidget
+import com.andannn.melodify.shared.compose.common.widgets.PlayButtonContent
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
 import kotlin.time.Duration.Companion.milliseconds
@@ -55,7 +57,7 @@ fun DesktopPlayerUi(
                 coverUri = state.mediaItem.artWorkUri,
                 playMode = state.playMode,
                 isShuffle = state.isShuffle,
-                isPlaying = state.isPlaying,
+                playerState = state.playerState,
                 isFavorite = state.isFavorite,
                 title = state.mediaItem.name,
                 artist = state.mediaItem.subTitle,
@@ -82,7 +84,7 @@ private fun PlayStateBar(
     modifier: Modifier = Modifier,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
     isShuffle: Boolean = false,
-    isPlaying: Boolean = false,
+    playerState: PlayerState = PlayerState.PLAYING,
     isFavorite: Boolean = false,
     title: String = "",
     artist: String = "",
@@ -108,7 +110,7 @@ private fun PlayStateBar(
                 PlayControlBar(
                     modifier = Modifier,
                     enabled = enabled,
-                    isPlaying = isPlaying,
+                    playerState = playerState,
                     playMode = playMode,
                     isShuffle = isShuffle,
                     onEvent = onEvent,
@@ -134,7 +136,7 @@ private fun PlayStateBar(
 private fun PlayControlBar(
     modifier: Modifier = Modifier,
     isShuffle: Boolean,
-    isPlaying: Boolean,
+    playerState: PlayerState,
     enabled: Boolean,
     playMode: PlayMode,
     onEvent: (PlayerUiEvent) -> Unit = {},
@@ -170,11 +172,7 @@ private fun PlayControlBar(
                 onEvent(PlayerUiEvent.OnPlayButtonClick)
             },
         ) {
-            if (isPlaying) {
-                Icon(imageVector = Icons.Rounded.Pause, contentDescription = "")
-            } else {
-                Icon(imageVector = Icons.Rounded.PlayArrow, contentDescription = "")
-            }
+            PlayButtonContent(playerState)
         }
 
         IconButton(

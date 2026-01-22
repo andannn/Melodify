@@ -6,6 +6,7 @@ package com.andannn.melodify.domain
 
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.PlayerState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -28,7 +29,7 @@ interface PlayerStateMonitoryRepository {
 
     fun observePlayMode(): Flow<PlayMode>
 
-    fun observeIsPlaying(): Flow<Boolean>
+    fun observePlayerState(): Flow<PlayerState>
 
     fun observeProgressFactor(): Flow<Float>
 

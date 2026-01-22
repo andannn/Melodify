@@ -5,10 +5,11 @@
 package com.andannn.melodify.core.data.internal
 
 import com.andannn.melodify.core.player.ExoPlayerWrapper
-import com.andannn.melodify.core.player.PlayerState
 import com.andannn.melodify.domain.PlayerStateMonitoryRepository
+import com.andannn.melodify.domain.impl.toPlayerState
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.PlayerState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -57,11 +58,11 @@ class PlayerStateMonitoryRepositoryImpl(
                 fromRepeatMode(it)
             }.distinctUntilChanged()
 
-    override fun observeIsPlaying() =
+    override fun observePlayerState(): Flow<PlayerState> =
         playerWrapper
             .observePlayerState()
             .map {
-                it is PlayerState.Playing
+                it.toPlayerState()
             }.distinctUntilChanged()
 
     override fun observeProgressFactor() =

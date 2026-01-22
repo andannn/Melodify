@@ -20,6 +20,7 @@ kotlin {
         commonMain.dependencies {
             api(project(":shared:domain:api"))
             implementation(project(":shared:database"))
+            implementation(project(":shared:player:common"))
         }
     }
 }

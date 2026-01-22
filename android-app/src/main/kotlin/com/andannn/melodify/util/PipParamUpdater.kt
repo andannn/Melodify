@@ -22,6 +22,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.core.app.PictureInPictureModeChangedInfo
 import androidx.core.util.Consumer
 import com.andannn.melodify.domain.PlayerStateMonitoryRepository
+import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import io.github.aakira.napier.Napier
@@ -33,7 +34,7 @@ private const val TAG = "PipParamUpdater"
 fun PipParamUpdateEffect(playerStateMonitoryRepository: PlayerStateMonitoryRepository = LocalRepository.current) {
     val activity = LocalActivity.current ?: return
     val pipParamUpdater = remember { PipParamUpdater(activity) }
-    val isPlaying by playerStateMonitoryRepository.observeIsPlaying().collectAsState(false)
+    val playerState by playerStateMonitoryRepository.observePlayerState().collectAsState(false)
     val playingItem by playerStateMonitoryRepository.getPlayingMediaStateFlow().collectAsState(null)
     val videoSize =
         remember(playingItem) {
@@ -47,9 +48,9 @@ fun PipParamUpdateEffect(playerStateMonitoryRepository: PlayerStateMonitoryRepos
                 }
             }
         }
-    LaunchedEffect(pipParamUpdater, videoSize, isPlaying) {
+    LaunchedEffect(pipParamUpdater, videoSize, playerState) {
         delay(50)
-        pipParamUpdater.isAutoEnterEnabled = isPlaying
+        pipParamUpdater.isAutoEnterEnabled = playerState == PlayerState.PLAYING
         if (videoSize != null) {
             pipParamUpdater.aspectRatio =
                 Rational(videoSize.width.toInt(), videoSize.height.toInt())

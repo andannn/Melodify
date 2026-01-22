@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.LinerWaveSlider
 import com.andannn.melodify.shared.compose.common.widgets.MarqueeText
@@ -40,7 +41,7 @@ internal fun LargePlayerControlArea(
     progress: Float,
     duration: Long,
     enable: Boolean = true,
-    isPlaying: Boolean = false,
+    playerState: PlayerState = PlayerState.PLAYING,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
     isShuffle: Boolean = false,
     onEvent: (PlayerUiEvent) -> Unit = {},
@@ -80,12 +81,15 @@ internal fun LargePlayerControlArea(
             verticalArrangement = Arrangement.Center,
         ) {
             LinerWaveSlider(
-                modifier = Modifier.fillMaxWidth(),
                 value = progress,
-                playing = isPlaying,
+                modifier = Modifier.fillMaxWidth(),
                 onValueChange = {
                     onEvent(PlayerUiEvent.OnProgressChange(it))
                 },
+                onValueChangeFinished = {
+                    onEvent(PlayerUiEvent.OnStopChangeProgress)
+                },
+                playing = playerState == PlayerState.PLAYING,
             )
             Spacer(Modifier.height(3.dp))
             Row {
@@ -108,7 +112,7 @@ internal fun LargePlayerControlArea(
                     .padding(horizontal = 10.dp)
                     .weight(1.3f),
             enable = enable,
-            isPlaying = isPlaying,
+            playerState = playerState,
             playMode = playMode,
             isShuffle = isShuffle,
             onEvent = onEvent,

@@ -20,14 +20,16 @@ import androidx.compose.ui.unit.dp
 @Composable
 actual fun LinerWaveSlider(
     value: Float,
-    onValueChange: (Float) -> Unit,
     modifier: Modifier,
+    onValueChange: (Float) -> Unit,
+    onValueChangeFinished: () -> Unit,
     playing: Boolean,
 ) {
     Slider(
         modifier = modifier,
         value = value,
         onValueChange = onValueChange,
+        onValueChangeFinished = onValueChangeFinished,
         track = { sliderState ->
             LinearWavyProgressIndicator(
                 modifier = Modifier.fillMaxWidth(),

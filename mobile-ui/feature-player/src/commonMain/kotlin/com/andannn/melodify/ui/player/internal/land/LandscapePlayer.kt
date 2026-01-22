@@ -72,7 +72,7 @@ internal fun LandscapePlayer(
                 playMode = state.playMode,
                 initialIsQueueOpened = initialIsQueueOpened,
                 isShuffle = state.isShuffle,
-                isPlaying = state.isPlaying,
+                playerState = state.playerState,
                 title = state.mediaItem.name,
                 subTitle = state.mediaItem.subTitle,
                 progress = state.progress,
@@ -86,7 +86,7 @@ internal fun LandscapePlayer(
             LandScapeShrinkPlayerLayout(
                 title = state.mediaItem.name,
                 subTitle = state.mediaItem.subTitle,
-                isPlaying = state.isPlaying,
+                playerState = state.playerState,
                 isFavorite = state.isFavorite,
                 onEvent = onEvent,
                 onExpand = {

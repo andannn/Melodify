@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.player.internal.AVPlayerView
 import com.andannn.melodify.ui.player.internal.common.MiniPlayerLayout
@@ -33,7 +34,7 @@ import com.andannn.melodify.ui.player.internal.common.MiniPlayerLayout
 internal fun LandScapeShrinkPlayerLayout(
     title: String,
     subTitle: String,
-    isPlaying: Boolean,
+    playerState: PlayerState,
     isFavorite: Boolean,
     modifier: Modifier = Modifier,
     onEvent: (PlayerUiEvent) -> Unit = {},
@@ -73,7 +74,7 @@ internal fun LandScapeShrinkPlayerLayout(
                         modifier = Modifier.weight(1f),
                         title = title,
                         subTitle = subTitle,
-                        isPlaying = isPlaying,
+                        playerState = playerState,
                         isFavorite = isFavorite,
                         onEvent = onEvent,
                     )

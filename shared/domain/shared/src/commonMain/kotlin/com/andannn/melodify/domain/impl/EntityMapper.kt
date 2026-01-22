@@ -26,6 +26,7 @@ import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.GenreItemModel
 import com.andannn.melodify.domain.model.LyricModel
 import com.andannn.melodify.domain.model.PlayListItemModel
+import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.VideoItemModel
 
@@ -340,3 +341,16 @@ fun LyricEntity.toLyricModel(): LyricModel =
         plainLyrics = plainLyrics,
         syncedLyrics = syncedLyrics,
     )
+
+fun com.andannn.melodify.core.player.PlayerState.toPlayerState(): PlayerState =
+    when (this) {
+        is com.andannn.melodify.core.player.PlayerState.Error,
+        com.andannn.melodify.core.player.PlayerState.Idle,
+        is com.andannn.melodify.core.player.PlayerState.PlayBackEnd,
+        is com.andannn.melodify.core.player.PlayerState.Paused,
+        -> PlayerState.PAUSED
+
+        is com.andannn.melodify.core.player.PlayerState.Playing -> PlayerState.PLAYING
+
+        is com.andannn.melodify.core.player.PlayerState.Buffering -> PlayerState.BUFFERING
+    }

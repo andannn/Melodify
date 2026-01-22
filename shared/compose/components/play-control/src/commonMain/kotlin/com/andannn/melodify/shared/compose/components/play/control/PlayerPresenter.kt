@@ -15,6 +15,7 @@ import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.domain.model.next
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
@@ -70,7 +71,7 @@ sealed class PlayerUiState(
         val playMode: PlayMode = PlayMode.REPEAT_ALL,
         val mediaItem: MediaItemModel,
         val progress: Float,
-        val isPlaying: Boolean,
+        val playerState: PlayerState,
         val isCounting: Boolean,
         override val eventSink: (PlayerUiEvent) -> Unit,
     ) : PlayerUiState(eventSink)
@@ -105,6 +106,8 @@ sealed interface PlayerUiEvent {
         val progress: Float,
     ) : PlayerUiEvent
 
+    data object OnStopChangeProgress : PlayerUiEvent
+
     data object OnTimerIconClick : PlayerUiEvent
 }
 
@@ -124,13 +127,13 @@ private class PlayerPresenter(
                 initialValue = null,
             )
 
-    private val isPlayingFlow =
+    private val playerStateFlow =
         repository
-            .observeIsPlaying()
+            .observePlayerState()
             .stateIn(
                 retainedScope,
                 started = SharingStarted.WhileSubscribed(),
-                initialValue = false,
+                initialValue = PlayerState.PAUSED,
             )
 
     private val progressFactorFlow =
@@ -190,10 +193,12 @@ private class PlayerPresenter(
                 initialValue = false,
             )
 
+    private var isPlayingWhenStartDrag: Boolean? = null
+
     @Composable
     override fun present(): PlayerUiState {
         val interactingMusicItem by interactingMusicItemFlow.collectAsStateWithLifecycle()
-        val isPlaying by isPlayingFlow.collectAsStateWithLifecycle()
+        val playerState by playerStateFlow.collectAsStateWithLifecycle()
         val progressFactor by progressFactorFlow.collectAsStateWithLifecycle()
         val playMode by playModeFlow.collectAsStateWithLifecycle()
         val isShuffle by isShuffleFlow.collectAsStateWithLifecycle()
@@ -202,6 +207,7 @@ private class PlayerPresenter(
         val isFavorite by isFavoriteFlow.collectAsStateWithLifecycle()
         val hapticFeedback = LocalHapticFeedback.current
         val eventSink: (PlayerUiEvent) -> Unit by rememberUpdatedState {
+            Napier.d(tag = TAG) { "onEvent: $it" }
             when (it) {
                 PlayerUiEvent.OnFavoriteButtonClick -> {
                     onFavoriteButtonClick(
@@ -210,15 +216,15 @@ private class PlayerPresenter(
                 }
 
                 PlayerUiEvent.OnNextButtonClick -> {
-                    next()
+                    repository.seekToNext()
                 }
 
                 PlayerUiEvent.OnPreviousButtonClick -> {
-                    previous()
+                    repository.seekToPrevious()
                 }
 
                 PlayerUiEvent.OnPlayButtonClick -> {
-                    togglePlayState(isPlaying)
+                    togglePlayState(currentState = playerState)
                 }
 
                 PlayerUiEvent.OnShuffleButtonClick -> {
@@ -247,7 +253,20 @@ private class PlayerPresenter(
                 }
 
                 is PlayerUiEvent.OnProgressChange -> {
-                    seekToTime(duration.times(it.progress).toLong())
+                    if (isPlayingWhenStartDrag == null) {
+                        isPlayingWhenStartDrag =
+                            playerState == PlayerState.PLAYING || playerState == PlayerState.BUFFERING
+                        repository.pause()
+                    }
+                    repository.seekToTime(duration.times(it.progress).toLong())
+                }
+
+                PlayerUiEvent.OnStopChangeProgress -> {
+                    if (isPlayingWhenStartDrag == true) {
+                        Napier.d(tag = TAG) { "OnStopChangeProgress: resume play." }
+                        repository.play()
+                    }
+                    isPlayingWhenStartDrag = null
                 }
 
                 PlayerUiEvent.OnSetDoublePlaySpeed -> {
@@ -278,7 +297,7 @@ private class PlayerPresenter(
                 playMode = playMode,
                 isShuffle = isShuffle,
                 isFavorite = isFavorite,
-                isPlaying = isPlaying,
+                playerState = playerState,
                 progress = progressFactor,
                 isCounting = isSleepTimerCounting,
                 eventSink = eventSink,
@@ -339,23 +358,13 @@ private class PlayerPresenter(
         }
     }
 
-    private fun togglePlayState(isPlaying: Boolean) {
-        if (isPlaying) {
-            repository.pause()
-        } else {
-            repository.play()
+    private fun togglePlayState(currentState: PlayerState) {
+        when (currentState) {
+            PlayerState.PLAYING,
+            PlayerState.BUFFERING,
+            -> repository.pause()
+
+            PlayerState.PAUSED -> repository.play()
         }
-    }
-
-    private fun next() {
-        repository.seekToNext()
-    }
-
-    private fun previous() {
-        repository.seekToPrevious()
-    }
-
-    private fun seekToTime(time: Long) {
-        repository.seekToTime(time)
     }
 }

@@ -5,16 +5,19 @@
 package com.andannn.melodify.shared.compose.common.widgets
 
 import androidx.compose.material3.Slider
+import androidx.compose.ui.Modifier
 
 @androidx.compose.runtime.Composable
 actual fun LinerWaveSlider(
     value: Float,
+    modifier: Modifier,
     onValueChange: (Float) -> Unit,
-    modifier: androidx.compose.ui.Modifier,
+    onValueChangeFinished: () -> Unit,
     playing: Boolean,
 ) {
     Slider(
         value = value,
+        onValueChangeFinished = onValueChangeFinished,
         onValueChange = onValueChange,
         modifier = modifier,
     )

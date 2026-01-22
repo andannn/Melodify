@@ -93,7 +93,7 @@ internal fun PortraitPlayer(
             initialIsQueueOpened = initialIsQueueOpened,
             playMode = state.playMode,
             isShuffle = state.isShuffle,
-            isPlaying = state.isPlaying,
+            playerState = state.playerState,
             isFavorite = state.isFavorite,
             activeMediaItem = state.mediaItem,
             isCounting = state.isCounting,

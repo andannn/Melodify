@@ -11,12 +11,14 @@ import androidx.compose.ui.Modifier
 @Composable
 actual fun LinerWaveSlider(
     value: Float,
-    onValueChange: (Float) -> Unit,
     modifier: Modifier,
+    onValueChange: (Float) -> Unit,
+    onValueChangeFinished: () -> Unit,
     playing: Boolean,
 ) {
     Slider(
         value = value,
+        onValueChangeFinished = onValueChangeFinished,
         onValueChange = onValueChange,
         modifier = modifier,
     )
