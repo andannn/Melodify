@@ -80,12 +80,18 @@ internal fun LargePlayerControlArea(
             verticalArrangement = Arrangement.Center,
         ) {
             LinerWaveSlider(
-                modifier = Modifier.fillMaxWidth(),
                 value = progress,
-                playing = isPlaying,
+                modifier = Modifier.fillMaxWidth(),
+                onStartDrag = {
+                    onEvent(PlayerUiEvent.OnStartChangeProgress)
+                },
                 onValueChange = {
                     onEvent(PlayerUiEvent.OnProgressChange(it))
                 },
+                onEndDrag = {
+                    onEvent(PlayerUiEvent.OnStopChangeProgress)
+                },
+                playing = isPlaying,
             )
             Spacer(Modifier.height(3.dp))
             Row {

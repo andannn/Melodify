@@ -101,9 +101,13 @@ sealed interface PlayerUiEvent {
 
     data object OnSeekBackwardGesture : PlayerUiEvent
 
+    data object OnStartChangeProgress : PlayerUiEvent
+
     data class OnProgressChange(
         val progress: Float,
     ) : PlayerUiEvent
+
+    data object OnStopChangeProgress : PlayerUiEvent
 
     data object OnTimerIconClick : PlayerUiEvent
 }
@@ -190,6 +194,8 @@ private class PlayerPresenter(
                 initialValue = false,
             )
 
+    private var isPlayingWhenStartDrag: Boolean? = null
+
     @Composable
     override fun present(): PlayerUiState {
         val interactingMusicItem by interactingMusicItemFlow.collectAsStateWithLifecycle()
@@ -210,11 +216,11 @@ private class PlayerPresenter(
                 }
 
                 PlayerUiEvent.OnNextButtonClick -> {
-                    next()
+                    repository.seekToNext()
                 }
 
                 PlayerUiEvent.OnPreviousButtonClick -> {
-                    previous()
+                    repository.seekToPrevious()
                 }
 
                 PlayerUiEvent.OnPlayButtonClick -> {
@@ -246,8 +252,20 @@ private class PlayerPresenter(
                     repository.setPlayMode(nextPlayMode)
                 }
 
+                PlayerUiEvent.OnStartChangeProgress -> {
+                    isPlayingWhenStartDrag = isPlaying
+                    repository.pause()
+                }
+
                 is PlayerUiEvent.OnProgressChange -> {
-                    seekToTime(duration.times(it.progress).toLong())
+                    repository.seekToTime(duration.times(it.progress).toLong())
+                }
+
+                PlayerUiEvent.OnStopChangeProgress -> {
+                    if (isPlayingWhenStartDrag == true) {
+                        repository.play()
+                    }
+                    isPlayingWhenStartDrag = null
                 }
 
                 PlayerUiEvent.OnSetDoublePlaySpeed -> {
@@ -345,17 +363,5 @@ private class PlayerPresenter(
         } else {
             repository.play()
         }
-    }
-
-    private fun next() {
-        repository.seekToNext()
-    }
-
-    private fun previous() {
-        repository.seekToPrevious()
-    }
-
-    private fun seekToTime(time: Long) {
-        repository.seekToTime(time)
     }
 }

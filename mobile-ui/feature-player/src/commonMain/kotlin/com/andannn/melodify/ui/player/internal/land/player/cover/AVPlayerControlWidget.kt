@@ -159,12 +159,14 @@ internal fun AVPlayerControlWidget(
 
                 Text(progressString, style = MaterialTheme.typography.labelLarge)
                 LinerWaveSlider(
-                    modifier = Modifier.weight(1f),
-                    playing = isPlaying,
                     value = progress,
+                    modifier = Modifier.weight(1f),
+                    onStartDrag = { onEvent(PlayerUiEvent.OnStartChangeProgress) },
                     onValueChange = {
                         onEvent(PlayerUiEvent.OnProgressChange(it))
                     },
+                    onEndDrag = { onEvent(PlayerUiEvent.OnStopChangeProgress) },
+                    playing = isPlaying,
                 )
                 Text(durationString, style = MaterialTheme.typography.labelLarge)
             }

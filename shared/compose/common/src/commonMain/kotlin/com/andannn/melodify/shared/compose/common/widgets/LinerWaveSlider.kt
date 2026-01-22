@@ -10,7 +10,9 @@ import androidx.compose.ui.Modifier
 @Composable
 expect fun LinerWaveSlider(
     value: Float,
-    onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
+    onValueChange: (Float) -> Unit,
+    onStartDrag: () -> Unit,
+    onEndDrag: () -> Unit,
     playing: Boolean = true,
 )
