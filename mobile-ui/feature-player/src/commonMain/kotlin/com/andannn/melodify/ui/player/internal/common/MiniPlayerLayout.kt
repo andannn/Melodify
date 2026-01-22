@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.shared.compose.common.widgets.FavoriteIconButton
+import com.andannn.melodify.shared.compose.common.widgets.PlayButtonContent
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 
 @Composable

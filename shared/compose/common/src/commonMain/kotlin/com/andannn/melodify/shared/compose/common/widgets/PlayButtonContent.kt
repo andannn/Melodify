@@ -1,4 +1,8 @@
-package com.andannn.melodify.ui.player.internal.common
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+package com.andannn.melodify.shared.compose.common.widgets
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -7,6 +11,7 @@ import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,7 +20,7 @@ import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 
 @Composable
-internal fun PlayButtonContent(
+fun PlayButtonContent(
     playerState: PlayerState,
     modifier: Modifier = Modifier,
 ) {
@@ -30,7 +35,10 @@ internal fun PlayButtonContent(
             }
 
             PlayerState.BUFFERING -> {
-                CircularProgressIndicator(modifier = Modifier.size(36.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier.size(36.dp),
+                    color = LocalContentColor.current,
+                )
             }
         }
     }
