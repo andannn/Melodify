@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.LinerWaveSlider
 import com.andannn.melodify.shared.compose.common.widgets.MarqueeText
@@ -55,7 +56,7 @@ internal fun AVPlayerControlWidget(
     duration: Long,
     progress: Float,
     isShuffle: Boolean,
-    isPlaying: Boolean,
+    playerState: PlayerState,
     playMode: PlayMode,
     modifier: Modifier = Modifier,
     onEvent: (PlayerUiEvent) -> Unit = {},
@@ -131,7 +132,7 @@ internal fun AVPlayerControlWidget(
             PlayControlButtons(
                 modifier = Modifier.weight(2f),
                 isShuffle = isShuffle,
-                isPlaying = isPlaying,
+                playerState = playerState,
                 playMode = playMode,
                 onEvent = onEvent,
             )
@@ -166,7 +167,7 @@ internal fun AVPlayerControlWidget(
                         onEvent(PlayerUiEvent.OnProgressChange(it))
                     },
                     onEndDrag = { onEvent(PlayerUiEvent.OnStopChangeProgress) },
-                    playing = isPlaying,
+                    playing = playerState == PlayerState.PLAYING,
                 )
                 Text(durationString, style = MaterialTheme.typography.labelLarge)
             }
@@ -201,7 +202,7 @@ private fun AVPlayerControlWidgetPreview() {
                     duration = 10000L,
                     progress = 0.5f,
                     isShuffle = false,
-                    isPlaying = true,
+                    playerState = PlayerState.PLAYING,
                     playMode = PlayMode.REPEAT_ALL,
                 )
             }

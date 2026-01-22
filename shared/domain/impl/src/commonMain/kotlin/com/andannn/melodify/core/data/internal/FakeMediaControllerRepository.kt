@@ -8,6 +8,7 @@ import com.andannn.melodify.domain.MediaControllerRepository
 import com.andannn.melodify.domain.PlayerStateMonitoryRepository
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.PlayerState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,7 @@ class FakeMediaControllerRepository :
     private val currentIndexFlow = MutableStateFlow<Int>(0)
     private val playModeFlow = MutableStateFlow<PlayMode>(PlayMode.REPEAT_ALL)
     private val isShuffleFlow = MutableStateFlow<Boolean>(false)
-    private val isPlayFlow = MutableStateFlow<Boolean>(false)
+    private val playerStateFlow = MutableStateFlow<PlayerState>(PlayerState.PLAYING)
 
     override fun playMediaList(
         mediaList: List<MediaItemModel>,
@@ -58,11 +59,11 @@ class FakeMediaControllerRepository :
     }
 
     override fun play() {
-        isPlayFlow.value = true
+        playerStateFlow.value = PlayerState.PLAYING
     }
 
     override fun pause() {
-        isPlayFlow.value = false
+        playerStateFlow.value = PlayerState.PAUSED
     }
 
     override fun addMediaItems(
@@ -129,7 +130,7 @@ class FakeMediaControllerRepository :
 
     override fun observePlayMode(): Flow<PlayMode> = playModeFlow
 
-    override fun observeIsPlaying(): Flow<Boolean> = isPlayFlow
+    override fun observePlayerState(): Flow<PlayerState> = playerStateFlow
 
     override fun observeProgressFactor(): Flow<Float> = MutableStateFlow(0f)
 

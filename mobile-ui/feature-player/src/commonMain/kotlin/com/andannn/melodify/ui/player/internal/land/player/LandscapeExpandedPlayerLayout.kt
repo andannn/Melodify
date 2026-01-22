@@ -23,6 +23,7 @@ import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationEventHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.ImmersiveModeEffect
 import com.andannn.melodify.ui.KeepScreenOnEffect
@@ -37,9 +38,9 @@ import com.andannn.melodify.ui.player.internal.land.player.queue.QueueWithHeader
 internal fun LandScapeExpandedPlayerLayout(
     modifier: Modifier = Modifier,
     initialIsQueueOpened: Boolean,
+    playerState: PlayerState,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
     isShuffle: Boolean = false,
-    isPlaying: Boolean = false,
     title: String = "",
     subTitle: String = "",
     progress: Float = 1f,
@@ -68,7 +69,7 @@ internal fun LandScapeExpandedPlayerLayout(
                             duration = duration,
                             isShuffle = isShuffle,
                             playMode = playMode,
-                            isPlaying = isPlaying,
+                            playerState = playerState,
                             progress = progress,
                             onEvent = onEvent,
                             onShrink = onShrink,
@@ -102,7 +103,7 @@ internal fun LandScapeExpandedPlayerLayout(
     }
 
     ImmersiveModeEffect()
-    if (isPlaying) {
+    if (playerState == PlayerState.PLAYING) {
         KeepScreenOnEffect()
     }
 }

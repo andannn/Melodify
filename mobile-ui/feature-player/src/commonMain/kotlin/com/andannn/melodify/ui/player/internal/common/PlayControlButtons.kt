@@ -9,26 +9,26 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Pause
-import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material.icons.rounded.ShuffleOn
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material.icons.rounded.SkipPrevious
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.shared.compose.common.getIcon
-import com.andannn.melodify.shared.compose.common.widgets.SmpMainIconButton
 import com.andannn.melodify.shared.compose.common.widgets.SmpSubIconButton
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 
 @Composable
 internal fun PlayControlButtons(
     isShuffle: Boolean,
-    isPlaying: Boolean,
+    playerState: PlayerState,
     playMode: PlayMode,
     modifier: Modifier = Modifier,
     enable: Boolean = true,
@@ -63,17 +63,20 @@ internal fun PlayControlButtons(
             },
         )
 
-        SmpMainIconButton(
+        TextButton(
             modifier =
                 Modifier
                     .weight(1f)
                     .aspectRatio(1f),
             enabled = enable,
-            imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+            colors = ButtonDefaults.buttonColors(),
             onClick = {
                 onEvent(PlayerUiEvent.OnPlayButtonClick)
             },
-        )
+        ) {
+            PlayButtonContent(playerState)
+        }
+
         SmpSubIconButton(
             modifier =
                 Modifier

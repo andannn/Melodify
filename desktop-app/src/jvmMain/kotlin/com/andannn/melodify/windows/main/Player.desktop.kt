@@ -55,7 +55,7 @@ fun DesktopPlayerUi(
                 coverUri = state.mediaItem.artWorkUri,
                 playMode = state.playMode,
                 isShuffle = state.isShuffle,
-                isPlaying = state.isPlaying,
+                isPlaying = state.playerState,
                 isFavorite = state.isFavorite,
                 title = state.mediaItem.name,
                 artist = state.mediaItem.subTitle,

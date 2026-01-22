@@ -6,11 +6,12 @@ package com.andannn.melodify.core.data.internal
 
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.player.AvPlayerQueuePlayer
-import com.andannn.melodify.core.player.PlayerState
 import com.andannn.melodify.domain.PlayerStateMonitoryRepository
 import com.andannn.melodify.domain.impl.toAppItem
+import com.andannn.melodify.domain.impl.toPlayerState
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.PlayerState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,11 +67,11 @@ internal class PlayerStateMonitoryRepositoryImpl(
 
     override fun observePlayMode() = flowOf(PlayMode.REPEAT_ALL)
 
-    override fun observeIsPlaying(): Flow<Boolean> =
+    override fun observePlayerState(): Flow<PlayerState> =
         queuePlayer
             .observePlayerState()
             .map {
-                it is PlayerState.Playing
+                it.toPlayerState()
             }.distinctUntilChanged()
 
     override fun observeProgressFactor(): Flow<Float> = queuePlayer.observeProgressFactor()

@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Pause
-import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.SkipPrevious
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +26,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.shared.compose.common.widgets.FavoriteIconButton
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 
@@ -35,7 +34,7 @@ import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 internal fun MiniPlayerLayout(
     title: String,
     subTitle: String,
-    isPlaying: Boolean,
+    playerState: PlayerState,
     isFavorite: Boolean,
     modifier: Modifier = Modifier,
     onEvent: (PlayerUiEvent) -> Unit = {},
@@ -64,11 +63,7 @@ internal fun MiniPlayerLayout(
                 onEvent(PlayerUiEvent.OnPlayButtonClick)
             },
         ) {
-            if (isPlaying) {
-                Icon(imageVector = Icons.Rounded.Pause, contentDescription = "")
-            } else {
-                Icon(imageVector = Icons.Rounded.PlayArrow, contentDescription = "")
-            }
+            PlayButtonContent(playerState)
         }
         Spacer(modifier = Modifier.width(10.dp))
         IconButton(

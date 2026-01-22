@@ -18,23 +18,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun SmpMainIconButton(
-    imageVector: ImageVector,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    onClick: () -> Unit = {},
-) {
-    TextButton(
-        modifier = modifier,
-        enabled = enabled,
-        colors = ButtonDefaults.buttonColors(),
-        onClick = onClick,
-    ) {
-        Icon(modifier = Modifier.scale(1.5f), imageVector = imageVector, contentDescription = null)
-    }
-}
-
-@Composable
 fun SmpSubIconButton(
     imageVector: ImageVector,
     modifier: Modifier = Modifier,
@@ -51,17 +34,6 @@ fun SmpSubIconButton(
             modifier = Modifier.scale(scale),
             imageVector = imageVector,
             contentDescription = null,
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun SmpMainIconButtonPreview() {
-    MaterialTheme {
-        SmpMainIconButton(
-            onClick = {},
-            imageVector = Icons.Rounded.PlayArrow,
         )
     }
 }

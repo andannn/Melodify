@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayMode
+import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiEvent
 import com.andannn.melodify.ui.player.internal.AVPlayerView
 import com.andannn.melodify.ui.player.internal.common.MiniPlayerLayout
@@ -62,7 +63,7 @@ internal fun PortraitPlayerLayout(
     modifier: Modifier = Modifier,
     playMode: PlayMode = PlayMode.REPEAT_ALL,
     isShuffle: Boolean = false,
-    isPlaying: Boolean = false,
+    playerState: PlayerState = PlayerState.PLAYING,
     isFavorite: Boolean = false,
     isCounting: Boolean = false,
     title: String = "",
@@ -111,7 +112,7 @@ internal fun PortraitPlayerLayout(
                             ),
                     title = title,
                     subTitle = subTitle,
-                    isPlaying = isPlaying,
+                    playerState = playerState,
                     isFavorite = isFavorite,
                     onEvent = onEvent,
                 )
@@ -172,7 +173,7 @@ internal fun PortraitPlayerLayout(
                                 .graphicsLayer {
                                     alpha = fadeInAreaAlpha
                                 },
-                        isPlaying = isPlaying,
+                        playerState = playerState,
                         playMode = playMode,
                         isShuffle = isShuffle,
                         progress = progress,

@@ -16,11 +16,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.drop
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -33,13 +35,14 @@ actual fun LinerWaveSlider(
     playing: Boolean,
 ) {
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
-    val isDragged by interactionSource.collectIsDraggedAsState()
-
-    LaunchedEffect(isDragged) {
-        if (isDragged) {
-            onStartDrag()
-        } else {
-            onStartDrag()
+    val isDraggedState = interactionSource.collectIsDraggedAsState()
+    LaunchedEffect(Unit) {
+        snapshotFlow { isDraggedState.value }.drop(1).collect { isDragged ->
+            if (isDragged) {
+                onStartDrag()
+            } else {
+                onEndDrag()
+            }
         }
     }
 
