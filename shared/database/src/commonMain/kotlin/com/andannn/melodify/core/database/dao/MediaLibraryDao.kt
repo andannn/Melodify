@@ -58,13 +58,13 @@ interface MediaLibraryDao {
     suspend fun upsertMedias(audios: List<MediaEntity>): List<Long>
 
     @Query("SELECT ${MediaColumns.TITLE} FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ID} IN (:ids)")
-    suspend fun getNameOfMedia(ids: List<Long>): List<String?>
+    suspend fun getNameOfMedia(ids: List<Long>): List<String>
 
     @Upsert
     suspend fun upsertVideos(audios: List<VideoEntity>): List<Long>
 
     @Query("SELECT ${VideoColumns.TITLE} FROM ${Tables.LIBRARY_VIDEO} WHERE ${VideoColumns.ID} IN (:ids)")
-    suspend fun getNameOfVideo(ids: List<Long>): List<String?>
+    suspend fun getNameOfVideo(ids: List<Long>): List<String>
 
     @Upsert(entity = AlbumEntity::class)
     suspend fun upsertAlbumsWithoutTrackCount(albums: List<AlbumWithoutTrackCount>): List<Long>

@@ -50,6 +50,7 @@ abstract class AbstractDatabaseTest {
         listOf(
             LyricEntity(
                 id = 1,
+                mediaId = 1,
                 name = "name",
                 trackName = "trackName",
                 artistName = "artistName",
@@ -61,6 +62,7 @@ abstract class AbstractDatabaseTest {
             ),
             LyricEntity(
                 id = 2,
+                mediaId = 2,
                 name = "name",
                 trackName = "trackName",
                 artistName = "artistName",
@@ -87,19 +89,37 @@ abstract class AbstractDatabaseTest {
     @Test
     fun get_lyric_by_media_store_id() =
         runTest {
-            lyricDao.insertLyricOfMedia(mediaStoreId = "99", lyric = dummyLyricEntities[0])
+            libraryDao.upsertMedias(
+                audios = listOf(MediaEntity(id = 1, title = "dummy")),
+            )
+            lyricDao.insertLyricEntities(listOf(dummyLyricEntities[0]))
 
-            val lyric = lyricDao.getLyricByMediaIdFlow("99").first()
+            val lyric = lyricDao.getLyricByMediaIdFlow("1").first()
             assertEquals(dummyLyricEntities[0], lyric)
         }
 
     @Test
     fun get_lyric_by_media_store_id_not_exist() =
         runTest {
-            lyricDao.insertLyricOfMedia(mediaStoreId = "99", lyric = dummyLyricEntities[0])
+            libraryDao.upsertMedias(
+                audios = listOf(MediaEntity(id = 1, title = "dummy")),
+            )
+            lyricDao.insertLyricEntities(entities = listOf(dummyLyricEntities[0]))
 
             val lyric = lyricDao.getLyricByMediaIdFlow("100").first()
             assertEquals(null, lyric)
+        }
+
+    @Test
+    fun lyric_deleted_cascade_when_media_deleted() =
+        runTest {
+            libraryDao.upsertMedias(
+                audios = listOf(MediaEntity(id = 1, title = "dummy")),
+            )
+            lyricDao.insertLyricEntities(entities = listOf(dummyLyricEntities[0]))
+            assertEquals(dummyLyricEntities[0], lyricDao.getLyricByMediaIdFlow("1").first())
+            libraryDao.deleteMediasByIds(listOf(1))
+            assertEquals(null, lyricDao.getLyricByMediaIdFlow("1").first())
         }
 
     @Test
