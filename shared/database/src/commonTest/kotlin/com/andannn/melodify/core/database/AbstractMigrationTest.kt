@@ -390,4 +390,20 @@ abstract class AbstractMigrationTest {
                 }
             migratedConnection.close()
         }
+
+    @Test
+    fun migrate17To18Test(): Unit =
+        helper.let { helper ->
+            val newConnection = helper.createDatabase(17)
+            newConnection.execSQL(
+                "INSERT INTO `lyric_table` (`lyric_id`, `lyric_name`, `lyric_track_name`, `lyric_artist_name`, `lyric_album_name`, `lyric_duration_name`, `lyric_instrumental`, `lyric_plain_lyrics`, `lyric_synced_lyrics`) VALUES (1, 'example.lrc', 'Example Track', 'Example Artist', 'Example Album', 240.5, 0, 'Example Plain Lyrics', '[00:00.00]Example Synced Lyrics');",
+            )
+            newConnection.execSQL(
+                "INSERT INTO `lyric_with_audio_cross_ref_table` (`lyric_with_audio_cross_ref_media_store_id`, `lyric_with_audio_cross_ref_lyric_id`) VALUES ('123', 1);",
+            )
+            newConnection.close()
+            val migratedConnection =
+                helper.runMigrationsAndValidate(18, migrations = listOf(Migration17To18Spec))
+            migratedConnection.close()
+        }
 }

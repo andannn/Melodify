@@ -11,6 +11,8 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import androidx.room.migration.AutoMigrationSpec
+import androidx.room.migration.Migration
+import androidx.room.util.foreignKeyCheck
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import com.andannn.melodify.core.database.dao.LyricDao
@@ -26,7 +28,6 @@ import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
-import com.andannn.melodify.core.database.entity.LyricWithAudioCrossRef
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListColumns
@@ -67,7 +68,6 @@ internal object Tables {
 @Database(
     entities = [
         LyricEntity::class,
-        LyricWithAudioCrossRef::class,
         PlayListEntity::class,
         PlayListWithMediaCrossRef::class,
         AlbumEntity::class,
@@ -100,7 +100,7 @@ internal object Tables {
         AutoMigration(from = 15, to = 16, AutoMigration15To16Spec::class),
         AutoMigration(from = 16, to = 17, AutoMigration16To17Spec::class),
     ],
-    version = 17,
+    version = 18,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)
@@ -125,6 +125,7 @@ fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() =
         setQueryCoroutineContext(Dispatchers.IO)
         addCallback(addTriggerCallback)
         addCallback(addInitialCustomTabsCallback)
+        addMigrations(Migration17To18Spec)
     }
 
 internal val addTriggerCallback =
@@ -379,5 +380,33 @@ class AutoMigration16To17Spec : AutoMigrationSpec {
 
         connection.execSQL("INSERT INTO `library_fts_artist_table`(`library_fts_artist_table`) VALUES('rebuild')")
         connection.execSQL("INSERT INTO `library_fts_album_table`(`library_fts_album_table`) VALUES('rebuild')")
+    }
+}
+
+object Migration17To18Spec : Migration(17, 18) {
+    override fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("DROP TABLE `lyric_with_audio_cross_ref_table`")
+
+        connection.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `_new_lyric_table` (
+                `lyric_id` INTEGER NOT NULL, 
+                `media_id` INTEGER NOT NULL DEFAULT 0, 
+                `lyric_name` TEXT NOT NULL, 
+                `lyric_track_name` TEXT NOT NULL, 
+                `lyric_artist_name` TEXT NOT NULL, 
+                `lyric_album_name` TEXT NOT NULL, 
+                `lyric_duration_name` REAL NOT NULL, 
+                `lyric_instrumental` INTEGER NOT NULL, 
+                `lyric_plain_lyrics` TEXT NOT NULL, 
+                `lyric_synced_lyrics` TEXT NOT NULL, 
+                PRIMARY KEY(`lyric_id`), 
+                FOREIGN KEY(`media_id`) REFERENCES `library_media_table`(`media_id`) ON UPDATE NO ACTION ON DELETE CASCADE 
+            )
+            """.trimIndent(),
+        )
+        connection.execSQL("DROP TABLE `lyric_table`")
+        connection.execSQL("ALTER TABLE `_new_lyric_table` RENAME TO `lyric_table`")
+        foreignKeyCheck(connection, "lyric_table")
     }
 }

@@ -6,11 +6,13 @@ package com.andannn.melodify.core.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.andannn.melodify.core.database.Tables
 
 internal object LyricColumns {
     const val ID = "lyric_id"
+    const val MEDIA_ID = "media_id"
     const val NAME = "lyric_name"
     const val TRACK_NAME = "lyric_track_name"
     const val ARTIST_NAME = "lyric_artist_name"
@@ -21,11 +23,23 @@ internal object LyricColumns {
     const val SYNCED_LYRICS = "lyric_synced_lyrics"
 }
 
-@Entity(tableName = Tables.LYRIC)
+@Entity(
+    tableName = Tables.LYRIC,
+    foreignKeys = [
+        ForeignKey(
+            entity = MediaEntity::class,
+            parentColumns = [MediaColumns.ID],
+            childColumns = [LyricColumns.MEDIA_ID],
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
+)
 data class LyricEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = LyricColumns.ID)
     val id: Long,
+    @ColumnInfo(name = LyricColumns.MEDIA_ID, defaultValue = "0")
+    val mediaId: Long = 0,
     @ColumnInfo(name = LyricColumns.NAME)
     val name: String,
     @ColumnInfo(name = LyricColumns.TRACK_NAME)

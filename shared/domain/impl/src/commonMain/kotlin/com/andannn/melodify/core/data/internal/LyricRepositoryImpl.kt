@@ -46,9 +46,8 @@ internal class LyricRepositoryImpl(
                         duration = duration,
                     )
                 val lyricData = lyricDataResult.getOrThrow()
-                lyricDao.insertLyricOfMedia(
-                    mediaStoreId = mediaId,
-                    lyric = lyricData.toLyricEntity(),
+                lyricDao.insertLyricEntities(
+                    entities = listOf(lyricData.toLyricEntity(mediaId)),
                 )
                 val result = lyricDao.getLyricByMediaIdFlow(mediaId).first()?.toLyricModel()
                 emit(LyricRepository.State.Success(result ?: error("Lyric not found")))
@@ -59,9 +58,10 @@ internal class LyricRepositoryImpl(
         }
 }
 
-private fun LyricData.toLyricEntity() =
+private fun LyricData.toLyricEntity(mediaId: String) =
     LyricEntity(
         id = id,
+        mediaId = mediaId.toLong(),
         name = name,
         trackName = trackName,
         artistName = artistName,
