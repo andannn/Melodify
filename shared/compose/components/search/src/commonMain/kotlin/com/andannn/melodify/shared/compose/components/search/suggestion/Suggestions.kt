@@ -5,27 +5,39 @@
 package com.andannn.melodify.shared.compose.components.search.suggestion
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowOutward
 import androidx.compose.material.icons.rounded.History
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.MediaType
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
+import com.andannn.melodify.shared.compose.common.widgets.ExtraPaddingBottom
+import com.andannn.melodify.shared.compose.components.library.item.MediaLibraryItem
+import melodify.shared.compose.resource.generated.resources.Res
+import melodify.shared.compose.resource.generated.resources.album_page_title
+import melodify.shared.compose.resource.generated.resources.artist_page_title
+import melodify.shared.compose.resource.generated.resources.audio_page_title
+import melodify.shared.compose.resource.generated.resources.genre_title
+import melodify.shared.compose.resource.generated.resources.playlist_page_title
+import melodify.shared.compose.resource.generated.resources.video_page_title
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Content of the search bar when expanded.
@@ -43,28 +55,14 @@ internal fun Suggestions(
     modifier: Modifier = Modifier,
     presenter: Presenter<SuggestionsUiState> = retainSuggestionsPresenter(query = query.text.toString()),
     onConfirmSearch: (String) -> Unit = {},
+    onResultItemClick: (MediaItemModel) -> Unit = {},
 ) {
-    SuggestionUi(
+    SuggestionsContent(
         modifier = modifier,
-        uiState = presenter.present(),
+        state = presenter.present().state,
         onConfirmSearch = onConfirmSearch,
+        onResultItemClick = onResultItemClick,
     )
-}
-
-@Composable
-internal fun SuggestionUi(
-    uiState: SuggestionsUiState,
-    modifier: Modifier = Modifier,
-    onConfirmSearch: (String) -> Unit = {},
-) {
-    Box(
-        modifier = modifier,
-    ) {
-        SuggestionsContent(
-            state = uiState.state,
-            onConfirmSearch = onConfirmSearch,
-        )
-    }
 }
 
 @Composable
@@ -72,48 +70,48 @@ private fun SuggestionsContent(
     state: SuggestionsState,
     modifier: Modifier = Modifier,
     onConfirmSearch: (String) -> Unit = {},
+    onResultItemClick: (MediaItemModel) -> Unit = {},
 ) {
-    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
+    LazyColumn(modifier = modifier) {
         when (state) {
             is SuggestionsState.LoadingHistory,
             is SuggestionsState.NoSuggestion,
             is SuggestionsState.LoadingSuggestion,
             -> {
-                Spacer(modifier = Modifier)
+                item {
+                    Spacer(modifier = Modifier)
+                }
             }
 
             is SuggestionsState.SuggestionLoaded -> {
-                state.suggestions.forEach {
-                    ListItem(
-                        colors =
-                            ListItemDefaults.colors(
-                                containerColor = Color.Transparent,
-                            ),
-                        modifier =
-                            Modifier.clickable {
-                                onConfirmSearch(it)
+                state.suggestions.forEach { (type, suggestions) ->
+                    item {
+                        Text(
+                            modifier = Modifier.padding(horizontal = 8.dp).padding(top = 24.dp),
+                            text = stringResource(type.label()),
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                    }
+                    items(
+                        suggestions,
+                        key = { type to it.id },
+                    ) { matchedContent ->
+                        MediaLibraryItem(
+                            contentId = matchedContent.id,
+                            contentType = type,
+                            onItemClick = {
+                                onResultItemClick(it)
                             },
-                        headlineContent = {
-                            Text(it)
-                        },
-                        leadingContent = {
-                            Icon(
-                                imageVector = Icons.Rounded.Search,
-                                contentDescription = "History",
-                            )
-                        },
-                        trailingContent = {
-                            Icon(
-                                imageVector = Icons.Rounded.ArrowOutward,
-                                contentDescription = "SearchScreen",
-                            )
-                        },
-                    )
+                        )
+                    }
                 }
             }
 
             is SuggestionsState.HistoryLoaded -> {
-                state.searchWordList.forEach {
+                items(
+                    state.searchWordList,
+                    key = { it },
+                ) { item ->
                     ListItem(
                         colors =
                             ListItemDefaults.colors(
@@ -121,10 +119,10 @@ private fun SuggestionsContent(
                             ),
                         modifier =
                             Modifier.clickable {
-                                onConfirmSearch(it)
+                                onConfirmSearch(item)
                             },
                         headlineContent = {
-                            Text(it)
+                            Text(item)
                         },
                         leadingContent = {
                             Icon(
@@ -142,16 +140,30 @@ private fun SuggestionsContent(
                 }
             }
         }
+
+        item {
+            ExtraPaddingBottom()
+        }
     }
 }
+
+private fun MediaType.label() =
+    when (this) {
+        MediaType.AUDIO -> Res.string.audio_page_title
+        MediaType.VIDEO -> Res.string.video_page_title
+        MediaType.ALBUM -> Res.string.album_page_title
+        MediaType.ARTIST -> Res.string.artist_page_title
+        MediaType.GENRE -> Res.string.genre_title
+        MediaType.PLAYLIST -> Res.string.playlist_page_title
+    }
 
 @Preview
 @Composable
 private fun SuggestionUiLoadingHistoryPreview() {
     MelodifyTheme {
         Surface {
-            SuggestionUi(
-                uiState =
+            SuggestionsContent(
+                state =
                     SuggestionsUiState(
                         SuggestionsState.HistoryLoaded(
                             listOf(
@@ -161,7 +173,7 @@ private fun SuggestionUiLoadingHistoryPreview() {
                                 "Suggestion 4",
                             ),
                         ),
-                    ),
+                    ).state,
             )
         }
     }

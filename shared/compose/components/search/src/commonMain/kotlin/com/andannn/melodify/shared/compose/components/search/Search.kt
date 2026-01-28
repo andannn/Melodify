@@ -129,6 +129,9 @@ private fun SearchViewContent(
             Suggestions(
                 query = textFieldState,
                 onConfirmSearch = onConfirmSearch,
+                onResultItemClick = {
+                    onResultItemClick(it)
+                },
             )
         }
 

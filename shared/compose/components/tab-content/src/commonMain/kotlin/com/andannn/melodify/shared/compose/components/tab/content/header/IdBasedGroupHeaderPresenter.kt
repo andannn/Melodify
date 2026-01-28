@@ -100,9 +100,9 @@ private class GroupHeaderPresenter(
         retainedScope.launch {
             mediaItem =
                 when (val groupKey = groupInfo.groupKey) {
-                    is GroupKey.Artist -> repository.getArtistByArtistId(artistId = groupKey.artistId)
-                    is GroupKey.Album -> repository.getAlbumByAlbumId(albumId = groupKey.albumId)
-                    is GroupKey.Genre -> repository.getGenreByGenreId(genreId = groupKey.genreId)
+                    is GroupKey.Artist -> repository.getArtistByArtistId(artistId = groupKey.artistId.toLong())
+                    is GroupKey.Album -> repository.getAlbumByAlbumId(albumId = groupKey.albumId.toLong())
+                    is GroupKey.Genre -> repository.getGenreByGenreId(genreId = groupKey.genreId.toLong())
                     else -> null
                 }
         }

@@ -10,6 +10,9 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "library_video_table",
+    indices = [
+        androidx.room.Index(value = ["video_bucket_id"]),
+    ],
 )
 data class VideoEntity constructor(
     @PrimaryKey(autoGenerate = false)

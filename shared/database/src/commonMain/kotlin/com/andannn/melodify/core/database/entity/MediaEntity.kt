@@ -10,6 +10,11 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "library_media_table",
+    indices = [
+        androidx.room.Index(value = ["media_album_id"]),
+        androidx.room.Index(value = ["media_artist_id"]),
+        androidx.room.Index(value = ["media_genre_id"]),
+    ],
 )
 data class MediaEntity constructor(
     @PrimaryKey(autoGenerate = false)

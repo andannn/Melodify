@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 19,
-    "identityHash": "02f40c7e040cf6ec146c17958acbc6d4",
+    "identityHash": "cc29ac8019ea65a5617bc0aef9bafdd3",
     "entities": [
       {
         "tableName": "lyric_table",
@@ -76,6 +76,17 @@
             "lyric_id"
           ]
         },
+        "indices": [
+          {
+            "name": "index_lyric_table_media_id",
+            "unique": false,
+            "columnNames": [
+              "media_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_lyric_table_media_id` ON `${TABLE_NAME}` (`media_id`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "library_media_table",
@@ -420,7 +431,36 @@
           "columnNames": [
             "media_id"
           ]
-        }
+        },
+        "indices": [
+          {
+            "name": "index_library_media_table_media_album_id",
+            "unique": false,
+            "columnNames": [
+              "media_album_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_library_media_table_media_album_id` ON `${TABLE_NAME}` (`media_album_id`)"
+          },
+          {
+            "name": "index_library_media_table_media_artist_id",
+            "unique": false,
+            "columnNames": [
+              "media_artist_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_library_media_table_media_artist_id` ON `${TABLE_NAME}` (`media_artist_id`)"
+          },
+          {
+            "name": "index_library_media_table_media_genre_id",
+            "unique": false,
+            "columnNames": [
+              "media_genre_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_library_media_table_media_genre_id` ON `${TABLE_NAME}` (`media_genre_id`)"
+          }
+        ]
       },
       {
         "tableName": "custom_tab_table",
@@ -569,41 +609,6 @@
           "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_media_table_BEFORE_DELETE BEFORE DELETE ON `library_media_table` BEGIN DELETE FROM `library_fts_media_table` WHERE `docid`=OLD.`rowid`; END",
           "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_media_table_AFTER_UPDATE AFTER UPDATE ON `library_media_table` BEGIN INSERT INTO `library_fts_media_table`(`docid`, `media_title`) VALUES (NEW.`rowid`, NEW.`media_title`); END",
           "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_media_table_AFTER_INSERT AFTER INSERT ON `library_media_table` BEGIN INSERT INTO `library_fts_media_table`(`docid`, `media_title`) VALUES (NEW.`rowid`, NEW.`media_title`); END"
-        ]
-      },
-      {
-        "tableName": "library_fts_video_table",
-        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`video_title` TEXT NOT NULL, content=`library_video_table`)",
-        "fields": [
-          {
-            "fieldPath": "title",
-            "columnName": "video_title",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": true,
-          "columnNames": [
-            "rowid"
-          ]
-        },
-        "ftsVersion": "FTS4",
-        "ftsOptions": {
-          "tokenizer": "simple",
-          "tokenizerArgs": [],
-          "contentTable": "library_video_table",
-          "languageIdColumnName": "",
-          "matchInfo": "FTS4",
-          "notIndexedColumns": [],
-          "prefixSizes": [],
-          "preferredOrder": "ASC"
-        },
-        "contentSyncTriggers": [
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_video_table_BEFORE_UPDATE BEFORE UPDATE ON `library_video_table` BEGIN DELETE FROM `library_fts_video_table` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_video_table_BEFORE_DELETE BEFORE DELETE ON `library_video_table` BEGIN DELETE FROM `library_fts_video_table` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_video_table_AFTER_UPDATE AFTER UPDATE ON `library_video_table` BEGIN INSERT INTO `library_fts_video_table`(`docid`, `video_title`) VALUES (NEW.`rowid`, NEW.`video_title`); END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_video_table_AFTER_INSERT AFTER INSERT ON `library_video_table` BEGIN INSERT INTO `library_fts_video_table`(`docid`, `video_title`) VALUES (NEW.`rowid`, NEW.`video_title`); END"
         ]
       },
       {
@@ -838,7 +843,53 @@
           "columnNames": [
             "video_id"
           ]
-        }
+        },
+        "indices": [
+          {
+            "name": "index_library_video_table_video_bucket_id",
+            "unique": false,
+            "columnNames": [
+              "video_bucket_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_library_video_table_video_bucket_id` ON `${TABLE_NAME}` (`video_bucket_id`)"
+          }
+        ]
+      },
+      {
+        "tableName": "library_fts_video_table",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`video_title` TEXT NOT NULL, content=`library_video_table`)",
+        "fields": [
+          {
+            "fieldPath": "title",
+            "columnName": "video_title",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "rowid"
+          ]
+        },
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "library_video_table",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_video_table_BEFORE_UPDATE BEFORE UPDATE ON `library_video_table` BEGIN DELETE FROM `library_fts_video_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_video_table_BEFORE_DELETE BEFORE DELETE ON `library_video_table` BEGIN DELETE FROM `library_fts_video_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_video_table_AFTER_UPDATE AFTER UPDATE ON `library_video_table` BEGIN INSERT INTO `library_fts_video_table`(`docid`, `video_title`) VALUES (NEW.`rowid`, NEW.`video_title`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_video_table_AFTER_INSERT AFTER INSERT ON `library_video_table` BEGIN INSERT INTO `library_fts_video_table`(`docid`, `video_title`) VALUES (NEW.`rowid`, NEW.`video_title`); END"
+        ]
       },
       {
         "tableName": "video_play_progress_table",
@@ -956,7 +1007,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '02f40c7e040cf6ec146c17958acbc6d4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cc29ac8019ea65a5617bc0aef9bafdd3')"
     ]
   }
 }

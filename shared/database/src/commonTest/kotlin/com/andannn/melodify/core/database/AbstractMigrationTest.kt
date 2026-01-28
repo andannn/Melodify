@@ -401,4 +401,14 @@ abstract class AbstractMigrationTest {
                 helper.runMigrationsAndValidate(18, migrations = listOf(Migration17To18Spec))
             migratedConnection.close()
         }
+
+    @Test
+    fun migrate18To19Test(): Unit =
+        helper.let { helper ->
+            val newConnection = helper.createDatabase(18)
+            newConnection.close()
+            val migratedConnection =
+                helper.runMigrationsAndValidate(19, migrations = listOf())
+            migratedConnection.close()
+        }
 }

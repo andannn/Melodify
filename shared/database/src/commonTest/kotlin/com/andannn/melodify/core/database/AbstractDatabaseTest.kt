@@ -585,7 +585,7 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            assertEquals(0, libraryDao.getArtistByArtistId("4")?.trackCount)
+            assertEquals(0, libraryDao.getArtistByArtistId(4)?.trackCount)
             libraryDao.upsertMedias(
                 audios =
                     listOf(
@@ -598,9 +598,9 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            assertEquals(1, libraryDao.getArtistByArtistId("4")?.trackCount)
+            assertEquals(1, libraryDao.getArtistByArtistId(4)?.trackCount)
             libraryDao.deleteMediasByIds(listOf(1L))
-            assertEquals(0, libraryDao.getArtistByArtistId("4")?.trackCount)
+            assertEquals(0, libraryDao.getArtistByArtistId(4)?.trackCount)
         }
 
     @Test
@@ -615,7 +615,7 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            assertEquals(0, libraryDao.getAlbumByAlbumId("2")?.trackCount)
+            assertEquals(0, libraryDao.getAlbumByAlbumId(2)?.trackCount)
             libraryDao.upsertMedias(
                 audios =
                     listOf(
@@ -628,9 +628,9 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            assertEquals(1, libraryDao.getAlbumByAlbumId("2")?.trackCount)
+            assertEquals(1, libraryDao.getAlbumByAlbumId(2)?.trackCount)
             libraryDao.deleteMediasByIds(listOf(1L))
-            assertEquals(0, libraryDao.getAlbumByAlbumId("2")?.trackCount)
+            assertEquals(0, libraryDao.getAlbumByAlbumId(2)?.trackCount)
         }
 
     @Test
@@ -1204,10 +1204,10 @@ abstract class AbstractDatabaseTest {
                     artists = listOf(ArtistEntity(artistId = 600, name = "new_artist")),
                 )
                 assertEquals(1, dao.getAllArtistID().size)
-                assertEquals(1, dao.getArtistByArtistId("600")?.trackCount)
+                assertEquals(1, dao.getArtistByArtistId(600)?.trackCount)
                 assertEquals(1, dao.getAllGenreID().size)
                 assertEquals(1, dao.getAllAlbumID().size)
-                assertEquals(1, dao.getAlbumByAlbumId("400")?.trackCount)
+                assertEquals(1, dao.getAlbumByAlbumId(400)?.trackCount)
                 assertEquals(1, dao.getAllMediaID().size)
                 assertEquals(1, dao.getAllVideoID().size)
                 assertEquals(100, dao.getAllMediaID().first())

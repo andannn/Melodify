@@ -396,22 +396,25 @@ interface MediaLibraryDao {
     fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumEntity?>
 
     @Query("SELECT * FROM library_album_table WHERE album_id = :albumId")
-    suspend fun getAlbumByAlbumId(albumId: String): AlbumEntity?
+    suspend fun getAlbumByAlbumId(albumId: Long): AlbumEntity?
 
     @Query("SELECT * FROM library_artist_table WHERE artist_id = :artistId")
     fun getArtistByArtistIdFlow(artistId: String): Flow<ArtistEntity?>
 
     @Query("SELECT * FROM library_artist_table WHERE artist_id = :artistId")
-    suspend fun getArtistByArtistId(artistId: String): ArtistEntity?
+    suspend fun getArtistByArtistId(artistId: Long): ArtistEntity?
 
     @Query("SELECT * FROM library_genre_table WHERE genre_id = :genreId")
     fun getGenreByGenreIdFlow(genreId: String): Flow<GenreEntity?>
 
     @Query("SELECT * FROM library_genre_table WHERE genre_id = :genreId")
-    suspend fun getGenreByGenreId(genreId: String): GenreEntity?
+    suspend fun getGenreByGenreId(genreId: Long): GenreEntity?
 
     @Query("SELECT * FROM library_media_table WHERE media_id IN (:mediaIds)")
-    suspend fun getMediaByMediaIds(mediaIds: List<String>): List<MediaEntity>
+    suspend fun getMediaByMediaIds(mediaIds: List<Long>): List<MediaEntity>
+
+    @Query("SELECT * FROM library_video_table WHERE video_id IN (:videoIds)")
+    suspend fun getVideoByVideoIds(videoIds: List<Long>): List<VideoEntity>
 
     @Query("SELECT * FROM library_media_table WHERE source_uri IN (:sources)")
     suspend fun getMediaByMediaSourceUrl(sources: List<String>): List<MediaEntity>
