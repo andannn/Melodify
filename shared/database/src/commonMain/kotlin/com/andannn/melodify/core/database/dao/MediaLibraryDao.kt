@@ -30,6 +30,7 @@ import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.VideoColumns
 import com.andannn.melodify.core.database.entity.VideoEntity
+import com.andannn.melodify.core.database.entity.model.LibraryContentSearchResult
 import com.andannn.melodify.core.database.entity.toAlbumWithoutTrackCount
 import com.andannn.melodify.core.database.entity.toArtistWithoutTrackCount
 import com.andannn.melodify.core.database.toSortString
@@ -439,6 +440,33 @@ interface MediaLibraryDao {
         deleteOrphanGenres()
         deleteOrphanArtists()
     }
+
+    @Query(
+        """
+        SELECT ${Tables.LIBRARY_ALBUM}.${AlbumColumns.ID} AS id, ${Tables.LIBRARY_ALBUM}.${AlbumColumns.TITLE} AS title, 'ALBUM' AS content FROM ${Tables.LIBRARY_ALBUM} 
+        WHERE ${AlbumColumns.ID} IN (
+            SELECT rowid FROM ${Tables.LIBRARY_FTS_ALBUM} 
+            WHERE ${Tables.LIBRARY_FTS_ALBUM} MATCH :keyword
+        )
+        
+        UNION
+        
+        SELECT ${Tables.LIBRARY_MEDIA}.${MediaColumns.ID} AS id, ${Tables.LIBRARY_MEDIA}.${MediaColumns.TITLE} AS title, 'MEDIA' AS content FROM ${Tables.LIBRARY_MEDIA} 
+        WHERE ${MediaColumns.ID} IN (
+            SELECT rowid FROM ${Tables.LIBRARY_FTS_MEDIA} 
+            WHERE ${Tables.LIBRARY_FTS_MEDIA} MATCH :keyword
+        )
+        
+        UNION
+
+        SELECT ${Tables.LIBRARY_ARTIST}.${ArtistColumns.ID} AS id, ${Tables.LIBRARY_ARTIST}.${ArtistColumns.NAME} AS title, 'ARTIST' AS content FROM ${Tables.LIBRARY_ARTIST} 
+        WHERE ${ArtistColumns.ID} IN (
+            SELECT rowid FROM ${Tables.LIBRARY_FTS_ARTIST}
+            WHERE ${Tables.LIBRARY_FTS_ARTIST} MATCH :keyword
+        )
+    """,
+    )
+    suspend fun searchContentByKeyword(keyword: String): List<LibraryContentSearchResult>
 
     @Query(
         """
