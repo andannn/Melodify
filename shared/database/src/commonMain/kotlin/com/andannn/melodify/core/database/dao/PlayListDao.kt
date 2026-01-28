@@ -11,19 +11,19 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.room.RoomRawQuery
-import com.andannn.melodify.core.database.MediaSorts
-import com.andannn.melodify.core.database.MediaWheres
-import com.andannn.melodify.core.database.Where
-import com.andannn.melodify.core.database.appendOrCreateWith
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.VideoEntity
-import com.andannn.melodify.core.database.entity.model.CrossRefWithMediaRelation
-import com.andannn.melodify.core.database.entity.model.CrossRefWithVideoRelation
-import com.andannn.melodify.core.database.entity.model.PlayListWithMediaCount
-import com.andannn.melodify.core.database.toSortString
-import com.andannn.melodify.core.database.toWhereString
+import com.andannn.melodify.core.database.helper.paging.MediaSorts
+import com.andannn.melodify.core.database.helper.paging.MediaWheres
+import com.andannn.melodify.core.database.helper.paging.Where
+import com.andannn.melodify.core.database.helper.paging.appendOrCreateWith
+import com.andannn.melodify.core.database.helper.paging.toSortString
+import com.andannn.melodify.core.database.helper.paging.toWhereString
+import com.andannn.melodify.core.database.model.CrossRefWithMediaRelation
+import com.andannn.melodify.core.database.model.CrossRefWithVideoRelation
+import com.andannn.melodify.core.database.model.PlayListWithMediaCount
 import kotlinx.coroutines.flow.Flow
 
 private const val PLAYLIST_WITH_COUNT_SELECTION =

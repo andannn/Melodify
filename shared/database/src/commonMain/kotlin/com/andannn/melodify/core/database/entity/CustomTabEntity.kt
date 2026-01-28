@@ -14,7 +14,7 @@ data class CustomTabEntity constructor(
     @ColumnInfo(name = "custom_tab_id")
     val id: Long = 0,
     /**
-     *  values of [CustomTabType]
+     *  values of [com.andannn.melodify.core.database.CustomTabType]
      */
     @ColumnInfo(name = "custom_tab_type")
     val type: String,
@@ -32,14 +32,3 @@ data class CustomTabEntity constructor(
     @ColumnInfo(name = "sort_order")
     val sortOrder: Int? = 0,
 )
-
-object CustomTabType {
-    const val ALL_MUSIC = "all_music"
-    const val ALL_VIDEO = "all_video"
-    const val ALBUM_DETAIL = "album_detail"
-    const val ARTIST_DETAIL = "artist_detail"
-    const val GENRE_DETAIL = "genre_detail"
-    const val AUDIO_PLAYLIST_DETAIL = "playlist_detail"
-    const val VIDEO_PLAYLIST_DETAIL = "video_playlist_detail"
-    const val VIDEO_BUCKET = "video_bucket"
-}

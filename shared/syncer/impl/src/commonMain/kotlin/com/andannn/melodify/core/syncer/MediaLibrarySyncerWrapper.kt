@@ -4,8 +4,9 @@
  */
 package com.andannn.melodify.core.syncer
 
+import com.andannn.melodify.core.database.MediaType
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
-import com.andannn.melodify.core.database.dao.MediaType
+import com.andannn.melodify.core.database.helper.sync.MediaLibrarySyncHelper
 import com.andannn.melodify.core.syncer.model.FileChangeEvent
 import com.andannn.melodify.core.syncer.model.FileChangeType
 import io.github.aakira.napier.Napier
@@ -19,6 +20,7 @@ private const val TAG = "MediaLibrarySyncer"
 internal class MediaLibrarySyncerWrapper(
     private val mediaLibraryScanner: MediaLibraryScanner,
     private val mediaLibraryDao: MediaLibraryDao,
+    private val syncHelper: MediaLibrarySyncHelper,
 ) : MediaLibrarySyncer {
     override fun syncAllMediaLibrary(): Flow<SyncStatusEvent> =
         channelFlow {
@@ -28,7 +30,7 @@ internal class MediaLibrarySyncerWrapper(
                 trySend(SyncStatusEvent.Start)
 
                 Napier.d(tag = TAG) { "sync database E. audio size: ${mediaData.audioData.size}" }
-                mediaLibraryDao.syncMediaLibrary(
+                syncHelper.syncMediaLibrary(
                     albums = mediaData.albumData.toAlbumEntity(),
                     artists = mediaData.artistData.toArtistEntity(),
                     genres = mediaData.genreData.toGenreEntity(),
@@ -72,7 +74,7 @@ internal class MediaLibrarySyncerWrapper(
                         val mediaData =
                             mediaLibraryScanner.scanMediaByUri(events.map { it.fileUri })
 
-                        mediaLibraryDao.upsertMedia(
+                        syncHelper.upsertMedia(
                             mediaData.albumData.toAlbumEntity(),
                             mediaData.artistData.toArtistEntity(),
                             mediaData.genreData.toGenreEntity(),

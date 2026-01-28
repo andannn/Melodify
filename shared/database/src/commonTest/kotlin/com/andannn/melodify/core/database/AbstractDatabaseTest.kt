@@ -7,26 +7,32 @@ package com.andannn.melodify.core.database
 import androidx.room.RoomDatabase
 import androidx.room.execSQL
 import androidx.room.useReaderConnection
+import com.andannn.melodify.core.database.CustomTabType.ALL_VIDEO
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
-import com.andannn.melodify.core.database.dao.MediaType
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.dao.UserDataDao
+import com.andannn.melodify.core.database.dao.internal.SyncerDao
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.AlbumWithoutTrackCount
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.ArtistWithoutTrackCount
 import com.andannn.melodify.core.database.entity.CustomTabEntity
-import com.andannn.melodify.core.database.entity.CustomTabType.ALL_VIDEO
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
-import com.andannn.melodify.core.database.entity.SortOptionData
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
+import com.andannn.melodify.core.database.helper.paging.AllMediaPagingProvider
+import com.andannn.melodify.core.database.helper.paging.MediaSorts
+import com.andannn.melodify.core.database.helper.paging.MediaWheres
+import com.andannn.melodify.core.database.helper.paging.Sort
+import com.andannn.melodify.core.database.helper.paging.SortOrder
+import com.andannn.melodify.core.database.helper.paging.Where
+import com.andannn.melodify.core.database.helper.sync.MediaLibrarySyncHelper
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
@@ -42,8 +48,17 @@ abstract class AbstractDatabaseTest {
     private val lyricDao: LyricDao get() = database.getLyricDao()
     private val playListDao: PlayListDao get() = database.getPlayListDao()
     private val libraryDao: MediaLibraryDao get() = database.getMediaLibraryDao()
+    private val syncerDao: SyncerDao get() = database.getSyncerDao()
     private val userDataDao: UserDataDao get() = database.getUserDataDao()
+    private val syncHelper: MediaLibrarySyncHelper
+        get() =
+            MediaLibrarySyncHelper(
+                database,
+                libraryDao,
+                syncerDao,
+            )
 
+    private val allMediaPagingProvider get() = AllMediaPagingProvider(database.getMediaEntityRawQueryDao())
     private val dummyLyricEntities =
         listOf(
             LyricEntity(
@@ -87,7 +102,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun get_lyric_by_media_store_id() =
         runTest {
-            libraryDao.upsertMedias(
+            syncerDao.upsertMedias(
                 audios = listOf(MediaEntity(id = 1, title = "dummy")),
             )
             lyricDao.insertLyricEntities(listOf(dummyLyricEntities[0]))
@@ -99,7 +114,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun get_lyric_by_media_store_id_not_exist() =
         runTest {
-            libraryDao.upsertMedias(
+            syncerDao.upsertMedias(
                 audios = listOf(MediaEntity(id = 1, title = "dummy")),
             )
             lyricDao.insertLyricEntities(entities = listOf(dummyLyricEntities[0]))
@@ -111,12 +126,12 @@ abstract class AbstractDatabaseTest {
     @Test
     fun lyric_deleted_cascade_when_media_deleted() =
         runTest {
-            libraryDao.upsertMedias(
+            syncerDao.upsertMedias(
                 audios = listOf(MediaEntity(id = 1, title = "dummy")),
             )
             lyricDao.insertLyricEntities(entities = listOf(dummyLyricEntities[0]))
             assertEquals(dummyLyricEntities[0], lyricDao.getLyricByMediaIdFlow("1").first())
-            libraryDao.deleteMediasByIds(listOf(1))
+            syncerDao.deleteMediasByIds(listOf(1))
             assertEquals(null, lyricDao.getLyricByMediaIdFlow("1").first())
         }
 
@@ -499,7 +514,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun delete_test() =
         runTest {
-            libraryDao.upsertAlbumsWithoutTrackCount(
+            syncerDao.upsertAlbumsWithoutTrackCount(
                 albums =
                     listOf(
                         AlbumWithoutTrackCount(
@@ -508,7 +523,7 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            libraryDao.upsertGenres(
+            syncerDao.upsertGenres(
                 genres =
                     listOf(
                         GenreEntity(
@@ -517,7 +532,7 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            libraryDao.upsertArtistWithoutTrackCount(
+            syncerDao.upsertArtistWithoutTrackCount(
                 artists =
                     listOf(
                         ArtistWithoutTrackCount(
@@ -526,7 +541,7 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            libraryDao.upsertMedias(
+            syncerDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -549,17 +564,17 @@ abstract class AbstractDatabaseTest {
             )
             assertEquals(
                 listOf(3L),
-                libraryDao.getAllGenreID(),
+                syncerDao.getAllGenreID(),
             )
             assertEquals(
                 listOf(4L),
-                libraryDao.getAllArtistID(),
+                syncerDao.getAllArtistID(),
             )
             assertEquals(
                 listOf(1L),
-                libraryDao.getAllMediaID(),
+                syncerDao.getAllMediaID(),
             )
-            libraryDao.deleteMediasByIds(listOf(1L))
+            syncerDao.deleteMediasByIds(listOf(1L))
             libraryDao.getAllAlbumFlow().first().also { items ->
                 assertEquals(1, items.size)
                 assertEquals(0, items.first().trackCount)
@@ -576,7 +591,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun update_artist_count_test() =
         runTest {
-            libraryDao.upsertArtistWithoutTrackCount(
+            syncerDao.upsertArtistWithoutTrackCount(
                 artists =
                     listOf(
                         ArtistWithoutTrackCount(
@@ -586,7 +601,7 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             assertEquals(0, libraryDao.getArtistByArtistId(4)?.trackCount)
-            libraryDao.upsertMedias(
+            syncerDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -599,14 +614,14 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             assertEquals(1, libraryDao.getArtistByArtistId(4)?.trackCount)
-            libraryDao.deleteMediasByIds(listOf(1L))
+            syncerDao.deleteMediasByIds(listOf(1L))
             assertEquals(0, libraryDao.getArtistByArtistId(4)?.trackCount)
         }
 
     @Test
     fun update_album_count_test() =
         runTest {
-            libraryDao.upsertAlbumsWithoutTrackCount(
+            syncerDao.upsertAlbumsWithoutTrackCount(
                 albums =
                     listOf(
                         AlbumWithoutTrackCount(
@@ -616,7 +631,7 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             assertEquals(0, libraryDao.getAlbumByAlbumId(2)?.trackCount)
-            libraryDao.upsertMedias(
+            syncerDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -629,14 +644,14 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             assertEquals(1, libraryDao.getAlbumByAlbumId(2)?.trackCount)
-            libraryDao.deleteMediasByIds(listOf(1L))
+            syncerDao.deleteMediasByIds(listOf(1L))
             assertEquals(0, libraryDao.getAlbumByAlbumId(2)?.trackCount)
         }
 
     @Test
     fun fts_table_sync_test() =
         runTest {
-            libraryDao.insertDummyData()
+            syncHelper.insertDummyData()
             database.verifyFtsTableSync(
                 tableName = "library_album_table",
                 ftsTableName = "library_fts_album_table",
@@ -657,7 +672,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun match_keyword_test() =
         runTest {
-            libraryDao.insertDummyData()
+            syncHelper.insertDummyData()
             assertEquals(1, libraryDao.searchAlbum("title 1").size)
             assertEquals(1, libraryDao.searchAlbum("title 1").first().albumId)
 
@@ -726,8 +741,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun sort_media_by_album_test() =
         runTest {
-            val dao = database.getMediaLibraryDao()
-            dao.upsertMedias(
+            syncerDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -752,8 +766,8 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            dao
-                .getAllMediaFlow(
+            allMediaPagingProvider
+                .getDataFlow(
                     sort =
                         MediaSorts.buildMethod {
                             add(Sort("media_album", SortOrder.DESCENDING))
@@ -770,8 +784,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun sort_media_by_title_test() =
         runTest {
-            val dao = database.getMediaLibraryDao()
-            dao.upsertMedias(
+            syncerDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -796,8 +809,8 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            dao
-                .getAllMediaFlow(
+            allMediaPagingProvider
+                .getDataFlow(
                     sort =
                         MediaSorts.buildMethod {
                             add(Sort("media_title", SortOrder.ASCENDING))
@@ -930,8 +943,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `get media list where album test`() =
         runTest {
-            val dao = database.getMediaLibraryDao()
-            dao.upsertMedias(
+            syncerDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -956,8 +968,8 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            dao
-                .getAllMediaFlow(
+            allMediaPagingProvider
+                .getDataFlow(
                     where =
                         MediaWheres.buildMethod {
                             add(
@@ -977,8 +989,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `get media list where title test`() =
         runTest {
-            val dao = database.getMediaLibraryDao()
-            dao.upsertMedias(
+            syncerDao.upsertMedias(
                 audios =
                     listOf(
                         MediaEntity(
@@ -1011,8 +1022,8 @@ abstract class AbstractDatabaseTest {
             )
 
             suspend fun mediaStartBy(first: String) =
-                dao
-                    .getAllMediaFlow(
+                allMediaPagingProvider
+                    .getDataFlow(
                         where =
                             MediaWheres.buildMethod {
                                 add(
@@ -1079,7 +1090,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `update video progress`() =
         runTest {
-            database.getMediaLibraryDao().upsertVideos(
+            syncerDao.upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
             userDataDao.savePlayProgress(videoId = 1L, 100L)
@@ -1095,7 +1106,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `can not mark video as watched when progress record not exist`() =
         runTest {
-            database.getMediaLibraryDao().upsertVideos(
+            syncerDao.upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
             assertEquals(0, userDataDao.markVideoAsWatched(1L))
@@ -1104,7 +1115,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `mark video as watched success`() =
         runTest {
-            database.getMediaLibraryDao().upsertVideos(
+            syncerDao.upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
             userDataDao.savePlayProgress(videoId = 1L, 100L)
@@ -1122,14 +1133,14 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `progress record is deleted when video deleted`() =
         runTest {
-            libraryDao.upsertVideos(
+            syncerDao.upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
             userDataDao.savePlayProgress(videoId = 1L, 100L)
             userDataDao.getPlayProgressFlow(1L).first().also {
                 assertEquals(100L, it?.progressMs)
             }
-            libraryDao.deleteVideoByIds(listOf(1))
+            syncerDao.deleteVideoByIds(listOf(1))
             userDataDao.getPlayProgressFlow(1L).first().also {
                 assertEquals(null, it)
             }
@@ -1138,14 +1149,14 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `progress record will not be deleted when video updated`() =
         runTest {
-            libraryDao.upsertVideos(
+            syncerDao.upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
             userDataDao.savePlayProgress(videoId = 1L, 100L)
             userDataDao.getPlayProgressFlow(1L).first().also {
                 assertEquals(100L, it?.progressMs)
             }
-            libraryDao.upsertVideos(
+            syncerDao.upsertVideos(
                 listOf(VideoEntity(id = 1, title = "title", duration = 1000)),
             )
             userDataDao.getPlayProgressFlow(1L).first().also {
@@ -1185,10 +1196,9 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `sync media library test`() =
         runTest {
-            val dao = database.getMediaLibraryDao()
-            dao.insertDummyData()
+            syncHelper.insertDummyData()
             repeat(2) {
-                dao.syncMediaLibrary(
+                syncHelper.syncMediaLibrary(
                     audios =
                         listOf(
                             MediaEntity(
@@ -1203,31 +1213,31 @@ abstract class AbstractDatabaseTest {
                     genres = listOf(GenreEntity(genreId = 500)),
                     artists = listOf(ArtistEntity(artistId = 600, name = "new_artist")),
                 )
-                assertEquals(1, dao.getAllArtistID().size)
-                assertEquals(1, dao.getArtistByArtistId(600)?.trackCount)
-                assertEquals(1, dao.getAllGenreID().size)
-                assertEquals(1, dao.getAllAlbumID().size)
-                assertEquals(1, dao.getAlbumByAlbumId(400)?.trackCount)
-                assertEquals(1, dao.getAllMediaID().size)
-                assertEquals(1, dao.getAllVideoID().size)
-                assertEquals(100, dao.getAllMediaID().first())
-                assertEquals(400, dao.getAllAlbumID().first())
-                assertEquals(300, dao.getAllVideoID().first())
-                assertEquals(500, dao.getAllGenreID().first())
-                assertEquals(600, dao.getAllArtistID().first())
+                assertEquals(1, syncerDao.getAllArtistID().size)
+                assertEquals(1, libraryDao.getArtistByArtistId(600)?.trackCount)
+                assertEquals(1, syncerDao.getAllGenreID().size)
+                assertEquals(1, libraryDao.getAllAlbumID().size)
+                assertEquals(1, libraryDao.getAlbumByAlbumId(400)?.trackCount)
+                assertEquals(1, syncerDao.getAllMediaID().size)
+                assertEquals(1, syncerDao.getAllVideoID().size)
+                assertEquals(100, syncerDao.getAllMediaID().first())
+                assertEquals(400, libraryDao.getAllAlbumID().first())
+                assertEquals(300, syncerDao.getAllVideoID().first())
+                assertEquals(500, syncerDao.getAllGenreID().first())
+                assertEquals(600, syncerDao.getAllArtistID().first())
             }
         }
 
     @Test
     fun `sync media library insert delete CallBack event test`() =
         runTest {
-            libraryDao.syncMediaLibrary(
+            syncHelper.syncMediaLibrary(
                 audios = listOf(MediaEntity(id = 100, title = "Test")),
                 onInsert = { type, names ->
                     assertEquals("Test", names[0])
                 },
             )
-            libraryDao.syncMediaLibrary(
+            syncHelper.syncMediaLibrary(
                 onDelete = { type, names ->
                     assertEquals("Test", names[0])
                 },
@@ -1237,13 +1247,13 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `sync artist library insert delete CallBack event test`() =
         runTest {
-            libraryDao.syncMediaLibrary(
+            syncHelper.syncMediaLibrary(
                 artists = listOf(ArtistEntity(artistId = 100, name = "Test")),
                 onInsert = { type, names ->
                     assertEquals("Test", names[0])
                 },
             )
-            libraryDao.syncMediaLibrary(
+            syncHelper.syncMediaLibrary(
                 onDelete = { type, names ->
                     assertEquals("Test", names[0])
                 },
@@ -1253,13 +1263,13 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `sync album library insert delete CallBack event test`() =
         runTest {
-            libraryDao.syncMediaLibrary(
+            syncHelper.syncMediaLibrary(
                 albums = listOf(AlbumEntity(albumId = 100, title = "Test")),
                 onInsert = { type, names ->
                     assertEquals("Test", names[0])
                 },
             )
-            libraryDao.syncMediaLibrary(
+            syncHelper.syncMediaLibrary(
                 onDelete = { type, names ->
                     assertEquals("Test", names[0])
                 },
@@ -1270,12 +1280,12 @@ abstract class AbstractDatabaseTest {
     fun `delete orphan album test`() =
         runTest {
             val dao = database.getMediaLibraryDao()
-            dao.insertDummyData()
+            syncHelper.insertDummyData()
 
             assertEquals(2, dao.getAllAlbumID().size)
             dao.deleteOrphanAlbums()
             assertEquals(1, dao.getAllAlbumID().size)
-            dao.deleteMediasByIds(listOf(1, 2))
+            syncerDao.deleteMediasByIds(listOf(1, 2))
             dao.deleteOrphanAlbums()
             assertEquals(0, dao.getAllAlbumID().size)
         }
@@ -1284,34 +1294,34 @@ abstract class AbstractDatabaseTest {
     fun `delete orphan artist test`() =
         runTest {
             val dao = database.getMediaLibraryDao()
-            dao.insertDummyData()
+            syncHelper.insertDummyData()
 
-            assertEquals(2, dao.getAllArtistID().size)
+            assertEquals(2, syncerDao.getAllArtistID().size)
             dao.deleteOrphanArtists()
-            assertEquals(0, dao.getAllArtistID().size)
+            assertEquals(0, syncerDao.getAllArtistID().size)
         }
 
     @Test
     fun `delete orphan genre test`() =
         runTest {
             val dao = database.getMediaLibraryDao()
-            dao.insertDummyData()
+            syncHelper.insertDummyData()
 
-            assertEquals(2, dao.getAllGenreID().size)
+            assertEquals(2, syncerDao.getAllGenreID().size)
             dao.deleteOrphanGenres()
-            assertEquals(0, dao.getAllGenreID().size)
+            assertEquals(0, syncerDao.getAllGenreID().size)
         }
 
     @Test
     fun `insert and update test`() =
         runTest {
-            libraryDao
+            syncerDao
                 .upsertArtistWithoutTrackCount(listOf(ArtistWithoutTrackCount(10, "test")))
                 .also {
                     assertEquals(1, it.size)
                     assertEquals(10, it.first())
                 }
-            libraryDao
+            syncerDao
                 .upsertArtistWithoutTrackCount(listOf(ArtistWithoutTrackCount(10, "test")))
                 .also {
                     assertEquals(1, it.size)
@@ -1322,7 +1332,7 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `search library content test`() =
         runTest {
-            libraryDao.insertDummyData()
+            syncHelper.insertDummyData()
             libraryDao.searchContentByKeyword("title").also {
                 assertEquals(2, it.count { it.contentType == MediaType.VIDEO })
                 assertEquals(2, it.count { it.contentType == MediaType.ARTIST })
@@ -1332,7 +1342,7 @@ abstract class AbstractDatabaseTest {
         }
 }
 
-private suspend fun MediaLibraryDao.insertDummyData() {
+private suspend fun MediaLibrarySyncHelper.insertDummyData() {
     upsertMedia(
         videos =
             listOf(

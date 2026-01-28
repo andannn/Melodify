@@ -6,6 +6,8 @@ package com.andannn.melodify.core.syncer
 
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.entity.MediaEntity
+import com.andannn.melodify.core.database.helper.paging.PagingProvider
+import com.andannn.melodify.core.database.helper.paging.PagingProviderFactory
 import com.andannn.melodify.core.datastore.UserSettingPreferences
 import com.andannn.melodify.core.syncer.model.AudioData
 import com.andannn.melodify.core.syncer.model.MediaDataModel
@@ -30,6 +32,9 @@ internal class LocalMediaLibraryScanner(
     private val mediaLibraryDao: MediaLibraryDao,
     private val userSettingPreferences: UserSettingPreferences,
 ) : MediaLibraryScanner {
+    private val allMediaPagingProvider: PagingProvider<MediaEntity> =
+        PagingProviderFactory.allMediaPagingProvider()
+
     override suspend fun scanAllMedia(): MediaDataModel {
         // 1: Get All media from database
         // 2: Scan all files in library path and generated Key (generate hash from file path and last modify date).
@@ -41,7 +46,7 @@ internal class LocalMediaLibraryScanner(
         // 6: Group genre from created GenreData list
         // 7: Insert all data to database.
 
-        val allMediaEntity = mediaLibraryDao.getAllMediaFlow().first()
+        val allMediaEntity = allMediaPagingProvider.getDataFlow().first()
         val mediaInDb = allMediaEntity.associateBy { it.id }
 
         val libraryPathSet = userSettingPreferences.userDate.first().libraryPath

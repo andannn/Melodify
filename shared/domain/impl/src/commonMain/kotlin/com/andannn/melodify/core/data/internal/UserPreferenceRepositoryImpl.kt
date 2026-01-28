@@ -5,9 +5,9 @@
 package com.andannn.melodify.core.data.internal
 
 import androidx.sqlite.SQLiteException
+import com.andannn.melodify.core.database.CustomTabType
 import com.andannn.melodify.core.database.dao.UserDataDao
 import com.andannn.melodify.core.database.entity.CustomTabEntity
-import com.andannn.melodify.core.database.entity.CustomTabType
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.datastore.UserSettingPreferences
 import com.andannn.melodify.core.datastore.model.DefaultPresetValues
