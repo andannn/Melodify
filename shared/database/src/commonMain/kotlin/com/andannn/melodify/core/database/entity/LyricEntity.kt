@@ -9,12 +9,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-internal object LyricColumns {
-    const val ID = "lyric_id"
-    const val MEDIA_ID = "media_id"
-    const val NAME = "lyric_name"
-}
-
 @Entity(
     tableName = "lyric_table",
     foreignKeys = [
@@ -25,6 +19,7 @@ internal object LyricColumns {
             onDelete = ForeignKey.CASCADE,
         ),
     ],
+// TODO: ADD INDEX
 )
 data class LyricEntity(
     @PrimaryKey(autoGenerate = false)

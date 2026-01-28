@@ -19,18 +19,12 @@ import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.dao.UserDataDao
-import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
-import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
-import com.andannn.melodify.core.database.entity.CustomTabColumns
 import com.andannn.melodify.core.database.entity.CustomTabEntity
-import com.andannn.melodify.core.database.entity.GenreColumns
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
-import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
-import com.andannn.melodify.core.database.entity.PlayListColumns
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
@@ -42,6 +36,7 @@ import com.andannn.melodify.core.database.entity.VideoTabSettingEntity
 import com.andannn.melodify.core.database.entity.fts.AlbumFtsEntity
 import com.andannn.melodify.core.database.entity.fts.ArtistFtsEntity
 import com.andannn.melodify.core.database.entity.fts.MediaFtsEntity
+import com.andannn.melodify.core.database.entity.fts.VideoFtsEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
@@ -61,6 +56,7 @@ import kotlinx.coroutines.IO
         SearchHistoryEntity::class,
         SortRuleEntity::class,
         VideoEntity::class,
+        VideoFtsEntity::class,
         VideoPlayProgressEntity::class,
         VideoTabSettingEntity::class,
     ],
@@ -79,8 +75,9 @@ import kotlinx.coroutines.IO
         AutoMigration(from = 14, to = 15, AutoMigration14To15Spec::class),
         AutoMigration(from = 15, to = 16, AutoMigration15To16Spec::class),
         AutoMigration(from = 16, to = 17, AutoMigration16To17Spec::class),
+        AutoMigration(from = 18, to = 19),
     ],
-    version = 18,
+    version = 19,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)
@@ -119,11 +116,11 @@ internal val addTriggerCallback =
                 CREATE TRIGGER update_artist_song_count_on_insert
                 AFTER INSERT ON library_media_table
                 FOR EACH ROW
-                WHEN NEW.${MediaColumns.ARTIST_ID} IS NOT NULL
+                WHEN NEW.media_artist_id IS NOT NULL
                 BEGIN
                     UPDATE library_artist_table
-                    SET ${ArtistColumns.TRACK_COUNT} = ${ArtistColumns.TRACK_COUNT} + 1
-                    WHERE "artist_id" = NEW.${MediaColumns.ARTIST_ID};
+                    SET artist_track_count = artist_track_count + 1
+                    WHERE "artist_id" = NEW.media_artist_id;
                 END;
                 """.trimIndent(),
             )
@@ -133,11 +130,11 @@ internal val addTriggerCallback =
                 CREATE TRIGGER update_artist_song_count_on_delete
                 AFTER DELETE ON library_media_table
                 FOR EACH ROW
-                WHEN OLD.${MediaColumns.ARTIST_ID} IS NOT NULL
+                WHEN OLD.media_artist_id IS NOT NULL
                 BEGIN
                     UPDATE library_artist_table
-                    SET ${ArtistColumns.TRACK_COUNT} = ${ArtistColumns.TRACK_COUNT} - 1
-                    WHERE "artist_id" = OLD.${MediaColumns.ARTIST_ID};
+                    SET artist_track_count = artist_track_count - 1
+                    WHERE "artist_id" = OLD.media_artist_id;
                 END;
                 """.trimIndent(),
             )
@@ -148,11 +145,11 @@ internal val addTriggerCallback =
                 CREATE TRIGGER update_album_song_count_on_insert
                 AFTER INSERT ON library_media_table
                 FOR EACH ROW
-                WHEN NEW.${MediaColumns.ALBUM_ID} IS NOT NULL
+                WHEN NEW.media_album_id IS NOT NULL
                 BEGIN
                     UPDATE library_album_table
-                    SET ${AlbumColumns.TRACK_COUNT} = ${AlbumColumns.TRACK_COUNT} + 1
-                    WHERE ${AlbumColumns.ID} = NEW.${MediaColumns.ALBUM_ID};
+                    SET album_track_count = album_track_count + 1
+                    WHERE album_id = NEW.media_album_id;
                 END;
                 """.trimIndent(),
             )
@@ -162,11 +159,11 @@ internal val addTriggerCallback =
                 CREATE TRIGGER update_album_song_count_on_delete
                 AFTER DELETE ON library_media_table
                 FOR EACH ROW
-                WHEN OLD.${MediaColumns.ALBUM_ID} IS NOT NULL
+                WHEN OLD.media_album_id IS NOT NULL
                 BEGIN
                     UPDATE library_album_table
-                    SET ${AlbumColumns.TRACK_COUNT} = ${AlbumColumns.TRACK_COUNT} - 1
-                    WHERE ${AlbumColumns.ID} = OLD.${MediaColumns.ALBUM_ID};
+                    SET album_track_count = album_track_count - 1
+                    WHERE album_id = OLD.media_album_id;
                 END;
                 """.trimIndent(),
             )
@@ -202,9 +199,9 @@ class AutoMigration5To6Spec : AutoMigrationSpec {
             CREATE TRIGGER IF NOT EXISTS delete_invalid_albums_artists_genres
             AFTER DELETE ON library_media_table
             BEGIN
-                DELETE FROM library_album_table WHERE ${AlbumColumns.ID} NOT IN (SELECT DISTINCT ${MediaColumns.ALBUM_ID} FROM library_media_table WHERE ${MediaColumns.ALBUM_ID} IS NOT NULL);
-                DELETE FROM library_artist_table WHERE "artist_id" NOT IN (SELECT DISTINCT ${MediaColumns.ARTIST_ID} FROM library_media_table WHERE ${MediaColumns.ARTIST_ID} IS NOT NULL);
-                DELETE FROM library_genre_table WHERE ${GenreColumns.ID} NOT IN (SELECT DISTINCT ${MediaColumns.GENRE_ID} FROM library_media_table WHERE ${MediaColumns.GENRE_ID} IS NOT NULL);
+                DELETE FROM library_album_table WHERE album_id NOT IN (SELECT DISTINCT media_album_id FROM library_media_table WHERE media_album_id IS NOT NULL);
+                DELETE FROM library_artist_table WHERE "artist_id" NOT IN (SELECT DISTINCT media_artist_id FROM library_media_table WHERE media_artist_id IS NOT NULL);
+                DELETE FROM library_genre_table WHERE genre_id NOT IN (SELECT DISTINCT media_genre_id FROM library_media_table WHERE media_genre_id IS NOT NULL);
             END;
             """.trimIndent(),
         )
@@ -215,11 +212,11 @@ class AutoMigration5To6Spec : AutoMigrationSpec {
             CREATE TRIGGER update_artist_song_count_on_insert
             AFTER INSERT ON library_media_table
             FOR EACH ROW
-            WHEN NEW.${MediaColumns.ARTIST_ID} IS NOT NULL
+            WHEN NEW.media_artist_id IS NOT NULL
             BEGIN
                 UPDATE library_artist_table
-                SET ${ArtistColumns.TRACK_COUNT} = ${ArtistColumns.TRACK_COUNT} + 1
-                WHERE "artist_id" = NEW.${MediaColumns.ARTIST_ID};
+                SET artist_track_count = artist_track_count + 1
+                WHERE "artist_id" = NEW.media_artist_id;
             END;
             """.trimIndent(),
         )
@@ -229,11 +226,11 @@ class AutoMigration5To6Spec : AutoMigrationSpec {
             CREATE TRIGGER update_artist_song_count_on_delete
             AFTER DELETE ON library_media_table
             FOR EACH ROW
-            WHEN OLD.${MediaColumns.ARTIST_ID} IS NOT NULL
+            WHEN OLD.media_artist_id IS NOT NULL
             BEGIN
                 UPDATE library_artist_table
-                SET ${ArtistColumns.TRACK_COUNT} = ${ArtistColumns.TRACK_COUNT} - 1
-                WHERE "artist_id" = OLD.${MediaColumns.ARTIST_ID};
+                SET artist_track_count = artist_track_count - 1
+                WHERE "artist_id" = OLD.media_artist_id;
             END;
             """.trimIndent(),
         )
@@ -244,11 +241,11 @@ class AutoMigration5To6Spec : AutoMigrationSpec {
             CREATE TRIGGER update_album_song_count_on_insert
             AFTER INSERT ON library_media_table
             FOR EACH ROW
-            WHEN NEW.${MediaColumns.ALBUM_ID} IS NOT NULL
+            WHEN NEW.media_album_id IS NOT NULL
             BEGIN
                 UPDATE library_album_table
-                SET ${AlbumColumns.TRACK_COUNT} = ${AlbumColumns.TRACK_COUNT} + 1
-                WHERE ${AlbumColumns.ID} = NEW.${MediaColumns.ALBUM_ID};
+                SET album_track_count = album_track_count + 1
+                WHERE album_id = NEW.media_album_id;
             END;
             """.trimIndent(),
         )
@@ -258,11 +255,11 @@ class AutoMigration5To6Spec : AutoMigrationSpec {
             CREATE TRIGGER update_album_song_count_on_delete
             AFTER DELETE ON library_media_table
             FOR EACH ROW
-            WHEN OLD.${MediaColumns.ALBUM_ID} IS NOT NULL
+            WHEN OLD.media_album_id IS NOT NULL
             BEGIN
                 UPDATE library_album_table
-                SET ${AlbumColumns.TRACK_COUNT} = ${AlbumColumns.TRACK_COUNT} - 1
-                WHERE ${AlbumColumns.ID} = OLD.${MediaColumns.ALBUM_ID};
+                SET album_track_count = album_track_count - 1
+                WHERE album_id = OLD.media_album_id;
             END;
             """.trimIndent(),
         )
@@ -274,7 +271,7 @@ class AutoMigration7To8Spec : AutoMigrationSpec {
         connection.execSQL(
             """
             UPDATE custom_tab_table 
-            SET ${CustomTabColumns.SORT_ORDER} = ${CustomTabColumns.ID}
+            SET sort_order = custom_tab_id
             """.trimIndent(),
         )
     }
@@ -286,15 +283,15 @@ class AutoMigration11To12Spec : AutoMigrationSpec {
         connection.execSQL(
             """
             UPDATE play_list_table 
-            SET ${PlayListColumns.IS_FAVORITE_PLAYLIST} = 1
-            WHERE ${PlayListColumns.ID} = 0
+            SET is_favorite_playlist = 1
+            WHERE play_list_id = 0
             """.trimIndent(),
         )
 
         connection.execSQL(
             """
             UPDATE play_list_table 
-            SET ${PlayListColumns.IS_AUDIO_PLAYLIST} = 1
+            SET is_audio_playlist = 1
             """.trimIndent(),
         )
     }
@@ -315,7 +312,7 @@ class AutoMigration15To16Spec : AutoMigrationSpec {
             UPDATE library_album_table
             SET album_track_count = (
                 SELECT COUNT(*) FROM library_media_table 
-                WHERE library_media_table.${MediaColumns.ALBUM_ID} = library_album_table.${AlbumColumns.ID}
+                WHERE library_media_table.media_album_id = library_album_table.album_id
             )
             """.trimIndent(),
         )
@@ -324,7 +321,7 @@ class AutoMigration15To16Spec : AutoMigrationSpec {
             UPDATE library_artist_table
             SET artist_track_count = (
                 SELECT COUNT(*) FROM library_media_table 
-                WHERE library_media_table.${MediaColumns.ARTIST_ID} = library_artist_table."artist_id"
+                WHERE library_media_table.media_artist_id = library_artist_table."artist_id"
             )
             """.trimIndent(),
         )

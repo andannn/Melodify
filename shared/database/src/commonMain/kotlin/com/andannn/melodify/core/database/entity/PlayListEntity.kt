@@ -8,14 +8,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-internal object PlayListColumns {
-    const val ID = "play_list_id"
-    const val NAME = "play_list_name"
-    const val CREATED_DATE = "play_list_created_date"
-    const val IS_AUDIO_PLAYLIST = "is_audio_playlist"
-    const val IS_FAVORITE_PLAYLIST = "is_favorite_playlist"
-}
-
 @Entity(tableName = "play_list_table")
 data class PlayListEntity(
     @PrimaryKey(autoGenerate = true)

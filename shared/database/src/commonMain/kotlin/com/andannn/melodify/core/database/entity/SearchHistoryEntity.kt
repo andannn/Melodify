@@ -9,16 +9,10 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-internal object SearchHistoryColumns {
-    const val ID = "search_history_id"
-    const val SEARCH_DATE = "search_date"
-    const val SEARCH_TEXT = "search_text"
-}
-
 @Entity(
     tableName = "search_history_table",
     indices = [
-        Index(value = [SearchHistoryColumns.SEARCH_TEXT], unique = true),
+        Index(value = ["search_text"], unique = true),
     ],
 )
 data class SearchHistoryEntity(

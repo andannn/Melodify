@@ -16,7 +16,7 @@ import androidx.room.TypeConverter
     foreignKeys = [
         ForeignKey(
             entity = CustomTabEntity::class,
-            parentColumns = [CustomTabColumns.ID],
+            parentColumns = ["custom_tab_id"],
             childColumns = ["custom_tab_foreign_key"],
             onDelete = ForeignKey.CASCADE,
         ),

@@ -8,11 +8,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-internal object GenreColumns {
-    const val ID = "genre_id"
-    const val NAME = "genre_name"
-}
-
 @Entity(tableName = "library_genre_table")
 class GenreEntity(
     @PrimaryKey(autoGenerate = false)

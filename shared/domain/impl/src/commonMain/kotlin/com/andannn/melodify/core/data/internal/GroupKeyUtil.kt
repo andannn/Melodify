@@ -9,8 +9,6 @@ import com.andannn.melodify.core.database.MediaWheres
 import com.andannn.melodify.core.database.Sort
 import com.andannn.melodify.core.database.SortOrder
 import com.andannn.melodify.core.database.Where
-import com.andannn.melodify.core.database.entity.MediaColumns
-import com.andannn.melodify.core.database.entity.VideoColumns
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.SortOption
 
@@ -36,7 +34,7 @@ private fun MutableList<Where>.addAudioWhereOption(where: GroupKey) =
             when (where) {
                 is GroupKey.Album -> {
                     Where(
-                        MediaColumns.ALBUM_ID,
+                        "media_album_id",
                         Where.Operator.EQUALS,
                         where.albumId,
                     )
@@ -44,7 +42,7 @@ private fun MutableList<Where>.addAudioWhereOption(where: GroupKey) =
 
                 is GroupKey.Artist -> {
                     Where(
-                        MediaColumns.ARTIST_ID,
+                        "media_artist_id",
                         Where.Operator.EQUALS,
                         where.artistId,
                     )
@@ -52,7 +50,7 @@ private fun MutableList<Where>.addAudioWhereOption(where: GroupKey) =
 
                 is GroupKey.Genre -> {
                     Where(
-                        MediaColumns.GENRE_ID,
+                        "media_genre_id",
                         Where.Operator.EQUALS,
                         where.genreId,
                     )
@@ -60,7 +58,7 @@ private fun MutableList<Where>.addAudioWhereOption(where: GroupKey) =
 
                 is GroupKey.Year -> {
                     Where(
-                        MediaColumns.YEAR,
+                        "media_year",
                         Where.Operator.EQUALS,
                         where.year,
                     )
@@ -68,7 +66,7 @@ private fun MutableList<Where>.addAudioWhereOption(where: GroupKey) =
 
                 is GroupKey.Title -> {
                     Where(
-                        MediaColumns.TITLE,
+                        "media_title",
                         Where.Operator.GLOB,
                         where.firstCharacterString + "*",
                     )
@@ -87,7 +85,7 @@ private fun MutableList<Where>.addVideoWhereOption(where: GroupKey) =
             when (where) {
                 is GroupKey.Title -> {
                     Where(
-                        VideoColumns.TITLE,
+                        "video_title",
                         Where.Operator.GLOB,
                         where.firstCharacterString + "*",
                     )
@@ -95,7 +93,7 @@ private fun MutableList<Where>.addVideoWhereOption(where: GroupKey) =
 
                 is GroupKey.BucketId -> {
                     Where(
-                        VideoColumns.BUCKET_ID,
+                        "video_bucket_id",
                         Where.Operator.EQUALS,
                         where.bucketId,
                     )
@@ -126,49 +124,49 @@ private fun MutableList<Sort>.addSortOption(sort: SortOption) {
     when (sort) {
         is SortOption.AudioOption.Album -> {
             apply {
-                add(Sort(MediaColumns.ALBUM, sort.ascending.toOrder()))
+                add(Sort("media_album", sort.ascending.toOrder()))
             }
         }
 
         is SortOption.AudioOption.Artist -> {
             apply {
-                add(Sort(MediaColumns.ARTIST, sort.ascending.toOrder()))
+                add(Sort("media_artist", sort.ascending.toOrder()))
             }
         }
 
         is SortOption.AudioOption.Title -> {
             apply {
-                add(Sort(MediaColumns.TITLE, sort.ascending.toOrder()))
+                add(Sort("media_title", sort.ascending.toOrder()))
             }
         }
 
         is SortOption.AudioOption.TrackNum -> {
             apply {
-                add(Sort(MediaColumns.CD_TRACK_NUMBER, sort.ascending.toOrder()))
+                add(Sort("media_cd_track_number", sort.ascending.toOrder()))
             }
         }
 
         is SortOption.AudioOption.Genre -> {
             apply {
-                add(Sort(MediaColumns.GENRE, sort.ascending.toOrder()))
+                add(Sort("media_genre", sort.ascending.toOrder()))
             }
         }
 
         is SortOption.AudioOption.ReleaseYear -> {
             apply {
-                add(Sort(MediaColumns.YEAR, sort.ascending.toOrder()))
+                add(Sort("media_year", sort.ascending.toOrder()))
             }
         }
 
         is SortOption.VideoOption.Bucket -> {
             apply {
-                add(Sort(VideoColumns.BUCKET_DISPLAY_NAME, sort.ascending.toOrder()))
+                add(Sort("video_bucket_display_name", sort.ascending.toOrder()))
             }
         }
 
         is SortOption.VideoOption.Title -> {
             apply {
-                add(Sort(VideoColumns.TITLE, sort.ascending.toOrder()))
+                add(Sort("video_title", sort.ascending.toOrder()))
             }
         }
 

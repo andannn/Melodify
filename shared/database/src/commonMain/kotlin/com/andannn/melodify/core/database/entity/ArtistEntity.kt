@@ -8,12 +8,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-internal object ArtistColumns {
-    const val ID = "artist_id"
-    const val NAME = "artist_name"
-    const val TRACK_COUNT = "artist_track_count"
-}
-
 @Entity(tableName = "library_artist_table")
 data class ArtistEntity(
     @PrimaryKey(autoGenerate = false)

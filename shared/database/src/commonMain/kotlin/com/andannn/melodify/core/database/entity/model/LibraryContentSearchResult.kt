@@ -7,6 +7,7 @@ data class LibraryContentSearchResult(
     val id: String,
     @ColumnInfo(name = "title")
     val title: String,
-    @ColumnInfo(name = "content")
-    val content: String,
+    /** contentType of [com.andannn.melodify.core.database.dao.MediaType] */
+    @ColumnInfo(name = "type")
+    val contentType: Int,
 )

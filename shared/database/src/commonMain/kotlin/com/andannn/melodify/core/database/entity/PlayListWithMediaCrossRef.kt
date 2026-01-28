@@ -9,20 +9,13 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-internal object PlayListWithMediaCrossRefColumns {
-    const val ID = "play_list_with_media_cross_ref_id"
-    const val PLAY_LIST_ID = "play_list_with_media_cross_ref_play_list_id"
-    const val MEDIA_STORE_ID = "play_list_with_media_cross_ref_media_store_id"
-    const val TITLE = "play_list_with_media_cross_ref_song_title"
-}
-
 @Entity(
     tableName = "play_list_with_media_cross_ref_table",
     indices = [
         Index(
             value = [
-                PlayListWithMediaCrossRefColumns.PLAY_LIST_ID,
-                PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID,
+                "play_list_with_media_cross_ref_play_list_id",
+                "play_list_with_media_cross_ref_media_store_id",
             ],
             unique = true,
         ),

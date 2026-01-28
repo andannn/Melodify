@@ -10,18 +10,13 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-internal object VideoPlayProgressColumns {
-    const val ID = "id"
-    const val EXTERNAL_VIDEO_ID = "external_video_id"
-}
-
 @Entity(
     tableName = "video_play_progress_table",
     foreignKeys = [
         ForeignKey(
             entity = VideoEntity::class,
-            parentColumns = [VideoColumns.ID],
-            childColumns = [VideoPlayProgressColumns.EXTERNAL_VIDEO_ID],
+            parentColumns = ["video_id"],
+            childColumns = ["external_video_id"],
             onDelete = ForeignKey.CASCADE,
         ),
     ],

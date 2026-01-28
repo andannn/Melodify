@@ -8,32 +8,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-internal object CustomTabColumns {
-    const val ID = "custom_tab_id"
-    const val NAME = "custom_tab_name"
-    const val TYPE = "custom_tab_type"
-    const val EXTERNAL_ID = "custom_tab_external_id"
-
-    @Deprecated(
-        """
-        Use SortRuleEntity to save sort rule.
-    """,
-    )
-    const val DISPLAY_SETTING = "display_setting"
-    const val SORT_ORDER = "sort_order"
-}
-
-object CustomTabType {
-    const val ALL_MUSIC = "all_music"
-    const val ALL_VIDEO = "all_video"
-    const val ALBUM_DETAIL = "album_detail"
-    const val ARTIST_DETAIL = "artist_detail"
-    const val GENRE_DETAIL = "genre_detail"
-    const val AUDIO_PLAYLIST_DETAIL = "playlist_detail"
-    const val VIDEO_PLAYLIST_DETAIL = "video_playlist_detail"
-    const val VIDEO_BUCKET = "video_bucket"
-}
-
 @Entity(tableName = "custom_tab_table")
 data class CustomTabEntity constructor(
     @PrimaryKey(autoGenerate = true)
@@ -58,3 +32,14 @@ data class CustomTabEntity constructor(
     @ColumnInfo(name = "sort_order")
     val sortOrder: Int? = 0,
 )
+
+object CustomTabType {
+    const val ALL_MUSIC = "all_music"
+    const val ALL_VIDEO = "all_video"
+    const val ALBUM_DETAIL = "album_detail"
+    const val ARTIST_DETAIL = "artist_detail"
+    const val GENRE_DETAIL = "genre_detail"
+    const val AUDIO_PLAYLIST_DETAIL = "playlist_detail"
+    const val VIDEO_PLAYLIST_DETAIL = "video_playlist_detail"
+    const val VIDEO_BUCKET = "video_bucket"
+}

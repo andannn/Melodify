@@ -4,12 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-internal object AlbumColumns {
-    const val ID = "album_id"
-    const val TITLE = "album_title"
-    const val TRACK_COUNT = "album_track_count"
-}
-
 @Entity(tableName = "library_album_table")
 data class AlbumEntity(
     @PrimaryKey(autoGenerate = false)

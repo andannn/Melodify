@@ -8,21 +8,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-object MediaColumns {
-    const val ID = "media_id"
-    const val TITLE = "media_title"
-    const val SOURCE_URI = "source_uri"
-    const val ALBUM = "media_album"
-    const val ALBUM_ID = "media_album_id"
-    const val ARTIST = "media_artist"
-    const val ARTIST_ID = "media_artist_id"
-    const val CD_TRACK_NUMBER = "media_cd_track_number"
-    const val GENRE = "media_genre"
-    const val GENRE_ID = "media_genre_id"
-    const val YEAR = "media_year"
-    const val DELETED = "deleted"
-}
-
 @Entity(
     tableName = "library_media_table",
 )

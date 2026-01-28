@@ -8,18 +8,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-object VideoColumns {
-    const val ID = "video_id"
-    const val SOURCE_URI = "video_source_uri"
-    const val TITLE = "video_title"
-    const val BUCKET_ID = "video_bucket_id"
-    const val BUCKET_DISPLAY_NAME = "video_bucket_display_name"
-
-    const val ALBUM = "video_album"
-
-    const val DELETED = "video_deleted"
-}
-
 @Entity(
     tableName = "library_video_table",
 )
