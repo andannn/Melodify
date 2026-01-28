@@ -8,16 +8,16 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Fts4
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.VideoEntity
 
 @Fts4(
-    contentEntity = ArtistEntity::class,
+    contentEntity = VideoEntity::class,
 )
-@Entity(tableName = "library_fts_artist_table")
-data class ArtistFtsEntity(
+@Entity(tableName = "library_fts_video_table")
+data class VideoFtsEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "rowid")
     val rowId: Int,
-    @ColumnInfo(name = "artist_name")
+    @ColumnInfo(name = "video_title")
     val title: String,
 )

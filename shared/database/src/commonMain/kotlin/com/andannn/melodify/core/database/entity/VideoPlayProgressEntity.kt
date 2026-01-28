@@ -9,22 +9,14 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.Tables
-
-internal object VideoPlayProgressColumns {
-    const val ID = "id"
-    const val EXTERNAL_VIDEO_ID = "external_video_id"
-    const val PROGRESS_MS = "progress"
-    const val IS_FINISHED = "is_finished"
-}
 
 @Entity(
-    tableName = Tables.VIDEO_PLAY_PROGRESS,
+    tableName = "video_play_progress_table",
     foreignKeys = [
         ForeignKey(
             entity = VideoEntity::class,
-            parentColumns = [VideoColumns.ID],
-            childColumns = [VideoPlayProgressColumns.EXTERNAL_VIDEO_ID],
+            parentColumns = ["video_id"],
+            childColumns = ["external_video_id"],
             onDelete = ForeignKey.CASCADE,
         ),
     ],
@@ -37,14 +29,14 @@ internal object VideoPlayProgressColumns {
 )
 class VideoPlayProgressEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = VideoPlayProgressColumns.ID)
+    @ColumnInfo(name = "id")
     val id: Long = 0,
-    @ColumnInfo(name = VideoPlayProgressColumns.EXTERNAL_VIDEO_ID)
+    @ColumnInfo(name = "external_video_id")
     val externalVideoId: String,
     /** The progress in milliseconds. If the video is finished, this value is [FINISHED_MS]. */
-    @ColumnInfo(name = VideoPlayProgressColumns.PROGRESS_MS)
+    @ColumnInfo(name = "progress")
     val progressMs: Long,
-    @ColumnInfo(name = VideoPlayProgressColumns.IS_FINISHED)
+    @ColumnInfo(name = "is_finished")
     val isFinished: Boolean? = false,
 ) {
     fun getIsVideoFinished(): Boolean = isFinished == true

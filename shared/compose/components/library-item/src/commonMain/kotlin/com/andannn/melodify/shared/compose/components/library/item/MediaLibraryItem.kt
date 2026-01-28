@@ -6,6 +6,7 @@ package com.andannn.melodify.shared.compose.components.library.item
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.andannn.melodify.domain.MediaFileDeleteHelper
@@ -15,6 +16,7 @@ import com.andannn.melodify.domain.model.ArtistItemModel
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.GenreItemModel
 import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.MediaType
 import com.andannn.melodify.domain.model.PlayListItemModel
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
@@ -27,7 +29,9 @@ import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
 import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.showLibraryMediaOption
+import io.github.andannn.RetainedModel
 import io.github.andannn.popup.PopupHostState
+import io.github.andannn.retainRetainedModel
 import kotlinx.coroutines.launch
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.track_count
@@ -36,11 +40,78 @@ import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun MediaLibraryItem(
+    contentId: Long,
+    contentType: MediaType,
     modifier: Modifier = Modifier,
-    mediaItemModel: MediaItemModel,
+    onItemClick: (MediaItemModel) -> Unit = {},
+) {
+    val item = retainFindMediaItemPresenter(contentId, contentType).mediaItem.value
+
+    MediaLibraryItem(
+        modifier = modifier,
+        mediaItemModel = item,
+        onItemClick = {
+            if (item != null) {
+                onItemClick(item)
+            }
+        },
+    )
+}
+
+@Composable
+private fun retainFindMediaItemPresenter(
+    contentId: Long,
+    contentType: MediaType,
+    repository: Repository = LocalRepository.current,
+) = retainRetainedModel(
+    contentId,
+    contentType,
+    repository,
+) {
+    FindMediaItemRetainedModel(
+        contentId = contentId,
+        contentType = contentType,
+        repository = repository,
+    )
+}
+
+private class FindMediaItemRetainedModel(
+    contentId: Long,
+    contentType: MediaType,
+    repository: Repository,
+) : RetainedModel() {
+    val mediaItem = mutableStateOf<MediaItemModel?>(null)
+
+    init {
+        retainedScope.launch {
+            val item =
+                when (contentType) {
+                    MediaType.AUDIO -> repository.getAudioById(audioId = contentId)
+                    MediaType.VIDEO -> repository.getVideoById(videoId = contentId)
+                    MediaType.ALBUM -> repository.getAlbumByAlbumId(albumId = contentId)
+                    MediaType.ARTIST -> repository.getArtistByArtistId(artistId = contentId)
+                    MediaType.GENRE -> repository.getGenreByGenreId(genreId = contentId)
+                    MediaType.PLAYLIST -> TODO()
+                }
+            mediaItem.value = item
+        }
+    }
+}
+
+@Composable
+fun MediaLibraryItem(
+    modifier: Modifier = Modifier,
+    mediaItemModel: MediaItemModel?,
     playListId: String? = null,
     onItemClick: () -> Unit = {},
 ) {
+    if (mediaItemModel == null) {
+        return MediaLibraryItemContent(
+            modifier = modifier,
+            mediaItemModel = null,
+        )
+    }
+
     val presenter =
         retainMediaLibraryItemPresenter(mediaItemModel, playListId)
     val state = presenter.present()
@@ -57,12 +128,12 @@ fun MediaLibraryItem(
 @Composable
 private fun MediaLibraryItemContent(
     modifier: Modifier = Modifier,
-    mediaItemModel: MediaItemModel,
+    mediaItemModel: MediaItemModel?,
     onOptionButtonClick: () -> Unit = {},
     onItemClick: () -> Unit = {},
 ) {
-    val title = mediaItemModel.name
-    val cover = mediaItemModel.artWorkUri
+    val title = mediaItemModel?.name ?: ""
+    val cover = mediaItemModel?.artWorkUri ?: ""
     val subTitle =
         when (mediaItemModel) {
             is AlbumItemModel -> {
@@ -90,6 +161,10 @@ private fun MediaLibraryItemContent(
 
             is VideoItemModel -> {
                 mediaItemModel.bucketName
+            }
+
+            null -> {
+                ""
             }
         }
 
@@ -145,7 +220,13 @@ private class MediaLibraryItemPresenter(
     @Composable
     override fun present(): UiState =
         UiState { event ->
-            context(popupHostState, snackBarController, repository, fileDeleteHelper, navigationRequestEventSink) {
+            context(
+                popupHostState,
+                snackBarController,
+                repository,
+                fileDeleteHelper,
+                navigationRequestEventSink,
+            ) {
                 when (event) {
                     UiEvent.OnOptionButtonClick -> {
                         retainedScope.launch {

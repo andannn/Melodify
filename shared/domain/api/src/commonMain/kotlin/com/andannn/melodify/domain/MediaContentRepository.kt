@@ -10,12 +10,17 @@ import com.andannn.melodify.domain.model.ArtistItemModel
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.GenreItemModel
 import com.andannn.melodify.domain.model.GroupKey
+import com.andannn.melodify.domain.model.MatchedContentTitle
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.VideoItemModel
 import kotlinx.coroutines.flow.Flow
 
 interface MediaContentRepository {
+    suspend fun getAudioById(audioId: Long): AudioItemModel?
+
+    suspend fun getVideoById(videoId: Long): VideoItemModel?
+
     fun getAllMediaItemsPagingFlow(
         whereGroup: List<GroupKey> = emptyList(),
         sort: List<SortOption.AudioOption>,
@@ -132,17 +137,22 @@ interface MediaContentRepository {
     /**
      * Return album by albumId
      */
-    suspend fun getAlbumByAlbumId(albumId: String): AlbumItemModel?
+    suspend fun getAlbumByAlbumId(albumId: Long): AlbumItemModel?
 
     /**
      * Return artist by artistId
      */
-    suspend fun getArtistByArtistId(artistId: String): ArtistItemModel?
+    suspend fun getArtistByArtistId(artistId: Long): ArtistItemModel?
 
     /**
      * Return genre by genreId
      */
-    suspend fun getGenreByGenreId(genreId: String): GenreItemModel?
+    suspend fun getGenreByGenreId(genreId: Long): GenreItemModel?
+
+    /**
+     * Search content by keyword
+     */
+    suspend fun getMatchedContentTitle(keyword: String): List<MatchedContentTitle>
 
     /**
      * Search content by keyword

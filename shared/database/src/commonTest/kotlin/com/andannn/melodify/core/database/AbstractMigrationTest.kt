@@ -6,12 +6,7 @@ package com.andannn.melodify.core.database
 
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.execSQL
-import com.andannn.melodify.core.database.entity.AlbumColumns
-import com.andannn.melodify.core.database.entity.ArtistColumns
-import com.andannn.melodify.core.database.entity.CustomTabColumns
 import com.andannn.melodify.core.database.entity.CustomTabType.ALL_MUSIC
-import com.andannn.melodify.core.database.entity.MediaColumns
-import com.andannn.melodify.core.database.entity.PlayListColumns
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -42,7 +37,7 @@ abstract class AbstractMigrationTest {
 
             val migratedConnection =
                 helper.runMigrationsAndValidate(5)
-            migratedConnection.prepare("SELECT * FROM ${Tables.CUSTOM_TAB}").use { stmt ->
+            migratedConnection.prepare("SELECT * FROM custom_tab_table").use { stmt ->
                 assertTrue { stmt.step() }
                 assertEquals(ALL_MUSIC, stmt.getText(1))
             }
@@ -66,12 +61,12 @@ abstract class AbstractMigrationTest {
             val newConnection = helper.createDatabase(6)
             newConnection.execSQL(
                 """
-                INSERT INTO ${Tables.LIBRARY_MEDIA}(${MediaColumns.ID}, ${MediaColumns.TITLE}) VALUES (1, 'row 1');
+                INSERT INTO library_media_table(media_id, media_title) VALUES (1, 'row 1');
                 """.trimIndent(),
             )
             newConnection.execSQL(
                 """
-                INSERT INTO ${Tables.LIBRARY_MEDIA}(${MediaColumns.ID}, ${MediaColumns.TITLE}) VALUES (2, 'row 2');
+                INSERT INTO library_media_table(media_id, media_title) VALUES (2, 'row 2');
                 """.trimIndent(),
             )
             newConnection.close()
@@ -80,7 +75,7 @@ abstract class AbstractMigrationTest {
                 helper.runMigrationsAndValidate(7)
 
             migratedConnection
-                .prepare("SELECT rowid, * FROM ${Tables.LIBRARY_FTS_MEDIA}")
+                .prepare("SELECT rowid, * FROM library_fts_media_table")
                 .use { stm ->
                     stm.step()
                     assertEquals(1, stm.getLong(0))
@@ -99,12 +94,12 @@ abstract class AbstractMigrationTest {
             val newConnection = helper.createDatabase(6)
             newConnection.execSQL(
                 """
-                INSERT INTO ${Tables.LIBRARY_ALBUM}(${AlbumColumns.ID}, ${AlbumColumns.TITLE}, ${AlbumColumns.TRACK_COUNT}) VALUES (1, 'row 1', 10);
+                INSERT INTO library_album_table(album_id, album_title, album_track_count) VALUES (1, 'row 1', 10);
                 """.trimIndent(),
             )
             newConnection.execSQL(
                 """
-                INSERT INTO ${Tables.LIBRARY_ALBUM}(${AlbumColumns.ID}, ${AlbumColumns.TITLE}, ${AlbumColumns.TRACK_COUNT}) VALUES (2, 'row 2', 12);
+                INSERT INTO library_album_table(album_id, album_title, album_track_count) VALUES (2, 'row 2', 12);
                 """.trimIndent(),
             )
             newConnection.close()
@@ -113,7 +108,7 @@ abstract class AbstractMigrationTest {
                 helper.runMigrationsAndValidate(7)
 
             migratedConnection
-                .prepare("SELECT rowid, * FROM ${Tables.LIBRARY_FTS_ALBUM}")
+                .prepare("SELECT rowid, * FROM library_fts_album_table")
                 .use { stm ->
                     stm.step()
                     assertEquals(1, stm.getLong(0))
@@ -132,12 +127,12 @@ abstract class AbstractMigrationTest {
             val newConnection = helper.createDatabase(6)
             newConnection.execSQL(
                 """
-                INSERT INTO ${Tables.LIBRARY_ARTIST}(${ArtistColumns.ID}, ${ArtistColumns.NAME}, ${ArtistColumns.TRACK_COUNT}) VALUES (1, 'row 1', 10);
+                INSERT INTO library_artist_table(artist_id, artist_name, artist_track_count) VALUES (1, 'row 1', 10);
                 """.trimIndent(),
             )
             newConnection.execSQL(
                 """
-                INSERT INTO ${Tables.LIBRARY_ARTIST}(${ArtistColumns.ID}, ${ArtistColumns.NAME}, ${ArtistColumns.TRACK_COUNT}) VALUES (2, 'row 2', 12);
+                INSERT INTO library_artist_table(artist_id, artist_name, artist_track_count) VALUES (2, 'row 2', 12);
                 """.trimIndent(),
             )
             newConnection.close()
@@ -146,7 +141,7 @@ abstract class AbstractMigrationTest {
                 helper.runMigrationsAndValidate(7)
 
             migratedConnection
-                .prepare("SELECT rowid, * FROM ${Tables.LIBRARY_FTS_ARTIST}")
+                .prepare("SELECT rowid, * FROM library_fts_artist_table")
                 .use { stm ->
                     stm.step()
                     assertEquals(1, stm.getLong(0))
@@ -165,8 +160,8 @@ abstract class AbstractMigrationTest {
             val newConnection = helper.createDatabase(7)
             newConnection.execSQL(
                 """
-                             INSERT INTO ${Tables.CUSTOM_TAB} 
-                (${CustomTabColumns.ID}, ${CustomTabColumns.TYPE}, ${CustomTabColumns.NAME}, ${CustomTabColumns.EXTERNAL_ID})
+                             INSERT INTO custom_tab_table 
+                (custom_tab_id, custom_tab_type, custom_tab_name, custom_tab_external_id)
                 VALUES (4, 'album_detail', 'Album1', 'A01')
                 """.trimIndent(),
             )
@@ -174,7 +169,7 @@ abstract class AbstractMigrationTest {
             val migratedConnection =
                 helper.runMigrationsAndValidate(8)
             migratedConnection
-                .prepare("SELECT ${CustomTabColumns.ID}, ${CustomTabColumns.SORT_ORDER} FROM ${Tables.CUSTOM_TAB}")
+                .prepare("SELECT custom_tab_id, sort_order FROM custom_tab_table")
                 .use { stm ->
                     stm.step()
                     assertEquals(4, stm.getInt(0))
@@ -189,8 +184,8 @@ abstract class AbstractMigrationTest {
             val newConnection = helper.createDatabase(8)
             newConnection.execSQL(
                 """
-                INSERT INTO ${Tables.CUSTOM_TAB} 
-                (${CustomTabColumns.ID}, ${CustomTabColumns.TYPE}, ${CustomTabColumns.NAME}, ${CustomTabColumns.EXTERNAL_ID}, ${CustomTabColumns.DISPLAY_SETTING})
+                INSERT INTO custom_tab_table 
+                (custom_tab_id, custom_tab_type, custom_tab_name, custom_tab_external_id, display_setting)
                 VALUES (4, 'album_detail', 'Album1', 'A01', '{"primary_group_sort":{"type":"com.andannn.melodify.domain.model.SortOption.Album","ascending":true},"content_sort":{"type":"com.andannn.melodify.domain.model.SortOption.TrackNum","ascending":true},"show_track_num":true,"is_preset":false}')
                 """.trimIndent(),
             )
@@ -234,7 +229,7 @@ abstract class AbstractMigrationTest {
             val migratedConnection =
                 helper.runMigrationsAndValidate(12)
             migratedConnection
-                .prepare("SELECT ${PlayListColumns.IS_FAVORITE_PLAYLIST}, ${PlayListColumns.IS_AUDIO_PLAYLIST} FROM ${Tables.PLAY_LIST}")
+                .prepare("SELECT is_favorite_playlist, is_audio_playlist FROM play_list_table")
                 .use { stm ->
                     stm.step()
                     assertEquals(true, stm.getBoolean(0))
@@ -268,10 +263,10 @@ abstract class AbstractMigrationTest {
         helper.let { helper ->
             val newConnection = helper.createDatabase(15)
             val mediaSql = """
-            INSERT INTO ${Tables.LIBRARY_MEDIA} (
+            INSERT INTO library_media_table (
                 media_id, 
-                ${MediaColumns.ALBUM_ID}, 
-                ${MediaColumns.ARTIST_ID},
+                media_album_id, 
+                media_artist_id,
                 media_title
             ) VALUES (?, 1, 10, ?)
         """
@@ -288,17 +283,17 @@ abstract class AbstractMigrationTest {
             }
             newConnection.execSQL(
                 """
-            INSERT INTO ${Tables.LIBRARY_ALBUM} (
-                ${AlbumColumns.ID}, 
-                ${AlbumColumns.TITLE}, 
-                ${AlbumColumns.TRACK_COUNT}
+            INSERT INTO library_album_table (
+                album_id, 
+                album_title, 
+                album_track_count
             ) VALUES (1, 'Test Album', 0)
         """,
             )
             newConnection.execSQL(
                 """
-            INSERT INTO ${Tables.LIBRARY_ARTIST} (
-                ${ArtistColumns.ID}, 
+            INSERT INTO library_artist_table (
+                artist_id, 
                 artist_name, 
                 artist_track_count
             ) VALUES (10, 'Test Artist', 0)
@@ -310,13 +305,13 @@ abstract class AbstractMigrationTest {
                 helper.runMigrationsAndValidate(16)
 
             migratedConnection
-                .prepare("SELECT ${AlbumColumns.TRACK_COUNT} FROM ${Tables.LIBRARY_ALBUM}")
+                .prepare("SELECT album_track_count FROM library_album_table")
                 .use {
                     it.step()
                     assertEquals(2, it.getInt(0))
                 }
             migratedConnection
-                .prepare("SELECT ${ArtistColumns.TRACK_COUNT} FROM ${Tables.LIBRARY_ARTIST}")
+                .prepare("SELECT artist_track_count FROM library_artist_table")
                 .use {
                     it.step()
                     assertEquals(2, it.getInt(0))
@@ -330,8 +325,8 @@ abstract class AbstractMigrationTest {
             val newConnection = helper.createDatabase(16)
             newConnection.execSQL(
                 """
-            INSERT INTO ${Tables.LIBRARY_ARTIST} (
-                ${ArtistColumns.ID}, 
+            INSERT INTO library_artist_table (
+                artist_id, 
                 artist_name, 
                 artist_track_count
             ) VALUES (10, 'Test Artist', 0)
@@ -339,10 +334,10 @@ abstract class AbstractMigrationTest {
             )
             newConnection.execSQL(
                 """
-            INSERT INTO ${Tables.LIBRARY_ALBUM} (
-                ${AlbumColumns.ID}, 
-                ${AlbumColumns.TITLE}, 
-                ${AlbumColumns.TRACK_COUNT}
+            INSERT INTO library_album_table (
+                album_id, 
+                album_title, 
+                album_track_count
             ) VALUES (1, 'Test Album', 0)
         """,
             )
@@ -352,8 +347,8 @@ abstract class AbstractMigrationTest {
                 helper.runMigrationsAndValidate(17)
             migratedConnection.execSQL(
                 """
-            INSERT INTO ${Tables.LIBRARY_ARTIST} (
-                ${ArtistColumns.ID}, 
+            INSERT INTO library_artist_table (
+                artist_id, 
                 artist_name, 
                 artist_track_count
             ) VALUES (11, 'Test Artist 2', 0)
@@ -361,10 +356,10 @@ abstract class AbstractMigrationTest {
             )
             migratedConnection.execSQL(
                 """
-            INSERT INTO ${Tables.LIBRARY_ALBUM} (
-                ${AlbumColumns.ID}, 
-                ${AlbumColumns.TITLE}, 
-                ${AlbumColumns.TRACK_COUNT}
+            INSERT INTO library_album_table (
+                album_id, 
+                album_title, 
+                album_track_count
             ) VALUES (2, 'Test Album 2', 0)
         """,
             )
@@ -404,6 +399,16 @@ abstract class AbstractMigrationTest {
             newConnection.close()
             val migratedConnection =
                 helper.runMigrationsAndValidate(18, migrations = listOf(Migration17To18Spec))
+            migratedConnection.close()
+        }
+
+    @Test
+    fun migrate18To19Test(): Unit =
+        helper.let { helper ->
+            val newConnection = helper.createDatabase(18)
+            newConnection.close()
+            val migratedConnection =
+                helper.runMigrationsAndValidate(19, migrations = listOf())
             migratedConnection.close()
         }
 }

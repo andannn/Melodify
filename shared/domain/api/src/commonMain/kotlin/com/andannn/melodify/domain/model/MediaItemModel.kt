@@ -4,6 +4,15 @@
  */
 package com.andannn.melodify.domain.model
 
+enum class MediaType {
+    AUDIO,
+    VIDEO,
+    ALBUM,
+    ARTIST,
+    GENRE,
+    PLAYLIST,
+}
+
 sealed interface MediaItemModel {
     val id: String
     val name: String

@@ -8,8 +8,8 @@ import androidx.paging.Pager
 import androidx.paging.map
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.entity.PlayListEntity
-import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
+import com.andannn.melodify.core.database.entity.model.PlayListWithMediaCount
 import com.andannn.melodify.domain.PlayListRepository
 import com.andannn.melodify.domain.impl.mapToAppItem
 import com.andannn.melodify.domain.impl.toAppItem
@@ -41,31 +41,13 @@ internal class PlayListRepositoryImpl(
             .getAllPlayListFlow()
             .map(::mapPlayListToAudioList)
 
-    override suspend fun getPlayListById(playListId: Long) =
-        playListDao.getPlayListWithMedias(playListId)?.let {
-            PlayListItemModel(
-                id = it.playList.id.toString(),
-                name = it.playList.name,
-                artWorkUri = it.playList.artworkUri ?: "",
-                trackCount = it.medias.size,
-                isFavoritePlayList = it.playList.isFavoritePlayList == true,
-                isAudioPlayList = it.playList.isAudioPlayList == true,
-            )
-        }
+    override suspend fun getPlayListById(playListId: Long) = playListDao.getPlayListFlowById(playListId).first()?.toAppItem()
 
     override fun getPlayListFlowById(playListId: Long) =
         playListDao
-            .getPlayListFlow(playListId)
+            .getPlayListFlowById(playListId)
             .map {
-                if (it == null) return@map null
-                PlayListItemModel(
-                    id = it.playList.id.toString(),
-                    name = it.playList.name,
-                    artWorkUri = it.playList.artworkUri ?: "",
-                    trackCount = it.medias.size,
-                    isFavoritePlayList = it.playList.isFavoritePlayList == true,
-                    isAudioPlayList = it.playList.isAudioPlayList == true,
-                )
+                it?.toAppItem()
             }
 
     @OptIn(ExperimentalTime::class)
@@ -73,10 +55,7 @@ internal class PlayListRepositoryImpl(
         playListId: Long,
         items: List<MediaItemModel>,
     ): List<Long> {
-        val playListEntity = playListDao.getPlayListEntity(playListId)
-        if (playListEntity == null) {
-            return emptyList()
-        }
+        val playListEntity = playListDao.getPlayListEntity(playListId) ?: return emptyList()
 
         val videos = items.filterIsInstance<VideoItemModel>()
         val musics = items.filterIsInstance<AudioItemModel>()

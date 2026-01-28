@@ -10,7 +10,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.MatchedContentTitle
 import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.MediaType
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
@@ -48,18 +50,13 @@ internal class SuggestionsPresenter(
             }
         } else {
             retainedScope.launch {
-                val result = repository.searchContent("$query*")
+                val result = repository.getMatchedContentTitle("$query*")
                 if (result.isEmpty()) {
                     state = SuggestionsState.NoSuggestion
                 } else {
-                    val bestMatchedItems =
-                        result.filter {
-                            it.name == query
-                        }
                     state =
                         SuggestionsState.SuggestionLoaded(
-                            suggestions = result.map { it.name }.distinct(),
-                            bestMatchedItems = bestMatchedItems,
+                            matched = result,
                         )
                 }
             }
@@ -91,23 +88,28 @@ sealed interface SuggestionsState {
     /**
      * When query string is not empty, show search suggestions.
      */
-    sealed class Suggestion : SuggestionsState
+    sealed interface Suggestion : SuggestionsState
 
     /**
      * Loading search suggestions.
      */
-    data object LoadingSuggestion : Suggestion()
+    data object LoadingSuggestion : Suggestion
 
     /**
      * No search suggestions.
      */
-    data object NoSuggestion : Suggestion()
+    data object NoSuggestion : Suggestion
 
     /**
      * Showing search suggestions.
      */
     data class SuggestionLoaded(
-        val suggestions: List<String>,
-        val bestMatchedItems: List<MediaItemModel>,
-    ) : Suggestion()
+        val suggestions: Map<MediaType, List<MatchedContentTitle>>,
+    ) : Suggestion {
+        constructor(
+            matched: List<MatchedContentTitle>,
+        ) : this(
+            matched.groupBy { it.type },
+        )
+    }
 }

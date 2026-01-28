@@ -9,19 +9,17 @@ import androidx.room.execSQL
 import androidx.room.useReaderConnection
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
+import com.andannn.melodify.core.database.dao.MediaType
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.dao.UserDataDao
-import com.andannn.melodify.core.database.entity.AlbumColumns
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.AlbumWithoutTrackCount
-import com.andannn.melodify.core.database.entity.ArtistColumns
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.ArtistWithoutTrackCount
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.CustomTabType.ALL_VIDEO
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
-import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
@@ -210,7 +208,7 @@ abstract class AbstractDatabaseTest {
             )
 
             val playList = playListDao.getPlayListFlowById(1).first()!!
-            assertEquals(2, playList.medias.size)
+            assertEquals(2, playList.mediaCount)
         }
 
     @Test
@@ -242,7 +240,7 @@ abstract class AbstractDatabaseTest {
             )
 
             val playList = playListDao.getPlayListFlowById(1).first()!!
-            assertEquals(1, playList.medias.size)
+            assertEquals(1, playList.mediaCount)
 
             val insertIds =
                 playListDao.insertPlayListWithMediaCrossRef(
@@ -260,7 +258,7 @@ abstract class AbstractDatabaseTest {
             assertEquals(-1, insertIds.first())
 
             val playList2 = playListDao.getPlayListFlowById(1).first()
-            assertEquals(1, playList2!!.medias.size)
+            assertEquals(1, playList2!!.mediaCount)
         }
 
     @Test
@@ -387,7 +385,7 @@ abstract class AbstractDatabaseTest {
                 playListDao
                     .getPlayListFlowById(1)
                     .first()!!
-                    .medias.size,
+                    .mediaCount,
             )
 
             playListDao.deleteMediaFromPlayList(1, listOf("1"))
@@ -396,7 +394,7 @@ abstract class AbstractDatabaseTest {
                 playListDao
                     .getPlayListFlowById(1)
                     .first()!!
-                    .medias.size,
+                    .mediaCount,
             )
         }
 
@@ -587,7 +585,7 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            assertEquals(0, libraryDao.getArtistByArtistId("4")?.trackCount)
+            assertEquals(0, libraryDao.getArtistByArtistId(4)?.trackCount)
             libraryDao.upsertMedias(
                 audios =
                     listOf(
@@ -600,9 +598,9 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            assertEquals(1, libraryDao.getArtistByArtistId("4")?.trackCount)
+            assertEquals(1, libraryDao.getArtistByArtistId(4)?.trackCount)
             libraryDao.deleteMediasByIds(listOf(1L))
-            assertEquals(0, libraryDao.getArtistByArtistId("4")?.trackCount)
+            assertEquals(0, libraryDao.getArtistByArtistId(4)?.trackCount)
         }
 
     @Test
@@ -617,7 +615,7 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            assertEquals(0, libraryDao.getAlbumByAlbumId("2")?.trackCount)
+            assertEquals(0, libraryDao.getAlbumByAlbumId(2)?.trackCount)
             libraryDao.upsertMedias(
                 audios =
                     listOf(
@@ -630,9 +628,9 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            assertEquals(1, libraryDao.getAlbumByAlbumId("2")?.trackCount)
+            assertEquals(1, libraryDao.getAlbumByAlbumId(2)?.trackCount)
             libraryDao.deleteMediasByIds(listOf(1L))
-            assertEquals(0, libraryDao.getAlbumByAlbumId("2")?.trackCount)
+            assertEquals(0, libraryDao.getAlbumByAlbumId(2)?.trackCount)
         }
 
     @Test
@@ -640,19 +638,19 @@ abstract class AbstractDatabaseTest {
         runTest {
             libraryDao.insertDummyData()
             database.verifyFtsTableSync(
-                tableName = Tables.LIBRARY_ALBUM,
-                ftsTableName = Tables.LIBRARY_FTS_ALBUM,
-                matchContentName = AlbumColumns.TITLE,
+                tableName = "library_album_table",
+                ftsTableName = "library_fts_album_table",
+                matchContentName = "album_title",
             )
             database.verifyFtsTableSync(
-                tableName = Tables.LIBRARY_ARTIST,
-                ftsTableName = Tables.LIBRARY_FTS_ARTIST,
-                matchContentName = ArtistColumns.NAME,
+                tableName = "library_artist_table",
+                ftsTableName = "library_fts_artist_table",
+                matchContentName = "artist_name",
             )
             database.verifyFtsTableSync(
-                tableName = Tables.LIBRARY_MEDIA,
-                ftsTableName = Tables.LIBRARY_FTS_MEDIA,
-                matchContentName = MediaColumns.TITLE,
+                tableName = "library_media_table",
+                ftsTableName = "library_fts_media_table",
+                matchContentName = "media_title",
             )
         }
 
@@ -758,8 +756,8 @@ abstract class AbstractDatabaseTest {
                 .getAllMediaFlow(
                     sort =
                         MediaSorts.buildMethod {
-                            add(Sort(MediaColumns.ALBUM, SortOrder.DESCENDING))
-                            add(Sort(MediaColumns.CD_TRACK_NUMBER, SortOrder.DESCENDING))
+                            add(Sort("media_album", SortOrder.DESCENDING))
+                            add(Sort("media_cd_track_number", SortOrder.DESCENDING))
                         },
                 ).first()
                 .also { mediaList ->
@@ -802,7 +800,7 @@ abstract class AbstractDatabaseTest {
                 .getAllMediaFlow(
                     sort =
                         MediaSorts.buildMethod {
-                            add(Sort(MediaColumns.TITLE, SortOrder.ASCENDING))
+                            add(Sort("media_title", SortOrder.ASCENDING))
                         },
                 ).first()
                 .also { mediaList ->
@@ -964,7 +962,7 @@ abstract class AbstractDatabaseTest {
                         MediaWheres.buildMethod {
                             add(
                                 Where(
-                                    MediaColumns.ALBUM_ID,
+                                    "media_album_id",
                                     Where.Operator.EQUALS,
                                     3.toString(),
                                 ),
@@ -1019,7 +1017,7 @@ abstract class AbstractDatabaseTest {
                             MediaWheres.buildMethod {
                                 add(
                                     Where(
-                                        MediaColumns.TITLE,
+                                        "media_title",
                                         Where.Operator.GLOB,
                                         "$first*",
                                     ),
@@ -1206,10 +1204,10 @@ abstract class AbstractDatabaseTest {
                     artists = listOf(ArtistEntity(artistId = 600, name = "new_artist")),
                 )
                 assertEquals(1, dao.getAllArtistID().size)
-                assertEquals(1, dao.getArtistByArtistId("600")?.trackCount)
+                assertEquals(1, dao.getArtistByArtistId(600)?.trackCount)
                 assertEquals(1, dao.getAllGenreID().size)
                 assertEquals(1, dao.getAllAlbumID().size)
-                assertEquals(1, dao.getAlbumByAlbumId("400")?.trackCount)
+                assertEquals(1, dao.getAlbumByAlbumId(400)?.trackCount)
                 assertEquals(1, dao.getAllMediaID().size)
                 assertEquals(1, dao.getAllVideoID().size)
                 assertEquals(100, dao.getAllMediaID().first())
@@ -1320,6 +1318,18 @@ abstract class AbstractDatabaseTest {
                     assertEquals(-1, it.first())
                 }
         }
+
+    @Test
+    fun `search library content test`() =
+        runTest {
+            libraryDao.insertDummyData()
+            libraryDao.searchContentByKeyword("title").also {
+                assertEquals(2, it.count { it.contentType == MediaType.VIDEO })
+                assertEquals(2, it.count { it.contentType == MediaType.ARTIST })
+                assertEquals(2, it.count { it.contentType == MediaType.ARTIST })
+                assertEquals(2, it.count { it.contentType == MediaType.MEDIA })
+            }
+        }
 }
 
 private suspend fun MediaLibraryDao.insertDummyData() {
@@ -1328,9 +1338,11 @@ private suspend fun MediaLibraryDao.insertDummyData() {
             listOf(
                 VideoEntity(
                     id = 5,
+                    title = "title 1",
                 ),
                 VideoEntity(
                     id = 6,
+                    title = "title 2",
                 ),
             ),
         audios =

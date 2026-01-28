@@ -11,51 +11,46 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.room.RoomRawQuery
-import androidx.room.Transaction
 import com.andannn.melodify.core.database.MediaSorts
 import com.andannn.melodify.core.database.MediaWheres
-import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.Where
 import com.andannn.melodify.core.database.appendOrCreateWith
-import com.andannn.melodify.core.database.entity.CrossRefWithMediaRelation
-import com.andannn.melodify.core.database.entity.CrossRefWithVideoRelation
-import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
-import com.andannn.melodify.core.database.entity.PlayListAndMedias
-import com.andannn.melodify.core.database.entity.PlayListColumns
 import com.andannn.melodify.core.database.entity.PlayListEntity
-import com.andannn.melodify.core.database.entity.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
-import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRefColumns
-import com.andannn.melodify.core.database.entity.VideoColumns
 import com.andannn.melodify.core.database.entity.VideoEntity
+import com.andannn.melodify.core.database.entity.model.CrossRefWithMediaRelation
+import com.andannn.melodify.core.database.entity.model.CrossRefWithVideoRelation
+import com.andannn.melodify.core.database.entity.model.PlayListWithMediaCount
 import com.andannn.melodify.core.database.toSortString
 import com.andannn.melodify.core.database.toWhereString
 import kotlinx.coroutines.flow.Flow
+
+private const val PLAYLIST_WITH_COUNT_SELECTION =
+    """
+        SELECT play_list_table.*, COUNT(play_list_with_media_cross_ref_media_store_id) AS mediaCount
+        FROM play_list_table
+        LEFT JOIN play_list_with_media_cross_ref_table
+            ON play_list_id = play_list_with_media_cross_ref_play_list_id
+    """
 
 @Dao
 interface PlayListDao {
     @Query(
         """
-        select ${Tables.PLAY_LIST}.*, COUNT(${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}) as mediaCount
-        from ${Tables.PLAY_LIST}
-        left join ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
-            on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
-        where ${PlayListColumns.IS_AUDIO_PLAYLIST} = :isAudio
-        group by ${PlayListColumns.ID}
-        order by ${PlayListColumns.CREATED_DATE} desc
+        $PLAYLIST_WITH_COUNT_SELECTION
+        WHERE is_audio_playlist = :isAudio
+        GROUP BY play_list_id
+        ORDER BY play_list_created_date DESC
     """,
     )
     fun getAllPlayListFlow(isAudio: Boolean): Flow<List<PlayListWithMediaCount>>
 
     @Query(
         """
-        select ${Tables.PLAY_LIST}.*, COUNT(${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}) as mediaCount
-        from ${Tables.PLAY_LIST}
-        left join ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
-            on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
-        group by ${PlayListColumns.ID}
-        order by ${PlayListColumns.CREATED_DATE} desc
+        $PLAYLIST_WITH_COUNT_SELECTION
+        GROUP BY play_list_id
+        ORDER BY play_list_created_date DESC
     """,
     )
     fun getAllPlayListFlow(): Flow<List<PlayListWithMediaCount>>
@@ -68,10 +63,10 @@ interface PlayListDao {
 
     @Query(
         """
-        select ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}
-        from ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
-        where ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID} = :playListId and
-            ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} in (:mediaIdList)
+        SELECT play_list_with_media_cross_ref_media_store_id
+        FROM play_list_with_media_cross_ref_table
+        WHERE play_list_with_media_cross_ref_play_list_id = :playListId AND
+            play_list_with_media_cross_ref_media_store_id IN (:mediaIdList)
     """,
     )
     suspend fun getDuplicateMediaInPlayList(
@@ -81,9 +76,9 @@ interface PlayListDao {
 
     @Query(
         """
-            delete from ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
-            where ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID} = :playListId and
-                ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} in (:mediaIdList)
+            DELETE FROM play_list_with_media_cross_ref_table
+            WHERE play_list_with_media_cross_ref_play_list_id = :playListId AND
+                play_list_with_media_cross_ref_media_store_id IN (:mediaIdList)
     """,
     )
     suspend fun deleteMediaFromPlayList(
@@ -93,45 +88,27 @@ interface PlayListDao {
 
     @Query(
         """
-        select * from ${Tables.PLAY_LIST}
-        where ${PlayListColumns.ID} = :playListId
+        $PLAYLIST_WITH_COUNT_SELECTION
+        WHERE play_list_id = :playListId
+        GROUP BY play_list_id
     """,
     )
-    @Transaction
-    fun getPlayListFlowById(playListId: Long): Flow<PlayListAndMedias?>
+    fun getPlayListFlowById(playListId: Long): Flow<PlayListWithMediaCount?>
 
     @Query(
         """
-        select * from ${Tables.PLAY_LIST}
-        where ${PlayListColumns.ID} = :playListId
-    """,
-    )
-    @Transaction
-    suspend fun getPlayListWithMedias(playListId: Long): PlayListAndMedias?
-
-    @Query(
-        """
-        select * from ${Tables.PLAY_LIST}
-        where ${PlayListColumns.ID} = :playListId
+        SELECT * FROM play_list_table
+        WHERE play_list_id = :playListId
     """,
     )
     suspend fun getPlayListEntity(playListId: Long): PlayListEntity?
 
     @Query(
         """
-        select * from ${Tables.PLAY_LIST}
-        where ${PlayListColumns.ID} = :playListId
-    """,
-    )
-    @Transaction
-    fun getPlayListFlow(playListId: Long): Flow<PlayListAndMedias?>
-
-    @Query(
-        """
-        select exists(
-            select 1 from ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
-            where ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID} = :playList and
-                ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = :mediaStoreId
+        SELECT EXISTS(
+            SELECT 1 FROM play_list_with_media_cross_ref_table
+            WHERE play_list_with_media_cross_ref_play_list_id = :playList AND
+                play_list_with_media_cross_ref_media_store_id = :mediaStoreId
         )
     """,
     )
@@ -145,24 +122,24 @@ interface PlayListDao {
 
     @Query(
         """
-        SELECT * FROM ${Tables.PLAY_LIST}
-        WHERE ${PlayListColumns.IS_FAVORITE_PLAYLIST} = 1 AND ${PlayListColumns.IS_AUDIO_PLAYLIST} = 1
+        SELECT * FROM play_list_table
+        WHERE is_favorite_playlist = 1 AND is_audio_playlist = 1
     """,
     )
     fun getFavoriteAudioPlayListFlow(): Flow<PlayListEntity?>
 
     @Query(
         """
-        SELECT * FROM ${Tables.PLAY_LIST}
-        WHERE ${PlayListColumns.IS_FAVORITE_PLAYLIST} = 1 AND ${PlayListColumns.IS_AUDIO_PLAYLIST} = 0
+        SELECT * FROM play_list_table
+        WHERE is_favorite_playlist = 1 AND is_audio_playlist = 0
     """,
     )
     fun getFavoriteVideoPlayListFlow(): Flow<PlayListEntity?>
 
     @Query(
         """
-        delete from ${Tables.PLAY_LIST}
-        where ${PlayListColumns.ID} = :playListId
+        delete from play_list_table
+        where play_list_id = :playListId
     """,
     )
     suspend fun deletePlayListById(playListId: Long)
@@ -240,9 +217,11 @@ interface PlayListDao {
         sort: MediaSorts?,
     ): RoomRawQuery {
         val sql = """
-            SELECT * FROM ${Tables.PLAY_LIST}
-            JOIN ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF} ON ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
-            LEFT JOIN ${Tables.LIBRARY_MEDIA} ON ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${MediaColumns.ID}
+            SELECT * FROM play_list_table
+            JOIN play_list_with_media_cross_ref_table 
+                ON play_list_id = play_list_with_media_cross_ref_play_list_id
+            LEFT JOIN library_media_table 
+                ON play_list_with_media_cross_ref_media_store_id = media_id
             ${wheres.toWhereString()}
             ${sort.toSortString()}
         """
@@ -254,9 +233,11 @@ interface PlayListDao {
         sort: MediaSorts?,
     ): RoomRawQuery {
         val sql = """
-            SELECT * FROM ${Tables.PLAY_LIST}
-            JOIN ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF} ON ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
-            LEFT JOIN ${Tables.LIBRARY_VIDEO} ON ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${VideoColumns.ID}
+            SELECT * FROM play_list_table
+            JOIN play_list_with_media_cross_ref_table 
+                ON play_list_id = play_list_with_media_cross_ref_play_list_id
+            LEFT JOIN library_video_table 
+                ON play_list_with_media_cross_ref_media_store_id = video_id
             ${wheres.toWhereString()}
             ${sort.toSortString()}
         """
@@ -265,21 +246,21 @@ interface PlayListDao {
 
     private fun audioNotDeletedWhere() =
         Where(
-            MediaColumns.DELETED,
+            "deleted",
             "IS NOT",
             "1",
         )
 
     private fun videoNotDeletedWhere() =
         Where(
-            VideoColumns.DELETED,
+            "video_deleted",
             "IS NOT",
             "1",
         )
 
     private fun playListIdWhere(playListId: String) =
         Where(
-            PlayListColumns.ID,
+            "play_list_id",
             "=",
             playListId,
         )

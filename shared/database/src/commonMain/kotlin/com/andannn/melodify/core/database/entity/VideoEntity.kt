@@ -7,83 +7,56 @@ package com.andannn.melodify.core.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.Tables
-
-object VideoColumns {
-    const val ID = "video_id"
-    const val FILE_PATH = "video_file_path"
-    const val SOURCE_URI = "video_source_uri"
-    const val TITLE = "video_title"
-    const val DURATION = "video_duration"
-    const val SIZE = "video_size"
-    const val MIME_TYPE = "video_mime_type"
-
-    const val WIDTH = "video_width"
-    const val HEIGHT = "video_height"
-    const val ORIENTATION = "video_orientation"
-    const val RESOLUTION = "video_resolution"
-
-    const val RELATIVE_PATH = "video_relative_path"
-    const val BUCKET_ID = "video_bucket_id"
-    const val BUCKET_DISPLAY_NAME = "video_bucket_display_name"
-    const val VOLUME_NAME = "video_volume_name"
-
-    const val ALBUM = "video_album"
-    const val ARTIST = "video_artist"
-
-    const val DATE_ADDED = "video_date_added"
-    const val DATE_MODIFIED = "video_date_modified"
-    const val MODIFIED_DATE = "video_modified_date"
-
-    const val DELETED = "video_deleted"
-}
 
 @Entity(
-    tableName = Tables.LIBRARY_VIDEO,
+    tableName = "library_video_table",
+    indices = [
+        androidx.room.Index(value = ["video_bucket_id"]),
+    ],
 )
 data class VideoEntity constructor(
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = VideoColumns.ID)
+    @ColumnInfo(name = "video_id")
     val id: Long = 0,
-    @ColumnInfo(name = VideoColumns.FILE_PATH)
+    @ColumnInfo(name = "video_file_path")
     val path: String? = null,
-    @ColumnInfo(name = VideoColumns.SOURCE_URI)
+    @ColumnInfo(name = "video_source_uri")
     val sourceUri: String? = null,
-    @ColumnInfo(name = VideoColumns.TITLE)
+    @ColumnInfo(name = "video_title")
     val title: String? = null,
-    @ColumnInfo(name = VideoColumns.DURATION)
+    @ColumnInfo(name = "video_duration")
     val duration: Int? = null,
-    @ColumnInfo(name = VideoColumns.MODIFIED_DATE)
+    @ColumnInfo(name = "video_modified_date")
     val modifiedDate: Long? = null,
-    @ColumnInfo(name = VideoColumns.SIZE)
+    @ColumnInfo(name = "video_size")
     val size: Int? = null,
-    @ColumnInfo(name = VideoColumns.MIME_TYPE)
+    @ColumnInfo(name = "video_mime_type")
     val mimeType: String? = null,
     // video-specific
-    @ColumnInfo(name = VideoColumns.WIDTH)
+    @ColumnInfo(name = "video_width")
     val width: Int? = null,
-    @ColumnInfo(name = VideoColumns.HEIGHT)
+    @ColumnInfo(name = "video_height")
     val height: Int? = null,
-    @ColumnInfo(name = VideoColumns.ORIENTATION)
+    @ColumnInfo(name = "video_orientation")
     val orientation: Int? = null,
-    @ColumnInfo(name = VideoColumns.RESOLUTION)
+    @ColumnInfo(name = "video_resolution")
     val resolution: String? = null,
-    @ColumnInfo(name = VideoColumns.RELATIVE_PATH)
+    @ColumnInfo(name = "video_relative_path")
     val relativePath: String? = null,
-    @ColumnInfo(name = VideoColumns.BUCKET_ID)
+    @ColumnInfo(name = "video_bucket_id")
     val bucketId: Long? = null,
-    @ColumnInfo(name = VideoColumns.BUCKET_DISPLAY_NAME)
+    @ColumnInfo(name = "video_bucket_display_name")
     val bucketDisplayName: String? = null,
-    @ColumnInfo(name = VideoColumns.VOLUME_NAME)
+    @ColumnInfo(name = "video_volume_name")
     val volumeName: String? = null,
-    @ColumnInfo(name = VideoColumns.ALBUM)
+    @ColumnInfo(name = "video_album")
     val album: String? = null,
-    @ColumnInfo(name = VideoColumns.ARTIST)
+    @ColumnInfo(name = "video_artist")
     val artist: String? = null,
-    @ColumnInfo(name = VideoColumns.DATE_ADDED)
+    @ColumnInfo(name = "video_date_added")
     val dateAdded: Long? = null,
-    @ColumnInfo(name = VideoColumns.DATE_MODIFIED)
+    @ColumnInfo(name = "video_date_modified")
     val dateModified: Long? = null,
-    @ColumnInfo(name = VideoColumns.DELETED)
+    @ColumnInfo(name = "video_deleted")
     val deleted: Int? = null,
 )

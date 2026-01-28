@@ -7,22 +7,31 @@ package com.andannn.melodify.core.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.Tables
 
-internal object CustomTabColumns {
-    const val ID = "custom_tab_id"
-    const val NAME = "custom_tab_name"
-    const val TYPE = "custom_tab_type"
-    const val EXTERNAL_ID = "custom_tab_external_id"
-
+@Entity(tableName = "custom_tab_table")
+data class CustomTabEntity constructor(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "custom_tab_id")
+    val id: Long = 0,
+    /**
+     *  values of [CustomTabType]
+     */
+    @ColumnInfo(name = "custom_tab_type")
+    val type: String,
+    @ColumnInfo(name = "custom_tab_name")
+    val name: String? = null,
+    @ColumnInfo(name = "custom_tab_external_id")
+    val externalId: String? = null,
     @Deprecated(
         """
         Use SortRuleEntity to save sort rule.
     """,
     )
-    const val DISPLAY_SETTING = "display_setting"
-    const val SORT_ORDER = "sort_order"
-}
+    @ColumnInfo(name = "display_setting")
+    val displaySettings: String? = null,
+    @ColumnInfo(name = "sort_order")
+    val sortOrder: Int? = 0,
+)
 
 object CustomTabType {
     const val ALL_MUSIC = "all_music"
@@ -34,28 +43,3 @@ object CustomTabType {
     const val VIDEO_PLAYLIST_DETAIL = "video_playlist_detail"
     const val VIDEO_BUCKET = "video_bucket"
 }
-
-@Entity(tableName = Tables.CUSTOM_TAB)
-data class CustomTabEntity constructor(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = CustomTabColumns.ID)
-    val id: Long = 0,
-    /**
-     *  values of [CustomTabType]
-     */
-    @ColumnInfo(name = CustomTabColumns.TYPE)
-    val type: String,
-    @ColumnInfo(name = CustomTabColumns.NAME)
-    val name: String? = null,
-    @ColumnInfo(name = CustomTabColumns.EXTERNAL_ID)
-    val externalId: String? = null,
-    @Deprecated(
-        """
-        Use SortRuleEntity to save sort rule.
-    """,
-    )
-    @ColumnInfo(name = CustomTabColumns.DISPLAY_SETTING)
-    val displaySettings: String? = null,
-    @ColumnInfo(name = CustomTabColumns.SORT_ORDER)
-    val sortOrder: Int? = 0,
-)

@@ -187,17 +187,17 @@ private suspend fun LibraryDataSource.getTitle(): String =
         }
 
         is LibraryDataSource.AlbumDetail -> {
-            repository.getAlbumByAlbumId(id)?.name
+            repository.getAlbumByAlbumId(id.toLong())?.name
                 ?: ""
         }
 
         is LibraryDataSource.ArtistDetail -> {
-            repository.getArtistByArtistId(id)?.name
+            repository.getArtistByArtistId(id.toLong())?.name
                 ?: ""
         }
 
         is LibraryDataSource.GenreDetail -> {
-            repository.getGenreByGenreId(id)?.name
+            repository.getGenreByGenreId(id.toLong())?.name
                 ?: ""
         }
 

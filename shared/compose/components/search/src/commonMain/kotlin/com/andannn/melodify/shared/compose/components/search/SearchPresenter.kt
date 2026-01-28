@@ -49,8 +49,8 @@ data class SearchUiState(
 )
 
 sealed interface SearchUiEvent {
-    data class OnPlayAudio(
-        val audioItemModel: AudioItemModel,
+    data class OnPlay(
+        val itemModel: MediaItemModel,
     ) : SearchUiEvent
 
     data class OnConfirmSearch(
@@ -132,8 +132,8 @@ private class SearchUiPresenter(
                     }
                 }
 
-                is SearchUiEvent.OnPlayAudio -> {
-                    onPlayAudio(eventSink.audioItemModel)
+                is SearchUiEvent.OnPlay -> {
+                    onPlay(eventSink.itemModel)
                 }
 
                 is SearchUiEvent.OnExpandChange -> {
@@ -143,12 +143,12 @@ private class SearchUiPresenter(
         }
     }
 
-    private fun onPlayAudio(audioItemModel: AudioItemModel) {
+    private fun onPlay(mediaItemModel: MediaItemModel) {
         retainedScope.launch {
             context(repository, popupHostState) {
                 playMediaItems(
-                    audioItemModel,
-                    listOf(audioItemModel),
+                    mediaItemModel,
+                    listOf(mediaItemModel),
                 )
             }
         }
