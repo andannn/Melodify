@@ -37,24 +37,24 @@ object CustomTabType {
 @Entity(tableName = "custom_tab_table")
 data class CustomTabEntity constructor(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = CustomTabColumns.ID)
+    @ColumnInfo(name = "custom_tab_id")
     val id: Long = 0,
     /**
      *  values of [CustomTabType]
      */
-    @ColumnInfo(name = CustomTabColumns.TYPE)
+    @ColumnInfo(name = "custom_tab_type")
     val type: String,
-    @ColumnInfo(name = CustomTabColumns.NAME)
+    @ColumnInfo(name = "custom_tab_name")
     val name: String? = null,
-    @ColumnInfo(name = CustomTabColumns.EXTERNAL_ID)
+    @ColumnInfo(name = "custom_tab_external_id")
     val externalId: String? = null,
     @Deprecated(
         """
         Use SortRuleEntity to save sort rule.
     """,
     )
-    @ColumnInfo(name = CustomTabColumns.DISPLAY_SETTING)
+    @ColumnInfo(name = "display_setting")
     val displaySettings: String? = null,
-    @ColumnInfo(name = CustomTabColumns.SORT_ORDER)
+    @ColumnInfo(name = "sort_order")
     val sortOrder: Int? = 0,
 )

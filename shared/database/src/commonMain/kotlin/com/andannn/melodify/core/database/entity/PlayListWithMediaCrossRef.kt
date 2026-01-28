@@ -13,8 +13,6 @@ internal object PlayListWithMediaCrossRefColumns {
     const val ID = "play_list_with_media_cross_ref_id"
     const val PLAY_LIST_ID = "play_list_with_media_cross_ref_play_list_id"
     const val MEDIA_STORE_ID = "play_list_with_media_cross_ref_media_store_id"
-    const val ADDED_DATE = "play_list_with_media_cross_ref_added_date"
-    const val ARTIST = "play_list_with_media_cross_ref_song_artist"
     const val TITLE = "play_list_with_media_cross_ref_song_title"
 }
 
@@ -32,16 +30,16 @@ internal object PlayListWithMediaCrossRefColumns {
 )
 data class PlayListWithMediaCrossRef(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = PlayListWithMediaCrossRefColumns.ID)
+    @ColumnInfo(name = "play_list_with_media_cross_ref_id")
     val id: Long = 0,
-    @ColumnInfo(name = PlayListWithMediaCrossRefColumns.PLAY_LIST_ID)
+    @ColumnInfo(name = "play_list_with_media_cross_ref_play_list_id")
     val playListId: Long,
-    @ColumnInfo(name = PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID)
+    @ColumnInfo(name = "play_list_with_media_cross_ref_media_store_id")
     val mediaStoreId: String,
-    @ColumnInfo(name = PlayListWithMediaCrossRefColumns.ADDED_DATE)
+    @ColumnInfo(name = "play_list_with_media_cross_ref_added_date")
     val addedDate: Long,
-    @ColumnInfo(name = PlayListWithMediaCrossRefColumns.ARTIST)
+    @ColumnInfo(name = "play_list_with_media_cross_ref_song_artist")
     val artist: String,
-    @ColumnInfo(name = PlayListWithMediaCrossRefColumns.TITLE)
+    @ColumnInfo(name = "play_list_with_media_cross_ref_song_title")
     val title: String,
 )

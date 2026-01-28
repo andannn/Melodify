@@ -12,7 +12,6 @@ internal object PlayListColumns {
     const val ID = "play_list_id"
     const val NAME = "play_list_name"
     const val CREATED_DATE = "play_list_created_date"
-    const val ARTWORK_URI = "play_list_artwork_uri"
     const val IS_AUDIO_PLAYLIST = "is_audio_playlist"
     const val IS_FAVORITE_PLAYLIST = "is_favorite_playlist"
 }
@@ -20,16 +19,16 @@ internal object PlayListColumns {
 @Entity(tableName = "play_list_table")
 data class PlayListEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = PlayListColumns.ID)
+    @ColumnInfo(name = "play_list_id")
     val id: Long = 0,
-    @ColumnInfo(name = PlayListColumns.CREATED_DATE)
+    @ColumnInfo(name = "play_list_created_date")
     val createdDate: Long,
-    @ColumnInfo(name = PlayListColumns.NAME)
+    @ColumnInfo(name = "play_list_name")
     val name: String,
-    @ColumnInfo(name = PlayListColumns.ARTWORK_URI)
+    @ColumnInfo(name = "play_list_artwork_uri")
     val artworkUri: String?,
-    @ColumnInfo(name = PlayListColumns.IS_AUDIO_PLAYLIST)
+    @ColumnInfo(name = "is_audio_playlist")
     val isAudioPlayList: Boolean? = true,
-    @ColumnInfo(name = PlayListColumns.IS_FAVORITE_PLAYLIST)
+    @ColumnInfo(name = "is_favorite_playlist")
     val isFavoritePlayList: Boolean? = false,
 )

@@ -23,10 +23,10 @@ internal object SearchHistoryColumns {
 )
 data class SearchHistoryEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = SearchHistoryColumns.ID)
+    @ColumnInfo(name = "search_history_id")
     val id: Long = 0,
-    @ColumnInfo(name = SearchHistoryColumns.SEARCH_DATE)
+    @ColumnInfo(name = "search_date")
     val searchDate: Long,
-    @ColumnInfo(name = SearchHistoryColumns.SEARCH_TEXT)
+    @ColumnInfo(name = "search_text")
     val searchText: String,
 )

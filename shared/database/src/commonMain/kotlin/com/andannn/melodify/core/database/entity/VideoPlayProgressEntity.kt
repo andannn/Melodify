@@ -13,8 +13,6 @@ import androidx.room.PrimaryKey
 internal object VideoPlayProgressColumns {
     const val ID = "id"
     const val EXTERNAL_VIDEO_ID = "external_video_id"
-    const val PROGRESS_MS = "progress"
-    const val IS_FINISHED = "is_finished"
 }
 
 @Entity(
@@ -36,14 +34,14 @@ internal object VideoPlayProgressColumns {
 )
 class VideoPlayProgressEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = VideoPlayProgressColumns.ID)
+    @ColumnInfo(name = "id")
     val id: Long = 0,
-    @ColumnInfo(name = VideoPlayProgressColumns.EXTERNAL_VIDEO_ID)
+    @ColumnInfo(name = "external_video_id")
     val externalVideoId: String,
     /** The progress in milliseconds. If the video is finished, this value is [FINISHED_MS]. */
-    @ColumnInfo(name = VideoPlayProgressColumns.PROGRESS_MS)
+    @ColumnInfo(name = "progress")
     val progressMs: Long,
-    @ColumnInfo(name = VideoPlayProgressColumns.IS_FINISHED)
+    @ColumnInfo(name = "is_finished")
     val isFinished: Boolean? = false,
 ) {
     fun getIsVideoFinished(): Boolean = isFinished == true
