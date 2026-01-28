@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 
 data class LibraryContentSearchResult(
     @ColumnInfo(name = "id")
-    val id: String,
+    val id: Long,
     @ColumnInfo(name = "title")
     val title: String,
     /** contentType of [com.andannn.melodify.core.database.dao.MediaType] */

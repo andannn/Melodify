@@ -466,6 +466,8 @@ interface MediaLibraryDao {
             SELECT rowid FROM library_fts_video_table
             WHERE library_fts_video_table MATCH :keyword
         )
+        
+        ORDER BY type
     """,
     )
     suspend fun searchContentByKeyword(keyword: String): List<LibraryContentSearchResult>

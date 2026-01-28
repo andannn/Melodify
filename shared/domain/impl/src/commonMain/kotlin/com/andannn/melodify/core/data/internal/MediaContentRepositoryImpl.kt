@@ -15,8 +15,10 @@ import com.andannn.melodify.domain.impl.mapToAudioItemModel
 import com.andannn.melodify.domain.impl.mapToGenreItemModel
 import com.andannn.melodify.domain.impl.mapToVideoItemModel
 import com.andannn.melodify.domain.impl.toAppItem
+import com.andannn.melodify.domain.impl.toModel
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.GroupKey
+import com.andannn.melodify.domain.model.MatchedContentTitle
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.VideoItemModel
@@ -228,6 +230,11 @@ internal class MediaContentRepositoryImpl(
     override suspend fun getArtistByArtistId(artistId: String) = mediaLibraryDao.getArtistByArtistId(artistId)?.toAppItem()
 
     override suspend fun getGenreByGenreId(genreId: String) = mediaLibraryDao.getGenreByGenreId(genreId)?.toAppItem()
+
+    override suspend fun getMatchedContentTitle(keyword: String): List<MatchedContentTitle> =
+        mediaLibraryDao.searchContentByKeyword(keyword).map {
+            it.toModel()
+        }
 
     override suspend fun searchContent(keyword: String): List<MediaItemModel> {
         val matchedAudios = mediaLibraryDao.searchMedia(keyword).map { it.toAppItem() }

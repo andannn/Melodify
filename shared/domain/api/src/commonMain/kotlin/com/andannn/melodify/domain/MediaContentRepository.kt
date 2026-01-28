@@ -10,6 +10,7 @@ import com.andannn.melodify.domain.model.ArtistItemModel
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.GenreItemModel
 import com.andannn.melodify.domain.model.GroupKey
+import com.andannn.melodify.domain.model.MatchedContentTitle
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.VideoItemModel
@@ -143,6 +144,11 @@ interface MediaContentRepository {
      * Return genre by genreId
      */
     suspend fun getGenreByGenreId(genreId: String): GenreItemModel?
+
+    /**
+     * Search content by keyword
+     */
+    suspend fun getMatchedContentTitle(keyword: String): List<MatchedContentTitle>
 
     /**
      * Search content by keyword
