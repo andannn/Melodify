@@ -11,7 +11,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.room.RoomRawQuery
-import androidx.room.Transaction
 import com.andannn.melodify.core.database.MediaSorts
 import com.andannn.melodify.core.database.MediaWheres
 import com.andannn.melodify.core.database.Where
@@ -22,20 +21,24 @@ import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.entity.model.CrossRefWithMediaRelation
 import com.andannn.melodify.core.database.entity.model.CrossRefWithVideoRelation
-import com.andannn.melodify.core.database.entity.model.PlayListAndMedias
 import com.andannn.melodify.core.database.entity.model.PlayListWithMediaCount
 import com.andannn.melodify.core.database.toSortString
 import com.andannn.melodify.core.database.toWhereString
 import kotlinx.coroutines.flow.Flow
 
-@Dao
-interface PlayListDao {
-    @Query(
-        """
+private const val PLAYLIST_WITH_COUNT_SELECTION =
+    """
         SELECT play_list_table.*, COUNT(play_list_with_media_cross_ref_media_store_id) AS mediaCount
         FROM play_list_table
         LEFT JOIN play_list_with_media_cross_ref_table
             ON play_list_id = play_list_with_media_cross_ref_play_list_id
+    """
+
+@Dao
+interface PlayListDao {
+    @Query(
+        """
+        $PLAYLIST_WITH_COUNT_SELECTION
         WHERE is_audio_playlist = :isAudio
         GROUP BY play_list_id
         ORDER BY play_list_created_date DESC
@@ -45,10 +48,7 @@ interface PlayListDao {
 
     @Query(
         """
-        SELECT play_list_table.*, COUNT(play_list_with_media_cross_ref_media_store_id) AS mediaCount
-        FROM play_list_table
-        LEFT JOIN play_list_with_media_cross_ref_table
-            ON play_list_id = play_list_with_media_cross_ref_play_list_id
+        $PLAYLIST_WITH_COUNT_SELECTION
         GROUP BY play_list_id
         ORDER BY play_list_created_date DESC
     """,
@@ -88,21 +88,12 @@ interface PlayListDao {
 
     @Query(
         """
-        SELECT * FROM play_list_table
+        $PLAYLIST_WITH_COUNT_SELECTION
         WHERE play_list_id = :playListId
+        GROUP BY play_list_id
     """,
     )
-    @Transaction
-    fun getPlayListFlowById(playListId: Long): Flow<PlayListAndMedias?>
-
-    @Query(
-        """
-        SELECT * FROM play_list_table
-        WHERE play_list_id = :playListId
-    """,
-    )
-    @Transaction
-    suspend fun getPlayListWithMedias(playListId: Long): PlayListAndMedias?
+    fun getPlayListFlowById(playListId: Long): Flow<PlayListWithMediaCount?>
 
     @Query(
         """
@@ -111,15 +102,6 @@ interface PlayListDao {
     """,
     )
     suspend fun getPlayListEntity(playListId: Long): PlayListEntity?
-
-    @Query(
-        """
-        SELECT * FROM play_list_table
-        WHERE play_list_id = :playListId
-    """,
-    )
-    @Transaction
-    fun getPlayListFlow(playListId: Long): Flow<PlayListAndMedias?>
 
     @Query(
         """

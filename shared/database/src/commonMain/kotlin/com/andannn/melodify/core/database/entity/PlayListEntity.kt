@@ -8,7 +8,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "play_list_table")
+@Entity(
+    tableName = "play_list_table",
+)
 data class PlayListEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "play_list_id")

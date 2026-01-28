@@ -41,31 +41,13 @@ internal class PlayListRepositoryImpl(
             .getAllPlayListFlow()
             .map(::mapPlayListToAudioList)
 
-    override suspend fun getPlayListById(playListId: Long) =
-        playListDao.getPlayListWithMedias(playListId)?.let {
-            PlayListItemModel(
-                id = it.playList.id.toString(),
-                name = it.playList.name,
-                artWorkUri = it.playList.artworkUri ?: "",
-                trackCount = it.medias.size,
-                isFavoritePlayList = it.playList.isFavoritePlayList == true,
-                isAudioPlayList = it.playList.isAudioPlayList == true,
-            )
-        }
+    override suspend fun getPlayListById(playListId: Long) = playListDao.getPlayListFlowById(playListId).first()?.toAppItem()
 
     override fun getPlayListFlowById(playListId: Long) =
         playListDao
-            .getPlayListFlow(playListId)
+            .getPlayListFlowById(playListId)
             .map {
-                if (it == null) return@map null
-                PlayListItemModel(
-                    id = it.playList.id.toString(),
-                    name = it.playList.name,
-                    artWorkUri = it.playList.artworkUri ?: "",
-                    trackCount = it.medias.size,
-                    isFavoritePlayList = it.playList.isFavoritePlayList == true,
-                    isAudioPlayList = it.playList.isAudioPlayList == true,
-                )
+                it?.toAppItem()
             }
 
     @OptIn(ExperimentalTime::class)
@@ -73,10 +55,7 @@ internal class PlayListRepositoryImpl(
         playListId: Long,
         items: List<MediaItemModel>,
     ): List<Long> {
-        val playListEntity = playListDao.getPlayListEntity(playListId)
-        if (playListEntity == null) {
-            return emptyList()
-        }
+        val playListEntity = playListDao.getPlayListEntity(playListId) ?: return emptyList()
 
         val videos = items.filterIsInstance<VideoItemModel>()
         val musics = items.filterIsInstance<AudioItemModel>()

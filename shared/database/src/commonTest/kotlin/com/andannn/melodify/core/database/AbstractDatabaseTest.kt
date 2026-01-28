@@ -208,7 +208,7 @@ abstract class AbstractDatabaseTest {
             )
 
             val playList = playListDao.getPlayListFlowById(1).first()!!
-            assertEquals(2, playList.medias.size)
+            assertEquals(2, playList.mediaCount)
         }
 
     @Test
@@ -240,7 +240,7 @@ abstract class AbstractDatabaseTest {
             )
 
             val playList = playListDao.getPlayListFlowById(1).first()!!
-            assertEquals(1, playList.medias.size)
+            assertEquals(1, playList.mediaCount)
 
             val insertIds =
                 playListDao.insertPlayListWithMediaCrossRef(
@@ -258,7 +258,7 @@ abstract class AbstractDatabaseTest {
             assertEquals(-1, insertIds.first())
 
             val playList2 = playListDao.getPlayListFlowById(1).first()
-            assertEquals(1, playList2!!.medias.size)
+            assertEquals(1, playList2!!.mediaCount)
         }
 
     @Test
@@ -385,7 +385,7 @@ abstract class AbstractDatabaseTest {
                 playListDao
                     .getPlayListFlowById(1)
                     .first()!!
-                    .medias.size,
+                    .mediaCount,
             )
 
             playListDao.deleteMediaFromPlayList(1, listOf("1"))
@@ -394,7 +394,7 @@ abstract class AbstractDatabaseTest {
                 playListDao
                     .getPlayListFlowById(1)
                     .first()!!
-                    .medias.size,
+                    .mediaCount,
             )
         }
 
