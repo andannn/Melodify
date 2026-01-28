@@ -15,7 +15,6 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import com.andannn.melodify.core.database.MediaSorts
 import com.andannn.melodify.core.database.MediaWheres
-import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.Where
 import com.andannn.melodify.core.database.appendOrCreateWith
 import com.andannn.melodify.core.database.entity.AlbumColumns
@@ -49,48 +48,48 @@ object MediaType {
 
 @Dao
 interface MediaLibraryDao {
-    @Query("UPDATE ${Tables.LIBRARY_MEDIA} SET ${MediaColumns.DELETED} = 1 WHERE ${MediaColumns.ID} IN (:ids)")
+    @Query("UPDATE library_media_table SET ${MediaColumns.DELETED} = 1 WHERE ${MediaColumns.ID} IN (:ids)")
     suspend fun markMediaAsDeleted(ids: List<String>)
 
-    @Query("UPDATE ${Tables.LIBRARY_VIDEO} SET ${VideoColumns.DELETED} = 1 WHERE ${VideoColumns.ID} IN (:ids)")
+    @Query("UPDATE library_video_table SET ${VideoColumns.DELETED} = 1 WHERE ${VideoColumns.ID} IN (:ids)")
     suspend fun markVideoAsDeleted(ids: List<String>)
 
     @Upsert
     suspend fun upsertMedias(audios: List<MediaEntity>): List<Long>
 
-    @Query("SELECT ${MediaColumns.TITLE} FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ID} IN (:ids)")
+    @Query("SELECT ${MediaColumns.TITLE} FROM library_media_table WHERE ${MediaColumns.ID} IN (:ids)")
     suspend fun getNameOfMedia(ids: List<Long>): List<String>
 
     @Upsert
     suspend fun upsertVideos(audios: List<VideoEntity>): List<Long>
 
-    @Query("SELECT ${VideoColumns.TITLE} FROM ${Tables.LIBRARY_VIDEO} WHERE ${VideoColumns.ID} IN (:ids)")
+    @Query("SELECT ${VideoColumns.TITLE} FROM library_video_table WHERE ${VideoColumns.ID} IN (:ids)")
     suspend fun getNameOfVideo(ids: List<Long>): List<String>
 
     @Upsert(entity = AlbumEntity::class)
     suspend fun upsertAlbumsWithoutTrackCount(albums: List<AlbumWithoutTrackCount>): List<Long>
 
-    @Query("SELECT ${AlbumColumns.TITLE} FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} IN (:ids)")
+    @Query("SELECT ${AlbumColumns.TITLE} FROM library_album_table WHERE ${AlbumColumns.ID} IN (:ids)")
     suspend fun getNameOfAlbum(ids: List<Long>): List<String>
 
     @Upsert(entity = ArtistEntity::class)
     suspend fun upsertArtistWithoutTrackCount(artists: List<ArtistWithoutTrackCount>): List<Long>
 
-    @Query("SELECT ${ArtistColumns.NAME} FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} IN (:ids)")
+    @Query("SELECT ${ArtistColumns.NAME} FROM library_artist_table WHERE ${ArtistColumns.ID} IN (:ids)")
     suspend fun getNameOfArtist(ids: List<Long>): List<String>
 
     @Insert(entity = GenreEntity::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun upsertGenres(genres: List<GenreEntity>): List<Long>
 
-    @Query("DELETE FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} IN (:ids)")
+    @Query("DELETE FROM library_album_table WHERE ${AlbumColumns.ID} IN (:ids)")
     suspend fun deleteAlbumsByIds(ids: List<Long>)
 
     @Query(
         """
-        DELETE FROM ${Tables.LIBRARY_ALBUM}
+        DELETE FROM library_album_table
         WHERE ${AlbumColumns.ID} NOT IN (
             SELECT DISTINCT ${MediaColumns.ALBUM_ID} 
-            FROM ${Tables.LIBRARY_MEDIA} 
+            FROM library_media_table 
             WHERE ${MediaColumns.ALBUM_ID} IS NOT NULL
         )
     """,
@@ -99,10 +98,10 @@ interface MediaLibraryDao {
 
     @Query(
         """
-        DELETE FROM ${Tables.LIBRARY_ARTIST}
+        DELETE FROM library_artist_table
         WHERE ${ArtistColumns.ID} NOT IN (
             SELECT DISTINCT ${MediaColumns.ARTIST_ID} 
-            FROM ${Tables.LIBRARY_MEDIA} 
+            FROM library_media_table 
             WHERE ${MediaColumns.ARTIST_ID} IS NOT NULL
         )
     """,
@@ -111,50 +110,50 @@ interface MediaLibraryDao {
 
     @Query(
         """
-        DELETE FROM ${Tables.LIBRARY_GENRE}
+        DELETE FROM library_genre_table
         WHERE ${GenreColumns.ID} NOT IN (
             SELECT DISTINCT ${MediaColumns.GENRE_ID} 
-            FROM ${Tables.LIBRARY_MEDIA} 
+            FROM library_media_table 
             WHERE ${MediaColumns.GENRE_ID} IS NOT NULL
         )
     """,
     )
     suspend fun deleteOrphanGenres()
 
-    @Query("DELETE FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} IN (:ids)")
+    @Query("DELETE FROM library_artist_table WHERE ${ArtistColumns.ID} IN (:ids)")
     suspend fun deleteArtistsByIds(ids: List<Long>)
 
-    @Query("DELETE FROM ${Tables.LIBRARY_GENRE} WHERE ${GenreColumns.ID} IN (:ids)")
+    @Query("DELETE FROM library_genre_table WHERE ${GenreColumns.ID} IN (:ids)")
     suspend fun deleteGenreByIds(ids: List<Long>)
 
-    @Query("DELETE FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ID} IN (:ids)")
+    @Query("DELETE FROM library_media_table WHERE ${MediaColumns.ID} IN (:ids)")
     suspend fun deleteMediasByIds(ids: List<Long>)
 
-    @Query("DELETE FROM ${Tables.LIBRARY_VIDEO} WHERE ${VideoColumns.ID} IN (:ids)")
+    @Query("DELETE FROM library_video_table WHERE ${VideoColumns.ID} IN (:ids)")
     suspend fun deleteVideoByIds(ids: List<Long>)
 
-    @Query("SELECT ${AlbumColumns.ID} FROM ${Tables.LIBRARY_ALBUM}")
+    @Query("SELECT ${AlbumColumns.ID} FROM library_album_table")
     suspend fun getAllAlbumID(): List<Long>
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_ALBUM}")
+    @Query("SELECT * FROM library_album_table")
     fun getAllAlbumFlow(): Flow<List<AlbumEntity>>
 
-    @Query("SELECT ${GenreColumns.ID} FROM ${Tables.LIBRARY_GENRE}")
+    @Query("SELECT ${GenreColumns.ID} FROM library_genre_table")
     suspend fun getAllGenreID(): List<Long>
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_GENRE}")
+    @Query("SELECT * FROM library_genre_table")
     fun getAllGenreFlow(): Flow<List<GenreEntity>>
 
-    @Query("SELECT ${ArtistColumns.ID} FROM ${Tables.LIBRARY_ARTIST}")
+    @Query("SELECT ${ArtistColumns.ID} FROM library_artist_table")
     suspend fun getAllArtistID(): List<Long>
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_ARTIST}")
+    @Query("SELECT * FROM library_artist_table")
     fun getAllArtistFlow(): Flow<List<ArtistEntity>>
 
-    @Query("SELECT ${MediaColumns.ID} FROM ${Tables.LIBRARY_MEDIA}")
+    @Query("SELECT ${MediaColumns.ID} FROM library_media_table")
     suspend fun getAllMediaID(): List<Long>
 
-    @Query("SELECT ${VideoColumns.ID} FROM ${Tables.LIBRARY_VIDEO}")
+    @Query("SELECT ${VideoColumns.ID} FROM library_video_table")
     suspend fun getAllVideoID(): List<Long>
 
     @RawQuery(observedEntities = [MediaEntity::class])
@@ -274,7 +273,7 @@ interface MediaLibraryDao {
         sort: MediaSorts?,
     ): RoomRawQuery {
         val sql =
-            "SELECT * FROM ${Tables.LIBRARY_MEDIA} ${wheres.toWhereString()} ${sort.toSortString()}"
+            "SELECT * FROM library_media_table ${wheres.toWhereString()} ${sort.toSortString()}"
         return RoomRawQuery(sql)
     }
 
@@ -283,7 +282,7 @@ interface MediaLibraryDao {
         sort: MediaSorts?,
     ): RoomRawQuery {
         val sql =
-            "SELECT * FROM ${Tables.LIBRARY_VIDEO} ${wheres.toWhereString()} ${sort.toSortString()}"
+            "SELECT * FROM library_video_table ${wheres.toWhereString()} ${sort.toSortString()}"
         return RoomRawQuery(sql)
     }
 
@@ -395,40 +394,40 @@ interface MediaLibraryDao {
             ),
         )
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.GENRE_ID} = :genreId")
+    @Query("SELECT * FROM library_media_table WHERE ${MediaColumns.GENRE_ID} = :genreId")
     fun getMediasByGenreIdFlow(genreId: String): Flow<List<MediaEntity>>
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} = :albumId")
+    @Query("SELECT * FROM library_album_table WHERE ${AlbumColumns.ID} = :albumId")
     fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumEntity?>
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_ALBUM} WHERE ${AlbumColumns.ID} = :albumId")
+    @Query("SELECT * FROM library_album_table WHERE ${AlbumColumns.ID} = :albumId")
     suspend fun getAlbumByAlbumId(albumId: String): AlbumEntity?
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} = :artistId")
+    @Query("SELECT * FROM library_artist_table WHERE ${ArtistColumns.ID} = :artistId")
     fun getArtistByArtistIdFlow(artistId: String): Flow<ArtistEntity?>
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_ARTIST} WHERE ${ArtistColumns.ID} = :artistId")
+    @Query("SELECT * FROM library_artist_table WHERE ${ArtistColumns.ID} = :artistId")
     suspend fun getArtistByArtistId(artistId: String): ArtistEntity?
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_GENRE} WHERE ${GenreColumns.ID} = :genreId")
+    @Query("SELECT * FROM library_genre_table WHERE ${GenreColumns.ID} = :genreId")
     fun getGenreByGenreIdFlow(genreId: String): Flow<GenreEntity?>
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_GENRE} WHERE ${GenreColumns.ID} = :genreId")
+    @Query("SELECT * FROM library_genre_table WHERE ${GenreColumns.ID} = :genreId")
     suspend fun getGenreByGenreId(genreId: String): GenreEntity?
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ID} IN (:mediaIds)")
+    @Query("SELECT * FROM library_media_table WHERE ${MediaColumns.ID} IN (:mediaIds)")
     suspend fun getMediaByMediaIds(mediaIds: List<String>): List<MediaEntity>
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.SOURCE_URI} IN (:sources)")
+    @Query("SELECT * FROM library_media_table WHERE ${MediaColumns.SOURCE_URI} IN (:sources)")
     suspend fun getMediaByMediaSourceUrl(sources: List<String>): List<MediaEntity>
 
-    @Query("SELECT * FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.ID} IN (:mediaIds)")
+    @Query("SELECT * FROM library_media_table WHERE ${MediaColumns.ID} IN (:mediaIds)")
     fun getMediaByMediaIdsFlow(mediaIds: List<String>): Flow<List<MediaEntity>>
 
-    @Query("DELETE FROM ${Tables.LIBRARY_MEDIA} WHERE ${MediaColumns.SOURCE_URI} IN (:uris)")
+    @Query("DELETE FROM library_media_table WHERE ${MediaColumns.SOURCE_URI} IN (:uris)")
     suspend fun deleteMediaByUri(uris: List<String>)
 
-    @Query("DELETE FROM ${Tables.LIBRARY_VIDEO} WHERE ${VideoColumns.SOURCE_URI} IN (:uris)")
+    @Query("DELETE FROM library_video_table WHERE ${VideoColumns.SOURCE_URI} IN (:uris)")
     suspend fun deleteVideoByUri(uris: List<String>)
 
     @Transaction
@@ -443,26 +442,26 @@ interface MediaLibraryDao {
 
     @Query(
         """
-        SELECT ${Tables.LIBRARY_ALBUM}.${AlbumColumns.ID} AS id, ${Tables.LIBRARY_ALBUM}.${AlbumColumns.TITLE} AS title, 'ALBUM' AS content FROM ${Tables.LIBRARY_ALBUM} 
+        SELECT library_album_table.${AlbumColumns.ID} AS id, library_album_table.${AlbumColumns.TITLE} AS title, 'ALBUM' AS content FROM library_album_table 
         WHERE ${AlbumColumns.ID} IN (
-            SELECT rowid FROM ${Tables.LIBRARY_FTS_ALBUM} 
-            WHERE ${Tables.LIBRARY_FTS_ALBUM} MATCH :keyword
+            SELECT rowid FROM library_fts_album_table 
+            WHERE library_fts_album_table MATCH :keyword
         )
         
         UNION
         
-        SELECT ${Tables.LIBRARY_MEDIA}.${MediaColumns.ID} AS id, ${Tables.LIBRARY_MEDIA}.${MediaColumns.TITLE} AS title, 'MEDIA' AS content FROM ${Tables.LIBRARY_MEDIA} 
+        SELECT library_media_table.${MediaColumns.ID} AS id, library_media_table.${MediaColumns.TITLE} AS title, 'MEDIA' AS content FROM library_media_table 
         WHERE ${MediaColumns.ID} IN (
-            SELECT rowid FROM ${Tables.LIBRARY_FTS_MEDIA} 
-            WHERE ${Tables.LIBRARY_FTS_MEDIA} MATCH :keyword
+            SELECT rowid FROM library_fts_media_table 
+            WHERE library_fts_media_table MATCH :keyword
         )
         
         UNION
 
-        SELECT ${Tables.LIBRARY_ARTIST}.${ArtistColumns.ID} AS id, ${Tables.LIBRARY_ARTIST}.${ArtistColumns.NAME} AS title, 'ARTIST' AS content FROM ${Tables.LIBRARY_ARTIST} 
+        SELECT library_artist_table.${ArtistColumns.ID} AS id, library_artist_table.${ArtistColumns.NAME} AS title, 'ARTIST' AS content FROM library_artist_table 
         WHERE ${ArtistColumns.ID} IN (
-            SELECT rowid FROM ${Tables.LIBRARY_FTS_ARTIST}
-            WHERE ${Tables.LIBRARY_FTS_ARTIST} MATCH :keyword
+            SELECT rowid FROM library_fts_artist_table
+            WHERE library_fts_artist_table MATCH :keyword
         )
     """,
     )
@@ -470,10 +469,10 @@ interface MediaLibraryDao {
 
     @Query(
         """
-        SELECT * FROM ${Tables.LIBRARY_ALBUM} 
+        SELECT * FROM library_album_table 
         WHERE ${AlbumColumns.ID} IN (
-            SELECT rowid FROM ${Tables.LIBRARY_FTS_ALBUM} 
-            WHERE ${Tables.LIBRARY_FTS_ALBUM} MATCH :keyword
+            SELECT rowid FROM library_fts_album_table 
+            WHERE library_fts_album_table MATCH :keyword
         )
     """,
     )
@@ -481,10 +480,10 @@ interface MediaLibraryDao {
 
     @Query(
         """
-        SELECT * FROM ${Tables.LIBRARY_MEDIA} 
+        SELECT * FROM library_media_table 
         WHERE ${MediaColumns.ID} IN (
-            SELECT rowid FROM ${Tables.LIBRARY_FTS_MEDIA} 
-            WHERE ${Tables.LIBRARY_FTS_MEDIA} MATCH :keyword
+            SELECT rowid FROM library_fts_media_table 
+            WHERE library_fts_media_table MATCH :keyword
         )
     """,
     )
@@ -492,10 +491,10 @@ interface MediaLibraryDao {
 
     @Query(
         """
-        SELECT * FROM ${Tables.LIBRARY_ARTIST} 
+        SELECT * FROM library_artist_table 
         WHERE ${ArtistColumns.ID} IN (
-            SELECT rowid FROM ${Tables.LIBRARY_FTS_ARTIST} 
-            WHERE ${Tables.LIBRARY_FTS_ARTIST} MATCH :keyword
+            SELECT rowid FROM library_fts_artist_table 
+            WHERE library_fts_artist_table MATCH :keyword
         )
     """,
     )

@@ -9,7 +9,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.Tables
 
 internal object VideoPlayProgressColumns {
     const val ID = "id"
@@ -19,7 +18,7 @@ internal object VideoPlayProgressColumns {
 }
 
 @Entity(
-    tableName = Tables.VIDEO_PLAY_PROGRESS,
+    tableName = "video_play_progress_table",
     foreignKeys = [
         ForeignKey(
             entity = VideoEntity::class,

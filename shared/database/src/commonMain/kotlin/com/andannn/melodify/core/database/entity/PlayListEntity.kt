@@ -7,7 +7,6 @@ package com.andannn.melodify.core.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.Tables
 
 internal object PlayListColumns {
     const val ID = "play_list_id"
@@ -18,7 +17,7 @@ internal object PlayListColumns {
     const val IS_FAVORITE_PLAYLIST = "is_favorite_playlist"
 }
 
-@Entity(tableName = Tables.PLAY_LIST)
+@Entity(tableName = "play_list_table")
 data class PlayListEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = PlayListColumns.ID)

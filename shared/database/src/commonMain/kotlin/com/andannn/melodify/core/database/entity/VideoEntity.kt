@@ -7,7 +7,6 @@ package com.andannn.melodify.core.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.Tables
 
 object VideoColumns {
     const val ID = "video_id"
@@ -39,7 +38,7 @@ object VideoColumns {
 }
 
 @Entity(
-    tableName = Tables.LIBRARY_VIDEO,
+    tableName = "library_video_table",
 )
 data class VideoEntity constructor(
     @PrimaryKey(autoGenerate = false)

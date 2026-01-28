@@ -8,52 +8,44 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.Tables
 
 internal object LyricColumns {
     const val ID = "lyric_id"
     const val MEDIA_ID = "media_id"
     const val NAME = "lyric_name"
-    const val TRACK_NAME = "lyric_track_name"
-    const val ARTIST_NAME = "lyric_artist_name"
-    const val ALBUM_NAME = "lyric_album_name"
-    const val DURATION = "lyric_duration_name"
-    const val INSTRUMENTAL = "lyric_instrumental"
-    const val PLAIN_LYRICS = "lyric_plain_lyrics"
-    const val SYNCED_LYRICS = "lyric_synced_lyrics"
 }
 
 @Entity(
-    tableName = Tables.LYRIC,
+    tableName = "lyric_table",
     foreignKeys = [
         ForeignKey(
             entity = MediaEntity::class,
-            parentColumns = [MediaColumns.ID],
-            childColumns = [LyricColumns.MEDIA_ID],
+            parentColumns = ["media_id"],
+            childColumns = ["media_id"],
             onDelete = ForeignKey.CASCADE,
         ),
     ],
 )
 data class LyricEntity(
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = LyricColumns.ID)
+    @ColumnInfo(name = "lyric_id")
     val id: Long,
-    @ColumnInfo(name = LyricColumns.MEDIA_ID, defaultValue = "0")
+    @ColumnInfo(name = "media_id", defaultValue = "0")
     val mediaId: Long = 0,
-    @ColumnInfo(name = LyricColumns.NAME)
+    @ColumnInfo(name = "lyric_name")
     val name: String,
-    @ColumnInfo(name = LyricColumns.TRACK_NAME)
+    @ColumnInfo(name = "lyric_track_name")
     val trackName: String,
-    @ColumnInfo(name = LyricColumns.ARTIST_NAME)
+    @ColumnInfo(name = "lyric_artist_name")
     val artistName: String,
-    @ColumnInfo(name = LyricColumns.ALBUM_NAME)
+    @ColumnInfo(name = "lyric_album_name")
     val albumName: String,
-    @ColumnInfo(name = LyricColumns.DURATION)
+    @ColumnInfo(name = "lyric_duration_name")
     val duration: Double,
-    @ColumnInfo(name = LyricColumns.INSTRUMENTAL)
+    @ColumnInfo(name = "lyric_instrumental")
     val instrumental: Boolean,
-    @ColumnInfo(name = LyricColumns.PLAIN_LYRICS)
+    @ColumnInfo(name = "lyric_plain_lyrics")
     val plainLyrics: String,
-    @ColumnInfo(name = LyricColumns.SYNCED_LYRICS)
+    @ColumnInfo(name = "lyric_synced_lyrics")
     val syncedLyrics: String,
 )

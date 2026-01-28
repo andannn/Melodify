@@ -8,7 +8,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.Tables
 
 internal object SearchHistoryColumns {
     const val ID = "search_history_id"
@@ -17,7 +16,7 @@ internal object SearchHistoryColumns {
 }
 
 @Entity(
-    tableName = Tables.SEARCH_HISTORY,
+    tableName = "search_history_table",
     indices = [
         Index(value = [SearchHistoryColumns.SEARCH_TEXT], unique = true),
     ],

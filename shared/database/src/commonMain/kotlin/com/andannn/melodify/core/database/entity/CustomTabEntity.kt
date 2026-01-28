@@ -7,7 +7,6 @@ package com.andannn.melodify.core.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.Tables
 
 internal object CustomTabColumns {
     const val ID = "custom_tab_id"
@@ -35,7 +34,7 @@ object CustomTabType {
     const val VIDEO_BUCKET = "video_bucket"
 }
 
-@Entity(tableName = Tables.CUSTOM_TAB)
+@Entity(tableName = "custom_tab_table")
 data class CustomTabEntity constructor(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = CustomTabColumns.ID)

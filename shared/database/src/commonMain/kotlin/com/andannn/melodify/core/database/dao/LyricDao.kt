@@ -8,7 +8,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.entity.LyricColumns
 import com.andannn.melodify.core.database.entity.LyricEntity
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +19,7 @@ interface LyricDao {
 
     @Query(
         """
-        SELECT * FROM ${Tables.LYRIC} WHERE :mediaStoreId = ${LyricColumns.MEDIA_ID}
+        SELECT * FROM lyric_table WHERE :mediaStoreId = ${LyricColumns.MEDIA_ID}
     """,
     )
     fun getLyricByMediaIdFlow(mediaStoreId: String): Flow<LyricEntity?>

@@ -9,10 +9,9 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.Tables
 
 @Entity(
-    tableName = Tables.VIDEO_TAB_SETTING,
+    tableName = "video_tab_setting_table",
     foreignKeys = [
         ForeignKey(
             entity = CustomTabEntity::class,

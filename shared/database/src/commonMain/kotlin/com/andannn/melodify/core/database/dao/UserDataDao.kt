@@ -9,7 +9,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.entity.CustomTabColumns
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryColumns
@@ -22,16 +21,16 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDataDao {
-    @Query("SELECT * FROM ${Tables.CUSTOM_TAB} ORDER BY ${CustomTabColumns.SORT_ORDER} ASC")
+    @Query("SELECT * FROM custom_tab_table ORDER BY ${CustomTabColumns.SORT_ORDER} ASC")
     fun getCustomTabsFlow(): Flow<List<CustomTabEntity>>
 
-    @Query("DELETE FROM ${Tables.CUSTOM_TAB}")
+    @Query("DELETE FROM custom_tab_table")
     suspend fun deleteAllCustomTabs()
 
-    @Query("SELECT MAX(${CustomTabColumns.SORT_ORDER}) FROM ${Tables.CUSTOM_TAB}")
+    @Query("SELECT MAX(${CustomTabColumns.SORT_ORDER}) FROM custom_tab_table")
     suspend fun getMaxSortOrder(): Int?
 
-    @Query("SELECT ${CustomTabColumns.SORT_ORDER} FROM ${Tables.CUSTOM_TAB} WHERE ${CustomTabColumns.ID} = :id LIMIT 1")
+    @Query("SELECT ${CustomTabColumns.SORT_ORDER} FROM custom_tab_table WHERE ${CustomTabColumns.ID} = :id LIMIT 1")
     suspend fun getSortOrder(id: Long): Int
 
     @Transaction
@@ -74,14 +73,14 @@ interface UserDataDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertCustomTab(customTab: CustomTabEntity): Long?
 
-    @Query("DELETE FROM ${Tables.CUSTOM_TAB} WHERE ${CustomTabColumns.ID} = :tabId")
+    @Query("DELETE FROM custom_tab_table WHERE ${CustomTabColumns.ID} = :tabId")
     suspend fun deleteCustomTab(tabId: Long)
 
     @Query(
         """
         SELECT EXISTS(
             SELECT 1
-            FROM ${Tables.CUSTOM_TAB}
+            FROM custom_tab_table
             WHERE ${CustomTabColumns.EXTERNAL_ID} = :externalId
             AND ${CustomTabColumns.NAME} = :name
             AND ${CustomTabColumns.TYPE} = :type
@@ -98,7 +97,7 @@ interface UserDataDao {
         """
         SELECT EXISTS(
             SELECT 1
-            FROM ${Tables.CUSTOM_TAB}
+            FROM custom_tab_table
             WHERE ${CustomTabColumns.TYPE} = :type
         )
     """,
@@ -108,12 +107,12 @@ interface UserDataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSortRuleEntity(entity: SortRuleEntity)
 
-    @Query("SELECT * FROM ${Tables.SORT_RULE} WHERE custom_tab_foreign_key = :tabId")
+    @Query("SELECT * FROM sort_rule_table WHERE custom_tab_foreign_key = :tabId")
     fun getDisplaySettingFlowOfTab(tabId: Long): Flow<SortRuleEntity?>
 
     @Query(
         """
-    INSERT INTO ${Tables.VIDEO_TAB_SETTING} (
+    INSERT INTO video_tab_setting_table (
         custom_tab_foreign_key, 
         is_show_progress
     ) VALUES (
@@ -128,21 +127,21 @@ interface UserDataDao {
         isShowProgress: Boolean,
     )
 
-    @Query("SELECT * FROM ${Tables.VIDEO_TAB_SETTING} WHERE custom_tab_foreign_key = :tabId")
+    @Query("SELECT * FROM video_tab_setting_table WHERE custom_tab_foreign_key = :tabId")
     fun getVideoSettingFlowOfTab(tabId: Long): Flow<VideoTabSettingEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSearchHistory(searchHistories: List<SearchHistoryEntity>)
 
-    @Query("SELECT * FROM ${Tables.SEARCH_HISTORY} ORDER BY ${SearchHistoryColumns.SEARCH_DATE} DESC LIMIT :limit")
+    @Query("SELECT * FROM search_history_table ORDER BY ${SearchHistoryColumns.SEARCH_DATE} DESC LIMIT :limit")
     suspend fun getSearchHistories(limit: Int): List<SearchHistoryEntity>
 
-    @Query("UPDATE ${Tables.VIDEO_PLAY_PROGRESS} SET is_finished = 1 WHERE ${VideoPlayProgressColumns.EXTERNAL_VIDEO_ID} = :videoId")
+    @Query("UPDATE video_play_progress_table SET is_finished = 1 WHERE ${VideoPlayProgressColumns.EXTERNAL_VIDEO_ID} = :videoId")
     suspend fun markVideoAsWatched(videoId: Long): Int
 
     @Query(
         """
-    INSERT INTO ${Tables.VIDEO_PLAY_PROGRESS} (
+    INSERT INTO video_play_progress_table (
         external_video_id, 
         progress
     ) VALUES (
@@ -157,6 +156,6 @@ interface UserDataDao {
         progressMs: Long,
     )
 
-    @Query("SELECT * FROM ${Tables.VIDEO_PLAY_PROGRESS} WHERE external_video_id = :videoId")
+    @Query("SELECT * FROM video_play_progress_table WHERE external_video_id = :videoId")
     fun getPlayProgressFlow(videoId: Long): Flow<VideoPlayProgressEntity?>
 }

@@ -14,12 +14,11 @@ import androidx.room.RoomRawQuery
 import androidx.room.Transaction
 import com.andannn.melodify.core.database.MediaSorts
 import com.andannn.melodify.core.database.MediaWheres
-import com.andannn.melodify.core.database.Tables
 import com.andannn.melodify.core.database.Where
 import com.andannn.melodify.core.database.appendOrCreateWith
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
-import com.andannn.melodify.core.database.entity.PlayListAndMedias
+import com.andannn.melodify.core.database.entity.model.PlayListAndMedias
 import com.andannn.melodify.core.database.entity.PlayListColumns
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
@@ -37,9 +36,9 @@ import kotlinx.coroutines.flow.Flow
 interface PlayListDao {
     @Query(
         """
-        select ${Tables.PLAY_LIST}.*, COUNT(${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}) as mediaCount
-        from ${Tables.PLAY_LIST}
-        left join ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
+        select play_list_table.*, COUNT(${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}) as mediaCount
+        from play_list_table
+        left join play_list_with_media_cross_ref_table
             on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
         where ${PlayListColumns.IS_AUDIO_PLAYLIST} = :isAudio
         group by ${PlayListColumns.ID}
@@ -50,9 +49,9 @@ interface PlayListDao {
 
     @Query(
         """
-        select ${Tables.PLAY_LIST}.*, COUNT(${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}) as mediaCount
-        from ${Tables.PLAY_LIST}
-        left join ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
+        select play_list_table.*, COUNT(${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}) as mediaCount
+        from play_list_table
+        left join play_list_with_media_cross_ref_table
             on ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
         group by ${PlayListColumns.ID}
         order by ${PlayListColumns.CREATED_DATE} desc
@@ -69,7 +68,7 @@ interface PlayListDao {
     @Query(
         """
         select ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID}
-        from ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
+        from play_list_with_media_cross_ref_table
         where ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID} = :playListId and
             ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} in (:mediaIdList)
     """,
@@ -81,7 +80,7 @@ interface PlayListDao {
 
     @Query(
         """
-            delete from ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
+            delete from play_list_with_media_cross_ref_table
             where ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID} = :playListId and
                 ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} in (:mediaIdList)
     """,
@@ -93,7 +92,7 @@ interface PlayListDao {
 
     @Query(
         """
-        select * from ${Tables.PLAY_LIST}
+        select * from play_list_table
         where ${PlayListColumns.ID} = :playListId
     """,
     )
@@ -102,7 +101,7 @@ interface PlayListDao {
 
     @Query(
         """
-        select * from ${Tables.PLAY_LIST}
+        select * from play_list_table
         where ${PlayListColumns.ID} = :playListId
     """,
     )
@@ -111,7 +110,7 @@ interface PlayListDao {
 
     @Query(
         """
-        select * from ${Tables.PLAY_LIST}
+        select * from play_list_table
         where ${PlayListColumns.ID} = :playListId
     """,
     )
@@ -119,7 +118,7 @@ interface PlayListDao {
 
     @Query(
         """
-        select * from ${Tables.PLAY_LIST}
+        select * from play_list_table
         where ${PlayListColumns.ID} = :playListId
     """,
     )
@@ -129,7 +128,7 @@ interface PlayListDao {
     @Query(
         """
         select exists(
-            select 1 from ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF}
+            select 1 from play_list_with_media_cross_ref_table
             where ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID} = :playList and
                 ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = :mediaStoreId
         )
@@ -145,7 +144,7 @@ interface PlayListDao {
 
     @Query(
         """
-        SELECT * FROM ${Tables.PLAY_LIST}
+        SELECT * FROM play_list_table
         WHERE ${PlayListColumns.IS_FAVORITE_PLAYLIST} = 1 AND ${PlayListColumns.IS_AUDIO_PLAYLIST} = 1
     """,
     )
@@ -153,7 +152,7 @@ interface PlayListDao {
 
     @Query(
         """
-        SELECT * FROM ${Tables.PLAY_LIST}
+        SELECT * FROM play_list_table
         WHERE ${PlayListColumns.IS_FAVORITE_PLAYLIST} = 1 AND ${PlayListColumns.IS_AUDIO_PLAYLIST} = 0
     """,
     )
@@ -161,7 +160,7 @@ interface PlayListDao {
 
     @Query(
         """
-        delete from ${Tables.PLAY_LIST}
+        delete from play_list_table
         where ${PlayListColumns.ID} = :playListId
     """,
     )
@@ -240,9 +239,9 @@ interface PlayListDao {
         sort: MediaSorts?,
     ): RoomRawQuery {
         val sql = """
-            SELECT * FROM ${Tables.PLAY_LIST}
-            JOIN ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF} ON ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
-            LEFT JOIN ${Tables.LIBRARY_MEDIA} ON ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${MediaColumns.ID}
+            SELECT * FROM play_list_table
+            JOIN play_list_with_media_cross_ref_table ON ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
+            LEFT JOIN library_media_table ON ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${MediaColumns.ID}
             ${wheres.toWhereString()}
             ${sort.toSortString()}
         """
@@ -254,9 +253,9 @@ interface PlayListDao {
         sort: MediaSorts?,
     ): RoomRawQuery {
         val sql = """
-            SELECT * FROM ${Tables.PLAY_LIST}
-            JOIN ${Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF} ON ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
-            LEFT JOIN ${Tables.LIBRARY_VIDEO} ON ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${VideoColumns.ID}
+            SELECT * FROM play_list_table
+            JOIN play_list_with_media_cross_ref_table ON ${PlayListColumns.ID} = ${PlayListWithMediaCrossRefColumns.PLAY_LIST_ID}
+            LEFT JOIN library_video_table ON ${PlayListWithMediaCrossRefColumns.MEDIA_STORE_ID} = ${VideoColumns.ID}
             ${wheres.toWhereString()}
             ${sort.toSortString()}
         """

@@ -10,10 +10,9 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
-import com.andannn.melodify.core.database.Tables
 
 @Entity(
-    tableName = Tables.SORT_RULE,
+    tableName = "sort_rule_table",
     foreignKeys = [
         ForeignKey(
             entity = CustomTabEntity::class,

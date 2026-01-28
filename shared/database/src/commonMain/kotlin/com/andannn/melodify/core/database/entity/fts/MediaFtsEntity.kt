@@ -8,14 +8,13 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Fts4
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.Tables.LIBRARY_FTS_MEDIA
 import com.andannn.melodify.core.database.entity.MediaColumns
 import com.andannn.melodify.core.database.entity.MediaEntity
 
 @Fts4(
     contentEntity = MediaEntity::class,
 )
-@Entity(tableName = LIBRARY_FTS_MEDIA)
+@Entity(tableName = "library_fts_media_table")
 data class MediaFtsEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "rowid")

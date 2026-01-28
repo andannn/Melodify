@@ -640,18 +640,18 @@ abstract class AbstractDatabaseTest {
         runTest {
             libraryDao.insertDummyData()
             database.verifyFtsTableSync(
-                tableName = Tables.LIBRARY_ALBUM,
-                ftsTableName = Tables.LIBRARY_FTS_ALBUM,
+                tableName = "library_album_table",
+                ftsTableName = "library_fts_album_table",
                 matchContentName = AlbumColumns.TITLE,
             )
             database.verifyFtsTableSync(
-                tableName = Tables.LIBRARY_ARTIST,
-                ftsTableName = Tables.LIBRARY_FTS_ARTIST,
+                tableName = "library_artist_table",
+                ftsTableName = "library_fts_artist_table",
                 matchContentName = ArtistColumns.NAME,
             )
             database.verifyFtsTableSync(
-                tableName = Tables.LIBRARY_MEDIA,
-                ftsTableName = Tables.LIBRARY_FTS_MEDIA,
+                tableName = "library_media_table",
+                ftsTableName = "library_fts_media_table",
                 matchContentName = MediaColumns.TITLE,
             )
         }

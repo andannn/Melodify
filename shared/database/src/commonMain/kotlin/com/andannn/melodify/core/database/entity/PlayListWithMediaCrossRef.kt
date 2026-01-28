@@ -8,7 +8,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.andannn.melodify.core.database.Tables
 
 internal object PlayListWithMediaCrossRefColumns {
     const val ID = "play_list_with_media_cross_ref_id"
@@ -20,7 +19,7 @@ internal object PlayListWithMediaCrossRefColumns {
 }
 
 @Entity(
-    tableName = Tables.PLAY_LIST_WITH_MEDIA_CROSS_REF,
+    tableName = "play_list_with_media_cross_ref_table",
     indices = [
         Index(
             value = [
