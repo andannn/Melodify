@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
-import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.browsable
 import com.andannn.melodify.shared.compose.common.Presenter
@@ -50,8 +49,8 @@ fun Search(
         onConfirmSearch = {
             state.eventSink.invoke(SearchUiEvent.OnConfirmSearch(it))
         },
-        onPlayAudio = {
-            state.eventSink.invoke(SearchUiEvent.OnPlayAudio(it))
+        onPlay = {
+            state.eventSink.invoke(SearchUiEvent.OnPlay(it))
         },
         onBackKeyPressed = onBackKeyPressed,
         onNavigateToLibraryContentList = onNavigateToLibraryDetail,
@@ -78,7 +77,7 @@ private fun SearchViewContent(
     onConfirmSearch: (String) -> Unit = {},
     onBackKeyPressed: () -> Unit = {},
     onNavigateToLibraryContentList: (LibraryDataSource) -> Unit = {},
-    onPlayAudio: (AudioItemModel) -> Unit = {},
+    onPlay: (MediaItemModel) -> Unit = {},
     onExpandChange: (Boolean) -> Unit = {},
 ) {
     fun onResultItemClick(item: MediaItemModel) {
@@ -86,7 +85,7 @@ private fun SearchViewContent(
             onNavigateToLibraryContentList(item.asLibraryDataSource())
         } else {
             // open player and play this audio item.
-            onPlayAudio(item as AudioItemModel)
+            onPlay(item)
         }
     }
 
