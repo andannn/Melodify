@@ -78,9 +78,9 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
         is LibraryDataSource.PlayListDetail -> {
             repository.getItemsOfPlayListFlow(
                 id.toLong(),
-                DisplaySetting.Preset.Audio.TitleASC
+                DisplaySetting.Preset.Playlist.CreateDateDESC
                     .sortOptions()
-                    .filterIsInstance<SortOption.AudioOption>(),
+                    .filterIsInstance<SortOption.PlayListOption>(),
             )
         }
     }

@@ -135,7 +135,7 @@ suspend fun deleteItemInPlayList(
     playListId: String,
     source: AudioItemModel,
 ) {
-    playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(source.id))
+    playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(source))
 }
 
 context(repo: Repository)

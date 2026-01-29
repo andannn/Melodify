@@ -45,9 +45,13 @@ internal class PlayListPagingProvider(
         )
 }
 
+object PlayListEntrySort {
+    fun buildCreateDateSort(ascending: Boolean) = Sort("e.added_date", ascending.toOrder())
+}
+
 private fun playListIdWhere(playListId: String) =
     Where(
-        "play_list_id",
+        "p.play_list_id",
         "=",
         playListId,
     )
@@ -62,9 +66,9 @@ private fun buildPlayListRawQuery(
             JOIN play_list_item_entry_table AS e
                 ON p.play_list_id = e.play_list_id
             LEFT JOIN library_media_table AS a
-                ON a.media_id = e.audio_id AND a.deleted = 0
-            LEFT JOIN library_video_table AS v AND v.video_deleted = 0
-                ON v.video_id = e.video_id
+                ON a.media_id = e.audio_id 
+            LEFT JOIN library_video_table AS v
+                ON v.video_id = e.video_id 
             ${wheres.toWhereString()}
             ${sort.toSortString()}
         """

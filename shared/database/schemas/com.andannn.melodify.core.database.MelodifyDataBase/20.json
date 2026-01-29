@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 20,
-    "identityHash": "bd2f5d56edd68977d3036ebe5b278fed",
+    "identityHash": "045e027814d4d90d2d417fa108d0ccee",
     "entities": [
       {
         "tableName": "lyric_table",
@@ -147,68 +147,8 @@
         }
       },
       {
-        "tableName": "play_list_with_media_cross_ref_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`play_list_with_media_cross_ref_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `play_list_with_media_cross_ref_play_list_id` INTEGER NOT NULL, `play_list_with_media_cross_ref_media_store_id` TEXT NOT NULL, `play_list_with_media_cross_ref_added_date` INTEGER NOT NULL, `play_list_with_media_cross_ref_song_artist` TEXT NOT NULL, `play_list_with_media_cross_ref_song_title` TEXT NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "play_list_with_media_cross_ref_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "playListId",
-            "columnName": "play_list_with_media_cross_ref_play_list_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "audioId",
-            "columnName": "play_list_with_media_cross_ref_media_store_id",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "addedDate",
-            "columnName": "play_list_with_media_cross_ref_added_date",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "artist",
-            "columnName": "play_list_with_media_cross_ref_song_artist",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "title",
-            "columnName": "play_list_with_media_cross_ref_song_title",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": true,
-          "columnNames": [
-            "play_list_with_media_cross_ref_id"
-          ]
-        },
-        "indices": [
-          {
-            "name": "index_play_list_with_media_cross_ref_table_play_list_with_media_cross_ref_play_list_id_play_list_with_media_cross_ref_media_store_id",
-            "unique": true,
-            "columnNames": [
-              "play_list_with_media_cross_ref_play_list_id",
-              "play_list_with_media_cross_ref_media_store_id"
-            ],
-            "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_play_list_with_media_cross_ref_table_play_list_with_media_cross_ref_play_list_id_play_list_with_media_cross_ref_media_store_id` ON `${TABLE_NAME}` (`play_list_with_media_cross_ref_play_list_id`, `play_list_with_media_cross_ref_media_store_id`)"
-          }
-        ]
-      },
-      {
         "tableName": "play_list_item_entry_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `play_list_id` INTEGER NOT NULL, `audio_id` TEXT DEFAULT NULL, `video_id` TEXT DEFAULT NULL, `added_date` INTEGER NOT NULL, FOREIGN KEY(`play_list_id`) REFERENCES `play_list_table`(`play_list_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`audio_id`) REFERENCES `library_media_table`(`media_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`video_id`) REFERENCES `library_video_table`(`video_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `play_list_id` INTEGER NOT NULL, `audio_id` INTEGER DEFAULT NULL, `video_id` INTEGER DEFAULT NULL, `entry_type` INTEGER NOT NULL, `added_date` INTEGER NOT NULL, FOREIGN KEY(`play_list_id`) REFERENCES `play_list_table`(`play_list_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`audio_id`) REFERENCES `library_media_table`(`media_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`video_id`) REFERENCES `library_video_table`(`video_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -225,14 +165,20 @@
           {
             "fieldPath": "audioId",
             "columnName": "audio_id",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "defaultValue": "NULL"
           },
           {
             "fieldPath": "videoId",
             "columnName": "video_id",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "defaultValue": "NULL"
+          },
+          {
+            "fieldPath": "entryType",
+            "columnName": "entry_type",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "addedDate",
@@ -274,6 +220,15 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_play_list_item_entry_table_play_list_id` ON `${TABLE_NAME}` (`play_list_id`)"
+          },
+          {
+            "name": "index_play_list_item_entry_table_entry_type",
+            "unique": false,
+            "columnNames": [
+              "entry_type"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_play_list_item_entry_table_entry_type` ON `${TABLE_NAME}` (`entry_type`)"
           }
         ],
         "foreignKeys": [
@@ -1113,7 +1068,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bd2f5d56edd68977d3036ebe5b278fed')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '045e027814d4d90d2d417fa108d0ccee')"
     ]
   }
 }

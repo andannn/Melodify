@@ -345,7 +345,7 @@ private class PlayerPresenter(
             flowOf(false)
         } else {
             repository.isMediaInFavoritePlayListFlow(
-                interactingMusicItem.id,
+                interactingMusicItem,
             )
         }
 

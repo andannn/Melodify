@@ -59,7 +59,7 @@ fun CustomTab.contentFlow(
         is CustomTab.PlayListDetail -> {
             repository.getItemsOfPlayListFlow(
                 playListId.toLong(),
-                sorts.filterIsInstance<SortOption.AudioOption>(),
+                sorts.filterIsInstance<SortOption.PlayListOption>(),
                 whereGroups,
             )
         }
@@ -113,7 +113,7 @@ fun CustomTab.contentPagingDataFlow(
         is CustomTab.PlayListDetail -> {
             repository.getItemsPagingFlowOfPlayList(
                 playListId.toLong(),
-                sorts.filterIsInstance<SortOption.AudioOption>(),
+                sorts.filterIsInstance<SortOption.PlayListOption>(),
                 whereGroups,
             )
         }

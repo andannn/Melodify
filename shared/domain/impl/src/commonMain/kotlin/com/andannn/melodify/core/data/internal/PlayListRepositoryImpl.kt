@@ -4,12 +4,18 @@
  */
 package com.andannn.melodify.core.data.internal
 
+import androidx.paging.Pager
 import androidx.paging.PagingData
+import androidx.paging.map
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.entity.PlayListEntity
+import com.andannn.melodify.core.database.entity.PlayListEntryType
 import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
+import com.andannn.melodify.core.database.helper.paging.PagingProviderFactory
 import com.andannn.melodify.core.database.model.PlayListWithMediaCount
 import com.andannn.melodify.domain.PlayListRepository
+import com.andannn.melodify.domain.impl.mapToAudioItemModel
+import com.andannn.melodify.domain.impl.mapToMediaItemModel
 import com.andannn.melodify.domain.impl.toAppItem
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.GroupKey
@@ -37,19 +43,35 @@ internal class PlayListRepositoryImpl(
 
     override fun getItemsOfPlayListFlow(
         playListId: Long,
-        sort: List<SortOption.AudioOption>,
+        sort: List<SortOption.PlayListOption>,
         wheres: List<GroupKey>,
-    ): Flow<List<MediaItemModel>> {
-        TODO("Not yet implemented")
-    }
+    ): Flow<List<MediaItemModel>> =
+        PagingProviderFactory
+            .playListPagingProvider(playListId)
+            .getDataFlow(
+                null,
+                sort.toPlayListSortMethod(),
+            ).map { it.mapToMediaItemModel() }
 
     override fun getItemsPagingFlowOfPlayList(
         playListId: Long,
-        sort: List<SortOption.AudioOption>,
+        sort: List<SortOption.PlayListOption>,
         wheres: List<GroupKey>,
-    ): Flow<PagingData<MediaItemModel>> {
-        TODO("Not yet implemented")
-    }
+    ): Flow<PagingData<MediaItemModel>> =
+        Pager(
+            config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
+            pagingSourceFactory = {
+                PagingProviderFactory
+                    .playListPagingProvider(
+                        playListId = playListId,
+                    ).getPagingSource(
+                        null,
+                        sort.toPlayListSortMethod(),
+                    )
+            },
+        ).flow.map { pagingData ->
+            pagingData.map { it.toAppItem() }
+        }
 
     override suspend fun getPlayListById(playListId: Long) = playListDao.getPlayListFlowById(playListId).first()?.toAppItem()
 
@@ -71,8 +93,8 @@ internal class PlayListRepositoryImpl(
                     items.map { item ->
                         PlayListItemEntryEntity(
                             playListId = playListId,
-                            audioId = item.id.takeIf { item is AudioItemModel },
-                            videoId = item.id.takeIf { item is VideoItemModel },
+                            audioId = item.id.takeIf { item is AudioItemModel }?.toLong(),
+                            videoId = item.id.takeIf { item is VideoItemModel }?.toLong(),
                             addedDate = Clock.System.now().toEpochMilliseconds(),
                         )
                     },
@@ -88,17 +110,27 @@ internal class PlayListRepositoryImpl(
     override suspend fun getDuplicatedMediaInPlayList(
         playListId: Long,
         items: List<MediaItemModel>,
-    ): List<String> = playListDao.getDuplicateMediaInPlayList(playListId, items.map { it.id })
+    ): List<String> =
+        items
+            .filter {
+                playListDao
+                    .getIsMediaInPlayListFlow(
+                        playList = playListId,
+                        entryType = if (it is AudioItemModel) PlayListEntryType.AUDIO else PlayListEntryType.VIDEO,
+                        mediaId = it.id.toLong(),
+                    ).first()
+            }.map { it.id }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun isMediaInFavoritePlayListFlow(mediaStoreId: String) =
+    override fun isMediaInFavoritePlayListFlow(item: MediaItemModel) =
         playListDao.getFavoritePlayListFlow().flatMapLatest { favoriteOrNull ->
             if (favoriteOrNull == null) {
                 flow { emit(false) }
             } else {
                 playListDao.getIsMediaInPlayListFlow(
-                    favoriteOrNull.id.toString(),
-                    mediaStoreId,
+                    favoriteOrNull.id,
+                    if (item is AudioItemModel) PlayListEntryType.AUDIO else PlayListEntryType.VIDEO,
+                    item.id.toLong(),
                 )
             }
         }
@@ -113,11 +145,12 @@ internal class PlayListRepositoryImpl(
             val isFavorite =
                 playListDao
                     .getIsMediaInPlayListFlow(
-                        favoritePlayListOrNull.id.toString(),
-                        item.id,
+                        favoritePlayListOrNull.id,
+                        if (item is AudioItemModel) PlayListEntryType.AUDIO else PlayListEntryType.VIDEO,
+                        item.id.toLong(),
                     ).first()
             if (isFavorite) {
-                removeMusicFromPlayList(favoritePlayListOrNull.id, listOf(item.id))
+                removeMusicFromPlayList(favoritePlayListOrNull.id, listOf(item))
             } else {
                 addItemsToPlayList(favoritePlayListOrNull.id, listOf(item))
             }
@@ -126,8 +159,13 @@ internal class PlayListRepositoryImpl(
 
     override suspend fun removeMusicFromPlayList(
         playListId: Long,
-        mediaIdList: List<String>,
-    ) = playListDao.deleteMediaFromPlayList(playListId, mediaIdList)
+        mediaList: List<MediaItemModel>,
+    ) = playListDao.deleteMediasFromPlayList(
+        playListId,
+        mediaList.map {
+            it.id.toLong() to if (it is AudioItemModel) PlayListEntryType.AUDIO else PlayListEntryType.VIDEO
+        },
+    )
 
     @OptIn(ExperimentalTime::class)
     override suspend fun createNewPlayList(name: String): Long {

@@ -14,6 +14,7 @@ import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
+import com.andannn.melodify.core.database.model.AudioVideoMergedResult
 import com.andannn.melodify.core.database.model.LibraryContentSearchResult
 import com.andannn.melodify.core.database.model.PlayListWithMediaCount
 import com.andannn.melodify.domain.model.AlbumItemModel
@@ -29,6 +30,7 @@ import com.andannn.melodify.domain.model.PlayListItemModel
 import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.VideoItemModel
+import kotlin.Long
 
 fun List<AlbumEntity>.mapToAlbumItemModel() =
     map {
@@ -36,6 +38,11 @@ fun List<AlbumEntity>.mapToAlbumItemModel() =
     }
 
 fun List<MediaEntity>.mapToAudioItemModel() =
+    map {
+        it.toAppItem()
+    }
+
+fun List<AudioVideoMergedResult>.mapToMediaItemModel() =
     map {
         it.toAppItem()
     }
@@ -130,6 +137,70 @@ fun PlayListWithMediaCount.toAppItem() =
         trackCount = mediaCount,
     )
 
+fun AudioVideoMergedResult.toAppItem() =
+    toEntity().let {
+        if (it is MediaEntity) {
+            it.toAppItem()
+        } else if (it is VideoEntity) {
+            it.toAppItem()
+        } else {
+            error("no supported")
+        }
+    }
+
+private fun AudioVideoMergedResult.toEntity() =
+    if (audio_id != null) {
+        MediaEntity(
+            id = audio_id!!,
+            path = audio_path,
+            sourceUri = audio_sourceUri,
+            title = audio_title,
+            duration = audio_duration,
+            modifiedDate = audio_modifiedDate,
+            size = audio_size,
+            mimeType = audio_mimeType,
+            album = audio_album,
+            albumId = audio_albumId,
+            artist = audio_artist,
+            artistId = audio_artistId,
+            cdTrackNumber = audio_cdTrackNumber,
+            discNumber = audio_discNumber,
+            numTracks = audio_numTracks,
+            bitrate = audio_bitrate,
+            genre = audio_genre,
+            genreId = audio_genreId,
+            year = audio_year,
+            track = audio_track,
+            composer = audio_composer,
+            cover = audio_cover,
+            deleted = audio_deleted,
+        )
+    } else {
+        VideoEntity(
+            id = video_id!!,
+            path = video_path,
+            sourceUri = video_sourceUri,
+            title = video_title,
+            duration = video_duration,
+            modifiedDate = video_modifiedDate,
+            size = video_size,
+            mimeType = video_mimeType,
+            width = video_width,
+            height = video_height,
+            orientation = video_orientation,
+            resolution = video_resolution,
+            relativePath = video_relativePath,
+            bucketId = video_bucketId,
+            bucketDisplayName = video_bucketDisplayName,
+            volumeName = video_volumeName,
+            album = video_album,
+            artist = video_artist,
+            dateAdded = video_dateAdded,
+            dateModified = video_dateModified,
+            deleted = video_deleted,
+        )
+    }
+
 fun List<CustomTabEntity>.mapToCustomTabModel() =
     map {
         it.toAppItem()
@@ -206,16 +277,47 @@ fun SortOptionData?.toModel() =
         SortOption.NONE
     } else {
         when (type) {
-            SortOptionData.SORT_TYPE_AUDIO_ALBUM -> SortOption.AudioOption.Album(isAscending)
-            SortOptionData.SORT_TYPE_AUDIO_ARTIST -> SortOption.AudioOption.Artist(isAscending)
-            SortOptionData.SORT_TYPE_AUDIO_GENRE -> SortOption.AudioOption.Genre(isAscending)
-            SortOptionData.SORT_TYPE_AUDIO_TITLE -> SortOption.AudioOption.Title(isAscending)
-            SortOptionData.SORT_TYPE_AUDIO_YEAR -> SortOption.AudioOption.ReleaseYear(isAscending)
-            SortOptionData.SORT_TYPE_AUDIO_TRACK_NUM -> SortOption.AudioOption.TrackNum(isAscending)
-            SortOptionData.SORT_TYPE_VIDEO_BUCKET_NAME -> SortOption.VideoOption.Bucket(isAscending)
-            SortOptionData.SORT_TYPE_VIDEO_TITLE_NAME -> SortOption.VideoOption.Title(isAscending)
-            SortOptionData.SORT_TYPE_PLAYLIST_CREATE_DATE -> SortOption.PlayListOption.CreateData(isAscending)
-            else -> SortOption.NONE
+            SortOptionData.SORT_TYPE_AUDIO_ALBUM -> {
+                SortOption.AudioOption.Album(isAscending)
+            }
+
+            SortOptionData.SORT_TYPE_AUDIO_ARTIST -> {
+                SortOption.AudioOption.Artist(isAscending)
+            }
+
+            SortOptionData.SORT_TYPE_AUDIO_GENRE -> {
+                SortOption.AudioOption.Genre(isAscending)
+            }
+
+            SortOptionData.SORT_TYPE_AUDIO_TITLE -> {
+                SortOption.AudioOption.Title(isAscending)
+            }
+
+            SortOptionData.SORT_TYPE_AUDIO_YEAR -> {
+                SortOption.AudioOption.ReleaseYear(isAscending)
+            }
+
+            SortOptionData.SORT_TYPE_AUDIO_TRACK_NUM -> {
+                SortOption.AudioOption.TrackNum(isAscending)
+            }
+
+            SortOptionData.SORT_TYPE_VIDEO_BUCKET_NAME -> {
+                SortOption.VideoOption.Bucket(isAscending)
+            }
+
+            SortOptionData.SORT_TYPE_VIDEO_TITLE_NAME -> {
+                SortOption.VideoOption.Title(isAscending)
+            }
+
+            SortOptionData.SORT_TYPE_PLAYLIST_CREATE_DATE -> {
+                SortOption.PlayListOption.CreateData(
+                    isAscending,
+                )
+            }
+
+            else -> {
+                SortOption.NONE
+            }
         }
     }
 

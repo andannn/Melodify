@@ -1,10 +1,14 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.core.database.model
 
 import androidx.room.ColumnInfo
 
 class AudioVideoMergedResult(
     @ColumnInfo(name = "video_id")
-    val video_id: Long = 0,
+    val video_id: Long? = null,
     @ColumnInfo(name = "video_file_path")
     val video_path: String? = null,
     @ColumnInfo(name = "video_source_uri")
@@ -47,7 +51,7 @@ class AudioVideoMergedResult(
     @ColumnInfo(name = "video_deleted")
     val video_deleted: Int? = null,
     @ColumnInfo(name = "media_id")
-    val audio_id: Long = 0,
+    val audio_id: Long? = null,
     @ColumnInfo(name = "file_path")
     val audio_path: String? = null,
     @ColumnInfo(name = "source_uri")

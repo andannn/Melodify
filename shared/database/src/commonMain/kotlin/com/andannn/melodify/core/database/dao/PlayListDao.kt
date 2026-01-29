@@ -8,7 +8,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.andannn.melodify.core.database.entity.PlayListEntity
+import com.andannn.melodify.core.database.entity.PlayListEntryType
 import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
 import com.andannn.melodify.core.database.model.PlayListWithMediaCount
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +24,7 @@ interface PlayListDao {
         LEFT JOIN play_list_item_entry_table AS e
             ON p.play_list_id = e.play_list_id
         GROUP BY p.play_list_id
-        ORDER BY e.added_date DESC
+        ORDER BY p.play_list_created_date DESC
     """,
     )
     fun getAllPlayListFlow(): Flow<List<PlayListWithMediaCount>>
@@ -45,29 +47,42 @@ interface PlayListDao {
     @Insert(entity = PlayListItemEntryEntity::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPlayListWithMediaCrossRef(crossRefs: List<PlayListItemEntryEntity>): List<Long>
 
-    @Query(
-        """
-        SELECT play_list_with_media_cross_ref_media_store_id
-        FROM play_list_with_media_cross_ref_table
-        WHERE play_list_with_media_cross_ref_play_list_id = :playListId AND
-            play_list_with_media_cross_ref_media_store_id IN (:mediaIdList)
-    """,
-    )
-    suspend fun getDuplicateMediaInPlayList(
+    /**
+     * Delete media from a play list.
+     *
+     * @param mediaList pair of media id and entry type.
+     */
+    @Transaction
+    suspend fun deleteMediasFromPlayList(
         playListId: Long,
-        mediaIdList: List<String>,
-    ): List<String>
+        mediaList: List<Pair<Long, Long>>,
+    ) {
+        mediaList.forEach { (mediaId, entryType) ->
+            deleteMediaFromPlayList(playListId, mediaId, entryType)
+        }
+    }
 
+    /**
+     * Delete media from a play list.
+     *
+     * @param playListId The play list id.
+     * @param mediaId The media id.
+     * @param entryType [com.andannn.melodify.core.database.entity.PlayListEntryType] The entry type.
+     */
     @Query(
         """
-            DELETE FROM play_list_with_media_cross_ref_table
-            WHERE play_list_with_media_cross_ref_play_list_id = :playListId AND
-                play_list_with_media_cross_ref_media_store_id IN (:mediaIdList)
+            DELETE FROM play_list_item_entry_table
+            WHERE play_list_id = :playListId AND (
+                (:entryType = 0 AND audio_id = :mediaId) 
+                OR 
+                (:entryType = 1 AND video_id = :mediaId)
+            )
     """,
     )
     suspend fun deleteMediaFromPlayList(
         playListId: Long,
-        mediaIdList: List<String>,
+        mediaId: Long,
+        entryType: Long,
     )
 
     @Query(
@@ -78,18 +93,29 @@ interface PlayListDao {
     )
     suspend fun getPlayListEntity(playListId: Long): PlayListEntity?
 
+    /**
+     * Check if a media is in a play list.
+     *
+     * @param playList The play list id.
+     * @param mediaId The media id.
+     * @param entryType [com.andannn.melodify.core.database.entity.PlayListEntryType] The entry type.
+     */
     @Query(
         """
         SELECT EXISTS(
-            SELECT 1 FROM play_list_with_media_cross_ref_table
-            WHERE play_list_with_media_cross_ref_play_list_id = :playList AND
-                play_list_with_media_cross_ref_media_store_id = :mediaStoreId
+            SELECT 1 FROM play_list_item_entry_table AS p
+            WHERE p.play_list_id = :playList AND (
+                (:entryType = 0 AND p.audio_id = :mediaId) 
+                OR 
+                (:entryType = 1 AND p.video_id = :mediaId)
+            )
         )
     """,
     )
     fun getIsMediaInPlayListFlow(
-        playList: String,
-        mediaStoreId: String,
+        playList: Long,
+        entryType: Long,
+        mediaId: Long,
     ): Flow<Boolean>
 
     @Query(

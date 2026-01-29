@@ -58,4 +58,4 @@ object VideoEntitySort {
     fun buildTitleSort(ascending: Boolean) = Sort("video_title", ascending.toOrder())
 }
 
-private fun Boolean.toOrder() = if (this) SortOrder.ASCENDING else SortOrder.DESCENDING
+internal fun Boolean.toOrder() = if (this) SortOrder.ASCENDING else SortOrder.DESCENDING

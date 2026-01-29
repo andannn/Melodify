@@ -5,12 +5,10 @@
 package com.andannn.melodify.domain
 
 import androidx.paging.PagingData
-import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayListItemModel
 import com.andannn.melodify.domain.model.SortOption
-import com.andannn.melodify.domain.model.VideoItemModel
 import kotlinx.coroutines.flow.Flow
 
 interface PlayListRepository {
@@ -21,13 +19,13 @@ interface PlayListRepository {
      */
     fun getItemsOfPlayListFlow(
         playListId: Long,
-        sort: List<SortOption.AudioOption>,
+        sort: List<SortOption.PlayListOption>,
         wheres: List<GroupKey> = emptyList(),
     ): Flow<List<MediaItemModel>>
 
     fun getItemsPagingFlowOfPlayList(
         playListId: Long,
-        sort: List<SortOption.AudioOption>,
+        sort: List<SortOption.PlayListOption>,
         wheres: List<GroupKey> = emptyList(),
     ): Flow<PagingData<MediaItemModel>>
 
@@ -52,7 +50,7 @@ interface PlayListRepository {
     ): List<Long>
 
     /**
-     * Return indexes of [items] which is duplicated in playList
+     * Return [MediaItemModel.id] list of [items] which already contains in playList
      */
     suspend fun getDuplicatedMediaInPlayList(
         playListId: Long,
@@ -60,9 +58,9 @@ interface PlayListRepository {
     ): List<String>
 
     /**
-     * Return flow of whether [mediaStoreId] is in favorite playList
+     * Return flow of whether [item] is in favorite playList
      */
-    fun isMediaInFavoritePlayListFlow(mediaStoreId: String): Flow<Boolean>
+    fun isMediaInFavoritePlayListFlow(item: MediaItemModel): Flow<Boolean>
 
     /**
      * Toggle favorite media
@@ -74,7 +72,7 @@ interface PlayListRepository {
      */
     suspend fun removeMusicFromPlayList(
         playListId: Long,
-        mediaIdList: List<String>,
+        mediaList: List<MediaItemModel>,
     )
 
     /**

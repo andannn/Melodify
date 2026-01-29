@@ -48,6 +48,11 @@ import androidx.room.PrimaryKey
                 "play_list_id",
             ],
         ),
+        Index(
+            value = [
+                "entry_type",
+            ],
+        ),
     ],
 )
 data class PlayListItemEntryEntity(
@@ -57,14 +62,37 @@ data class PlayListItemEntryEntity(
     @ColumnInfo(name = "play_list_id")
     val playListId: Long,
     @ColumnInfo(name = "audio_id", defaultValue = "NULL")
-    val audioId: String? = null,
+    val audioId: Long? = null,
     @ColumnInfo(name = "video_id", defaultValue = "NULL")
-    val videoId: String? = null,
+    val videoId: Long? = null,
+    /**
+     * 0 for audio, 1 for video
+     */
+    @ColumnInfo(name = "entry_type")
+    val entryType: Long,
     @ColumnInfo(name = "added_date")
     val addedDate: Long,
 ) {
+    constructor(
+        playListId: Long,
+        audioId: Long? = null,
+        videoId: Long? = null,
+        addedDate: Long,
+    ) : this(
+        playListId = playListId,
+        audioId = audioId,
+        videoId = videoId,
+        entryType = if (audioId != null) PlayListEntryType.AUDIO else PlayListEntryType.VIDEO,
+        addedDate = addedDate,
+    )
+
     init {
         require(audioId != null || videoId != null) { "Either audioId or videoId must be set" }
         require(audioId == null || videoId == null) { "Only one of audioId or videoId can be set" }
     }
+}
+
+object PlayListEntryType {
+    const val AUDIO = 0L
+    const val VIDEO = 1L
 }

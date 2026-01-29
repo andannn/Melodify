@@ -12,6 +12,7 @@ import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.dao.UserDataDao
+import com.andannn.melodify.core.database.dao.internal.PlayListRawQueryDao
 import com.andannn.melodify.core.database.dao.internal.SyncerDao
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.AlbumWithoutTrackCount
@@ -22,13 +23,16 @@ import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
-import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
+import com.andannn.melodify.core.database.entity.PlayListEntryType
+import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.helper.paging.AllMediaPagingProvider
 import com.andannn.melodify.core.database.helper.paging.MediaSorts
 import com.andannn.melodify.core.database.helper.paging.MediaWheres
+import com.andannn.melodify.core.database.helper.paging.PlayListEntrySort
+import com.andannn.melodify.core.database.helper.paging.PlayListPagingProvider
 import com.andannn.melodify.core.database.helper.paging.Sort
 import com.andannn.melodify.core.database.helper.paging.SortOrder
 import com.andannn.melodify.core.database.helper.paging.Where
@@ -50,6 +54,7 @@ abstract class AbstractDatabaseTest {
     private val libraryDao: MediaLibraryDao get() = database.getMediaLibraryDao()
     private val syncerDao: SyncerDao get() = database.getSyncerDao()
     private val userDataDao: UserDataDao get() = database.getUserDataDao()
+    private val playListRawQueryDao: PlayListRawQueryDao get() = database.getPlayListRawQueryDao()
     private val syncHelper: MediaLibrarySyncHelper
         get() =
             MediaLibrarySyncHelper(
@@ -150,7 +155,7 @@ abstract class AbstractDatabaseTest {
                     ),
             )
 
-            val playLists = playListDao.getAllPlayListFlow(true).first()
+            val playLists = playListDao.getAllPlayListFlow().first()
             assertEquals(1, playLists.size)
         }
 
@@ -163,234 +168,215 @@ abstract class AbstractDatabaseTest {
                         PlayListEntity(
                             createdDate = 1,
                             artworkUri = null,
-                            name = "name",
-                            isAudioPlayList = true,
+                            name = "name1",
                         ),
                         PlayListEntity(
                             createdDate = 3,
                             artworkUri = null,
-                            name = "name",
-                            isAudioPlayList = true,
+                            name = "name3",
                         ),
                         PlayListEntity(
                             createdDate = 2,
                             artworkUri = null,
-                            name = "name",
-                            isAudioPlayList = false,
+                            name = "name2",
                         ),
                     ),
             )
-            playListDao.getAllPlayListFlow(true).first().also {
-                assertEquals(2, it.size)
-            }
-            playListDao.getAllPlayListFlow(false).first().also {
-                assertEquals(1, it.size)
-            }
-        }
-
-    @Test
-    fun insert_play_list_with_media_cross_ref() =
-        runTest {
-            playListDao.insertPlayListEntities(
-                entities =
-                    listOf(
-                        PlayListEntity(
-                            id = 1,
-                            createdDate = 1,
-                            artworkUri = null,
-                            name = "name",
-                        ),
-                    ),
-            )
-            playListDao.insertPlayListWithMediaCrossRef(
-                crossRefs =
-                    listOf(
-                        PlayListWithMediaCrossRef(
-                            playListId = 1,
-                            mediaStoreId = "1",
-                            addedDate = 1,
-                            artist = "",
-                            title = "",
-                        ),
-                        PlayListWithMediaCrossRef(
-                            playListId = 1,
-                            mediaStoreId = "2",
-                            addedDate = 2,
-                            artist = "",
-                            title = "",
-                        ),
-                    ),
-            )
-
-            val playList = playListDao.getPlayListFlowById(1).first()!!
-            assertEquals(2, playList.mediaCount)
-        }
-
-    @Test
-    fun insert_same_play_list_with_media_cross_ref() =
-        runTest {
-            playListDao.insertPlayListEntities(
-                entities =
-                    listOf(
-                        PlayListEntity(
-                            id = 1,
-                            createdDate = 1,
-                            artworkUri = null,
-                            name = "name",
-                        ),
-                    ),
-            )
-
-            playListDao.insertPlayListWithMediaCrossRef(
-                crossRefs =
-                    listOf(
-                        PlayListWithMediaCrossRef(
-                            playListId = 1,
-                            mediaStoreId = "1",
-                            addedDate = 1,
-                            artist = "",
-                            title = "",
-                        ),
-                    ),
-            )
-
-            val playList = playListDao.getPlayListFlowById(1).first()!!
-            assertEquals(1, playList.mediaCount)
-
-            val insertIds =
-                playListDao.insertPlayListWithMediaCrossRef(
-                    crossRefs =
-                        listOf(
-                            PlayListWithMediaCrossRef(
-                                playListId = 1,
-                                mediaStoreId = "1",
-                                addedDate = 1,
-                                artist = "",
-                                title = "",
-                            ),
-                        ),
-                )
-            assertEquals(-1, insertIds.first())
-
-            val playList2 = playListDao.getPlayListFlowById(1).first()
-            assertEquals(1, playList2!!.mediaCount)
+            playListDao
+                .getAllPlayListFlow()
+                .first()
+                .also {
+                    assertEquals(3, it.size)
+                }.iterator()
+                .also {
+                    assertEquals("name3", it.next().playListEntity.name)
+                    assertEquals("name2", it.next().playListEntity.name)
+                    assertEquals("name1", it.next().playListEntity.name)
+                }
         }
 
     @Test
     fun get_play_list_with_media_count() =
         runTest {
-            playListDao.insertPlayListEntities(
-                entities =
-                    listOf(
-                        PlayListEntity(
-                            id = 1,
-                            createdDate = 1,
-                            artworkUri = null,
-                            name = "name",
-                            isAudioPlayList = true,
-                        ),
-                    ),
-            )
+            val playListId =
+                playListDao
+                    .insertPlayListEntities(
+                        entities =
+                            listOf(
+                                PlayListEntity(
+                                    createdDate = 1,
+                                    artworkUri = null,
+                                    name = "name",
+                                ),
+                            ),
+                    ).first()
+            val mediaId =
+                syncerDao.upsertMedias(listOf(MediaEntity(id = 1, title = "dummy"))).first()
+            val mediaId2 =
+                syncerDao.upsertMedias(listOf(MediaEntity(id = 2, title = "dummy2"))).first()
 
             playListDao.insertPlayListWithMediaCrossRef(
                 crossRefs =
                     listOf(
-                        PlayListWithMediaCrossRef(
-                            playListId = 1,
-                            mediaStoreId = "1",
+                        PlayListItemEntryEntity(
+                            playListId = playListId,
+                            audioId = mediaId,
+                            entryType = PlayListEntryType.AUDIO,
                             addedDate = 1,
-                            artist = "",
-                            title = "",
                         ),
-                        PlayListWithMediaCrossRef(
-                            playListId = 1,
-                            mediaStoreId = "2",
+                        PlayListItemEntryEntity(
+                            playListId = playListId,
+                            audioId = mediaId2,
+                            entryType = PlayListEntryType.AUDIO,
                             addedDate = 2,
-                            artist = "",
-                            title = "",
                         ),
                     ),
             )
 
-            val playLists = playListDao.getAllPlayListFlow(true).first()
+            val playLists = playListDao.getAllPlayListFlow().first()
             assertEquals(2, playLists.first().mediaCount)
-
-            playListDao.insertPlayListWithMediaCrossRef(
-                crossRefs =
-                    listOf(
-                        PlayListWithMediaCrossRef(
-                            playListId = 1,
-                            mediaStoreId = "3",
-                            addedDate = 3,
-                            artist = "",
-                            title = "",
-                        ),
-                    ),
-            )
         }
 
     @Test
-    fun check_is_media_in_play_list() =
+    fun check_is_audio_in_play_list() =
         runTest {
-            val res =
-                playListDao.insertPlayListEntities(
-                    entities =
+            val playListId =
+                playListDao
+                    .insertPlayListEntities(
                         listOf(
                             PlayListEntity(
-                                id = 12,
                                 name = "",
                                 createdDate = 1L,
                                 artworkUri = null,
                             ),
                         ),
-                )
-            val mediaStoreId = "1"
+                    ).first()
+            val mediaId = syncerDao.upsertMedias(listOf(MediaEntity(title = "dummy"))).first()
             assertEquals(
                 false,
-                playListDao.getIsMediaInPlayListFlow(res.first().toString(), mediaStoreId).first(),
+                playListDao
+                    .getIsMediaInPlayListFlow(
+                        playListId,
+                        entryType = PlayListEntryType.AUDIO,
+                        mediaId,
+                    ).first(),
             )
 
             playListDao.insertPlayListWithMediaCrossRef(
                 crossRefs =
                     listOf(
-                        PlayListWithMediaCrossRef(
-                            playListId = res.first(),
-                            mediaStoreId = mediaStoreId,
+                        PlayListItemEntryEntity(
+                            playListId = playListId,
+                            audioId = mediaId,
+                            entryType = PlayListEntryType.AUDIO,
                             addedDate = 1L,
-                            artist = "",
-                            title = "",
                         ),
                     ),
             )
             assertEquals(
                 true,
-                playListDao.getIsMediaInPlayListFlow(res.first().toString(), mediaStoreId).first(),
+                playListDao
+                    .getIsMediaInPlayListFlow(
+                        playListId,
+                        entryType = PlayListEntryType.AUDIO,
+                        mediaId,
+                    ).first(),
             )
+        }
+
+    @Test
+    fun check_is_video_in_play_list() =
+        runTest {
+            val playListId =
+                playListDao
+                    .insertPlayListEntities(
+                        listOf(
+                            PlayListEntity(
+                                name = "",
+                                createdDate = 1L,
+                                artworkUri = null,
+                            ),
+                        ),
+                    ).first()
+            val mediaId = syncerDao.upsertVideos(listOf(VideoEntity(title = "dummy"))).first()
+            assertEquals(
+                false,
+                playListDao
+                    .getIsMediaInPlayListFlow(
+                        playListId,
+                        entryType = PlayListEntryType.VIDEO,
+                        mediaId,
+                    ).first(),
+            )
+
+            playListDao.insertPlayListWithMediaCrossRef(
+                crossRefs =
+                    listOf(
+                        PlayListItemEntryEntity(
+                            playListId = playListId,
+                            videoId = mediaId,
+                            entryType = PlayListEntryType.AUDIO,
+                            addedDate = 1L,
+                        ),
+                    ),
+            )
+            assertEquals(
+                true,
+                playListDao
+                    .getIsMediaInPlayListFlow(
+                        playListId,
+                        entryType = PlayListEntryType.VIDEO,
+                        mediaId,
+                    ).first(),
+            )
+        }
+
+    @Test
+    fun `can only set one of audio_id and video_id `() =
+        runTest {
+            assertFails("Only one of audioId or videoId can be set") {
+                PlayListItemEntryEntity(
+                    playListId = 1,
+                    audioId = 1,
+                    videoId = 1,
+                    entryType = PlayListEntryType.AUDIO,
+                    addedDate = 1,
+                )
+            }
+            assertFails("Either audioId or videoId must be set") {
+                PlayListItemEntryEntity(
+                    playListId = 1,
+                    entryType = PlayListEntryType.AUDIO,
+                    addedDate = 1,
+                )
+            }
         }
 
     @Test
     fun delete_media_from_play_list() =
         runTest {
-            playListDao.insertPlayListEntities(
-                entities =
-                    listOf(
-                        PlayListEntity(
-                            id = 1,
-                            createdDate = 1,
-                            artworkUri = null,
-                            name = "name",
-                        ),
-                    ),
-            )
+            val playListId =
+                playListDao
+                    .insertPlayListEntities(
+                        entities =
+                            listOf(
+                                PlayListEntity(
+                                    id = 1,
+                                    createdDate = 1,
+                                    artworkUri = null,
+                                    name = "name",
+                                ),
+                            ),
+                    ).first()
+            val mediaId = syncerDao.upsertMedias(listOf(MediaEntity(title = "dummy"))).first()
             playListDao.insertPlayListWithMediaCrossRef(
                 crossRefs =
                     listOf(
-                        PlayListWithMediaCrossRef(
-                            playListId = 1,
-                            mediaStoreId = "1",
+                        PlayListItemEntryEntity(
+                            playListId = playListId,
+                            audioId = mediaId,
+                            entryType = PlayListEntryType.AUDIO,
                             addedDate = 1,
-                            artist = "",
-                            title = "",
                         ),
                     ),
             )
@@ -398,50 +384,74 @@ abstract class AbstractDatabaseTest {
             assertEquals(
                 1,
                 playListDao
-                    .getPlayListFlowById(1)
+                    .getPlayListFlowById(playListId)
                     .first()!!
                     .mediaCount,
             )
 
-            playListDao.deleteMediaFromPlayList(1, listOf("1"))
+            playListDao.deleteMediaFromPlayList(
+                playListId,
+                mediaId,
+                entryType = PlayListEntryType.AUDIO,
+            )
             assertEquals(
                 0,
                 playListDao
-                    .getPlayListFlowById(1)
+                    .getPlayListFlowById(playListId)
                     .first()!!
                     .mediaCount,
             )
         }
 
     @Test
-    fun get_duplicate_media_in_play_list() =
+    fun delete_video_from_play_list() =
         runTest {
-            playListDao.insertPlayListEntities(
-                entities =
-                    listOf(
-                        PlayListEntity(
-                            id = 1,
-                            createdDate = 1,
-                            artworkUri = null,
-                            name = "name",
-                        ),
-                    ),
-            )
+            val playListId =
+                playListDao
+                    .insertPlayListEntities(
+                        entities =
+                            listOf(
+                                PlayListEntity(
+                                    id = 1,
+                                    createdDate = 1,
+                                    artworkUri = null,
+                                    name = "name",
+                                ),
+                            ),
+                    ).first()
+            val mediaId = syncerDao.upsertVideos(listOf(VideoEntity(title = "dummy"))).first()
             playListDao.insertPlayListWithMediaCrossRef(
                 crossRefs =
                     listOf(
-                        PlayListWithMediaCrossRef(
-                            playListId = 1,
-                            mediaStoreId = "1",
+                        PlayListItemEntryEntity(
+                            playListId = playListId,
+                            videoId = mediaId,
+                            entryType = PlayListEntryType.VIDEO,
                             addedDate = 1,
-                            artist = "",
-                            title = "",
                         ),
                     ),
             )
 
-            val res = playListDao.getDuplicateMediaInPlayList(1, listOf("1"))
-            assertEquals(listOf("1"), res)
+            assertEquals(
+                1,
+                playListDao
+                    .getPlayListFlowById(playListId)
+                    .first()!!
+                    .mediaCount,
+            )
+
+            playListDao.deleteMediaFromPlayList(
+                playListId,
+                mediaId,
+                entryType = PlayListEntryType.VIDEO,
+            )
+            assertEquals(
+                0,
+                playListDao
+                    .getPlayListFlowById(playListId)
+                    .first()!!
+                    .mediaCount,
+            )
         }
 
     @Test
@@ -507,7 +517,7 @@ abstract class AbstractDatabaseTest {
                     ),
             )
             playListDao.deletePlayListById(2)
-            val playLists = playListDao.getAllPlayListFlow(true).first()
+            val playLists = playListDao.getAllPlayListFlow().first()
             assertEquals(2, playLists.size)
         }
 
@@ -1056,23 +1066,21 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `get favorite play list`() =
         runTest {
-            playListDao.insertPlayListEntities(
-                listOf(
-                    PlayListEntity(
-                        id = 1,
-                        createdDate = 1,
-                        artworkUri = null,
-                        name = "name",
-                        isFavoritePlayList = true,
-                        isAudioPlayList = true,
-                    ),
-                ),
-            )
-            playListDao.getFavoritePlayListFlow(isAudio = true).first().let {
-                assertEquals(1, it?.id)
-            }
-            playListDao.getFavoritePlayListFlow(isAudio = false).first().let {
-                assertEquals(null, it)
+            val playListId =
+                playListDao
+                    .insertPlayListEntities(
+                        listOf(
+                            PlayListEntity(
+                                id = 1,
+                                createdDate = 1,
+                                artworkUri = null,
+                                name = "name",
+                                isFavoritePlayList = true,
+                            ),
+                        ),
+                    ).first()
+            playListDao.getFavoritePlayListFlow().first().let {
+                assertEquals(playListId, it?.id)
             }
         }
 
@@ -1339,6 +1347,81 @@ abstract class AbstractDatabaseTest {
                 assertEquals(2, it.count { it.contentType == MediaType.ARTIST })
                 assertEquals(2, it.count { it.contentType == MediaType.MEDIA })
             }
+        }
+
+    private suspend fun insertDummyPlayListInfo(): Long {
+        syncHelper.insertDummyData()
+        val playListId =
+            playListDao
+                .insertPlayListEntities(
+                    entities =
+                        listOf(
+                            PlayListEntity(
+                                id = 1,
+                                name = "playlist 1",
+                                createdDate = 1,
+                                artworkUri = null,
+                            ),
+                        ),
+                ).first()
+        playListDao.insertPlayListWithMediaCrossRef(
+            crossRefs =
+                listOf(
+                    PlayListItemEntryEntity(
+                        playListId = playListId,
+                        videoId = 5,
+                        addedDate = 3,
+                    ),
+                    PlayListItemEntryEntity(
+                        playListId = playListId,
+                        videoId = 6,
+                        addedDate = 4,
+                    ),
+                    PlayListItemEntryEntity(
+                        playListId = playListId,
+                        audioId = 1,
+                        addedDate = 2,
+                    ),
+                    PlayListItemEntryEntity(
+                        playListId = playListId,
+                        audioId = 2,
+                        addedDate = 1,
+                    ),
+                ),
+        )
+        return playListId
+    }
+
+    @Test
+    fun `play list paging content provider test`() =
+        runTest {
+            val playListId = insertDummyPlayListInfo()
+            PlayListPagingProvider(playListId, playListRawQueryDao)
+                .getDataFlow()
+                .first()
+                .also {
+                    assertEquals(4, it.size)
+                }
+        }
+
+    @Test
+    fun `play list paging content order by create date`() =
+        runTest {
+            val playListId = insertDummyPlayListInfo()
+            PlayListPagingProvider(playListId, playListRawQueryDao)
+                .getDataFlow(
+                    sort =
+                        MediaSorts.buildMethod {
+                            add(PlayListEntrySort.buildCreateDateSort(ascending = false))
+                        },
+                ).first()
+                .iterator()
+                .also {
+                    assertEquals(6, it.next().video_id)
+                    assertEquals(5, it.next().video_id)
+                    assertEquals(1, it.next().audio_id)
+                    assertEquals(2, it.next().audio_id)
+                }
         }
 }
 
