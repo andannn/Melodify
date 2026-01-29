@@ -170,7 +170,6 @@ object MockData {
                 artWorkUri = "https://picsum.photos/200/200?random=1",
                 trackCount = 50,
                 isFavoritePlayList = true,
-                isAudioPlayList = true,
             ),
             PlayListItemModel(
                 id = "pl_002",
@@ -178,7 +177,6 @@ object MockData {
                 artWorkUri = null,
                 trackCount = 120,
                 isFavoritePlayList = false,
-                isAudioPlayList = true,
             ),
             PlayListItemModel(
                 id = "pl_003",
@@ -186,7 +184,6 @@ object MockData {
                 artWorkUri = "https://picsum.photos/200/200?random=2",
                 trackCount = 5,
                 isFavoritePlayList = true,
-                isAudioPlayList = false,
             ),
             PlayListItemModel(
                 id = "pl_004",
@@ -194,7 +191,6 @@ object MockData {
                 artWorkUri = "https://picsum.photos/200/200?random=3",
                 trackCount = 89,
                 isFavoritePlayList = false,
-                isAudioPlayList = true,
             ),
             PlayListItemModel(
                 id = "pl_005",
@@ -202,7 +198,6 @@ object MockData {
                 artWorkUri = null,
                 trackCount = 0,
                 isFavoritePlayList = false,
-                isAudioPlayList = true,
             ),
         )
 }

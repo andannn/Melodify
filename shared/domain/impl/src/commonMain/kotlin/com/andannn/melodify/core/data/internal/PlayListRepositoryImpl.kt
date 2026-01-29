@@ -5,6 +5,7 @@
 package com.andannn.melodify.core.data.internal
 
 import androidx.paging.Pager
+import androidx.paging.PagingData
 import androidx.paging.map
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.entity.PlayListEntity
@@ -31,15 +32,26 @@ import kotlin.time.ExperimentalTime
 internal class PlayListRepositoryImpl(
     private val playListDao: PlayListDao,
 ) : PlayListRepository {
-    override fun getAllPlayListFlow(isAudio: Boolean): Flow<List<PlayListItemModel>> =
-        playListDao
-            .getAllPlayListFlow(isAudio)
-            .map(::mapPlayListToAudioList)
-
     override fun getAllPlayListFlow(): Flow<List<PlayListItemModel>> =
         playListDao
             .getAllPlayListFlow()
             .map(::mapPlayListToAudioList)
+
+    override fun getItemsOfPlayListFlow(
+        playListId: Long,
+        sort: List<SortOption.AudioOption>,
+        wheres: List<GroupKey>,
+    ): Flow<List<MediaItemModel>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getItemsPagingFlowOfPlayList(
+        playListId: Long,
+        sort: List<SortOption.AudioOption>,
+        wheres: List<GroupKey>,
+    ): Flow<PagingData<MediaItemModel>> {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun getPlayListById(playListId: Long) = playListDao.getPlayListFlowById(playListId).first()?.toAppItem()
 
@@ -145,10 +157,7 @@ internal class PlayListRepositoryImpl(
     ) = playListDao.deleteMediaFromPlayList(playListId, mediaIdList)
 
     @OptIn(ExperimentalTime::class)
-    override suspend fun createNewPlayList(
-        name: String,
-        isAudio: Boolean,
-    ): Long {
+    override suspend fun createNewPlayList(name: String): Long {
         val ids =
             playListDao.insertPlayListEntities(
                 listOf(
@@ -156,7 +165,6 @@ internal class PlayListRepositoryImpl(
                         name = name,
                         createdDate = Clock.System.now().toEpochMilliseconds(),
                         artworkUri = null,
-                        isAudioPlayList = isAudio,
                     ),
                 ),
             )
@@ -165,63 +173,6 @@ internal class PlayListRepositoryImpl(
 
     override suspend fun deletePlayList(playListId: Long) {
         playListDao.deletePlayListById(playListId)
-    }
-
-    override fun getAudiosOfPlayListFlow(
-        playListId: Long,
-        sort: List<SortOption.AudioOption>,
-        wheres: List<GroupKey>,
-    ) = playListDao
-        .getMediasInPlayListFlow(
-            playListId,
-            wheres.toAudioWheresMethod(),
-            sort.toAudioSortMethod(),
-        ).map { it.map { it.mapToAppItem() } }
-
-    override fun getVideosOfPlayListFlow(
-        playListId: Long,
-        sort: List<SortOption.VideoOption>,
-        wheres: List<GroupKey>,
-    ): Flow<List<VideoItemModel>> =
-        playListDao
-            .getVideosInPlayListFlow(
-                playListId,
-                wheres.toVideoWheresMethod(),
-                sort.toVideoSortMethod(),
-            ).map { it.map { it.mapToAppItem() } }
-
-    override fun getAudioPagingFlowOfPlayList(
-        playListId: Long,
-        sort: List<SortOption.AudioOption>,
-        wheres: List<GroupKey>,
-    ) = Pager(
-        config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
-        pagingSourceFactory = {
-            playListDao.getMediaPagingSourceInPlayList(
-                playListId = playListId,
-                wheres = wheres.toAudioWheresMethod(),
-                mediaSorts = sort.toAudioSortMethod(),
-            )
-        },
-    ).flow.map { pagingData ->
-        pagingData.map { it.mapToAppItem() }
-    }
-
-    override fun getVideoPagingFlowOfPlayList(
-        playListId: Long,
-        sort: List<SortOption.VideoOption>,
-        wheres: List<GroupKey>,
-    ) = Pager(
-        config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
-        pagingSourceFactory = {
-            playListDao.getVideoPagingSourceInPlayList(
-                playListId = playListId,
-                wheres = wheres.toVideoWheresMethod(),
-                mediaSorts = sort.toVideoSortMethod(),
-            )
-        },
-    ).flow.map { pagingData ->
-        pagingData.map { it.mapToAppItem() }
     }
 
     private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>) = list.map { it.toAppItem() }

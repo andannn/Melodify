@@ -13,4 +13,5 @@ object PreferencesKeyName {
     const val LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME = "last_successful_sync_time"
     const val DEFAULT_PRESET_SORT_RULE_KEY_NAME = "default_preset_sort_rule"
     const val DEFAULT_VIDEO_PRESET_SORT_RULE_KEY_NAME = "default_video_preset_sort_rule"
+    const val DEFAULT_PLAYLIST_PRESET_SORT_RULE_KEY_NAME = "default_playlist_preset_sort_rule_key_name"
 }

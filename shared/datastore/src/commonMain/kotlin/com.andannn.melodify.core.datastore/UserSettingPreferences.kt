@@ -42,6 +42,8 @@ class UserSettingPreferences(
                         preferences[intPreferencesKey(PreferencesKeyName.DEFAULT_PRESET_SORT_RULE_KEY_NAME)],
                     defaultVideoSortRule =
                         preferences[intPreferencesKey(PreferencesKeyName.DEFAULT_VIDEO_PRESET_SORT_RULE_KEY_NAME)],
+                    defaultPlayListSortRule =
+                        preferences[intPreferencesKey(PreferencesKeyName.DEFAULT_PLAYLIST_PRESET_SORT_RULE_KEY_NAME)],
                 )
             }
 
@@ -75,6 +77,12 @@ class UserSettingPreferences(
     suspend fun setDefaultVideoPreset(defaultPreset: Int) {
         preferences.edit { preferences ->
             preferences[intPreferencesKey(PreferencesKeyName.DEFAULT_VIDEO_PRESET_SORT_RULE_KEY_NAME)] = defaultPreset
+        }
+    }
+
+    suspend fun setDefaultPlaylistPreset(defaultPreset: Int) {
+        preferences.edit { preferences ->
+            preferences[intPreferencesKey(PreferencesKeyName.DEFAULT_PLAYLIST_PRESET_SORT_RULE_KEY_NAME)] = defaultPreset
         }
     }
 }

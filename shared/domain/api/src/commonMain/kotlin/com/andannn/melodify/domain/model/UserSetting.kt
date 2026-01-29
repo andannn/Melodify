@@ -10,4 +10,5 @@ data class UserSetting(
     val lastSuccessfulSyncTime: Long?,
     val defaultAudioPresetDisplaySetting: PresetDisplaySetting?,
     val defaultVideoPresetDisplaySetting: PresetDisplaySetting?,
+    val defaultPlayListPresetDisplaySetting: PresetDisplaySetting?,
 )

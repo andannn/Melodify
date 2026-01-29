@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.domain
 
+import com.andannn.melodify.domain.model.ContentSortType
 import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.PresetDisplaySetting
@@ -98,7 +99,11 @@ interface UserPreferenceRepository {
      */
     fun getCurrentSortRule(tab: CustomTab): Flow<DisplaySetting>
 
-    fun getDefaultPresetSortRule(isAudio: Boolean): Flow<DisplaySetting>
+    fun getDefaultAudioPresetSortRule(): Flow<DisplaySetting>
+
+    fun getDefaultVideoPresetSortRule(): Flow<DisplaySetting>
+
+    fun getDefaultPlayListPresetSortRule(): Flow<DisplaySetting>
 
     /**
      * get custom sort rule of tab.

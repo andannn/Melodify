@@ -39,4 +39,5 @@ object DefaultPresetValues {
     const val TITLE_ASC_VALUE: Int = 2
     const val ARTIST_ALBUM_ASC_VALUE: Int = 3
     const val BUCKET_NAME_ASC_VALUE: Int = 4
+    const val PLAYLIST_CREATE_DATE_DESC_VALUE: Int = 5
 }

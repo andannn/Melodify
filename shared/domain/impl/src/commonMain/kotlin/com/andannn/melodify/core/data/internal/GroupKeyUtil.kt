@@ -145,6 +145,11 @@ private fun MutableList<Sort>.addSortOption(sort: SortOption) {
             }
         }
 
+        is SortOption.PlayListOption.CreateData -> {
+            apply {
+            }
+        }
+
         SortOption.NONE -> {
             apply { }
         }

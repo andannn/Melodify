@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.domain.model.ContentSortType
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
@@ -89,11 +90,10 @@ private fun DefaultSortRuleSettingDialogContent(
             }
 
             item {
-                val selectedPresetOption = selectedAudioPresetOption
                 PresetSortOptionSelector(
                     modifier = Modifier.fillMaxWidth(),
-                    selectedPresetOption = selectedPresetOption,
-                    isAudio = true,
+                    selectedPresetOption = selectedAudioPresetOption,
+                    type = ContentSortType.Audio,
                     onChangePresetSortRule = onChangeAudioSortRule,
                 )
             }
@@ -102,7 +102,7 @@ private fun DefaultSortRuleSettingDialogContent(
                 PresetSortOptionSelector(
                     modifier = Modifier.fillMaxWidth(),
                     selectedPresetOption = selectedVideoPresetOption,
-                    isAudio = false,
+                    type = ContentSortType.Audio,
                     onChangePresetSortRule = onChangeVideoSortRule,
                 )
             }

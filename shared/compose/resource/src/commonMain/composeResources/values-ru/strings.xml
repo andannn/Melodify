@@ -100,4 +100,7 @@
     <string name="change_play_list_alert_dialog_content">Вы уверены, что хотите сменить текущий плейлист?</string>
     <string name="last_watched_jump">Вы смотрели: %1$s. Нажмите для перехода.</string>
     <string name="show_play_progress">Показывать прогресс воспроизведения</string>
+    <string name="preset_playlist">Предустановки плейлистов</string>
+    <string name="sort_by_playlist_create_data">Сортировать по дате создания</string>
+    <string name="sort_sub_playlist_create_date_desc">Группировать элементы по дате создания плейлиста в порядке убывания.</string>
 </resources>

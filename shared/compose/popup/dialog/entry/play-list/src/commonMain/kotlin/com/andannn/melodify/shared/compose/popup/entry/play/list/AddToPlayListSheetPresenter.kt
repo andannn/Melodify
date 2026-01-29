@@ -20,22 +20,18 @@ import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun retainedAddToPlayListSheetState(
-    isAudio: Boolean,
-    repository: Repository = LocalRepository.current,
-): Presenter<AddToPlayListSheetState> =
-    retainPresenter(isAudio, repository) {
-        AddToPlayListSheetPresenter(isAudio, repository)
+internal fun retainedAddToPlayListSheetState(repository: Repository = LocalRepository.current): Presenter<AddToPlayListSheetState> =
+    retainPresenter(repository) {
+        AddToPlayListSheetPresenter(repository)
     }
 
 @OptIn(ExperimentalMaterial3Api::class)
 internal class AddToPlayListSheetPresenter(
-    isAudio: Boolean,
     repository: Repository,
 ) : RetainedPresenter<AddToPlayListSheetState>() {
     private val playListStateFlow =
         repository
-            .getAllPlayListFlow(isAudio)
+            .getAllPlayListFlow()
             .stateIn(
                 retainedScope,
                 initialValue = emptyList(),

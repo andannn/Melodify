@@ -100,4 +100,7 @@
     <string name="change_play_list_alert_dialog_content">현재 플레이리스트를 변경하시겠습니까?</string>
     <string name="last_watched_jump">마지막 시청: %1$s. 탭하여 이동.</string>
     <string name="show_play_progress">재생 진행률 표시</string>
+    <string name="preset_playlist">재생목록 프리셋</string>
+    <string name="sort_by_playlist_create_data">생성 날짜순으로 정렬</string>
+    <string name="sort_sub_playlist_create_date_desc">재생목록 생성 날짜 기준으로 내림차순으로 항목을 그룹화합니다.</string>
 </resources>

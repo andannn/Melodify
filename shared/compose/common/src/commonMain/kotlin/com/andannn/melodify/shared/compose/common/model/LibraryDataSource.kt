@@ -51,7 +51,6 @@ sealed interface LibraryDataSource {
     @Serializable
     data class PlayListDetail(
         val id: String,
-        val isAudioPlayList: Boolean,
     ) : LibraryDataSource
 }
 
@@ -89,7 +88,6 @@ fun MediaItemModel.asLibraryDataSource() =
         is PlayListItemModel -> {
             LibraryDataSource.PlayListDetail(
                 id,
-                isAudioPlayList = isAudioPlayList,
             )
         }
 

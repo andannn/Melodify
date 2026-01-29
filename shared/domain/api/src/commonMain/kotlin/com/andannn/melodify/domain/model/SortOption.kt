@@ -41,8 +41,38 @@ sealed interface SortOption {
         ) : VideoOption
     }
 
+    sealed interface PlayListOption : SortOption {
+        data class CreateData(
+            val ascending: Boolean,
+        ) : PlayListOption
+    }
+
     data object NONE : SortOption
 }
+
+/**
+ * Which content to sort
+ */
+enum class ContentSortType {
+    Audio,
+    Video,
+    PlayList,
+}
+
+fun CustomTab.contentSortType(): ContentSortType =
+    when (this) {
+        is CustomTab.AlbumDetail,
+        is CustomTab.AllMusic,
+        is CustomTab.ArtistDetail,
+        is CustomTab.GenreDetail,
+        -> ContentSortType.Audio
+
+        is CustomTab.AllVideo,
+        is CustomTab.BucketDetail,
+        -> ContentSortType.Video
+
+        is CustomTab.PlayListDetail -> ContentSortType.PlayList
+    }
 
 fun SortOption.isAscending() =
     when (this) {
@@ -53,6 +83,7 @@ fun SortOption.isAscending() =
         is SortOption.AudioOption.ReleaseYear -> ascending
         is SortOption.AudioOption.Title -> ascending
         is SortOption.VideoOption.Bucket -> ascending
+        is SortOption.PlayListOption.CreateData -> ascending
         is SortOption.VideoOption.Title -> ascending
         is SortOption.NONE -> false
     }

@@ -100,4 +100,7 @@
     <string name="change_play_list_alert_dialog_content">Voulez-vous vraiment changer la playlist en cours ?</string>
     <string name="last_watched_jump">Dernière lecture : %1$s. Appuyer pour y aller.</string>
     <string name="show_play_progress">Afficher la progression de lecture</string>
+    <string name="preset_playlist">Préréglages de playlists</string>
+    <string name="sort_by_playlist_create_data">Trier par date de création</string>
+    <string name="sort_sub_playlist_create_date_desc">Regrouper les éléments par date de création de la playlist par ordre décroissant.</string>
 </resources>

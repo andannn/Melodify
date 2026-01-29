@@ -130,7 +130,6 @@ fun PlayListWithMediaCount.toAppItem() =
         name = playListEntity.name,
         artWorkUri = playListEntity.artworkUri ?: "",
         isFavoritePlayList = playListEntity.isFavoritePlayList == true,
-        isAudioPlayList = playListEntity.isAudioPlayList == true,
         trackCount = mediaCount,
     )
 
@@ -213,12 +212,11 @@ fun CustomTabEntity.toAppItem() =
             CustomTab.GenreDetail(tabId = id, externalId!!, name!!)
         }
 
-        CustomTabType.AUDIO_PLAYLIST_DETAIL -> {
+        CustomTabType.PLAYLIST_DETAIL -> {
             CustomTab.PlayListDetail(
                 tabId = id,
                 externalId!!,
                 name!!,
-                isAudio = true,
             )
         }
 
@@ -227,7 +225,6 @@ fun CustomTabEntity.toAppItem() =
                 tabId = id,
                 externalId!!,
                 name!!,
-                isAudio = false,
             )
         }
 
@@ -272,6 +269,7 @@ fun SortOptionData?.toModel() =
             SortOptionData.SORT_TYPE_AUDIO_TRACK_NUM -> SortOption.AudioOption.TrackNum(isAscending)
             SortOptionData.SORT_TYPE_VIDEO_BUCKET_NAME -> SortOption.VideoOption.Bucket(isAscending)
             SortOptionData.SORT_TYPE_VIDEO_TITLE_NAME -> SortOption.VideoOption.Title(isAscending)
+            SortOptionData.SORT_TYPE_PLAYLIST_CREATE_DATE -> SortOption.PlayListOption.CreateData(isAscending)
             else -> SortOption.NONE
         }
     }
@@ -330,6 +328,13 @@ fun SortOption.toEntity() =
         is SortOption.VideoOption.Title -> {
             SortOptionData(
                 type = SortOptionData.SORT_TYPE_VIDEO_TITLE_NAME,
+                isAscending = ascending,
+            )
+        }
+
+        is SortOption.PlayListOption.CreateData -> {
+            SortOptionData(
+                type = SortOptionData.SORT_TYPE_PLAYLIST_CREATE_DATE,
                 isAscending = ascending,
             )
         }

@@ -32,7 +32,7 @@ private class DefaultSortRulePresenter(
 ) : RetainedPresenter<DefaultSortRuleState>() {
     private val audioDefaultDisplaySetting =
         repository
-            .getDefaultPresetSortRule(isAudio = true)
+            .getDefaultAudioPresetSortRule()
             .stateIn(
                 retainedScope,
                 initialValue = null,
@@ -40,7 +40,7 @@ private class DefaultSortRulePresenter(
             )
     private val videoDefaultDisplaySetting =
         repository
-            .getDefaultPresetSortRule(isAudio = false)
+            .getDefaultVideoPresetSortRule()
             .stateIn(
                 retainedScope,
                 initialValue = null,

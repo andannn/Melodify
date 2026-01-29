@@ -20,5 +20,8 @@ data class SortOptionData(
         // Video
         const val SORT_TYPE_VIDEO_BUCKET_NAME = 7
         const val SORT_TYPE_VIDEO_TITLE_NAME = 8
+
+        // PlayList
+        const val SORT_TYPE_PLAYLIST_CREATE_DATE = 9
     }
 }

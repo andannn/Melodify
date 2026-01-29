@@ -39,16 +39,6 @@ interface PlayListDao {
     @Query(
         """
         $PLAYLIST_WITH_COUNT_SELECTION
-        WHERE is_audio_playlist = :isAudio
-        GROUP BY play_list_id
-        ORDER BY play_list_created_date DESC
-    """,
-    )
-    fun getAllPlayListFlow(isAudio: Boolean): Flow<List<PlayListWithMediaCount>>
-
-    @Query(
-        """
-        $PLAYLIST_WITH_COUNT_SELECTION
         GROUP BY play_list_id
         ORDER BY play_list_created_date DESC
     """,

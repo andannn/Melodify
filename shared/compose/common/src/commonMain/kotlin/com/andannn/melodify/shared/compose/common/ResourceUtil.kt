@@ -20,12 +20,14 @@ import melodify.shared.compose.resource.generated.resources.number_seconds
 import melodify.shared.compose.resource.generated.resources.sort_by_album
 import melodify.shared.compose.resource.generated.resources.sort_by_artist
 import melodify.shared.compose.resource.generated.resources.sort_by_artist_then_album
+import melodify.shared.compose.resource.generated.resources.sort_by_playlist_create_data
 import melodify.shared.compose.resource.generated.resources.sort_by_title
 import melodify.shared.compose.resource.generated.resources.sort_by_video_bucket
 import melodify.shared.compose.resource.generated.resources.sort_sub_album_asc
 import melodify.shared.compose.resource.generated.resources.sort_sub_artist_album_asc
 import melodify.shared.compose.resource.generated.resources.sort_sub_artist_asc
 import melodify.shared.compose.resource.generated.resources.sort_sub_bucket_name_asc
+import melodify.shared.compose.resource.generated.resources.sort_sub_playlist_create_date_desc
 import melodify.shared.compose.resource.generated.resources.sort_sub_title_name_asc
 import melodify.shared.compose.resource.generated.resources.video_page_title
 import org.jetbrains.compose.resources.stringResource
@@ -92,6 +94,10 @@ fun PresetDisplaySetting.headerText(): String =
         PresetDisplaySetting.VideoBucketNameASC -> {
             stringResource(Res.string.sort_by_video_bucket)
         }
+
+        PresetDisplaySetting.PlaylistCreateDateDESC -> {
+            stringResource(Res.string.sort_by_playlist_create_data)
+        }
     }
 
 @Composable
@@ -115,6 +121,10 @@ fun PresetDisplaySetting.subTitle(): String =
 
         PresetDisplaySetting.VideoBucketNameASC -> {
             stringResource(Res.string.sort_sub_bucket_name_asc)
+        }
+
+        PresetDisplaySetting.PlaylistCreateDateDESC -> {
+            stringResource(Res.string.sort_sub_playlist_create_date_desc)
         }
     }
 

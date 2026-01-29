@@ -22,12 +22,20 @@ enum class PresetDisplaySetting(
     VideoBucketNameASC(
         displaySetting = DisplaySetting.Preset.Video.BucketNameASC,
     ),
+    PlaylistCreateDateDESC(
+        displaySetting = DisplaySetting.Preset.Playlist.CreateDateDESC,
+    ),
     ;
 
     companion object {
         val VIDEO_OPTIONS =
             listOf(
                 VideoBucketNameASC,
+            )
+
+        val PLAYLIST_OPTIONS =
+            listOf(
+                PlaylistCreateDateDESC,
             )
 
         val AUDIO_OPTIONS =

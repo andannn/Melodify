@@ -14,39 +14,22 @@ import com.andannn.melodify.domain.model.VideoItemModel
 import kotlinx.coroutines.flow.Flow
 
 interface PlayListRepository {
-    /**
-     * Return flow of all playLists
-     */
-    fun getAllPlayListFlow(isAudio: Boolean): Flow<List<PlayListItemModel>>
-
     fun getAllPlayListFlow(): Flow<List<PlayListItemModel>>
 
     /**
      * Return flow of audios of playList
      */
-    fun getAudiosOfPlayListFlow(
+    fun getItemsOfPlayListFlow(
         playListId: Long,
         sort: List<SortOption.AudioOption>,
         wheres: List<GroupKey> = emptyList(),
-    ): Flow<List<AudioItemModel>>
+    ): Flow<List<MediaItemModel>>
 
-    fun getVideosOfPlayListFlow(
-        playListId: Long,
-        sort: List<SortOption.VideoOption>,
-        wheres: List<GroupKey> = emptyList(),
-    ): Flow<List<VideoItemModel>>
-
-    fun getAudioPagingFlowOfPlayList(
+    fun getItemsPagingFlowOfPlayList(
         playListId: Long,
         sort: List<SortOption.AudioOption>,
         wheres: List<GroupKey> = emptyList(),
-    ): Flow<PagingData<AudioItemModel>>
-
-    fun getVideoPagingFlowOfPlayList(
-        playListId: Long,
-        sort: List<SortOption.VideoOption>,
-        wheres: List<GroupKey> = emptyList(),
-    ): Flow<PagingData<VideoItemModel>>
+    ): Flow<PagingData<MediaItemModel>>
 
     /**
      * Return playList by playListId
@@ -100,10 +83,7 @@ interface PlayListRepository {
     /**
      * Create new playList
      */
-    suspend fun createNewPlayList(
-        name: String,
-        isAudio: Boolean,
-    ): Long
+    suspend fun createNewPlayList(name: String): Long
 
     /**
      * Delete playList by playListId
