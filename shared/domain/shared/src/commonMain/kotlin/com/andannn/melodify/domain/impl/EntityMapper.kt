@@ -4,22 +4,21 @@
  */
 package com.andannn.melodify.domain.impl
 
+import com.andannn.melodify.core.database.CustomTabType
+import com.andannn.melodify.core.database.SortOptionData
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.CustomTabEntity
-import com.andannn.melodify.core.database.entity.CustomTabType
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaEntity
-import com.andannn.melodify.core.database.entity.SearchHistoryEntity
-import com.andannn.melodify.core.database.entity.SortOptionData
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
-import com.andannn.melodify.core.database.entity.model.CrossRefWithMediaRelation
-import com.andannn.melodify.core.database.entity.model.CrossRefWithVideoRelation
-import com.andannn.melodify.core.database.entity.model.LibraryContentSearchResult
-import com.andannn.melodify.core.database.entity.model.PlayListWithMediaCount
 import com.andannn.melodify.core.database.entity.valid
+import com.andannn.melodify.core.database.model.CrossRefWithMediaRelation
+import com.andannn.melodify.core.database.model.CrossRefWithVideoRelation
+import com.andannn.melodify.core.database.model.LibraryContentSearchResult
+import com.andannn.melodify.core.database.model.PlayListWithMediaCount
 import com.andannn.melodify.domain.model.AlbumItemModel
 import com.andannn.melodify.domain.model.ArtistItemModel
 import com.andannn.melodify.domain.model.AudioItemModel
@@ -368,10 +367,10 @@ fun LibraryContentSearchResult.toModel(): MatchedContentTitle =
 
 fun Int.toMediaType() =
     when (this) {
-        com.andannn.melodify.core.database.dao.MediaType.MEDIA -> MediaType.AUDIO
-        com.andannn.melodify.core.database.dao.MediaType.ALBUM -> MediaType.ALBUM
-        com.andannn.melodify.core.database.dao.MediaType.ARTIST -> MediaType.ARTIST
-        com.andannn.melodify.core.database.dao.MediaType.GENRE -> MediaType.GENRE
-        com.andannn.melodify.core.database.dao.MediaType.VIDEO -> MediaType.VIDEO
+        com.andannn.melodify.core.database.MediaType.MEDIA -> MediaType.AUDIO
+        com.andannn.melodify.core.database.MediaType.ALBUM -> MediaType.ALBUM
+        com.andannn.melodify.core.database.MediaType.ARTIST -> MediaType.ARTIST
+        com.andannn.melodify.core.database.MediaType.GENRE -> MediaType.GENRE
+        com.andannn.melodify.core.database.MediaType.VIDEO -> MediaType.VIDEO
         else -> error("Invalid")
     }

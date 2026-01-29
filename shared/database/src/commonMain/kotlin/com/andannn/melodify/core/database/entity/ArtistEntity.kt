@@ -21,7 +21,7 @@ data class ArtistEntity(
     val trackCount: Int = 0,
 )
 
-fun ArtistEntity.toArtistWithoutTrackCount() = ArtistWithoutTrackCount(artistId, name, artistCoverUri)
+internal fun ArtistEntity.toArtistWithoutTrackCount() = ArtistWithoutTrackCount(artistId, name, artistCoverUri)
 
 data class ArtistWithoutTrackCount(
     @ColumnInfo(name = "artist_id")

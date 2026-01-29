@@ -8,6 +8,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
+import com.andannn.melodify.core.database.helper.paging.PagingProviderFactory
 import com.andannn.melodify.domain.MediaContentRepository
 import com.andannn.melodify.domain.impl.mapToAlbumItemModel
 import com.andannn.melodify.domain.impl.mapToArtistItemModel
@@ -41,7 +42,7 @@ internal class MediaContentRepositoryImpl(
         Pager(
             config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
             pagingSourceFactory = {
-                mediaLibraryDao.getAllMediaPagingSource(
+                PagingProviderFactory.allMediaPagingProvider().getPagingSource(
                     whereGroup.toAudioWheresMethod(),
                     sort.toAudioSortMethod(),
                 )
@@ -57,7 +58,7 @@ internal class MediaContentRepositoryImpl(
         Pager(
             config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
             pagingSourceFactory = {
-                mediaLibraryDao.getAllVideoPagingSource(
+                PagingProviderFactory.allVideoPagingProvider().getPagingSource(
                     sort = sort.toVideoSortMethod(),
                     where = whereGroup.toVideoWheresMethod(),
                 )
@@ -74,11 +75,13 @@ internal class MediaContentRepositoryImpl(
         Pager(
             config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
             pagingSourceFactory = {
-                mediaLibraryDao.getVideoBucketPagingSource(
-                    bucketId = bucketId,
-                    sort = sort.toVideoSortMethod(),
-                    where = whereGroup.toVideoWheresMethod(),
-                )
+                PagingProviderFactory
+                    .bucketVideoPagingProvider(
+                        bucketId = bucketId,
+                    ).getPagingSource(
+                        sort = sort.toVideoSortMethod(),
+                        where = whereGroup.toVideoWheresMethod(),
+                    )
             },
         ).flow.map { pagingData ->
             pagingData.map { it.toAppItem() }
@@ -89,9 +92,10 @@ internal class MediaContentRepositoryImpl(
         sort: List<SortOption.VideoOption>,
         whereGroup: List<GroupKey>,
     ): Flow<List<VideoItemModel>> =
-        mediaLibraryDao
-            .getVideoBucketFlow(
+        PagingProviderFactory
+            .bucketVideoPagingProvider(
                 bucketId = bucketId,
+            ).getDataFlow(
                 sort = sort.toVideoSortMethod(),
                 where = whereGroup.toVideoWheresMethod(),
             ).map { it.mapToVideoItemModel() }
@@ -99,8 +103,9 @@ internal class MediaContentRepositoryImpl(
     override fun getAllMediaItemsFlow(
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey>,
-    ) = mediaLibraryDao
-        .getAllMediaFlow(
+    ) = PagingProviderFactory
+        .allMediaPagingProvider()
+        .getDataFlow(
             whereGroup.toAudioWheresMethod(),
             sort.toAudioSortMethod(),
         ).map { it.mapToAudioItemModel() }
@@ -109,8 +114,9 @@ internal class MediaContentRepositoryImpl(
         sort: List<SortOption.VideoOption>,
         whereGroup: List<GroupKey>,
     ): Flow<List<VideoItemModel>> =
-        mediaLibraryDao
-            .getAllVideoFlow(
+        PagingProviderFactory
+            .allVideoPagingProvider()
+            .getDataFlow(
                 where = whereGroup.toVideoWheresMethod(),
                 sort = sort.toVideoSortMethod(),
             ).map { it.mapToVideoItemModel() }
@@ -134,9 +140,9 @@ internal class MediaContentRepositoryImpl(
         albumId: String,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey>,
-    ) = mediaLibraryDao
-        .getMediasByAlbumIdFlow(
-            albumId,
+    ) = PagingProviderFactory
+        .albumMediaPagingProvider(albumId)
+        .getDataFlow(
             whereGroup.toAudioWheresMethod(),
             sort.toAudioSortMethod(),
         ).map { it.mapToAudioItemModel() }
@@ -149,11 +155,13 @@ internal class MediaContentRepositoryImpl(
         Pager(
             config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
             pagingSourceFactory = {
-                mediaLibraryDao.getMediasPagingSourceByAlbumId(
-                    albumId = albumId,
-                    whereGroup.toAudioWheresMethod(),
-                    sort.toAudioSortMethod(),
-                )
+                PagingProviderFactory
+                    .albumMediaPagingProvider(
+                        albumId = albumId,
+                    ).getPagingSource(
+                        whereGroup.toAudioWheresMethod(),
+                        sort.toAudioSortMethod(),
+                    )
             },
         ).flow.map { pagingData ->
             pagingData.map { it.toAppItem() }
@@ -163,9 +171,10 @@ internal class MediaContentRepositoryImpl(
         artistId: String,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey>,
-    ) = mediaLibraryDao
-        .getMediasByArtistIdFlow(
-            artistId,
+    ) = PagingProviderFactory
+        .artistMediaPagingProvider(
+            artistId = artistId,
+        ).getDataFlow(
             whereGroup.toAudioWheresMethod(),
             sort.toAudioSortMethod(),
         ).map { it.mapToAudioItemModel() }
@@ -178,11 +187,13 @@ internal class MediaContentRepositoryImpl(
         Pager(
             config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
             pagingSourceFactory = {
-                mediaLibraryDao.getMediasPagingSourceByArtistId(
-                    artistId = artistId,
-                    whereGroup.toAudioWheresMethod(),
-                    sort.toAudioSortMethod(),
-                )
+                PagingProviderFactory
+                    .artistMediaPagingProvider(
+                        artistId = artistId,
+                    ).getPagingSource(
+                        whereGroup.toAudioWheresMethod(),
+                        sort.toAudioSortMethod(),
+                    )
             },
         ).flow.map { pagingData ->
             pagingData.map { it.toAppItem() }
@@ -192,9 +203,10 @@ internal class MediaContentRepositoryImpl(
         genreId: String,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey>,
-    ) = mediaLibraryDao
-        .getMediasByGenreIdFlow(
-            genreId,
+    ) = PagingProviderFactory
+        .genreMediaPagingProvider(
+            genreId = genreId,
+        ).getDataFlow(
             whereGroup.toAudioWheresMethod(),
             sort.toAudioSortMethod(),
         ).map { it.mapToAudioItemModel() }
@@ -206,11 +218,13 @@ internal class MediaContentRepositoryImpl(
     ) = Pager(
         config = MediaPagingConfig.DEFAULT_PAGE_CONFIG,
         pagingSourceFactory = {
-            mediaLibraryDao.getMediasPagingSourceByGenreId(
-                genreId = genreId,
-                whereGroup.toAudioWheresMethod(),
-                sort.toAudioSortMethod(),
-            )
+            PagingProviderFactory
+                .genreMediaPagingProvider(
+                    genreId = genreId,
+                ).getPagingSource(
+                    whereGroup.toAudioWheresMethod(),
+                    sort.toAudioSortMethod(),
+                )
         },
     ).flow.map { pagingData ->
         pagingData.map { it.toAppItem() }

@@ -19,24 +19,27 @@ import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.dao.UserDataDao
+import com.andannn.melodify.core.database.dao.internal.MediaEntityRawQueryDao
+import com.andannn.melodify.core.database.dao.internal.SyncerDao
+import com.andannn.melodify.core.database.dao.internal.VideoEntityRawQueryDao
 import com.andannn.melodify.core.database.entity.AlbumEntity
+import com.andannn.melodify.core.database.entity.AlbumFtsEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.ArtistFtsEntity
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaEntity
+import com.andannn.melodify.core.database.entity.MediaFtsEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortOptionJsonConverter
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
+import com.andannn.melodify.core.database.entity.VideoFtsEntity
 import com.andannn.melodify.core.database.entity.VideoPlayProgressEntity
 import com.andannn.melodify.core.database.entity.VideoTabSettingEntity
-import com.andannn.melodify.core.database.entity.fts.AlbumFtsEntity
-import com.andannn.melodify.core.database.entity.fts.ArtistFtsEntity
-import com.andannn.melodify.core.database.entity.fts.MediaFtsEntity
-import com.andannn.melodify.core.database.entity.fts.VideoFtsEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
@@ -89,6 +92,12 @@ abstract class MelodifyDataBase : RoomDatabase() {
     abstract fun getMediaLibraryDao(): MediaLibraryDao
 
     abstract fun getUserDataDao(): UserDataDao
+
+    internal abstract fun getMediaEntityRawQueryDao(): MediaEntityRawQueryDao
+
+    internal abstract fun getVideoFlowPagingSource(): VideoEntityRawQueryDao
+
+    internal abstract fun getSyncerDao(): SyncerDao
 }
 
 // The Room compiler generates the `actual` implementations.
@@ -97,7 +106,7 @@ expect object MelodifyDataBaseConstructor : RoomDatabaseConstructor<MelodifyData
     override fun initialize(): MelodifyDataBase
 }
 
-fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() =
+internal fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() =
     apply {
         setQueryCoroutineContext(Dispatchers.IO)
         addCallback(addTriggerCallback)
@@ -187,7 +196,7 @@ class AutoMigration4To5Spec : AutoMigrationSpec {
     }
 }
 
-class AutoMigration5To6Spec : AutoMigrationSpec {
+internal class AutoMigration5To6Spec : AutoMigrationSpec {
     override fun onPostMigrate(connection: SQLiteConnection) {
         createUpdateTrackCountTrigger(connection)
     }
@@ -266,7 +275,7 @@ class AutoMigration5To6Spec : AutoMigrationSpec {
     }
 }
 
-class AutoMigration7To8Spec : AutoMigrationSpec {
+internal class AutoMigration7To8Spec : AutoMigrationSpec {
     override fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL(
             """
@@ -277,7 +286,7 @@ class AutoMigration7To8Spec : AutoMigrationSpec {
     }
 }
 
-class AutoMigration11To12Spec : AutoMigrationSpec {
+internal class AutoMigration11To12Spec : AutoMigrationSpec {
     override fun onPostMigrate(connection: SQLiteConnection) {
         // Set is_favorite_playlist column to true for favorite play list.
         connection.execSQL(
@@ -297,7 +306,7 @@ class AutoMigration11To12Spec : AutoMigrationSpec {
     }
 }
 
-class AutoMigration14To15Spec : AutoMigrationSpec {
+internal class AutoMigration14To15Spec : AutoMigrationSpec {
     override fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL(
             "DROP TRIGGER IF EXISTS delete_invalid_albums_artists_genres",
@@ -305,7 +314,7 @@ class AutoMigration14To15Spec : AutoMigrationSpec {
     }
 }
 
-class AutoMigration15To16Spec : AutoMigrationSpec {
+internal class AutoMigration15To16Spec : AutoMigrationSpec {
     override fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL(
             """
@@ -328,7 +337,7 @@ class AutoMigration15To16Spec : AutoMigrationSpec {
     }
 }
 
-class AutoMigration16To17Spec : AutoMigrationSpec {
+internal class AutoMigration16To17Spec : AutoMigrationSpec {
     override fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL(
             "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_BEFORE_UPDATE BEFORE UPDATE ON `library_artist_table` BEGIN DELETE FROM `library_fts_artist_table` WHERE `docid`=OLD.`rowid`; END",
@@ -360,7 +369,7 @@ class AutoMigration16To17Spec : AutoMigrationSpec {
     }
 }
 
-object Migration17To18Spec : Migration(17, 18) {
+internal object Migration17To18Spec : Migration(17, 18) {
     override fun migrate(connection: SQLiteConnection) {
         connection.execSQL("DROP TABLE `lyric_with_audio_cross_ref_table`")
 

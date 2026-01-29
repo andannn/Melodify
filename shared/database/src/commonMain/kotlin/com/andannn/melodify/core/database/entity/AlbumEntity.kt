@@ -23,7 +23,7 @@ data class AlbumEntity(
     val coverUri: String? = null,
 )
 
-fun AlbumEntity.toAlbumWithoutTrackCount() = AlbumWithoutTrackCount(albumId, title, coverUri)
+internal fun AlbumEntity.toAlbumWithoutTrackCount() = AlbumWithoutTrackCount(albumId, title, coverUri)
 
 data class AlbumWithoutTrackCount(
     @ColumnInfo(name = "album_id")
