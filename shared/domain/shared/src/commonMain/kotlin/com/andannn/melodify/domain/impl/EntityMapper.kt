@@ -14,9 +14,6 @@ import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
-import com.andannn.melodify.core.database.entity.valid
-import com.andannn.melodify.core.database.model.CrossRefWithMediaRelation
-import com.andannn.melodify.core.database.model.CrossRefWithVideoRelation
 import com.andannn.melodify.core.database.model.LibraryContentSearchResult
 import com.andannn.melodify.core.database.model.PlayListWithMediaCount
 import com.andannn.melodify.domain.model.AlbumItemModel
@@ -132,58 +129,6 @@ fun PlayListWithMediaCount.toAppItem() =
         isFavoritePlayList = playListEntity.isFavoritePlayList == true,
         trackCount = mediaCount,
     )
-
-fun CrossRefWithMediaRelation.mapToAppItem(): AudioItemModel {
-    val entity = this
-    val media = entity.media
-    return if (media.valid) {
-        media.toAppItem()
-    } else {
-        AudioItemModel(
-            id = AudioItemModel.INVALID_ID_PREFIX + entity.playListWithMediaCrossRef.mediaStoreId,
-            name = entity.playListWithMediaCrossRef.title,
-            artist = entity.playListWithMediaCrossRef.artist,
-            modifiedDate = 0,
-            artWorkUri = "",
-            album = "",
-            albumId = "",
-            artistId = "",
-            genreId = "",
-            genre = "",
-            cdTrackNumber = 0,
-            discNumber = 0,
-            source = "",
-            releaseYear = "",
-            path = "",
-        )
-    }
-}
-
-fun CrossRefWithVideoRelation.mapToAppItem(): VideoItemModel {
-    val entity = this
-    val media = entity.media
-    return if (media.valid) {
-        media.toAppItem()
-    } else {
-        VideoItemModel(
-            id = AudioItemModel.INVALID_ID_PREFIX + entity.playListWithMediaCrossRef.mediaStoreId,
-            name = entity.playListWithMediaCrossRef.title,
-            modifiedDate = 0,
-            artWorkUri = "",
-            bucketId = "",
-            bucketName = "",
-            path = "",
-            duration = 0,
-            size = 0,
-            mimeType = "",
-            width = 0,
-            height = 0,
-            resolution = "",
-            relativePath = "",
-            source = "",
-        )
-    }
-}
 
 fun List<CustomTabEntity>.mapToCustomTabModel() =
     map {

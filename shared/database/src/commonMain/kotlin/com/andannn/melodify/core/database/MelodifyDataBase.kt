@@ -32,6 +32,7 @@ import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.MediaFtsEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
+import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
 import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortOptionJsonConverter
@@ -48,6 +49,7 @@ import kotlinx.coroutines.IO
         LyricEntity::class,
         PlayListEntity::class,
         PlayListWithMediaCrossRef::class,
+        PlayListItemEntryEntity::class,
         AlbumEntity::class,
         ArtistEntity::class,
         GenreEntity::class,
@@ -79,8 +81,9 @@ import kotlinx.coroutines.IO
         AutoMigration(from = 15, to = 16, AutoMigration15To16Spec::class),
         AutoMigration(from = 16, to = 17, AutoMigration16To17Spec::class),
         AutoMigration(from = 18, to = 19),
+        AutoMigration(from = 19, to = 20),
     ],
-    version = 19,
+    version = 20,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)

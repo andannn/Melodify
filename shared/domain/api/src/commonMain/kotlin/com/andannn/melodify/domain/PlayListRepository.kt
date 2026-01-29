@@ -62,10 +62,7 @@ interface PlayListRepository {
     /**
      * Return flow of whether [mediaStoreId] is in favorite playList
      */
-    fun isMediaInFavoritePlayListFlow(
-        mediaStoreId: String,
-        isAudio: Boolean,
-    ): Flow<Boolean>
+    fun isMediaInFavoritePlayListFlow(mediaStoreId: String): Flow<Boolean>
 
     /**
      * Toggle favorite media

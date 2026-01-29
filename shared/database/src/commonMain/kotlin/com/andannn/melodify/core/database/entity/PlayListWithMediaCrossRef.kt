@@ -21,6 +21,7 @@ import androidx.room.PrimaryKey
         ),
     ],
 )
+@Deprecated("Use PlayListWithMediaCrossRef")
 data class PlayListWithMediaCrossRef(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "play_list_with_media_cross_ref_id")
@@ -28,7 +29,7 @@ data class PlayListWithMediaCrossRef(
     @ColumnInfo(name = "play_list_with_media_cross_ref_play_list_id")
     val playListId: Long,
     @ColumnInfo(name = "play_list_with_media_cross_ref_media_store_id")
-    val mediaStoreId: String,
+    val audioId: String,
     @ColumnInfo(name = "play_list_with_media_cross_ref_added_date")
     val addedDate: Long,
     @ColumnInfo(name = "play_list_with_media_cross_ref_song_artist")

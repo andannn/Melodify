@@ -346,7 +346,6 @@ private class PlayerPresenter(
         } else {
             repository.isMediaInFavoritePlayListFlow(
                 interactingMusicItem.id,
-                interactingMusicItem is AudioItemModel,
             )
         }
 

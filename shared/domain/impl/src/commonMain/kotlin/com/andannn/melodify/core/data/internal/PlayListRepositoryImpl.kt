@@ -4,15 +4,12 @@
  */
 package com.andannn.melodify.core.data.internal
 
-import androidx.paging.Pager
 import androidx.paging.PagingData
-import androidx.paging.map
 import com.andannn.melodify.core.database.dao.PlayListDao
 import com.andannn.melodify.core.database.entity.PlayListEntity
-import com.andannn.melodify.core.database.entity.PlayListWithMediaCrossRef
+import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
 import com.andannn.melodify.core.database.model.PlayListWithMediaCount
 import com.andannn.melodify.domain.PlayListRepository
-import com.andannn.melodify.domain.impl.mapToAppItem
 import com.andannn.melodify.domain.impl.toAppItem
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.GroupKey
@@ -20,6 +17,7 @@ import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayListItemModel
 import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.VideoItemModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -67,41 +65,18 @@ internal class PlayListRepositoryImpl(
         playListId: Long,
         items: List<MediaItemModel>,
     ): List<Long> {
-        val playListEntity = playListDao.getPlayListEntity(playListId) ?: return emptyList()
-
-        val videos = items.filterIsInstance<VideoItemModel>()
-        val musics = items.filterIsInstance<AudioItemModel>()
-
         val insertedIndexList =
-            if (playListEntity.isAudioPlayList == true) {
-                if (videos.isNotEmpty()) error("insert videos to audio playlist")
-                playListDao.insertPlayListWithMediaCrossRef(
-                    crossRefs =
-                        musics.map {
-                            PlayListWithMediaCrossRef(
-                                playListId = playListId,
-                                mediaStoreId = it.id,
-                                artist = it.artist,
-                                title = it.name,
-                                addedDate = Clock.System.now().toEpochMilliseconds(),
-                            )
-                        },
-                )
-            } else {
-                if (musics.isNotEmpty()) error("insert musics to video playlist")
-                playListDao.insertPlayListWithMediaCrossRef(
-                    crossRefs =
-                        videos.map {
-                            PlayListWithMediaCrossRef(
-                                playListId = playListId,
-                                mediaStoreId = it.id,
-                                artist = "",
-                                title = it.name,
-                                addedDate = Clock.System.now().toEpochMilliseconds(),
-                            )
-                        },
-                )
-            }
+            playListDao.insertPlayListWithMediaCrossRef(
+                crossRefs =
+                    items.map { item ->
+                        PlayListItemEntryEntity(
+                            playListId = playListId,
+                            audioId = item.id.takeIf { item is AudioItemModel },
+                            videoId = item.id.takeIf { item is VideoItemModel },
+                            addedDate = Clock.System.now().toEpochMilliseconds(),
+                        )
+                    },
+            )
 
         return insertedIndexList
             .mapIndexed { index, insertedIndex ->
@@ -115,26 +90,24 @@ internal class PlayListRepositoryImpl(
         items: List<MediaItemModel>,
     ): List<String> = playListDao.getDuplicateMediaInPlayList(playListId, items.map { it.id })
 
-    override fun isMediaInFavoritePlayListFlow(
-        mediaStoreId: String,
-        isAudio: Boolean,
-    ) = playListDao.getFavoritePlayListFlow(isAudio).flatMapLatest { favoriteOrNull ->
-        if (favoriteOrNull == null) {
-            flow { emit(false) }
-        } else {
-            playListDao.getIsMediaInPlayListFlow(
-                favoriteOrNull.id.toString(),
-                mediaStoreId,
-            )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun isMediaInFavoritePlayListFlow(mediaStoreId: String) =
+        playListDao.getFavoritePlayListFlow().flatMapLatest { favoriteOrNull ->
+            if (favoriteOrNull == null) {
+                flow { emit(false) }
+            } else {
+                playListDao.getIsMediaInPlayListFlow(
+                    favoriteOrNull.id.toString(),
+                    mediaStoreId,
+                )
+            }
         }
-    }
 
     override suspend fun toggleFavoriteMedia(item: MediaItemModel) {
-        val isAudio = item is AudioItemModel
-        val favoritePlayListOrNull = playListDao.getFavoritePlayListFlow(isAudio = isAudio).first()
+        val favoritePlayListOrNull = playListDao.getFavoritePlayListFlow().first()
 
         if (favoritePlayListOrNull == null) {
-            val newId = createFavoritePlayList(isAudio = isAudio)
+            val newId = createFavoritePlayList()
             addItemsToPlayList(newId, listOf(item))
         } else {
             val isFavorite =
@@ -178,16 +151,15 @@ internal class PlayListRepositoryImpl(
     private fun mapPlayListToAudioList(list: List<PlayListWithMediaCount>) = list.map { it.toAppItem() }
 
     @OptIn(ExperimentalTime::class)
-    private suspend fun createFavoritePlayList(isAudio: Boolean): Long =
+    private suspend fun createFavoritePlayList(): Long =
         playListDao
             .insertPlayListEntities(
                 listOf(
                     PlayListEntity(
-                        name = if (isAudio) "Favorite music" else "Favorite video",
+                        name = "Favorite",
                         createdDate = Clock.System.now().toEpochMilliseconds(),
                         artworkUri = null,
                         isFavoritePlayList = true,
-                        isAudioPlayList = isAudio,
                     ),
                 ),
             ).first()
