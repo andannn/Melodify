@@ -34,7 +34,7 @@ internal class PlayListPagingProvider(
         sort: MediaSorts?,
     ): PagingSource<Int, AudioVideoMergedResult> =
         provider.getMediasInPlayListFlowPagingSource(
-            buildVideoRawQuery(
+            buildPlayListRawQuery(
                 where.appendOrCreateWith {
                     listOf(
                         playListIdWhere(playListId.toString()),

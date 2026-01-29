@@ -47,6 +47,7 @@ private class DefaultSortRulePresenter(
                 started = WhileSubscribed(5000),
             )
 
+// TODO: add playlist default display setting
     @Composable
     override fun present(): DefaultSortRuleState {
         val audioDisplaySetting by audioDefaultDisplaySetting.collectAsStateWithLifecycle()

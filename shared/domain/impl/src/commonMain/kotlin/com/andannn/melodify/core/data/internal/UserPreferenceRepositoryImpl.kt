@@ -196,7 +196,7 @@ internal class UserPreferenceRepositoryImpl(
     override fun getDefaultVideoPresetSortRule(): Flow<DisplaySetting> =
         userSettingFlow.map {
             it.defaultVideoPresetDisplaySetting?.displaySetting
-                ?: DisplaySetting.Preset.Audio.DefaultPreset
+                ?: DisplaySetting.Preset.Video.DefaultPreset
         }
 
     override fun getDefaultPlayListPresetSortRule(): Flow<DisplaySetting> =
