@@ -6,8 +6,8 @@ package com.andannn.melodify.domain
 
 import com.andannn.melodify.domain.model.AudioTrackStyle
 import com.andannn.melodify.domain.model.ContentSortType
-import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.PresetDisplaySetting
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabKind
 import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.UserSetting
@@ -22,7 +22,7 @@ interface UserPreferenceRepository {
     /**
      * current custom tabs flow
      */
-    val currentCustomTabsFlow: Flow<List<CustomTab>>
+    val currentTabsFlow: Flow<List<Tab>>
 
     /**
      * add new custom tab
@@ -48,7 +48,7 @@ interface UserPreferenceRepository {
      *
      * @param tab tab to delete
      */
-    suspend fun deleteCustomTab(tab: CustomTab)
+    suspend fun deleteCustomTab(tab: Tab)
 
     /**
      * add library path
@@ -90,26 +90,28 @@ interface UserPreferenceRepository {
         preset: PresetDisplaySetting,
     )
 
-    suspend fun saveSortRuleForTab(
-        tab: CustomTab,
-        tabSortRule: TabSortRule,
-    )
-
     /**
      * Return flow of current sort rule.
      * If there is no custom sort rule, return saved default sort rule.
      */
-    fun getCurrentSortRule(tab: CustomTab): Flow<TabSortRule>
+    fun getCurrentSortRule(tab: Tab): Flow<TabSortRule>
 
     /**
      * Get flow of saved default sort rule for content sort type.
      */
-    fun getDefaultPresetSortRule(contentSortType: ContentSortType): Flow<TabSortRule>
+    fun getDefaultPresetSortRule(contentSortType: ContentSortType): Flow<PresetDisplaySetting>
 
-    /**
-     * get custom sort rule of tab.
-     */
-    suspend fun getTabCustomSortRule(tab: CustomTab): TabSortRule?
+    suspend fun selectTabPresetDisplaySetting(
+        tabId: Long,
+        preset: PresetDisplaySetting,
+    )
+
+    suspend fun selectTabCustomDisplaySetting(
+        tabId: Long,
+        sortRule: TabSortRule,
+        audioEntryStyle: AudioTrackStyle,
+        isShowVideoProgress: Boolean,
+    )
 
     /**
      * swap tab order
@@ -118,8 +120,8 @@ interface UserPreferenceRepository {
      * @param to to tab
      */
     suspend fun swapTabOrder(
-        from: CustomTab,
-        to: CustomTab,
+        from: Tab,
+        to: Tab,
     )
 
     /**
@@ -155,11 +157,11 @@ interface UserPreferenceRepository {
      * @param isShow true if show, false otherwise
      */
     suspend fun setIsShowVideoProgress(
-        tab: CustomTab,
+        tab: Tab,
         isShow: Boolean,
     )
 
-    fun getIsShowVideoProgressFlow(tab: CustomTab): Flow<Boolean>
+    fun getIsShowVideoProgressFlow(tab: Tab): Flow<Boolean>
 
-    fun getAudioTrackStyleFlow(tab: CustomTab): Flow<AudioTrackStyle>
+    fun getAudioTrackStyleFlow(tab: Tab): Flow<AudioTrackStyle>
 }

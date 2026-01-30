@@ -16,9 +16,9 @@ import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.AudioTrackStyle
-import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.sortOptions
 import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
@@ -57,7 +57,7 @@ private const val TAG = "TabContentPresenter"
 
 @Composable
 fun retainTabContentPresenter(
-    selectedTab: CustomTab?,
+    selectedTab: Tab?,
     navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
     repository: Repository = LocalRepository.current,
     popupHostState: PopupHostState = LocalPopupHostState.current,
@@ -82,7 +82,7 @@ fun retainTabContentPresenter(
 
 @Stable
 data class TabContentState(
-    val selectedTab: CustomTab? = null,
+    val selectedTab: Tab? = null,
     val audioTrackStyle: AudioTrackStyle?,
     val tabSortRule: TabSortRule?,
     val pagingItems: LazyPagingItems<MediaItemModel>,
@@ -104,7 +104,7 @@ sealed interface TabContentEvent {
 }
 
 private class TabContentPresenter(
-    private val selectedTab: CustomTab?,
+    private val selectedTab: Tab?,
     private val navigationRequestEventSink: NavigationRequestEventSink,
     private val repository: Repository,
     private val popupHostState: PopupHostState,
@@ -183,7 +183,7 @@ private class TabContentPresenter(
     }
 
     private fun getContentPagingFlow(
-        selectedTab: CustomTab?,
+        selectedTab: Tab?,
         groupSort: TabSortRule,
     ): Flow<PagingData<MediaItemModel>> {
         if (selectedTab == null) {
@@ -228,7 +228,7 @@ private class TabContentPresenter(
     private suspend fun handleGroupItemClick(
         groupKeys: List<GroupKey?>,
         tabSortRule: TabSortRule,
-        selectedTab: CustomTab?,
+        selectedTab: Tab?,
     ) {
         val items =
             selectedTab

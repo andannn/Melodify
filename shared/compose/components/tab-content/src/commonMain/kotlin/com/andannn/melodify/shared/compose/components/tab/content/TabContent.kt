@@ -31,10 +31,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.AudioTrackStyle
-import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.SortOption
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.domain.model.browsableOrPlayable
@@ -87,7 +87,7 @@ fun TabContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyListContent(
-    selectedTab: CustomTab?,
+    selectedTab: Tab?,
     tabSortRule: TabSortRule?,
     audioTrackStyle: AudioTrackStyle?,
     itemSnapshotList: List<MediaItemModel?>,
@@ -188,7 +188,7 @@ private fun LazyListContent(
                                 is VideoItemModel -> {
                                     VideoListTileItemView(
                                         item = item,
-                                        customTab = selectedTab,
+                                        tab = selectedTab,
                                         onItemClick = {
                                             onMediaItemClick(item)
                                         },

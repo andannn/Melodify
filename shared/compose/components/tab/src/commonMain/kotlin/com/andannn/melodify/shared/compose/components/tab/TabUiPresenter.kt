@@ -9,8 +9,8 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
-import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.sortOptions
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
@@ -56,7 +56,7 @@ class TabUiPresenter(
     private val snackBarController: SnackBarController,
 ) : RetainedPresenter<TabUiState>() {
     val currentTabListFlow =
-        repository.currentCustomTabsFlow
+        repository.currentTabsFlow
             .stateIn(
                 retainedScope,
                 initialValue = emptyList(),
@@ -67,8 +67,8 @@ class TabUiPresenter(
 
     init {
         retainedScope.launch {
-            repository.currentCustomTabsFlow
-                .scan<List<CustomTab>, Pair<List<CustomTab>?, List<CustomTab>?>>(null to null) { pre, next ->
+            repository.currentTabsFlow
+                .scan<List<Tab>, Pair<List<Tab>?, List<Tab>?>>(null to null) { pre, next ->
                     pre.second to next
                 }.collect { (pre, next) ->
                     Napier.d(tag = TAG) { "tab changed pre: $pre, next: $next" }
@@ -177,11 +177,11 @@ class TabUiPresenter(
 @Stable
 data class TabUiState(
     val selectedIndex: Int = 0,
-    val customTabList: List<CustomTab> = emptyList(),
+    val tabList: List<Tab> = emptyList(),
     val eventSink: (TabUiEvent) -> Unit = {},
 ) {
-    val selectedTab: CustomTab?
-        get() = customTabList.getOrNull(selectedIndex)
+    val selectedTab: Tab?
+        get() = tabList.getOrNull(selectedIndex)
 }
 
 sealed interface TabUiEvent {
@@ -190,6 +190,6 @@ sealed interface TabUiEvent {
     ) : TabUiEvent
 
     data class OnShowTabOption(
-        val tab: CustomTab,
+        val tab: Tab,
     ) : TabUiEvent
 }

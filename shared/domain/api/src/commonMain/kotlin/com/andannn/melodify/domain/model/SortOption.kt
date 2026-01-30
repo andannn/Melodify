@@ -74,19 +74,19 @@ fun ContentSortType.defaultPresetSetting() =
         }
     }
 
-fun CustomTab.contentSortType(): ContentSortType =
+fun Tab.contentSortType(): ContentSortType =
     when (this) {
-        is CustomTab.AlbumDetail,
-        is CustomTab.AllMusic,
-        is CustomTab.ArtistDetail,
-        is CustomTab.GenreDetail,
+        is Tab.AlbumDetail,
+        is Tab.AllMusic,
+        is Tab.ArtistDetail,
+        is Tab.GenreDetail,
         -> ContentSortType.Audio
 
-        is CustomTab.AllVideo,
-        is CustomTab.BucketDetail,
+        is Tab.AllVideo,
+        is Tab.BucketDetail,
         -> ContentSortType.Video
 
-        is CustomTab.PlayListDetail -> ContentSortType.PlayList
+        is Tab.PlayListDetail -> ContentSortType.PlayList
     }
 
 fun SortOption.isAscending() =

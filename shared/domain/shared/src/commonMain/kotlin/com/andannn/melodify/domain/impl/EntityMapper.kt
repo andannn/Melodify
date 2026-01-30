@@ -9,10 +9,10 @@ import com.andannn.melodify.core.database.SortOptionData
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.AudioEntity
-import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.CustomTabSortRuleEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
+import com.andannn.melodify.core.database.entity.TabEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.model.AudioVideoMergedResult
 import com.andannn.melodify.core.database.model.LibraryContentSearchResult
@@ -20,7 +20,6 @@ import com.andannn.melodify.core.database.model.PlayListWithMediaCount
 import com.andannn.melodify.domain.model.AlbumItemModel
 import com.andannn.melodify.domain.model.ArtistItemModel
 import com.andannn.melodify.domain.model.AudioItemModel
-import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.GenreItemModel
 import com.andannn.melodify.domain.model.LyricModel
 import com.andannn.melodify.domain.model.MatchedContentTitle
@@ -28,6 +27,7 @@ import com.andannn.melodify.domain.model.MediaType
 import com.andannn.melodify.domain.model.PlayListItemModel
 import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.domain.model.SortOption
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.VideoItemModel
 import kotlin.Long
@@ -201,35 +201,35 @@ private fun AudioVideoMergedResult.toEntity() =
         )
     }
 
-fun List<CustomTabEntity>.mapToCustomTabModel() =
+fun List<TabEntity>.mapToCustomTabModel() =
     map {
         it.toAppItem()
     }
 
-fun CustomTabEntity.toAppItem() =
+fun TabEntity.toAppItem() =
     when (type) {
         CustomTabType.ALL_MUSIC -> {
-            CustomTab.AllMusic(tabId = id)
+            Tab.AllMusic(tabId = id)
         }
 
         CustomTabType.ALL_VIDEO -> {
-            CustomTab.AllVideo(tabId = id)
+            Tab.AllVideo(tabId = id)
         }
 
         CustomTabType.ALBUM_DETAIL -> {
-            CustomTab.AlbumDetail(tabId = id, externalId!!, name!!)
+            Tab.AlbumDetail(tabId = id, externalId!!, name!!)
         }
 
         CustomTabType.ARTIST_DETAIL -> {
-            CustomTab.ArtistDetail(tabId = id, externalId!!, name!!)
+            Tab.ArtistDetail(tabId = id, externalId!!, name!!)
         }
 
         CustomTabType.GENRE_DETAIL -> {
-            CustomTab.GenreDetail(tabId = id, externalId!!, name!!)
+            Tab.GenreDetail(tabId = id, externalId!!, name!!)
         }
 
         CustomTabType.PLAYLIST_DETAIL -> {
-            CustomTab.PlayListDetail(
+            Tab.PlayListDetail(
                 tabId = id,
                 externalId!!,
                 name!!,
@@ -237,7 +237,7 @@ fun CustomTabEntity.toAppItem() =
         }
 
         CustomTabType.VIDEO_PLAYLIST_DETAIL -> {
-            CustomTab.PlayListDetail(
+            Tab.PlayListDetail(
                 tabId = id,
                 externalId!!,
                 name!!,
@@ -245,7 +245,7 @@ fun CustomTabEntity.toAppItem() =
         }
 
         CustomTabType.VIDEO_BUCKET -> {
-            CustomTab.BucketDetail(tabId = id, externalId!!, name!!)
+            Tab.BucketDetail(tabId = id, externalId!!, name!!)
         }
 
         else -> {

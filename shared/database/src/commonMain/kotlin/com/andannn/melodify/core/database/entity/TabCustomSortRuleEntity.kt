@@ -16,7 +16,7 @@ import com.andannn.melodify.core.database.SortOptionData
     tableName = "sort_rule_table",
     foreignKeys = [
         ForeignKey(
-            entity = CustomTabEntity::class,
+            entity = TabEntity::class,
             parentColumns = ["custom_tab_id"],
             childColumns = ["custom_tab_id"],
             onDelete = ForeignKey.CASCADE,

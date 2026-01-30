@@ -40,9 +40,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.ContentSortType
-import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.domain.model.SortOption
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.contentSortType
 import com.andannn.melodify.domain.model.isAscending
@@ -87,7 +87,7 @@ import org.jetbrains.compose.resources.stringResource
  * Change the sort rule of the tab.
  */
 data class ChangeSortRulePopup(
-    val tab: CustomTab,
+    val tab: Tab,
 ) : PopupId<Unit>
 
 fun PopupEntryProviderScope<PopupId<*>>.addChangeSortRuleDialogEntry() {
@@ -129,7 +129,7 @@ internal fun ChangeSortRuleDialogContent(
 
 @Composable
 private fun ChangeSortRuleDialogContent(
-    tab: CustomTab,
+    tab: Tab,
     isShowVideoProgress: Boolean,
     tabSortRule: TabSortRule,
     modifier: Modifier = Modifier,
@@ -740,7 +740,7 @@ private fun ChangeSortRuleDialogContentAudioPreview() {
     MelodifyTheme {
         Surface {
             ChangeSortRuleDialogContent(
-                tab = CustomTab.AllMusic(tabId = 1),
+                tab = Tab.AllMusic(tabId = 1),
                 isShowVideoProgress = true,
                 tabSortRule = TabSortRule.Preset.Audio.AlbumASC,
             )
@@ -754,7 +754,7 @@ private fun ChangeSortRuleDialogContentAudioCustomPreview() {
     MelodifyTheme {
         Surface {
             ChangeSortRuleDialogContent(
-                tab = CustomTab.AllMusic(tabId = 1),
+                tab = Tab.AllMusic(tabId = 1),
                 isShowVideoProgress = true,
                 tabSortRule = TabSortRule.Preset.Audio.DefaultCustom,
             )
@@ -768,7 +768,7 @@ private fun ChangeSortRuleDialogContentVideoPreview() {
     MelodifyTheme {
         Surface {
             ChangeSortRuleDialogContent(
-                tab = CustomTab.AllVideo(tabId = 1),
+                tab = Tab.AllVideo(tabId = 1),
                 isShowVideoProgress = true,
                 tabSortRule = TabSortRule.Preset.Video.BucketNameASC,
             )

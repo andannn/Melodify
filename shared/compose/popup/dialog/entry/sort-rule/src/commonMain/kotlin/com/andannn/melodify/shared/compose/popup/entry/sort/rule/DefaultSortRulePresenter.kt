@@ -62,29 +62,11 @@ private class DefaultSortRulePresenter(
         val audioDisplaySetting by audioDefaultDisplaySetting.collectAsStateWithLifecycle()
         val videoDisplaySetting by videoDefaultDisplaySetting.collectAsStateWithLifecycle()
         val playlistDefaultDisplaySetting by playlistDefaultDisplaySetting.collectAsStateWithLifecycle()
-        val selectedAudioPresetOption =
-            remember(audioDisplaySetting) {
-                PresetDisplaySetting.entries.firstOrNull {
-                    audioDisplaySetting?.isPreset == true && it.tabSortRule == audioDisplaySetting
-                }
-            }
-        val selectedVideoPresetOption =
-            remember(videoDisplaySetting) {
-                PresetDisplaySetting.entries.firstOrNull {
-                    videoDisplaySetting?.isPreset == true && it.tabSortRule == videoDisplaySetting
-                }
-            }
-        val selectedPlaylistPresetOption =
-            remember(playlistDefaultDisplaySetting) {
-                PresetDisplaySetting.entries.firstOrNull {
-                    playlistDefaultDisplaySetting?.isPreset == true && it.tabSortRule == playlistDefaultDisplaySetting
-                }
-            }
 
         return DefaultSortRuleState(
-            audioDisplaySetting = selectedAudioPresetOption,
-            videoDisplaySetting = selectedVideoPresetOption,
-            playlistPresetOption = selectedPlaylistPresetOption,
+            audioDisplaySetting = audioDisplaySetting,
+            videoDisplaySetting = videoDisplaySetting,
+            playlistPresetOption = playlistDefaultDisplaySetting,
         ) { event ->
             when (event) {
                 is DefaultSortRuleStateEvent.ChangeAudioSortRule -> {

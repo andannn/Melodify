@@ -12,9 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.domain.Repository
-import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabKind
 import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.sortOptions
@@ -46,7 +46,7 @@ internal data class GroupInfo(
     val groupKey: GroupKey,
     val parentHeaderGroupKey: GroupKey? = null,
     val tabSortRule: TabSortRule?,
-    val selectedTab: CustomTab?,
+    val selectedTab: Tab?,
 ) {
     val selection
         get() = listOf(groupKey, parentHeaderGroupKey)
@@ -194,7 +194,7 @@ private class GroupHeaderPresenter(
         optionItem: OptionItem,
         groupKeys: List<GroupKey?>,
         tabSortRule: TabSortRule?,
-        selectedTab: CustomTab?,
+        selectedTab: Tab?,
     ) {
         val items =
             selectedTab

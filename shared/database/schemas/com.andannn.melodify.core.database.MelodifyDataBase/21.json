@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 21,
-    "identityHash": "5c25a147c42b5f42b3cf4bac03986e9c",
+    "identityHash": "bdcd305575d5dfed349e814292965b3a",
     "entities": [
       {
         "tableName": "lyric_table",
@@ -1056,11 +1056,65 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "tab_preset_display_setting_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tab_id` INTEGER NOT NULL, `selected_preset_display_setting` INTEGER DEFAULT NULL, FOREIGN KEY(`tab_id`) REFERENCES `custom_tab_table`(`custom_tab_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "customTabId",
+            "columnName": "tab_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "preset",
+            "columnName": "selected_preset_display_setting",
+            "affinity": "INTEGER",
+            "defaultValue": "NULL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_tab_preset_display_setting_table_tab_id",
+            "unique": true,
+            "columnNames": [
+              "tab_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_tab_preset_display_setting_table_tab_id` ON `${TABLE_NAME}` (`tab_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "custom_tab_table",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "tab_id"
+            ],
+            "referencedColumns": [
+              "custom_tab_id"
+            ]
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5c25a147c42b5f42b3cf4bac03986e9c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bdcd305575d5dfed349e814292965b3a')"
     ]
   }
 }

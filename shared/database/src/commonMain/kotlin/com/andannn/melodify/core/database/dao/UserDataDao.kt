@@ -9,18 +9,18 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Upsert
-import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.CustomTabSettingEntity
 import com.andannn.melodify.core.database.entity.CustomTabSortRuleEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
+import com.andannn.melodify.core.database.entity.TabEntity
+import com.andannn.melodify.core.database.entity.TabPresetDisplaySettingEntity
 import com.andannn.melodify.core.database.entity.VideoPlayProgressEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDataDao {
     @Query("SELECT * FROM custom_tab_table ORDER BY sort_order ASC")
-    fun getCustomTabsFlow(): Flow<List<CustomTabEntity>>
+    fun getCustomTabsFlow(): Flow<List<TabEntity>>
 
     @Query("DELETE FROM custom_tab_table")
     suspend fun deleteAllCustomTabs()
@@ -69,7 +69,7 @@ interface UserDataDao {
     )
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insertCustomTab(customTab: CustomTabEntity): Long?
+    suspend fun insertCustomTab(customTab: TabEntity): Long?
 
     @Query("DELETE FROM custom_tab_table WHERE custom_tab_id = :tabId")
     suspend fun deleteCustomTab(tabId: Long)
@@ -103,18 +103,6 @@ interface UserDataDao {
     suspend fun isTabKindExist(type: String): Boolean
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertSortRuleEntity(entity: CustomTabSortRuleEntity)
-
-    @Query("SELECT * FROM sort_rule_table WHERE custom_tab_id = :tabId")
-    fun getSortRuleFlowOfTab(tabId: Long): Flow<CustomTabSortRuleEntity?>
-
-    @Upsert(CustomTabSettingEntity::class)
-    suspend fun upsertTabSettingEntity(entity: CustomTabSettingEntity): Long
-
-    @Query("SELECT * FROM custom_tab_setting_table WHERE custom_tab_id = :tabId")
-    fun getCustomTabSettingFlow(tabId: Long): Flow<CustomTabSettingEntity?>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSearchHistory(searchHistories: List<SearchHistoryEntity>)
 
     @Query("SELECT * FROM search_history_table ORDER BY search_date DESC LIMIT :limit")
@@ -142,4 +130,65 @@ interface UserDataDao {
 
     @Query("SELECT * FROM video_play_progress_table WHERE external_video_id = :videoId")
     fun getPlayProgressFlow(videoId: Long): Flow<VideoPlayProgressEntity?>
+
+    @Query("SELECT * FROM sort_rule_table WHERE custom_tab_id = :tabId")
+    fun getCustomTabSortRuleFlow(tabId: Long): Flow<CustomTabSortRuleEntity?>
+
+    @Query("SELECT * FROM custom_tab_setting_table WHERE custom_tab_id = :tabId")
+    fun getCustomTabSettingFlow(tabId: Long): Flow<CustomTabSettingEntity?>
+
+    @Query("SELECT * FROM tab_preset_display_setting_table WHERE tab_id = :tabId")
+    fun getTabPresetDisplaySettingFlow(tabId: Long): Flow<TabPresetDisplaySettingEntity?>
+
+    @Transaction
+    suspend fun selectTabPresetDisplaySettingEntity(
+        tabId: Long,
+        preset: Int,
+    ) {
+        deleteTabCustomSettingEntity(tabId)
+        deleteTabCustomSortRuleEntity(tabId)
+        insertTabPresetDisplaySettingEntity(
+            TabPresetDisplaySettingEntity(
+                customTabId = tabId,
+                preset = preset,
+            ),
+        )
+    }
+
+    @Transaction
+    suspend fun selectTabCustomSettingEntity(
+        tabId: Long,
+        tabSettingEntity: CustomTabSettingEntity,
+        tabSortRuleEntity: CustomTabSortRuleEntity,
+    ) {
+        deleteTabPresetDisplaySettingEntity(tabId)
+        insertTabSettingEntity(tabSettingEntity)
+        insertSortRuleEntity(tabSortRuleEntity)
+    }
+
+    @Query(
+        """
+        DELETE FROM custom_tab_setting_table WHERE custom_tab_id = :tabId
+    """,
+    )
+    suspend fun deleteTabCustomSettingEntity(tabId: Long)
+
+    @Query(
+        """
+        DELETE FROM sort_rule_table WHERE custom_tab_id = :tabId
+    """,
+    )
+    suspend fun deleteTabCustomSortRuleEntity(tabId: Long)
+
+    @Insert(CustomTabSortRuleEntity::class, onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSortRuleEntity(entity: CustomTabSortRuleEntity)
+
+    @Insert(CustomTabSettingEntity::class, onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTabSettingEntity(entity: CustomTabSettingEntity): Long
+
+    @Insert(TabPresetDisplaySettingEntity::class, onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTabPresetDisplaySettingEntity(entity: TabPresetDisplaySettingEntity)
+
+    @Query("DELETE FROM tab_preset_display_setting_table WHERE tab_id = :tabId")
+    suspend fun deleteTabPresetDisplaySettingEntity(tabId: Long)
 }

@@ -4,46 +4,46 @@
  */
 package com.andannn.melodify.domain.model
 
-sealed class CustomTab(
+sealed class Tab(
     open val tabId: Long,
 ) {
     data class AllMusic constructor(
         override val tabId: Long,
-    ) : CustomTab(tabId)
+    ) : Tab(tabId)
 
     data class AllVideo(
         override val tabId: Long,
-    ) : CustomTab(tabId)
+    ) : Tab(tabId)
 
     data class AlbumDetail(
         override val tabId: Long,
         val albumId: String,
         val label: String,
-    ) : CustomTab(tabId)
+    ) : Tab(tabId)
 
     data class ArtistDetail(
         override val tabId: Long,
         val artistId: String,
         val label: String,
-    ) : CustomTab(tabId)
+    ) : Tab(tabId)
 
     data class GenreDetail(
         override val tabId: Long,
         val genreId: String,
         val label: String,
-    ) : CustomTab(tabId)
+    ) : Tab(tabId)
 
     data class PlayListDetail(
         override val tabId: Long,
         val playListId: String,
         val label: String,
-    ) : CustomTab(tabId)
+    ) : Tab(tabId)
 
     data class BucketDetail(
         override val tabId: Long,
         val bucketId: String,
         val label: String,
-    ) : CustomTab(tabId)
+    ) : Tab(tabId)
 }
 
 enum class TabKind {

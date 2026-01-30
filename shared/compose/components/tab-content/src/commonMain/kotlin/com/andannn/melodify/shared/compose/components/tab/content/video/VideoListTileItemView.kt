@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
-import com.andannn.melodify.domain.model.CustomTab
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.domain.model.browsableOrPlayable
 import com.andannn.melodify.shared.compose.common.LocalRepository
@@ -28,7 +28,7 @@ private const val TAG = "VideoListTileItemView"
 @Composable
 internal fun VideoListTileItemView(
     modifier: Modifier = Modifier,
-    customTab: CustomTab?,
+    tab: Tab?,
     item: VideoItemModel,
     onItemClick: (() -> Unit)? = null,
     onOptionButtonClick: (() -> Unit)? = null,
@@ -50,8 +50,8 @@ internal fun VideoListTileItemView(
             onOptionButtonClick = onOptionButtonClick,
         )
 
-        if (customTab != null) {
-            val model = retainVideoListTileItemModel(customTab)
+        if (tab != null) {
+            val model = retainVideoListTileItemModel(tab)
             val isShowProgress by model.isShowProgressStateFlow.collectAsStateWithLifecycle()
             Napier.d(tag = TAG) { "isShowProgress $isShowProgress" }
             if (isShowProgress) {
@@ -63,7 +63,7 @@ internal fun VideoListTileItemView(
 
 @Composable
 private fun retainVideoListTileItemModel(
-    tab: CustomTab,
+    tab: Tab,
     repository: Repository = LocalRepository.current,
 ) = retainRetainedModel(
     tab,
@@ -73,7 +73,7 @@ private fun retainVideoListTileItemModel(
 }
 
 private class VideoListTileItemModel(
-    tab: CustomTab,
+    tab: Tab,
     repository: Repository,
 ) : RetainedModel() {
     init {

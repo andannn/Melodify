@@ -32,12 +32,3 @@ object PreviewModeValues {
      */
     const val GRID_PREVIEW_VALUE: Int = 1
 }
-
-object DefaultPresetValues {
-    const val ALBUM_ASC_VALUE: Int = 0
-    const val ARTIST_ASC_VALUE: Int = 1
-    const val TITLE_ASC_VALUE: Int = 2
-    const val ARTIST_ALBUM_ASC_VALUE: Int = 3
-    const val BUCKET_NAME_ASC_VALUE: Int = 4
-    const val PLAYLIST_CREATE_DATE_DESC_VALUE: Int = 5
-}

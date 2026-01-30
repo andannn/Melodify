@@ -10,7 +10,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
-import com.andannn.melodify.domain.model.CustomTab
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.contentSortType
 import com.andannn.melodify.shared.compose.common.LocalRepository
@@ -26,26 +26,26 @@ private const val TAG = "ChangeSortRulePresenter"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun retainedChangeSortRulePresenter(
-    customTab: CustomTab,
+    tab: Tab,
     repository: Repository = LocalRepository.current,
 ) = retainPresenter(
-    customTab,
+    tab,
     repository,
 ) {
     ChangeSortRulePresenter(
         repository = repository,
-        customTab = customTab,
+        tab = tab,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 private class ChangeSortRulePresenter(
-    private val customTab: CustomTab,
+    private val tab: Tab,
     private val repository: Repository,
 ) : RetainedPresenter<UiState>() {
     private val tabSortRuleFlow =
         repository
-            .getCurrentSortRule(customTab)
+            .getCurrentSortRule(tab)
             .stateIn(
                 retainedScope,
                 initialValue = TabSortRule.Preset.Audio.DefaultPreset,
@@ -54,7 +54,7 @@ private class ChangeSortRulePresenter(
 
     private val isShowVideoProgressFlow =
         repository
-            .getIsShowVideoProgressFlow(customTab)
+            .getIsShowVideoProgressFlow(tab)
             .stateIn(
                 retainedScope,
                 initialValue = false,
@@ -74,13 +74,13 @@ private class ChangeSortRulePresenter(
                 is UiEvent.OnChangeSortRule -> {
                     Napier.d(tag = TAG) { "OnChangeSortRule. ${event.tabSortRule}" }
                     retainedScope.launch {
-                        repository.saveSortRuleForTab(customTab, event.tabSortRule)
+                        repository.saveSortRuleForTab(tab, event.tabSortRule)
                     }
                 }
 
                 UiEvent.OnCustomRadioButtonClick -> {
                     retainedScope.launch {
-                        val currentTab = customTab
+                        val currentTab = tab
                         val customSortRule = repository.getTabCustomSortRule(currentTab)
 
                         if (customSortRule != null && !customSortRule.isPreset) {
@@ -89,7 +89,7 @@ private class ChangeSortRulePresenter(
 
                         repository.saveSortRuleForTab(
                             currentTab,
-                            TabSortRule.getDefaultCustom(customTab.contentSortType()),
+                            TabSortRule.getDefaultCustom(tab.contentSortType()),
                         )
                     }
                 }
@@ -97,7 +97,7 @@ private class ChangeSortRulePresenter(
                 UiEvent.OnToggleIsShowVideoProgress -> {
                     retainedScope.launch {
                         repository.setIsShowVideoProgress(
-                            tab = customTab,
+                            tab = tab,
                             isShow = !isShowVideoProgress,
                         )
                     }
