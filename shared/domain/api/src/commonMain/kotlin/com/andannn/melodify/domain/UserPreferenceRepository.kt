@@ -85,7 +85,7 @@ interface UserPreferenceRepository {
     suspend fun getLastSuccessfulSyncTime(): Long?
 
     suspend fun saveDefaultSortRule(
-        isAudio: Boolean,
+        type: ContentSortType,
         preset: PresetDisplaySetting,
     )
 

@@ -49,14 +49,9 @@ private fun DefaultSortRuleSettingDialog(modifier: Modifier = Modifier) {
         selectedAudioPresetOption = state.audioDisplaySetting,
         selectedVideoPresetOption = state.videoDisplaySetting,
         selectedPlaylistPresetOption = state.playlistPresetOption,
-        onChangeAudioSortRule = {
+        onChangeAudioSortRule = { type, setting ->
             state.eventSink.invoke(
-                DefaultSortRuleStateEvent.ChangeAudioSortRule(it),
-            )
-        },
-        onChangeVideoSortRule = {
-            state.eventSink.invoke(
-                DefaultSortRuleStateEvent.ChangeVideoSortRule(it),
+                DefaultSortRuleStateEvent.ChangeAudioSortRule(type, setting),
             )
         },
     )
@@ -68,8 +63,7 @@ private fun DefaultSortRuleSettingDialogContent(
     selectedAudioPresetOption: PresetDisplaySetting? = null,
     selectedVideoPresetOption: PresetDisplaySetting? = null,
     selectedPlaylistPresetOption: PresetDisplaySetting? = null,
-    onChangeAudioSortRule: (PresetDisplaySetting) -> Unit = {},
-    onChangeVideoSortRule: (PresetDisplaySetting) -> Unit = {},
+    onChangeAudioSortRule: (ContentSortType, PresetDisplaySetting) -> Unit = { _, _ -> },
 ) {
     Column(modifier = modifier.fillMaxHeight()) {
         val title = stringResource(Res.string.change_default_sort_order)
@@ -96,7 +90,9 @@ private fun DefaultSortRuleSettingDialogContent(
                     modifier = Modifier.fillMaxWidth(),
                     selectedPresetOption = selectedAudioPresetOption,
                     type = ContentSortType.Audio,
-                    onChangePresetSortRule = onChangeAudioSortRule,
+                    onChangePresetSortRule = {
+                        onChangeAudioSortRule(ContentSortType.Audio, it)
+                    },
                 )
             }
 
@@ -105,7 +101,9 @@ private fun DefaultSortRuleSettingDialogContent(
                     modifier = Modifier.fillMaxWidth(),
                     selectedPresetOption = selectedVideoPresetOption,
                     type = ContentSortType.Video,
-                    onChangePresetSortRule = onChangeVideoSortRule,
+                    onChangePresetSortRule = {
+                        onChangeAudioSortRule(ContentSortType.Video, it)
+                    },
                 )
             }
             item {
@@ -113,7 +111,9 @@ private fun DefaultSortRuleSettingDialogContent(
                     modifier = Modifier.fillMaxWidth(),
                     selectedPresetOption = selectedPlaylistPresetOption,
                     type = ContentSortType.PlayList,
-                    onChangePresetSortRule = onChangeVideoSortRule,
+                    onChangePresetSortRule = {
+                        onChangeAudioSortRule(ContentSortType.PlayList, it)
+                    },
                 )
             }
         }

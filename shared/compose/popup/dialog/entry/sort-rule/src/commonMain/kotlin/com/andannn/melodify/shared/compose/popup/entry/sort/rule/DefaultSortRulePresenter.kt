@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.ContentSortType
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
@@ -89,16 +90,7 @@ private class DefaultSortRulePresenter(
                 is DefaultSortRuleStateEvent.ChangeAudioSortRule -> {
                     retainedScope.launch {
                         repository.saveDefaultSortRule(
-                            isAudio = true,
-                            event.sortRule,
-                        )
-                    }
-                }
-
-                is DefaultSortRuleStateEvent.ChangeVideoSortRule -> {
-                    retainedScope.launch {
-                        repository.saveDefaultSortRule(
-                            isAudio = false,
+                            event.type,
                             event.sortRule,
                         )
                     }
@@ -118,10 +110,7 @@ internal data class DefaultSortRuleState(
 
 internal sealed interface DefaultSortRuleStateEvent {
     data class ChangeAudioSortRule(
-        val sortRule: PresetDisplaySetting,
-    ) : DefaultSortRuleStateEvent
-
-    data class ChangeVideoSortRule(
+        val type: ContentSortType,
         val sortRule: PresetDisplaySetting,
     ) : DefaultSortRuleStateEvent
 }

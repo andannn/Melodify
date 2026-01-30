@@ -129,13 +129,13 @@ internal class UserPreferenceRepositoryImpl(
     override suspend fun getLastSuccessfulSyncTime(): Long? = preferences.userDate.first().lastSuccessfulSyncTime
 
     override suspend fun saveDefaultSortRule(
-        isAudio: Boolean,
+        type: ContentSortType,
         preset: PresetDisplaySetting,
     ) {
-        if (isAudio) {
-            preferences.setDefaultAudioPreset(preset.toIntValue())
-        } else {
-            preferences.setDefaultVideoPreset(preset.toIntValue())
+        when (type) {
+            ContentSortType.Audio -> preferences.setDefaultAudioPreset(preset.toIntValue())
+            ContentSortType.Video -> preferences.setDefaultVideoPreset(preset.toIntValue())
+            ContentSortType.PlayList -> preferences.setDefaultPlaylistPreset(preset.toIntValue())
         }
     }
 
