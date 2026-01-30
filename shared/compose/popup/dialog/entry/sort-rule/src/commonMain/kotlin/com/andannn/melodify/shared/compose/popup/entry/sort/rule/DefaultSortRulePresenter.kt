@@ -47,28 +47,43 @@ private class DefaultSortRulePresenter(
                 started = WhileSubscribed(5000),
             )
 
-// TODO: add playlist default display setting
+    private val playlistDefaultDisplaySetting =
+        repository
+            .getDefaultPlayListPresetSortRule()
+            .stateIn(
+                retainedScope,
+                initialValue = null,
+                started = WhileSubscribed(5000),
+            )
+
     @Composable
     override fun present(): DefaultSortRuleState {
         val audioDisplaySetting by audioDefaultDisplaySetting.collectAsStateWithLifecycle()
         val videoDisplaySetting by videoDefaultDisplaySetting.collectAsStateWithLifecycle()
+        val playlistDefaultDisplaySetting by playlistDefaultDisplaySetting.collectAsStateWithLifecycle()
         val selectedAudioPresetOption =
             remember(audioDisplaySetting) {
                 PresetDisplaySetting.entries.firstOrNull {
                     audioDisplaySetting?.isPreset == true && it.displaySetting == audioDisplaySetting
                 }
             }
-
         val selectedVideoPresetOption =
             remember(videoDisplaySetting) {
                 PresetDisplaySetting.entries.firstOrNull {
                     videoDisplaySetting?.isPreset == true && it.displaySetting == videoDisplaySetting
                 }
             }
+        val selectedPlaylistPresetOption =
+            remember(playlistDefaultDisplaySetting) {
+                PresetDisplaySetting.entries.firstOrNull {
+                    playlistDefaultDisplaySetting?.isPreset == true && it.displaySetting == playlistDefaultDisplaySetting
+                }
+            }
 
         return DefaultSortRuleState(
-            selectedAudioPresetOption,
-            selectedVideoPresetOption,
+            audioDisplaySetting = selectedAudioPresetOption,
+            videoDisplaySetting = selectedVideoPresetOption,
+            playlistPresetOption = selectedPlaylistPresetOption,
         ) { event ->
             when (event) {
                 is DefaultSortRuleStateEvent.ChangeAudioSortRule -> {
@@ -97,6 +112,7 @@ private class DefaultSortRulePresenter(
 internal data class DefaultSortRuleState(
     val audioDisplaySetting: PresetDisplaySetting?,
     val videoDisplaySetting: PresetDisplaySetting?,
+    val playlistPresetOption: PresetDisplaySetting?,
     val eventSink: (DefaultSortRuleStateEvent) -> Unit = {},
 )
 
