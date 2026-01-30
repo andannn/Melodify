@@ -258,7 +258,6 @@ fun CustomTabSortRuleEntity.toModel() =
         primaryGroupSort = primaryGroupSort.toModel(),
         secondaryGroupSort = secondaryGroupSort.toModel(),
         contentSort = contentSort.toModel(),
-        isPreset = isPreset,
     )
 
 fun TabSortRule.toEntity(bindTabId: Long): CustomTabSortRuleEntity =
@@ -267,7 +266,6 @@ fun TabSortRule.toEntity(bindTabId: Long): CustomTabSortRuleEntity =
         primaryGroupSort = primaryGroupSort.toEntity(),
         secondaryGroupSort = secondaryGroupSort.toEntity(),
         contentSort = contentSort.toEntity(),
-        isPreset = isPreset,
     )
 
 fun SortOptionData?.toModel() =

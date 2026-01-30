@@ -418,4 +418,5 @@ internal class AutoMigration19To20Spec : AutoMigrationSpec
 @RenameColumn(tableName = "custom_tab_setting_table", fromColumnName = "is_show_progress", toColumnName = "is_show_video_progress")
 @RenameColumn(tableName = "sort_rule_table", fromColumnName = "custom_tab_foreign_key", toColumnName = "custom_tab_id")
 @DeleteColumn(tableName = "sort_rule_table", columnName = "show_track_num")
+@DeleteColumn(tableName = "sort_rule_table", columnName = "is_preset")
 internal class AutoMigration20To21Spec : AutoMigrationSpec

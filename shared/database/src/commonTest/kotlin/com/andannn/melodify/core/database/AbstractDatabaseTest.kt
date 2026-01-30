@@ -103,7 +103,7 @@ abstract class AbstractDatabaseTest {
 
     @AfterTest
     fun closeDatabase() {
-        database?.close()
+        database.close()
     }
 
     @Test

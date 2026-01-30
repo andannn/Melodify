@@ -8,7 +8,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.ContentSortType
@@ -24,11 +23,11 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun retainDefaultSortRulePresenter(repository: Repository = LocalRepository.current) =
     retainPresenter(repository) {
-        DefaultSortRulePresenter(repository)
+        DefaultSortRuleSettingPresenter(repository)
     }
 
 @OptIn(ExperimentalMaterial3Api::class)
-private class DefaultSortRulePresenter(
+private class DefaultSortRuleSettingPresenter(
     private val repository: Repository,
 ) : RetainedPresenter<DefaultSortRuleState>() {
     private val audioDefaultDisplaySetting =

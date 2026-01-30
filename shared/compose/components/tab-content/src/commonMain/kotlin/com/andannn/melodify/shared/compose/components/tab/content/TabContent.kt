@@ -175,7 +175,7 @@ private fun LazyListContent(
                                         isActive = false,
                                         thumbnailSourceUri = item.artWorkUri,
                                         title = item.name,
-                                        trackNum = item.cdTrackNumber.takeIf { audioTrackStyle == AudioTrackStyle.ALBUM_COVER },
+                                        trackNum = item.cdTrackNumber.takeIf { audioTrackStyle == AudioTrackStyle.TRACK_NUMBER },
                                         onItemClick = {
                                             onMediaItemClick(item)
                                         },

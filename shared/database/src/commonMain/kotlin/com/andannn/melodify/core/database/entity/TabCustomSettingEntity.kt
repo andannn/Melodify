@@ -37,7 +37,7 @@ data class CustomTabSettingEntity constructor(
     val isShowVideoProgress: Boolean = false,
     /** 0: album cover, 1: track number */
     @ColumnInfo("audio_entry_style", defaultValue = "0")
-    val audioEntryStyle: Long,
+    val audioEntryStyle: Long = AudioEntryStyle.ALBUM_COVER,
 )
 
 object AudioEntryStyle {

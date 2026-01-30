@@ -29,7 +29,7 @@ import com.andannn.melodify.core.database.SortOptionData
         ),
     ],
 )
-data class CustomTabSortRuleEntity constructor(
+data class CustomTabSortRuleEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "sort_rule_id")
     val id: Long = 0,
@@ -41,8 +41,6 @@ data class CustomTabSortRuleEntity constructor(
     val secondaryGroupSort: SortOptionData? = null,
     @ColumnInfo("content_sort")
     val contentSort: SortOptionData? = null,
-    @ColumnInfo("is_preset")
-    val isPreset: Boolean = true,
 )
 
 internal class SortOptionJsonConverter {

@@ -8,7 +8,6 @@ data class TabSortRule(
     val primaryGroupSort: SortOption,
     val secondaryGroupSort: SortOption = SortOption.NONE,
     val contentSort: SortOption = SortOption.NONE,
-    val isPreset: Boolean = true,
 ) {
     companion object Preset {
         fun getDefaultCustom(type: ContentSortType) =
@@ -23,14 +22,11 @@ data class TabSortRule(
                 TabSortRule(
                     primaryGroupSort = SortOption.VideoOption.Bucket(true),
                     contentSort = SortOption.VideoOption.Title(ascending = true),
-                    isPreset = true,
                 )
 
-            val DefaultPreset = BucketNameASC
             val DefaultCustom =
                 TabSortRule(
                     primaryGroupSort = SortOption.VideoOption.Bucket(true),
-                    isPreset = false,
                 )
         }
 
@@ -38,18 +34,15 @@ data class TabSortRule(
             val TitleASC =
                 TabSortRule(
                     primaryGroupSort = SortOption.AudioOption.Title(true),
-                    isPreset = true,
                 )
             val AlbumASC =
                 TabSortRule(
                     primaryGroupSort = SortOption.AudioOption.Album(true),
                     contentSort = SortOption.AudioOption.TrackNum(true),
-                    isPreset = true,
                 )
             val ArtistASC =
                 TabSortRule(
                     primaryGroupSort = SortOption.AudioOption.Artist(true),
-                    isPreset = true,
                 )
 
             val ArtistAlbumASC =
@@ -57,14 +50,11 @@ data class TabSortRule(
                     primaryGroupSort = SortOption.AudioOption.Artist(true),
                     secondaryGroupSort = SortOption.AudioOption.Album(true),
                     contentSort = SortOption.AudioOption.TrackNum(true),
-                    isPreset = true,
                 )
 
-            val DefaultPreset = AlbumASC
             val DefaultCustom =
                 TabSortRule(
                     primaryGroupSort = SortOption.AudioOption.Album(true),
-                    isPreset = false,
                 )
         }
 
@@ -73,15 +63,12 @@ data class TabSortRule(
                 TabSortRule(
                     primaryGroupSort = SortOption.NONE,
                     contentSort = SortOption.PlayListOption.CreateData(false),
-                    isPreset = true,
                 )
             val DefaultCustom =
                 TabSortRule(
                     primaryGroupSort = SortOption.NONE,
                     contentSort = SortOption.PlayListOption.CreateData(true),
-                    isPreset = false,
                 )
-            val DefaultPreset = CreateDateDESC
         }
     }
 }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 21,
-    "identityHash": "bdcd305575d5dfed349e814292965b3a",
+    "identityHash": "41a4d2fcf4b7492ffb5f050916effd8e",
     "entities": [
       {
         "tableName": "lyric_table",
@@ -705,7 +705,7 @@
       },
       {
         "tableName": "sort_rule_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sort_rule_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `custom_tab_id` INTEGER NOT NULL, `primary_group_sort` TEXT, `secondary_group_sort` TEXT, `content_sort` TEXT, `is_preset` INTEGER NOT NULL, FOREIGN KEY(`custom_tab_id`) REFERENCES `custom_tab_table`(`custom_tab_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sort_rule_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `custom_tab_id` INTEGER NOT NULL, `primary_group_sort` TEXT, `secondary_group_sort` TEXT, `content_sort` TEXT, FOREIGN KEY(`custom_tab_id`) REFERENCES `custom_tab_table`(`custom_tab_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -733,12 +733,6 @@
             "fieldPath": "contentSort",
             "columnName": "content_sort",
             "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "isPreset",
-            "columnName": "is_preset",
-            "affinity": "INTEGER",
-            "notNull": true
           }
         ],
         "primaryKey": {
@@ -1114,7 +1108,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bdcd305575d5dfed349e814292965b3a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '41a4d2fcf4b7492ffb5f050916effd8e')"
     ]
   }
 }

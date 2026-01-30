@@ -7,7 +7,7 @@ package com.andannn.melodify.domain.model
 sealed class Tab(
     open val tabId: Long,
 ) {
-    data class AllMusic constructor(
+    data class AllMusic(
         override val tabId: Long,
     ) : Tab(tabId)
 

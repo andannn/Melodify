@@ -10,18 +10,20 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.AudioTrackStyle
+import com.andannn.melodify.domain.model.CustomDisplaySetting
+import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.contentSortType
+import com.andannn.melodify.domain.model.defaultPresetSetting
+import com.andannn.melodify.domain.model.toDisplaySetting
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-
-private const val TAG = "ChangeSortRulePresenter"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,62 +45,95 @@ private class ChangeSortRulePresenter(
     private val tab: Tab,
     private val repository: Repository,
 ) : RetainedPresenter<UiState>() {
-    private val tabSortRuleFlow =
+    private val tabCustomDisplaySettingFlow =
         repository
-            .getCurrentSortRule(tab)
+            .getTabCustomDisplaySettingFlow(tab)
             .stateIn(
                 retainedScope,
-                initialValue = TabSortRule.Preset.Audio.DefaultPreset,
+                initialValue = null,
                 started = WhileSubscribed(5000),
             )
 
-    private val isShowVideoProgressFlow =
+    private val tabPresetDisplaySettingFlow =
         repository
-            .getIsShowVideoProgressFlow(tab)
+            .getTabPresetDisplaySettingFlow(tab)
             .stateIn(
                 retainedScope,
-                initialValue = false,
+                initialValue = null,
                 started = WhileSubscribed(5000),
             )
 
     @Composable
     override fun present(): UiState {
-        val tabSortRule by tabSortRuleFlow.collectAsStateWithLifecycle()
-        val isShowVideoProgress by isShowVideoProgressFlow.collectAsStateWithLifecycle()
+        val tabCustomDisplaySetting by tabCustomDisplaySettingFlow.collectAsStateWithLifecycle()
+        val tabPresetDisplaySetting by tabPresetDisplaySettingFlow.collectAsStateWithLifecycle()
 
         return UiState(
-            tabSortRule = tabSortRule,
-            isShowVideoProgress = isShowVideoProgress,
+            tabCustomDisplaySetting = tabCustomDisplaySetting,
+            tabPresetDisplaySetting = tabPresetDisplaySetting,
         ) { event ->
             when (event) {
-                is UiEvent.OnChangeSortRule -> {
-                    Napier.d(tag = TAG) { "OnChangeSortRule. ${event.tabSortRule}" }
+                UiEvent.OnSelectCustomDisplaySetting -> {
                     retainedScope.launch {
-                        repository.saveSortRuleForTab(tab, event.tabSortRule)
-                    }
-                }
-
-                UiEvent.OnCustomRadioButtonClick -> {
-                    retainedScope.launch {
-                        val currentTab = tab
-                        val customSortRule = repository.getTabCustomSortRule(currentTab)
-
-                        if (customSortRule != null && !customSortRule.isPreset) {
-                            Napier.d(tag = TAG) { "Already has custom sort rule. $customSortRule" }
-                        }
-
-                        repository.saveSortRuleForTab(
-                            currentTab,
-                            TabSortRule.getDefaultCustom(tab.contentSortType()),
+                        repository.selectTabCustomDisplaySetting(
+                            tab.tabId,
+                            tab.contentSortType().defaultPresetSetting().toDisplaySetting(),
                         )
                     }
                 }
 
-                UiEvent.OnToggleIsShowVideoProgress -> {
+                UiEvent.OnClickResetSetting -> {
                     retainedScope.launch {
-                        repository.setIsShowVideoProgress(
-                            tab = tab,
-                            isShow = !isShowVideoProgress,
+                        repository.selectTabCustomDisplaySetting(
+                            tab.tabId,
+                            tab.contentSortType().defaultPresetSetting().toDisplaySetting(),
+                        )
+                    }
+                }
+
+                is UiEvent.OnSelectPresetDisplaySetting -> {
+                    retainedScope.launch {
+                        repository.selectTabPresetDisplaySetting(
+                            tab.tabId,
+                            event.preset,
+                        )
+                    }
+                }
+
+                is UiEvent.OnChangeAudioTrackStyle -> {
+                    retainedScope.launch {
+                        repository.selectTabCustomDisplaySetting(
+                            tab.tabId,
+                            displaySetting =
+                                tabCustomDisplaySetting?.copy(
+                                    audioTrackStyle = event.style,
+                                ) ?: error("no custom display setting"),
+                        )
+                    }
+                }
+
+                is UiEvent.OnChangeCustomSortRule -> {
+                    retainedScope.launch {
+                        repository.selectTabCustomDisplaySetting(
+                            tab.tabId,
+                            displaySetting =
+                                tabCustomDisplaySetting?.copy(
+                                    tabSortRule = event.tabSortRule,
+                                ) ?: error("no custom display setting"),
+                        )
+                    }
+                }
+
+                is UiEvent.OnToggleIsShowVideoProgress -> {
+                    retainedScope.launch {
+                        repository.selectTabCustomDisplaySetting(
+                            tab.tabId,
+                            displaySetting =
+                                tabCustomDisplaySetting?.let {
+                                    it.copy(
+                                        isShowVideoProgress = !it.isShowVideoProgress,
+                                    )
+                                } ?: error("no custom display setting"),
                         )
                     }
                 }
@@ -109,17 +144,27 @@ private class ChangeSortRulePresenter(
 
 @Stable
 internal data class UiState(
-    val tabSortRule: TabSortRule,
-    val isShowVideoProgress: Boolean,
+    val tabCustomDisplaySetting: CustomDisplaySetting?,
+    val tabPresetDisplaySetting: PresetDisplaySetting?,
     val eventSink: (UiEvent) -> Unit = {},
 )
 
 internal sealed interface UiEvent {
-    data class OnChangeSortRule(
+    data class OnChangeCustomSortRule(
         val tabSortRule: TabSortRule,
     ) : UiEvent
 
-    data object OnCustomRadioButtonClick : UiEvent
-
     data object OnToggleIsShowVideoProgress : UiEvent
+
+    data object OnClickResetSetting : UiEvent
+
+    data class OnChangeAudioTrackStyle(
+        val style: AudioTrackStyle,
+    ) : UiEvent
+
+    data object OnSelectCustomDisplaySetting : UiEvent
+
+    data class OnSelectPresetDisplaySetting(
+        val preset: PresetDisplaySetting,
+    ) : UiEvent
 }

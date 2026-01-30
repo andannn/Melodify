@@ -18,6 +18,7 @@ import com.andannn.melodify.domain.impl.toEntity
 import com.andannn.melodify.domain.impl.toModel
 import com.andannn.melodify.domain.model.AudioTrackStyle
 import com.andannn.melodify.domain.model.ContentSortType
+import com.andannn.melodify.domain.model.CustomDisplaySetting
 import com.andannn.melodify.domain.model.MediaPreviewMode
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.domain.model.Tab
@@ -157,6 +158,31 @@ internal class UserPreferenceRepositoryImpl(
     override fun getDefaultPresetSortRule(contentSortType: ContentSortType): Flow<PresetDisplaySetting> =
         getDefaultPresetDisplaySettingFlow(contentSortType)
 
+    override fun getTabCustomDisplaySettingFlow(tab: Tab): Flow<CustomDisplaySetting?> {
+        val sortRuleFlow =
+            userDataDao.getCustomTabSortRuleFlow(tab.tabId).map {
+                it?.toModel()
+            }
+        val settingFlow =
+            userDataDao.getCustomTabSettingFlow(tab.tabId)
+        return combine(
+            sortRuleFlow,
+            settingFlow,
+        ) { sortRule, setting ->
+            if (sortRule == null || setting == null) return@combine null
+            CustomDisplaySetting(
+                tabSortRule = sortRule,
+                isShowVideoProgress = setting.isShowVideoProgress,
+                audioTrackStyle = setting.audioEntryStyle.toDomainValue(),
+            )
+        }
+    }
+
+    override fun getTabPresetDisplaySettingFlow(tab: Tab): Flow<PresetDisplaySetting?> =
+        userDataDao.getTabPresetDisplaySettingFlow(tab.tabId).map { entity ->
+            entity?.preset?.let { PresetDisplaySetting.fromValue(it) }
+        }
+
     override suspend fun selectTabPresetDisplaySetting(
         tabId: Long,
         preset: PresetDisplaySetting,
@@ -166,19 +192,17 @@ internal class UserPreferenceRepositoryImpl(
 
     override suspend fun selectTabCustomDisplaySetting(
         tabId: Long,
-        sortRule: TabSortRule,
-        audioEntryStyle: AudioTrackStyle,
-        isShowVideoProgress: Boolean,
+        displaySetting: CustomDisplaySetting,
     ) {
         userDataDao.selectTabCustomSettingEntity(
             tabId,
             tabSettingEntity =
                 CustomTabSettingEntity(
                     customTabId = tabId,
-                    isShowVideoProgress = isShowVideoProgress,
-                    audioEntryStyle = audioEntryStyle.toDBValue(),
+                    isShowVideoProgress = displaySetting.isShowVideoProgress,
+                    audioEntryStyle = displaySetting.audioTrackStyle.toDBValue(),
                 ),
-            tabSortRuleEntity = sortRule.toEntity(tabId),
+            tabSortRuleEntity = displaySetting.tabSortRule.toEntity(tabId),
         )
     }
 

@@ -4,10 +4,18 @@
  */
 package com.andannn.melodify.domain.model
 
-enum class AudioTrackStyle {
-    ALBUM_COVER,
-    TRACK_NUMBER,
-}
+data class CustomDisplaySetting(
+    val tabSortRule: TabSortRule,
+    val isShowVideoProgress: Boolean,
+    val audioTrackStyle: AudioTrackStyle,
+)
+
+fun PresetDisplaySetting.toDisplaySetting() =
+    CustomDisplaySetting(
+        tabSortRule = tabSortRule,
+        isShowVideoProgress = isShowVideoProgress,
+        audioTrackStyle = audioTrackStyle,
+    )
 
 enum class PresetDisplaySetting(
     val value: Int,

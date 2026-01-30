@@ -6,6 +6,7 @@ package com.andannn.melodify.domain
 
 import com.andannn.melodify.domain.model.AudioTrackStyle
 import com.andannn.melodify.domain.model.ContentSortType
+import com.andannn.melodify.domain.model.CustomDisplaySetting
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabKind
@@ -101,6 +102,10 @@ interface UserPreferenceRepository {
      */
     fun getDefaultPresetSortRule(contentSortType: ContentSortType): Flow<PresetDisplaySetting>
 
+    fun getTabCustomDisplaySettingFlow(tab: Tab): Flow<CustomDisplaySetting?>
+
+    fun getTabPresetDisplaySettingFlow(tab: Tab): Flow<PresetDisplaySetting?>
+
     suspend fun selectTabPresetDisplaySetting(
         tabId: Long,
         preset: PresetDisplaySetting,
@@ -108,9 +113,7 @@ interface UserPreferenceRepository {
 
     suspend fun selectTabCustomDisplaySetting(
         tabId: Long,
-        sortRule: TabSortRule,
-        audioEntryStyle: AudioTrackStyle,
-        isShowVideoProgress: Boolean,
+        displaySetting: CustomDisplaySetting,
     )
 
     /**
