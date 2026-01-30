@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.ContentSortType
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
@@ -32,7 +33,7 @@ private class DefaultSortRulePresenter(
 ) : RetainedPresenter<DefaultSortRuleState>() {
     private val audioDefaultDisplaySetting =
         repository
-            .getDefaultPresetSortRule(isAudio = true)
+            .getDefaultAudioPresetSortRule()
             .stateIn(
                 retainedScope,
                 initialValue = null,
@@ -40,7 +41,16 @@ private class DefaultSortRulePresenter(
             )
     private val videoDefaultDisplaySetting =
         repository
-            .getDefaultPresetSortRule(isAudio = false)
+            .getDefaultVideoPresetSortRule()
+            .stateIn(
+                retainedScope,
+                initialValue = null,
+                started = WhileSubscribed(5000),
+            )
+
+    private val playlistDefaultDisplaySetting =
+        repository
+            .getDefaultPlayListPresetSortRule()
             .stateIn(
                 retainedScope,
                 initialValue = null,
@@ -51,38 +61,36 @@ private class DefaultSortRulePresenter(
     override fun present(): DefaultSortRuleState {
         val audioDisplaySetting by audioDefaultDisplaySetting.collectAsStateWithLifecycle()
         val videoDisplaySetting by videoDefaultDisplaySetting.collectAsStateWithLifecycle()
+        val playlistDefaultDisplaySetting by playlistDefaultDisplaySetting.collectAsStateWithLifecycle()
         val selectedAudioPresetOption =
             remember(audioDisplaySetting) {
                 PresetDisplaySetting.entries.firstOrNull {
                     audioDisplaySetting?.isPreset == true && it.displaySetting == audioDisplaySetting
                 }
             }
-
         val selectedVideoPresetOption =
             remember(videoDisplaySetting) {
                 PresetDisplaySetting.entries.firstOrNull {
                     videoDisplaySetting?.isPreset == true && it.displaySetting == videoDisplaySetting
                 }
             }
+        val selectedPlaylistPresetOption =
+            remember(playlistDefaultDisplaySetting) {
+                PresetDisplaySetting.entries.firstOrNull {
+                    playlistDefaultDisplaySetting?.isPreset == true && it.displaySetting == playlistDefaultDisplaySetting
+                }
+            }
 
         return DefaultSortRuleState(
-            selectedAudioPresetOption,
-            selectedVideoPresetOption,
+            audioDisplaySetting = selectedAudioPresetOption,
+            videoDisplaySetting = selectedVideoPresetOption,
+            playlistPresetOption = selectedPlaylistPresetOption,
         ) { event ->
             when (event) {
                 is DefaultSortRuleStateEvent.ChangeAudioSortRule -> {
                     retainedScope.launch {
                         repository.saveDefaultSortRule(
-                            isAudio = true,
-                            event.sortRule,
-                        )
-                    }
-                }
-
-                is DefaultSortRuleStateEvent.ChangeVideoSortRule -> {
-                    retainedScope.launch {
-                        repository.saveDefaultSortRule(
-                            isAudio = false,
+                            event.type,
                             event.sortRule,
                         )
                     }
@@ -96,15 +104,13 @@ private class DefaultSortRulePresenter(
 internal data class DefaultSortRuleState(
     val audioDisplaySetting: PresetDisplaySetting?,
     val videoDisplaySetting: PresetDisplaySetting?,
+    val playlistPresetOption: PresetDisplaySetting?,
     val eventSink: (DefaultSortRuleStateEvent) -> Unit = {},
 )
 
 internal sealed interface DefaultSortRuleStateEvent {
     data class ChangeAudioSortRule(
-        val sortRule: PresetDisplaySetting,
-    ) : DefaultSortRuleStateEvent
-
-    data class ChangeVideoSortRule(
+        val type: ContentSortType,
         val sortRule: PresetDisplaySetting,
     ) : DefaultSortRuleStateEvent
 }

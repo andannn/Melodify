@@ -100,4 +100,7 @@
     <string name="change_play_list_alert_dialog_content">現在のプレイリストを変更してもよろしいですか？</string>
     <string name="last_watched_jump">前回再生: %1$s。タップしてジャンプ。</string>
     <string name="show_play_progress">再生の進行状況を表示</string>
+    <string name="preset_playlist">プレイリストのプリセット</string>
+    <string name="sort_by_playlist_create_data">作成日時で並べ替え</string>
+    <string name="sort_sub_playlist_create_date_desc">プレイリストの作成日時の降順で項目をグループ化します。</string>
 </resources>

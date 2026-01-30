@@ -57,19 +57,11 @@ fun CustomTab.contentFlow(
         }
 
         is CustomTab.PlayListDetail -> {
-            if (isAudio) {
-                repository.getAudiosOfPlayListFlow(
-                    playListId.toLong(),
-                    sorts.filterIsInstance<SortOption.AudioOption>(),
-                    whereGroups,
-                )
-            } else {
-                repository.getVideosOfPlayListFlow(
-                    playListId.toLong(),
-                    sorts.filterIsInstance<SortOption.VideoOption>(),
-                    whereGroups,
-                )
-            }
+            repository.getItemsOfPlayListFlow(
+                playListId.toLong(),
+                sorts.filterIsInstance<SortOption.PlayListOption>(),
+                whereGroups,
+            )
         }
 
         is CustomTab.BucketDetail -> {
@@ -119,19 +111,11 @@ fun CustomTab.contentPagingDataFlow(
         }
 
         is CustomTab.PlayListDetail -> {
-            if (isAudio) {
-                repository.getAudioPagingFlowOfPlayList(
-                    playListId.toLong(),
-                    sorts.filterIsInstance<SortOption.AudioOption>(),
-                    whereGroups,
-                )
-            } else {
-                repository.getVideoPagingFlowOfPlayList(
-                    playListId.toLong(),
-                    sorts.filterIsInstance<SortOption.VideoOption>(),
-                    whereGroups,
-                )
-            }
+            repository.getItemsPagingFlowOfPlayList(
+                playListId.toLong(),
+                sorts.filterIsInstance<SortOption.PlayListOption>(),
+                whereGroups,
+            )
         }
 
         is CustomTab.AllVideo -> {

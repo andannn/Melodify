@@ -39,12 +39,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.domain.model.ContentSortType
 import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.domain.model.SortOption
+import com.andannn.melodify.domain.model.contentSortType
 import com.andannn.melodify.domain.model.isAscending
-import com.andannn.melodify.domain.model.isAudio
 import com.andannn.melodify.shared.compose.common.getCategoryResource
 import com.andannn.melodify.shared.compose.common.headerText
 import com.andannn.melodify.shared.compose.common.subTitle
@@ -67,6 +68,7 @@ import melodify.shared.compose.resource.generated.resources.order_new_to_old
 import melodify.shared.compose.resource.generated.resources.order_old_to_new
 import melodify.shared.compose.resource.generated.resources.order_z_to_a
 import melodify.shared.compose.resource.generated.resources.preset_audio
+import melodify.shared.compose.resource.generated.resources.preset_playlist
 import melodify.shared.compose.resource.generated.resources.preset_video
 import melodify.shared.compose.resource.generated.resources.primary_group_by
 import melodify.shared.compose.resource.generated.resources.reset_settings
@@ -76,12 +78,11 @@ import melodify.shared.compose.resource.generated.resources.show_track_number
 import melodify.shared.compose.resource.generated.resources.sort_by_genre
 import melodify.shared.compose.resource.generated.resources.sort_by_media_title
 import melodify.shared.compose.resource.generated.resources.sort_by_none
+import melodify.shared.compose.resource.generated.resources.sort_by_playlist_create_data
 import melodify.shared.compose.resource.generated.resources.sort_by_release_year
 import melodify.shared.compose.resource.generated.resources.sort_by_track_number
 import melodify.shared.compose.resource.generated.resources.sort_by_video_bucket
 import org.jetbrains.compose.resources.stringResource
-
-private const val TAG = "ChangeSortRuleDialog"
 
 /**
  * Change the sort rule of the tab.
@@ -138,7 +139,7 @@ private fun ChangeSortRuleDialogContent(
     onCustomRadioButtonClick: () -> Unit = {},
     onToggleIsShowVideoProgress: () -> Unit = {},
 ) {
-    val isAudio = tab.isAudio()
+    val type: ContentSortType = tab.contentSortType()
     val selectedPresetOption =
         remember(displaySetting) {
             PresetDisplaySetting.entries.firstOrNull { displaySetting.isPreset && it.displaySetting == displaySetting }
@@ -162,7 +163,7 @@ private fun ChangeSortRuleDialogContent(
             modifier = Modifier.weight(1f),
         ) {
             item {
-                if (!isAudio) {
+                if (type == ContentSortType.Video) {
                     Row(
                         modifier = Modifier.padding(top = 16.dp, start = 16.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -188,7 +189,7 @@ private fun ChangeSortRuleDialogContent(
                 PresetSortOptionSelector(
                     modifier = Modifier.fillMaxWidth(),
                     selectedPresetOption = selectedPresetOption,
-                    isAudio = isAudio,
+                    type = type,
                     onChangePresetSortRule = onChangePresetSortRule,
                 )
             }
@@ -222,7 +223,7 @@ private fun ChangeSortRuleDialogContent(
                     val resolvedSortOption =
                         remember(displaySetting) {
                             if (displaySetting.isPreset) {
-                                DisplaySetting.getDefaultCustom(isAudio)
+                                DisplaySetting.getDefaultCustom(type)
                             } else {
                                 displaySetting
                             }
@@ -241,7 +242,7 @@ private fun ChangeSortRuleDialogContent(
 
                         CustomSortOptionGroup(
                             modifier = Modifier,
-                            isAudio = isAudio,
+                            type = type,
                             enabled = enabled,
                             displaySetting = resolvedSortOption,
                             onPrimarySortRuleChange = { option ->
@@ -275,7 +276,7 @@ private fun ChangeSortRuleDialogContent(
 
                         Spacer(Modifier.height(8.dp))
 
-                        if (isAudio) {
+                        if (type == ContentSortType.Audio) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
@@ -300,7 +301,7 @@ private fun ChangeSortRuleDialogContent(
                             enabled = enabled,
                             onClick = {
                                 onChangeCustomSortRule(
-                                    DisplaySetting.getDefaultCustom(isAudio),
+                                    DisplaySetting.getDefaultCustom(type),
                                 )
                             },
                         ) {
@@ -324,7 +325,7 @@ private fun ChangeSortRuleDialogContent(
 
 @Composable
 private fun CustomSortOptionGroup(
-    isAudio: Boolean,
+    type: ContentSortType,
     displaySetting: DisplaySetting,
     enabled: Boolean,
     modifier: Modifier = Modifier,
@@ -336,7 +337,7 @@ private fun CustomSortOptionGroup(
         SortOptionSelector(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            options = SortOptionType.primaryGroupOptions(isAudio),
+            options = SortOptionType.primaryGroupOptions(type),
             currentOption = displaySetting.primaryGroupSort,
             label = stringResource(Res.string.primary_group_by),
             onChangeSortRule = onPrimarySortRuleChange,
@@ -345,7 +346,7 @@ private fun CustomSortOptionGroup(
         SortOptionSelector(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            options = SortOptionType.secondaryGroupOptions(isAudio),
+            options = SortOptionType.secondaryGroupOptions(type),
             currentOption = displaySetting.secondaryGroupSort,
             label = stringResource(Res.string.secondary_group_by),
             onChangeSortRule = onSecondarySortRuleChange,
@@ -354,7 +355,7 @@ private fun CustomSortOptionGroup(
         SortOptionSelector(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            options = SortOptionType.contentOptions(isAudio),
+            options = SortOptionType.contentOptions(type),
             currentOption = displaySetting.contentSort,
             label = stringResource(Res.string.content_sort_by),
             onChangeSortRule = onContentSortRuleChange,
@@ -363,20 +364,31 @@ private fun CustomSortOptionGroup(
 }
 
 @Composable
-fun PresetSortOptionSelector(
+internal fun PresetSortOptionSelector(
     modifier: Modifier = Modifier,
     selectedPresetOption: PresetDisplaySetting?,
-    isAudio: Boolean,
+    type: ContentSortType,
     onChangePresetSortRule: (PresetDisplaySetting) -> Unit = {},
 ) {
     val options =
-        if (isAudio) PresetDisplaySetting.AUDIO_OPTIONS else PresetDisplaySetting.VIDEO_OPTIONS
+        when (type) {
+            ContentSortType.Audio -> PresetDisplaySetting.AUDIO_OPTIONS
+            ContentSortType.Video -> PresetDisplaySetting.VIDEO_OPTIONS
+            ContentSortType.PlayList -> PresetDisplaySetting.PLAYLIST_OPTIONS
+        }
+
+    val title =
+        when (type) {
+            ContentSortType.Audio -> Res.string.preset_audio
+            ContentSortType.Video -> Res.string.preset_video
+            ContentSortType.PlayList -> Res.string.preset_playlist
+        }
 
     Column(modifier) {
         Text(
             modifier =
                 Modifier.padding(horizontal = 12.dp),
-            text = stringResource(if (isAudio) Res.string.preset_audio else Res.string.preset_video),
+            text = stringResource(title),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary,
         )
@@ -525,6 +537,7 @@ private fun SortOption.toSortOptionType() =
         is SortOption.AudioOption.Genre -> SortOptionType.Genre
         is SortOption.VideoOption.Title -> SortOptionType.VideoTitle
         is SortOption.VideoOption.Bucket -> SortOptionType.VideoBucket
+        is SortOption.PlayListOption.CreateData -> SortOptionType.PlayListCreateDate
         is SortOption.NONE -> SortOptionType.None
     }
 
@@ -538,54 +551,86 @@ private enum class SortOptionType {
     Genre,
     VideoBucket,
     VideoTitle,
+    PlayListCreateDate,
     ;
 
     companion object {
-        fun primaryGroupOptions(isAudio: Boolean = true) =
-            if (isAudio) {
-                listOf(
-                    Album,
-                    Artist,
-                    Title,
-                    Genre,
-                    ReleaseYear,
-                )
-            } else {
-                listOf(
-                    VideoBucket,
-                    VideoTitle,
-                )
+        fun primaryGroupOptions(type: ContentSortType) =
+            when (type) {
+                ContentSortType.Audio -> {
+                    listOf(
+                        Album,
+                        Artist,
+                        Title,
+                        Genre,
+                        ReleaseYear,
+                    )
+                }
+
+                ContentSortType.Video -> {
+                    listOf(
+                        VideoBucket,
+                        VideoTitle,
+                    )
+                }
+
+                ContentSortType.PlayList -> {
+                    listOf(
+                        None,
+                    )
+                }
             }
 
-        fun secondaryGroupOptions(isAudio: Boolean = true) =
-            if (isAudio) {
-                listOf(
-                    Album,
-                    Artist,
-                    Title,
-                    Genre,
-                    ReleaseYear,
-                    None,
-                )
-            } else {
-                listOf(
-                    VideoTitle,
-                    None,
-                )
+        fun secondaryGroupOptions(type: ContentSortType) =
+            when (type) {
+                ContentSortType.Audio -> {
+                    listOf(
+                        Album,
+                        Artist,
+                        Title,
+                        Genre,
+                        ReleaseYear,
+                        None,
+                    )
+                }
+
+                ContentSortType.Video -> {
+                    listOf(
+                        VideoTitle,
+                        None,
+                    )
+                }
+
+                ContentSortType.PlayList -> {
+                    listOf(
+                        None,
+                    )
+                }
             }
 
-        fun contentOptions(isAudio: Boolean = true) =
-            if (isAudio) {
-                listOf(
-                    TrackNum,
-                    Title,
-                    None,
-                )
-            } else {
-                listOf(
-                    VideoTitle,
-                    None,
-                )
+        fun contentOptions(type: ContentSortType) =
+            when (type) {
+                ContentSortType.Audio -> {
+                    listOf(
+                        TrackNum,
+                        Title,
+                        None,
+                    )
+                }
+
+                ContentSortType.Video -> {
+                    listOf(
+                        VideoTitle,
+                        None,
+                    )
+                }
+
+                ContentSortType.PlayList -> {
+                    listOf(
+                        PlayListCreateDate,
+                        None,
+                    )
+                }
             }
     }
 }
@@ -600,6 +645,7 @@ private fun SortOptionType.createSortOption(isAscending: Boolean) =
         SortOptionType.ReleaseYear -> SortOption.AudioOption.ReleaseYear(isAscending)
         SortOptionType.VideoBucket -> SortOption.VideoOption.Bucket(isAscending)
         SortOptionType.VideoTitle -> SortOption.VideoOption.Title(isAscending)
+        SortOptionType.PlayListCreateDate -> SortOption.PlayListOption.CreateData(isAscending)
         SortOptionType.None -> SortOption.NONE
     }
 
@@ -622,6 +668,8 @@ private fun SortOptionType.label() =
         SortOptionType.ReleaseYear -> Res.string.sort_by_release_year
 
         SortOptionType.VideoBucket -> Res.string.sort_by_video_bucket
+
+        SortOptionType.PlayListCreateDate -> Res.string.sort_by_playlist_create_data
     }
 
 private fun SortOptionType.icon() =
@@ -643,6 +691,8 @@ private fun SortOptionType.icon() =
         SortOptionType.ReleaseYear -> Icons.Outlined.Timeline
 
         SortOptionType.VideoBucket -> Icons.Outlined.Folder
+
+        SortOptionType.PlayListCreateDate -> Icons.Outlined.Remove
     }
 
 @Composable
@@ -670,7 +720,9 @@ private fun SortOptionType.orderLabel(ascending: Boolean): String =
             }
         }
 
-        SortOptionType.ReleaseYear -> {
+        SortOptionType.ReleaseYear,
+        SortOptionType.PlayListCreateDate,
+        -> {
             if (ascending) {
                 stringResource(Res.string.order_old_to_new)
             } else {

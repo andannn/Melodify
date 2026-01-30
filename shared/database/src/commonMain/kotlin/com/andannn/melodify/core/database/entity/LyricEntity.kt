@@ -14,7 +14,7 @@ import androidx.room.PrimaryKey
     tableName = "lyric_table",
     foreignKeys = [
         ForeignKey(
-            entity = MediaEntity::class,
+            entity = AudioEntity::class,
             parentColumns = ["media_id"],
             childColumns = ["media_id"],
             onDelete = ForeignKey.CASCADE,

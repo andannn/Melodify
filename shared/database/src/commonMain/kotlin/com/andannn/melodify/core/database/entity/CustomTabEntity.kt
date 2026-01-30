@@ -9,7 +9,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "custom_tab_table")
-data class CustomTabEntity constructor(
+data class CustomTabEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "custom_tab_id")
     val id: Long = 0,
@@ -22,13 +22,6 @@ data class CustomTabEntity constructor(
     val name: String? = null,
     @ColumnInfo(name = "custom_tab_external_id")
     val externalId: String? = null,
-    @Deprecated(
-        """
-        Use SortRuleEntity to save sort rule.
-    """,
-    )
-    @ColumnInfo(name = "display_setting")
-    val displaySettings: String? = null,
     @ColumnInfo(name = "sort_order")
     val sortOrder: Int? = 0,
 )

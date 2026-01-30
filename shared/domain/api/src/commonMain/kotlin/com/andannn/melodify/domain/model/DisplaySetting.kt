@@ -12,7 +12,12 @@ data class DisplaySetting(
     val isPreset: Boolean = true,
 ) {
     companion object Preset {
-        fun getDefaultCustom(isAudio: Boolean) = if (isAudio) Audio.DefaultCustom else Video.DefaultCustom
+        fun getDefaultCustom(type: ContentSortType) =
+            when (type) {
+                ContentSortType.Audio -> Audio.DefaultCustom
+                ContentSortType.Video -> Video.DefaultCustom
+                ContentSortType.PlayList -> Playlist.DefaultCustom
+            }
 
         object Video {
             val BucketNameASC =
@@ -69,6 +74,23 @@ data class DisplaySetting(
                     showTrackNum = true,
                     isPreset = false,
                 )
+        }
+
+        object Playlist {
+            val CreateDateDESC =
+                DisplaySetting(
+                    primaryGroupSort = SortOption.NONE,
+                    contentSort = SortOption.PlayListOption.CreateData(false),
+                    isPreset = true,
+                )
+            val DefaultCustom =
+                DisplaySetting(
+                    primaryGroupSort = SortOption.NONE,
+                    contentSort = SortOption.PlayListOption.CreateData(true),
+                    showTrackNum = true,
+                    isPreset = false,
+                )
+            val DefaultPreset = CreateDateDESC
         }
     }
 }

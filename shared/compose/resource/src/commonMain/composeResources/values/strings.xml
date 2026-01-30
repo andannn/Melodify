@@ -100,4 +100,7 @@
     <string name="change_play_list_alert_dialog_content">Are you sure you want to change the current playlist?</string>
     <string name="last_watched_jump">Last watched: %1$s. Tap to jump.</string>
     <string name="show_play_progress">Show playback progress</string>
+    <string name="preset_playlist">Playlist Presets</string>
+    <string name="sort_by_playlist_create_data">Sort by creation date</string>
+    <string name="sort_sub_playlist_create_date_desc">Group items by playlist creation date in descending order.</string>
 </resources>

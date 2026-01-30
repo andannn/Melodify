@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
         androidx.room.Index(value = ["media_genre_id"]),
     ],
 )
-data class MediaEntity constructor(
+data class AudioEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "media_id")
     val id: Long = 0,
@@ -65,6 +65,3 @@ data class MediaEntity constructor(
     @ColumnInfo(name = "deleted")
     val deleted: Int? = null,
 )
-
-val MediaEntity.valid: Boolean get() = id != 0L
-val VideoEntity.valid: Boolean get() = id != 0L

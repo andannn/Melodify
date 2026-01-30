@@ -59,7 +59,6 @@ import org.jetbrains.compose.resources.stringResource
 
 data class AddMusicsToPlayListPopup(
     val items: List<MediaItemModel>,
-    val isAudio: Boolean,
 ) : PopupId<AddToPlayListDialogResult>
 
 sealed interface AddToPlayListDialogResult {
@@ -97,7 +96,7 @@ internal fun AddToPlayListDialogContent(
     onAction: (AddToPlayListDialogResult) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val state = retainedAddToPlayListSheetState(dialog.isAudio).present()
+    val state = retainedAddToPlayListSheetState().present()
     AddToPlayListRequestSheetContent(
         modifier = modifier.fillMaxWidth(),
         items = dialog.items,

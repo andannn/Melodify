@@ -12,7 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.DisplaySetting
-import com.andannn.melodify.domain.model.isAudio
+import com.andannn.melodify.domain.model.contentSortType
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
@@ -72,6 +72,7 @@ private class ChangeSortRulePresenter(
         ) { event ->
             when (event) {
                 is UiEvent.OnChangeSortRule -> {
+                    Napier.d(tag = TAG) { "OnChangeSortRule. ${event.displaySetting}" }
                     retainedScope.launch {
                         repository.saveSortRuleForTab(customTab, event.displaySetting)
                     }
@@ -88,7 +89,7 @@ private class ChangeSortRulePresenter(
 
                         repository.saveSortRuleForTab(
                             currentTab,
-                            DisplaySetting.getDefaultCustom(customTab.isAudio()),
+                            DisplaySetting.getDefaultCustom(customTab.contentSortType()),
                         )
                     }
                 }

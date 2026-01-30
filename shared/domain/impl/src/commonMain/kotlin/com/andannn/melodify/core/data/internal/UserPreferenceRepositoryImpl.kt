@@ -16,13 +16,14 @@ import com.andannn.melodify.domain.UserPreferenceRepository
 import com.andannn.melodify.domain.impl.mapToCustomTabModel
 import com.andannn.melodify.domain.impl.toEntity
 import com.andannn.melodify.domain.impl.toModel
+import com.andannn.melodify.domain.model.ContentSortType
 import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.MediaPreviewMode
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.domain.model.TabKind
 import com.andannn.melodify.domain.model.UserSetting
-import com.andannn.melodify.domain.model.isAudio
+import com.andannn.melodify.domain.model.contentSortType
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -45,6 +46,7 @@ internal class UserPreferenceRepositoryImpl(
                 lastSuccessfulSyncTime = it.lastSuccessfulSyncTime,
                 defaultAudioPresetDisplaySetting = it.defaultAudioSortRule?.toDefaultPresetRule(),
                 defaultVideoPresetDisplaySetting = it.defaultVideoSortRule?.toDefaultPresetRule(),
+                defaultPlayListPresetDisplaySetting = it.defaultPlayListSortRule?.toDefaultPresetRule(),
             )
         }
 
@@ -127,13 +129,13 @@ internal class UserPreferenceRepositoryImpl(
     override suspend fun getLastSuccessfulSyncTime(): Long? = preferences.userDate.first().lastSuccessfulSyncTime
 
     override suspend fun saveDefaultSortRule(
-        isAudio: Boolean,
+        type: ContentSortType,
         preset: PresetDisplaySetting,
     ) {
-        if (isAudio) {
-            preferences.setDefaultAudioPreset(preset.toIntValue())
-        } else {
-            preferences.setDefaultVideoPreset(preset.toIntValue())
+        when (type) {
+            ContentSortType.Audio -> preferences.setDefaultAudioPreset(preset.toIntValue())
+            ContentSortType.Video -> preferences.setDefaultVideoPreset(preset.toIntValue())
+            ContentSortType.PlayList -> preferences.setDefaultPlaylistPreset(preset.toIntValue())
         }
     }
 
@@ -147,10 +149,18 @@ internal class UserPreferenceRepositoryImpl(
     override fun getCurrentSortRule(tab: CustomTab): Flow<DisplaySetting> {
         val defaultSortRuleFlow =
             userSettingFlow.map {
-                if (tab.isAudio()) {
-                    it.defaultAudioPresetDisplaySetting?.displaySetting
-                } else {
-                    it.defaultVideoPresetDisplaySetting?.displaySetting
+                when (tab.contentSortType()) {
+                    ContentSortType.Audio -> {
+                        it.defaultAudioPresetDisplaySetting?.displaySetting
+                    }
+
+                    ContentSortType.Video -> {
+                        it.defaultVideoPresetDisplaySetting?.displaySetting
+                    }
+
+                    ContentSortType.PlayList -> {
+                        it.defaultPlayListPresetDisplaySetting?.displaySetting
+                    }
                 }
             }
         val customTabSortRuleFlow = userDataDao.getDisplaySettingFlowOfTab(tab.tabId)
@@ -160,24 +170,39 @@ internal class UserPreferenceRepositoryImpl(
         ) { default, custom ->
             val customDisplaySetting: DisplaySetting? = custom?.toModel()
             customDisplaySetting ?: default ?: run {
-                if (tab.isAudio()) {
-                    DisplaySetting.Preset.Audio.DefaultPreset
-                } else {
-                    DisplaySetting.Preset.Video.DefaultPreset
+                when (tab.contentSortType()) {
+                    ContentSortType.Audio -> {
+                        DisplaySetting.Preset.Audio.DefaultPreset
+                    }
+
+                    ContentSortType.Video -> {
+                        DisplaySetting.Preset.Video.DefaultPreset
+                    }
+
+                    ContentSortType.PlayList -> {
+                        DisplaySetting.Preset.Playlist.DefaultPreset
+                    }
                 }
             }
         }
     }
 
-    override fun getDefaultPresetSortRule(isAudio: Boolean): Flow<DisplaySetting> =
+    override fun getDefaultAudioPresetSortRule(): Flow<DisplaySetting> =
         userSettingFlow.map {
-            if (isAudio) {
-                it.defaultAudioPresetDisplaySetting?.displaySetting
-                    ?: DisplaySetting.Preset.Audio.DefaultPreset
-            } else {
-                it.defaultVideoPresetDisplaySetting?.displaySetting
-                    ?: DisplaySetting.Preset.Video.DefaultPreset
-            }
+            it.defaultAudioPresetDisplaySetting?.displaySetting
+                ?: DisplaySetting.Preset.Audio.DefaultPreset
+        }
+
+    override fun getDefaultVideoPresetSortRule(): Flow<DisplaySetting> =
+        userSettingFlow.map {
+            it.defaultVideoPresetDisplaySetting?.displaySetting
+                ?: DisplaySetting.Preset.Video.DefaultPreset
+        }
+
+    override fun getDefaultPlayListPresetSortRule(): Flow<DisplaySetting> =
+        userSettingFlow.map {
+            it.defaultPlayListPresetDisplaySetting?.displaySetting
+                ?: DisplaySetting.Preset.Playlist.DefaultPreset
         }
 
     override suspend fun getTabCustomSortRule(tab: CustomTab): DisplaySetting? =
@@ -239,8 +264,7 @@ private fun TabKind.toEntityName(): String =
         TabKind.ALBUM -> CustomTabType.ALBUM_DETAIL
         TabKind.ARTIST -> CustomTabType.ARTIST_DETAIL
         TabKind.GENRE -> CustomTabType.GENRE_DETAIL
-        TabKind.VIDEO_PLAYLIST -> CustomTabType.VIDEO_PLAYLIST_DETAIL
-        TabKind.AUDIO_PLAYLIST -> CustomTabType.AUDIO_PLAYLIST_DETAIL
+        TabKind.PLAYLIST -> CustomTabType.PLAYLIST_DETAIL
         TabKind.ALL_MUSIC -> CustomTabType.ALL_MUSIC
         TabKind.ALL_VIDEO -> CustomTabType.ALL_VIDEO
         TabKind.VIDEO_BUCKET -> CustomTabType.VIDEO_BUCKET
@@ -263,6 +287,7 @@ private fun PresetDisplaySetting.toIntValue() =
         PresetDisplaySetting.TitleNameAsc -> DefaultPresetValues.TITLE_ASC_VALUE
         PresetDisplaySetting.ArtistAlbumASC -> DefaultPresetValues.ARTIST_ALBUM_ASC_VALUE
         PresetDisplaySetting.VideoBucketNameASC -> DefaultPresetValues.BUCKET_NAME_ASC_VALUE
+        PresetDisplaySetting.PlaylistCreateDateDESC -> DefaultPresetValues.PLAYLIST_CREATE_DATE_DESC_VALUE
     }
 
 private fun Int.toDefaultPresetRule() =
@@ -272,5 +297,6 @@ private fun Int.toDefaultPresetRule() =
         DefaultPresetValues.TITLE_ASC_VALUE -> PresetDisplaySetting.TitleNameAsc
         DefaultPresetValues.ARTIST_ALBUM_ASC_VALUE -> PresetDisplaySetting.ArtistAlbumASC
         DefaultPresetValues.BUCKET_NAME_ASC_VALUE -> PresetDisplaySetting.VideoBucketNameASC
+        DefaultPresetValues.PLAYLIST_CREATE_DATE_DESC_VALUE -> PresetDisplaySetting.PlaylistCreateDateDESC
         else -> error("Invalid preset value: $this")
     }

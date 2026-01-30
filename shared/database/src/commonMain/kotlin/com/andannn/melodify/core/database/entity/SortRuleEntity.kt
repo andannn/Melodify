@@ -29,7 +29,7 @@ import com.andannn.melodify.core.database.SortOptionData
         ),
     ],
 )
-data class SortRuleEntity(
+data class SortRuleEntity constructor(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "sort_rule_id")
     val id: Long = 0,

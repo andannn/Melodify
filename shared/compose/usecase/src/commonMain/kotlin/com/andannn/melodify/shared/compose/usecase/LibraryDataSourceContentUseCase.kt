@@ -76,21 +76,12 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
         }
 
         is LibraryDataSource.PlayListDetail -> {
-            if (isAudioPlayList) {
-                repository.getAudiosOfPlayListFlow(
-                    id.toLong(),
-                    DisplaySetting.Preset.Audio.TitleASC
-                        .sortOptions()
-                        .filterIsInstance<SortOption.AudioOption>(),
-                )
-            } else {
-                repository.getVideosOfPlayListFlow(
-                    id.toLong(),
-                    DisplaySetting.Preset.Video.BucketNameASC
-                        .sortOptions()
-                        .filterIsInstance<SortOption.VideoOption>(),
-                )
-            }
+            repository.getItemsOfPlayListFlow(
+                id.toLong(),
+                DisplaySetting.Preset.Playlist.CreateDateDESC
+                    .sortOptions()
+                    .filterIsInstance<SortOption.PlayListOption>(),
+            )
         }
     }
 

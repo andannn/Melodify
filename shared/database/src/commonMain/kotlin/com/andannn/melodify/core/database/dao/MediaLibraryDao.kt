@@ -5,16 +5,13 @@
 package com.andannn.melodify.core.database.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Upsert
 import com.andannn.melodify.core.database.MediaType
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
-import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.model.LibraryContentSearchResult
 import kotlinx.coroutines.flow.Flow
@@ -76,7 +73,7 @@ interface MediaLibraryDao {
     fun getAllArtistFlow(): Flow<List<ArtistEntity>>
 
     @Query("SELECT * FROM library_media_table WHERE media_genre_id = :genreId")
-    fun getMediasByGenreIdFlow(genreId: String): Flow<List<MediaEntity>>
+    fun getMediasByGenreIdFlow(genreId: String): Flow<List<AudioEntity>>
 
     @Query("SELECT * FROM library_album_table WHERE album_id = :albumId")
     fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumEntity?>
@@ -97,13 +94,13 @@ interface MediaLibraryDao {
     suspend fun getGenreByGenreId(genreId: Long): GenreEntity?
 
     @Query("SELECT * FROM library_media_table WHERE media_id IN (:mediaIds)")
-    suspend fun getMediaByMediaIds(mediaIds: List<Long>): List<MediaEntity>
+    suspend fun getMediaByMediaIds(mediaIds: List<Long>): List<AudioEntity>
 
     @Query("SELECT * FROM library_video_table WHERE video_id IN (:videoIds)")
     suspend fun getVideoByVideoIds(videoIds: List<Long>): List<VideoEntity>
 
     @Query("SELECT * FROM library_media_table WHERE source_uri IN (:sources)")
-    suspend fun getMediaByMediaSourceUrl(sources: List<String>): List<MediaEntity>
+    suspend fun getMediaByMediaSourceUrl(sources: List<String>): List<AudioEntity>
 
     @Query("DELETE FROM library_media_table WHERE source_uri IN (:uris)")
     suspend fun deleteMediaByUri(uris: List<String>)
@@ -178,7 +175,7 @@ interface MediaLibraryDao {
         )
     """,
     )
-    suspend fun searchMedia(keyword: String): List<MediaEntity>
+    suspend fun searchMedia(keyword: String): List<AudioEntity>
 
     @Query(
         """

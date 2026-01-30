@@ -10,7 +10,9 @@ object CustomTabType {
     const val ALBUM_DETAIL = "album_detail"
     const val ARTIST_DETAIL = "artist_detail"
     const val GENRE_DETAIL = "genre_detail"
-    const val AUDIO_PLAYLIST_DETAIL = "playlist_detail"
+    const val PLAYLIST_DETAIL = "playlist_detail"
+
+    @Deprecated("merged audio and video")
     const val VIDEO_PLAYLIST_DETAIL = "video_playlist_detail"
     const val VIDEO_BUCKET = "video_bucket"
 }

@@ -100,4 +100,7 @@
     <string name="change_play_list_alert_dialog_content">¿Seguro que quieres cambiar la lista de reproducción actual?</string>
     <string name="last_watched_jump">Visto por última vez: %1$s. Toca para ir.</string>
     <string name="show_play_progress">Mostrar progreso de reproducción</string>
+    <string name="preset_playlist">Preajustes de listas de reproducción</string>
+    <string name="sort_by_playlist_create_data">Ordenar por fecha de creación</string>
+    <string name="sort_sub_playlist_create_date_desc">Agrupar elementos por fecha de creación de la lista de reproducción en orden descendente.</string>
 </resources>

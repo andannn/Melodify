@@ -11,7 +11,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "video_tab_setting_table",
+    tableName = "custom_tab_setting_table",
     foreignKeys = [
         ForeignKey(
             entity = CustomTabEntity::class,
@@ -27,7 +27,7 @@ import androidx.room.PrimaryKey
         ),
     ],
 )
-data class VideoTabSettingEntity(
+data class CustomTabSettingEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long = 0,

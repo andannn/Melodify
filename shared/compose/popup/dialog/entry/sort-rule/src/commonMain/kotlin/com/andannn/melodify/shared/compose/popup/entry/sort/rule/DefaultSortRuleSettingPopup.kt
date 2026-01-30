@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.andannn.melodify.domain.model.ContentSortType
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.popup.ModalBottomSheetFactoryProvider
@@ -47,14 +48,10 @@ private fun DefaultSortRuleSettingDialog(modifier: Modifier = Modifier) {
         modifier = modifier,
         selectedAudioPresetOption = state.audioDisplaySetting,
         selectedVideoPresetOption = state.videoDisplaySetting,
-        onChangeAudioSortRule = {
+        selectedPlaylistPresetOption = state.playlistPresetOption,
+        onChangeAudioSortRule = { type, setting ->
             state.eventSink.invoke(
-                DefaultSortRuleStateEvent.ChangeAudioSortRule(it),
-            )
-        },
-        onChangeVideoSortRule = {
-            state.eventSink.invoke(
-                DefaultSortRuleStateEvent.ChangeVideoSortRule(it),
+                DefaultSortRuleStateEvent.ChangeAudioSortRule(type, setting),
             )
         },
     )
@@ -65,8 +62,8 @@ private fun DefaultSortRuleSettingDialogContent(
     modifier: Modifier = Modifier,
     selectedAudioPresetOption: PresetDisplaySetting? = null,
     selectedVideoPresetOption: PresetDisplaySetting? = null,
-    onChangeAudioSortRule: (PresetDisplaySetting) -> Unit = {},
-    onChangeVideoSortRule: (PresetDisplaySetting) -> Unit = {},
+    selectedPlaylistPresetOption: PresetDisplaySetting? = null,
+    onChangeAudioSortRule: (ContentSortType, PresetDisplaySetting) -> Unit = { _, _ -> },
 ) {
     Column(modifier = modifier.fillMaxHeight()) {
         val title = stringResource(Res.string.change_default_sort_order)
@@ -89,12 +86,13 @@ private fun DefaultSortRuleSettingDialogContent(
             }
 
             item {
-                val selectedPresetOption = selectedAudioPresetOption
                 PresetSortOptionSelector(
                     modifier = Modifier.fillMaxWidth(),
-                    selectedPresetOption = selectedPresetOption,
-                    isAudio = true,
-                    onChangePresetSortRule = onChangeAudioSortRule,
+                    selectedPresetOption = selectedAudioPresetOption,
+                    type = ContentSortType.Audio,
+                    onChangePresetSortRule = {
+                        onChangeAudioSortRule(ContentSortType.Audio, it)
+                    },
                 )
             }
 
@@ -102,8 +100,20 @@ private fun DefaultSortRuleSettingDialogContent(
                 PresetSortOptionSelector(
                     modifier = Modifier.fillMaxWidth(),
                     selectedPresetOption = selectedVideoPresetOption,
-                    isAudio = false,
-                    onChangePresetSortRule = onChangeVideoSortRule,
+                    type = ContentSortType.Video,
+                    onChangePresetSortRule = {
+                        onChangeAudioSortRule(ContentSortType.Video, it)
+                    },
+                )
+            }
+            item {
+                PresetSortOptionSelector(
+                    modifier = Modifier.fillMaxWidth(),
+                    selectedPresetOption = selectedPlaylistPresetOption,
+                    type = ContentSortType.PlayList,
+                    onChangePresetSortRule = {
+                        onChangeAudioSortRule(ContentSortType.PlayList, it)
+                    },
                 )
             }
         }

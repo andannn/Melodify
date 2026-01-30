@@ -47,7 +47,7 @@ suspend fun MediaItemModel.pinToHomeTab() {
 
             is GenreItemModel -> TabKind.GENRE
 
-            is PlayListItemModel -> if (this.isAudioPlayList) TabKind.AUDIO_PLAYLIST else TabKind.VIDEO_PLAYLIST
+            is PlayListItemModel -> TabKind.PLAYLIST
 
             is AudioItemModel,
             is VideoItemModel,
@@ -135,7 +135,7 @@ suspend fun deleteItemInPlayList(
     playListId: String,
     source: AudioItemModel,
 ) {
-    playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(source.id))
+    playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(source))
 }
 
 context(repo: Repository)
@@ -184,20 +184,13 @@ suspend fun openSleepTimer() {
 context(repo: Repository, popupHostState: PopupHostState, _: SnackBarController)
 suspend fun addToPlaylist(items: List<MediaItemModel>) {
     Napier.d(tag = TAG) { "addToPlaylist E" }
-    val audios = items.filterIsInstance<AudioItemModel>()
-    val videos = items.filterIsInstance<VideoItemModel>()
-    if (audios.isNotEmpty() && videos.isNotEmpty()) {
-        error("can not add audio and video at the same time")
-    }
-    val isAudio = audios.isNotEmpty()
-
-    when (val result = popupHostState.showDialog(AddMusicsToPlayListPopup(items, isAudio))) {
+    when (val result = popupHostState.showDialog(AddMusicsToPlayListPopup(items))) {
         is AddToPlayListDialogResult.OnAddToPlayListResult -> {
             result.playList.addAll(items = result.items)
         }
 
         AddToPlayListDialogResult.OnCreateNewPlayListResult -> {
-            createNewPlayList(items, isAudio)
+            createNewPlayList(items)
         }
 
         else -> {}
@@ -230,16 +223,13 @@ suspend fun deleteItems(items: List<MediaItemModel>) {
 }
 
 context(repo: Repository, popupHostState: PopupHostState)
-private suspend fun createNewPlayList(
-    items: List<MediaItemModel>,
-    isAudio: Boolean,
-) {
+private suspend fun createNewPlayList(items: List<MediaItemModel>) {
     val result = popupHostState.showDialog(NewPlayListPopup)
     Napier.d(tag = TAG) { "result. name = $result" }
     if (result is InputDialogResult.Accept) {
         val name = result.input
-        Napier.d(tag = TAG) { "create new playlist start. name = $name, isAudio $isAudio" }
-        val playListId = repo.createNewPlayList(name, isAudio)
+        Napier.d(tag = TAG) { "create new playlist start. name = $name" }
+        val playListId = repo.createNewPlayList(name)
 
         Napier.d(tag = TAG) { "playlist created. id = $playListId" }
 
@@ -251,7 +241,7 @@ private suspend fun createNewPlayList(
         repo.addNewCustomTab(
             externalId = playListId.toString(),
             tabName = name,
-            tabKind = if (isAudio) TabKind.AUDIO_PLAYLIST else TabKind.VIDEO_PLAYLIST,
+            tabKind = TabKind.PLAYLIST,
         )
     }
 }

@@ -100,4 +100,7 @@
     <string name="change_play_list_alert_dialog_content">Möchten Sie die aktuelle Wiedergabeliste wirklich wechseln?</string>
     <string name="last_watched_jump">Zuletzt angesehen: %1$s. Zum Springen tippen.</string>
     <string name="show_play_progress">Wiedergabefortschritt anzeigen</string>
+    <string name="preset_playlist">Playlist-Voreinstellungen</string>
+    <string name="sort_by_playlist_create_data">Nach Erstellungsdatum sortieren</string>
+    <string name="sort_sub_playlist_create_date_desc">Elemente nach dem Erstellungsdatum der Playlist in absteigender Reihenfolge gruppieren.</string>
 </resources>

@@ -21,8 +21,6 @@ data class PlayListEntity(
     val name: String,
     @ColumnInfo(name = "play_list_artwork_uri")
     val artworkUri: String?,
-    @ColumnInfo(name = "is_audio_playlist")
-    val isAudioPlayList: Boolean? = true,
     @ColumnInfo(name = "is_favorite_playlist")
     val isFavoritePlayList: Boolean? = false,
 )

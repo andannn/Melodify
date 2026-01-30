@@ -8,6 +8,7 @@ import com.andannn.melodify.core.database.helper.paging.MediaEntitySort
 import com.andannn.melodify.core.database.helper.paging.MediaEntityWhere
 import com.andannn.melodify.core.database.helper.paging.MediaSorts
 import com.andannn.melodify.core.database.helper.paging.MediaWheres
+import com.andannn.melodify.core.database.helper.paging.PlayListEntrySort
 import com.andannn.melodify.core.database.helper.paging.Sort
 import com.andannn.melodify.core.database.helper.paging.VideoEntitySort
 import com.andannn.melodify.core.database.helper.paging.VideoEntityWhere
@@ -95,6 +96,13 @@ internal fun List<SortOption.VideoOption>.toVideoSortMethod() =
         }
     }
 
+internal fun List<SortOption.PlayListOption>.toPlayListSortMethod() =
+    MediaSorts.buildMethod {
+        this@toPlayListSortMethod.forEach {
+            addSortOption(it)
+        }
+    }
+
 private fun MutableList<Sort>.addSortOption(sort: SortOption) {
     when (sort) {
         is SortOption.AudioOption.Album -> {
@@ -142,6 +150,12 @@ private fun MutableList<Sort>.addSortOption(sort: SortOption) {
         is SortOption.VideoOption.Title -> {
             apply {
                 add(VideoEntitySort.buildTitleSort(sort.ascending))
+            }
+        }
+
+        is SortOption.PlayListOption.CreateData -> {
+            apply {
+                add(PlayListEntrySort.buildCreateDateSort(sort.ascending))
             }
         }
 

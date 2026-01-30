@@ -7,7 +7,7 @@ package com.andannn.melodify.domain.model
 sealed class CustomTab(
     open val tabId: Long,
 ) {
-    data class AllMusic(
+    data class AllMusic constructor(
         override val tabId: Long,
     ) : CustomTab(tabId)
 
@@ -37,7 +37,6 @@ sealed class CustomTab(
         override val tabId: Long,
         val playListId: String,
         val label: String,
-        val isAudio: Boolean,
     ) : CustomTab(tabId)
 
     data class BucketDetail(
@@ -47,27 +46,11 @@ sealed class CustomTab(
     ) : CustomTab(tabId)
 }
 
-fun CustomTab.isAudio() =
-    when (this) {
-        is CustomTab.AlbumDetail,
-        is CustomTab.AllMusic,
-        is CustomTab.ArtistDetail,
-        is CustomTab.GenreDetail,
-        -> true
-
-        is CustomTab.AllVideo,
-        is CustomTab.BucketDetail,
-        -> false
-
-        is CustomTab.PlayListDetail -> isAudio
-    }
-
 enum class TabKind {
     ALBUM,
     ARTIST,
     GENRE,
-    AUDIO_PLAYLIST,
-    VIDEO_PLAYLIST,
+    PLAYLIST,
     ALL_MUSIC,
     ALL_VIDEO,
     VIDEO_BUCKET,

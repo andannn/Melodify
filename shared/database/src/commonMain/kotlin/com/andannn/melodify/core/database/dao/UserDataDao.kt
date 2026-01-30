@@ -10,10 +10,10 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.andannn.melodify.core.database.entity.CustomTabEntity
+import com.andannn.melodify.core.database.entity.CustomTabSettingEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoPlayProgressEntity
-import com.andannn.melodify.core.database.entity.VideoTabSettingEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -109,7 +109,7 @@ interface UserDataDao {
 
     @Query(
         """
-    INSERT INTO video_tab_setting_table (
+    INSERT INTO custom_tab_setting_table (
         custom_tab_foreign_key, 
         is_show_progress
     ) VALUES (
@@ -124,8 +124,8 @@ interface UserDataDao {
         isShowProgress: Boolean,
     )
 
-    @Query("SELECT * FROM video_tab_setting_table WHERE custom_tab_foreign_key = :tabId")
-    fun getVideoSettingFlowOfTab(tabId: Long): Flow<VideoTabSettingEntity?>
+    @Query("SELECT * FROM custom_tab_setting_table WHERE custom_tab_foreign_key = :tabId")
+    fun getVideoSettingFlowOfTab(tabId: Long): Flow<CustomTabSettingEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSearchHistory(searchHistories: List<SearchHistoryEntity>)
