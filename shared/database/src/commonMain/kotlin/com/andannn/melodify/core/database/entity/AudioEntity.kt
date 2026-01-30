@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
         androidx.room.Index(value = ["media_genre_id"]),
     ],
 )
-data class MediaEntity(
+data class AudioEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "media_id")
     val id: Long = 0,

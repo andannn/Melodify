@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE,
         ),
         ForeignKey(
-            entity = MediaEntity::class,
+            entity = AudioEntity::class,
             parentColumns = ["media_id"],
             childColumns = ["audio_id"],
             onDelete = ForeignKey.CASCADE,

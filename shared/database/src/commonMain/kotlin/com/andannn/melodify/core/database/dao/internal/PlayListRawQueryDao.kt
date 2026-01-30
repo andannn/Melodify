@@ -8,7 +8,7 @@ import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.RawQuery
 import androidx.room.RoomRawQuery
-import com.andannn.melodify.core.database.entity.MediaEntity
+import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
@@ -17,9 +17,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PlayListRawQueryDao {
-    @RawQuery(observedEntities = [MediaEntity::class, VideoEntity::class, PlayListEntity::class, PlayListItemEntryEntity::class])
+    @RawQuery(observedEntities = [AudioEntity::class, VideoEntity::class, PlayListEntity::class, PlayListItemEntryEntity::class])
     fun getMediasInPlayListFlowRaw(rawQuery: RoomRawQuery): Flow<List<AudioVideoMergedResult>>
 
-    @RawQuery(observedEntities = [MediaEntity::class, VideoEntity::class, PlayListEntity::class, PlayListItemEntryEntity::class])
+    @RawQuery(observedEntities = [AudioEntity::class, VideoEntity::class, PlayListEntity::class, PlayListItemEntryEntity::class])
     fun getMediasInPlayListFlowPagingSource(rawQuery: RoomRawQuery): PagingSource<Int, AudioVideoMergedResult>
 }

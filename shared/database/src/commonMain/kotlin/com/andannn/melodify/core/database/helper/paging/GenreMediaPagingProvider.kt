@@ -6,17 +6,17 @@ package com.andannn.melodify.core.database.helper.paging
 
 import androidx.paging.PagingSource
 import com.andannn.melodify.core.database.dao.internal.MediaEntityRawQueryDao
-import com.andannn.melodify.core.database.entity.MediaEntity
+import com.andannn.melodify.core.database.entity.AudioEntity
 import kotlinx.coroutines.flow.Flow
 
 internal class GenreMediaPagingProvider(
     private val genreId: String,
     private val provider: MediaEntityRawQueryDao,
-) : PagingProvider<MediaEntity> {
+) : PagingProvider<AudioEntity> {
     override fun getDataFlow(
         where: MediaWheres?,
         sort: MediaSorts?,
-    ): Flow<List<MediaEntity>> =
+    ): Flow<List<AudioEntity>> =
         provider.getMediaFlowRaw(
             buildMediaRawQuery(
                 wheres =
@@ -33,7 +33,7 @@ internal class GenreMediaPagingProvider(
     override fun getPagingSource(
         where: MediaWheres?,
         sort: MediaSorts?,
-    ): PagingSource<Int, MediaEntity> =
+    ): PagingSource<Int, AudioEntity> =
         provider.getMediaFlowPagingSource(
             buildMediaRawQuery(
                 wheres =

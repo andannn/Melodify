@@ -12,8 +12,8 @@ import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.internal.SyncerDao
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
-import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.entity.toAlbumWithoutTrackCount
 import com.andannn.melodify.core.database.entity.toArtistWithoutTrackCount
@@ -29,7 +29,7 @@ class MediaLibrarySyncHelper internal constructor(
         albums: List<AlbumEntity>,
         artists: List<ArtistEntity>,
         genres: List<GenreEntity>,
-        audios: List<MediaEntity>,
+        audios: List<AudioEntity>,
         videos: List<VideoEntity> = emptyList(),
     ) {
         db.useWriterConnection {
@@ -47,7 +47,7 @@ class MediaLibrarySyncHelper internal constructor(
         albums: List<AlbumEntity> = emptyList(),
         artists: List<ArtistEntity> = emptyList(),
         genres: List<GenreEntity> = emptyList(),
-        audios: List<MediaEntity> = emptyList(),
+        audios: List<AudioEntity> = emptyList(),
         videos: List<VideoEntity> = emptyList(),
         onInsert: (type: Int, items: List<String>) -> Unit = { _, _ -> },
         onDelete: (type: Int, items: List<String>) -> Unit = { _, _ -> },
@@ -102,7 +102,7 @@ class MediaLibrarySyncHelper internal constructor(
     }
 
     private suspend fun syncMedia(
-        audios: List<MediaEntity>,
+        audios: List<AudioEntity>,
         onProgress: (inserted: Int, total: Int) -> Unit,
         onInsert: (items: List<String>) -> Unit = {},
         onDelete: (items: List<String>) -> Unit = {},

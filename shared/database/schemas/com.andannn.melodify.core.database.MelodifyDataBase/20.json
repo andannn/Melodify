@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 20,
-    "identityHash": "1457b6a90a82c2ea4f2b72a05098bdc9",
+    "identityHash": "ab71a56d6aeb2fa96a9e5b65025ad24a",
     "entities": [
       {
         "tableName": "lyric_table",
@@ -1002,7 +1002,7 @@
         ]
       },
       {
-        "tableName": "video_tab_setting_table",
+        "tableName": "custom_tab_setting_table",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `custom_tab_foreign_key` INTEGER NOT NULL, `is_show_progress` INTEGER NOT NULL, FOREIGN KEY(`custom_tab_foreign_key`) REFERENCES `custom_tab_table`(`custom_tab_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
@@ -1032,13 +1032,13 @@
         },
         "indices": [
           {
-            "name": "index_video_tab_setting_table_custom_tab_foreign_key",
+            "name": "index_custom_tab_setting_table_custom_tab_foreign_key",
             "unique": true,
             "columnNames": [
               "custom_tab_foreign_key"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_video_tab_setting_table_custom_tab_foreign_key` ON `${TABLE_NAME}` (`custom_tab_foreign_key`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_custom_tab_setting_table_custom_tab_foreign_key` ON `${TABLE_NAME}` (`custom_tab_foreign_key`)"
           }
         ],
         "foreignKeys": [
@@ -1058,7 +1058,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1457b6a90a82c2ea4f2b72a05098bdc9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ab71a56d6aeb2fa96a9e5b65025ad24a')"
     ]
   }
 }

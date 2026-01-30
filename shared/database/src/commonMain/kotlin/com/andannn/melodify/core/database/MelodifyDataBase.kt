@@ -9,6 +9,7 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.DeleteColumn
 import androidx.room.DeleteTable
+import androidx.room.RenameTable
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
@@ -29,10 +30,11 @@ import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.AlbumFtsEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.ArtistFtsEntity
+import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.CustomTabEntity
+import com.andannn.melodify.core.database.entity.CustomTabSettingEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
-import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.MediaFtsEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
@@ -42,7 +44,6 @@ import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.entity.VideoFtsEntity
 import com.andannn.melodify.core.database.entity.VideoPlayProgressEntity
-import com.andannn.melodify.core.database.entity.VideoTabSettingEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
@@ -54,7 +55,7 @@ import kotlinx.coroutines.IO
         AlbumEntity::class,
         ArtistEntity::class,
         GenreEntity::class,
-        MediaEntity::class,
+        AudioEntity::class,
         CustomTabEntity::class,
         AlbumFtsEntity::class,
         ArtistFtsEntity::class,
@@ -64,7 +65,7 @@ import kotlinx.coroutines.IO
         VideoEntity::class,
         VideoFtsEntity::class,
         VideoPlayProgressEntity::class,
-        VideoTabSettingEntity::class,
+        CustomTabSettingEntity::class,
     ],
     autoMigrations = [
         AutoMigration(from = 3, to = 4),
@@ -406,4 +407,5 @@ internal object Migration17To18Spec : Migration(17, 18) {
 @DeleteTable(tableName = "play_list_with_media_cross_ref_table")
 @DeleteColumn(tableName = "play_list_table", columnName = "is_audio_playlist")
 @DeleteColumn(tableName = "custom_tab_table", columnName = "display_setting")
+@RenameTable(fromTableName = "video_tab_setting_table", toTableName = "custom_tab_setting_table")
 internal class AutoMigration19To20Spec : AutoMigrationSpec

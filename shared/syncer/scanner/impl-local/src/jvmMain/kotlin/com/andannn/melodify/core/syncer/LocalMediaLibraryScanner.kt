@@ -5,7 +5,7 @@
 package com.andannn.melodify.core.syncer
 
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
-import com.andannn.melodify.core.database.entity.MediaEntity
+import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.helper.paging.PagingProvider
 import com.andannn.melodify.core.database.helper.paging.PagingProviderFactory
 import com.andannn.melodify.core.datastore.UserSettingPreferences
@@ -32,7 +32,7 @@ internal class LocalMediaLibraryScanner(
     private val mediaLibraryDao: MediaLibraryDao,
     private val userSettingPreferences: UserSettingPreferences,
 ) : MediaLibraryScanner {
-    private val allMediaPagingProvider: PagingProvider<MediaEntity> =
+    private val allMediaPagingProvider: PagingProvider<AudioEntity> =
         PagingProviderFactory.allMediaPagingProvider()
 
     override suspend fun scanAllMedia(): MediaDataModel {
@@ -107,7 +107,7 @@ private fun CoroutineScope.asyncTaskForExtractTag(filePath: Path) =
         result
     }
 
-private fun MediaEntity.toAudioData() =
+private fun AudioEntity.toAudioData() =
     AudioData(
         id = id,
         sourceUri = sourceUri ?: "",

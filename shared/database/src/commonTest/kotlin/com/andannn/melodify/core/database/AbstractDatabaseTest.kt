@@ -18,10 +18,10 @@ import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.AlbumWithoutTrackCount
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.ArtistWithoutTrackCount
+import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
-import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListEntryType
 import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
@@ -108,7 +108,7 @@ abstract class AbstractDatabaseTest {
     fun get_lyric_by_media_store_id() =
         runTest {
             syncerDao.upsertMedias(
-                audios = listOf(MediaEntity(id = 1, title = "dummy")),
+                audios = listOf(AudioEntity(id = 1, title = "dummy")),
             )
             lyricDao.insertLyricEntities(listOf(dummyLyricEntities[0]))
 
@@ -120,7 +120,7 @@ abstract class AbstractDatabaseTest {
     fun get_lyric_by_media_store_id_not_exist() =
         runTest {
             syncerDao.upsertMedias(
-                audios = listOf(MediaEntity(id = 1, title = "dummy")),
+                audios = listOf(AudioEntity(id = 1, title = "dummy")),
             )
             lyricDao.insertLyricEntities(entities = listOf(dummyLyricEntities[0]))
 
@@ -132,7 +132,7 @@ abstract class AbstractDatabaseTest {
     fun lyric_deleted_cascade_when_media_deleted() =
         runTest {
             syncerDao.upsertMedias(
-                audios = listOf(MediaEntity(id = 1, title = "dummy")),
+                audios = listOf(AudioEntity(id = 1, title = "dummy")),
             )
             lyricDao.insertLyricEntities(entities = listOf(dummyLyricEntities[0]))
             assertEquals(dummyLyricEntities[0], lyricDao.getLyricByMediaIdFlow("1").first())
@@ -210,9 +210,9 @@ abstract class AbstractDatabaseTest {
                             ),
                     ).first()
             val mediaId =
-                syncerDao.upsertMedias(listOf(MediaEntity(id = 1, title = "dummy"))).first()
+                syncerDao.upsertMedias(listOf(AudioEntity(id = 1, title = "dummy"))).first()
             val mediaId2 =
-                syncerDao.upsertMedias(listOf(MediaEntity(id = 2, title = "dummy2"))).first()
+                syncerDao.upsertMedias(listOf(AudioEntity(id = 2, title = "dummy2"))).first()
 
             playListDao.insertPlayListWithMediaCrossRef(
                 crossRefs =
@@ -250,7 +250,7 @@ abstract class AbstractDatabaseTest {
                             ),
                         ),
                     ).first()
-            val mediaId = syncerDao.upsertMedias(listOf(MediaEntity(title = "dummy"))).first()
+            val mediaId = syncerDao.upsertMedias(listOf(AudioEntity(title = "dummy"))).first()
             assertEquals(
                 false,
                 playListDao
@@ -367,7 +367,7 @@ abstract class AbstractDatabaseTest {
                                 ),
                             ),
                     ).first()
-            val mediaId = syncerDao.upsertMedias(listOf(MediaEntity(title = "dummy"))).first()
+            val mediaId = syncerDao.upsertMedias(listOf(AudioEntity(title = "dummy"))).first()
             playListDao.insertPlayListWithMediaCrossRef(
                 crossRefs =
                     listOf(
@@ -550,7 +550,7 @@ abstract class AbstractDatabaseTest {
             syncerDao.upsertMedias(
                 audios =
                     listOf(
-                        MediaEntity(
+                        AudioEntity(
                             id = 1,
                             albumId = 2,
                             genreId = 3,
@@ -610,7 +610,7 @@ abstract class AbstractDatabaseTest {
             syncerDao.upsertMedias(
                 audios =
                     listOf(
-                        MediaEntity(
+                        AudioEntity(
                             id = 1,
                             albumId = 2,
                             genreId = 3,
@@ -640,7 +640,7 @@ abstract class AbstractDatabaseTest {
             syncerDao.upsertMedias(
                 audios =
                     listOf(
-                        MediaEntity(
+                        AudioEntity(
                             id = 1,
                             albumId = 2,
                             genreId = 3,
@@ -750,20 +750,20 @@ abstract class AbstractDatabaseTest {
             syncerDao.upsertMedias(
                 audios =
                     listOf(
-                        MediaEntity(
+                        AudioEntity(
                             id = 2,
                             albumId = 2,
                             title = "title a",
                             album = "album a",
                             cdTrackNumber = 1,
                         ),
-                        MediaEntity(
+                        AudioEntity(
                             id = 3,
                             title = "title c",
                             albumId = 4,
                             album = "album b",
                         ),
-                        MediaEntity(
+                        AudioEntity(
                             id = 1,
                             title = "title b",
                             albumId = 2,
@@ -793,20 +793,20 @@ abstract class AbstractDatabaseTest {
             syncerDao.upsertMedias(
                 audios =
                     listOf(
-                        MediaEntity(
+                        AudioEntity(
                             id = 2,
                             albumId = 2,
                             title = "title a",
                             album = "album a",
                             cdTrackNumber = 1,
                         ),
-                        MediaEntity(
+                        AudioEntity(
                             id = 3,
                             title = "title c",
                             albumId = 4,
                             album = "album b",
                         ),
-                        MediaEntity(
+                        AudioEntity(
                             id = 1,
                             title = "title b",
                             albumId = 2,
@@ -952,20 +952,20 @@ abstract class AbstractDatabaseTest {
             syncerDao.upsertMedias(
                 audios =
                     listOf(
-                        MediaEntity(
+                        AudioEntity(
                             id = 2,
                             albumId = 2,
                             title = "title a",
                             album = "album a",
                             cdTrackNumber = 1,
                         ),
-                        MediaEntity(
+                        AudioEntity(
                             id = 3,
                             title = "title c",
                             albumId = 3,
                             album = "album b",
                         ),
-                        MediaEntity(
+                        AudioEntity(
                             id = 1,
                             title = "title b",
                             albumId = 2,
@@ -998,26 +998,26 @@ abstract class AbstractDatabaseTest {
             syncerDao.upsertMedias(
                 audios =
                     listOf(
-                        MediaEntity(
+                        AudioEntity(
                             id = 2,
                             albumId = 2,
                             title = "Aa",
                             album = "album a",
                             cdTrackNumber = 1,
                         ),
-                        MediaEntity(
+                        AudioEntity(
                             id = 3,
                             title = "aA",
                             albumId = 3,
                             album = "album b",
                         ),
-                        MediaEntity(
+                        AudioEntity(
                             id = 4,
                             title = "abijia",
                             albumId = 3,
                             album = "album b",
                         ),
-                        MediaEntity(
+                        AudioEntity(
                             id = 1,
                             title = "啊asdfasf",
                             albumId = 2,
@@ -1205,7 +1205,7 @@ abstract class AbstractDatabaseTest {
                 syncHelper.syncMediaLibrary(
                     audios =
                         listOf(
-                            MediaEntity(
+                            AudioEntity(
                                 id = 100,
                                 albumId = 400,
                                 genreId = 500,
@@ -1236,7 +1236,7 @@ abstract class AbstractDatabaseTest {
     fun `sync media library insert delete CallBack event test`() =
         runTest {
             syncHelper.syncMediaLibrary(
-                audios = listOf(MediaEntity(id = 100, title = "Test")),
+                audios = listOf(AudioEntity(id = 100, title = "Test")),
                 onInsert = { type, names ->
                     assertEquals("Test", names[0])
                 },
@@ -1436,14 +1436,14 @@ private suspend fun MediaLibrarySyncHelper.insertDummyData() {
             ),
         audios =
             listOf(
-                MediaEntity(
+                AudioEntity(
                     id = 1,
                     albumId = 2,
                     genreId = 3,
                     artistId = 4,
                     title = "title 1",
                 ),
-                MediaEntity(
+                AudioEntity(
                     id = 2,
                     albumId = 2,
                     genreId = 3,

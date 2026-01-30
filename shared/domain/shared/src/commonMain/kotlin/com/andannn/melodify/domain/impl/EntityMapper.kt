@@ -8,10 +8,10 @@ import com.andannn.melodify.core.database.CustomTabType
 import com.andannn.melodify.core.database.SortOptionData
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
-import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.model.AudioVideoMergedResult
@@ -37,7 +37,7 @@ fun List<AlbumEntity>.mapToAlbumItemModel() =
         it.toAppItem()
     }
 
-fun List<MediaEntity>.mapToAudioItemModel() =
+fun List<AudioEntity>.mapToAudioItemModel() =
     map {
         it.toAppItem()
     }
@@ -62,7 +62,7 @@ fun List<GenreEntity>.mapToGenreItemModel() =
         it.toAppItem()
     }
 
-fun MediaEntity.toAppItem() =
+fun AudioEntity.toAppItem() =
     AudioItemModel(
         id = id.toString(),
         path = path ?: "",
@@ -139,7 +139,7 @@ fun PlayListWithMediaCount.toAppItem() =
 
 fun AudioVideoMergedResult.toAppItem() =
     toEntity().let {
-        if (it is MediaEntity) {
+        if (it is AudioEntity) {
             it.toAppItem()
         } else if (it is VideoEntity) {
             it.toAppItem()
@@ -150,7 +150,7 @@ fun AudioVideoMergedResult.toAppItem() =
 
 private fun AudioVideoMergedResult.toEntity() =
     if (audio_id != null) {
-        MediaEntity(
+        AudioEntity(
             id = audio_id!!,
             path = audio_path,
             sourceUri = audio_sourceUri,

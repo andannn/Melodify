@@ -10,7 +10,7 @@ import androidx.room.Fts4
 import androidx.room.PrimaryKey
 
 @Fts4(
-    contentEntity = MediaEntity::class,
+    contentEntity = AudioEntity::class,
 )
 @Entity(tableName = "library_fts_media_table")
 data class MediaFtsEntity(

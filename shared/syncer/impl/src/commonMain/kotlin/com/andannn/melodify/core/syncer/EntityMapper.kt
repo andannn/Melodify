@@ -6,8 +6,8 @@ package com.andannn.melodify.core.syncer
 
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
+import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
-import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.syncer.model.AlbumData
 import com.andannn.melodify.core.syncer.model.ArtistData
@@ -42,9 +42,9 @@ internal fun List<ArtistData>.toArtistEntity(): List<ArtistEntity> =
         )
     }
 
-internal fun List<AudioData>.toMediaEntity(): List<MediaEntity> =
+internal fun List<AudioData>.toMediaEntity(): List<AudioEntity> =
     map {
-        MediaEntity(
+        AudioEntity(
             id = it.id,
             path = it.path,
             sourceUri = it.sourceUri,

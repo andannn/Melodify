@@ -13,8 +13,8 @@ import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.AlbumWithoutTrackCount
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.ArtistWithoutTrackCount
+import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
-import com.andannn.melodify.core.database.entity.MediaEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 
 @Dao
@@ -38,7 +38,7 @@ internal interface SyncerDao {
     suspend fun getNameOfMedia(ids: List<Long>): List<String>
 
     @Upsert
-    suspend fun upsertMedias(audios: List<MediaEntity>): List<Long>
+    suspend fun upsertMedias(audios: List<AudioEntity>): List<Long>
 
     @Upsert
     suspend fun upsertVideos(audios: List<VideoEntity>): List<Long>
