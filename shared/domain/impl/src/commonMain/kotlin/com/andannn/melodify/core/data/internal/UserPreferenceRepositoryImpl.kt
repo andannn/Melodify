@@ -7,26 +7,30 @@ package com.andannn.melodify.core.data.internal
 import androidx.sqlite.SQLiteException
 import com.andannn.melodify.core.database.CustomTabType
 import com.andannn.melodify.core.database.dao.UserDataDao
-import com.andannn.melodify.core.database.entity.CustomTabEntity
+import com.andannn.melodify.core.database.entity.CustomTabSettingEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
+import com.andannn.melodify.core.database.entity.TabEntity
 import com.andannn.melodify.core.datastore.UserSettingPreferences
-import com.andannn.melodify.core.datastore.model.DefaultPresetValues
 import com.andannn.melodify.core.datastore.model.PreviewModeValues
 import com.andannn.melodify.domain.UserPreferenceRepository
 import com.andannn.melodify.domain.impl.mapToCustomTabModel
 import com.andannn.melodify.domain.impl.toEntity
 import com.andannn.melodify.domain.impl.toModel
+import com.andannn.melodify.domain.model.AudioTrackStyle
 import com.andannn.melodify.domain.model.ContentSortType
-import com.andannn.melodify.domain.model.CustomTab
-import com.andannn.melodify.domain.model.DisplaySetting
+import com.andannn.melodify.domain.model.CustomDisplaySetting
 import com.andannn.melodify.domain.model.MediaPreviewMode
 import com.andannn.melodify.domain.model.PresetDisplaySetting
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabKind
+import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.UserSetting
 import com.andannn.melodify.domain.model.contentSortType
+import com.andannn.melodify.domain.model.defaultPresetSetting
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlin.time.Clock
@@ -50,7 +54,7 @@ internal class UserPreferenceRepositoryImpl(
             )
         }
 
-    override val currentCustomTabsFlow: Flow<List<CustomTab>> =
+    override val currentTabsFlow: Flow<List<Tab>> =
         userDataDao
             .getCustomTabsFlow()
             .map { it.mapToCustomTabModel().filterNotNull() }
@@ -61,7 +65,7 @@ internal class UserPreferenceRepositoryImpl(
         tabKind: TabKind,
     ) {
         userDataDao.insertCustomTab(
-            CustomTabEntity(
+            TabEntity(
                 externalId = externalId,
                 name = tabName,
                 type = tabKind.toEntityName(),
@@ -91,7 +95,7 @@ internal class UserPreferenceRepositoryImpl(
             }
         }
 
-    override suspend fun deleteCustomTab(tab: CustomTab) {
+    override suspend fun deleteCustomTab(tab: Tab) {
         userDataDao.deleteCustomTab(tabId = tab.tabId)
     }
 
@@ -139,78 +143,72 @@ internal class UserPreferenceRepositoryImpl(
         }
     }
 
-    override suspend fun saveSortRuleForTab(
-        tab: CustomTab,
-        displaySetting: DisplaySetting,
-    ) {
-        userDataDao.upsertSortRuleEntity(entity = displaySetting.toEntity(tab.tabId))
-    }
-
-    override fun getCurrentSortRule(tab: CustomTab): Flow<DisplaySetting> {
+    override fun getCurrentSortRule(tab: Tab): Flow<TabSortRule> {
         val defaultSortRuleFlow =
-            userSettingFlow.map {
-                when (tab.contentSortType()) {
-                    ContentSortType.Audio -> {
-                        it.defaultAudioPresetDisplaySetting?.displaySetting
-                    }
-
-                    ContentSortType.Video -> {
-                        it.defaultVideoPresetDisplaySetting?.displaySetting
-                    }
-
-                    ContentSortType.PlayList -> {
-                        it.defaultPlayListPresetDisplaySetting?.displaySetting
-                    }
-                }
-            }
-        val customTabSortRuleFlow = userDataDao.getDisplaySettingFlowOfTab(tab.tabId)
+            getDefaultPresetDisplaySettingFlow(tab.contentSortType()).map { it.tabSortRule }
+        val tabSortRuleFlow = getTabSortRuleFlow(tab)
         return combine(
             defaultSortRuleFlow,
-            customTabSortRuleFlow,
-        ) { default, custom ->
-            val customDisplaySetting: DisplaySetting? = custom?.toModel()
-            customDisplaySetting ?: default ?: run {
-                when (tab.contentSortType()) {
-                    ContentSortType.Audio -> {
-                        DisplaySetting.Preset.Audio.DefaultPreset
-                    }
-
-                    ContentSortType.Video -> {
-                        DisplaySetting.Preset.Video.DefaultPreset
-                    }
-
-                    ContentSortType.PlayList -> {
-                        DisplaySetting.Preset.Playlist.DefaultPreset
-                    }
-                }
-            }
+            tabSortRuleFlow,
+        ) { default, tabSortRule ->
+            tabSortRule ?: default
         }
     }
 
-    override fun getDefaultAudioPresetSortRule(): Flow<DisplaySetting> =
-        userSettingFlow.map {
-            it.defaultAudioPresetDisplaySetting?.displaySetting
-                ?: DisplaySetting.Preset.Audio.DefaultPreset
+    override fun getDefaultPresetSortRule(contentSortType: ContentSortType): Flow<PresetDisplaySetting> =
+        getDefaultPresetDisplaySettingFlow(contentSortType)
+
+    override fun getTabCustomDisplaySettingFlow(tab: Tab): Flow<CustomDisplaySetting?> {
+        val sortRuleFlow =
+            userDataDao.getCustomTabSortRuleFlow(tab.tabId).map {
+                it?.toModel()
+            }
+        val settingFlow =
+            userDataDao.getCustomTabSettingFlow(tab.tabId)
+        return combine(
+            sortRuleFlow,
+            settingFlow,
+        ) { sortRule, setting ->
+            if (sortRule == null || setting == null) return@combine null
+            CustomDisplaySetting(
+                tabSortRule = sortRule,
+                isShowVideoProgress = setting.isShowVideoProgress,
+                audioTrackStyle = setting.audioEntryStyle.toDomainValue(),
+            )
+        }
+    }
+
+    override fun getTabPresetDisplaySettingFlow(tab: Tab): Flow<PresetDisplaySetting?> =
+        userDataDao.getTabPresetDisplaySettingFlow(tab.tabId).map { entity ->
+            entity?.preset?.let { PresetDisplaySetting.fromValue(it) }
         }
 
-    override fun getDefaultVideoPresetSortRule(): Flow<DisplaySetting> =
-        userSettingFlow.map {
-            it.defaultVideoPresetDisplaySetting?.displaySetting
-                ?: DisplaySetting.Preset.Video.DefaultPreset
-        }
+    override suspend fun selectTabPresetDisplaySetting(
+        tabId: Long,
+        preset: PresetDisplaySetting,
+    ) {
+        userDataDao.selectTabPresetDisplaySettingEntity(tabId, preset = preset.toIntValue())
+    }
 
-    override fun getDefaultPlayListPresetSortRule(): Flow<DisplaySetting> =
-        userSettingFlow.map {
-            it.defaultPlayListPresetDisplaySetting?.displaySetting
-                ?: DisplaySetting.Preset.Playlist.DefaultPreset
-        }
-
-    override suspend fun getTabCustomSortRule(tab: CustomTab): DisplaySetting? =
-        userDataDao.getDisplaySettingFlowOfTab(tab.tabId).first()?.toModel()
+    override suspend fun selectTabCustomDisplaySetting(
+        tabId: Long,
+        displaySetting: CustomDisplaySetting,
+    ) {
+        userDataDao.selectTabCustomSettingEntity(
+            tabId,
+            tabSettingEntity =
+                CustomTabSettingEntity(
+                    customTabId = tabId,
+                    isShowVideoProgress = displaySetting.isShowVideoProgress,
+                    audioEntryStyle = displaySetting.audioTrackStyle.toDBValue(),
+                ),
+            tabSortRuleEntity = displaySetting.tabSortRule.toEntity(tabId),
+        )
+    }
 
     override suspend fun swapTabOrder(
-        from: CustomTab,
-        to: CustomTab,
+        from: Tab,
+        to: Tab,
     ) {
         userDataDao.swapTabOrder(from.tabId, toId = to.tabId)
     }
@@ -247,17 +245,135 @@ internal class UserPreferenceRepositoryImpl(
     }
 
     override suspend fun setIsShowVideoProgress(
-        tabId: Long,
+        tab: Tab,
         isShow: Boolean,
     ) {
-        userDataDao.upsertVideoTabSettingEntity(tabId, isShow)
+        val oldSetting = userDataDao.getCustomTabSettingFlow(tab.tabId).first()
+        if (oldSetting == null) {
+            userDataDao.insertTabSettingEntity(
+                CustomTabSettingEntity(
+                    customTabId = tab.tabId,
+                    isShowVideoProgress = isShow,
+                    audioEntryStyle =
+                        tab
+                            .contentSortType()
+                            .defaultPresetSetting()
+                            .audioTrackStyle
+                            .toDBValue(),
+                ),
+            )
+            return
+        }
+        userDataDao.insertTabSettingEntity(oldSetting.copy(isShowVideoProgress = isShow))
     }
 
-    override fun getIsShowVideoProgressFlow(tabId: Long): Flow<Boolean> =
-        userDataDao.getVideoSettingFlowOfTab(tabId).map {
-            it?.isShowProgress ?: false
+    override fun getIsShowVideoProgressFlow(tab: Tab): Flow<Boolean> {
+        val defaultSettingFlow =
+            getDefaultPresetDisplaySettingFlow(tab.contentSortType()).map { it.isShowVideoProgress }
+        val tabSettingFlow = getTabIsShowVideoProgressFlow(tab)
+
+        return combine(
+            defaultSettingFlow,
+            tabSettingFlow,
+        ) { default, custom ->
+            custom ?: default
+        }.distinctUntilChanged()
+    }
+
+    override fun getAudioTrackStyleFlow(tab: Tab): Flow<AudioTrackStyle> {
+        val defaultSettingFlow =
+            getDefaultPresetDisplaySettingFlow(tab.contentSortType()).map { it.audioTrackStyle }
+        val tabSettingFlow = getTabAudioTrackStyleFlow(tab)
+        return combine(
+            defaultSettingFlow,
+            tabSettingFlow,
+        ) { default, custom ->
+            custom ?: default
+        }.distinctUntilChanged()
+    }
+
+    private fun getDefaultPresetDisplaySettingFlow(type: ContentSortType) =
+        userSettingFlow.map {
+            when (type) {
+                ContentSortType.Audio -> {
+                    it.defaultAudioPresetDisplaySetting
+                }
+
+                ContentSortType.Video -> {
+                    it.defaultVideoPresetDisplaySetting
+                }
+
+                ContentSortType.PlayList -> {
+                    it.defaultPlayListPresetDisplaySetting
+                }
+            }
+                ?: type.defaultPresetSetting()
         }
+
+    private fun getTabSortRuleFlow(tab: Tab): Flow<TabSortRule?> {
+        val tabPresetFlow =
+            userDataDao.getTabPresetDisplaySettingFlow(tab.tabId).map { entityOrNull ->
+                entityOrNull?.preset?.let { PresetDisplaySetting.fromValue(it) }?.tabSortRule
+            }
+        val tabCustomSortRuleFlow =
+            userDataDao.getCustomTabSortRuleFlow(tab.tabId).map {
+                it?.toModel()
+            }
+        return combine(
+            tabPresetFlow,
+            tabCustomSortRuleFlow,
+        ) { preset, custom ->
+            custom ?: preset
+        }
+    }
+
+    private fun getTabAudioTrackStyleFlow(tab: Tab): Flow<AudioTrackStyle?> {
+        val tabPresetFlow =
+            userDataDao.getTabPresetDisplaySettingFlow(tab.tabId).map { entityOrNull ->
+                entityOrNull?.preset?.let { PresetDisplaySetting.fromValue(it) }?.audioTrackStyle
+            }
+        val tabCustomFlow =
+            userDataDao.getCustomTabSettingFlow(tab.tabId).map {
+                it?.audioEntryStyle?.toDomainValue()
+            }
+        return combine(
+            tabPresetFlow,
+            tabCustomFlow,
+        ) { preset, custom ->
+            custom ?: preset
+        }
+    }
+
+    private fun getTabIsShowVideoProgressFlow(tab: Tab): Flow<Boolean?> {
+        val tabPresetFlow =
+            userDataDao.getTabPresetDisplaySettingFlow(tab.tabId).map { entityOrNull ->
+                entityOrNull?.preset?.let { PresetDisplaySetting.fromValue(it) }?.isShowVideoProgress
+            }
+        val tabCustomFlow =
+            userDataDao.getCustomTabSettingFlow(tab.tabId).map {
+                it?.isShowVideoProgress
+            }
+        return combine(
+            tabPresetFlow,
+            tabCustomFlow,
+        ) { preset, custom ->
+            custom ?: preset
+        }
+    }
 }
+
+private fun AudioTrackStyle.toDBValue() =
+    when (this) {
+        AudioTrackStyle.ALBUM_COVER -> com.andannn.melodify.core.database.entity.AudioEntryStyle.ALBUM_COVER
+        AudioTrackStyle.TRACK_NUMBER -> com.andannn.melodify.core.database.entity.AudioEntryStyle.TRACK_NUMBER
+    }
+
+private fun Long.toDomainValue() =
+    when (this) {
+        com.andannn.melodify.core.database.entity.AudioEntryStyle.ALBUM_COVER -> AudioTrackStyle.ALBUM_COVER
+        com.andannn.melodify.core.database.entity.AudioEntryStyle.TRACK_NUMBER -> AudioTrackStyle.TRACK_NUMBER
+        else -> error("Invalid audio entry style: $this")
+    }
 
 private fun TabKind.toEntityName(): String =
     when (this) {
@@ -280,23 +396,6 @@ private fun Int.toMediaPreviewMode(): MediaPreviewMode =
         else -> MediaPreviewMode.GRID_PREVIEW
     }
 
-private fun PresetDisplaySetting.toIntValue() =
-    when (this) {
-        PresetDisplaySetting.AlbumAsc -> DefaultPresetValues.ALBUM_ASC_VALUE
-        PresetDisplaySetting.ArtistAsc -> DefaultPresetValues.ARTIST_ASC_VALUE
-        PresetDisplaySetting.TitleNameAsc -> DefaultPresetValues.TITLE_ASC_VALUE
-        PresetDisplaySetting.ArtistAlbumASC -> DefaultPresetValues.ARTIST_ALBUM_ASC_VALUE
-        PresetDisplaySetting.VideoBucketNameASC -> DefaultPresetValues.BUCKET_NAME_ASC_VALUE
-        PresetDisplaySetting.PlaylistCreateDateDESC -> DefaultPresetValues.PLAYLIST_CREATE_DATE_DESC_VALUE
-    }
+private fun PresetDisplaySetting.toIntValue() = this.value
 
-private fun Int.toDefaultPresetRule() =
-    when (this) {
-        DefaultPresetValues.ALBUM_ASC_VALUE -> PresetDisplaySetting.AlbumAsc
-        DefaultPresetValues.ARTIST_ASC_VALUE -> PresetDisplaySetting.ArtistAsc
-        DefaultPresetValues.TITLE_ASC_VALUE -> PresetDisplaySetting.TitleNameAsc
-        DefaultPresetValues.ARTIST_ALBUM_ASC_VALUE -> PresetDisplaySetting.ArtistAlbumASC
-        DefaultPresetValues.BUCKET_NAME_ASC_VALUE -> PresetDisplaySetting.VideoBucketNameASC
-        DefaultPresetValues.PLAYLIST_CREATE_DATE_DESC_VALUE -> PresetDisplaySetting.PlaylistCreateDateDESC
-        else -> error("Invalid preset value: $this")
-    }
+private fun Int.toDefaultPresetRule() = PresetDisplaySetting.fromValue(this) ?: error("Invalid preset value: $this")

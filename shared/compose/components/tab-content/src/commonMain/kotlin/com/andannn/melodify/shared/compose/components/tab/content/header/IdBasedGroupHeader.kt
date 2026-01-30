@@ -23,22 +23,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.domain.model.CustomTab
-import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.GroupKey
+import com.andannn.melodify.domain.model.Tab
+import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.MediaCoverImageWidget
 
 @Composable
 internal fun GroupHeaderContainer(
-    selectedTab: CustomTab?,
-    displaySetting: DisplaySetting?,
+    selectedTab: Tab?,
+    tabSortRule: TabSortRule?,
     groupKey: GroupKey,
     parentHeaderGroupKey: GroupKey? = null,
     onGroupItemClick: (List<GroupKey?>) -> Unit = {},
@@ -47,7 +46,7 @@ internal fun GroupHeaderContainer(
         GroupInfo(
             groupKey = groupKey,
             parentHeaderGroupKey = parentHeaderGroupKey,
-            displaySetting = displaySetting,
+            tabSortRule = tabSortRule,
             selectedTab = selectedTab,
         )
     GroupHeader(

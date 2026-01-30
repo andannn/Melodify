@@ -19,14 +19,16 @@ import com.andannn.melodify.core.database.entity.AlbumWithoutTrackCount
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.ArtistWithoutTrackCount
 import com.andannn.melodify.core.database.entity.AudioEntity
-import com.andannn.melodify.core.database.entity.CustomTabEntity
+import com.andannn.melodify.core.database.entity.AudioEntryStyle
+import com.andannn.melodify.core.database.entity.CustomTabSettingEntity
+import com.andannn.melodify.core.database.entity.CustomTabSortRuleEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListEntryType
 import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
-import com.andannn.melodify.core.database.entity.SortRuleEntity
+import com.andannn.melodify.core.database.entity.TabEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.helper.paging.AllMediaPagingProvider
 import com.andannn.melodify.core.database.helper.paging.MediaSorts
@@ -101,7 +103,7 @@ abstract class AbstractDatabaseTest {
 
     @AfterTest
     fun closeDatabase() {
-        database?.close()
+        database.close()
     }
 
     @Test
@@ -834,7 +836,7 @@ abstract class AbstractDatabaseTest {
         runTest {
             val dao = userDataDao
             dao.insertCustomTab(
-                CustomTabEntity(
+                TabEntity(
                     id = 10,
                     name = "name",
                     type = "bbbbb",
@@ -856,7 +858,7 @@ abstract class AbstractDatabaseTest {
 
             val firstId =
                 dao.insertCustomTab(
-                    CustomTabEntity(
+                    TabEntity(
                         name = "A",
                         type = "type",
                         externalId = "a1",
@@ -865,7 +867,7 @@ abstract class AbstractDatabaseTest {
                 )
             val secondId =
                 dao.insertCustomTab(
-                    CustomTabEntity(
+                    TabEntity(
                         name = "B",
                         type = "type",
                         externalId = "b1",
@@ -874,7 +876,7 @@ abstract class AbstractDatabaseTest {
                 )
             val thirdId =
                 dao.insertCustomTab(
-                    CustomTabEntity(
+                    TabEntity(
                         name = "C",
                         type = "type",
                         externalId = "c1",
@@ -909,31 +911,31 @@ abstract class AbstractDatabaseTest {
         runTest {
             val dao = userDataDao
             dao.insertCustomTab(
-                CustomTabEntity(
+                TabEntity(
                     id = 1234,
                     name = "name",
                     type = "bbbbb",
                 ),
             )
-            dao.upsertSortRuleEntity(
-                SortRuleEntity(
+            dao.insertSortRuleEntity(
+                CustomTabSortRuleEntity(
                     foreignKey = 1234,
                     primaryGroupSort = SortOptionData(1, false),
                 ),
             )
-            dao.getDisplaySettingFlowOfTab(1234).first().also {
+            dao.getCustomTabSortRuleFlow(1234).first().also {
                 assertEquals(
                     SortOptionData(1, false),
                     it?.primaryGroupSort,
                 )
             }
-            dao.upsertSortRuleEntity(
-                SortRuleEntity(
+            dao.insertSortRuleEntity(
+                CustomTabSortRuleEntity(
                     foreignKey = 1234,
                     primaryGroupSort = SortOptionData(4, true),
                 ),
             )
-            dao.getDisplaySettingFlowOfTab(1234).first().also {
+            dao.getCustomTabSortRuleFlow(1234).first().also {
                 assertEquals(
                     SortOptionData(4, true),
                     it?.primaryGroupSort,
@@ -941,7 +943,7 @@ abstract class AbstractDatabaseTest {
             }
 
             dao.deleteCustomTab(1234)
-            dao.getDisplaySettingFlowOfTab(1234).first().also {
+            dao.getCustomTabSortRuleFlow(1234).first().also {
                 assertNull(it)
             }
         }
@@ -1130,7 +1132,13 @@ abstract class AbstractDatabaseTest {
     fun `set is show video progress setting failed when no video tab setting`() =
         runTest {
             assertFails {
-                userDataDao.upsertVideoTabSettingEntity(10, true)
+                userDataDao.insertTabSettingEntity(
+                    CustomTabSettingEntity(
+                        customTabId = 10,
+                        isShowVideoProgress = true,
+                        audioEntryStyle = AudioEntryStyle.ALBUM_COVER,
+                    ),
+                )
             }
         }
 
@@ -1171,16 +1179,29 @@ abstract class AbstractDatabaseTest {
     @Test
     fun `set is show video progress setting success`() =
         runTest {
-            database
-                .getUserDataDao()
-                .insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
-            userDataDao.upsertVideoTabSettingEntity(10, true)
-            userDataDao.getVideoSettingFlowOfTab(10).first().also {
-                assertEquals(true, it?.isShowProgress)
+            userDataDao
+                .insertCustomTab(TabEntity(id = 10, name = "name", type = ALL_VIDEO))
+            val settingId =
+                userDataDao.insertTabSettingEntity(
+                    CustomTabSettingEntity(
+                        customTabId = 10,
+                        isShowVideoProgress = true,
+                        audioEntryStyle = AudioEntryStyle.ALBUM_COVER,
+                    ),
+                )
+            userDataDao.getCustomTabSettingFlow(10).first().also {
+                assertEquals(true, it?.isShowVideoProgress)
             }
-            userDataDao.upsertVideoTabSettingEntity(10, false)
-            userDataDao.getVideoSettingFlowOfTab(10).first().also {
-                assertEquals(false, it?.isShowProgress)
+            userDataDao.insertTabSettingEntity(
+                CustomTabSettingEntity(
+                    id = settingId,
+                    customTabId = 10,
+                    isShowVideoProgress = false,
+                    audioEntryStyle = AudioEntryStyle.ALBUM_COVER,
+                ),
+            )
+            userDataDao.getCustomTabSettingFlow(10).first().also {
+                assertEquals(false, it?.isShowVideoProgress)
             }
         }
 
@@ -1189,10 +1210,16 @@ abstract class AbstractDatabaseTest {
         runTest {
             database
                 .getUserDataDao()
-                .insertCustomTab(CustomTabEntity(id = 10, name = "name", type = ALL_VIDEO))
-            userDataDao.upsertVideoTabSettingEntity(10, true)
+                .insertCustomTab(TabEntity(id = 10, name = "name", type = ALL_VIDEO))
+            userDataDao.insertTabSettingEntity(
+                CustomTabSettingEntity(
+                    customTabId = 10,
+                    isShowVideoProgress = true,
+                    audioEntryStyle = AudioEntryStyle.ALBUM_COVER,
+                ),
+            )
             userDataDao.deleteCustomTab(10)
-            userDataDao.getVideoSettingFlowOfTab(10).first().also {
+            userDataDao.getCustomTabSettingFlow(10).first().also {
                 assertEquals(null, it)
             }
         }
@@ -1418,6 +1445,49 @@ abstract class AbstractDatabaseTest {
                     assertEquals(1, it.next().audio_id)
                     assertEquals(2, it.next().audio_id)
                 }
+        }
+
+    @Test
+    fun `select tab preset display setting`() =
+        runTest {
+            syncHelper.insertDummyData()
+            userDataDao.insertCustomTab(TabEntity(id = 10, name = "name", type = ALL_VIDEO))
+
+            // select preset
+            userDataDao.selectTabPresetDisplaySettingEntity(tabId = 10, preset = 20)
+            userDataDao.getTabPresetDisplaySettingFlow(10).first().also {
+                assertEquals(20, it?.preset)
+            }
+
+            // select custom
+            userDataDao.selectTabCustomSettingEntity(
+                tabId = 10,
+                tabSettingEntity =
+                    CustomTabSettingEntity(
+                        customTabId = 10,
+                        isShowVideoProgress = true,
+                        audioEntryStyle = AudioEntryStyle.ALBUM_COVER,
+                    ),
+                tabSortRuleEntity = CustomTabSortRuleEntity(foreignKey = 10, primaryGroupSort = SortOptionData(1, false)),
+            )
+
+            // preset is clear
+            userDataDao.getTabPresetDisplaySettingFlow(10).first().also {
+                assertEquals(null, it)
+            }
+
+            userDataDao.getCustomTabSettingFlow(10).first().also {
+                assertEquals(true, it?.isShowVideoProgress)
+                assertEquals(AudioEntryStyle.ALBUM_COVER, it?.audioEntryStyle)
+            }
+
+            // select preset again
+            userDataDao.selectTabPresetDisplaySettingEntity(tabId = 10, preset = 20)
+
+            // custom tab is reset
+            userDataDao.getCustomTabSettingFlow(10).first().also {
+                assertEquals(null, it)
+            }
         }
 }
 

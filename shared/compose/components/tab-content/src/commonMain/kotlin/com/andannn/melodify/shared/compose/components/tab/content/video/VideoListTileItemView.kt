@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.domain.model.browsableOrPlayable
 import com.andannn.melodify.shared.compose.common.LocalRepository
@@ -27,7 +28,7 @@ private const val TAG = "VideoListTileItemView"
 @Composable
 internal fun VideoListTileItemView(
     modifier: Modifier = Modifier,
-    tabId: Long?,
+    tab: Tab?,
     item: VideoItemModel,
     onItemClick: (() -> Unit)? = null,
     onOptionButtonClick: (() -> Unit)? = null,
@@ -49,8 +50,8 @@ internal fun VideoListTileItemView(
             onOptionButtonClick = onOptionButtonClick,
         )
 
-        if (tabId != null) {
-            val model = retainVideoListTileItemModel(tabId)
+        if (tab != null) {
+            val model = retainVideoListTileItemModel(tab)
             val isShowProgress by model.isShowProgressStateFlow.collectAsStateWithLifecycle()
             Napier.d(tag = TAG) { "isShowProgress $isShowProgress" }
             if (isShowProgress) {
@@ -62,17 +63,17 @@ internal fun VideoListTileItemView(
 
 @Composable
 private fun retainVideoListTileItemModel(
-    tabId: Long,
+    tab: Tab,
     repository: Repository = LocalRepository.current,
 ) = retainRetainedModel(
-    tabId,
+    tab,
     repository,
 ) {
-    VideoListTileItemModel(tabId, repository)
+    VideoListTileItemModel(tab, repository)
 }
 
 private class VideoListTileItemModel(
-    tabId: Long,
+    tab: Tab,
     repository: Repository,
 ) : RetainedModel() {
     init {
@@ -80,7 +81,7 @@ private class VideoListTileItemModel(
     }
 
     val isShowProgressStateFlow =
-        repository.getIsShowVideoProgressFlow(tabId).stateIn(
+        repository.getIsShowVideoProgressFlow(tab).stateIn(
             scope = retainedScope,
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = false,

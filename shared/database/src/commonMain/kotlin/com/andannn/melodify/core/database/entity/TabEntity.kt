@@ -9,7 +9,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "custom_tab_table")
-data class CustomTabEntity(
+data class TabEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "custom_tab_id")
     val id: Long = 0,

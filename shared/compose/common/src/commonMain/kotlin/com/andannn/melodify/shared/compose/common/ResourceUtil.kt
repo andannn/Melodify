@@ -9,9 +9,9 @@ import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.RepeatOn
 import androidx.compose.material.icons.rounded.RepeatOneOn
 import androidx.compose.runtime.Composable
-import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.domain.model.PresetDisplaySetting
+import com.andannn.melodify.domain.model.Tab
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.audio_page_title
 import melodify.shared.compose.resource.generated.resources.number_hours
@@ -61,15 +61,15 @@ fun durationString(duration: Duration): String {
 }
 
 @Composable
-fun getCategoryResource(category: CustomTab): String =
+fun getCategoryResource(category: Tab): String =
     when (category) {
-        is CustomTab.AllMusic -> stringResource(Res.string.audio_page_title)
-        is CustomTab.AllVideo -> stringResource(Res.string.video_page_title)
-        is CustomTab.AlbumDetail -> category.label
-        is CustomTab.ArtistDetail -> category.label
-        is CustomTab.GenreDetail -> category.label
-        is CustomTab.PlayListDetail -> category.label
-        is CustomTab.BucketDetail -> category.label
+        is Tab.AllMusic -> stringResource(Res.string.audio_page_title)
+        is Tab.AllVideo -> stringResource(Res.string.video_page_title)
+        is Tab.AlbumDetail -> category.label
+        is Tab.ArtistDetail -> category.label
+        is Tab.GenreDetail -> category.label
+        is Tab.PlayListDetail -> category.label
+        is Tab.BucketDetail -> category.label
     }
 
 @Composable

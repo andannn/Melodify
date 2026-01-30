@@ -12,11 +12,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.domain.Repository
-import com.andannn.melodify.domain.model.CustomTab
-import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabKind
+import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.sortOptions
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
@@ -45,8 +45,8 @@ private const val TAG = "GroupHeaderPresenter"
 internal data class GroupInfo(
     val groupKey: GroupKey,
     val parentHeaderGroupKey: GroupKey? = null,
-    val displaySetting: DisplaySetting?,
-    val selectedTab: CustomTab?,
+    val tabSortRule: TabSortRule?,
+    val selectedTab: Tab?,
 ) {
     val selection
         get() = listOf(groupKey, parentHeaderGroupKey)
@@ -173,7 +173,7 @@ private class GroupHeaderPresenter(
                                             handleGroupOption(
                                                 result.optionItem,
                                                 groupInfo.selection,
-                                                groupInfo.displaySetting,
+                                                groupInfo.tabSortRule,
                                                 groupInfo.selectedTab,
                                             )
                                         }
@@ -193,13 +193,13 @@ private class GroupHeaderPresenter(
     private suspend fun handleGroupOption(
         optionItem: OptionItem,
         groupKeys: List<GroupKey?>,
-        displaySetting: DisplaySetting?,
-        selectedTab: CustomTab?,
+        tabSortRule: TabSortRule?,
+        selectedTab: Tab?,
     ) {
         val items =
             selectedTab
                 ?.contentFlow(
-                    sorts = displaySetting?.sortOptions() ?: return,
+                    sorts = tabSortRule?.sortOptions() ?: return,
                     whereGroups = groupKeys.filterNotNull(),
                 )?.first() ?: emptyList()
         when (optionItem) {

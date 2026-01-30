@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.domain.model.CustomTab
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.shared.compose.common.getCategoryResource
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 
@@ -39,7 +39,7 @@ fun TabUi(
     modifier: Modifier = Modifier,
     onTabManagementClick: () -> Unit = {},
 ) {
-    val tabs = state.customTabList
+    val tabs = state.tabList
     val selectedIndex = state.selectedIndex
 
     Box(
@@ -108,12 +108,12 @@ private fun TabUiPreview() {
             state =
                 TabUiState(
                     selectedIndex = 0,
-                    customTabList =
+                    tabList =
                         listOf(
-                            CustomTab.AllMusic(1),
-                            CustomTab.AllVideo(2),
-                            CustomTab.AlbumDetail(3, albumId = "1", label = "Album 1"),
-                            CustomTab.AlbumDetail(3, albumId = "2", label = "Album 2"),
+                            Tab.AllMusic(1),
+                            Tab.AllVideo(2),
+                            Tab.AlbumDetail(3, albumId = "1", label = "Album 1"),
+                            Tab.AlbumDetail(3, albumId = "2", label = "Album 2"),
                         ),
                 ),
         )

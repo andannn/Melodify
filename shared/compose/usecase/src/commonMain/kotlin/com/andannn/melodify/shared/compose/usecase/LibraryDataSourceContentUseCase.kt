@@ -5,9 +5,9 @@
 package com.andannn.melodify.shared.compose.usecase
 
 import com.andannn.melodify.domain.Repository
-import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.SortOption
+import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.sortOptions
 import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import kotlinx.coroutines.flow.Flow
@@ -35,7 +35,7 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
         is LibraryDataSource.AlbumDetail -> {
             repository.getAudiosOfAlbumFlow(
                 id,
-                DisplaySetting.Preset.Audio.TitleASC
+                TabSortRule.Preset.Audio.TitleASC
                     .sortOptions()
                     .filterIsInstance<SortOption.AudioOption>(),
             )
@@ -43,7 +43,7 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
 
         LibraryDataSource.AllSong -> {
             repository.getAllMediaItemsFlow(
-                DisplaySetting.Preset.Audio.TitleASC
+                TabSortRule.Preset.Audio.TitleASC
                     .sortOptions()
                     .filterIsInstance<SortOption.AudioOption>(),
             )
@@ -51,7 +51,7 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
 
         LibraryDataSource.AllVideo -> {
             repository.getAllVideoItemsFlow(
-                DisplaySetting.Preset.Video.BucketNameASC
+                TabSortRule.Preset.Video.BucketNameASC
                     .sortOptions()
                     .filterIsInstance<SortOption.VideoOption>(),
             )
@@ -60,7 +60,7 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
         is LibraryDataSource.ArtistDetail -> {
             repository.getAudiosOfArtistFlow(
                 id,
-                DisplaySetting.Preset.Audio.TitleASC
+                TabSortRule.Preset.Audio.TitleASC
                     .sortOptions()
                     .filterIsInstance<SortOption.AudioOption>(),
             )
@@ -69,7 +69,7 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
         is LibraryDataSource.GenreDetail -> {
             repository.getAudiosOfGenreFlow(
                 id,
-                DisplaySetting.Preset.Audio.TitleASC
+                TabSortRule.Preset.Audio.TitleASC
                     .sortOptions()
                     .filterIsInstance<SortOption.AudioOption>(),
             )
@@ -78,7 +78,7 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
         is LibraryDataSource.PlayListDetail -> {
             repository.getItemsOfPlayListFlow(
                 id.toLong(),
-                DisplaySetting.Preset.Playlist.CreateDateDESC
+                TabSortRule.Preset.Playlist.CreateDateDESC
                     .sortOptions()
                     .filterIsInstance<SortOption.PlayListOption>(),
             )

@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.domain.model.CustomTab
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.getCategoryResource
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
@@ -37,7 +37,6 @@ import com.andannn.melodify.shared.compose.common.widgets.ActionType
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.immutableListOf
 import kotlinx.collections.immutable.persistentListOf
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
@@ -66,14 +65,14 @@ fun TabManagementUi(
 @Composable
 private fun TabManagementList(
     modifier: Modifier = Modifier,
-    currentTabList: ImmutableList<CustomTab>,
+    currentTabList: ImmutableList<Tab>,
     onSwapFinished: (from: Int, to: Int) -> Unit = { _, _ -> },
     onDeleteFinished: (index: Int) -> Unit = { },
 ) {
     val listState: LazyListState =
         rememberLazyListState()
-    val customTabState =
-        rememberSwapListState<CustomTab>(
+    val tabState =
+        rememberSwapListState<Tab>(
             lazyListState = listState,
             onSwapFinished = { from, to, _ ->
                 Napier.d(tag = TAG) { "PlayQueueView: drag stopped from $from to $to" }
@@ -86,7 +85,7 @@ private fun TabManagementList(
         )
 
     LaunchedEffect(currentTabList) {
-        customTabState.onApplyNewList(currentTabList)
+        tabState.onApplyNewList(currentTabList)
     }
 
     LazyColumn(
@@ -95,20 +94,20 @@ private fun TabManagementList(
         state = listState,
     ) {
         itemsIndexed(
-            items = customTabState.itemList,
+            items = tabState.itemList,
             key = { index, item -> item.hashCode() },
         ) { index, item ->
             ReorderableItem(
-                state = customTabState.reorderableLazyListState,
+                state = tabState.reorderableLazyListState,
                 key = item.hashCode(),
             ) { _ ->
                 CustomTabItem(
                     item = item,
                     onSwapFinish = {
-                        customTabState.onStopDrag()
+                        tabState.onStopDrag()
                     },
                     onDeleteItem = {
-                        customTabState.onDeleteItem(item)
+                        tabState.onDeleteItem(item)
                     },
                 )
             }
@@ -118,7 +117,7 @@ private fun TabManagementList(
 
 @Composable
 private fun ReorderableCollectionItemScope.CustomTabItem(
-    item: CustomTab,
+    item: Tab,
     modifier: Modifier = Modifier,
     onDeleteItem: () -> Unit = {},
     onSwapFinish: () -> Unit = {},
@@ -164,10 +163,10 @@ fun TabManagementUiPreview() {
         TabManagementList(
             currentTabList =
                 persistentListOf(
-                    CustomTab.AllMusic(1),
-                    CustomTab.AllVideo(2),
-                    CustomTab.AlbumDetail(3, albumId = "1", label = "Album 1"),
-                    CustomTab.AlbumDetail(3, albumId = "2", label = "Album 2"),
+                    Tab.AllMusic(1),
+                    Tab.AllVideo(2),
+                    Tab.AlbumDetail(3, albumId = "1", label = "Album 1"),
+                    Tab.AlbumDetail(3, albumId = "2", label = "Album 2"),
                 ),
         )
     }

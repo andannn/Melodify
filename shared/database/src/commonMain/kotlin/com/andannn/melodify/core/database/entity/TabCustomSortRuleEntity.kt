@@ -16,24 +16,24 @@ import com.andannn.melodify.core.database.SortOptionData
     tableName = "sort_rule_table",
     foreignKeys = [
         ForeignKey(
-            entity = CustomTabEntity::class,
+            entity = TabEntity::class,
             parentColumns = ["custom_tab_id"],
-            childColumns = ["custom_tab_foreign_key"],
+            childColumns = ["custom_tab_id"],
             onDelete = ForeignKey.CASCADE,
         ),
     ],
     indices = [
         Index(
-            "custom_tab_foreign_key",
+            "custom_tab_id",
             unique = true,
         ),
     ],
 )
-data class SortRuleEntity constructor(
+data class CustomTabSortRuleEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "sort_rule_id")
     val id: Long = 0,
-    @ColumnInfo("custom_tab_foreign_key")
+    @ColumnInfo("custom_tab_id")
     val foreignKey: Long,
     @ColumnInfo("primary_group_sort")
     val primaryGroupSort: SortOptionData? = null,
@@ -41,10 +41,6 @@ data class SortRuleEntity constructor(
     val secondaryGroupSort: SortOptionData? = null,
     @ColumnInfo("content_sort")
     val contentSort: SortOptionData? = null,
-    @ColumnInfo("show_track_num")
-    val showTrackNum: Boolean = false,
-    @ColumnInfo("is_preset")
-    val isPreset: Boolean = true,
 )
 
 internal class SortOptionJsonConverter {

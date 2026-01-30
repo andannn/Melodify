@@ -15,10 +15,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.AudioItemModel
-import com.andannn.melodify.domain.model.CustomTab
-import com.andannn.melodify.domain.model.DisplaySetting
+import com.andannn.melodify.domain.model.AudioTrackStyle
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.Tab
+import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.sortOptions
 import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.LocalRepository
@@ -56,7 +57,7 @@ private const val TAG = "TabContentPresenter"
 
 @Composable
 fun retainTabContentPresenter(
-    selectedTab: CustomTab?,
+    selectedTab: Tab?,
     navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
     repository: Repository = LocalRepository.current,
     popupHostState: PopupHostState = LocalPopupHostState.current,
@@ -81,8 +82,9 @@ fun retainTabContentPresenter(
 
 @Stable
 data class TabContentState(
-    val selectedTab: CustomTab? = null,
-    val groupSort: DisplaySetting?,
+    val selectedTab: Tab? = null,
+    val audioTrackStyle: AudioTrackStyle?,
+    val tabSortRule: TabSortRule?,
     val pagingItems: LazyPagingItems<MediaItemModel>,
     val eventSink: (TabContentEvent) -> Unit = {},
 )
@@ -102,7 +104,7 @@ sealed interface TabContentEvent {
 }
 
 private class TabContentPresenter(
-    private val selectedTab: CustomTab?,
+    private val selectedTab: Tab?,
     private val navigationRequestEventSink: NavigationRequestEventSink,
     private val repository: Repository,
     private val popupHostState: PopupHostState,
@@ -111,6 +113,13 @@ private class TabContentPresenter(
 ) : RetainedPresenter<TabContentState>() {
     private val displaySetting =
         getDisplaySettingFlow().stateIn(
+            scope = retainedScope,
+            started = kotlinx.coroutines.flow.SharingStarted.Eagerly,
+            initialValue = null,
+        )
+
+    private val audioTrackStyleFlow =
+        getAudioTrackStyleFlow().stateIn(
             scope = retainedScope,
             started = kotlinx.coroutines.flow.SharingStarted.Eagerly,
             initialValue = null,
@@ -128,9 +137,11 @@ private class TabContentPresenter(
     override fun present(): TabContentState {
         val pagingItems: LazyPagingItems<MediaItemModel> = pagingDataFlow.collectAsLazyPagingItems()
         val displaySettingState by displaySetting.collectAsStateWithLifecycle()
+        val audioTrackStyle by audioTrackStyleFlow.collectAsStateWithLifecycle()
         return TabContentState(
             selectedTab = selectedTab,
-            groupSort = displaySettingState,
+            audioTrackStyle = audioTrackStyle,
+            tabSortRule = displaySettingState,
             pagingItems = pagingItems,
         ) { eventSink ->
             context(repository, snackBarController, popupHostState, mediaFileDeleteHelper) {
@@ -172,8 +183,8 @@ private class TabContentPresenter(
     }
 
     private fun getContentPagingFlow(
-        selectedTab: CustomTab?,
-        groupSort: DisplaySetting,
+        selectedTab: Tab?,
+        groupSort: TabSortRule,
     ): Flow<PagingData<MediaItemModel>> {
         if (selectedTab == null) {
             return flowOf()
@@ -188,6 +199,13 @@ private class TabContentPresenter(
     private fun getDisplaySettingFlow() =
         if (selectedTab != null) {
             repository.getCurrentSortRule(selectedTab)
+        } else {
+            flowOf(null)
+        }
+
+    private fun getAudioTrackStyleFlow() =
+        if (selectedTab != null) {
+            repository.getAudioTrackStyleFlow(selectedTab)
         } else {
             flowOf(null)
         }
@@ -209,13 +227,13 @@ private class TabContentPresenter(
     context(repository: Repository, popupHostState: PopupHostState)
     private suspend fun handleGroupItemClick(
         groupKeys: List<GroupKey?>,
-        displaySetting: DisplaySetting,
-        selectedTab: CustomTab?,
+        tabSortRule: TabSortRule,
+        selectedTab: Tab?,
     ) {
         val items =
             selectedTab
                 ?.contentFlow(
-                    sorts = displaySetting.sortOptions(),
+                    sorts = tabSortRule.sortOptions(),
                     whereGroups = groupKeys.filterNotNull(),
                 )?.first() ?: emptyList()
         if (items.isNotEmpty()) {

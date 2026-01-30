@@ -12,10 +12,10 @@ import com.andannn.melodify.domain.UserPreferenceRepository
 import com.andannn.melodify.domain.model.AlbumItemModel
 import com.andannn.melodify.domain.model.ArtistItemModel
 import com.andannn.melodify.domain.model.AudioItemModel
-import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.GenreItemModel
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayListItemModel
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabKind
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.popup.entry.alert.AlertDialogAction
@@ -142,9 +142,9 @@ context(repo: Repository)
 suspend fun PlayListItemModel.delete() {
     repo.deletePlayList(id.toLong())
 
-    val currentCustomTabs = repo.currentCustomTabsFlow.first()
+    val currentCustomTabs = repo.currentTabsFlow.first()
     val deletedTab =
-        currentCustomTabs.firstOrNull { it is CustomTab.PlayListDetail && it.playListId == id }
+        currentCustomTabs.firstOrNull { it is Tab.PlayListDetail && it.playListId == id }
 
     Napier.d(tag = TAG) { "deletedTab $deletedTab" }
     if (deletedTab != null) {

@@ -6,33 +6,33 @@ package com.andannn.melodify.shared.compose.usecase
 
 import androidx.paging.PagingData
 import com.andannn.melodify.domain.Repository
-import com.andannn.melodify.domain.model.CustomTab
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.SortOption
+import com.andannn.melodify.domain.model.Tab
 import kotlinx.coroutines.flow.Flow
 
 context(repository: Repository)
-fun CustomTab.contentFlow(
+fun Tab.contentFlow(
     sorts: List<SortOption>,
     whereGroups: List<GroupKey> = emptyList(),
 ): Flow<List<MediaItemModel>> =
     when (this) {
-        is CustomTab.AllMusic -> {
+        is Tab.AllMusic -> {
             repository.getAllMediaItemsFlow(
                 sorts.filterIsInstance<SortOption.AudioOption>(),
                 whereGroups,
             )
         }
 
-        is CustomTab.AllVideo -> {
+        is Tab.AllVideo -> {
             repository.getAllVideoItemsFlow(
                 sorts.filterIsInstance<SortOption.VideoOption>(),
                 whereGroups,
             )
         }
 
-        is CustomTab.AlbumDetail -> {
+        is Tab.AlbumDetail -> {
             repository.getAudiosOfAlbumFlow(
                 albumId,
                 sorts.filterIsInstance<SortOption.AudioOption>(),
@@ -40,7 +40,7 @@ fun CustomTab.contentFlow(
             )
         }
 
-        is CustomTab.ArtistDetail -> {
+        is Tab.ArtistDetail -> {
             repository.getAudiosOfArtistFlow(
                 artistId,
                 sorts.filterIsInstance<SortOption.AudioOption>(),
@@ -48,7 +48,7 @@ fun CustomTab.contentFlow(
             )
         }
 
-        is CustomTab.GenreDetail -> {
+        is Tab.GenreDetail -> {
             repository.getAudiosOfGenreFlow(
                 genreId,
                 sorts.filterIsInstance<SortOption.AudioOption>(),
@@ -56,7 +56,7 @@ fun CustomTab.contentFlow(
             )
         }
 
-        is CustomTab.PlayListDetail -> {
+        is Tab.PlayListDetail -> {
             repository.getItemsOfPlayListFlow(
                 playListId.toLong(),
                 sorts.filterIsInstance<SortOption.PlayListOption>(),
@@ -64,7 +64,7 @@ fun CustomTab.contentFlow(
             )
         }
 
-        is CustomTab.BucketDetail -> {
+        is Tab.BucketDetail -> {
             repository.getVideoBucketItemsFlow(
                 bucketId,
                 sorts.filterIsInstance<SortOption.VideoOption>(),
@@ -74,19 +74,19 @@ fun CustomTab.contentFlow(
     }
 
 context(repository: Repository)
-fun CustomTab.contentPagingDataFlow(
+fun Tab.contentPagingDataFlow(
     whereGroups: List<GroupKey> = emptyList(),
     sorts: List<SortOption>,
 ): Flow<PagingData<out MediaItemModel>> =
     when (this) {
-        is CustomTab.AllMusic -> {
+        is Tab.AllMusic -> {
             repository.getAllMediaItemsPagingFlow(
                 whereGroups,
                 sorts.filterIsInstance<SortOption.AudioOption>(),
             )
         }
 
-        is CustomTab.AlbumDetail -> {
+        is Tab.AlbumDetail -> {
             repository.getAudiosPagingFlowOfAlbum(
                 albumId,
                 sorts.filterIsInstance<SortOption.AudioOption>(),
@@ -94,7 +94,7 @@ fun CustomTab.contentPagingDataFlow(
             )
         }
 
-        is CustomTab.ArtistDetail -> {
+        is Tab.ArtistDetail -> {
             repository.getAudiosPagingFlowOfArtist(
                 artistId,
                 sorts.filterIsInstance<SortOption.AudioOption>(),
@@ -102,7 +102,7 @@ fun CustomTab.contentPagingDataFlow(
             )
         }
 
-        is CustomTab.GenreDetail -> {
+        is Tab.GenreDetail -> {
             repository.getAudiosPagingFlowOfGenre(
                 genreId,
                 sorts.filterIsInstance<SortOption.AudioOption>(),
@@ -110,7 +110,7 @@ fun CustomTab.contentPagingDataFlow(
             )
         }
 
-        is CustomTab.PlayListDetail -> {
+        is Tab.PlayListDetail -> {
             repository.getItemsPagingFlowOfPlayList(
                 playListId.toLong(),
                 sorts.filterIsInstance<SortOption.PlayListOption>(),
@@ -118,14 +118,14 @@ fun CustomTab.contentPagingDataFlow(
             )
         }
 
-        is CustomTab.AllVideo -> {
+        is Tab.AllVideo -> {
             repository.getAllVideoItemsPagingFlow(
                 sorts.filterIsInstance<SortOption.VideoOption>(),
                 whereGroups,
             )
         }
 
-        is CustomTab.BucketDetail -> {
+        is Tab.BucketDetail -> {
             repository.getVideoBucketItemsPagingFlow(
                 bucketId,
                 sorts.filterIsInstance<SortOption.VideoOption>(),
