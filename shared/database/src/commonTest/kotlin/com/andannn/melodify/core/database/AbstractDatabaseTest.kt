@@ -150,7 +150,6 @@ abstract class AbstractDatabaseTest {
                             createdDate = 1,
                             artworkUri = null,
                             name = "name",
-                            isAudioPlayList = true,
                         ),
                     ),
             )
@@ -488,7 +487,6 @@ abstract class AbstractDatabaseTest {
                             createdDate = 1,
                             artworkUri = null,
                             name = "name",
-                            isAudioPlayList = true,
                         ),
                     ),
             )
@@ -500,7 +498,6 @@ abstract class AbstractDatabaseTest {
                             createdDate = 1,
                             artworkUri = null,
                             name = "name",
-                            isAudioPlayList = true,
                         ),
                     ),
             )
@@ -512,7 +509,6 @@ abstract class AbstractDatabaseTest {
                             createdDate = 1,
                             artworkUri = null,
                             name = "name",
-                            isAudioPlayList = true,
                         ),
                     ),
             )

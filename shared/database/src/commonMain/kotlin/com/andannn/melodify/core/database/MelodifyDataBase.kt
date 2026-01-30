@@ -7,6 +7,7 @@ package com.andannn.melodify.core.database
 import androidx.room.AutoMigration
 import androidx.room.ConstructedBy
 import androidx.room.Database
+import androidx.room.DeleteColumn
 import androidx.room.DeleteTable
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
@@ -403,4 +404,6 @@ internal object Migration17To18Spec : Migration(17, 18) {
 }
 
 @DeleteTable(tableName = "play_list_with_media_cross_ref_table")
+@DeleteColumn(tableName = "play_list_table", columnName = "is_audio_playlist")
+@DeleteColumn(tableName = "custom_tab_table", columnName = "display_setting")
 internal class AutoMigration19To20Spec : AutoMigrationSpec

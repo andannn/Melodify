@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 20,
-    "identityHash": "045e027814d4d90d2d417fa108d0ccee",
+    "identityHash": "1457b6a90a82c2ea4f2b72a05098bdc9",
     "entities": [
       {
         "tableName": "lyric_table",
@@ -103,7 +103,7 @@
       },
       {
         "tableName": "play_list_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`play_list_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `play_list_created_date` INTEGER NOT NULL, `play_list_name` TEXT NOT NULL, `play_list_artwork_uri` TEXT, `is_audio_playlist` INTEGER, `is_favorite_playlist` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`play_list_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `play_list_created_date` INTEGER NOT NULL, `play_list_name` TEXT NOT NULL, `play_list_artwork_uri` TEXT, `is_favorite_playlist` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -127,11 +127,6 @@
             "fieldPath": "artworkUri",
             "columnName": "play_list_artwork_uri",
             "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "isAudioPlayList",
-            "columnName": "is_audio_playlist",
-            "affinity": "INTEGER"
           },
           {
             "fieldPath": "isFavoritePlayList",
@@ -525,7 +520,7 @@
       },
       {
         "tableName": "custom_tab_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`custom_tab_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `custom_tab_type` TEXT NOT NULL, `custom_tab_name` TEXT, `custom_tab_external_id` TEXT, `display_setting` TEXT, `sort_order` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`custom_tab_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `custom_tab_type` TEXT NOT NULL, `custom_tab_name` TEXT, `custom_tab_external_id` TEXT, `sort_order` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -547,11 +542,6 @@
           {
             "fieldPath": "externalId",
             "columnName": "custom_tab_external_id",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "displaySettings",
-            "columnName": "display_setting",
             "affinity": "TEXT"
           },
           {
@@ -1068,7 +1058,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '045e027814d4d90d2d417fa108d0ccee')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1457b6a90a82c2ea4f2b72a05098bdc9')"
     ]
   }
 }
