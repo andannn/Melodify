@@ -9,6 +9,7 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.DeleteColumn
 import androidx.room.DeleteTable
+import androidx.room.RenameColumn
 import androidx.room.RenameTable
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
@@ -33,6 +34,7 @@ import com.andannn.melodify.core.database.entity.ArtistFtsEntity
 import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.CustomTabSettingEntity
+import com.andannn.melodify.core.database.entity.CustomTabSortRuleEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaFtsEntity
@@ -40,7 +42,6 @@ import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortOptionJsonConverter
-import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.entity.VideoFtsEntity
 import com.andannn.melodify.core.database.entity.VideoPlayProgressEntity
@@ -61,7 +62,7 @@ import kotlinx.coroutines.IO
         ArtistFtsEntity::class,
         MediaFtsEntity::class,
         SearchHistoryEntity::class,
-        SortRuleEntity::class,
+        CustomTabSortRuleEntity::class,
         VideoEntity::class,
         VideoFtsEntity::class,
         VideoPlayProgressEntity::class,
@@ -84,8 +85,9 @@ import kotlinx.coroutines.IO
         AutoMigration(from = 16, to = 17, AutoMigration16To17Spec::class),
         AutoMigration(from = 18, to = 19),
         AutoMigration(from = 19, to = 20, AutoMigration19To20Spec::class),
+        AutoMigration(from = 20, to = 21, AutoMigration20To21Spec::class),
     ],
-    version = 20,
+    version = 21,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)
@@ -409,3 +411,9 @@ internal object Migration17To18Spec : Migration(17, 18) {
 @DeleteColumn(tableName = "custom_tab_table", columnName = "display_setting")
 @RenameTable(fromTableName = "video_tab_setting_table", toTableName = "custom_tab_setting_table")
 internal class AutoMigration19To20Spec : AutoMigrationSpec
+
+@RenameColumn(tableName = "custom_tab_setting_table", fromColumnName = "custom_tab_foreign_key", toColumnName = "custom_tab_id")
+@RenameColumn(tableName = "custom_tab_setting_table", fromColumnName = "is_show_progress", toColumnName = "is_show_video_progress")
+@RenameColumn(tableName = "sort_rule_table", fromColumnName = "custom_tab_foreign_key", toColumnName = "custom_tab_id")
+@DeleteColumn(tableName = "sort_rule_table", columnName = "show_track_num")
+internal class AutoMigration20To21Spec : AutoMigrationSpec

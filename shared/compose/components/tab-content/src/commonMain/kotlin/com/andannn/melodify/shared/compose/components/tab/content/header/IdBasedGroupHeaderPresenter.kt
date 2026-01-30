@@ -13,10 +13,10 @@ import androidx.compose.runtime.setValue
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.CustomTab
-import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.TabKind
+import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.sortOptions
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
@@ -45,7 +45,7 @@ private const val TAG = "GroupHeaderPresenter"
 internal data class GroupInfo(
     val groupKey: GroupKey,
     val parentHeaderGroupKey: GroupKey? = null,
-    val displaySetting: DisplaySetting?,
+    val tabSortRule: TabSortRule?,
     val selectedTab: CustomTab?,
 ) {
     val selection
@@ -173,7 +173,7 @@ private class GroupHeaderPresenter(
                                             handleGroupOption(
                                                 result.optionItem,
                                                 groupInfo.selection,
-                                                groupInfo.displaySetting,
+                                                groupInfo.tabSortRule,
                                                 groupInfo.selectedTab,
                                             )
                                         }
@@ -193,13 +193,13 @@ private class GroupHeaderPresenter(
     private suspend fun handleGroupOption(
         optionItem: OptionItem,
         groupKeys: List<GroupKey?>,
-        displaySetting: DisplaySetting?,
+        tabSortRule: TabSortRule?,
         selectedTab: CustomTab?,
     ) {
         val items =
             selectedTab
                 ?.contentFlow(
-                    sorts = displaySetting?.sortOptions() ?: return,
+                    sorts = tabSortRule?.sortOptions() ?: return,
                     whereGroups = groupKeys.filterNotNull(),
                 )?.first() ?: emptyList()
         when (optionItem) {

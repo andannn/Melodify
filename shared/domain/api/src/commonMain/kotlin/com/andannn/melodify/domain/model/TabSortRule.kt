@@ -4,11 +4,10 @@
  */
 package com.andannn.melodify.domain.model
 
-data class DisplaySetting(
+data class TabSortRule(
     val primaryGroupSort: SortOption,
     val secondaryGroupSort: SortOption = SortOption.NONE,
     val contentSort: SortOption = SortOption.NONE,
-    val showTrackNum: Boolean = false,
     val isPreset: Boolean = true,
 ) {
     companion object Preset {
@@ -21,73 +20,65 @@ data class DisplaySetting(
 
         object Video {
             val BucketNameASC =
-                DisplaySetting(
+                TabSortRule(
                     primaryGroupSort = SortOption.VideoOption.Bucket(true),
                     contentSort = SortOption.VideoOption.Title(ascending = true),
-                    showTrackNum = false,
                     isPreset = true,
                 )
 
             val DefaultPreset = BucketNameASC
             val DefaultCustom =
-                DisplaySetting(
+                TabSortRule(
                     primaryGroupSort = SortOption.VideoOption.Bucket(true),
-                    showTrackNum = false,
                     isPreset = false,
                 )
         }
 
         object Audio {
             val TitleASC =
-                DisplaySetting(
+                TabSortRule(
                     primaryGroupSort = SortOption.AudioOption.Title(true),
-                    showTrackNum = false,
                     isPreset = true,
                 )
             val AlbumASC =
-                DisplaySetting(
+                TabSortRule(
                     primaryGroupSort = SortOption.AudioOption.Album(true),
                     contentSort = SortOption.AudioOption.TrackNum(true),
-                    showTrackNum = true,
                     isPreset = true,
                 )
             val ArtistASC =
-                DisplaySetting(
+                TabSortRule(
                     primaryGroupSort = SortOption.AudioOption.Artist(true),
-                    showTrackNum = false,
                     isPreset = true,
                 )
 
             val ArtistAlbumASC =
-                DisplaySetting(
+                TabSortRule(
                     primaryGroupSort = SortOption.AudioOption.Artist(true),
                     secondaryGroupSort = SortOption.AudioOption.Album(true),
                     contentSort = SortOption.AudioOption.TrackNum(true),
-                    showTrackNum = true,
                     isPreset = true,
                 )
 
             val DefaultPreset = AlbumASC
             val DefaultCustom =
-                DisplaySetting(
+                TabSortRule(
                     primaryGroupSort = SortOption.AudioOption.Album(true),
-                    showTrackNum = true,
                     isPreset = false,
                 )
         }
 
         object Playlist {
             val CreateDateDESC =
-                DisplaySetting(
+                TabSortRule(
                     primaryGroupSort = SortOption.NONE,
                     contentSort = SortOption.PlayListOption.CreateData(false),
                     isPreset = true,
                 )
             val DefaultCustom =
-                DisplaySetting(
+                TabSortRule(
                     primaryGroupSort = SortOption.NONE,
                     contentSort = SortOption.PlayListOption.CreateData(true),
-                    showTrackNum = true,
                     isPreset = false,
                 )
             val DefaultPreset = CreateDateDESC
@@ -95,7 +86,7 @@ data class DisplaySetting(
     }
 }
 
-fun DisplaySetting.sortOptions() =
+fun TabSortRule.sortOptions() =
     buildList {
         add(primaryGroupSort)
         add(secondaryGroupSort)

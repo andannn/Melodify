@@ -11,7 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.CustomTab
-import com.andannn.melodify.domain.model.DisplaySetting
+import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.contentSortType
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
@@ -43,18 +43,18 @@ private class ChangeSortRulePresenter(
     private val customTab: CustomTab,
     private val repository: Repository,
 ) : RetainedPresenter<UiState>() {
-    private val displaySettingFlow =
+    private val tabSortRuleFlow =
         repository
             .getCurrentSortRule(customTab)
             .stateIn(
                 retainedScope,
-                initialValue = DisplaySetting.Preset.Audio.DefaultPreset,
+                initialValue = TabSortRule.Preset.Audio.DefaultPreset,
                 started = WhileSubscribed(5000),
             )
 
     private val isShowVideoProgressFlow =
         repository
-            .getIsShowVideoProgressFlow(customTab.tabId)
+            .getIsShowVideoProgressFlow(customTab)
             .stateIn(
                 retainedScope,
                 initialValue = false,
@@ -63,18 +63,18 @@ private class ChangeSortRulePresenter(
 
     @Composable
     override fun present(): UiState {
-        val displaySetting by displaySettingFlow.collectAsStateWithLifecycle()
+        val tabSortRule by tabSortRuleFlow.collectAsStateWithLifecycle()
         val isShowVideoProgress by isShowVideoProgressFlow.collectAsStateWithLifecycle()
 
         return UiState(
-            displaySetting = displaySetting,
+            tabSortRule = tabSortRule,
             isShowVideoProgress = isShowVideoProgress,
         ) { event ->
             when (event) {
                 is UiEvent.OnChangeSortRule -> {
-                    Napier.d(tag = TAG) { "OnChangeSortRule. ${event.displaySetting}" }
+                    Napier.d(tag = TAG) { "OnChangeSortRule. ${event.tabSortRule}" }
                     retainedScope.launch {
-                        repository.saveSortRuleForTab(customTab, event.displaySetting)
+                        repository.saveSortRuleForTab(customTab, event.tabSortRule)
                     }
                 }
 
@@ -89,7 +89,7 @@ private class ChangeSortRulePresenter(
 
                         repository.saveSortRuleForTab(
                             currentTab,
-                            DisplaySetting.getDefaultCustom(customTab.contentSortType()),
+                            TabSortRule.getDefaultCustom(customTab.contentSortType()),
                         )
                     }
                 }
@@ -97,7 +97,7 @@ private class ChangeSortRulePresenter(
                 UiEvent.OnToggleIsShowVideoProgress -> {
                     retainedScope.launch {
                         repository.setIsShowVideoProgress(
-                            tabId = customTab.tabId,
+                            tab = customTab,
                             isShow = !isShowVideoProgress,
                         )
                     }
@@ -109,14 +109,14 @@ private class ChangeSortRulePresenter(
 
 @Stable
 internal data class UiState(
-    val displaySetting: DisplaySetting,
+    val tabSortRule: TabSortRule,
     val isShowVideoProgress: Boolean,
     val eventSink: (UiEvent) -> Unit = {},
 )
 
 internal sealed interface UiEvent {
     data class OnChangeSortRule(
-        val displaySetting: DisplaySetting,
+        val tabSortRule: TabSortRule,
     ) : UiEvent
 
     data object OnCustomRadioButtonClick : UiEvent

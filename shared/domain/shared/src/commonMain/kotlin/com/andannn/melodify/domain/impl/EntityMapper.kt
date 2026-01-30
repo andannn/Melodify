@@ -10,9 +10,9 @@ import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.CustomTabEntity
+import com.andannn.melodify.core.database.entity.CustomTabSortRuleEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
-import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.model.AudioVideoMergedResult
 import com.andannn.melodify.core.database.model.LibraryContentSearchResult
@@ -21,7 +21,6 @@ import com.andannn.melodify.domain.model.AlbumItemModel
 import com.andannn.melodify.domain.model.ArtistItemModel
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.CustomTab
-import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.GenreItemModel
 import com.andannn.melodify.domain.model.LyricModel
 import com.andannn.melodify.domain.model.MatchedContentTitle
@@ -29,6 +28,7 @@ import com.andannn.melodify.domain.model.MediaType
 import com.andannn.melodify.domain.model.PlayListItemModel
 import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.domain.model.SortOption
+import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.VideoItemModel
 import kotlin.Long
 
@@ -253,22 +253,20 @@ fun CustomTabEntity.toAppItem() =
         }
     }
 
-fun SortRuleEntity.toModel() =
-    DisplaySetting(
+fun CustomTabSortRuleEntity.toModel() =
+    TabSortRule(
         primaryGroupSort = primaryGroupSort.toModel(),
         secondaryGroupSort = secondaryGroupSort.toModel(),
         contentSort = contentSort.toModel(),
-        showTrackNum = showTrackNum,
         isPreset = isPreset,
     )
 
-fun DisplaySetting.toEntity(bindTabId: Long): SortRuleEntity =
-    SortRuleEntity(
+fun TabSortRule.toEntity(bindTabId: Long): CustomTabSortRuleEntity =
+    CustomTabSortRuleEntity(
         foreignKey = bindTabId,
         primaryGroupSort = primaryGroupSort.toEntity(),
         secondaryGroupSort = secondaryGroupSort.toEntity(),
         contentSort = contentSort.toEntity(),
-        showTrackNum = showTrackNum,
         isPreset = isPreset,
     )
 

@@ -4,11 +4,12 @@
  */
 package com.andannn.melodify.domain
 
+import com.andannn.melodify.domain.model.AudioTrackStyle
 import com.andannn.melodify.domain.model.ContentSortType
 import com.andannn.melodify.domain.model.CustomTab
-import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.domain.model.TabKind
+import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.UserSetting
 import kotlinx.coroutines.flow.Flow
 
@@ -91,24 +92,24 @@ interface UserPreferenceRepository {
 
     suspend fun saveSortRuleForTab(
         tab: CustomTab,
-        displaySetting: DisplaySetting,
+        tabSortRule: TabSortRule,
     )
 
     /**
-     * get sort rule of tab.
+     * Return flow of current sort rule.
+     * If there is no custom sort rule, return saved default sort rule.
      */
-    fun getCurrentSortRule(tab: CustomTab): Flow<DisplaySetting>
+    fun getCurrentSortRule(tab: CustomTab): Flow<TabSortRule>
 
-    fun getDefaultAudioPresetSortRule(): Flow<DisplaySetting>
-
-    fun getDefaultVideoPresetSortRule(): Flow<DisplaySetting>
-
-    fun getDefaultPlayListPresetSortRule(): Flow<DisplaySetting>
+    /**
+     * Get flow of saved default sort rule for content sort type.
+     */
+    fun getDefaultPresetSortRule(contentSortType: ContentSortType): Flow<TabSortRule>
 
     /**
      * get custom sort rule of tab.
      */
-    suspend fun getTabCustomSortRule(tab: CustomTab): DisplaySetting?
+    suspend fun getTabCustomSortRule(tab: CustomTab): TabSortRule?
 
     /**
      * swap tab order
@@ -150,13 +151,15 @@ interface UserPreferenceRepository {
     /**
      * set is show video progress
      *
-     * @param tabId tab id
+     * @param tab tab
      * @param isShow true if show, false otherwise
      */
     suspend fun setIsShowVideoProgress(
-        tabId: Long,
+        tab: CustomTab,
         isShow: Boolean,
     )
 
-    fun getIsShowVideoProgressFlow(tabId: Long): Flow<Boolean>
+    fun getIsShowVideoProgressFlow(tab: CustomTab): Flow<Boolean>
+
+    fun getAudioTrackStyleFlow(tab: CustomTab): Flow<AudioTrackStyle>
 }

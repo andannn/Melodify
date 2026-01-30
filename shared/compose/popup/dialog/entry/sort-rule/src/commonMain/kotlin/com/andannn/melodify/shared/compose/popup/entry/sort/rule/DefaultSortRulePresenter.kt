@@ -33,7 +33,7 @@ private class DefaultSortRulePresenter(
 ) : RetainedPresenter<DefaultSortRuleState>() {
     private val audioDefaultDisplaySetting =
         repository
-            .getDefaultAudioPresetSortRule()
+            .getDefaultPresetSortRule(ContentSortType.Audio)
             .stateIn(
                 retainedScope,
                 initialValue = null,
@@ -41,7 +41,7 @@ private class DefaultSortRulePresenter(
             )
     private val videoDefaultDisplaySetting =
         repository
-            .getDefaultVideoPresetSortRule()
+            .getDefaultPresetSortRule(ContentSortType.Video)
             .stateIn(
                 retainedScope,
                 initialValue = null,
@@ -50,7 +50,7 @@ private class DefaultSortRulePresenter(
 
     private val playlistDefaultDisplaySetting =
         repository
-            .getDefaultPlayListPresetSortRule()
+            .getDefaultPresetSortRule(ContentSortType.PlayList)
             .stateIn(
                 retainedScope,
                 initialValue = null,
@@ -65,19 +65,19 @@ private class DefaultSortRulePresenter(
         val selectedAudioPresetOption =
             remember(audioDisplaySetting) {
                 PresetDisplaySetting.entries.firstOrNull {
-                    audioDisplaySetting?.isPreset == true && it.displaySetting == audioDisplaySetting
+                    audioDisplaySetting?.isPreset == true && it.tabSortRule == audioDisplaySetting
                 }
             }
         val selectedVideoPresetOption =
             remember(videoDisplaySetting) {
                 PresetDisplaySetting.entries.firstOrNull {
-                    videoDisplaySetting?.isPreset == true && it.displaySetting == videoDisplaySetting
+                    videoDisplaySetting?.isPreset == true && it.tabSortRule == videoDisplaySetting
                 }
             }
         val selectedPlaylistPresetOption =
             remember(playlistDefaultDisplaySetting) {
                 PresetDisplaySetting.entries.firstOrNull {
-                    playlistDefaultDisplaySetting?.isPreset == true && it.displaySetting == playlistDefaultDisplaySetting
+                    playlistDefaultDisplaySetting?.isPreset == true && it.tabSortRule == playlistDefaultDisplaySetting
                 }
             }
 

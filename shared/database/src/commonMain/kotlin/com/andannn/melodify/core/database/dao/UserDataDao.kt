@@ -9,10 +9,11 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 import com.andannn.melodify.core.database.entity.CustomTabEntity
 import com.andannn.melodify.core.database.entity.CustomTabSettingEntity
+import com.andannn.melodify.core.database.entity.CustomTabSortRuleEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
-import com.andannn.melodify.core.database.entity.SortRuleEntity
 import com.andannn.melodify.core.database.entity.VideoPlayProgressEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -102,30 +103,16 @@ interface UserDataDao {
     suspend fun isTabKindExist(type: String): Boolean
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertSortRuleEntity(entity: SortRuleEntity)
+    suspend fun upsertSortRuleEntity(entity: CustomTabSortRuleEntity)
 
-    @Query("SELECT * FROM sort_rule_table WHERE custom_tab_foreign_key = :tabId")
-    fun getDisplaySettingFlowOfTab(tabId: Long): Flow<SortRuleEntity?>
+    @Query("SELECT * FROM sort_rule_table WHERE custom_tab_id = :tabId")
+    fun getSortRuleFlowOfTab(tabId: Long): Flow<CustomTabSortRuleEntity?>
 
-    @Query(
-        """
-    INSERT INTO custom_tab_setting_table (
-        custom_tab_foreign_key, 
-        is_show_progress
-    ) VALUES (
-        :tabId,
-        :isShowProgress
-    ) ON CONFLICT(custom_tab_foreign_key) DO UPDATE SET 
-        is_show_progress = excluded.is_show_progress
-    """,
-    )
-    suspend fun upsertVideoTabSettingEntity(
-        tabId: Long,
-        isShowProgress: Boolean,
-    )
+    @Upsert(CustomTabSettingEntity::class)
+    suspend fun upsertTabSettingEntity(entity: CustomTabSettingEntity): Long
 
-    @Query("SELECT * FROM custom_tab_setting_table WHERE custom_tab_foreign_key = :tabId")
-    fun getVideoSettingFlowOfTab(tabId: Long): Flow<CustomTabSettingEntity?>
+    @Query("SELECT * FROM custom_tab_setting_table WHERE custom_tab_id = :tabId")
+    fun getCustomTabSettingFlow(tabId: Long): Flow<CustomTabSettingEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSearchHistory(searchHistories: List<SearchHistoryEntity>)

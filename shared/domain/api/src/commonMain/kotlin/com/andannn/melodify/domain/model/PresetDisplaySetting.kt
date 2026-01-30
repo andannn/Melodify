@@ -4,26 +4,40 @@
  */
 package com.andannn.melodify.domain.model
 
+enum class AudioTrackStyle {
+    ALBUM_COVER,
+    TRACK_NUMBER,
+}
+
 enum class PresetDisplaySetting(
-    val displaySetting: DisplaySetting,
+    val tabSortRule: TabSortRule,
+    val isShowVideoProgress: Boolean = false,
+    val audioTrackStyle: AudioTrackStyle = AudioTrackStyle.ALBUM_COVER,
 ) {
     AlbumAsc(
-        displaySetting = DisplaySetting.Preset.Audio.AlbumASC,
+        tabSortRule = TabSortRule.Preset.Audio.AlbumASC,
+        audioTrackStyle = AudioTrackStyle.TRACK_NUMBER,
     ),
     ArtistAsc(
-        displaySetting = DisplaySetting.Preset.Audio.ArtistASC,
+        tabSortRule = TabSortRule.Preset.Audio.ArtistASC,
+        audioTrackStyle = AudioTrackStyle.ALBUM_COVER,
     ),
     TitleNameAsc(
-        displaySetting = DisplaySetting.Preset.Audio.TitleASC,
+        tabSortRule = TabSortRule.Preset.Audio.TitleASC,
+        audioTrackStyle = AudioTrackStyle.ALBUM_COVER,
     ),
     ArtistAlbumASC(
-        displaySetting = DisplaySetting.Preset.Audio.ArtistAlbumASC,
+        tabSortRule = TabSortRule.Preset.Audio.ArtistAlbumASC,
+        audioTrackStyle = AudioTrackStyle.TRACK_NUMBER,
     ),
     VideoBucketNameASC(
-        displaySetting = DisplaySetting.Preset.Video.BucketNameASC,
+        tabSortRule = TabSortRule.Preset.Video.BucketNameASC,
+        isShowVideoProgress = true,
     ),
     PlaylistCreateDateDESC(
-        displaySetting = DisplaySetting.Preset.Playlist.CreateDateDESC,
+        tabSortRule = TabSortRule.Preset.Playlist.CreateDateDESC,
+        isShowVideoProgress = false,
+        audioTrackStyle = AudioTrackStyle.ALBUM_COVER,
     ),
     ;
 

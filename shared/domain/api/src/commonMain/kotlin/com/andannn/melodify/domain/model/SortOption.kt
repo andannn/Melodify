@@ -59,6 +59,21 @@ enum class ContentSortType {
     PlayList,
 }
 
+fun ContentSortType.defaultPresetSetting() =
+    when (this) {
+        ContentSortType.Audio -> {
+            PresetDisplaySetting.AlbumAsc
+        }
+
+        ContentSortType.Video -> {
+            PresetDisplaySetting.VideoBucketNameASC
+        }
+
+        ContentSortType.PlayList -> {
+            PresetDisplaySetting.PlaylistCreateDateDESC
+        }
+    }
+
 fun CustomTab.contentSortType(): ContentSortType =
     when (this) {
         is CustomTab.AlbumDetail,

@@ -41,9 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.ContentSortType
 import com.andannn.melodify.domain.model.CustomTab
-import com.andannn.melodify.domain.model.DisplaySetting
 import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.domain.model.SortOption
+import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.contentSortType
 import com.andannn.melodify.domain.model.isAscending
 import com.andannn.melodify.shared.compose.common.getCategoryResource
@@ -74,7 +74,6 @@ import melodify.shared.compose.resource.generated.resources.primary_group_by
 import melodify.shared.compose.resource.generated.resources.reset_settings
 import melodify.shared.compose.resource.generated.resources.secondary_group_by
 import melodify.shared.compose.resource.generated.resources.show_play_progress
-import melodify.shared.compose.resource.generated.resources.show_track_number
 import melodify.shared.compose.resource.generated.resources.sort_by_genre
 import melodify.shared.compose.resource.generated.resources.sort_by_media_title
 import melodify.shared.compose.resource.generated.resources.sort_by_none
@@ -111,10 +110,10 @@ internal fun ChangeSortRuleDialogContent(
     ChangeSortRuleDialogContent(
         modifier = modifier,
         tab = dialog.tab,
-        displaySetting = state.displaySetting,
+        tabSortRule = state.tabSortRule,
         isShowVideoProgress = state.isShowVideoProgress,
         onChangePresetSortRule = {
-            state.eventSink(UiEvent.OnChangeSortRule(it.displaySetting))
+            state.eventSink(UiEvent.OnChangeSortRule(it.tabSortRule))
         },
         onCustomRadioButtonClick = {
             state.eventSink(UiEvent.OnCustomRadioButtonClick)
@@ -132,17 +131,17 @@ internal fun ChangeSortRuleDialogContent(
 private fun ChangeSortRuleDialogContent(
     tab: CustomTab,
     isShowVideoProgress: Boolean,
-    displaySetting: DisplaySetting,
+    tabSortRule: TabSortRule,
     modifier: Modifier = Modifier,
     onChangePresetSortRule: (PresetDisplaySetting) -> Unit = {},
-    onChangeCustomSortRule: (DisplaySetting) -> Unit = {},
+    onChangeCustomSortRule: (TabSortRule) -> Unit = {},
     onCustomRadioButtonClick: () -> Unit = {},
     onToggleIsShowVideoProgress: () -> Unit = {},
 ) {
     val type: ContentSortType = tab.contentSortType()
     val selectedPresetOption =
-        remember(displaySetting) {
-            PresetDisplaySetting.entries.firstOrNull { displaySetting.isPreset && it.displaySetting == displaySetting }
+        remember(tabSortRule) {
+            PresetDisplaySetting.entries.firstOrNull { tabSortRule.isPreset && it.tabSortRule == tabSortRule }
         }
 
     Column(modifier = modifier.fillMaxHeight()) {
@@ -221,11 +220,11 @@ private fun ChangeSortRuleDialogContent(
                             .padding(horizontal = 16.dp),
                 ) {
                     val resolvedSortOption =
-                        remember(displaySetting) {
-                            if (displaySetting.isPreset) {
-                                DisplaySetting.getDefaultCustom(type)
+                        remember(tabSortRule) {
+                            if (tabSortRule.isPreset) {
+                                TabSortRule.getDefaultCustom(type)
                             } else {
-                                displaySetting
+                                tabSortRule
                             }
                         }
 
@@ -235,38 +234,38 @@ private fun ChangeSortRuleDialogContent(
                                 .padding(horizontal = 16.dp)
                                 .weight(1f)
                                 .graphicsLayer {
-                                    alpha = if (displaySetting.isPreset) 0.5f else 1f
+                                    alpha = if (tabSortRule.isPreset) 0.5f else 1f
                                 },
                     ) {
-                        val enabled = !displaySetting.isPreset
+                        val enabled = !tabSortRule.isPreset
 
                         CustomSortOptionGroup(
                             modifier = Modifier,
                             type = type,
                             enabled = enabled,
-                            displaySetting = resolvedSortOption,
+                            tabSortRule = resolvedSortOption,
                             onPrimarySortRuleChange = { option ->
-                                if (!displaySetting.containsOption(option)) {
+                                if (!tabSortRule.containsOption(option)) {
                                     onChangeCustomSortRule(
-                                        displaySetting.copy(
+                                        tabSortRule.copy(
                                             primaryGroupSort = option,
                                         ),
                                     )
                                 }
                             },
                             onSecondarySortRuleChange = { option ->
-                                if (!displaySetting.containsOption(option)) {
+                                if (!tabSortRule.containsOption(option)) {
                                     onChangeCustomSortRule(
-                                        displaySetting.copy(
+                                        tabSortRule.copy(
                                             secondaryGroupSort = option,
                                         ),
                                     )
                                 }
                             },
                             onContentSortRuleChange = { option ->
-                                if (!displaySetting.containsOption(option)) {
+                                if (!tabSortRule.containsOption(option)) {
                                     onChangeCustomSortRule(
-                                        displaySetting.copy(
+                                        tabSortRule.copy(
                                             contentSort = option,
                                         ),
                                     )
@@ -275,33 +274,33 @@ private fun ChangeSortRuleDialogContent(
                         )
 
                         Spacer(Modifier.height(8.dp))
-
-                        if (type == ContentSortType.Audio) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(stringResource(Res.string.show_track_number))
-                                Spacer(Modifier.width(6.dp))
-                                Switch(
-                                    enabled = enabled,
-                                    checked = resolvedSortOption.showTrackNum,
-                                    onCheckedChange = {
-                                        onChangeCustomSortRule(
-                                            resolvedSortOption.copy(
-                                                showTrackNum = it,
-                                            ),
-                                        )
-                                    },
-                                )
-                            }
-                            Spacer(Modifier.height(8.dp))
-                        }
+// TODO: set
+//                        if (type == ContentSortType.Audio) {
+//                            Row(
+//                                verticalAlignment = Alignment.CenterVertically,
+//                            ) {
+//                                Text(stringResource(Res.string.show_track_number))
+//                                Spacer(Modifier.width(6.dp))
+//                                Switch(
+//                                    enabled = enabled,
+//                                    checked = resolvedSortOption.showTrackNum,
+//                                    onCheckedChange = {
+//                                        onChangeCustomSortRule(
+//                                            resolvedSortOption.copy(
+//                                                showTrackNum = it,
+//                                            ),
+//                                        )
+//                                    },
+//                                )
+//                            }
+//                            Spacer(Modifier.height(8.dp))
+//                        }
 
                         TextButton(
                             enabled = enabled,
                             onClick = {
                                 onChangeCustomSortRule(
-                                    DisplaySetting.getDefaultCustom(type),
+                                    TabSortRule.getDefaultCustom(type),
                                 )
                             },
                         ) {
@@ -311,7 +310,7 @@ private fun ChangeSortRuleDialogContent(
 
                     RadioButton(
                         modifier = Modifier.padding(end = 8.dp),
-                        selected = !displaySetting.isPreset,
+                        selected = !tabSortRule.isPreset,
                         onClick = onCustomRadioButtonClick,
                     )
                 }
@@ -326,7 +325,7 @@ private fun ChangeSortRuleDialogContent(
 @Composable
 private fun CustomSortOptionGroup(
     type: ContentSortType,
-    displaySetting: DisplaySetting,
+    tabSortRule: TabSortRule,
     enabled: Boolean,
     modifier: Modifier = Modifier,
     onPrimarySortRuleChange: (SortOption) -> Unit = {},
@@ -338,7 +337,7 @@ private fun CustomSortOptionGroup(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             options = SortOptionType.primaryGroupOptions(type),
-            currentOption = displaySetting.primaryGroupSort,
+            currentOption = tabSortRule.primaryGroupSort,
             label = stringResource(Res.string.primary_group_by),
             onChangeSortRule = onPrimarySortRuleChange,
         )
@@ -347,7 +346,7 @@ private fun CustomSortOptionGroup(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             options = SortOptionType.secondaryGroupOptions(type),
-            currentOption = displaySetting.secondaryGroupSort,
+            currentOption = tabSortRule.secondaryGroupSort,
             label = stringResource(Res.string.secondary_group_by),
             onChangeSortRule = onSecondarySortRuleChange,
         )
@@ -356,7 +355,7 @@ private fun CustomSortOptionGroup(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             options = SortOptionType.contentOptions(type),
-            currentOption = displaySetting.contentSort,
+            currentOption = tabSortRule.contentSort,
             label = stringResource(Res.string.content_sort_by),
             onChangeSortRule = onContentSortRuleChange,
         )
@@ -524,7 +523,7 @@ private fun SelectableTextButton(
     }
 }
 
-private fun DisplaySetting.containsOption(sortOption: SortOption) =
+private fun TabSortRule.containsOption(sortOption: SortOption) =
     primaryGroupSort == sortOption || secondaryGroupSort == sortOption || contentSort == sortOption
 
 private fun SortOption.toSortOptionType() =
@@ -743,7 +742,7 @@ private fun ChangeSortRuleDialogContentAudioPreview() {
             ChangeSortRuleDialogContent(
                 tab = CustomTab.AllMusic(tabId = 1),
                 isShowVideoProgress = true,
-                displaySetting = DisplaySetting.Preset.Audio.AlbumASC,
+                tabSortRule = TabSortRule.Preset.Audio.AlbumASC,
             )
         }
     }
@@ -757,7 +756,7 @@ private fun ChangeSortRuleDialogContentAudioCustomPreview() {
             ChangeSortRuleDialogContent(
                 tab = CustomTab.AllMusic(tabId = 1),
                 isShowVideoProgress = true,
-                displaySetting = DisplaySetting.Preset.Audio.DefaultCustom,
+                tabSortRule = TabSortRule.Preset.Audio.DefaultCustom,
             )
         }
     }
@@ -771,7 +770,7 @@ private fun ChangeSortRuleDialogContentVideoPreview() {
             ChangeSortRuleDialogContent(
                 tab = CustomTab.AllVideo(tabId = 1),
                 isShowVideoProgress = true,
-                displaySetting = DisplaySetting.Preset.Video.BucketNameASC,
+                tabSortRule = TabSortRule.Preset.Video.BucketNameASC,
             )
         }
     }
