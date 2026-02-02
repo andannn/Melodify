@@ -46,7 +46,7 @@ enum class PresetDisplaySetting(
     VideoBucketNameASC(
         4,
         tabSortRule = TabSortRule.Preset.Video.BucketNameASC,
-        isShowVideoProgress = true,
+        isShowVideoProgress = false,
     ),
     PlaylistCreateDateDESC(
         5,
