@@ -7,8 +7,12 @@ package com.andannn.melodify.ui.routes.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import com.andannn.melodify.core.syncer.MediaLibrarySyncRepository
+import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.browsable
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
+import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource
 import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.components.tab.TabUiState
 import com.andannn.melodify.shared.compose.components.tab.content.TabContentState
@@ -17,6 +21,7 @@ import com.andannn.melodify.shared.compose.components.tab.retainTabUiPresenter
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.sort.rule.DefaultSortRuleSettingPopup
 import com.andannn.melodify.shared.compose.popup.entry.sync.SyncStatusPopup
+import com.andannn.melodify.shared.compose.usecase.playMediaItems
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
 import io.github.andannn.popup.PopupHostState
@@ -31,17 +36,17 @@ import org.koin.mp.KoinPlatform.getKoin
 internal fun retainHomeUiPresenter(
     navigator: Navigator,
     popController: PopupHostState = LocalPopupHostState.current,
-    mediaLibrarySyncRepository: MediaLibrarySyncRepository = getKoin().get(),
+    repository: Repository = getKoin().get(),
 ): Presenter<HomeState> =
     retainPresenter(
         navigator,
         popController,
-        mediaLibrarySyncRepository,
+        repository,
     ) {
         HomePresenter(
             navigator,
             popController,
-            mediaLibrarySyncRepository,
+            repository,
         )
     }
 
@@ -73,14 +78,16 @@ internal sealed interface HomeUiEvent {
     ) : HomeUiEvent
 
     data object OnTabManagementClick : HomeUiEvent
-}
 
-private const val TAG = "HomeScreen"
+    data class OnSearchResultItemClick(
+        val result: MediaItemModel,
+    ) : HomeUiEvent
+}
 
 private class HomePresenter(
     private val navigator: Navigator,
-    private val popController: PopupHostState,
-    private val mediaLibrarySyncRepository: MediaLibrarySyncRepository,
+    private val popupHostState: PopupHostState,
+    private val repository: Repository,
 ) : RetainedPresenter<HomeState>() {
     @Composable
     override fun present(): HomeState {
@@ -92,7 +99,7 @@ private class HomePresenter(
             tabUiState = tabUiState,
             tabContentState = tabContentPresenter.present(),
         ) { eventSink ->
-            with(popController) {
+            context(popupHostState, repository) {
                 when (eventSink) {
                     HomeUiEvent.LibraryButtonClick -> {
                         navigator.navigateTo(Screen.Library)
@@ -116,6 +123,22 @@ private class HomePresenter(
 
                     HomeUiEvent.OnTabManagementClick -> {
                         navigator.navigateTo(Screen.TabManage)
+                    }
+
+                    is HomeUiEvent.OnSearchResultItemClick -> {
+                        val item = eventSink.result
+                        if (item.browsable) {
+                            navigator.navigateTo(
+                                Screen.LibraryDetail(item.asLibraryDataSource()),
+                            )
+                        } else {
+                            retainedScope.launch {
+                                playMediaItems(
+                                    item,
+                                    listOf(item),
+                                )
+                            }
+                        }
                     }
                 }
             }

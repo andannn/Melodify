@@ -4,11 +4,12 @@
  */
 package com.andannn.melodify.ui.routes.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -16,7 +17,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.AppBarWithSearch
-import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
+import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -37,7 +38,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.andannn.melodify.shared.compose.common.Presenter
@@ -48,7 +48,6 @@ import com.andannn.melodify.shared.compose.components.tab.TabUi
 import com.andannn.melodify.shared.compose.components.tab.content.TabContent
 import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.Navigator
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -63,27 +62,38 @@ internal fun HomeUiScreen(
     val textFieldState = rememberTextFieldState()
     val searchBarState = rememberSearchBarState()
     val scope = rememberCoroutineScope()
-    val appBarWithSearchColors =
-        SearchBarDefaults.appBarWithSearchColors(
-            searchBarColors = SearchBarDefaults.containedColors(state = searchBarState),
-        )
+
+    fun onConfirmSearch(text: String) {
+        scope.launch {
+            searchBarState.animateToCollapsed()
+        }
+    }
     val inputField =
         @Composable {
             SearchBarDefaults.InputField(
                 textFieldState = textFieldState,
                 searchBarState = searchBarState,
-                colors = appBarWithSearchColors.searchBarColors.inputFieldColors,
-                onSearch = { scope.launch { searchBarState.animateToCollapsed() } },
+                onSearch = { onConfirmSearch(it) },
                 placeholder = {
-                    Text(modifier = Modifier.clearAndSetSemantics {}, text = "Search")
+                    Text(text = "Search")
                 },
                 leadingIcon = {
-                    SearchLeadingIcon(searchBarState, scope)
+                    SearchLeadingIcon(
+                        searchBarState = searchBarState,
+                        onBackClick = {
+                            scope.launch {
+                                textFieldState.clearText()
+                                searchBarState.animateToCollapsed()
+                            }
+                        },
+                    )
                 },
             )
         }
     Scaffold(
-        modifier = modifier,
+        modifier =
+            modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = {
             SnackbarHost(
                 modifier = Modifier.padding(bottom = 64.dp),
@@ -95,42 +105,31 @@ internal fun HomeUiScreen(
                 modifier = Modifier.statusBarsPadding(),
                 scrollBehavior = scrollBehavior,
                 state = searchBarState,
-                colors = appBarWithSearchColors,
                 inputField = inputField,
                 navigationIcon = {
-                    IconButton(
-                        onClick = { homeState.eventSink.invoke(HomeUiEvent.LibraryButtonClick) },
-                        content = {
-                            Icon(Icons.Rounded.Menu, contentDescription = "")
-                        },
-                    )
+                    NavigateLibraryIcon(onClick = { homeState.eventSink.invoke(HomeUiEvent.LibraryButtonClick) })
                 },
                 actions = {
-                    val options = MenuOption.entries
-                    DropDownMenuIconButton(
-                        options = options.map { it.textRes },
-                        onSelectIndex = {
-                            val selected = options[it]
-                            homeState.eventSink.invoke(
-                                HomeUiEvent.OnMenuSelected(
-                                    selected = selected,
-                                ),
-                            )
+                    DropDownMenuActionButton(
+                        onSelectItem = {
+                            homeState.eventSink.invoke(HomeUiEvent.OnMenuSelected(it))
                         },
-                        imageVector = Icons.Rounded.MoreVert,
                     )
                 },
             )
-            ExpandedFullScreenContainedSearchBar(
+            ExpandedFullScreenSearchBar(
                 state = searchBarState,
                 inputField = inputField,
-                colors = appBarWithSearchColors.searchBarColors,
             ) {
                 Suggestions(
                     query = textFieldState,
-                    onConfirmSearch = {
-                    },
+                    onConfirmSearch = { onConfirmSearch(it) },
                     onResultItemClick = {
+                        scope.launch {
+                            textFieldState.clearText()
+                            searchBarState.animateToCollapsed()
+                            homeState.eventSink.invoke(HomeUiEvent.OnSearchResultItemClick(it))
+                        }
                     },
                 )
             }
@@ -140,7 +139,6 @@ internal fun HomeUiScreen(
             modifier =
                 Modifier
                     .padding(padding)
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
                     .fillMaxSize(),
         ) {
             TabUi(
@@ -165,18 +163,54 @@ internal fun HomeUiScreen(
 @Composable
 private fun SearchLeadingIcon(
     searchBarState: SearchBarState,
-    scope: CoroutineScope,
-) = if (searchBarState.currentValue == SearchBarValue.Expanded) {
-    TooltipBox(
-        positionProvider =
-            TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
-        tooltip = { PlainTooltip { Text("Back") } },
-        state = rememberTooltipState(),
-    ) {
-        IconButton(onClick = { scope.launch { searchBarState.animateToCollapsed() } }) {
-            Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back")
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit = {},
+) {
+    Box(modifier = modifier) {
+        if (searchBarState.currentValue == SearchBarValue.Expanded) {
+            TooltipBox(
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+                tooltip = { PlainTooltip { Text("Back") } },
+                state = rememberTooltipState(),
+            ) {
+                IconButton(onClick = onBackClick) {
+                    Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back")
+                }
+            }
+        } else {
+            Icon(Icons.Default.Search, contentDescription = null)
         }
     }
-} else {
-    Icon(Icons.Default.Search, contentDescription = null)
+}
+
+@Composable
+private fun DropDownMenuActionButton(
+    modifier: Modifier = Modifier,
+    onSelectItem: (MenuOption) -> Unit,
+) {
+    val options = MenuOption.entries
+    DropDownMenuIconButton(
+        modifier = modifier,
+        options = options.map { it.textRes },
+        onSelectIndex = {
+            val selected = options[it]
+            onSelectItem(selected)
+        },
+        imageVector = Icons.Rounded.MoreVert,
+    )
+}
+
+@Composable
+private fun NavigateLibraryIcon(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = onClick,
+        content = {
+            Icon(Icons.Rounded.Menu, contentDescription = "")
+        },
+    )
 }
