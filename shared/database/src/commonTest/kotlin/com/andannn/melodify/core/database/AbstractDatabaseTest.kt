@@ -7,7 +7,7 @@ package com.andannn.melodify.core.database
 import androidx.room.RoomDatabase
 import androidx.room.execSQL
 import androidx.room.useReaderConnection
-import com.andannn.melodify.core.database.CustomTabType.ALL_VIDEO
+import com.andannn.melodify.core.database.TabType.ALL_VIDEO
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
@@ -20,14 +20,14 @@ import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.ArtistWithoutTrackCount
 import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.AudioEntryStyle
-import com.andannn.melodify.core.database.entity.CustomTabSettingEntity
-import com.andannn.melodify.core.database.entity.CustomTabSortRuleEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListEntryType
 import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
+import com.andannn.melodify.core.database.entity.TabCustomSettingEntity
+import com.andannn.melodify.core.database.entity.TabCustomSortRuleEntity
 import com.andannn.melodify.core.database.entity.TabEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.helper.paging.AllMediaPagingProvider
@@ -918,7 +918,7 @@ abstract class AbstractDatabaseTest {
                 ),
             )
             dao.insertSortRuleEntity(
-                CustomTabSortRuleEntity(
+                TabCustomSortRuleEntity(
                     foreignKey = 1234,
                     primaryGroupSort = SortOptionData(1, false),
                 ),
@@ -930,7 +930,7 @@ abstract class AbstractDatabaseTest {
                 )
             }
             dao.insertSortRuleEntity(
-                CustomTabSortRuleEntity(
+                TabCustomSortRuleEntity(
                     foreignKey = 1234,
                     primaryGroupSort = SortOptionData(4, true),
                 ),
@@ -1133,7 +1133,7 @@ abstract class AbstractDatabaseTest {
         runTest {
             assertFails {
                 userDataDao.insertTabSettingEntity(
-                    CustomTabSettingEntity(
+                    TabCustomSettingEntity(
                         customTabId = 10,
                         isShowVideoProgress = true,
                         audioEntryStyle = AudioEntryStyle.ALBUM_COVER,
@@ -1183,7 +1183,7 @@ abstract class AbstractDatabaseTest {
                 .insertCustomTab(TabEntity(id = 10, name = "name", type = ALL_VIDEO))
             val settingId =
                 userDataDao.insertTabSettingEntity(
-                    CustomTabSettingEntity(
+                    TabCustomSettingEntity(
                         customTabId = 10,
                         isShowVideoProgress = true,
                         audioEntryStyle = AudioEntryStyle.ALBUM_COVER,
@@ -1193,7 +1193,7 @@ abstract class AbstractDatabaseTest {
                 assertEquals(true, it?.isShowVideoProgress)
             }
             userDataDao.insertTabSettingEntity(
-                CustomTabSettingEntity(
+                TabCustomSettingEntity(
                     id = settingId,
                     customTabId = 10,
                     isShowVideoProgress = false,
@@ -1212,7 +1212,7 @@ abstract class AbstractDatabaseTest {
                 .getUserDataDao()
                 .insertCustomTab(TabEntity(id = 10, name = "name", type = ALL_VIDEO))
             userDataDao.insertTabSettingEntity(
-                CustomTabSettingEntity(
+                TabCustomSettingEntity(
                     customTabId = 10,
                     isShowVideoProgress = true,
                     audioEntryStyle = AudioEntryStyle.ALBUM_COVER,
@@ -1463,12 +1463,12 @@ abstract class AbstractDatabaseTest {
             userDataDao.selectTabCustomSettingEntity(
                 tabId = 10,
                 tabSettingEntity =
-                    CustomTabSettingEntity(
+                    TabCustomSettingEntity(
                         customTabId = 10,
                         isShowVideoProgress = true,
                         audioEntryStyle = AudioEntryStyle.ALBUM_COVER,
                     ),
-                tabSortRuleEntity = CustomTabSortRuleEntity(foreignKey = 10, primaryGroupSort = SortOptionData(1, false)),
+                tabSortRuleEntity = TabCustomSortRuleEntity(foreignKey = 10, primaryGroupSort = SortOptionData(1, false)),
             )
 
             // preset is clear

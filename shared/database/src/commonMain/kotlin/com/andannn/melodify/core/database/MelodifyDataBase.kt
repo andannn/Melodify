@@ -32,8 +32,6 @@ import com.andannn.melodify.core.database.entity.AlbumFtsEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.ArtistFtsEntity
 import com.andannn.melodify.core.database.entity.AudioEntity
-import com.andannn.melodify.core.database.entity.CustomTabSettingEntity
-import com.andannn.melodify.core.database.entity.CustomTabSortRuleEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaFtsEntity
@@ -41,6 +39,8 @@ import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortOptionJsonConverter
+import com.andannn.melodify.core.database.entity.TabCustomSettingEntity
+import com.andannn.melodify.core.database.entity.TabCustomSortRuleEntity
 import com.andannn.melodify.core.database.entity.TabEntity
 import com.andannn.melodify.core.database.entity.TabPresetDisplaySettingEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
@@ -63,11 +63,11 @@ import kotlinx.coroutines.IO
         ArtistFtsEntity::class,
         MediaFtsEntity::class,
         SearchHistoryEntity::class,
-        CustomTabSortRuleEntity::class,
+        TabCustomSortRuleEntity::class,
         VideoEntity::class,
         VideoFtsEntity::class,
         VideoPlayProgressEntity::class,
-        CustomTabSettingEntity::class,
+        TabCustomSettingEntity::class,
         TabPresetDisplaySettingEntity::class,
     ],
     autoMigrations = [
