@@ -11,11 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
-import com.andannn.melodify.shared.compose.components.search.Search
 import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.windows.CustomMenuBar
 import com.andannn.melodify.windows.WindowNavigator
-import com.andannn.melodify.windows.WindowType
 import com.andannn.melodify.windows.common.CommonActionDialog
 import com.andannn.melodify.windows.handleMenuEvent
 
@@ -38,13 +36,14 @@ fun SearchWindow(
                 )
             },
         ) {
-            Search(
-                showBackButton = false,
-                modifier = Modifier.padding(it),
-                onNavigateToLibraryDetail = {
-                    navigator.openWindow(WindowType.MediaLibrary(it))
-                },
-            )
+// TODO: Implement with DockedSearchBar
+//            Search(
+//                showBackButton = false,
+//                modifier = Modifier.padding(it),
+//                onNavigateToLibraryDetail = {
+//                    navigator.openWindow(WindowType.MediaLibrary(it))
+//                },
+//            )
         }
 
         CommonActionDialog()
