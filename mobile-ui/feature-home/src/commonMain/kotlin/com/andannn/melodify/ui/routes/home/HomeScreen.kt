@@ -9,8 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.text.input.clearText
-import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
@@ -32,23 +31,23 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.widgets.DropDownMenuIconButton
 import com.andannn.melodify.shared.compose.components.play.control.ResumePointIndicatorContainer
 import com.andannn.melodify.shared.compose.components.search.suggestion.Suggestions
 import com.andannn.melodify.shared.compose.components.tab.TabUi
+import com.andannn.melodify.shared.compose.components.tab.TabUiState
 import com.andannn.melodify.shared.compose.components.tab.content.TabContent
+import com.andannn.melodify.shared.compose.components.tab.content.TabContentState
 import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
 import com.andannn.melodify.ui.Navigator
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -58,34 +57,63 @@ internal fun HomeUiScreen(
     homePresenter: Presenter<HomeState> = retainHomeUiPresenter(navigator = navigator),
 ) {
     val homeState = homePresenter.present()
-    val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
-    val textFieldState = rememberTextFieldState()
-    val searchBarState = rememberSearchBarState()
-    val scope = rememberCoroutineScope()
 
-    fun onConfirmSearch(text: String) {
-        scope.launch {
-            searchBarState.animateToCollapsed()
-        }
-    }
+    HomeContent(
+        modifier = modifier,
+        textFieldState = homeState.textFieldState,
+        searchBarState = homeState.searchBarState,
+        tabUiState = homeState.tabUiState,
+        tabContentState = homeState.tabContentState,
+        onConfirmSearch = {
+            homeState.eventSink.invoke(HomeUiEvent.OnConfirmSearch(it))
+        },
+        onResultItemClick = {
+            homeState.eventSink.invoke(HomeUiEvent.OnSearchResultItemClick(it))
+        },
+        onLibraryButtonClick = {
+            homeState.eventSink.invoke(HomeUiEvent.LibraryButtonClick)
+        },
+        onBackFullScreen = {
+            homeState.eventSink.invoke(HomeUiEvent.OnBackFullScreen)
+        },
+        onTabManagementClick = {
+            homeState.eventSink.invoke(HomeUiEvent.OnTabManagementClick)
+        },
+        onMenuSelected = {
+            homeState.eventSink.invoke(HomeUiEvent.OnMenuSelected(it))
+        },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HomeContent(
+    modifier: Modifier = Modifier,
+    textFieldState: TextFieldState,
+    searchBarState: SearchBarState,
+    tabUiState: TabUiState,
+    tabContentState: TabContentState,
+    onConfirmSearch: (String) -> Unit = {},
+    onResultItemClick: (MediaItemModel) -> Unit = {},
+    onLibraryButtonClick: () -> Unit = {},
+    onBackFullScreen: () -> Unit = {},
+    onTabManagementClick: () -> Unit = {},
+    onMenuSelected: (MenuOption) -> Unit = {},
+) {
+    val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
     val inputField =
         @Composable {
             SearchBarDefaults.InputField(
                 textFieldState = textFieldState,
                 searchBarState = searchBarState,
-                onSearch = { onConfirmSearch(it) },
+                onSearch = onConfirmSearch,
                 placeholder = {
                     Text(text = "Search")
                 },
                 leadingIcon = {
                     SearchLeadingIcon(
                         searchBarState = searchBarState,
-                        onBackClick = {
-                            scope.launch {
-                                textFieldState.clearText()
-                                searchBarState.animateToCollapsed()
-                            }
-                        },
+                        onBackClick = onBackFullScreen,
                     )
                 },
             )
@@ -107,13 +135,11 @@ internal fun HomeUiScreen(
                 state = searchBarState,
                 inputField = inputField,
                 navigationIcon = {
-                    NavigateLibraryIcon(onClick = { homeState.eventSink.invoke(HomeUiEvent.LibraryButtonClick) })
+                    NavigateLibraryIcon(onClick = onLibraryButtonClick)
                 },
                 actions = {
                     DropDownMenuActionButton(
-                        onSelectItem = {
-                            homeState.eventSink.invoke(HomeUiEvent.OnMenuSelected(it))
-                        },
+                        onSelectItem = onMenuSelected,
                     )
                 },
             )
@@ -123,14 +149,8 @@ internal fun HomeUiScreen(
             ) {
                 Suggestions(
                     query = textFieldState,
-                    onConfirmSearch = { onConfirmSearch(it) },
-                    onResultItemClick = {
-                        scope.launch {
-                            textFieldState.clearText()
-                            searchBarState.animateToCollapsed()
-                            homeState.eventSink.invoke(HomeUiEvent.OnSearchResultItemClick(it))
-                        }
-                    },
+                    onConfirmSearch = onConfirmSearch,
+                    onResultItemClick = onResultItemClick,
                 )
             }
         },
@@ -142,13 +162,11 @@ internal fun HomeUiScreen(
                     .fillMaxSize(),
         ) {
             TabUi(
-                state = homeState.tabUiState,
-                onTabManagementClick = {
-                    homeState.eventSink.invoke(HomeUiEvent.OnTabManagementClick)
-                },
+                state = tabUiState,
+                onTabManagementClick = onTabManagementClick,
             )
 
-            TabContent(homeState.tabContentState, modifier = Modifier)
+            TabContent(tabContentState, modifier = Modifier)
         }
     }
 

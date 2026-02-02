@@ -4,9 +4,15 @@
  */
 package com.andannn.melodify.ui.routes.home
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SearchBarState
+import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import com.andannn.melodify.core.syncer.MediaLibrarySyncRepository
+import androidx.compose.runtime.rememberCoroutineScope
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.browsable
@@ -24,6 +30,7 @@ import com.andannn.melodify.shared.compose.popup.entry.sync.SyncStatusPopup
 import com.andannn.melodify.shared.compose.usecase.playMediaItems
 import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
+import com.andannn.melodify.ui.Screen.*
 import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.launch
 import melodify.shared.compose.resource.generated.resources.Res
@@ -62,16 +69,22 @@ internal enum class MenuOption(
 }
 
 @Stable
-internal data class HomeState(
-    val tabUiState: TabUiState,
-    val tabContentState: TabContentState,
-    val eventSink: (HomeUiEvent) -> Unit = {},
-)
+internal data class HomeState
+    @OptIn(ExperimentalMaterial3Api::class)
+    constructor(
+        val textFieldState: TextFieldState,
+        val searchBarState: SearchBarState,
+        val tabUiState: TabUiState,
+        val tabContentState: TabContentState,
+        val eventSink: (HomeUiEvent) -> Unit = {},
+    )
 
 internal sealed interface HomeUiEvent {
     data object SearchButtonClick : HomeUiEvent
 
     data object LibraryButtonClick : HomeUiEvent
+
+    data object OnBackFullScreen : HomeUiEvent
 
     data class OnMenuSelected(
         val selected: MenuOption,
@@ -82,6 +95,10 @@ internal sealed interface HomeUiEvent {
     data class OnSearchResultItemClick(
         val result: MediaItemModel,
     ) : HomeUiEvent
+
+    data class OnConfirmSearch(
+        val text: String,
+    ) : HomeUiEvent
 }
 
 private class HomePresenter(
@@ -89,24 +106,40 @@ private class HomePresenter(
     private val popupHostState: PopupHostState,
     private val repository: Repository,
 ) : RetainedPresenter<HomeState>() {
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun present(): HomeState {
         val tabUiState = retainTabUiPresenter().present()
         val tabContentPresenter =
             retainTabContentPresenter(selectedTab = tabUiState.selectedTab)
+        val textFieldState = rememberTextFieldState()
+        val searchBarState = rememberSearchBarState()
+        val animationScope = rememberCoroutineScope()
+
+        fun resetSearchState() {
+            textFieldState.clearText()
+        }
+
+        fun collapsedSearchScreen() {
+            animationScope.launch {
+                searchBarState.animateToCollapsed()
+            }
+        }
 
         return HomeState(
+            textFieldState = textFieldState,
+            searchBarState = searchBarState,
             tabUiState = tabUiState,
             tabContentState = tabContentPresenter.present(),
         ) { eventSink ->
             context(popupHostState, repository) {
                 when (eventSink) {
                     HomeUiEvent.LibraryButtonClick -> {
-                        navigator.navigateTo(Screen.Library)
+                        navigator.navigateTo(Library)
                     }
 
                     HomeUiEvent.SearchButtonClick -> {
-                        navigator.navigateTo(Screen.Search)
+                        navigator.navigateTo(Search)
                     }
 
                     is HomeUiEvent.OnMenuSelected -> {
@@ -122,14 +155,17 @@ private class HomePresenter(
                     }
 
                     HomeUiEvent.OnTabManagementClick -> {
-                        navigator.navigateTo(Screen.TabManage)
+                        navigator.navigateTo(TabManage)
                     }
 
                     is HomeUiEvent.OnSearchResultItemClick -> {
+                        resetSearchState()
+                        collapsedSearchScreen()
+
                         val item = eventSink.result
                         if (item.browsable) {
                             navigator.navigateTo(
-                                Screen.LibraryDetail(item.asLibraryDataSource()),
+                                LibraryDetail(item.asLibraryDataSource()),
                             )
                         } else {
                             retainedScope.launch {
@@ -139,6 +175,17 @@ private class HomePresenter(
                                 )
                             }
                         }
+                    }
+
+                    is HomeUiEvent.OnConfirmSearch -> {
+                        animationScope.launch {
+                            searchBarState.animateToCollapsed()
+                        }
+                    }
+
+                    HomeUiEvent.OnBackFullScreen -> {
+                        resetSearchState()
+                        collapsedSearchScreen()
                     }
                 }
             }
