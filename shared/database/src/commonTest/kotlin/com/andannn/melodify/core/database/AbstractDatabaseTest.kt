@@ -7,7 +7,6 @@ package com.andannn.melodify.core.database
 import androidx.room.RoomDatabase
 import androidx.room.execSQL
 import androidx.room.useReaderConnection
-import com.andannn.melodify.core.database.TabType.ALL_VIDEO
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
@@ -26,9 +25,11 @@ import com.andannn.melodify.core.database.entity.PlayListEntity
 import com.andannn.melodify.core.database.entity.PlayListEntryType
 import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
+import com.andannn.melodify.core.database.entity.SortOptionData
 import com.andannn.melodify.core.database.entity.TabCustomSettingEntity
 import com.andannn.melodify.core.database.entity.TabCustomSortRuleEntity
 import com.andannn.melodify.core.database.entity.TabEntity
+import com.andannn.melodify.core.database.entity.TabType.ALL_VIDEO
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.helper.paging.AllMediaPagingProvider
 import com.andannn.melodify.core.database.helper.paging.MediaSorts

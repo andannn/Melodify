@@ -19,6 +19,7 @@ kotlin {
             implementation(project(":shared:compose:components:tab"))
             implementation(project(":shared:compose:components:play-control"))
             implementation(project(":shared:compose:components:tab-content"))
+            implementation(project(":shared:compose:components:search"))
             implementation(project(":mobile-ui:common"))
             implementation(project(":shared:compose:popup:dialog:entry:sync"))
             implementation(project(":shared:compose:popup:dialog:entry:sort-rule"))

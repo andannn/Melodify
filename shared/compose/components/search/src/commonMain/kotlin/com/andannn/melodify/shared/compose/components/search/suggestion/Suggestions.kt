@@ -50,7 +50,7 @@ import org.jetbrains.compose.resources.stringResource
  * @param query The current query text.
  */
 @Composable
-internal fun Suggestions(
+fun Suggestions(
     query: TextFieldState,
     modifier: Modifier = Modifier,
     presenter: Presenter<SuggestionsUiState> = retainSuggestionsPresenter(query = query.text.toString()),
