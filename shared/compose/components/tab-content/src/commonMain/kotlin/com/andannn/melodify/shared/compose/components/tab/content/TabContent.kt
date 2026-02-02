@@ -30,11 +30,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.AudioItemModel
-import com.andannn.melodify.domain.model.CustomTab
-import com.andannn.melodify.domain.model.DisplaySetting
+import com.andannn.melodify.domain.model.AudioTrackStyle
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.SortOption
+import com.andannn.melodify.domain.model.Tab
+import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.domain.model.browsableOrPlayable
 import com.andannn.melodify.domain.model.groupKeyOf
@@ -56,11 +57,12 @@ fun TabContent(
 ) {
     LazyListContent(
         selectedTab = state.selectedTab,
+        audioTrackStyle = state.audioTrackStyle,
         itemSnapshotList = state.pagingItems.itemSnapshotList,
         onTriggerReadOfIndex = {
             state.pagingItems[it]
         },
-        displaySetting = state.groupSort,
+        tabSortRule = state.tabSortRule,
         modifier = modifier.fillMaxSize(),
         onMediaItemClick = {
             state.eventSink.invoke(TabContentEvent.OnPlayMedia(it))
@@ -71,7 +73,7 @@ fun TabContent(
         onBuildGroupHeader = { groupKey, parentHeaderGroupKey ->
             GroupHeaderContainer(
                 selectedTab = state.selectedTab,
-                displaySetting = state.groupSort,
+                tabSortRule = state.tabSortRule,
                 groupKey = groupKey,
                 parentHeaderGroupKey = parentHeaderGroupKey,
                 onGroupItemClick = { groupKeyList ->
@@ -85,8 +87,9 @@ fun TabContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyListContent(
-    selectedTab: CustomTab?,
-    displaySetting: DisplaySetting?,
+    selectedTab: Tab?,
+    tabSortRule: TabSortRule?,
+    audioTrackStyle: AudioTrackStyle?,
     itemSnapshotList: List<MediaItemModel?>,
     modifier: Modifier = Modifier,
     onMediaItemClick: (MediaItemModel) -> Unit = {},
@@ -98,8 +101,8 @@ private fun LazyListContent(
     ) -> Unit = { _, _ -> },
 ) {
     val primaryGroupList =
-        remember(itemSnapshotList, displaySetting) {
-            displaySetting?.let { itemSnapshotList.groupByType(displaySetting) } ?: emptyList()
+        remember(itemSnapshotList, tabSortRule) {
+            tabSortRule?.let { itemSnapshotList.groupByType(tabSortRule) } ?: emptyList()
         }
 
     val state = rememberLazyListState()
@@ -144,7 +147,6 @@ private fun LazyListContent(
                         if (primaryGroupKey != null) headerCount++
                         if (secondaryGroupKey != null) headerCount++
 
-                        val showTrackNum = displaySetting?.showTrackNum ?: true
                         Row(modifier = Modifier.height(IntrinsicSize.Min)) {
                             if (headerCount >= 2) {
                                 val needConnection =
@@ -173,7 +175,7 @@ private fun LazyListContent(
                                         isActive = false,
                                         thumbnailSourceUri = item.artWorkUri,
                                         title = item.name,
-                                        trackNum = item.cdTrackNumber.takeIf { showTrackNum },
+                                        trackNum = item.cdTrackNumber.takeIf { audioTrackStyle == AudioTrackStyle.TRACK_NUMBER },
                                         onItemClick = {
                                             onMediaItemClick(item)
                                         },
@@ -186,7 +188,7 @@ private fun LazyListContent(
                                 is VideoItemModel -> {
                                     VideoListTileItemView(
                                         item = item,
-                                        tabId = selectedTab?.tabId,
+                                        tab = selectedTab,
                                         onItemClick = {
                                             onMediaItemClick(item)
                                         },
@@ -269,11 +271,11 @@ private fun List<PrimaryGroup>.flattenIndex(
     return ret
 }
 
-private fun List<MediaItemModel?>.groupByType(displaySetting: DisplaySetting): List<PrimaryGroup> =
-    groupByType(displaySetting.primaryGroupSort)
+private fun List<MediaItemModel?>.groupByType(tabSortRule: TabSortRule): List<PrimaryGroup> =
+    groupByType(tabSortRule.primaryGroupSort)
         .map { (headerItem, contentList) ->
             val primaryHeader = headerItem
-            val items = contentList.groupByType(displaySetting.secondaryGroupSort)
+            val items = contentList.groupByType(tabSortRule.secondaryGroupSort)
 
             PrimaryGroup(
                 headerItem = primaryHeader,
@@ -299,7 +301,8 @@ private fun LazyListContentAlbumASCPreview() {
     MelodifyTheme {
         LazyListContent(
             selectedTab = null,
-            displaySetting = DisplaySetting.Preset.Audio.AlbumASC,
+            audioTrackStyle = null,
+            tabSortRule = TabSortRule.Preset.Audio.AlbumASC,
             itemSnapshotList = MockData.medias,
             onBuildGroupHeader = { _, _ ->
                 Box(modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.Red))
@@ -314,7 +317,8 @@ private fun LazyListContentArtistASCPreview() {
     MelodifyTheme {
         LazyListContent(
             selectedTab = null,
-            displaySetting = DisplaySetting.Preset.Audio.ArtistASC,
+            audioTrackStyle = null,
+            tabSortRule = TabSortRule.Preset.Audio.ArtistASC,
             itemSnapshotList = MockData.medias,
             onBuildGroupHeader = { _, _ ->
                 Box(modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.Red))
@@ -329,7 +333,8 @@ private fun LazyListContentArtistAlbumASCPreview() {
     MelodifyTheme {
         LazyListContent(
             selectedTab = null,
-            displaySetting = DisplaySetting.Preset.Audio.ArtistAlbumASC,
+            audioTrackStyle = null,
+            tabSortRule = TabSortRule.Preset.Audio.ArtistAlbumASC,
             itemSnapshotList = MockData.medias,
             onBuildGroupHeader = { _, _ ->
                 Box(modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.Red))

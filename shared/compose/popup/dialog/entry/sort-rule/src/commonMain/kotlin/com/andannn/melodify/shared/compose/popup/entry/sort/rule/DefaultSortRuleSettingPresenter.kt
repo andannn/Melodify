@@ -8,7 +8,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.ContentSortType
@@ -24,16 +23,16 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun retainDefaultSortRulePresenter(repository: Repository = LocalRepository.current) =
     retainPresenter(repository) {
-        DefaultSortRulePresenter(repository)
+        DefaultSortRuleSettingPresenter(repository)
     }
 
 @OptIn(ExperimentalMaterial3Api::class)
-private class DefaultSortRulePresenter(
+private class DefaultSortRuleSettingPresenter(
     private val repository: Repository,
 ) : RetainedPresenter<DefaultSortRuleState>() {
     private val audioDefaultDisplaySetting =
         repository
-            .getDefaultAudioPresetSortRule()
+            .getDefaultPresetSortRule(ContentSortType.Audio)
             .stateIn(
                 retainedScope,
                 initialValue = null,
@@ -41,7 +40,7 @@ private class DefaultSortRulePresenter(
             )
     private val videoDefaultDisplaySetting =
         repository
-            .getDefaultVideoPresetSortRule()
+            .getDefaultPresetSortRule(ContentSortType.Video)
             .stateIn(
                 retainedScope,
                 initialValue = null,
@@ -50,7 +49,7 @@ private class DefaultSortRulePresenter(
 
     private val playlistDefaultDisplaySetting =
         repository
-            .getDefaultPlayListPresetSortRule()
+            .getDefaultPresetSortRule(ContentSortType.PlayList)
             .stateIn(
                 retainedScope,
                 initialValue = null,
@@ -62,29 +61,11 @@ private class DefaultSortRulePresenter(
         val audioDisplaySetting by audioDefaultDisplaySetting.collectAsStateWithLifecycle()
         val videoDisplaySetting by videoDefaultDisplaySetting.collectAsStateWithLifecycle()
         val playlistDefaultDisplaySetting by playlistDefaultDisplaySetting.collectAsStateWithLifecycle()
-        val selectedAudioPresetOption =
-            remember(audioDisplaySetting) {
-                PresetDisplaySetting.entries.firstOrNull {
-                    audioDisplaySetting?.isPreset == true && it.displaySetting == audioDisplaySetting
-                }
-            }
-        val selectedVideoPresetOption =
-            remember(videoDisplaySetting) {
-                PresetDisplaySetting.entries.firstOrNull {
-                    videoDisplaySetting?.isPreset == true && it.displaySetting == videoDisplaySetting
-                }
-            }
-        val selectedPlaylistPresetOption =
-            remember(playlistDefaultDisplaySetting) {
-                PresetDisplaySetting.entries.firstOrNull {
-                    playlistDefaultDisplaySetting?.isPreset == true && it.displaySetting == playlistDefaultDisplaySetting
-                }
-            }
 
         return DefaultSortRuleState(
-            audioDisplaySetting = selectedAudioPresetOption,
-            videoDisplaySetting = selectedVideoPresetOption,
-            playlistPresetOption = selectedPlaylistPresetOption,
+            audioDisplaySetting = audioDisplaySetting,
+            videoDisplaySetting = videoDisplaySetting,
+            playlistPresetOption = playlistDefaultDisplaySetting,
         ) { event ->
             when (event) {
                 is DefaultSortRuleStateEvent.ChangeAudioSortRule -> {

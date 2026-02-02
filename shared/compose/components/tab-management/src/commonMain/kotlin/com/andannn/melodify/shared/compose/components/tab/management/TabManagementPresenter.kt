@@ -9,7 +9,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
-import com.andannn.melodify.domain.model.CustomTab
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
@@ -34,7 +34,7 @@ fun retainTabManagementPresenter(repository: Repository = LocalRepository.curren
 
 @Stable
 data class TabManagementState(
-    val tabList: ImmutableList<CustomTab> = persistentListOf(),
+    val tabList: ImmutableList<Tab> = persistentListOf(),
     val eventSink: (TabManagementEvent) -> Unit = {},
 )
 
@@ -53,7 +53,7 @@ private class TabManagementPresenter(
     private val repository: Repository,
 ) : RetainedPresenter<TabManagementState>() {
     private val currentTabListFlow =
-        repository.currentCustomTabsFlow
+        repository.currentTabsFlow
             .stateIn(
                 retainedScope,
                 started = WhileSubscribed(),
