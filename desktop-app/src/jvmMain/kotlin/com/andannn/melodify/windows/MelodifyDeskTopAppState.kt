@@ -22,8 +22,6 @@ sealed interface WindowType {
 
     data object TabManage : WindowType
 
-    data object Search : WindowType
-
     data class MediaLibrary(
         val datasource: LibraryDataSource,
     ) : WindowType

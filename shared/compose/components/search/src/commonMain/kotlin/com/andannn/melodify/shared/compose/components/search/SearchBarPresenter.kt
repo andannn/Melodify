@@ -9,7 +9,6 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -50,12 +49,13 @@ fun retainSearchBarPresenter(
     )
 }
 
-data class SearchBarState
+@Stable
+data class SearchBarLayoutState
     @OptIn(ExperimentalMaterial3Api::class)
     constructor(
         val currentContent: ContentState,
         val textFieldState: TextFieldState,
-        val searchBarState: SearchBarState,
+        val searchBarState: androidx.compose.material3.SearchBarState,
         val eventSink: (SearchBarUiEvent) -> Unit = {},
     )
 
@@ -92,18 +92,13 @@ class SearchBarPresenter(
     private val navigationRequestEventSink: NavigationRequestEventSink,
     private val popupHostState: PopupHostState,
     private val repository: Repository,
-) : RetainedPresenter<com.andannn.melodify.shared.compose.components.search.SearchBarState>() {
+) : RetainedPresenter<SearchBarLayoutState>() {
     private val contentState = mutableStateOf<ContentState>(ContentState.Library)
-
-    init {
-        Napier.d { "JQN init ${this.hashCode()}" }
-    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun present(): com.andannn.melodify.shared.compose.components.search.SearchBarState {
+    override fun present(): SearchBarLayoutState {
         val textFieldState = rememberTextFieldState()
-        Napier.d { "JQN textFieldState $textFieldState" }
         val searchBarState = rememberSearchBarState()
         val animationScope = rememberCoroutineScope()
 
@@ -118,7 +113,7 @@ class SearchBarPresenter(
             contentState.value = ContentState.Library
         }
 
-        return SearchBarState(
+        return SearchBarLayoutState(
             textFieldState = textFieldState,
             searchBarState = searchBarState,
             currentContent = contentState.value,

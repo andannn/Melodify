@@ -17,7 +17,7 @@ import androidx.navigationevent.compose.rememberNavigationEventState
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.components.play.control.ResumePointIndicatorContainer
 import com.andannn.melodify.shared.compose.components.search.ContentState
-import com.andannn.melodify.shared.compose.components.search.SearchBarState
+import com.andannn.melodify.shared.compose.components.search.SearchBarLayoutState
 import com.andannn.melodify.shared.compose.components.search.SearchBarUiEvent
 import com.andannn.melodify.shared.compose.components.search.result.SearchResultPage
 import com.andannn.melodify.shared.compose.components.search.retainSearchBarPresenter
@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 internal fun HomeUiScreen(
     navigator: Navigator,
     modifier: Modifier = Modifier,
-    searchBarPresenter: Presenter<SearchBarState> = retainSearchBarPresenter(),
+    searchBarPresenter: Presenter<SearchBarLayoutState> = retainSearchBarPresenter(),
     popupHostState: PopupHostState = LocalPopupHostState.current,
 ) {
     val tabUiState = retainTabUiPresenter().present()
@@ -57,7 +57,7 @@ internal fun HomeUiScreen(
 
     SearchScaffoldLayout(
         modifier = modifier,
-        searchWithContentState = searchBarState,
+        searchBarLayoutState = searchBarState,
         onLibraryButtonClick = {
             navigator.navigateTo(Screen.Library)
         },
