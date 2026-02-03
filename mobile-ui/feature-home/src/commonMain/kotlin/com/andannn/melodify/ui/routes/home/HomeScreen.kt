@@ -4,6 +4,11 @@
  */
 package com.andannn.melodify.ui.routes.home
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -73,31 +78,39 @@ internal fun HomeUiScreen(
             }
         },
     ) {
-        when (val state = searchBarState.currentContent) {
-            is ContentState.Library -> {
-                Column {
-                    TabUi(
-                        state = tabUiState,
-                        onTabManagementClick = {
-                            navigator.navigateTo(Screen.TabManage)
+        AnimatedContent(
+            searchBarState.currentContent,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(220, delayMillis = 90))
+                    .togetherWith(fadeOut(animationSpec = tween(90)))
+            },
+        ) { state ->
+            when (state) {
+                is ContentState.Library -> {
+                    Column {
+                        TabUi(
+                            state = tabUiState,
+                            onTabManagementClick = {
+                                navigator.navigateTo(Screen.TabManage)
+                            },
+                        )
+
+                        TabContent(tabContentState, modifier = Modifier)
+                    }
+                }
+
+                is ContentState.Search -> {
+                    SearchResultPage(
+                        query = state.query,
+                        onResultItemClick = {
+                            searchBarState.eventSink.invoke(
+                                SearchBarUiEvent.OnSearchResultItemClick(
+                                    it,
+                                ),
+                            )
                         },
                     )
-
-                    TabContent(tabContentState, modifier = Modifier)
                 }
-            }
-
-            is ContentState.Search -> {
-                SearchResultPage(
-                    query = state.query,
-                    onResultItemClick = {
-                        searchBarState.eventSink.invoke(
-                            SearchBarUiEvent.OnSearchResultItemClick(
-                                it,
-                            ),
-                        )
-                    },
-                )
             }
         }
     }
