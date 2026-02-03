@@ -9,8 +9,9 @@ import com.andannn.melodify.core.database.dao.internal.VideoEntityRawQueryDao
 import com.andannn.melodify.core.database.entity.VideoEntity
 import kotlinx.coroutines.flow.Flow
 
-internal class AllVideoPagingProvider(
+internal class VideoPagingProvider(
     private val provider: VideoEntityRawQueryDao,
+    private val extraWhere: List<Where>,
 ) : PagingProvider<VideoEntity> {
     override fun getDataFlow(
         where: MediaWheres?,
@@ -21,6 +22,7 @@ internal class AllVideoPagingProvider(
                 wheres =
                     where.appendOrCreateWith {
                         listOf(
+                            *extraWhere.toTypedArray(),
                             VideoEntityWhere.videoNotDeletedWhere(),
                         )
                     },
@@ -37,6 +39,7 @@ internal class AllVideoPagingProvider(
                 wheres =
                     where.appendOrCreateWith {
                         listOf(
+                            *extraWhere.toTypedArray(),
                             VideoEntityWhere.videoNotDeletedWhere(),
                         )
                     },

@@ -66,7 +66,12 @@ abstract class AbstractDatabaseTest {
                 syncerDao,
             )
 
-    private val allMediaPagingProvider get() = MediaPagingProvider(database.getMediaEntityRawQueryDao())
+    private val allMediaPagingProvider
+        get() =
+            MediaPagingProvider(
+                database.getMediaEntityRawQueryDao(),
+                emptyList(),
+            )
     private val dummyLyricEntities =
         listOf(
             LyricEntity(
@@ -1455,7 +1460,11 @@ abstract class AbstractDatabaseTest {
                         isShowVideoProgress = true,
                         audioEntryStyle = AudioEntryStyle.ALBUM_COVER,
                     ),
-                tabSortRuleEntity = TabCustomSortRuleEntity(foreignKey = 10, primaryGroupSort = SortOptionData(1, false)),
+                tabSortRuleEntity =
+                    TabCustomSortRuleEntity(
+                        foreignKey = 10,
+                        primaryGroupSort = SortOptionData(1, false),
+                    ),
             )
 
             // preset is clear

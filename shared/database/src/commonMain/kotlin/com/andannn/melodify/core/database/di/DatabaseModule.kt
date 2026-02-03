@@ -14,10 +14,9 @@ import com.andannn.melodify.core.database.dao.internal.MediaEntityRawQueryDao
 import com.andannn.melodify.core.database.dao.internal.PlayListRawQueryDao
 import com.andannn.melodify.core.database.dao.internal.SyncerDao
 import com.andannn.melodify.core.database.dao.internal.VideoEntityRawQueryDao
-import com.andannn.melodify.core.database.helper.paging.AllVideoPagingProvider
-import com.andannn.melodify.core.database.helper.paging.BucketVideoPagingProvider
 import com.andannn.melodify.core.database.helper.paging.MediaPagingProvider
 import com.andannn.melodify.core.database.helper.paging.PlayListPagingProvider
+import com.andannn.melodify.core.database.helper.paging.VideoPagingProvider
 import com.andannn.melodify.core.database.helper.paging.Where
 import com.andannn.melodify.core.database.helper.sync.MediaLibrarySyncHelper
 import com.andannn.melodify.core.database.setUpDatabase
@@ -52,13 +51,7 @@ private fun Module.daoModule() {
     single<PlayListRawQueryDao> { get<MelodifyDataBase>().getPlayListRawQueryDao() }
     single<MediaLibrarySyncHelper> { MediaLibrarySyncHelper(get(), get(), get()) }
     factory<MediaPagingProvider> { (wheres: List<Where>) -> MediaPagingProvider(get(), wheres) }
-    factory<AllVideoPagingProvider> { AllVideoPagingProvider(get()) }
-    factory<BucketVideoPagingProvider> { (bucketId: String) ->
-        BucketVideoPagingProvider(
-            bucketId = bucketId,
-            get(),
-        )
-    }
+    factory<VideoPagingProvider> { (wheres: List<Where>) -> VideoPagingProvider(get(), wheres) }
     factory<PlayListPagingProvider> { (playListId: Long) ->
         PlayListPagingProvider(
             playListId = playListId,
