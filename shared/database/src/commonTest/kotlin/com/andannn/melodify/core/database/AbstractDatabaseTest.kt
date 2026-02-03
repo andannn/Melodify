@@ -679,20 +679,6 @@ abstract class AbstractDatabaseTest {
         }
 
     @Test
-    fun match_keyword_test() =
-        runTest {
-            syncHelper.insertDummyData()
-            assertEquals(1, libraryDao.searchAlbum("title 1").size)
-            assertEquals(1, libraryDao.searchAlbum("title 1").first().albumId)
-
-            assertEquals(1, libraryDao.searchArtist("title 1").size)
-            assertEquals(1, libraryDao.searchArtist("title 1").first().artistId)
-
-            assertEquals(1, libraryDao.searchMedia("title 1").size)
-            assertEquals(1, libraryDao.searchMedia("title 1").first().id)
-        }
-
-    @Test
     fun upsert_search_history_test() =
         runTest {
             val searchHistoryDao = userDataDao

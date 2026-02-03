@@ -154,37 +154,4 @@ interface MediaLibraryDao {
     """,
     )
     suspend fun searchContentByKeyword(keyword: String): List<LibraryContentSearchResult>
-
-    @Query(
-        """
-        SELECT * FROM library_album_table 
-        WHERE album_id IN (
-            SELECT rowid FROM library_fts_album_table 
-            WHERE library_fts_album_table MATCH :keyword
-        )
-    """,
-    )
-    suspend fun searchAlbum(keyword: String): List<AlbumEntity>
-
-    @Query(
-        """
-        SELECT * FROM library_media_table 
-        WHERE media_id IN (
-            SELECT rowid FROM library_fts_media_table 
-            WHERE library_fts_media_table MATCH :keyword
-        )
-    """,
-    )
-    suspend fun searchMedia(keyword: String): List<AudioEntity>
-
-    @Query(
-        """
-        SELECT * FROM library_artist_table 
-        WHERE artist_id IN (
-            SELECT rowid FROM library_fts_artist_table 
-            WHERE library_fts_artist_table MATCH :keyword
-        )
-    """,
-    )
-    suspend fun searchArtist(keyword: String): List<ArtistEntity>
 }
