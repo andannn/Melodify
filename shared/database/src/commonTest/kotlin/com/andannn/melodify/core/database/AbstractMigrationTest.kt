@@ -6,7 +6,7 @@ package com.andannn.melodify.core.database
 
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.execSQL
-import com.andannn.melodify.core.database.CustomTabType.ALL_MUSIC
+import com.andannn.melodify.core.database.entity.TabType.ALL_MUSIC
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

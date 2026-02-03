@@ -256,14 +256,6 @@ internal class MediaContentRepositoryImpl(
             it.toModel()
         }
 
-    override suspend fun searchContent(keyword: String): List<MediaItemModel> {
-        val matchedAudios = mediaLibraryDao.searchMedia(keyword).map { it.toAppItem() }
-        val matchedAlbums = mediaLibraryDao.searchAlbum(keyword).map { it.toAppItem() }
-        val matchedArtists = mediaLibraryDao.searchArtist(keyword).map { it.toAppItem() }
-
-        return matchedAudios + matchedAlbums + matchedArtists
-    }
-
     override suspend fun markMediaAsDeleted(mediaIds: List<String>) {
         mediaLibraryDao.markMediaAsDeleted(mediaIds)
     }

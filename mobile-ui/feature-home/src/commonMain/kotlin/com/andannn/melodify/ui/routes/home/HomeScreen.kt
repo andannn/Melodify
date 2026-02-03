@@ -4,115 +4,114 @@
  */
 package com.andannn.melodify.ui.routes.home
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Menu
-import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ProvidableCompositionLocal
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationEventHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import com.andannn.melodify.shared.compose.common.Presenter
-import com.andannn.melodify.shared.compose.common.widgets.DropDownMenuIconButton
 import com.andannn.melodify.shared.compose.components.play.control.ResumePointIndicatorContainer
+import com.andannn.melodify.shared.compose.components.search.ContentState
+import com.andannn.melodify.shared.compose.components.search.SearchBarLayoutState
+import com.andannn.melodify.shared.compose.components.search.SearchBarUiEvent
+import com.andannn.melodify.shared.compose.components.search.result.SearchResultPage
+import com.andannn.melodify.shared.compose.components.search.retainSearchBarPresenter
 import com.andannn.melodify.shared.compose.components.tab.TabUi
 import com.andannn.melodify.shared.compose.components.tab.content.TabContent
-import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
-import com.andannn.melodify.ui.AppTitleHolder
-import com.andannn.melodify.ui.LocalAppTitleHolder
+import com.andannn.melodify.shared.compose.components.tab.content.retainTabContentPresenter
+import com.andannn.melodify.shared.compose.components.tab.retainTabUiPresenter
+import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
+import com.andannn.melodify.shared.compose.popup.entry.sort.rule.DefaultSortRuleSettingPopup
+import com.andannn.melodify.shared.compose.popup.entry.sync.SyncStatusPopup
 import com.andannn.melodify.ui.Navigator
-import com.andannn.melodify.util.orientation.ScreenOrientationController
+import com.andannn.melodify.ui.Screen
+import io.github.andannn.popup.PopupHostState
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun HomeUiScreen(
     navigator: Navigator,
     modifier: Modifier = Modifier,
-    homePresenter: Presenter<HomeState> = retainHomeUiPresenter(navigator = navigator),
-    appTitleHolder: AppTitleHolder = LocalAppTitleHolder.current,
+    searchBarPresenter: Presenter<SearchBarLayoutState> = retainSearchBarPresenter(),
+    popupHostState: PopupHostState = LocalPopupHostState.current,
 ) {
-    val homeState = homePresenter.present()
-    val scrollBehavior = enterAlwaysScrollBehavior()
-    Scaffold(
+    val tabUiState = retainTabUiPresenter().present()
+    val tabContentState =
+        retainTabContentPresenter(selectedTab = tabUiState.selectedTab).present()
+    val searchBarState = searchBarPresenter.present()
+
+    val scope = rememberCoroutineScope()
+
+    NavigationEventHandler(
+        state = rememberNavigationEventState(NavigationEventInfo.None),
+        isBackEnabled = searchBarState.currentContent is ContentState.Search,
+    ) {
+        searchBarState.eventSink.invoke(SearchBarUiEvent.OnExitSearch)
+    }
+
+    SearchScaffoldLayout(
         modifier = modifier,
-        snackbarHost = {
-            SnackbarHost(
-                modifier = Modifier.padding(bottom = 64.dp),
-                hostState = rememberAndSetupSnackBarHostState(),
-            )
+        searchBarLayoutState = searchBarState,
+        onLibraryButtonClick = {
+            navigator.navigateTo(Screen.Library)
         },
-        topBar = {
-            TopAppBar(
-                colors =
-                    TopAppBarDefaults.topAppBarColors().run {
-                        copy(scrolledContainerColor = containerColor)
-                    },
-                title = {
-                    Text(text = appTitleHolder.title)
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { homeState.eventSink.invoke(HomeUiEvent.LibraryButtonClick) },
-                        content = {
-                            Icon(Icons.Rounded.Menu, contentDescription = "")
-                        },
-                    )
-                },
-                actions = {
-                    IconButton(
-                        onClick = { homeState.eventSink.invoke(HomeUiEvent.SearchButtonClick) },
-                        content = {
-                            Icon(Icons.Rounded.Search, contentDescription = "")
-                        },
-                    )
-                    val options = MenuOption.entries
-                    DropDownMenuIconButton(
-                        options = options.map { it.textRes },
-                        onSelectIndex = {
-                            val selected = options[it]
-                            homeState.eventSink.invoke(
-                                HomeUiEvent.OnMenuSelected(
-                                    selected = selected,
+        onMenuSelected = { selected ->
+            when (selected) {
+                MenuOption.DEFAULT_SORT -> {
+                    scope.launch { popupHostState.changeSortRule() }
+                }
+
+                MenuOption.RE_SYNC_ALL_MEDIA -> {
+                    scope.launch { popupHostState.showSyncDialog() }
+                }
+            }
+        },
+    ) {
+        AnimatedContent(
+            searchBarState.currentContent,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(220, delayMillis = 90))
+                    .togetherWith(fadeOut(animationSpec = tween(90)))
+            },
+        ) { state ->
+            when (state) {
+                is ContentState.Library -> {
+                    Column {
+                        TabUi(
+                            state = tabUiState,
+                            onTabManagementClick = {
+                                navigator.navigateTo(Screen.TabManage)
+                            },
+                        )
+
+                        TabContent(tabContentState, modifier = Modifier)
+                    }
+                }
+
+                is ContentState.Search -> {
+                    SearchResultPage(
+                        query = state.query,
+                        onResultItemClick = {
+                            searchBarState.eventSink.invoke(
+                                SearchBarUiEvent.OnSearchResultItemClick(
+                                    it,
                                 ),
                             )
                         },
-                        imageVector = Icons.Rounded.MoreVert,
                     )
-                },
-                scrollBehavior = scrollBehavior,
-            )
-        },
-    ) { padding ->
-        Column(
-            modifier =
-                Modifier
-                    .padding(padding)
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-                    .fillMaxSize(),
-        ) {
-            TabUi(
-                state = homeState.tabUiState,
-                onTabManagementClick = {
-                    homeState.eventSink.invoke(HomeUiEvent.OnTabManagementClick)
-                },
-            )
-
-            TabContent(homeState.tabContentState, modifier = Modifier)
+                }
+            }
         }
     }
 
@@ -120,5 +119,17 @@ internal fun HomeUiScreen(
         modifier =
             Modifier
                 .zIndex(1f),
+    )
+}
+
+private suspend fun PopupHostState.changeSortRule() {
+    showDialog(
+        DefaultSortRuleSettingPopup,
+    )
+}
+
+private suspend fun PopupHostState.showSyncDialog() {
+    showDialog(
+        SyncStatusPopup,
     )
 }

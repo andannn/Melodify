@@ -4,15 +4,15 @@
  */
 package com.andannn.melodify.domain.impl
 
-import com.andannn.melodify.core.database.CustomTabType
-import com.andannn.melodify.core.database.SortOptionData
 import com.andannn.melodify.core.database.entity.AlbumEntity
 import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.AudioEntity
-import com.andannn.melodify.core.database.entity.CustomTabSortRuleEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
+import com.andannn.melodify.core.database.entity.SortOptionData
+import com.andannn.melodify.core.database.entity.TabCustomSortRuleEntity
 import com.andannn.melodify.core.database.entity.TabEntity
+import com.andannn.melodify.core.database.entity.TabType
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.model.AudioVideoMergedResult
 import com.andannn.melodify.core.database.model.LibraryContentSearchResult
@@ -79,7 +79,7 @@ fun AudioEntity.toAppItem() =
         artistId = artistId?.toString() ?: "",
         cdTrackNumber = cdTrackNumber ?: 0,
         discNumber = discNumber ?: 0,
-        releaseYear = year?.toString() ?: "Unknown",
+        releaseYear = year ?: "Unknown",
         source = sourceUri ?: error("No source uri"),
     )
 
@@ -208,27 +208,27 @@ fun List<TabEntity>.mapToCustomTabModel() =
 
 fun TabEntity.toAppItem() =
     when (type) {
-        CustomTabType.ALL_MUSIC -> {
+        TabType.ALL_MUSIC -> {
             Tab.AllMusic(tabId = id)
         }
 
-        CustomTabType.ALL_VIDEO -> {
+        TabType.ALL_VIDEO -> {
             Tab.AllVideo(tabId = id)
         }
 
-        CustomTabType.ALBUM_DETAIL -> {
+        TabType.ALBUM_DETAIL -> {
             Tab.AlbumDetail(tabId = id, externalId!!, name!!)
         }
 
-        CustomTabType.ARTIST_DETAIL -> {
+        TabType.ARTIST_DETAIL -> {
             Tab.ArtistDetail(tabId = id, externalId!!, name!!)
         }
 
-        CustomTabType.GENRE_DETAIL -> {
+        TabType.GENRE_DETAIL -> {
             Tab.GenreDetail(tabId = id, externalId!!, name!!)
         }
 
-        CustomTabType.PLAYLIST_DETAIL -> {
+        TabType.PLAYLIST_DETAIL -> {
             Tab.PlayListDetail(
                 tabId = id,
                 externalId!!,
@@ -236,7 +236,7 @@ fun TabEntity.toAppItem() =
             )
         }
 
-        CustomTabType.VIDEO_PLAYLIST_DETAIL -> {
+        TabType.VIDEO_PLAYLIST_DETAIL -> {
             Tab.PlayListDetail(
                 tabId = id,
                 externalId!!,
@@ -244,7 +244,7 @@ fun TabEntity.toAppItem() =
             )
         }
 
-        CustomTabType.VIDEO_BUCKET -> {
+        TabType.VIDEO_BUCKET -> {
             Tab.BucketDetail(tabId = id, externalId!!, name!!)
         }
 
@@ -253,15 +253,15 @@ fun TabEntity.toAppItem() =
         }
     }
 
-fun CustomTabSortRuleEntity.toModel() =
+fun TabCustomSortRuleEntity.toModel() =
     TabSortRule(
         primaryGroupSort = primaryGroupSort.toModel(),
         secondaryGroupSort = secondaryGroupSort.toModel(),
         contentSort = contentSort.toModel(),
     )
 
-fun TabSortRule.toEntity(bindTabId: Long): CustomTabSortRuleEntity =
-    CustomTabSortRuleEntity(
+fun TabSortRule.toEntity(bindTabId: Long): TabCustomSortRuleEntity =
+    TabCustomSortRuleEntity(
         foreignKey = bindTabId,
         primaryGroupSort = primaryGroupSort.toEntity(),
         secondaryGroupSort = secondaryGroupSort.toEntity(),

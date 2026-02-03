@@ -103,4 +103,5 @@
     <string name="preset_playlist">Preajustes de listas de reproducción</string>
     <string name="sort_by_playlist_create_data">Ordenar por fecha de creación</string>
     <string name="sort_sub_playlist_create_date_desc">Agrupar elementos por fecha de creación de la lista de reproducción en orden descendente.</string>
+    <string name="search_your_library">Buscar en tu biblioteca</string>
 </resources>

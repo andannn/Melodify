@@ -24,6 +24,7 @@ import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.widgets.ActionType
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.snackbar.LocalSnackBarController
@@ -43,6 +44,7 @@ fun MediaLibraryItem(
     contentId: Long,
     contentType: MediaType,
     modifier: Modifier = Modifier,
+    showOptions: Boolean = true,
     onItemClick: (MediaItemModel) -> Unit = {},
 ) {
     val item = retainFindMediaItemPresenter(contentId, contentType).mediaItem.value
@@ -50,6 +52,7 @@ fun MediaLibraryItem(
     MediaLibraryItem(
         modifier = modifier,
         mediaItemModel = item,
+        showOptions = showOptions,
         onItemClick = {
             if (item != null) {
                 onItemClick(item)
@@ -102,6 +105,7 @@ private class FindMediaItemRetainedModel(
 fun MediaLibraryItem(
     modifier: Modifier = Modifier,
     mediaItemModel: MediaItemModel?,
+    showOptions: Boolean = true,
     playListId: String? = null,
     onItemClick: () -> Unit = {},
 ) {
@@ -118,6 +122,7 @@ fun MediaLibraryItem(
     MediaLibraryItemContent(
         modifier = modifier,
         mediaItemModel = mediaItemModel,
+        showOptions = showOptions,
         onItemClick = onItemClick,
         onOptionButtonClick = {
             state.eventSink.invoke(UiEvent.OnOptionButtonClick)
@@ -129,6 +134,7 @@ fun MediaLibraryItem(
 private fun MediaLibraryItemContent(
     modifier: Modifier = Modifier,
     mediaItemModel: MediaItemModel?,
+    showOptions: Boolean = true,
     onOptionButtonClick: () -> Unit = {},
     onItemClick: () -> Unit = {},
 ) {
@@ -174,6 +180,7 @@ private fun MediaLibraryItemContent(
         thumbnailSourceUri = cover.takeIf { mediaItemModel is AudioItemModel },
         subTitle = subTitle,
         defaultColor = Color.Transparent,
+        actionType = if (showOptions) ActionType.OPTION else ActionType.NONE,
         onOptionButtonClick = onOptionButtonClick,
         onItemClick = onItemClick,
     )

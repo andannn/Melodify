@@ -103,4 +103,5 @@
     <string name="preset_playlist">Préréglages de playlists</string>
     <string name="sort_by_playlist_create_data">Trier par date de création</string>
     <string name="sort_sub_playlist_create_date_desc">Regrouper les éléments par date de création de la playlist par ordre décroissant.</string>
+    <string name="search_your_library">Rechercher dans votre bibliothèque</string>
 </resources>

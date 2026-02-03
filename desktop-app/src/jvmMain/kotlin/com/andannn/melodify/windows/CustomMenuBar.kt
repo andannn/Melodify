@@ -14,8 +14,6 @@ import org.jetbrains.compose.resources.stringResource
 sealed interface MenuEvent {
     data object OnOpenMediaLibrarySettings : MenuEvent
 
-    data object OnOpenSearch : MenuEvent
-
     data class OnOpenMediaLibrary(
         val shortcutItem: ShortcutItem,
     ) : MenuEvent
@@ -32,12 +30,6 @@ fun WindowNavigator.handleMenuEvent(menuEvent: MenuEvent) {
         is MenuEvent.OnOpenMediaLibrary -> {
             openWindow(
                 WindowType.MediaLibrary(menuEvent.shortcutItem.toDataSource()),
-            )
-        }
-
-        MenuEvent.OnOpenSearch -> {
-            openWindow(
-                WindowType.Search,
             )
         }
     }
@@ -64,12 +56,6 @@ internal fun FrameWindowScope.CustomMenuBar(handler: (MenuEvent) -> Unit) {
                     },
                 )
             }
-            Item(
-                "Search",
-                onClick = {
-                    handler.invoke(MenuEvent.OnOpenSearch)
-                },
-            )
         }
     }
 }

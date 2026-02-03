@@ -27,7 +27,6 @@ include(":mobile-ui:app")
 include(":mobile-ui:feature-player")
 include(":mobile-ui:feature-home")
 include(":mobile-ui:feature-library")
-include(":mobile-ui:feature-search")
 include(":mobile-ui:feature-tab-management")
 
 include(":shared:compose:resource")

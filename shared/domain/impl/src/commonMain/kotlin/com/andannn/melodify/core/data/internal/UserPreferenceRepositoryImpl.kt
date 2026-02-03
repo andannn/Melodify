@@ -5,11 +5,11 @@
 package com.andannn.melodify.core.data.internal
 
 import androidx.sqlite.SQLiteException
-import com.andannn.melodify.core.database.CustomTabType
 import com.andannn.melodify.core.database.dao.UserDataDao
-import com.andannn.melodify.core.database.entity.CustomTabSettingEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
+import com.andannn.melodify.core.database.entity.TabCustomSettingEntity
 import com.andannn.melodify.core.database.entity.TabEntity
+import com.andannn.melodify.core.database.entity.TabType
 import com.andannn.melodify.core.datastore.UserSettingPreferences
 import com.andannn.melodify.core.datastore.model.PreviewModeValues
 import com.andannn.melodify.domain.UserPreferenceRepository
@@ -197,7 +197,7 @@ internal class UserPreferenceRepositoryImpl(
         userDataDao.selectTabCustomSettingEntity(
             tabId,
             tabSettingEntity =
-                CustomTabSettingEntity(
+                TabCustomSettingEntity(
                     customTabId = tabId,
                     isShowVideoProgress = displaySetting.isShowVideoProgress,
                     audioEntryStyle = displaySetting.audioTrackStyle.toDBValue(),
@@ -251,7 +251,7 @@ internal class UserPreferenceRepositoryImpl(
         val oldSetting = userDataDao.getCustomTabSettingFlow(tab.tabId).first()
         if (oldSetting == null) {
             userDataDao.insertTabSettingEntity(
-                CustomTabSettingEntity(
+                TabCustomSettingEntity(
                     customTabId = tab.tabId,
                     isShowVideoProgress = isShow,
                     audioEntryStyle =
@@ -377,13 +377,13 @@ private fun Long.toDomainValue() =
 
 private fun TabKind.toEntityName(): String =
     when (this) {
-        TabKind.ALBUM -> CustomTabType.ALBUM_DETAIL
-        TabKind.ARTIST -> CustomTabType.ARTIST_DETAIL
-        TabKind.GENRE -> CustomTabType.GENRE_DETAIL
-        TabKind.PLAYLIST -> CustomTabType.PLAYLIST_DETAIL
-        TabKind.ALL_MUSIC -> CustomTabType.ALL_MUSIC
-        TabKind.ALL_VIDEO -> CustomTabType.ALL_VIDEO
-        TabKind.VIDEO_BUCKET -> CustomTabType.VIDEO_BUCKET
+        TabKind.ALBUM -> TabType.ALBUM_DETAIL
+        TabKind.ARTIST -> TabType.ARTIST_DETAIL
+        TabKind.GENRE -> TabType.GENRE_DETAIL
+        TabKind.PLAYLIST -> TabType.PLAYLIST_DETAIL
+        TabKind.ALL_MUSIC -> TabType.ALL_MUSIC
+        TabKind.ALL_VIDEO -> TabType.ALL_VIDEO
+        TabKind.VIDEO_BUCKET -> TabType.VIDEO_BUCKET
     }
 
 private fun Int.toMediaPreviewMode(): MediaPreviewMode =

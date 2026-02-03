@@ -154,11 +154,6 @@ interface MediaContentRepository {
      */
     suspend fun getMatchedContentTitle(keyword: String): List<MatchedContentTitle>
 
-    /**
-     * Search content by keyword
-     */
-    suspend fun searchContent(keyword: String): List<MediaItemModel>
-
     suspend fun markMediaAsDeleted(mediaIds: List<String>)
 
     suspend fun markVideoAsDeleted(mediaIds: List<String>)

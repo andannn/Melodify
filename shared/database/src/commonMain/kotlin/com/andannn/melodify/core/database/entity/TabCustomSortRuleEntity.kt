@@ -10,7 +10,6 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
-import com.andannn.melodify.core.database.SortOptionData
 
 @Entity(
     tableName = "sort_rule_table",
@@ -29,7 +28,7 @@ import com.andannn.melodify.core.database.SortOptionData
         ),
     ],
 )
-data class CustomTabSortRuleEntity(
+data class TabCustomSortRuleEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "sort_rule_id")
     val id: Long = 0,
@@ -59,4 +58,26 @@ internal class SortOptionJsonConverter {
         date?.let {
             listOf(it.type.toString(), it.isAscending.toString()).joinToString(",")
         }
+}
+
+data class SortOptionData(
+    val type: Int,
+    val isAscending: Boolean,
+) {
+    companion object {
+        // Audio
+        const val SORT_TYPE_AUDIO_ALBUM = 1
+        const val SORT_TYPE_AUDIO_ARTIST = 2
+        const val SORT_TYPE_AUDIO_GENRE = 3
+        const val SORT_TYPE_AUDIO_TITLE = 4
+        const val SORT_TYPE_AUDIO_YEAR = 5
+        const val SORT_TYPE_AUDIO_TRACK_NUM = 6
+
+        // Video
+        const val SORT_TYPE_VIDEO_BUCKET_NAME = 7
+        const val SORT_TYPE_VIDEO_TITLE_NAME = 8
+
+        // PlayList
+        const val SORT_TYPE_PLAYLIST_CREATE_DATE = 9
+    }
 }

@@ -27,7 +27,7 @@ import androidx.room.PrimaryKey
         ),
     ],
 )
-data class CustomTabSettingEntity constructor(
+data class TabCustomSettingEntity constructor(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long = 0,

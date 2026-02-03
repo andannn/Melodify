@@ -103,4 +103,5 @@
     <string name="preset_playlist">Предустановки плейлистов</string>
     <string name="sort_by_playlist_create_data">Сортировать по дате создания</string>
     <string name="sort_sub_playlist_create_date_desc">Группировать элементы по дате создания плейлиста в порядке убывания.</string>
+    <string name="search_your_library">Поиск в вашей библиотеке</string>
 </resources>

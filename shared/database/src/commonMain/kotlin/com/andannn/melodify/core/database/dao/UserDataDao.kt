@@ -9,9 +9,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.andannn.melodify.core.database.entity.CustomTabSettingEntity
-import com.andannn.melodify.core.database.entity.CustomTabSortRuleEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
+import com.andannn.melodify.core.database.entity.TabCustomSettingEntity
+import com.andannn.melodify.core.database.entity.TabCustomSortRuleEntity
 import com.andannn.melodify.core.database.entity.TabEntity
 import com.andannn.melodify.core.database.entity.TabPresetDisplaySettingEntity
 import com.andannn.melodify.core.database.entity.VideoPlayProgressEntity
@@ -132,10 +132,10 @@ interface UserDataDao {
     fun getPlayProgressFlow(videoId: Long): Flow<VideoPlayProgressEntity?>
 
     @Query("SELECT * FROM sort_rule_table WHERE custom_tab_id = :tabId")
-    fun getCustomTabSortRuleFlow(tabId: Long): Flow<CustomTabSortRuleEntity?>
+    fun getCustomTabSortRuleFlow(tabId: Long): Flow<TabCustomSortRuleEntity?>
 
     @Query("SELECT * FROM custom_tab_setting_table WHERE custom_tab_id = :tabId")
-    fun getCustomTabSettingFlow(tabId: Long): Flow<CustomTabSettingEntity?>
+    fun getCustomTabSettingFlow(tabId: Long): Flow<TabCustomSettingEntity?>
 
     @Query("SELECT * FROM tab_preset_display_setting_table WHERE tab_id = :tabId")
     fun getTabPresetDisplaySettingFlow(tabId: Long): Flow<TabPresetDisplaySettingEntity?>
@@ -158,8 +158,8 @@ interface UserDataDao {
     @Transaction
     suspend fun selectTabCustomSettingEntity(
         tabId: Long,
-        tabSettingEntity: CustomTabSettingEntity,
-        tabSortRuleEntity: CustomTabSortRuleEntity,
+        tabSettingEntity: TabCustomSettingEntity,
+        tabSortRuleEntity: TabCustomSortRuleEntity,
     ) {
         deleteTabPresetDisplaySettingEntity(tabId)
         insertTabSettingEntity(tabSettingEntity)
@@ -180,11 +180,11 @@ interface UserDataDao {
     )
     suspend fun deleteTabCustomSortRuleEntity(tabId: Long)
 
-    @Insert(CustomTabSortRuleEntity::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSortRuleEntity(entity: CustomTabSortRuleEntity)
+    @Insert(TabCustomSortRuleEntity::class, onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSortRuleEntity(entity: TabCustomSortRuleEntity)
 
-    @Insert(CustomTabSettingEntity::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTabSettingEntity(entity: CustomTabSettingEntity): Long
+    @Insert(TabCustomSettingEntity::class, onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTabSettingEntity(entity: TabCustomSettingEntity): Long
 
     @Insert(TabPresetDisplaySettingEntity::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTabPresetDisplaySettingEntity(entity: TabPresetDisplaySettingEntity)
