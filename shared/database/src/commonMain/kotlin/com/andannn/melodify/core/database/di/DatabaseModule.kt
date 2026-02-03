@@ -14,13 +14,11 @@ import com.andannn.melodify.core.database.dao.internal.MediaEntityRawQueryDao
 import com.andannn.melodify.core.database.dao.internal.PlayListRawQueryDao
 import com.andannn.melodify.core.database.dao.internal.SyncerDao
 import com.andannn.melodify.core.database.dao.internal.VideoEntityRawQueryDao
-import com.andannn.melodify.core.database.helper.paging.AlbumMediaPagingProvider
-import com.andannn.melodify.core.database.helper.paging.AllMediaPagingProvider
 import com.andannn.melodify.core.database.helper.paging.AllVideoPagingProvider
-import com.andannn.melodify.core.database.helper.paging.ArtistMediaPagingProvider
 import com.andannn.melodify.core.database.helper.paging.BucketVideoPagingProvider
-import com.andannn.melodify.core.database.helper.paging.GenreMediaPagingProvider
+import com.andannn.melodify.core.database.helper.paging.MediaPagingProvider
 import com.andannn.melodify.core.database.helper.paging.PlayListPagingProvider
+import com.andannn.melodify.core.database.helper.paging.Where
 import com.andannn.melodify.core.database.helper.sync.MediaLibrarySyncHelper
 import com.andannn.melodify.core.database.setUpDatabase
 import org.koin.core.module.Module
@@ -53,26 +51,8 @@ private fun Module.daoModule() {
     single<SyncerDao> { get<MelodifyDataBase>().getSyncerDao() }
     single<PlayListRawQueryDao> { get<MelodifyDataBase>().getPlayListRawQueryDao() }
     single<MediaLibrarySyncHelper> { MediaLibrarySyncHelper(get(), get(), get()) }
+    factory<MediaPagingProvider> { (wheres: List<Where>) -> MediaPagingProvider(get(), wheres) }
     factory<AllVideoPagingProvider> { AllVideoPagingProvider(get()) }
-    factory<AllMediaPagingProvider> { AllMediaPagingProvider(get()) }
-    factory<AlbumMediaPagingProvider> { (albumId: String) ->
-        AlbumMediaPagingProvider(
-            albumId = albumId,
-            get(),
-        )
-    }
-    factory<ArtistMediaPagingProvider> { (artistId: String) ->
-        ArtistMediaPagingProvider(
-            artistId = artistId,
-            get(),
-        )
-    }
-    factory<GenreMediaPagingProvider> { (genreId: String) ->
-        GenreMediaPagingProvider(
-            genreId = genreId,
-            get(),
-        )
-    }
     factory<BucketVideoPagingProvider> { (bucketId: String) ->
         BucketVideoPagingProvider(
             bucketId = bucketId,

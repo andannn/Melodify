@@ -9,9 +9,9 @@ import com.andannn.melodify.core.database.dao.internal.MediaEntityRawQueryDao
 import com.andannn.melodify.core.database.entity.AudioEntity
 import kotlinx.coroutines.flow.Flow
 
-internal class ArtistMediaPagingProvider(
-    private val artistId: String,
+internal class MediaPagingProvider constructor(
     private val provider: MediaEntityRawQueryDao,
+    private val extraWhere: List<Where>,
 ) : PagingProvider<AudioEntity> {
     override fun getDataFlow(
         where: MediaWheres?,
@@ -22,7 +22,7 @@ internal class ArtistMediaPagingProvider(
                 wheres =
                     where.appendOrCreateWith {
                         listOf(
-                            MediaEntityWhere.artistIdWhere(artistId),
+                            *extraWhere.toTypedArray(),
                             MediaEntityWhere.audioNotDeletedWhere(),
                         )
                     },
@@ -39,7 +39,7 @@ internal class ArtistMediaPagingProvider(
                 wheres =
                     where.appendOrCreateWith {
                         listOf(
-                            MediaEntityWhere.artistIdWhere(artistId),
+                            *extraWhere.toTypedArray(),
                             MediaEntityWhere.audioNotDeletedWhere(),
                         )
                     },
