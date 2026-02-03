@@ -103,4 +103,5 @@
     <string name="preset_playlist">プレイリストのプリセット</string>
     <string name="sort_by_playlist_create_data">作成日時で並べ替え</string>
     <string name="sort_sub_playlist_create_date_desc">プレイリストの作成日時の降順で項目をグループ化します。</string>
+    <string name="search_your_library">ライブラリを検索</string>
 </resources>

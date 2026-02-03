@@ -25,6 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
+import melodify.shared.compose.resource.generated.resources.Res
+import melodify.shared.compose.resource.generated.resources.search_your_library
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +46,7 @@ fun SearchBarInputField(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = androidx.compose.ui.Alignment.Center,
             ) {
-                Text(text = "Search in library")
+                Text(text = stringResource(Res.string.search_your_library))
             }
         },
         leadingIcon = {
