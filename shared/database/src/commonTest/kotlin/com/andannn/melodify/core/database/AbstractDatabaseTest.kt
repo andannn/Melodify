@@ -31,7 +31,7 @@ import com.andannn.melodify.core.database.entity.TabCustomSortRuleEntity
 import com.andannn.melodify.core.database.entity.TabEntity
 import com.andannn.melodify.core.database.entity.TabType.ALL_VIDEO
 import com.andannn.melodify.core.database.entity.VideoEntity
-import com.andannn.melodify.core.database.helper.paging.AllMediaPagingProvider
+import com.andannn.melodify.core.database.helper.paging.MediaPagingProvider
 import com.andannn.melodify.core.database.helper.paging.MediaSorts
 import com.andannn.melodify.core.database.helper.paging.MediaWheres
 import com.andannn.melodify.core.database.helper.paging.PlayListEntrySort
@@ -66,7 +66,12 @@ abstract class AbstractDatabaseTest {
                 syncerDao,
             )
 
-    private val allMediaPagingProvider get() = AllMediaPagingProvider(database.getMediaEntityRawQueryDao())
+    private val allMediaPagingProvider
+        get() =
+            MediaPagingProvider(
+                database.getMediaEntityRawQueryDao(),
+                emptyList(),
+            )
     private val dummyLyricEntities =
         listOf(
             LyricEntity(
@@ -1455,7 +1460,11 @@ abstract class AbstractDatabaseTest {
                         isShowVideoProgress = true,
                         audioEntryStyle = AudioEntryStyle.ALBUM_COVER,
                     ),
-                tabSortRuleEntity = TabCustomSortRuleEntity(foreignKey = 10, primaryGroupSort = SortOptionData(1, false)),
+                tabSortRuleEntity =
+                    TabCustomSortRuleEntity(
+                        foreignKey = 10,
+                        primaryGroupSort = SortOptionData(1, false),
+                    ),
             )
 
             // preset is clear

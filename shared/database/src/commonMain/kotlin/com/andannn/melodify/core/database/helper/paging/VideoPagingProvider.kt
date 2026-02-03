@@ -5,25 +5,25 @@
 package com.andannn.melodify.core.database.helper.paging
 
 import androidx.paging.PagingSource
-import com.andannn.melodify.core.database.dao.internal.MediaEntityRawQueryDao
-import com.andannn.melodify.core.database.entity.AudioEntity
+import com.andannn.melodify.core.database.dao.internal.VideoEntityRawQueryDao
+import com.andannn.melodify.core.database.entity.VideoEntity
 import kotlinx.coroutines.flow.Flow
 
-internal class ArtistMediaPagingProvider(
-    private val artistId: String,
-    private val provider: MediaEntityRawQueryDao,
-) : PagingProvider<AudioEntity> {
+internal class VideoPagingProvider(
+    private val provider: VideoEntityRawQueryDao,
+    private val extraWhere: List<Where>,
+) : PagingProvider<VideoEntity> {
     override fun getDataFlow(
         where: MediaWheres?,
         sort: MediaSorts?,
-    ): Flow<List<AudioEntity>> =
-        provider.getMediaFlowRaw(
-            buildMediaRawQuery(
+    ): Flow<List<VideoEntity>> =
+        provider.getVideoFlowRaw(
+            buildVideoRawQuery(
                 wheres =
                     where.appendOrCreateWith {
                         listOf(
-                            MediaEntityWhere.artistIdWhere(artistId),
-                            MediaEntityWhere.audioNotDeletedWhere(),
+                            *extraWhere.toTypedArray(),
+                            VideoEntityWhere.videoNotDeletedWhere(),
                         )
                     },
                 sort = sort,
@@ -33,14 +33,14 @@ internal class ArtistMediaPagingProvider(
     override fun getPagingSource(
         where: MediaWheres?,
         sort: MediaSorts?,
-    ): PagingSource<Int, AudioEntity> =
-        provider.getMediaFlowPagingSource(
-            buildMediaRawQuery(
+    ): PagingSource<Int, VideoEntity> =
+        provider.getVideoFlowPagingSource(
+            buildVideoRawQuery(
                 wheres =
                     where.appendOrCreateWith {
                         listOf(
-                            MediaEntityWhere.artistIdWhere(artistId),
-                            MediaEntityWhere.audioNotDeletedWhere(),
+                            *extraWhere.toTypedArray(),
+                            VideoEntityWhere.videoNotDeletedWhere(),
                         )
                     },
                 sort = sort,

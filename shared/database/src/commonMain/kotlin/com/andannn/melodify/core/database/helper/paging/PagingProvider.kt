@@ -26,20 +26,34 @@ interface PagingProvider<E : Any> {
 
 object PagingProviderFactory {
     fun albumMediaPagingProvider(albumId: String): PagingProvider<AudioEntity> =
-        getKoin().get<AlbumMediaPagingProvider> { parametersOf(albumId) }
+        getKoin().get<MediaPagingProvider> {
+            parametersOf(listOf(MediaEntityWhere.albumIdWhere(albumId)))
+        }
 
-    fun allMediaPagingProvider(): PagingProvider<AudioEntity> = getKoin().get<AllMediaPagingProvider>()
+    fun allMediaPagingProvider(): PagingProvider<AudioEntity> =
+        getKoin().get<MediaPagingProvider> {
+            parametersOf(emptyList<Where>())
+        }
 
     fun artistMediaPagingProvider(artistId: String): PagingProvider<AudioEntity> =
-        getKoin().get<ArtistMediaPagingProvider> { parametersOf(artistId) }
+        getKoin().get<MediaPagingProvider> {
+            parametersOf(listOf(MediaEntityWhere.artistIdWhere(artistId)))
+        }
 
     fun genreMediaPagingProvider(genreId: String): PagingProvider<AudioEntity> =
-        getKoin().get<GenreMediaPagingProvider> { parametersOf(genreId) }
+        getKoin().get<MediaPagingProvider> {
+            parametersOf(listOf(MediaEntityWhere.genreIdWhere(genreId)))
+        }
 
-    fun allVideoPagingProvider(): PagingProvider<VideoEntity> = getKoin().get<AllVideoPagingProvider>()
+    fun allVideoPagingProvider(): PagingProvider<VideoEntity> =
+        getKoin().get<VideoPagingProvider> {
+            parametersOf(emptyList<Where>())
+        }
 
     fun bucketVideoPagingProvider(bucketId: String): PagingProvider<VideoEntity> =
-        getKoin().get<BucketVideoPagingProvider> { parametersOf(bucketId) }
+        getKoin().get<VideoPagingProvider> {
+            parametersOf(listOf(VideoEntityWhere.bucketIdWhere(bucketId)))
+        }
 
     fun playListPagingProvider(playListId: Long): PagingProvider<AudioVideoMergedResult> =
         getKoin().get<PlayListPagingProvider> { parametersOf(playListId) }
