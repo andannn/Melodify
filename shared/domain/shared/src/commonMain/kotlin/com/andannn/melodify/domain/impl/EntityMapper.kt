@@ -420,5 +420,6 @@ fun Int.toMediaType() =
         com.andannn.melodify.core.database.MediaType.ARTIST -> MediaType.ARTIST
         com.andannn.melodify.core.database.MediaType.GENRE -> MediaType.GENRE
         com.andannn.melodify.core.database.MediaType.VIDEO -> MediaType.VIDEO
+        com.andannn.melodify.core.database.MediaType.PLAY_LIST -> MediaType.PLAYLIST
         else -> error("Invalid")
     }

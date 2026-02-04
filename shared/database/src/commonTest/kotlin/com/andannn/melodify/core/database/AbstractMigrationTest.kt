@@ -431,4 +431,29 @@ abstract class AbstractMigrationTest {
                 helper.runMigrationsAndValidate(21, migrations = listOf())
             migratedConnection.close()
         }
+
+    @Test
+    fun migrate21To22Test(): Unit =
+        helper.let { helper ->
+            val newConnection = helper.createDatabase(21)
+            newConnection.execSQL(
+                """
+                INSERT INTO play_list_table (play_list_id, play_list_created_date, play_list_name, play_list_artwork_uri)
+                VALUES (0, 0, 'My Favorite Songs', '');
+                """.trimIndent(),
+            )
+            newConnection.close()
+            val migratedConnection =
+                helper.runMigrationsAndValidate(22, migrations = listOf())
+            migratedConnection
+                .prepare(
+                    """
+                    SELECT EXISTS (SELECT 1 FROM play_list_fts_table WHERE play_list_name = 'My Favorite Songs')
+                    """.trimIndent(),
+                ).use {
+                    it.step()
+                    assertEquals(true, it.getInt(0) == 1)
+                }
+            migratedConnection.close()
+        }
 }

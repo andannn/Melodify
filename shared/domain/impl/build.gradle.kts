@@ -1,5 +1,3 @@
-
-
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     id("kmp.ext")
@@ -23,8 +21,10 @@ kotlin {
         jvmMain.dependencies {
             implementation(project(":shared:domain:impl-player-none-android"))
         }
-        iosMain.dependencies {
-            implementation(project(":shared:domain:impl-player-none-android"))
+        if (project.isConfigIOS()) {
+            iosMain.dependencies {
+                implementation(project(":shared:domain:impl-player-none-android"))
+            }
         }
         commonMain.dependencies {
             implementation(project(":shared:player:sleep-timer"))
