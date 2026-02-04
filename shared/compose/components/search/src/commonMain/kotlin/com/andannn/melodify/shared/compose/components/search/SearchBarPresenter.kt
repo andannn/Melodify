@@ -125,6 +125,7 @@ class SearchBarPresenter(
                         collapsedSearchScreen()
 
                         handleItemClick(event.result)
+                        addToSearchHistory(event.result.name)
                     }
 
                     is SearchBarUiEvent.OnSearchResultItemClick -> {
@@ -139,6 +140,7 @@ class SearchBarPresenter(
                         }
                         textFieldState.setTextAndPlaceCursorAtEnd(text = event.text)
                         contentState.value = ContentState.Search(event.text)
+                        addToSearchHistory(event.text)
                     }
 
                     SearchBarUiEvent.OnExitSearch -> {
@@ -156,8 +158,14 @@ class SearchBarPresenter(
         }
     }
 
+    private fun addToSearchHistory(text: String) {
+        retainedScope.launch {
+            repository.addSearchHistory(text)
+        }
+    }
+
     context(_: PopupHostState, _: Repository)
-    fun handleItemClick(item: MediaItemModel) {
+    private fun handleItemClick(item: MediaItemModel) {
         if (item.browsable) {
             retainedScope.launch {
                 navigationRequestEventSink.onRequestNavigate(

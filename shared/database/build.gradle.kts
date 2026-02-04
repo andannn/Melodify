@@ -1,4 +1,3 @@
-
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.konan.target.Family
 
@@ -38,8 +37,10 @@ kotlin {
             implementation(libs.room.paging)
         }
 
-        iosMain.dependencies {
-            implementation(libs.androidx.sqlite.bundled)
+        if (project.isConfigIOS()) {
+            iosMain.dependencies {
+                implementation(libs.androidx.sqlite.bundled)
+            }
         }
 
         jvmMain.dependencies {

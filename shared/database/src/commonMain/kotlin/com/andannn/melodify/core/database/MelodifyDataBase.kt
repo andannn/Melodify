@@ -36,6 +36,7 @@ import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
 import com.andannn.melodify.core.database.entity.MediaFtsEntity
 import com.andannn.melodify.core.database.entity.PlayListEntity
+import com.andannn.melodify.core.database.entity.PlayListFtsEntity
 import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
 import com.andannn.melodify.core.database.entity.SearchHistoryEntity
 import com.andannn.melodify.core.database.entity.SortOptionJsonConverter
@@ -53,6 +54,7 @@ import kotlinx.coroutines.IO
     entities = [
         LyricEntity::class,
         PlayListEntity::class,
+        PlayListFtsEntity::class,
         PlayListItemEntryEntity::class,
         AlbumEntity::class,
         ArtistEntity::class,
@@ -88,8 +90,9 @@ import kotlinx.coroutines.IO
         AutoMigration(from = 18, to = 19),
         AutoMigration(from = 19, to = 20, AutoMigration19To20Spec::class),
         AutoMigration(from = 20, to = 21, AutoMigration20To21Spec::class),
+        AutoMigration(from = 21, to = 22, AutoMigration21To22Spec::class),
     ],
-    version = 21,
+    version = 22,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)
@@ -420,3 +423,9 @@ internal class AutoMigration19To20Spec : AutoMigrationSpec
 @DeleteColumn(tableName = "sort_rule_table", columnName = "show_track_num")
 @DeleteColumn(tableName = "sort_rule_table", columnName = "is_preset")
 internal class AutoMigration20To21Spec : AutoMigrationSpec
+
+internal class AutoMigration21To22Spec : AutoMigrationSpec {
+    override fun onPostMigrate(connection: SQLiteConnection) {
+        connection.execSQL("INSERT INTO `play_list_fts_table`(`play_list_fts_table`) VALUES('rebuild')")
+    }
+}

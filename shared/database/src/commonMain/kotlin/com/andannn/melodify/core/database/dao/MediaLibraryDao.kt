@@ -150,6 +150,14 @@ interface MediaLibraryDao {
             WHERE library_fts_video_table MATCH :keyword
         )
         
+        UNION
+
+        SELECT play_list_table.play_list_id AS id, play_list_table.play_list_name AS title, ${MediaType.PLAY_LIST} AS type FROM play_list_table 
+        WHERE play_list_id IN (
+            SELECT rowid FROM play_list_fts_table
+            WHERE play_list_fts_table MATCH :keyword
+        )
+
         ORDER BY type
     """,
     )

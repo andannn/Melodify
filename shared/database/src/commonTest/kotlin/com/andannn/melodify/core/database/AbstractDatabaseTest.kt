@@ -1356,11 +1356,22 @@ abstract class AbstractDatabaseTest {
     fun `search library content test`() =
         runTest {
             syncHelper.insertDummyData()
+            playListDao.insertPlayListEntities(
+                listOf(
+                    PlayListEntity(
+                        id = 1,
+                        name = "title playlist",
+                        createdDate = 1,
+                        artworkUri = null,
+                    ),
+                ),
+            )
             libraryDao.searchContentByKeyword("title").also {
                 assertEquals(2, it.count { it.contentType == MediaType.VIDEO })
                 assertEquals(2, it.count { it.contentType == MediaType.ARTIST })
                 assertEquals(2, it.count { it.contentType == MediaType.ARTIST })
                 assertEquals(2, it.count { it.contentType == MediaType.MEDIA })
+                assertEquals(1, it.count { it.contentType == MediaType.PLAY_LIST })
             }
         }
 

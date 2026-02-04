@@ -10,4 +10,5 @@ object MediaType {
     const val ARTIST = 2
     const val GENRE = 3
     const val VIDEO = 4
+    const val PLAY_LIST = 5
 }

@@ -97,7 +97,11 @@ internal fun SearchScaffoldLayout(
                     Suggestions(
                         query = textFieldState,
                         onConfirmSearch = {
-                            searchBarLayoutState.eventSink.invoke(SearchBarUiEvent.OnConfirmSearch(it))
+                            searchBarLayoutState.eventSink.invoke(
+                                SearchBarUiEvent.OnConfirmSearch(
+                                    it,
+                                ),
+                            )
                         },
                         onResultItemClick = {
                             searchBarLayoutState.eventSink.invoke(

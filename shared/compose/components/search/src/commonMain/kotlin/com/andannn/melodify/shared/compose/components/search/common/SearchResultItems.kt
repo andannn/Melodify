@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.andannn.melodify.domain.model.MatchedContentTitle
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.MediaType
+import com.andannn.melodify.shared.compose.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.shared.compose.components.library.item.MediaLibraryItem
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.album_page_title
@@ -52,6 +53,10 @@ fun LazyListScope.searchResultItems(
                 },
             )
         }
+    }
+
+    item {
+        ExtraPaddingBottom()
     }
 }
 
