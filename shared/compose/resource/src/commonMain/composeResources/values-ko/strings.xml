@@ -104,4 +104,6 @@
     <string name="sort_by_playlist_create_data">생성 날짜순으로 정렬</string>
     <string name="sort_sub_playlist_create_date_desc">재생목록 생성 날짜 기준으로 내림차순으로 항목을 그룹화합니다.</string>
     <string name="search_your_library">라이브러리 검색</string>
+    <string name="show_album_cover">앨범 커버 표시</string>
+    <string name="audio_track_setting">오디오 트랙 설정</string>
 </resources>

@@ -4,7 +4,6 @@
  */
 package com.andannn.melodify.shared.compose.popup.entry.sort.rule
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Album
@@ -64,6 +62,7 @@ import io.github.andannn.popup.PopupId
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.album_page_title
 import melodify.shared.compose.resource.generated.resources.artist_page_title
+import melodify.shared.compose.resource.generated.resources.audio_track_setting
 import melodify.shared.compose.resource.generated.resources.content_sort_by
 import melodify.shared.compose.resource.generated.resources.customize
 import melodify.shared.compose.resource.generated.resources.display_setting_for
@@ -79,6 +78,7 @@ import melodify.shared.compose.resource.generated.resources.preset_video
 import melodify.shared.compose.resource.generated.resources.primary_group_by
 import melodify.shared.compose.resource.generated.resources.reset_settings
 import melodify.shared.compose.resource.generated.resources.secondary_group_by
+import melodify.shared.compose.resource.generated.resources.show_album_cover
 import melodify.shared.compose.resource.generated.resources.show_play_progress
 import melodify.shared.compose.resource.generated.resources.show_track_number
 import melodify.shared.compose.resource.generated.resources.sort_by_genre
@@ -283,7 +283,7 @@ private fun ChangeSortRuleDialogContent(
 
                         if (type == ContentSortType.Audio || type == ContentSortType.PlayList) {
                             Text(
-                                "Audio Track",
+                                stringResource(Res.string.audio_track_setting),
                                 style = MaterialTheme.typography.labelLarge,
                             )
                             FlowRow {
@@ -299,7 +299,7 @@ private fun ChangeSortRuleDialogContent(
                                 )
                                 OptionChips(
                                     enabled = isCustomSelected,
-                                    text = "Album Cover",
+                                    text = stringResource(Res.string.show_album_cover),
                                     selected = customAudioTrackStyle == AudioTrackStyle.ALBUM_COVER,
                                     onClick = {
                                         onChangeCustomAudioTrackStyle(

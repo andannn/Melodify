@@ -104,4 +104,6 @@
     <string name="sort_by_playlist_create_data">Nach Erstellungsdatum sortieren</string>
     <string name="sort_sub_playlist_create_date_desc">Elemente nach dem Erstellungsdatum der Playlist in absteigender Reihenfolge gruppieren.</string>
     <string name="search_your_library">Durchsuche deine Bibliothek</string>
+    <string name="show_album_cover">Albumcover anzeigen</string>
+    <string name="audio_track_setting">Audio-Spureinstellungen</string>
 </resources>

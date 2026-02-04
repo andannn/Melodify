@@ -42,6 +42,7 @@ import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackB
 internal fun SearchScaffoldLayout(
     modifier: Modifier = Modifier,
     searchBarLayoutState: SearchBarLayoutState,
+    enabled: Boolean = true,
     onLibraryButtonClick: () -> Unit = {},
     onMenuSelected: (MenuOption) -> Unit = {},
     content: @Composable () -> Unit = {},
@@ -53,7 +54,7 @@ internal fun SearchScaffoldLayout(
 
     val inputField =
         @Composable {
-            SearchBarInputField(searchBarLayoutState)
+            SearchBarInputField(searchBarLayoutState, enabled = enabled)
         }
     Scaffold(
         modifier = modifier,
