@@ -26,9 +26,11 @@ kotlin {
             implementation(libs.reorderable)
         }
 
-        iosMain.dependencies {
-            implementation(project(":shared:util:artwork-ios"))
-            implementation(project(":shared:syncer:scanner:platform-ios"))
+        if (project.isConfigIOS()) {
+            iosMain.dependencies {
+                implementation(project(":shared:util:artwork-ios"))
+                implementation(project(":shared:syncer:scanner:platform-ios"))
+            }
         }
     }
 }

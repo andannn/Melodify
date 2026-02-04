@@ -42,6 +42,7 @@ import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackB
 internal fun SearchScaffoldLayout(
     modifier: Modifier = Modifier,
     searchBarLayoutState: SearchBarLayoutState,
+    enabled: Boolean = true,
     onLibraryButtonClick: () -> Unit = {},
     onMenuSelected: (MenuOption) -> Unit = {},
     content: @Composable () -> Unit = {},
@@ -53,7 +54,7 @@ internal fun SearchScaffoldLayout(
 
     val inputField =
         @Composable {
-            SearchBarInputField(searchBarLayoutState)
+            SearchBarInputField(searchBarLayoutState, enabled = enabled)
         }
     Scaffold(
         modifier = modifier,
@@ -88,23 +89,25 @@ internal fun SearchScaffoldLayout(
                     )
                 },
             )
-            ExpandedFullScreenSearchBar(
-                state = searchBarState,
-                inputField = inputField,
-            ) {
-                Suggestions(
-                    query = textFieldState,
-                    onConfirmSearch = {
-                        searchBarLayoutState.eventSink.invoke(SearchBarUiEvent.OnConfirmSearch(it))
-                    },
-                    onResultItemClick = {
-                        searchBarLayoutState.eventSink.invoke(
-                            SearchBarUiEvent.OnSuggestionItemClick(
-                                it,
-                            ),
-                        )
-                    },
-                )
+            if (enabled) {
+                ExpandedFullScreenSearchBar(
+                    state = searchBarState,
+                    inputField = inputField,
+                ) {
+                    Suggestions(
+                        query = textFieldState,
+                        onConfirmSearch = {
+                            searchBarLayoutState.eventSink.invoke(SearchBarUiEvent.OnConfirmSearch(it))
+                        },
+                        onResultItemClick = {
+                            searchBarLayoutState.eventSink.invoke(
+                                SearchBarUiEvent.OnSuggestionItemClick(
+                                    it,
+                                ),
+                            )
+                        },
+                    )
+                }
             }
         },
     ) { padding ->

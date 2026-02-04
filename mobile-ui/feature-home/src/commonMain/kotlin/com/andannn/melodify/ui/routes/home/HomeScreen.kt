@@ -52,7 +52,7 @@ internal fun HomeUiScreen(
     val searchBarState = searchBarPresenter.present()
 
     val scope = rememberCoroutineScope()
-
+    val isPopupShowing = popupHostState.currentPopup != null
     NavigationEventHandler(
         state = rememberNavigationEventState(NavigationEventInfo.None),
         isBackEnabled = searchBarState.currentContent is ContentState.Search,
@@ -62,6 +62,7 @@ internal fun HomeUiScreen(
 
     SearchScaffoldLayout(
         modifier = modifier,
+        enabled = !isPopupShowing,
         searchBarLayoutState = searchBarState,
         onLibraryButtonClick = {
             navigator.navigateTo(Screen.Library)

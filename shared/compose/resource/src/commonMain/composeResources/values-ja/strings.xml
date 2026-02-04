@@ -104,4 +104,6 @@
     <string name="sort_by_playlist_create_data">作成日時で並べ替え</string>
     <string name="sort_sub_playlist_create_date_desc">プレイリストの作成日時の降順で項目をグループ化します。</string>
     <string name="search_your_library">ライブラリを検索</string>
+    <string name="show_album_cover">アルバムカバーを表示</string>
+    <string name="audio_track_setting">音声トラック設定</string>
 </resources>

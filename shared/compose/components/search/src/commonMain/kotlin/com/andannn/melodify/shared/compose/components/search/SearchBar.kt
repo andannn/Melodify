@@ -33,9 +33,11 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SearchBarInputField(
     state: SearchBarLayoutState,
+    enabled: Boolean = true,
     isFullScreen: Boolean = true,
 ) {
     SearchBarDefaults.InputField(
+        enabled = enabled,
         textFieldState = state.textFieldState,
         searchBarState = state.searchBarState,
         onSearch = {

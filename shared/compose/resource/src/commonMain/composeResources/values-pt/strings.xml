@@ -104,4 +104,6 @@
     <string name="sort_by_playlist_create_data">Ordenar por data de criação</string>
     <string name="sort_sub_playlist_create_date_desc">Agrupar itens pela data de criação da playlist em ordem decrescente.</string>
     <string name="search_your_library">Pesquisar na sua biblioteca</string>
+    <string name="show_album_cover">Mostrar capa do álbum</string>
+    <string name="audio_track_setting">Configurações de faixas de áudio</string>
 </resources>
