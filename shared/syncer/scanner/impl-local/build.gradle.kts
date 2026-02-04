@@ -20,8 +20,11 @@ kotlin {
         commonMain.dependencies {
             api(project(":shared:syncer:scanner:api"))
         }
-        iosMain.dependencies {
-            implementation(project(":shared:syncer:scanner:platform-ios"))
+
+        if (project.isConfigIOS()) {
+            iosMain.dependencies {
+                implementation(project(":shared:syncer:scanner:platform-ios"))
+            }
         }
         jvmMain.dependencies {
             // https://mvnrepository.com/artifact/org/jaudiotagger

@@ -88,6 +88,8 @@ tasks.withType<KotlinNativeLink>().configureEach {
 dependencies {
     add("kspAndroid", libs.room.compiler)
     add("kspJvm", libs.room.compiler)
-    add("kspIosSimulatorArm64", libs.room.compiler)
-    add("kspIosArm64", libs.room.compiler)
+    if (project.isConfigIOS()) {
+        add("kspIosSimulatorArm64", libs.room.compiler)
+        add("kspIosArm64", libs.room.compiler)
+    }
 }

@@ -14,11 +14,12 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Melodify"
-
+val configIOS: Boolean =
+    providers.gradleProperty("kmp.configiOS").map { it == "true" }.getOrElse(true)
 include(":android-app")
 // include(":android-benchmark")
 
-include(":ios-app")
+if (configIOS) include(":ios-app")
 
 include(":desktop-app")
 
@@ -63,7 +64,7 @@ include(":shared:domain:impl-player-android")
 
 include(":shared:player:common")
 include(":shared:player:sleep-timer")
-include(":shared:player:platform-player-ios")
+if (configIOS) include(":shared:player:platform-player-ios")
 include(":shared:player:impl-none-android")
 include(":shared:player:impl-android")
 
@@ -81,12 +82,12 @@ include(":shared:syncer:scanner:api")
 include(":shared:syncer:scanner:common")
 include(":shared:syncer:scanner:impl-local")
 include(":shared:syncer:scanner:impl-monster-siren")
-include(":shared:syncer:scanner:platform-ios")
+if (configIOS) include(":shared:syncer:scanner:platform-ios")
 
 include(":shared:platform")
 
 include(":shared:util:orientation")
 include(":shared:util:immersive")
-include(":shared:util:artwork-ios")
+if (configIOS) include(":shared:util:artwork-ios")
 include(":shared:util:brightness")
 include(":shared:util:volume")
