@@ -42,13 +42,14 @@ uiautomator = "2.4.0-alpha07"
 testRules = "1.7.0"
 jetbrains-compose = "1.11.0-alpha01"
 androidx-compose = "1.11.0-alpha04"
+androidxComposeMaterial3 = "1.5.0-alpha13"
 turbine = "1.2.1"
 retainedmodel = "1.0.2"
 nav3Ui = "1.1.0-alpha02"
 nav3Runtime = "1.0.0"
 navigationevent = "1.0.0"
 expresso = "3.7.0"
-popuphost = "1.0.0"
+popuphost = "1.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -116,6 +117,7 @@ navigationevent-compose = { module = "org.jetbrains.androidx.navigationevent:nav
 lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 compose-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "androidx-compose" }
 compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "androidx-compose" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidxComposeMaterial3" }
 jetbrains-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 jetbrains-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-compose" }
 jetbrains-compose-ui-util = { module = "org.jetbrains.compose.ui:ui-util", version.ref = "jetbrains-compose" }

@@ -89,23 +89,25 @@ internal fun SearchScaffoldLayout(
                     )
                 },
             )
-            ExpandedFullScreenSearchBar(
-                state = searchBarState,
-                inputField = inputField,
-            ) {
-                Suggestions(
-                    query = textFieldState,
-                    onConfirmSearch = {
-                        searchBarLayoutState.eventSink.invoke(SearchBarUiEvent.OnConfirmSearch(it))
-                    },
-                    onResultItemClick = {
-                        searchBarLayoutState.eventSink.invoke(
-                            SearchBarUiEvent.OnSuggestionItemClick(
-                                it,
-                            ),
-                        )
-                    },
-                )
+            if (enabled) {
+                ExpandedFullScreenSearchBar(
+                    state = searchBarState,
+                    inputField = inputField,
+                ) {
+                    Suggestions(
+                        query = textFieldState,
+                        onConfirmSearch = {
+                            searchBarLayoutState.eventSink.invoke(SearchBarUiEvent.OnConfirmSearch(it))
+                        },
+                        onResultItemClick = {
+                            searchBarLayoutState.eventSink.invoke(
+                                SearchBarUiEvent.OnSuggestionItemClick(
+                                    it,
+                                ),
+                            )
+                        },
+                    )
+                }
             }
         },
     ) { padding ->
