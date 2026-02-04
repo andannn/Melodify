@@ -50,7 +50,7 @@ internal class SuggestionsPresenter(
             }
         } else {
             retainedScope.launch {
-                val result = repository.getMatchedContentTitle(query)
+                val result = repository.getMatchedContentTitle("$query*")
                 if (result.isEmpty()) {
                     state = SuggestionsState.NoSuggestion
                 } else {

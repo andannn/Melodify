@@ -52,7 +52,7 @@ internal class SearchResultPagePresenter(
 
     init {
         retainedScope.launch {
-            val result = repository.getMatchedContentTitle(query)
+            val result = repository.getMatchedContentTitle("$query*")
             if (result.isEmpty()) {
                 state.value = SearchState.NoObject
             } else {

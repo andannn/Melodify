@@ -52,7 +52,6 @@ import com.andannn.melodify.shared.compose.components.search.SearchBarLayoutStat
 import com.andannn.melodify.shared.compose.components.search.SearchBarUiEvent
 import com.andannn.melodify.shared.compose.components.search.result.SearchResultPage
 import com.andannn.melodify.shared.compose.components.search.retainSearchBarPresenter
-import com.andannn.melodify.shared.compose.components.search.suggestion.Suggestions
 import com.andannn.melodify.shared.compose.components.tab.TabUi
 import com.andannn.melodify.shared.compose.components.tab.TabUiState
 import com.andannn.melodify.shared.compose.components.tab.content.TabContent

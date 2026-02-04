@@ -45,9 +45,10 @@ fun Suggestions(
     onConfirmSearch: (String) -> Unit = {},
     onResultItemClick: (MediaItemModel) -> Unit = {},
 ) {
+    val state = presenter.present()
     SuggestionsContent(
         modifier = modifier,
-        state = presenter.present().state,
+        state = state.state,
         onConfirmSearch = onConfirmSearch,
         onResultItemClick = onResultItemClick,
     )
