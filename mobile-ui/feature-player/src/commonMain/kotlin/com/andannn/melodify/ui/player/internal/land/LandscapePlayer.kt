@@ -61,7 +61,12 @@ internal fun LandscapePlayer(
                     isFullScreen = false
                 }
             }
-            11
+            NavigationEventHandler(
+                state = rememberNavigationEventState(NavigationEventInfo.None),
+                isBackEnabled = true,
+            ) {
+                shrinkLandscapePlayer()
+            }
 
             LandScapeExpandedPlayerLayout(
                 playMode = state.playMode,
