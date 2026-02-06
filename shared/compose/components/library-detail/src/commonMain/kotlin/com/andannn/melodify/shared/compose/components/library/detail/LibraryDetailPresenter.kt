@@ -23,6 +23,7 @@ import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource
 import com.andannn.melodify.shared.compose.common.model.browseable
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.usecase.content
 import com.andannn.melodify.shared.compose.usecase.item
@@ -83,9 +84,7 @@ private class LibraryDetailPresenter(
         with(repository) {
             dataSource
                 .item()
-                .stateIn(
-                    retainedScope,
-                    started = WhileSubscribed(),
+                .stateInRetainedModel(
                     initialValue = null,
                 )
         }
@@ -94,9 +93,7 @@ private class LibraryDetailPresenter(
         with(repository) {
             dataSource
                 .content()
-                .stateIn(
-                    retainedScope,
-                    started = WhileSubscribed(),
+                .stateInRetainedModel(
                     initialValue = emptyList(),
                 )
         }

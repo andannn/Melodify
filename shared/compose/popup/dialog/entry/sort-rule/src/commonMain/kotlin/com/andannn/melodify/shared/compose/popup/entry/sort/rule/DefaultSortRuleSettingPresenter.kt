@@ -15,6 +15,7 @@ import com.andannn.melodify.domain.model.PresetDisplaySetting
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -33,27 +34,21 @@ private class DefaultSortRuleSettingPresenter(
     private val audioDefaultDisplaySetting =
         repository
             .getDefaultPresetSortRule(ContentSortType.Audio)
-            .stateIn(
-                retainedScope,
+            .stateInRetainedModel(
                 initialValue = null,
-                started = WhileSubscribed(5000),
             )
     private val videoDefaultDisplaySetting =
         repository
             .getDefaultPresetSortRule(ContentSortType.Video)
-            .stateIn(
-                retainedScope,
+            .stateInRetainedModel(
                 initialValue = null,
-                started = WhileSubscribed(5000),
             )
 
     private val playlistDefaultDisplaySetting =
         repository
             .getDefaultPresetSortRule(ContentSortType.PlayList)
-            .stateIn(
-                retainedScope,
+            .stateInRetainedModel(
                 initialValue = null,
-                started = WhileSubscribed(5000),
             )
 
     @Composable

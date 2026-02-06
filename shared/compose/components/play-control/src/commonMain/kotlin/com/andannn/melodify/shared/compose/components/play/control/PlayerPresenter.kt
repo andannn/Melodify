@@ -12,7 +12,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
-import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayMode
 import com.andannn.melodify.domain.model.PlayerState
@@ -21,6 +20,7 @@ import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
@@ -36,10 +36,8 @@ import io.github.aakira.napier.Napier
 import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Composable
@@ -121,63 +119,49 @@ private class PlayerPresenter(
     private val interactingMusicItemFlow =
         repository
             .getPlayingMediaStateFlow()
-            .stateIn(
-                retainedScope,
-                started = SharingStarted.WhileSubscribed(),
+            .stateInRetainedModel(
                 initialValue = null,
             )
 
     private val playerStateFlow =
         repository
             .observePlayerState()
-            .stateIn(
-                retainedScope,
-                started = SharingStarted.WhileSubscribed(),
+            .stateInRetainedModel(
                 initialValue = PlayerState.PAUSED,
             )
 
     private val progressFactorFlow =
         repository
             .observeProgressFactor()
-            .stateIn(
-                retainedScope,
-                started = SharingStarted.WhileSubscribed(),
+            .stateInRetainedModel(
                 initialValue = 0f,
             )
 
     private val playModeFlow =
         repository
             .observePlayMode()
-            .stateIn(
-                retainedScope,
-                started = SharingStarted.WhileSubscribed(),
+            .stateInRetainedModel(
                 initialValue = PlayMode.REPEAT_ALL,
             )
 
     private val isShuffleFlow =
         repository
             .observeIsShuffle()
-            .stateIn(
-                retainedScope,
-                started = SharingStarted.WhileSubscribed(),
+            .stateInRetainedModel(
                 initialValue = false,
             )
 
     private val durationFlow =
         repository
             .observeCurrentDurationMs()
-            .stateIn(
-                retainedScope,
-                started = SharingStarted.WhileSubscribed(),
+            .stateInRetainedModel(
                 initialValue = 0L,
             )
 
     private val isSleepTimerCountingFlow =
         repository
             .observeIsCounting()
-            .stateIn(
-                retainedScope,
-                started = SharingStarted.WhileSubscribed(),
+            .stateInRetainedModel(
                 initialValue = false,
             )
 
@@ -187,9 +171,7 @@ private class PlayerPresenter(
             .flatMapLatest { interactingMusicItem ->
                 Napier.d(tag = TAG) { "interactingMusicItem $interactingMusicItem" }
                 getIsFavoriteFlow(interactingMusicItem)
-            }.stateIn(
-                retainedScope,
-                started = SharingStarted.WhileSubscribed(),
+            }.stateInRetainedModel(
                 initialValue = false,
             )
 

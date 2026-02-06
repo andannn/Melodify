@@ -16,12 +16,11 @@ import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.domain.model.browsableOrPlayable
 import com.andannn.melodify.shared.compose.common.LocalRepository
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import io.github.aakira.napier.Napier
 import io.github.andannn.RetainedModel
 import io.github.andannn.retainRetainedModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
 
 private const val TAG = "VideoListTileItemView"
 
@@ -76,14 +75,8 @@ private class VideoListTileItemModel(
     tab: Tab,
     repository: Repository,
 ) : RetainedModel() {
-    init {
-        Napier.d(tag = TAG) { "init" }
-    }
-
     val isShowProgressStateFlow =
-        repository.getIsShowVideoProgressFlow(tab).stateIn(
-            scope = retainedScope,
-            started = SharingStarted.WhileSubscribed(5000L),
+        repository.getIsShowVideoProgressFlow(tab).stateInRetainedModel(
             initialValue = false,
         )
 }

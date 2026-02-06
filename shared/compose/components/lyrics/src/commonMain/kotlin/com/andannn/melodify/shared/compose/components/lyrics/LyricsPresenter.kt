@@ -18,6 +18,7 @@ import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -49,9 +50,7 @@ class LyricsPresenter(
     private val currentPlayingAudioFlow =
         repository
             .getPlayingMediaStateFlow()
-            .stateIn(
-                retainedScope,
-                started = SharingStarted.WhileSubscribed(),
+            .stateInRetainedModel(
                 initialValue = null,
             )
 

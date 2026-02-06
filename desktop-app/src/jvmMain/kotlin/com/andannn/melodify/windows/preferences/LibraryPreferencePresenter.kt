@@ -12,13 +12,13 @@ import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.alert.InvalidPathAlert
 import com.andannn.melodify.shared.compose.popup.entry.play.list.InputDialogResult
 import com.andannn.melodify.shared.compose.popup.entry.play.list.NewPlayListPopup
 import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Composable
@@ -57,10 +57,8 @@ class LibraryPreferencePresenter(
         repository.userSettingFlow
             .map {
                 it.libraryPath
-            }.stateIn(
-                retainedScope,
+            }.stateInRetainedModel(
                 initialValue = emptySet(),
-                started = kotlinx.coroutines.flow.SharingStarted.Lazily,
             )
 
     @Composable

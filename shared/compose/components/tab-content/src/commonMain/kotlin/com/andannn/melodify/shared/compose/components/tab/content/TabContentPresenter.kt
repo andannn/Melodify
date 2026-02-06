@@ -28,6 +28,7 @@ import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
@@ -112,16 +113,12 @@ private class TabContentPresenter(
     private val mediaFileDeleteHelper: MediaFileDeleteHelper,
 ) : RetainedPresenter<TabContentState>() {
     private val displaySetting =
-        getDisplaySettingFlow().stateIn(
-            scope = retainedScope,
-            started = kotlinx.coroutines.flow.SharingStarted.Eagerly,
+        getDisplaySettingFlow().stateInRetainedModel(
             initialValue = null,
         )
 
     private val audioTrackStyleFlow =
-        getAudioTrackStyleFlow().stateIn(
-            scope = retainedScope,
-            started = kotlinx.coroutines.flow.SharingStarted.Eagerly,
+        getAudioTrackStyleFlow().stateInRetainedModel(
             initialValue = null,
         )
 

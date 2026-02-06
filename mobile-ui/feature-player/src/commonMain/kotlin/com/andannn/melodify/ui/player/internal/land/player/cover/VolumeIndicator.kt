@@ -29,12 +29,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.util.volumn.VolumeController
 import io.github.andannn.RetainedModel
 import io.github.andannn.retainRetainedModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
@@ -59,9 +58,7 @@ internal class VolumeStateModel(
     val volumeStateFlow =
         volumeController
             .getCurrentVolumeFlow()
-            .stateIn(
-                retainedScope,
-                started = SharingStarted.WhileSubscribed(5000),
+            .stateInRetainedModel(
                 initialValue = volumeController.getCurrentVolume(),
             )
     val maxVolume = volumeController.getMaxVolume()

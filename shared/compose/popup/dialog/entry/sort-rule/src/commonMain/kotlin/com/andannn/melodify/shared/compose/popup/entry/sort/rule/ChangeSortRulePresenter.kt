@@ -21,8 +21,7 @@ import com.andannn.melodify.domain.model.toDisplaySetting
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.stateIn
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,19 +47,15 @@ private class ChangeSortRulePresenter(
     private val tabCustomDisplaySettingFlow =
         repository
             .getTabCustomDisplaySettingFlow(tab)
-            .stateIn(
-                retainedScope,
+            .stateInRetainedModel(
                 initialValue = null,
-                started = WhileSubscribed(5000),
             )
 
     private val tabPresetDisplaySettingFlow =
         repository
             .getTabPresetDisplaySettingFlow(tab)
-            .stateIn(
-                retainedScope,
+            .stateInRetainedModel(
                 initialValue = null,
-                started = WhileSubscribed(5000),
             )
 
     @Composable
