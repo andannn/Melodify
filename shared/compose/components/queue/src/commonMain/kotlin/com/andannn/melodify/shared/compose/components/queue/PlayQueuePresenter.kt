@@ -14,6 +14,7 @@ import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
@@ -51,17 +52,13 @@ private class PlayQueuePresenter(
     private val playListQueueFlow =
         repository
             .getPlayListQueueStateFlow()
-            .stateIn(
-                retainedScope,
-                started = SharingStarted.WhileSubscribed(),
+            .stateInRetainedModel(
                 initialValue = emptyList(),
             )
     private val interactingMusicItemFlow =
         repository
             .getPlayingMediaStateFlow()
-            .stateIn(
-                retainedScope,
-                started = SharingStarted.WhileSubscribed(),
+            .stateInRetainedModel(
                 initialValue = null,
             )
 

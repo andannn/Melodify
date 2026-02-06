@@ -16,15 +16,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import com.andannn.melodify.shared.compose.components.play.control.internal.ResumePointIndicator
 import io.github.aakira.napier.Napier
 import io.github.andannn.RetainedModel
 import io.github.andannn.retainRetainedModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 private const val TAG = "ResumePointIndicatorContainer"
@@ -61,9 +57,7 @@ private class ResumePointIndicatorContainerModel(
     val currentPlayingMediaFlow =
         repository
             .getPlayingMediaStateFlow()
-            .stateIn(
-                scope = retainedScope,
-                started = SharingStarted.WhileSubscribed(5000),
+            .stateInRetainedModel(
                 initialValue = null,
             )
 

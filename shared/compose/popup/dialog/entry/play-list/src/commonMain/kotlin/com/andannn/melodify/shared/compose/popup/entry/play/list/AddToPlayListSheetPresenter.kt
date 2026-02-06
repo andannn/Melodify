@@ -15,6 +15,7 @@ import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
 
@@ -32,10 +33,8 @@ internal class AddToPlayListSheetPresenter(
     private val playListStateFlow =
         repository
             .getAllPlayListFlow()
-            .stateIn(
-                retainedScope,
+            .stateInRetainedModel(
                 initialValue = emptyList(),
-                started = WhileSubscribed(),
             )
 
     @Composable

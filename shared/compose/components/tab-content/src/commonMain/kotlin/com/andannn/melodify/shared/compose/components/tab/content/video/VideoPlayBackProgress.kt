@@ -17,12 +17,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import io.github.aakira.napier.Napier
 import io.github.andannn.RetainedModel
 import io.github.andannn.retainRetainedModel
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 
 private const val TAG = "VideoPlayBackProgress"
 
@@ -72,9 +71,7 @@ private class VideoPlayBackProgressModel(
 
                 val (progressMs, isFinished) = progressResult
                 if (isFinished) 1f else progressMs.div(item.duration.toFloat()).coerceIn(0f, 1f)
-            }.stateIn(
-                scope = retainedScope,
-                started = SharingStarted.WhileSubscribed(5000L),
+            }.stateInRetainedModel(
                 initialValue = 0f,
             )
 }

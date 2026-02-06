@@ -11,8 +11,7 @@ import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.stateIn
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -34,10 +33,8 @@ private class SleepTimerCountingPresenter(
     private val remainedTimeFlow =
         repository
             .observeRemainTime()
-            .stateIn(
-                retainedScope,
+            .stateInRetainedModel(
                 initialValue = 0.seconds,
-                started = WhileSubscribed(5000),
             )
 
     @Composable

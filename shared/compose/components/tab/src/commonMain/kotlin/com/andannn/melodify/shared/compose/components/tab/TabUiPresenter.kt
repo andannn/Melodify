@@ -15,6 +15,7 @@ import com.andannn.melodify.domain.model.sortOptions
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
@@ -29,10 +30,8 @@ import com.andannn.melodify.shared.compose.usecase.contentFlow
 import io.github.aakira.napier.Napier
 import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.scan
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 private const val TAG = "TabUiState"
@@ -57,10 +56,8 @@ class TabUiPresenter(
 ) : RetainedPresenter<TabUiState>() {
     val currentTabListFlow =
         repository.currentTabsFlow
-            .stateIn(
-                retainedScope,
+            .stateInRetainedModel(
                 initialValue = emptyList(),
-                started = SharingStarted.Eagerly,
             )
 
     val selectedIndexFlow = MutableStateFlow(0)

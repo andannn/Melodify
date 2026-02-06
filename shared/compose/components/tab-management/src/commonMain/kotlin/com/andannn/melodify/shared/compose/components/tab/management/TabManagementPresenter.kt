@@ -13,11 +13,10 @@ import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 private const val TAG = "TabManagementPresenter"
@@ -54,9 +53,7 @@ private class TabManagementPresenter(
 ) : RetainedPresenter<TabManagementState>() {
     private val currentTabListFlow =
         repository.currentTabsFlow
-            .stateIn(
-                retainedScope,
-                started = WhileSubscribed(),
+            .stateInRetainedModel(
                 initialValue = emptyList(),
             )
 
