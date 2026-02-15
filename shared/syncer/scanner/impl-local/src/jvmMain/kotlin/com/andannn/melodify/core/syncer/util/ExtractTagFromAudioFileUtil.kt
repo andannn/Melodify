@@ -12,6 +12,7 @@ import org.jaudiotagger.audio.exceptions.CannotReadException
 import org.jaudiotagger.tag.FieldKey
 import org.jaudiotagger.tag.Tag
 import java.io.File
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.nameWithoutExtension
@@ -94,3 +95,13 @@ private fun getCoverFileInFolder(filePath: Path): String? {
 private fun String.matchAlbumCover() =
     contains("folder", ignoreCase = true) ||
         contains("cover", ignoreCase = true)
+
+private fun isImageFile(fileName: String): Boolean = getMineType(fileName)?.split("/")?.firstOrNull() == "image"
+
+private fun getMineType(fileName: String): String? =
+    try {
+        Files.probeContentType(File(fileName).toPath())
+    } catch (e: IOException) {
+        Napier.d { "failed to get mine type $e" }
+        null
+    }

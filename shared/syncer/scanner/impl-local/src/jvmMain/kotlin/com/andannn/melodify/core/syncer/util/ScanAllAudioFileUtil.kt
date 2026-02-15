@@ -4,6 +4,9 @@
  */
 package com.andannn.melodify.core.syncer.util
 
+import io.github.aakira.napier.Napier
+import java.io.File
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -24,4 +27,14 @@ internal fun scanAllAudioFile(pathSet: Set<String>): List<Path> =
                     isAudioFile(it.toString())
                 }.toList()
         data + acc
+    }
+
+internal fun isAudioFile(fileName: String): Boolean = getMineType(fileName)?.split("/")?.firstOrNull() == "audio"
+
+private fun getMineType(fileName: String): String? =
+    try {
+        Files.probeContentType(File(fileName).toPath())
+    } catch (e: IOException) {
+        Napier.d { "failed to get mine type $e" }
+        null
     }

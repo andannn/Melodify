@@ -22,6 +22,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardWatchEventKinds
 import java.nio.file.WatchKey
 import java.nio.file.WatchService
+import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 
 private const val TAG = "FileContentChangeFlow"
@@ -52,7 +53,7 @@ internal fun getDirectoryChangeFlow(dictionaries: List<Path>): Flow<RefreshType>
                         Files
                             .walk(dictionary)
                             .filter {
-                                Files.isDirectory(it)
+                                Files.isDirectory(it) && it.exists()
                             }.toList()
                 }.forEach { path ->
                     Napier.d(tag = TAG) { "register path: $path" }

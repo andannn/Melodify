@@ -4,7 +4,6 @@
  */
 package com.andannn.melodify.core.syncer
 
-import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.helper.paging.PagingProvider
 import com.andannn.melodify.core.database.helper.paging.PagingProviderFactory
@@ -17,7 +16,6 @@ import com.andannn.melodify.core.syncer.util.scanAllAudioFile
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -29,7 +27,6 @@ import kotlin.io.path.toPath
 private const val TAG = "MediaLibraryScanner"
 
 internal class LocalMediaLibraryScanner(
-    private val mediaLibraryDao: MediaLibraryDao,
     private val userSettingPreferences: UserSettingPreferences,
 ) : MediaLibraryScanner {
     private val allMediaPagingProvider: PagingProvider<AudioEntity> =
@@ -51,7 +48,6 @@ internal class LocalMediaLibraryScanner(
 
         val libraryPathSet = userSettingPreferences.userDate.first().libraryPath
 
-// TODO: Scan file in worker thread.
         val audioFiles = scanAllAudioFile(libraryPathSet)
 
         Napier.d(tag = TAG) { "scanMediaData: ${audioFiles.size} files found" }
@@ -61,7 +57,7 @@ internal class LocalMediaLibraryScanner(
                     audioFiles.map { filePath ->
                         val id = generateHashKey(filePath)
                         if (mediaInDb.containsKey(id)) {
-                            Napier.d(tag = TAG) { "skip extract tag from audio file: $filePath" }
+                            Napier.d(tag = TAG) { "skip extract tag from audio file: $filePath ${Thread.currentThread().name}" }
 
                             mediaInDb[id]!!.toAudioData()
                         } else {
@@ -97,7 +93,7 @@ internal class LocalMediaLibraryScanner(
 }
 
 private fun CoroutineScope.asyncTaskForExtractTag(filePath: Path) =
-    async(Dispatchers.IO) {
+    async {
         Napier.d(tag = TAG) { "extract tag from audio file E: $filePath, ${Thread.currentThread().name}" }
         val result =
             extractTagFromAudioFile(filePath)?.copy(

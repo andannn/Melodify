@@ -55,7 +55,7 @@ internal class MediaLibrarySyncerWrapper(
                 )
                 Napier.d(tag = TAG) { "sync database X" }
                 trySend(SyncStatusEvent.Complete)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 Napier.e(tag = TAG) { "Failed to sync media library: $e" }
                 trySend(SyncStatusEvent.Failed)
             } finally {
