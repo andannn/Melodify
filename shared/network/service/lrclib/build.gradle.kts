@@ -11,7 +11,7 @@ kmpExt {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.andannn.melodify.core.network.service.lrclib"
     }
 

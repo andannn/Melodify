@@ -10,7 +10,7 @@ kmpExt {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.andannn.melodify.ui.core.player"
     }
 
