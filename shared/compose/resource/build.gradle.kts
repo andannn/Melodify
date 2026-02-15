@@ -14,7 +14,7 @@ kmpExt {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.andannn.melodify.shared.compose.resource"
         androidResources.enable = true
     }
