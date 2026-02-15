@@ -56,8 +56,8 @@ abstract class KmpExtension
 
             project.extensions.configure<KotlinMultiplatformExtension> {
                 this.configure<KotlinMultiplatformAndroidLibraryExtension> {
-                    compileSdk = 36
-                    minSdk = 30
+                    compileSdk = project.compileSdkVersion
+                    minSdk = project.minSdkVersion
 
                     if (config.enableHostTest) {
                         withHostTestBuilder {

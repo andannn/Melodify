@@ -1,4 +1,7 @@
 [versions]
+android-compileSdk = "36"
+android-minSdk = "30"
+android-targetSdk = "36"
 firebaseBom = "34.9.0"
 jaudiotagger = "2.0.3"
 kotlinxCollectionsImmutable = "0.4.0"
@@ -41,7 +44,7 @@ benchmarkMacroJunit4 = "1.4.1"
 uiautomator = "2.4.0-beta01"
 testRules = "1.7.0"
 jetbrains-compose = "1.11.0-alpha01"
-androidx-compose = "1.11.0-alpha04"
+androidx-compose = "1.11.0-alpha05"
 androidxComposeMaterial3 = "1.5.0-alpha14"
 turbine = "1.2.1"
 retainedmodel = "1.0.2"
@@ -144,6 +147,7 @@ android-kmp-library-gradlePlugin = { group = "com.android.kotlin.multiplatform.l
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

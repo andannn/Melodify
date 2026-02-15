@@ -11,7 +11,7 @@ kmpExt {
     withIOSTarget()
 }
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.andannn.melodify.ui.core.player.common"
     }
 }
