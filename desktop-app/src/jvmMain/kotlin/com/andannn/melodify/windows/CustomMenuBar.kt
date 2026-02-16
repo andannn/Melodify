@@ -9,10 +9,14 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import com.andannn.melodify.shared.compose.common.model.ShortcutItem
 import com.andannn.melodify.shared.compose.common.model.toDataSource
+import melodify.shared.compose.resource.generated.resources.Res
+import melodify.shared.compose.resource.generated.resources.search_your_library
 import org.jetbrains.compose.resources.stringResource
 
 sealed interface MenuEvent {
     data object OnOpenMediaLibrarySettings : MenuEvent
+
+    data object OnOpenSearch : MenuEvent
 
     data class OnOpenMediaLibrary(
         val shortcutItem: ShortcutItem,
@@ -28,9 +32,11 @@ fun WindowNavigator.handleMenuEvent(menuEvent: MenuEvent) {
         }
 
         is MenuEvent.OnOpenMediaLibrary -> {
-            openWindow(
-                WindowType.MediaLibrary(menuEvent.shortcutItem.toDataSource()),
-            )
+            openWindow(WindowType.MediaLibrary(menuEvent.shortcutItem.toDataSource()))
+        }
+
+        MenuEvent.OnOpenSearch -> {
+            openWindow(WindowType.Search)
         }
     }
 }
@@ -56,6 +62,13 @@ internal fun FrameWindowScope.CustomMenuBar(handler: (MenuEvent) -> Unit) {
                     },
                 )
             }
+
+            Item(
+                stringResource(Res.string.search_your_library),
+                onClick = {
+                    handler.invoke(MenuEvent.OnOpenSearch)
+                },
+            )
         }
     }
 }

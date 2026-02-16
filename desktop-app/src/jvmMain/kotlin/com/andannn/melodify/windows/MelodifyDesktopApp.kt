@@ -19,6 +19,7 @@ import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.windows.librarydetail.LibraryDetailWindow
 import com.andannn.melodify.windows.main.MainWindow
 import com.andannn.melodify.windows.preferences.PreferenceWindow
+import com.andannn.melodify.windows.search.SearchWindow
 import com.andannn.melodify.windows.tabmanage.TabManageWindow
 import io.github.andannn.popup.PopupHostState
 
@@ -88,6 +89,15 @@ internal fun ApplicationScope.MelodifyDeskTopApp(
 
                                 WindowType.TabManage -> {
                                     TabManageWindow(
+                                        navigator = navigator,
+                                        onCloseRequest = {
+                                            onCloseRequest(windowType)
+                                        },
+                                    )
+                                }
+
+                                WindowType.Search -> {
+                                    SearchWindow(
                                         navigator = navigator,
                                         onCloseRequest = {
                                             onCloseRequest(windowType)
