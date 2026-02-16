@@ -67,25 +67,25 @@ internal fun buildVideoRawQuery(
 }
 
 object MediaEntityWhere {
-    fun albumIdWhere(albumId: String) =
+    fun albumIdWhere(albumId: Long) =
         Where(
             "media_album_id",
             "=",
-            albumId,
+            albumId.toString(),
         )
 
-    fun artistIdWhere(artist: String) =
+    fun artistIdWhere(artist: Long) =
         Where(
             "media_artist_id",
             "=",
-            artist,
+            artist.toString(),
         )
 
-    fun genreIdWhere(genreId: String) =
+    fun genreIdWhere(genreId: Long) =
         Where(
             "media_genre_id",
             "=",
-            genreId,
+            genreId.toString(),
         )
 
     fun releaseYearWhere(year: String) =
@@ -125,10 +125,10 @@ object VideoEntityWhere {
             "$firstCharacterString*",
         )
 
-    fun bucketIdWhere(bucketId: String) =
+    fun bucketIdWhere(bucketId: Long) =
         Where(
             "video_bucket_id",
             "=",
-            bucketId,
+            bucketId.toString(),
         )
 }

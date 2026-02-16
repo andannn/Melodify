@@ -11,7 +11,6 @@ import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.GenreItemModel
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MatchedContentTitle
-import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.VideoItemModel
 import kotlinx.coroutines.flow.Flow
@@ -32,13 +31,13 @@ interface MediaContentRepository {
     ): Flow<PagingData<VideoItemModel>>
 
     fun getVideoBucketItemsPagingFlow(
-        bucketId: String,
+        bucketId: Long,
         sort: List<SortOption.VideoOption>,
         whereGroup: List<GroupKey> = emptyList(),
     ): Flow<PagingData<VideoItemModel>>
 
     fun getVideoBucketItemsFlow(
-        bucketId: String,
+        bucketId: Long,
         sort: List<SortOption.VideoOption>,
         whereGroup: List<GroupKey> = emptyList(),
     ): Flow<List<VideoItemModel>>
@@ -78,13 +77,13 @@ interface MediaContentRepository {
      * Return flow of audios of album
      */
     fun getAudiosOfAlbumFlow(
-        albumId: String,
+        albumId: Long,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey> = emptyList(),
     ): Flow<List<AudioItemModel>>
 
     fun getAudiosPagingFlowOfAlbum(
-        albumId: String,
+        albumId: Long,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey> = emptyList(),
     ): Flow<PagingData<AudioItemModel>>
@@ -93,13 +92,13 @@ interface MediaContentRepository {
      * Return flow of audios of artist
      */
     fun getAudiosOfArtistFlow(
-        artistId: String,
+        artistId: Long,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey> = emptyList(),
     ): Flow<List<AudioItemModel>>
 
     fun getAudiosPagingFlowOfArtist(
-        artistId: String,
+        artistId: Long,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey> = emptyList(),
     ): Flow<PagingData<AudioItemModel>>
@@ -108,13 +107,13 @@ interface MediaContentRepository {
      * Return flow of audios of genre
      */
     fun getAudiosOfGenreFlow(
-        genreId: String,
+        genreId: Long,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey> = emptyList(),
     ): Flow<List<AudioItemModel>>
 
     fun getAudiosPagingFlowOfGenre(
-        genreId: String,
+        genreId: Long,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey> = emptyList(),
     ): Flow<PagingData<AudioItemModel>>
@@ -132,7 +131,7 @@ interface MediaContentRepository {
     /**
      * Return flow of genre by genreId
      */
-    fun getGenreByGenreIdFlow(genreId: String): Flow<GenreItemModel?>
+    fun getGenreByGenreIdFlow(genreId: Long): Flow<GenreItemModel?>
 
     /**
      * Return album by albumId
@@ -154,7 +153,7 @@ interface MediaContentRepository {
      */
     suspend fun getMatchedContentTitle(keyword: String): List<MatchedContentTitle>
 
-    suspend fun markMediaAsDeleted(mediaIds: List<String>)
+    suspend fun markMediaAsDeleted(mediaIds: List<Long>)
 
-    suspend fun markVideoAsDeleted(mediaIds: List<String>)
+    suspend fun markVideoAsDeleted(mediaIds: List<Long>)
 }

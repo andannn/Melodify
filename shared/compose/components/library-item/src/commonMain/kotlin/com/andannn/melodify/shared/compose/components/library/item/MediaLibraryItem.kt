@@ -106,7 +106,7 @@ fun MediaLibraryItem(
     modifier: Modifier = Modifier,
     mediaItemModel: MediaItemModel?,
     showOptions: Boolean = true,
-    playListId: String? = null,
+    playListId: Long? = null,
     onItemClick: () -> Unit = {},
 ) {
     if (mediaItemModel == null) {
@@ -189,7 +189,7 @@ private fun MediaLibraryItemContent(
 @Composable
 private fun retainMediaLibraryItemPresenter(
     mediaItemModel: MediaItemModel,
-    playListId: String?,
+    playListId: Long?,
     navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
     popupHostState: PopupHostState = LocalPopupHostState.current,
     snackBarController: SnackBarController = LocalSnackBarController.current,
@@ -217,7 +217,7 @@ private fun retainMediaLibraryItemPresenter(
 
 private class MediaLibraryItemPresenter(
     private val mediaItemModel: MediaItemModel,
-    private val playListId: String?,
+    private val playListId: Long?,
     private val popupHostState: PopupHostState,
     private val snackBarController: SnackBarController,
     private val repository: Repository,

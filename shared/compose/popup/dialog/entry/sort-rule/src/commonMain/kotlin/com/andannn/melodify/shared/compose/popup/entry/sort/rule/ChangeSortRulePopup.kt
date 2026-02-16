@@ -805,7 +805,7 @@ private fun ChangeSortRuleDialogContentPlayListPreview() {
     MelodifyTheme {
         Surface {
             ChangeSortRuleDialogContent(
-                tab = Tab.PlayListDetail(tabId = 1, playListId = "1", label = "AAA"),
+                tab = Tab.PlayListDetail(tabId = 1, playListId = 1, label = "AAA"),
                 tabCustomDisplaySetting =
                     CustomDisplaySetting(
                         tabSortRule = TabSortRule.Preset.Video.BucketNameASC,

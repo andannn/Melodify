@@ -77,7 +77,7 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
 
         is LibraryDataSource.PlayListDetail -> {
             repository.getItemsOfPlayListFlow(
-                id.toLong(),
+                id,
                 TabSortRule.Preset.Playlist.CreateDateDESC
                     .sortOptions()
                     .filterIsInstance<SortOption.PlayListOption>(),
@@ -90,13 +90,13 @@ fun LibraryDataSource.item(): Flow<MediaItemModel?> =
     when (this) {
         is LibraryDataSource.AlbumDetail -> {
             repository.getAlbumByAlbumIdFlow(
-                id.toLong(),
+                id,
             )
         }
 
         is LibraryDataSource.ArtistDetail -> {
             repository.getArtistByArtistIdFlow(
-                id.toLong(),
+                id,
             )
         }
 
@@ -107,7 +107,7 @@ fun LibraryDataSource.item(): Flow<MediaItemModel?> =
         }
 
         is LibraryDataSource.PlayListDetail -> {
-            repository.getPlayListFlowById(id.toLong())
+            repository.getPlayListFlowById(id)
         }
 
         else -> {

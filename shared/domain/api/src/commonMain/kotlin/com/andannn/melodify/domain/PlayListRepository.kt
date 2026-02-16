@@ -55,7 +55,7 @@ interface PlayListRepository {
     suspend fun getDuplicatedMediaInPlayList(
         playListId: Long,
         items: List<MediaItemModel>,
-    ): List<String>
+    ): List<Long>
 
     /**
      * Return flow of whether [item] is in favorite playList

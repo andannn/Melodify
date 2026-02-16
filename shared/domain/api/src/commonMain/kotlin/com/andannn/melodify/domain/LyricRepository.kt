@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LyricRepository {
     fun getLyricByMediaIdFlow(
-        mediaId: String,
+        mediaId: Long,
         trackName: String,
         artistName: String,
         albumName: String? = null,

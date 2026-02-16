@@ -17,31 +17,31 @@ sealed class Tab(
 
     data class AlbumDetail(
         override val tabId: Long,
-        val albumId: String,
+        val albumId: Long,
         val label: String,
     ) : Tab(tabId)
 
     data class ArtistDetail(
         override val tabId: Long,
-        val artistId: String,
+        val artistId: Long,
         val label: String,
     ) : Tab(tabId)
 
     data class GenreDetail(
         override val tabId: Long,
-        val genreId: String,
+        val genreId: Long,
         val label: String,
     ) : Tab(tabId)
 
     data class PlayListDetail(
         override val tabId: Long,
-        val playListId: String,
+        val playListId: Long,
         val label: String,
     ) : Tab(tabId)
 
     data class BucketDetail(
         override val tabId: Long,
-        val bucketId: String,
+        val bucketId: Long,
         val label: String,
     ) : Tab(tabId)
 }

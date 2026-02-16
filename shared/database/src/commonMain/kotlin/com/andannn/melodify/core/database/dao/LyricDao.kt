@@ -21,5 +21,5 @@ interface LyricDao {
         SELECT * FROM lyric_table WHERE :mediaStoreId = lyric_table.media_id
     """,
     )
-    fun getLyricByMediaIdFlow(mediaStoreId: String): Flow<LyricEntity?>
+    fun getLyricByMediaIdFlow(mediaStoreId: Long): Flow<LyricEntity?>
 }

@@ -55,7 +55,7 @@ suspend fun MediaItemModel.pinToHomeTab() {
         }
     Napier.d(tag = TAG) { "pinToHomeTab tabKind:$tabKind" }
     pinToHomeTab(
-        externalId = id,
+        externalId = id.toString(),
         tabName = name,
         tabKind = tabKind,
     )
@@ -132,15 +132,15 @@ suspend fun addToQueue(items: List<MediaItemModel>) {
 
 context(playListRepository: PlayListRepository)
 suspend fun deleteItemInPlayList(
-    playListId: String,
+    playListId: Long,
     source: AudioItemModel,
 ) {
-    playListRepository.removeMusicFromPlayList(playListId.toLong(), listOf(source))
+    playListRepository.removeMusicFromPlayList(playListId, listOf(source))
 }
 
 context(repo: Repository)
 suspend fun PlayListItemModel.delete() {
-    repo.deletePlayList(id.toLong())
+    repo.deletePlayList(id)
 
     val currentCustomTabs = repo.currentTabsFlow.first()
     val deletedTab =
@@ -250,7 +250,7 @@ context(playListRepository: PlayListRepository, popupHostState: PopupHostState, 
 private suspend fun PlayListItemModel.addAll(items: List<MediaItemModel>) {
     val duplicatedMedias =
         playListRepository.getDuplicatedMediaInPlayList(
-            playListId = id.toLong(),
+            playListId = id,
             items = items,
         )
 
@@ -258,7 +258,7 @@ private suspend fun PlayListItemModel.addAll(items: List<MediaItemModel>) {
     when {
         duplicatedMedias.isEmpty() -> {
             playListRepository.addItemsToPlayList(
-                playListId = id.toLong(),
+                playListId = id,
                 items = items,
             )
 
@@ -272,7 +272,7 @@ private suspend fun PlayListItemModel.addAll(items: List<MediaItemModel>) {
             val result = popupHostState.showDialog(DuplicatedAlert)
             if (result is AlertDialogAction.Accept) {
                 playListRepository.addItemsToPlayList(
-                    playListId = id.toLong(),
+                    playListId = id,
                     items = items.filter { it.id !in duplicatedMedias },
                 )
                 snackBarController.showSnackBar(

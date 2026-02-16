@@ -118,7 +118,7 @@ abstract class AbstractDatabaseTest {
             )
             lyricDao.insertLyricEntities(listOf(dummyLyricEntities[0]))
 
-            val lyric = lyricDao.getLyricByMediaIdFlow("1").first()
+            val lyric = lyricDao.getLyricByMediaIdFlow(1).first()
             assertEquals(dummyLyricEntities[0], lyric)
         }
 
@@ -130,7 +130,7 @@ abstract class AbstractDatabaseTest {
             )
             lyricDao.insertLyricEntities(entities = listOf(dummyLyricEntities[0]))
 
-            val lyric = lyricDao.getLyricByMediaIdFlow("100").first()
+            val lyric = lyricDao.getLyricByMediaIdFlow(100).first()
             assertEquals(null, lyric)
         }
 
@@ -141,9 +141,9 @@ abstract class AbstractDatabaseTest {
                 audios = listOf(AudioEntity(id = 1, title = "dummy")),
             )
             lyricDao.insertLyricEntities(entities = listOf(dummyLyricEntities[0]))
-            assertEquals(dummyLyricEntities[0], lyricDao.getLyricByMediaIdFlow("1").first())
+            assertEquals(dummyLyricEntities[0], lyricDao.getLyricByMediaIdFlow(1).first())
             syncerDao.deleteMediasByIds(listOf(1))
-            assertEquals(null, lyricDao.getLyricByMediaIdFlow("1").first())
+            assertEquals(null, lyricDao.getLyricByMediaIdFlow(1).first())
         }
 
     @Test

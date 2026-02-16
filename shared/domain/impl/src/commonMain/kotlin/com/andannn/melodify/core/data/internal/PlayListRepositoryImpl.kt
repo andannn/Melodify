@@ -93,8 +93,8 @@ internal class PlayListRepositoryImpl(
                     items.map { item ->
                         PlayListItemEntryEntity(
                             playListId = playListId,
-                            audioId = item.id.takeIf { item is AudioItemModel }?.toLong(),
-                            videoId = item.id.takeIf { item is VideoItemModel }?.toLong(),
+                            audioId = item.id.takeIf { item is AudioItemModel },
+                            videoId = item.id.takeIf { item is VideoItemModel },
                             addedDate = Clock.System.now().toEpochMilliseconds(),
                         )
                     },
@@ -110,14 +110,14 @@ internal class PlayListRepositoryImpl(
     override suspend fun getDuplicatedMediaInPlayList(
         playListId: Long,
         items: List<MediaItemModel>,
-    ): List<String> =
+    ): List<Long> =
         items
             .filter {
                 playListDao
                     .getIsMediaInPlayListFlow(
                         playList = playListId,
                         entryType = if (it is AudioItemModel) PlayListEntryType.AUDIO else PlayListEntryType.VIDEO,
-                        mediaId = it.id.toLong(),
+                        mediaId = it.id,
                     ).first()
             }.map { it.id }
 
@@ -130,7 +130,7 @@ internal class PlayListRepositoryImpl(
                 playListDao.getIsMediaInPlayListFlow(
                     favoriteOrNull.id,
                     if (item is AudioItemModel) PlayListEntryType.AUDIO else PlayListEntryType.VIDEO,
-                    item.id.toLong(),
+                    item.id,
                 )
             }
         }
@@ -147,7 +147,7 @@ internal class PlayListRepositoryImpl(
                     .getIsMediaInPlayListFlow(
                         favoritePlayListOrNull.id,
                         if (item is AudioItemModel) PlayListEntryType.AUDIO else PlayListEntryType.VIDEO,
-                        item.id.toLong(),
+                        item.id,
                     ).first()
             if (isFavorite) {
                 removeMusicFromPlayList(favoritePlayListOrNull.id, listOf(item))
@@ -163,7 +163,7 @@ internal class PlayListRepositoryImpl(
     ) = playListDao.deleteMediasFromPlayList(
         playListId,
         mediaList.map {
-            it.id.toLong() to if (it is AudioItemModel) PlayListEntryType.AUDIO else PlayListEntryType.VIDEO
+            it.id to if (it is AudioItemModel) PlayListEntryType.AUDIO else PlayListEntryType.VIDEO
         },
     )
 

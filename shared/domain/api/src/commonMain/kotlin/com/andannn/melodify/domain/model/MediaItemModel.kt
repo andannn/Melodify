@@ -14,24 +14,24 @@ enum class MediaType {
 }
 
 sealed interface MediaItemModel {
-    val id: String
+    val id: Long
     val name: String
     val artWorkUri: String?
     val trackCount: Int
 }
 
 data class AudioItemModel constructor(
-    override val id: String,
+    override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
     val path: String,
     val modifiedDate: Long,
     val album: String,
-    val albumId: String,
+    val albumId: Long,
     val genre: String,
-    val genreId: String,
+    val genreId: Long,
     val artist: String,
-    val artistId: String,
+    val artistId: Long,
     val releaseYear: String,
     val cdTrackNumber: Int,
     val discNumber: Int,
@@ -41,10 +41,10 @@ data class AudioItemModel constructor(
 ) : MediaItemModel
 
 data class VideoItemModel constructor(
-    override val id: String,
+    override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
-    val bucketId: String,
+    val bucketId: Long,
     val bucketName: String,
     val path: String,
     val modifiedDate: Long,
@@ -61,28 +61,28 @@ data class VideoItemModel constructor(
 ) : MediaItemModel
 
 data class AlbumItemModel(
-    override val id: String,
+    override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
     override val trackCount: Int,
 ) : MediaItemModel
 
 data class ArtistItemModel constructor(
-    override val id: String,
+    override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
     override val trackCount: Int,
 ) : MediaItemModel
 
 data class GenreItemModel(
-    override val id: String,
+    override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
     override val trackCount: Int,
 ) : MediaItemModel
 
 data class PlayListItemModel constructor(
-    override val id: String,
+    override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
     override val trackCount: Int,

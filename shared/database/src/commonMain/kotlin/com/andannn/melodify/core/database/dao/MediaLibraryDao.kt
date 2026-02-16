@@ -19,10 +19,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MediaLibraryDao {
     @Query("UPDATE library_media_table SET deleted = 1 WHERE media_id IN (:ids)")
-    suspend fun markMediaAsDeleted(ids: List<String>)
+    suspend fun markMediaAsDeleted(ids: List<Long>)
 
     @Query("UPDATE library_video_table SET video_deleted = 1 WHERE video_id IN (:ids)")
-    suspend fun markVideoAsDeleted(ids: List<String>)
+    suspend fun markVideoAsDeleted(ids: List<Long>)
 
     @Query(
         """
@@ -112,7 +112,7 @@ interface MediaLibraryDao {
     fun getArtistByArtistIdFlow(artistId: Long): Flow<ArtistWithMediaCount?>
 
     @Query("SELECT * FROM library_genre_table WHERE genre_id = :genreId")
-    fun getGenreByGenreIdFlow(genreId: String): Flow<GenreEntity?>
+    fun getGenreByGenreIdFlow(genreId: Long): Flow<GenreEntity?>
 
     @Query("SELECT * FROM library_genre_table WHERE genre_id = :genreId")
     suspend fun getGenreByGenreId(genreId: Long): GenreEntity?
