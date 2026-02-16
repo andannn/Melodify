@@ -14,13 +14,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -29,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -40,12 +37,6 @@ import com.andannn.melodify.shared.compose.components.lyrics.Lyrics
 import com.andannn.melodify.shared.compose.components.play.control.PlayerUiState
 import com.andannn.melodify.shared.compose.components.play.control.rememberPlayerPresenter
 import com.andannn.melodify.shared.compose.components.queue.PlayQueue
-import com.andannn.melodify.shared.compose.components.search.ContentState
-import com.andannn.melodify.shared.compose.components.search.SearchBarInputField
-import com.andannn.melodify.shared.compose.components.search.SearchBarLayoutState
-import com.andannn.melodify.shared.compose.components.search.SearchBarUiEvent
-import com.andannn.melodify.shared.compose.components.search.result.SearchResultPage
-import com.andannn.melodify.shared.compose.components.search.retainSearchBarPresenter
 import com.andannn.melodify.shared.compose.components.tab.TabUi
 import com.andannn.melodify.shared.compose.components.tab.TabUiState
 import com.andannn.melodify.shared.compose.components.tab.content.TabContent
@@ -67,7 +58,6 @@ data class MainUiState(
     val tabUiState: TabUiState,
     val playerUiState: PlayerUiState,
     val tabContentState: TabContentState,
-    val searchBarLayoutState: SearchBarLayoutState,
 )
 
 @Composable
@@ -106,13 +96,11 @@ internal fun MainWindow(
                 }
             val tabContentPresenter = retainTabContentPresenter(tabState.selectedTab, eventSink)
             val playerPresenter = rememberPlayerPresenter()
-            val searchBarPresenter = retainSearchBarPresenter()
             val state =
                 MainUiState(
                     tabUiState = tabState,
                     tabContentState = tabContentPresenter.present(),
                     playerUiState = playerPresenter.present(),
-                    searchBarLayoutState = searchBarPresenter.present(),
                 )
             MainScreen(
                 state = state,
@@ -137,40 +125,13 @@ private fun MainScreen(
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
-        SearchBar(
-            modifier = Modifier.padding(8.dp).align(Alignment.CenterHorizontally),
-            state = rememberSearchBarState(),
-            inputField = @Composable {
-                SearchBarInputField(state.searchBarLayoutState, isFullScreen = false)
-            },
-        )
-
-        HorizontalDivider()
-
         Row(modifier = modifier.weight(1f)) {
-            when (val content = state.searchBarLayoutState.currentContent) {
-                ContentState.Library -> {
-                    TabWithContentSector(
-                        tabUiState = state.tabUiState,
-                        tabContentState = state.tabContentState,
-                        modifier = Modifier.weight(2f),
-                        onTabManagementClick = onTabManagementClick,
-                    )
-                }
-
-                is ContentState.Search -> {
-                    SearchResultPage(
-                        query = content.query,
-                        onResultItemClick = {
-                            state.searchBarLayoutState.eventSink.invoke(
-                                SearchBarUiEvent.OnSearchResultItemClick(
-                                    it,
-                                ),
-                            )
-                        },
-                    )
-                }
-            }
+            TabWithContentSector(
+                tabUiState = state.tabUiState,
+                tabContentState = state.tabContentState,
+                modifier = Modifier.weight(2f),
+                onTabManagementClick = onTabManagementClick,
+            )
 
             VerticalDivider()
 

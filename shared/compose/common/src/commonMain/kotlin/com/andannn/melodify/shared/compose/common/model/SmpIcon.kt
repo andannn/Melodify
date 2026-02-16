@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.LibraryMusic
 import androidx.compose.material.icons.rounded.PlayCircle
 import androidx.compose.material.icons.rounded.PlaylistRemove
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -41,6 +42,7 @@ object SimpleMusicIcons {
     val PlayList = SmpIcon.ImageVectorIcon(Icons.Rounded.PlayCircle)
     val QueueMusic = SmpIcon.ImageVectorIcon(Icons.AutoMirrored.Outlined.QueueMusic)
     val DisplaySettings = SmpIcon.ImageVectorIcon(Icons.Rounded.DisplaySettings)
+    val Search = SmpIcon.ImageVectorIcon(Icons.Rounded.Search)
 }
 
 sealed class SmpIcon {

@@ -21,11 +21,7 @@ import androidx.navigationevent.compose.NavigationEventHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import com.andannn.melodify.shared.compose.common.Presenter
 import com.andannn.melodify.shared.compose.components.play.control.ResumePointIndicatorContainer
-import com.andannn.melodify.shared.compose.components.search.ContentState
-import com.andannn.melodify.shared.compose.components.search.SearchBarLayoutState
-import com.andannn.melodify.shared.compose.components.search.SearchBarUiEvent
 import com.andannn.melodify.shared.compose.components.search.result.SearchResultPage
-import com.andannn.melodify.shared.compose.components.search.retainSearchBarPresenter
 import com.andannn.melodify.shared.compose.components.tab.TabUi
 import com.andannn.melodify.shared.compose.components.tab.content.TabContent
 import com.andannn.melodify.shared.compose.components.tab.content.retainTabContentPresenter

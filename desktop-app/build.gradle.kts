@@ -18,6 +18,7 @@ kotlin {
             implementation(project(":shared:platform"))
 
             implementation(project(":shared:compose:common"))
+            implementation(project(":shared:compose:usecase"))
             implementation(project(":shared:compose:popup:dialog:common"))
             implementation(project(":shared:compose:popup:snack-bar"))
             implementation(project(":shared:compose:components:tab"))

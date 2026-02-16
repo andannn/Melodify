@@ -6,9 +6,27 @@ package com.andannn.melodify.shared.compose.usecase
 
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.browsable
+import com.andannn.melodify.shared.compose.common.NavigationRequest
+import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
+import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource
 import com.andannn.melodify.shared.compose.popup.entry.alert.AlertDialogAction
 import com.andannn.melodify.shared.compose.popup.entry.alert.ChangePlayListAlert
 import io.github.andannn.popup.PopupHostState
+
+context(_: PopupHostState, _: Repository, navigationRequestEventSink: NavigationRequestEventSink)
+suspend fun playOrGoToBrowsable(item: MediaItemModel) {
+    if (item.browsable) {
+        navigationRequestEventSink.onRequestNavigate(
+            NavigationRequest.GoToLibraryDetail(item.asLibraryDataSource()),
+        )
+    } else {
+        playMediaItems(
+            item,
+            listOf(item),
+        )
+    }
+}
 
 context(repo: Repository, popupHostState: PopupHostState)
 suspend fun playMediaItems(
