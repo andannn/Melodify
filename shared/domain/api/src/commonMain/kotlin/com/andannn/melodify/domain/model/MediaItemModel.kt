@@ -38,14 +38,7 @@ data class AudioItemModel constructor(
     val source: String,
     val extraUniqueId: String? = null,
     override val trackCount: Int = -1,
-) : MediaItemModel {
-    companion object {
-        // prefix for invalid item which local file is deleted but still in playlist
-        const val INVALID_ID_PREFIX = "invalid_id_"
-    }
-
-    fun isValid() = !this.id.contains(INVALID_ID_PREFIX)
-}
+) : MediaItemModel
 
 data class VideoItemModel constructor(
     override val id: String,
@@ -95,29 +88,6 @@ data class PlayListItemModel constructor(
     override val trackCount: Int,
     val isFavoritePlayList: Boolean,
 ) : MediaItemModel
-
-/**
- * enable state for ui item
- */
-val MediaItemModel.browsableOrPlayable
-    get() =
-        when (this) {
-            is AlbumItemModel,
-            is ArtistItemModel,
-            is GenreItemModel,
-            is PlayListItemModel,
-            -> {
-                true
-            }
-
-            is AudioItemModel -> {
-                this.isValid()
-            }
-
-            is VideoItemModel -> {
-                true
-            }
-        }
 
 val MediaItemModel.browsable
     get() =

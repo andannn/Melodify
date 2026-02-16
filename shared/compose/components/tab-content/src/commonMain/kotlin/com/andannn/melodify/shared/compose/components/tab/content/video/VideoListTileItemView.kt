@@ -14,7 +14,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.VideoItemModel
-import com.andannn.melodify.domain.model.browsableOrPlayable
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.stateInRetainedModel
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
@@ -41,7 +40,6 @@ internal fun VideoListTileItemView(
                     top = 4.dp,
                     bottom = 4.dp,
                 ),
-            playable = item.browsableOrPlayable,
             isActive = false,
             thumbnailSourceUri = null,
             title = item.name,
