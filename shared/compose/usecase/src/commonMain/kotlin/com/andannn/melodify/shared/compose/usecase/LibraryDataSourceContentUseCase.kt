@@ -90,13 +90,13 @@ fun LibraryDataSource.item(): Flow<MediaItemModel?> =
     when (this) {
         is LibraryDataSource.AlbumDetail -> {
             repository.getAlbumByAlbumIdFlow(
-                id,
+                id.toLong(),
             )
         }
 
         is LibraryDataSource.ArtistDetail -> {
             repository.getArtistByArtistIdFlow(
-                id,
+                id.toLong(),
             )
         }
 

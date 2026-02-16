@@ -10,9 +10,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import com.andannn.melodify.core.database.entity.AlbumEntity
-import com.andannn.melodify.core.database.entity.AlbumWithoutTrackCount
 import com.andannn.melodify.core.database.entity.ArtistEntity
-import com.andannn.melodify.core.database.entity.ArtistWithoutTrackCount
 import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
@@ -20,10 +18,10 @@ import com.andannn.melodify.core.database.entity.VideoEntity
 @Dao
 internal interface SyncerDao {
     @Upsert(entity = AlbumEntity::class)
-    suspend fun upsertAlbumsWithoutTrackCount(albums: List<AlbumWithoutTrackCount>): List<Long>
+    suspend fun upsertAlbums(albums: List<AlbumEntity>): List<Long>
 
     @Upsert(entity = ArtistEntity::class)
-    suspend fun upsertArtistWithoutTrackCount(artists: List<ArtistWithoutTrackCount>): List<Long>
+    suspend fun upsertArtist(artists: List<ArtistEntity>): List<Long>
 
     @Query("SELECT video_title FROM library_video_table WHERE video_id IN (:ids)")
     suspend fun getNameOfVideo(ids: List<Long>): List<String>

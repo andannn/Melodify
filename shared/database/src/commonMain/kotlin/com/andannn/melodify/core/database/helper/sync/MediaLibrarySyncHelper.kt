@@ -15,8 +15,6 @@ import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
-import com.andannn.melodify.core.database.entity.toAlbumWithoutTrackCount
-import com.andannn.melodify.core.database.entity.toArtistWithoutTrackCount
 
 private const val DEFAULT_CHUNK_SIZE = 500
 
@@ -34,8 +32,8 @@ class MediaLibrarySyncHelper internal constructor(
     ) {
         db.useWriterConnection {
             it.immediateTransaction {
-                syncerDao.upsertAlbumsWithoutTrackCount(albums.map { it.toAlbumWithoutTrackCount() })
-                syncerDao.upsertArtistWithoutTrackCount(artists.map { it.toArtistWithoutTrackCount() })
+                syncerDao.upsertAlbums(albums)
+                syncerDao.upsertArtist(artists)
                 syncerDao.upsertGenres(genres)
                 syncerDao.upsertMedias(audios)
                 syncerDao.upsertVideos(videos)
@@ -148,7 +146,7 @@ class MediaLibrarySyncHelper internal constructor(
             idSelector = { it.albumId },
             fetchLocalIdsDao = { dao.getAllAlbumID() },
             deleteDao = { syncerDao.deleteAlbumsByIds(it) },
-            upsertDao = { syncerDao.upsertAlbumsWithoutTrackCount(it.map { it.toAlbumWithoutTrackCount() }) },
+            upsertDao = { syncerDao.upsertAlbums(it) },
             onProgress = onProgress,
             onNewInsert = { onInsert(syncerDao.getNameOfAlbum(it)) },
             onBeforeDelete = { onDelete(syncerDao.getNameOfAlbum(it)) },
@@ -166,7 +164,7 @@ class MediaLibrarySyncHelper internal constructor(
             idSelector = { it.artistId },
             fetchLocalIdsDao = { syncerDao.getAllArtistID() },
             deleteDao = { syncerDao.deleteArtistsByIds(it) },
-            upsertDao = { syncerDao.upsertArtistWithoutTrackCount(it.map { it.toArtistWithoutTrackCount() }) },
+            upsertDao = { syncerDao.upsertArtist(it) },
             onProgress = onProgress,
             onNewInsert = { onInsert(syncerDao.getNameOfArtist(it)) },
             onBeforeDelete = { onDelete(syncerDao.getNameOfArtist(it)) },

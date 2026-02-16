@@ -4,8 +4,6 @@
  */
 package com.andannn.melodify.domain.impl
 
-import com.andannn.melodify.core.database.entity.AlbumEntity
-import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.LyricEntity
@@ -14,6 +12,8 @@ import com.andannn.melodify.core.database.entity.TabCustomSortRuleEntity
 import com.andannn.melodify.core.database.entity.TabEntity
 import com.andannn.melodify.core.database.entity.TabType
 import com.andannn.melodify.core.database.entity.VideoEntity
+import com.andannn.melodify.core.database.model.AlbumWithMediaCount
+import com.andannn.melodify.core.database.model.ArtistWithMediaCount
 import com.andannn.melodify.core.database.model.AudioVideoMergedResult
 import com.andannn.melodify.core.database.model.LibraryContentSearchResult
 import com.andannn.melodify.core.database.model.PlayListWithMediaCount
@@ -32,7 +32,7 @@ import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.VideoItemModel
 import kotlin.Long
 
-fun List<AlbumEntity>.mapToAlbumItemModel() =
+fun List<AlbumWithMediaCount>.mapToAlbumItemModel() =
     map {
         it.toAppItem()
     }
@@ -52,7 +52,7 @@ fun List<VideoEntity>.mapToVideoItemModel() =
         it.toAppItem()
     }
 
-fun List<ArtistEntity>.mapToArtistItemModel() =
+fun List<ArtistWithMediaCount>.mapToArtistItemModel() =
     map {
         it.toAppItem()
     }
@@ -104,19 +104,19 @@ fun VideoEntity.toAppItem(): VideoItemModel =
         trackCount = -1,
     )
 
-fun AlbumEntity.toAppItem() =
+fun AlbumWithMediaCount.toAppItem() =
     AlbumItemModel(
-        id = albumId.toString(),
-        name = title,
-        artWorkUri = coverUri ?: "",
+        id = entity.albumId.toString(),
+        name = entity.title,
+        artWorkUri = entity.coverUri ?: "",
         trackCount = trackCount,
     )
 
-fun ArtistEntity.toAppItem() =
+fun ArtistWithMediaCount.toAppItem() =
     ArtistItemModel(
-        id = artistId.toString(),
-        name = name,
-        artWorkUri = null,
+        id = entity.artistId.toString(),
+        name = entity.name,
+        artWorkUri = entity.artistCoverUri,
         trackCount = trackCount,
     )
 

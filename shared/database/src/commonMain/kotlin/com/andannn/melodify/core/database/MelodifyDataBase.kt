@@ -91,8 +91,9 @@ import kotlinx.coroutines.IO
         AutoMigration(from = 19, to = 20, AutoMigration19To20Spec::class),
         AutoMigration(from = 20, to = 21, AutoMigration20To21Spec::class),
         AutoMigration(from = 21, to = 22, AutoMigration21To22Spec::class),
+        AutoMigration(from = 22, to = 23, AutoMigration22To23Spec::class),
     ],
-    version = 22,
+    version = 23,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)
@@ -123,74 +124,8 @@ expect object MelodifyDataBaseConstructor : RoomDatabaseConstructor<MelodifyData
 internal fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() =
     apply {
         setQueryCoroutineContext(Dispatchers.IO)
-        addCallback(addTriggerCallback)
         addCallback(addInitialCustomTabsCallback)
         addMigrations(Migration17To18Spec)
-    }
-
-internal val addTriggerCallback =
-    object : RoomDatabase.Callback() {
-        override fun onCreate(connection: SQLiteConnection) {
-            super.onCreate(connection)
-
-            // update artist song count when insert or delete media.
-            connection.execSQL(
-                """
-                CREATE TRIGGER update_artist_song_count_on_insert
-                AFTER INSERT ON library_media_table
-                FOR EACH ROW
-                WHEN NEW.media_artist_id IS NOT NULL
-                BEGIN
-                    UPDATE library_artist_table
-                    SET artist_track_count = artist_track_count + 1
-                    WHERE "artist_id" = NEW.media_artist_id;
-                END;
-                """.trimIndent(),
-            )
-
-            connection.execSQL(
-                """
-                CREATE TRIGGER update_artist_song_count_on_delete
-                AFTER DELETE ON library_media_table
-                FOR EACH ROW
-                WHEN OLD.media_artist_id IS NOT NULL
-                BEGIN
-                    UPDATE library_artist_table
-                    SET artist_track_count = artist_track_count - 1
-                    WHERE "artist_id" = OLD.media_artist_id;
-                END;
-                """.trimIndent(),
-            )
-
-            // update album song count when insert or delete media.
-            connection.execSQL(
-                """
-                CREATE TRIGGER update_album_song_count_on_insert
-                AFTER INSERT ON library_media_table
-                FOR EACH ROW
-                WHEN NEW.media_album_id IS NOT NULL
-                BEGIN
-                    UPDATE library_album_table
-                    SET album_track_count = album_track_count + 1
-                    WHERE album_id = NEW.media_album_id;
-                END;
-                """.trimIndent(),
-            )
-
-            connection.execSQL(
-                """
-                CREATE TRIGGER update_album_song_count_on_delete
-                AFTER DELETE ON library_media_table
-                FOR EACH ROW
-                WHEN OLD.media_album_id IS NOT NULL
-                BEGIN
-                    UPDATE library_album_table
-                    SET album_track_count = album_track_count - 1
-                    WHERE album_id = OLD.media_album_id;
-                END;
-                """.trimIndent(),
-            )
-        }
     }
 
 internal val addInitialCustomTabsCallback =
@@ -427,5 +362,17 @@ internal class AutoMigration20To21Spec : AutoMigrationSpec
 internal class AutoMigration21To22Spec : AutoMigrationSpec {
     override fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL("INSERT INTO `play_list_fts_table`(`play_list_fts_table`) VALUES('rebuild')")
+    }
+}
+
+@DeleteColumn(tableName = "library_album_table", columnName = "album_number_of_songs_for_artist")
+@DeleteColumn(tableName = "library_album_table", columnName = "album_track_count")
+@DeleteColumn(tableName = "library_artist_table", columnName = "artist_track_count")
+internal class AutoMigration22To23Spec : AutoMigrationSpec {
+    override fun onPostMigrate(connection: SQLiteConnection) {
+        connection.execSQL("DROP TRIGGER IF EXISTS update_artist_song_count_on_insert")
+        connection.execSQL("DROP TRIGGER IF EXISTS update_artist_song_count_on_delete")
+        connection.execSQL("DROP TRIGGER IF EXISTS update_album_song_count_on_insert")
+        connection.execSQL("DROP TRIGGER IF EXISTS update_album_song_count_on_delete")
     }
 }

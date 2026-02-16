@@ -14,9 +14,7 @@ import com.andannn.melodify.core.database.dao.UserDataDao
 import com.andannn.melodify.core.database.dao.internal.PlayListRawQueryDao
 import com.andannn.melodify.core.database.dao.internal.SyncerDao
 import com.andannn.melodify.core.database.entity.AlbumEntity
-import com.andannn.melodify.core.database.entity.AlbumWithoutTrackCount
 import com.andannn.melodify.core.database.entity.ArtistEntity
-import com.andannn.melodify.core.database.entity.ArtistWithoutTrackCount
 import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.AudioEntryStyle
 import com.andannn.melodify.core.database.entity.GenreEntity
@@ -528,10 +526,10 @@ abstract class AbstractDatabaseTest {
     @Test
     fun delete_test() =
         runTest {
-            syncerDao.upsertAlbumsWithoutTrackCount(
+            syncerDao.upsertAlbums(
                 albums =
                     listOf(
-                        AlbumWithoutTrackCount(
+                        AlbumEntity(
                             albumId = 2,
                             title = "album 2",
                         ),
@@ -546,10 +544,10 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            syncerDao.upsertArtistWithoutTrackCount(
+            syncerDao.upsertArtist(
                 artists =
                     listOf(
-                        ArtistWithoutTrackCount(
+                        ArtistEntity(
                             artistId = 4,
                             name = "artist 4",
                         ),
@@ -605,16 +603,16 @@ abstract class AbstractDatabaseTest {
     @Test
     fun update_artist_count_test() =
         runTest {
-            syncerDao.upsertArtistWithoutTrackCount(
+            syncerDao.upsertArtist(
                 artists =
                     listOf(
-                        ArtistWithoutTrackCount(
+                        ArtistEntity(
                             artistId = 4,
                             name = "artist 4",
                         ),
                     ),
             )
-            assertEquals(0, libraryDao.getArtistByArtistId(4)?.trackCount)
+            assertEquals(0, libraryDao.getArtistByArtistIdFlow(4).first()?.trackCount)
             syncerDao.upsertMedias(
                 audios =
                     listOf(
@@ -627,24 +625,24 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            assertEquals(1, libraryDao.getArtistByArtistId(4)?.trackCount)
+            assertEquals(1, libraryDao.getArtistByArtistIdFlow(4).first()?.trackCount)
             syncerDao.deleteMediasByIds(listOf(1L))
-            assertEquals(0, libraryDao.getArtistByArtistId(4)?.trackCount)
+            assertEquals(0, libraryDao.getArtistByArtistIdFlow(4).first()?.trackCount)
         }
 
     @Test
     fun update_album_count_test() =
         runTest {
-            syncerDao.upsertAlbumsWithoutTrackCount(
+            syncerDao.upsertAlbums(
                 albums =
                     listOf(
-                        AlbumWithoutTrackCount(
+                        AlbumEntity(
                             albumId = 2,
                             title = "album 2",
                         ),
                     ),
             )
-            assertEquals(0, libraryDao.getAlbumByAlbumId(2)?.trackCount)
+            assertEquals(0, libraryDao.getAlbumByAlbumIdFlow(2).first()?.trackCount)
             syncerDao.upsertMedias(
                 audios =
                     listOf(
@@ -657,9 +655,9 @@ abstract class AbstractDatabaseTest {
                         ),
                     ),
             )
-            assertEquals(1, libraryDao.getAlbumByAlbumId(2)?.trackCount)
+            assertEquals(1, libraryDao.getAlbumByAlbumIdFlow(2).first()?.trackCount)
             syncerDao.deleteMediasByIds(listOf(1L))
-            assertEquals(0, libraryDao.getAlbumByAlbumId(2)?.trackCount)
+            assertEquals(0, libraryDao.getAlbumByAlbumIdFlow(2).first()?.trackCount)
         }
 
     @Test
@@ -1237,10 +1235,10 @@ abstract class AbstractDatabaseTest {
                     artists = listOf(ArtistEntity(artistId = 600, name = "new_artist")),
                 )
                 assertEquals(1, syncerDao.getAllArtistID().size)
-                assertEquals(1, libraryDao.getArtistByArtistId(600)?.trackCount)
+                assertEquals(1, libraryDao.getArtistByArtistIdFlow(600).first()?.trackCount)
                 assertEquals(1, syncerDao.getAllGenreID().size)
                 assertEquals(1, libraryDao.getAllAlbumID().size)
-                assertEquals(1, libraryDao.getAlbumByAlbumId(400)?.trackCount)
+                assertEquals(1, libraryDao.getAlbumByAlbumIdFlow(400).first()?.trackCount)
                 assertEquals(1, syncerDao.getAllMediaID().size)
                 assertEquals(1, syncerDao.getAllVideoID().size)
                 assertEquals(100, syncerDao.getAllMediaID().first())
@@ -1339,13 +1337,13 @@ abstract class AbstractDatabaseTest {
     fun `insert and update test`() =
         runTest {
             syncerDao
-                .upsertArtistWithoutTrackCount(listOf(ArtistWithoutTrackCount(10, "test")))
+                .upsertArtist(listOf(ArtistEntity(10, "test")))
                 .also {
                     assertEquals(1, it.size)
                     assertEquals(10, it.first())
                 }
             syncerDao
-                .upsertArtistWithoutTrackCount(listOf(ArtistWithoutTrackCount(10, "test")))
+                .upsertArtist(listOf(ArtistEntity(10, "test")))
                 .also {
                     assertEquals(1, it.size)
                     assertEquals(-1, it.first())

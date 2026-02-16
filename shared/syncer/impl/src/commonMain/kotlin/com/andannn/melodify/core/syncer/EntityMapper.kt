@@ -20,7 +20,6 @@ internal fun List<AlbumData>.toAlbumEntity(): List<AlbumEntity> =
         AlbumEntity(
             albumId = it.albumId,
             title = it.title,
-            numberOfSongsForArtist = it.numberOfSongsForArtist,
             coverUri = it.coverUri,
         )
     }

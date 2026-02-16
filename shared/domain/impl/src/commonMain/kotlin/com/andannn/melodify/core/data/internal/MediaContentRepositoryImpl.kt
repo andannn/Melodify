@@ -24,6 +24,7 @@ import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.VideoItemModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 internal class MediaContentRepositoryImpl(
@@ -230,12 +231,12 @@ internal class MediaContentRepositoryImpl(
         pagingData.map { it.toAppItem() }
     }
 
-    override fun getAlbumByAlbumIdFlow(albumId: String) =
+    override fun getAlbumByAlbumIdFlow(albumId: Long) =
         mediaLibraryDao
             .getAlbumByAlbumIdFlow(albumId)
             .map { it?.toAppItem() }
 
-    override fun getArtistByArtistIdFlow(artistId: String) =
+    override fun getArtistByArtistIdFlow(artistId: Long) =
         mediaLibraryDao
             .getArtistByArtistIdFlow(artistId)
             .map { it?.toAppItem() }
@@ -245,9 +246,9 @@ internal class MediaContentRepositoryImpl(
             .getGenreByGenreIdFlow(genreId)
             .map { it?.toAppItem() }
 
-    override suspend fun getAlbumByAlbumId(albumId: Long) = mediaLibraryDao.getAlbumByAlbumId(albumId)?.toAppItem()
+    override suspend fun getAlbumByAlbumId(albumId: Long) = mediaLibraryDao.getAlbumByAlbumIdFlow(albumId).first()?.toAppItem()
 
-    override suspend fun getArtistByArtistId(artistId: Long) = mediaLibraryDao.getArtistByArtistId(artistId)?.toAppItem()
+    override suspend fun getArtistByArtistId(artistId: Long) = mediaLibraryDao.getArtistByArtistIdFlow(artistId).first()?.toAppItem()
 
     override suspend fun getGenreByGenreId(genreId: Long) = mediaLibraryDao.getGenreByGenreId(genreId)?.toAppItem()
 
