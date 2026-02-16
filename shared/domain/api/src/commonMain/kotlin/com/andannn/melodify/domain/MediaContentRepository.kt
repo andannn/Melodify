@@ -122,12 +122,12 @@ interface MediaContentRepository {
     /**
      * Return flow of album by albumId
      */
-    fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumItemModel?>
+    fun getAlbumByAlbumIdFlow(albumId: Long): Flow<AlbumItemModel?>
 
     /**
      * Return flow of artist by artistId
      */
-    fun getArtistByArtistIdFlow(artistId: String): Flow<ArtistItemModel?>
+    fun getArtistByArtistIdFlow(artistId: Long): Flow<ArtistItemModel?>
 
     /**
      * Return flow of genre by genreId

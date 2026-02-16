@@ -8,11 +8,11 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import com.andannn.melodify.core.database.MediaType
-import com.andannn.melodify.core.database.entity.AlbumEntity
-import com.andannn.melodify.core.database.entity.ArtistEntity
 import com.andannn.melodify.core.database.entity.AudioEntity
 import com.andannn.melodify.core.database.entity.GenreEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
+import com.andannn.melodify.core.database.model.AlbumWithMediaCount
+import com.andannn.melodify.core.database.model.ArtistWithMediaCount
 import com.andannn.melodify.core.database.model.LibraryContentSearchResult
 import kotlinx.coroutines.flow.Flow
 
@@ -63,29 +63,53 @@ interface MediaLibraryDao {
     @Query("SELECT album_id FROM library_album_table")
     suspend fun getAllAlbumID(): List<Long>
 
-    @Query("SELECT * FROM library_album_table")
-    fun getAllAlbumFlow(): Flow<List<AlbumEntity>>
+    @Query(
+        """
+        SELECT a.*, COUNT(m.media_id) AS track_count
+        FROM library_album_table AS a
+        LEFT JOIN library_media_table AS m ON a.album_id = m.media_album_id
+        GROUP BY a.album_id
+    """,
+    )
+    fun getAllAlbumFlow(): Flow<List<AlbumWithMediaCount>>
 
     @Query("SELECT * FROM library_genre_table")
     fun getAllGenreFlow(): Flow<List<GenreEntity>>
 
-    @Query("SELECT * FROM library_artist_table")
-    fun getAllArtistFlow(): Flow<List<ArtistEntity>>
+    @Query(
+        """
+        SELECT a.*, COUNT(m.media_id) AS track_count
+        FROM library_artist_table AS a
+        LEFT JOIN library_media_table AS m ON a.artist_id = m.media_artist_id
+        GROUP BY a.artist_id
+    """,
+    )
+    fun getAllArtistFlow(): Flow<List<ArtistWithMediaCount>>
 
     @Query("SELECT * FROM library_media_table WHERE media_genre_id = :genreId")
     fun getMediasByGenreIdFlow(genreId: String): Flow<List<AudioEntity>>
 
-    @Query("SELECT * FROM library_album_table WHERE album_id = :albumId")
-    fun getAlbumByAlbumIdFlow(albumId: String): Flow<AlbumEntity?>
+    @Query(
+        """
+        SELECT a.*, COUNT(m.media_id) AS track_count
+        FROM library_album_table AS a
+        LEFT JOIN library_media_table AS m ON a.album_id = m.media_album_id
+        WHERE album_id = :albumId
+        GROUP BY a.album_id
+    """,
+    )
+    fun getAlbumByAlbumIdFlow(albumId: Long): Flow<AlbumWithMediaCount?>
 
-    @Query("SELECT * FROM library_album_table WHERE album_id = :albumId")
-    suspend fun getAlbumByAlbumId(albumId: Long): AlbumEntity?
-
-    @Query("SELECT * FROM library_artist_table WHERE artist_id = :artistId")
-    fun getArtistByArtistIdFlow(artistId: String): Flow<ArtistEntity?>
-
-    @Query("SELECT * FROM library_artist_table WHERE artist_id = :artistId")
-    suspend fun getArtistByArtistId(artistId: Long): ArtistEntity?
+    @Query(
+        """
+        SELECT a.*, COUNT(m.media_id) AS track_count
+        FROM library_artist_table AS a
+        LEFT JOIN library_media_table AS m ON a.artist_id = m.media_artist_id
+        WHERE a.artist_id = :artistId
+        GROUP BY a.artist_id        
+    """,
+    )
+    fun getArtistByArtistIdFlow(artistId: Long): Flow<ArtistWithMediaCount?>
 
     @Query("SELECT * FROM library_genre_table WHERE genre_id = :genreId")
     fun getGenreByGenreIdFlow(genreId: String): Flow<GenreEntity?>
