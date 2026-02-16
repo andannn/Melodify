@@ -14,44 +14,37 @@ enum class MediaType {
 }
 
 sealed interface MediaItemModel {
-    val id: String
+    val id: Long
     val name: String
     val artWorkUri: String?
     val trackCount: Int
 }
 
 data class AudioItemModel constructor(
-    override val id: String,
+    override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
     val path: String,
     val modifiedDate: Long,
     val album: String,
-    val albumId: String,
+    val albumId: Long,
     val genre: String,
-    val genreId: String,
+    val genreId: Long,
     val artist: String,
-    val artistId: String,
+    val artistId: Long,
     val releaseYear: String,
     val cdTrackNumber: Int,
     val discNumber: Int,
     val source: String,
     val extraUniqueId: String? = null,
     override val trackCount: Int = -1,
-) : MediaItemModel {
-    companion object {
-        // prefix for invalid item which local file is deleted but still in playlist
-        const val INVALID_ID_PREFIX = "invalid_id_"
-    }
-
-    fun isValid() = !this.id.contains(INVALID_ID_PREFIX)
-}
+) : MediaItemModel
 
 data class VideoItemModel constructor(
-    override val id: String,
+    override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
-    val bucketId: String,
+    val bucketId: Long,
     val bucketName: String,
     val path: String,
     val modifiedDate: Long,
@@ -68,56 +61,33 @@ data class VideoItemModel constructor(
 ) : MediaItemModel
 
 data class AlbumItemModel(
-    override val id: String,
+    override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
     override val trackCount: Int,
 ) : MediaItemModel
 
 data class ArtistItemModel constructor(
-    override val id: String,
+    override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
     override val trackCount: Int,
 ) : MediaItemModel
 
 data class GenreItemModel(
-    override val id: String,
+    override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
     override val trackCount: Int,
 ) : MediaItemModel
 
 data class PlayListItemModel constructor(
-    override val id: String,
+    override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
     override val trackCount: Int,
     val isFavoritePlayList: Boolean,
 ) : MediaItemModel
-
-/**
- * enable state for ui item
- */
-val MediaItemModel.browsableOrPlayable
-    get() =
-        when (this) {
-            is AlbumItemModel,
-            is ArtistItemModel,
-            is GenreItemModel,
-            is PlayListItemModel,
-            -> {
-                true
-            }
-
-            is AudioItemModel -> {
-                this.isValid()
-            }
-
-            is VideoItemModel -> {
-                true
-            }
-        }
 
 val MediaItemModel.browsable
     get() =

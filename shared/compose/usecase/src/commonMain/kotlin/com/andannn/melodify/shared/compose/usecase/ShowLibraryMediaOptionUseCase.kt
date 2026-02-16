@@ -36,7 +36,7 @@ context(
 )
 suspend fun showLibraryMediaOption(
     media: MediaItemModel,
-    playListId: String? = null,
+    playListId: Long? = null,
 ) {
     val isPlayable = media is AudioItemModel || media is VideoItemModel
     val isAudio = media is AudioItemModel
@@ -78,7 +78,7 @@ suspend fun showLibraryMediaOption(
             }
 
             OptionItem.ADD_TO_PLAYLIST -> {
-                addToPlaylist(medias() as List<AudioItemModel>)
+                addToPlaylist(medias())
             }
 
             OptionItem.DELETE_PLAYLIST -> {

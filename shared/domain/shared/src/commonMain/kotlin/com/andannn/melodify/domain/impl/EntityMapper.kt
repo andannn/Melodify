@@ -64,7 +64,7 @@ fun List<GenreEntity>.mapToGenreItemModel() =
 
 fun AudioEntity.toAppItem() =
     AudioItemModel(
-        id = id.toString(),
+        id = id,
         path = path ?: "",
 // Desktop app do not support the same item in play queue.
         extraUniqueId = id.toString(),
@@ -72,11 +72,11 @@ fun AudioEntity.toAppItem() =
         artWorkUri = cover ?: "",
         modifiedDate = modifiedDate ?: -1,
         album = album ?: "",
-        albumId = albumId?.toString() ?: "",
+        albumId = albumId ?: -1,
         artist = artist ?: "",
-        genreId = genreId?.toString() ?: "",
+        genreId = genreId ?: -1,
         genre = genre ?: "",
-        artistId = artistId?.toString() ?: "",
+        artistId = artistId ?: -1,
         cdTrackNumber = cdTrackNumber ?: 0,
         discNumber = discNumber ?: 0,
         releaseYear = year ?: "Unknown",
@@ -85,10 +85,10 @@ fun AudioEntity.toAppItem() =
 
 fun VideoEntity.toAppItem(): VideoItemModel =
     VideoItemModel(
-        id = id.toString(),
+        id = id,
         name = title.orEmpty(),
         artWorkUri = sourceUri,
-        bucketId = bucketId?.toString().orEmpty(),
+        bucketId = bucketId ?: -1,
         bucketName = bucketDisplayName.orEmpty(),
         path = path.orEmpty(),
         modifiedDate = modifiedDate ?: 0L,
@@ -106,7 +106,7 @@ fun VideoEntity.toAppItem(): VideoItemModel =
 
 fun AlbumWithMediaCount.toAppItem() =
     AlbumItemModel(
-        id = entity.albumId.toString(),
+        id = entity.albumId,
         name = entity.title,
         artWorkUri = entity.coverUri ?: "",
         trackCount = trackCount,
@@ -114,7 +114,7 @@ fun AlbumWithMediaCount.toAppItem() =
 
 fun ArtistWithMediaCount.toAppItem() =
     ArtistItemModel(
-        id = entity.artistId.toString(),
+        id = entity.artistId,
         name = entity.name,
         artWorkUri = entity.artistCoverUri,
         trackCount = trackCount,
@@ -122,7 +122,7 @@ fun ArtistWithMediaCount.toAppItem() =
 
 fun GenreEntity.toAppItem() =
     GenreItemModel(
-        id = genreId.toString(),
+        id = genreId ?: error("no genre id."),
         name = name ?: "V.A.",
         artWorkUri = null,
         trackCount = 0,
@@ -130,7 +130,7 @@ fun GenreEntity.toAppItem() =
 
 fun PlayListWithMediaCount.toAppItem() =
     PlayListItemModel(
-        id = playListEntity.id.toString(),
+        id = playListEntity.id,
         name = playListEntity.name,
         artWorkUri = playListEntity.artworkUri ?: "",
         isFavoritePlayList = playListEntity.isFavoritePlayList == true,
@@ -217,35 +217,27 @@ fun TabEntity.toAppItem() =
         }
 
         TabType.ALBUM_DETAIL -> {
-            Tab.AlbumDetail(tabId = id, externalId!!, name!!)
+            Tab.AlbumDetail(tabId = id, externalId!!.toLong(), name!!)
         }
 
         TabType.ARTIST_DETAIL -> {
-            Tab.ArtistDetail(tabId = id, externalId!!, name!!)
+            Tab.ArtistDetail(tabId = id, externalId!!.toLong(), name!!)
         }
 
         TabType.GENRE_DETAIL -> {
-            Tab.GenreDetail(tabId = id, externalId!!, name!!)
+            Tab.GenreDetail(tabId = id, externalId!!.toLong(), name!!)
         }
 
         TabType.PLAYLIST_DETAIL -> {
             Tab.PlayListDetail(
                 tabId = id,
-                externalId!!,
-                name!!,
-            )
-        }
-
-        TabType.VIDEO_PLAYLIST_DETAIL -> {
-            Tab.PlayListDetail(
-                tabId = id,
-                externalId!!,
+                externalId!!.toLong(),
                 name!!,
             )
         }
 
         TabType.VIDEO_BUCKET -> {
-            Tab.BucketDetail(tabId = id, externalId!!, name!!)
+            Tab.BucketDetail(tabId = id, externalId!!.toLong(), name!!)
         }
 
         else -> {

@@ -64,7 +64,7 @@ private class VideoPlayBackProgressModel(
 
     val progressFactorStateFlow =
         repository
-            .getResumePointMsFlow(item.id.toLong())
+            .getResumePointMsFlow(item.id)
             .map { progressResult ->
                 if (item.duration <= 0f) return@map 0f
                 if (progressResult == null) return@map 0f

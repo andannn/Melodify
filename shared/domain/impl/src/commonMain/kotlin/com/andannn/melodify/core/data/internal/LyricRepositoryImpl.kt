@@ -23,7 +23,7 @@ internal class LyricRepositoryImpl(
     private val lyricLocalDataSource: LrclibService,
 ) : LyricRepository {
     override fun getLyricByMediaIdFlow(
-        mediaId: String,
+        mediaId: Long,
         trackName: String,
         artistName: String,
         albumName: String?,
@@ -58,10 +58,10 @@ internal class LyricRepositoryImpl(
         }
 }
 
-private fun LyricData.toLyricEntity(mediaId: String) =
+private fun LyricData.toLyricEntity(mediaId: Long) =
     LyricEntity(
         id = id,
-        mediaId = mediaId.toLong(),
+        mediaId = mediaId,
         name = name,
         trackName = trackName,
         artistName = artistName,

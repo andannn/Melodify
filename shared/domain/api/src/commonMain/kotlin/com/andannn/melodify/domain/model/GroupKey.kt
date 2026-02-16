@@ -9,15 +9,15 @@ package com.andannn.melodify.domain.model
  */
 sealed interface GroupKey {
     data class Artist(
-        val artistId: String,
+        val artistId: Long,
     ) : GroupKey
 
     data class Album(
-        val albumId: String,
+        val albumId: Long,
     ) : GroupKey
 
     data class Genre(
-        val genreId: String,
+        val genreId: Long,
     ) : GroupKey
 
     data class Year(
@@ -29,7 +29,7 @@ sealed interface GroupKey {
     ) : GroupKey
 
     data class BucketId(
-        val bucketId: String,
+        val bucketId: Long,
         val bucketDisplayName: String,
     ) : GroupKey
 }

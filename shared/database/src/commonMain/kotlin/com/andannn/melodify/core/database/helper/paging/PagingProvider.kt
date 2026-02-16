@@ -25,7 +25,7 @@ interface PagingProvider<E : Any> {
 }
 
 object PagingProviderFactory {
-    fun albumMediaPagingProvider(albumId: String): PagingProvider<AudioEntity> =
+    fun albumMediaPagingProvider(albumId: Long): PagingProvider<AudioEntity> =
         getKoin().get<MediaPagingProvider> {
             parametersOf(listOf(MediaEntityWhere.albumIdWhere(albumId)))
         }
@@ -35,12 +35,12 @@ object PagingProviderFactory {
             parametersOf(emptyList<Where>())
         }
 
-    fun artistMediaPagingProvider(artistId: String): PagingProvider<AudioEntity> =
+    fun artistMediaPagingProvider(artistId: Long): PagingProvider<AudioEntity> =
         getKoin().get<MediaPagingProvider> {
             parametersOf(listOf(MediaEntityWhere.artistIdWhere(artistId)))
         }
 
-    fun genreMediaPagingProvider(genreId: String): PagingProvider<AudioEntity> =
+    fun genreMediaPagingProvider(genreId: Long): PagingProvider<AudioEntity> =
         getKoin().get<MediaPagingProvider> {
             parametersOf(listOf(MediaEntityWhere.genreIdWhere(genreId)))
         }
@@ -50,7 +50,7 @@ object PagingProviderFactory {
             parametersOf(emptyList<Where>())
         }
 
-    fun bucketVideoPagingProvider(bucketId: String): PagingProvider<VideoEntity> =
+    fun bucketVideoPagingProvider(bucketId: Long): PagingProvider<VideoEntity> =
         getKoin().get<VideoPagingProvider> {
             parametersOf(listOf(VideoEntityWhere.bucketIdWhere(bucketId)))
         }

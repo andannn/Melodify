@@ -37,7 +37,6 @@ import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.domain.model.VideoItemModel
-import com.andannn.melodify.domain.model.browsableOrPlayable
 import com.andannn.melodify.domain.model.groupKeyOf
 import com.andannn.melodify.shared.compose.common.mock.MockData
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
@@ -171,7 +170,7 @@ private fun LazyListContent(
                                                 top = 4.dp,
                                                 bottom = 4.dp,
                                             ),
-                                        playable = item.browsableOrPlayable,
+                                        playable = true,
                                         isActive = false,
                                         thumbnailSourceUri = item.artWorkUri,
                                         title = item.name,

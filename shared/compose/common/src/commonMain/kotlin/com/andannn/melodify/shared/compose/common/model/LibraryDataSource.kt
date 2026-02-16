@@ -35,22 +35,22 @@ sealed interface LibraryDataSource {
 
     @Serializable
     data class ArtistDetail(
-        val id: String,
+        val id: Long,
     ) : LibraryDataSource
 
     @Serializable
     data class AlbumDetail(
-        val id: String,
+        val id: Long,
     ) : LibraryDataSource
 
     @Serializable
     data class GenreDetail(
-        val id: String,
+        val id: Long,
     ) : LibraryDataSource
 
     @Serializable
     data class PlayListDetail(
-        val id: String,
+        val id: Long,
     ) : LibraryDataSource
 }
 

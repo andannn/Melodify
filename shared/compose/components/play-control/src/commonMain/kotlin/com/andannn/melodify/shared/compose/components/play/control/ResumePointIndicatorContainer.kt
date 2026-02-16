@@ -37,7 +37,7 @@ fun ResumePointIndicatorContainer(modifier: Modifier = Modifier) {
         ) {
             ResumePointIndicator(
                 modifier = Modifier.padding(bottom = 100.dp),
-                videoId = media.id.toLong(),
+                videoId = media.id,
             )
         }
     }
@@ -68,7 +68,7 @@ private class ResumePointIndicatorContainerModel(
             repository.observePlayBackEndEvent().collect { media ->
                 if (media is VideoItemModel) {
                     Napier.d(tag = TAG) { "mark video completed id: ${media.id}" }
-                    repository.markVideoCompleted(media.id.toLong())
+                    repository.markVideoCompleted(media.id)
                 }
             }
         }

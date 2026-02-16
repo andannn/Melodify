@@ -23,15 +23,15 @@ import com.andannn.melodify.domain.model.VideoItemModel
 fun MediaItem.toAppItem(): MediaItemModel =
     if (mediaMetadata.extras?.getBoolean(IS_AUDIO_KEY) == true) {
         AudioItemModel(
-            id = mediaId,
+            id = mediaId.toLong(),
             name = mediaMetadata.title.toString(),
             modifiedDate = 0,
             album = mediaMetadata.albumTitle.toString(),
-            albumId = "0",
+            albumId = 0,
             artist = mediaMetadata.artist.toString(),
-            artistId = "0",
+            artistId = 0,
             genre = mediaMetadata.genre.toString(),
-            genreId = "0",
+            genreId = 0,
             cdTrackNumber = mediaMetadata.trackNumber ?: 0,
             discNumber = 0,
             artWorkUri =
@@ -50,11 +50,11 @@ fun MediaItem.toAppItem(): MediaItemModel =
         )
     } else {
         VideoItemModel(
-            id = mediaId,
+            id = mediaId.toLong(),
             name = mediaMetadata.title.toString(),
             modifiedDate = 0,
             artWorkUri = "",
-            bucketId = "",
+            bucketId = 0,
             width = mediaMetadata.extras?.getInt(VIDEO_WIDTH_KEY) ?: 0,
             height = mediaMetadata.extras?.getInt(VIDEO_HEIGHT_KEY) ?: 0,
             bucketName = mediaMetadata.extras?.getString(VIDEO_BUCKET_NAME).orEmpty(),
@@ -88,7 +88,7 @@ fun MediaItemModel.toMediaItem(generateUniqueId: Boolean = false): MediaItem =
 fun VideoItemModel.toMediaItem(generateUniqueId: Boolean = false): MediaItem =
     buildMediaItem(
         isAudio = false,
-        mediaId = id,
+        mediaId = id.toString(),
         title = name,
         sourceUri = source.toUri(),
         imageUri = artWorkUri?.toUri(),
@@ -103,7 +103,7 @@ fun VideoItemModel.toMediaItem(generateUniqueId: Boolean = false): MediaItem =
 fun AudioItemModel.toMediaItem(generateUniqueId: Boolean = false): MediaItem =
     buildMediaItem(
         isAudio = true,
-        mediaId = id,
+        mediaId = id.toString(),
         title = name,
         sourceUri = source.toUri(),
         imageUri = artWorkUri?.toUri(),

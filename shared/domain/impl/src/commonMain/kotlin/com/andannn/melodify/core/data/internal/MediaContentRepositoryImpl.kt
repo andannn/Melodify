@@ -20,7 +20,6 @@ import com.andannn.melodify.domain.impl.toModel
 import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MatchedContentTitle
-import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.VideoItemModel
 import kotlinx.coroutines.flow.Flow
@@ -69,7 +68,7 @@ internal class MediaContentRepositoryImpl(
         }
 
     override fun getVideoBucketItemsPagingFlow(
-        bucketId: String,
+        bucketId: Long,
         sort: List<SortOption.VideoOption>,
         whereGroup: List<GroupKey>,
     ): Flow<PagingData<VideoItemModel>> =
@@ -89,7 +88,7 @@ internal class MediaContentRepositoryImpl(
         }
 
     override fun getVideoBucketItemsFlow(
-        bucketId: String,
+        bucketId: Long,
         sort: List<SortOption.VideoOption>,
         whereGroup: List<GroupKey>,
     ): Flow<List<VideoItemModel>> =
@@ -138,7 +137,7 @@ internal class MediaContentRepositoryImpl(
             .map { it.mapToGenreItemModel() }
 
     override fun getAudiosOfAlbumFlow(
-        albumId: String,
+        albumId: Long,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey>,
     ) = PagingProviderFactory
@@ -149,7 +148,7 @@ internal class MediaContentRepositoryImpl(
         ).map { it.mapToAudioItemModel() }
 
     override fun getAudiosPagingFlowOfAlbum(
-        albumId: String,
+        albumId: Long,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey>,
     ): Flow<PagingData<AudioItemModel>> =
@@ -169,7 +168,7 @@ internal class MediaContentRepositoryImpl(
         }
 
     override fun getAudiosOfArtistFlow(
-        artistId: String,
+        artistId: Long,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey>,
     ) = PagingProviderFactory
@@ -181,7 +180,7 @@ internal class MediaContentRepositoryImpl(
         ).map { it.mapToAudioItemModel() }
 
     override fun getAudiosPagingFlowOfArtist(
-        artistId: String,
+        artistId: Long,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey>,
     ): Flow<PagingData<AudioItemModel>> =
@@ -201,7 +200,7 @@ internal class MediaContentRepositoryImpl(
         }
 
     override fun getAudiosOfGenreFlow(
-        genreId: String,
+        genreId: Long,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey>,
     ) = PagingProviderFactory
@@ -213,7 +212,7 @@ internal class MediaContentRepositoryImpl(
         ).map { it.mapToAudioItemModel() }
 
     override fun getAudiosPagingFlowOfGenre(
-        genreId: String,
+        genreId: Long,
         sort: List<SortOption.AudioOption>,
         whereGroup: List<GroupKey>,
     ) = Pager(
@@ -241,7 +240,7 @@ internal class MediaContentRepositoryImpl(
             .getArtistByArtistIdFlow(artistId)
             .map { it?.toAppItem() }
 
-    override fun getGenreByGenreIdFlow(genreId: String) =
+    override fun getGenreByGenreIdFlow(genreId: Long) =
         mediaLibraryDao
             .getGenreByGenreIdFlow(genreId)
             .map { it?.toAppItem() }
@@ -257,11 +256,11 @@ internal class MediaContentRepositoryImpl(
             it.toModel()
         }
 
-    override suspend fun markMediaAsDeleted(mediaIds: List<String>) {
+    override suspend fun markMediaAsDeleted(mediaIds: List<Long>) {
         mediaLibraryDao.markMediaAsDeleted(mediaIds)
     }
 
-    override suspend fun markVideoAsDeleted(mediaIds: List<String>) {
+    override suspend fun markVideoAsDeleted(mediaIds: List<Long>) {
         mediaLibraryDao.markVideoAsDeleted(mediaIds)
     }
 }

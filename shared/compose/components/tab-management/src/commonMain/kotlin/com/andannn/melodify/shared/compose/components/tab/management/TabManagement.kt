@@ -165,8 +165,8 @@ fun TabManagementUiPreview() {
                 persistentListOf(
                     Tab.AllMusic(1),
                     Tab.AllVideo(2),
-                    Tab.AlbumDetail(3, albumId = "1", label = "Album 1"),
-                    Tab.AlbumDetail(3, albumId = "2", label = "Album 2"),
+                    Tab.AlbumDetail(3, albumId = 1, label = "Album 1"),
+                    Tab.AlbumDetail(3, albumId = 2, label = "Album 2"),
                 ),
         )
     }

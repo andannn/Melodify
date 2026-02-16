@@ -33,8 +33,5 @@ object TabType {
     const val ARTIST_DETAIL = "artist_detail"
     const val GENRE_DETAIL = "genre_detail"
     const val PLAYLIST_DETAIL = "playlist_detail"
-
-    @Deprecated("merged audio and video")
-    const val VIDEO_PLAYLIST_DETAIL = "video_playlist_detail"
     const val VIDEO_BUCKET = "video_bucket"
 }
