@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.shared.compose.components.search
+package com.andannn.melodify.ui.routes.home
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
@@ -26,6 +26,7 @@ import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource
 import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.usecase.playMediaItems
+import com.andannn.melodify.shared.compose.usecase.playOrGoToBrowsable
 import io.github.aakira.napier.Napier
 import io.github.andannn.popup.PopupHostState
 import kotlinx.coroutines.launch
@@ -33,7 +34,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "SearchWithContent"
 
 @Composable
-fun retainSearchBarPresenter(
+internal fun retainSearchBarPresenter(
     navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
     popupHostState: PopupHostState = LocalPopupHostState.current,
     repository: Repository = LocalRepository.current,
@@ -50,7 +51,7 @@ fun retainSearchBarPresenter(
 }
 
 @Stable
-data class SearchBarLayoutState
+internal data class SearchBarLayoutState
     @OptIn(ExperimentalMaterial3Api::class)
     constructor(
         val currentContent: ContentState,
@@ -60,7 +61,7 @@ data class SearchBarLayoutState
     )
 
 @Stable
-sealed interface ContentState {
+internal sealed interface ContentState {
     @Stable
     data class Search(
         val query: String,
@@ -70,7 +71,7 @@ sealed interface ContentState {
     data object Library : ContentState
 }
 
-sealed interface SearchBarUiEvent {
+internal sealed interface SearchBarUiEvent {
     data object OnBackFullScreen : SearchBarUiEvent
 
     data object OnExitSearch : SearchBarUiEvent
@@ -88,7 +89,7 @@ sealed interface SearchBarUiEvent {
     ) : SearchBarUiEvent
 }
 
-class SearchBarPresenter(
+internal class SearchBarPresenter(
     private val navigationRequestEventSink: NavigationRequestEventSink,
     private val popupHostState: PopupHostState,
     private val repository: Repository,
@@ -118,20 +119,24 @@ class SearchBarPresenter(
             searchBarState = searchBarState,
             currentContent = contentState.value,
         ) { event ->
-            context(popupHostState, repository) {
+            context(popupHostState, repository, navigationRequestEventSink) {
                 when (event) {
                     is SearchBarUiEvent.OnSuggestionItemClick -> {
                         exitSearch()
                         collapsedSearchScreen()
 
-                        handleItemClick(event.result)
-                        addToSearchHistory(event.result.name)
+                        retainedScope.launch {
+                            playOrGoToBrowsable(event.result)
+                            addToSearchHistory(event.result.name)
+                        }
                     }
 
                     is SearchBarUiEvent.OnSearchResultItemClick -> {
                         collapsedSearchScreen()
 
-                        handleItemClick(event.result)
+                        retainedScope.launch {
+                            playOrGoToBrowsable(event.result)
+                        }
                     }
 
                     is SearchBarUiEvent.OnConfirmSearch -> {
@@ -140,7 +145,10 @@ class SearchBarPresenter(
                         }
                         textFieldState.setTextAndPlaceCursorAtEnd(text = event.text)
                         contentState.value = ContentState.Search(event.text)
-                        addToSearchHistory(event.text)
+
+                        retainedScope.launch {
+                            addToSearchHistory(event.text)
+                        }
                     }
 
                     SearchBarUiEvent.OnExitSearch -> {
@@ -158,27 +166,7 @@ class SearchBarPresenter(
         }
     }
 
-    private fun addToSearchHistory(text: String) {
-        retainedScope.launch {
-            repository.addSearchHistory(text)
-        }
-    }
-
-    context(_: PopupHostState, _: Repository)
-    private fun handleItemClick(item: MediaItemModel) {
-        if (item.browsable) {
-            retainedScope.launch {
-                navigationRequestEventSink.onRequestNavigate(
-                    NavigationRequest.GoToLibraryDetail(item.asLibraryDataSource()),
-                )
-            }
-        } else {
-            retainedScope.launch {
-                playMediaItems(
-                    item,
-                    listOf(item),
-                )
-            }
-        }
+    private suspend fun addToSearchHistory(text: String) {
+        repository.addSearchHistory(text)
     }
 }

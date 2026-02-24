@@ -5,12 +5,9 @@
 package com.andannn.melodify.ui.routes.home
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Menu
@@ -24,16 +21,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.andannn.melodify.shared.compose.common.widgets.DropDownMenuIconButton
-import com.andannn.melodify.shared.compose.components.search.ContentState
-import com.andannn.melodify.shared.compose.components.search.SearchBarInputField
-import com.andannn.melodify.shared.compose.components.search.SearchBarLayoutState
-import com.andannn.melodify.shared.compose.components.search.SearchBarUiEvent
 import com.andannn.melodify.shared.compose.components.search.suggestion.Suggestions
 import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackBarHostState
 

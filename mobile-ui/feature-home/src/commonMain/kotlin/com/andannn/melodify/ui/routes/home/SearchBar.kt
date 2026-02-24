@@ -2,7 +2,7 @@
  * Copyright 2025, the Melodify project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.andannn.melodify.shared.compose.components.search
+package com.andannn.melodify.ui.routes.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +22,7 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
@@ -31,7 +32,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBarInputField(
+internal fun SearchBarInputField(
     state: SearchBarLayoutState,
     enabled: Boolean = true,
     isFullScreen: Boolean = true,
@@ -46,7 +47,7 @@ fun SearchBarInputField(
         placeholder = {
             Box(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = androidx.compose.ui.Alignment.Center,
+                contentAlignment = Alignment.Center,
             ) {
                 Text(text = stringResource(Res.string.search_your_library))
             }
