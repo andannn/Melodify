@@ -4,19 +4,19 @@
  */
 package com.andannn.melodify.core.database
 
-import androidx.room.AutoMigration
-import androidx.room.ConstructedBy
-import androidx.room.Database
-import androidx.room.DeleteColumn
-import androidx.room.DeleteTable
-import androidx.room.RenameColumn
-import androidx.room.RenameTable
-import androidx.room.RoomDatabase
-import androidx.room.RoomDatabaseConstructor
-import androidx.room.TypeConverters
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.migration.Migration
-import androidx.room.util.foreignKeyCheck
+import androidx.room3.AutoMigration
+import androidx.room3.ConstructedBy
+import androidx.room3.Database
+import androidx.room3.DeleteColumn
+import androidx.room3.DeleteTable
+import androidx.room3.RenameColumn
+import androidx.room3.RenameTable
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomDatabaseConstructor
+import androidx.room3.TypeConverters
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.migration.Migration
+import androidx.room3.util.foreignKeyCheck
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import com.andannn.melodify.core.database.dao.LyricDao
@@ -130,13 +130,13 @@ internal fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() =
 
 internal val addInitialCustomTabsCallback =
     object : RoomDatabase.Callback() {
-        override fun onCreate(connection: SQLiteConnection) {
+        override suspend fun onCreate(connection: SQLiteConnection) {
             connection.execSQL("INSERT INTO custom_tab_table (custom_tab_type, sort_order) VALUES ('all_music', 0)")
         }
     }
 
 class AutoMigration4To5Spec : AutoMigrationSpec {
-    override fun onPostMigrate(connection: SQLiteConnection) {
+    override suspend fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL(
             """
             INSERT INTO custom_tab_table (custom_tab_type) VALUES ('all_music')
@@ -146,7 +146,7 @@ class AutoMigration4To5Spec : AutoMigrationSpec {
 }
 
 internal class AutoMigration5To6Spec : AutoMigrationSpec {
-    override fun onPostMigrate(connection: SQLiteConnection) {
+    override suspend fun onPostMigrate(connection: SQLiteConnection) {
         createUpdateTrackCountTrigger(connection)
     }
 
@@ -225,7 +225,7 @@ internal class AutoMigration5To6Spec : AutoMigrationSpec {
 }
 
 internal class AutoMigration7To8Spec : AutoMigrationSpec {
-    override fun onPostMigrate(connection: SQLiteConnection) {
+    override suspend fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL(
             """
             UPDATE custom_tab_table 
@@ -236,7 +236,7 @@ internal class AutoMigration7To8Spec : AutoMigrationSpec {
 }
 
 internal class AutoMigration11To12Spec : AutoMigrationSpec {
-    override fun onPostMigrate(connection: SQLiteConnection) {
+    override suspend fun onPostMigrate(connection: SQLiteConnection) {
         // Set is_favorite_playlist column to true for favorite play list.
         connection.execSQL(
             """
@@ -256,7 +256,7 @@ internal class AutoMigration11To12Spec : AutoMigrationSpec {
 }
 
 internal class AutoMigration14To15Spec : AutoMigrationSpec {
-    override fun onPostMigrate(connection: SQLiteConnection) {
+    override suspend fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL(
             "DROP TRIGGER IF EXISTS delete_invalid_albums_artists_genres",
         )
@@ -264,7 +264,7 @@ internal class AutoMigration14To15Spec : AutoMigrationSpec {
 }
 
 internal class AutoMigration15To16Spec : AutoMigrationSpec {
-    override fun onPostMigrate(connection: SQLiteConnection) {
+    override suspend fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL(
             """
             UPDATE library_album_table
@@ -287,7 +287,7 @@ internal class AutoMigration15To16Spec : AutoMigrationSpec {
 }
 
 internal class AutoMigration16To17Spec : AutoMigrationSpec {
-    override fun onPostMigrate(connection: SQLiteConnection) {
+    override suspend fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL(
             "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_library_fts_artist_table_BEFORE_UPDATE BEFORE UPDATE ON `library_artist_table` BEGIN DELETE FROM `library_fts_artist_table` WHERE `docid`=OLD.`rowid`; END",
         )
@@ -319,7 +319,7 @@ internal class AutoMigration16To17Spec : AutoMigrationSpec {
 }
 
 internal object Migration17To18Spec : Migration(17, 18) {
-    override fun migrate(connection: SQLiteConnection) {
+    override suspend fun migrate(connection: SQLiteConnection) {
         connection.execSQL("DROP TABLE `lyric_with_audio_cross_ref_table`")
 
         connection.execSQL(
@@ -342,7 +342,6 @@ internal object Migration17To18Spec : Migration(17, 18) {
         )
         connection.execSQL("DROP TABLE `lyric_table`")
         connection.execSQL("ALTER TABLE `_new_lyric_table` RENAME TO `lyric_table`")
-        foreignKeyCheck(connection, "lyric_table")
     }
 }
 
@@ -352,15 +351,23 @@ internal object Migration17To18Spec : Migration(17, 18) {
 @RenameTable(fromTableName = "video_tab_setting_table", toTableName = "custom_tab_setting_table")
 internal class AutoMigration19To20Spec : AutoMigrationSpec
 
-@RenameColumn(tableName = "custom_tab_setting_table", fromColumnName = "custom_tab_foreign_key", toColumnName = "custom_tab_id")
-@RenameColumn(tableName = "custom_tab_setting_table", fromColumnName = "is_show_progress", toColumnName = "is_show_video_progress")
+@RenameColumn(
+    tableName = "custom_tab_setting_table",
+    fromColumnName = "custom_tab_foreign_key",
+    toColumnName = "custom_tab_id",
+)
+@RenameColumn(
+    tableName = "custom_tab_setting_table",
+    fromColumnName = "is_show_progress",
+    toColumnName = "is_show_video_progress",
+)
 @RenameColumn(tableName = "sort_rule_table", fromColumnName = "custom_tab_foreign_key", toColumnName = "custom_tab_id")
 @DeleteColumn(tableName = "sort_rule_table", columnName = "show_track_num")
 @DeleteColumn(tableName = "sort_rule_table", columnName = "is_preset")
 internal class AutoMigration20To21Spec : AutoMigrationSpec
 
 internal class AutoMigration21To22Spec : AutoMigrationSpec {
-    override fun onPostMigrate(connection: SQLiteConnection) {
+    override suspend fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL("INSERT INTO `play_list_fts_table`(`play_list_fts_table`) VALUES('rebuild')")
     }
 }
@@ -369,7 +376,7 @@ internal class AutoMigration21To22Spec : AutoMigrationSpec {
 @DeleteColumn(tableName = "library_album_table", columnName = "album_track_count")
 @DeleteColumn(tableName = "library_artist_table", columnName = "artist_track_count")
 internal class AutoMigration22To23Spec : AutoMigrationSpec {
-    override fun onPostMigrate(connection: SQLiteConnection) {
+    override suspend fun onPostMigrate(connection: SQLiteConnection) {
         connection.execSQL("DROP TRIGGER IF EXISTS update_artist_song_count_on_insert")
         connection.execSQL("DROP TRIGGER IF EXISTS update_artist_song_count_on_delete")
         connection.execSQL("DROP TRIGGER IF EXISTS update_album_song_count_on_insert")

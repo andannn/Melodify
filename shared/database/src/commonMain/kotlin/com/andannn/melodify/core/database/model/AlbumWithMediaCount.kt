@@ -4,8 +4,8 @@
  */
 package com.andannn.melodify.core.database.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
+import androidx.room3.ColumnInfo
+import androidx.room3.Embedded
 import com.andannn.melodify.core.database.entity.AlbumEntity
 
 data class AlbumWithMediaCount(

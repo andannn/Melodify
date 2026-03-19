@@ -4,16 +4,16 @@
  */
 package com.andannn.melodify.core.database.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.ColumnInfo
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 
 @Entity(
     tableName = "library_media_table",
     indices = [
-        androidx.room.Index(value = ["media_album_id"]),
-        androidx.room.Index(value = ["media_artist_id"]),
-        androidx.room.Index(value = ["media_genre_id"]),
+        androidx.room3.Index(value = ["media_album_id"]),
+        androidx.room3.Index(value = ["media_artist_id"]),
+        androidx.room3.Index(value = ["media_genre_id"]),
     ],
 )
 data class AudioEntity(

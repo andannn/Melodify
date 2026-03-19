@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.konan.target.Family
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     id("kmp.ext")
-    alias(libs.plugins.room)
+    alias(libs.plugins.room3)
     alias(libs.plugins.ksp)
 }
 
@@ -18,7 +18,7 @@ kmpExt {
     withIOSTarget()
 }
 
-room {
+room3 {
     schemaDirectory("$projectDir/schemas")
 }
 
@@ -32,9 +32,9 @@ kotlin {
         commonMain.dependencies {
             api(libs.androidx.sqlite.api)
             implementation(project(":shared:platform"))
-            implementation(libs.room.runtime)
+            implementation(libs.room3.runtime)
+            implementation(libs.room3.paging)
             implementation(libs.okio)
-            implementation(libs.room.paging)
         }
 
         if (project.isConfigIOS()) {
@@ -48,11 +48,11 @@ kotlin {
         }
 
         getByName("androidDeviceTest").dependencies {
-            implementation(libs.room.runtime)
+            implementation(libs.room3.runtime)
         }
 
         commonTest.dependencies {
-            implementation(libs.androidx.room.testing)
+            implementation(libs.room3.testing)
             implementation(libs.okio)
         }
     }
@@ -87,10 +87,10 @@ tasks.withType<KotlinNativeLink>().configureEach {
 }
 
 dependencies {
-    add("kspAndroid", libs.room.compiler)
-    add("kspJvm", libs.room.compiler)
+    add("kspAndroid", libs.room3.compiler)
+    add("kspJvm", libs.room3.compiler)
     if (project.isConfigIOS()) {
-        add("kspIosSimulatorArm64", libs.room.compiler)
-        add("kspIosArm64", libs.room.compiler)
+        add("kspIosSimulatorArm64", libs.room3.compiler)
+        add("kspIosArm64", libs.room3.compiler)
     }
 }

@@ -23,9 +23,18 @@ android {
         versionCode = 63
         versionName = "1.2.15"
 
-        compileSdk = libs.versions.android.compileSdk.get().toString().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toString().toInt()
-        minSdk = libs.versions.android.minSdk.get().toString().toInt()
+        compileSdk =
+            libs.versions.android.compileSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.android.targetSdk
+                .get()
+                .toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         signingConfig = signingConfigs.getByName("debug")

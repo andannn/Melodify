@@ -4,7 +4,7 @@
  */
 package com.andannn.melodify.core.database.helper.paging
 
-import androidx.room.RoomRawQuery
+import androidx.room3.RoomRawQuery
 import com.andannn.melodify.core.database.helper.paging.MediaWheres.Companion.buildMethod
 
 data class Where(

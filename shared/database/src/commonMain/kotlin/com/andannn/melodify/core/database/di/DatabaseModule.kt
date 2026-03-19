@@ -4,7 +4,7 @@
  */
 package com.andannn.melodify.core.database.di
 
-import androidx.room.RoomDatabase
+import androidx.room3.RoomDatabase
 import com.andannn.melodify.core.database.MelodifyDataBase
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao

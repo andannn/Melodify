@@ -5,7 +5,7 @@
 package com.andannn.melodify.core.database.helper.paging
 
 import androidx.paging.PagingSource
-import androidx.room.RoomRawQuery
+import androidx.room3.RoomRawQuery
 import com.andannn.melodify.core.database.dao.internal.PlayListRawQueryDao
 import com.andannn.melodify.core.database.model.AudioVideoMergedResult
 import kotlinx.coroutines.flow.Flow
