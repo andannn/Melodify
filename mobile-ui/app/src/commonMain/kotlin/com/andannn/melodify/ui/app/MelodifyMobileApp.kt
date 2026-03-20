@@ -10,7 +10,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -27,6 +26,7 @@ import com.andannn.melodify.ui.player.rememberPlayerProviderNavEntryDecorator
 import com.andannn.melodify.ui.routes.home.homeEntryBuilder
 import com.andannn.melodify.ui.routes.library.libraryEntryBuilder
 import com.andannn.melodify.ui.routes.tag.management.tabManagementEntryBuilder
+import kotlin.collections.listOf
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -58,7 +58,11 @@ fun MelodifyMobileApp(modifier: Modifier = Modifier) {
         NavDisplay(
             modifier = modifier,
             backStack = backStack,
-            sceneStrategy = DialogSceneStrategy<NavKey>() then SinglePaneSceneStrategy(),
+            sceneStrategies =
+                listOf(
+                    DialogSceneStrategy(),
+                    SinglePaneSceneStrategy(),
+                ),
             entryDecorators =
                 listOf(
                     rememberSaveableStateHolderNavEntryDecorator(),

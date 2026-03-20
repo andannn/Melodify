@@ -4,14 +4,14 @@
  */
 package com.andannn.melodify.core.database.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.ColumnInfo
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 
 @Entity(
     tableName = "library_video_table",
     indices = [
-        androidx.room.Index(value = ["video_bucket_id"]),
+        androidx.room3.Index(value = ["video_bucket_id"]),
     ],
 )
 data class VideoEntity constructor(

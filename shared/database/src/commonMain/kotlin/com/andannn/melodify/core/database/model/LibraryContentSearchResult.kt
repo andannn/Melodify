@@ -4,7 +4,7 @@
  */
 package com.andannn.melodify.core.database.model
 
-import androidx.room.ColumnInfo
+import androidx.room3.ColumnInfo
 
 data class LibraryContentSearchResult(
     @ColumnInfo(name = "id")

@@ -4,9 +4,9 @@
  */
 package com.andannn.melodify.core.database
 
-import androidx.room.RoomDatabase
-import androidx.room.execSQL
-import androidx.room.useReaderConnection
+import androidx.room3.RoomDatabase
+import androidx.room3.executeSQL
+import androidx.room3.useReaderConnection
 import com.andannn.melodify.core.database.dao.LyricDao
 import com.andannn.melodify.core.database.dao.MediaLibraryDao
 import com.andannn.melodify.core.database.dao.PlayListDao
@@ -1576,7 +1576,7 @@ private suspend fun MelodifyDataBase.verifyFtsTableSync(
             assertEquals(2, stmt.getLong(0))
         }
 
-        it.execSQL("UPDATE $tableName SET $matchContentName = 'title changed' WHERE rowid = 1")
+        it.executeSQL("UPDATE $tableName SET $matchContentName = 'title changed' WHERE rowid = 1")
 
         // Verify update sync
         it.usePrepared("SELECT rowid, * FROM $ftsTableName") { stmt ->
@@ -1585,7 +1585,7 @@ private suspend fun MelodifyDataBase.verifyFtsTableSync(
             assertEquals("title changed", stmt.getText(1))
         }
 
-        it.execSQL("DELETE FROM $tableName WHERE rowid = 1")
+        it.executeSQL("DELETE FROM $tableName WHERE rowid = 1")
 
         // Verify delete sync
         it.usePrepared("SELECT rowid, * FROM $ftsTableName") { stmt ->

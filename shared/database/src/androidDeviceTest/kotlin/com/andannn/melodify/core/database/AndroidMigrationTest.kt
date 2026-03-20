@@ -4,7 +4,7 @@
  */
 package com.andannn.melodify.core.database
 
-import androidx.room.testing.MigrationTestHelper
+import androidx.room3.testing.MigrationTestHelper
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry

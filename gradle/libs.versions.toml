@@ -12,10 +12,10 @@ androidx-palette = "1.0.0"
 androidxCore = "1.18.0"
 androidxCoreSplashscreen = "1.2.0"
 androidxActivity = "1.13.0"
-androidGradlePlugin = "9.2.0-alpha01"
+androidGradlePlugin = "9.2.0-alpha04"
 kotlinxCoroutines = "1.10.2"
 coil3 = "3.4.0"
-androidxRoom = "2.8.4"
+androidxRoom3 = "3.0.0-alpha01"
 androidxDatastore = "1.2.1"
 okio = "3.17.0"
 androidxMedia3 = "1.9.3"
@@ -36,7 +36,7 @@ paparazzi = "1.3.5"
 workRuntimeKtx = "2.11.1"
 ktlint = "12.2.0"
 spotless = "8.3.0"
-pagingCommonVersion = "3.4.2"
+pagingCommonVersion = "3.5.0-alpha01"
 lifecycle = "2.10.0"
 materialIconsExtended = "1.7.3"
 baselineprofile = "1.4.1"
@@ -76,9 +76,10 @@ coil3-video = { group = "io.coil-kt.coil3", name = "coil-video", version.ref = "
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 material-color-utilities-android = { module = "com.materialkolor:material-color-utilities-android", version.ref = "materialColorUtilitiesAndroid" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidxRoom" }
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidxRoom" }
-androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "androidxRoom" }
+room3-runtime = { group = "androidx.room3", name = "room3-runtime", version.ref = "androidxRoom3" }
+room3-compiler = { group = "androidx.room3", name = "room3-compiler", version.ref = "androidxRoom3" }
+room3-paging = { group = "androidx.room3", name = "room3-paging", version.ref = "androidxRoom3" }
+room3-testing = { group = "androidx.room3", name = "room3-testing", version.ref = "androidxRoom3" }
 datastore = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDatastore" }
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDatastore" }
 androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "androidxMedia3" }
@@ -113,7 +114,6 @@ androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.r
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "pagingCommonVersion" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCommonVersion" }
-room-paging = { group = "androidx.room", name = "room-paging", version.ref = "androidxRoom" }
 navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Runtime" }
 navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "nav3Ui" }
 navigationevent-compose = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version.ref = "navigationevent" }
@@ -158,6 +158,6 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrains-comp
 google-service = { id = "com.google.gms.google-services", version.ref = "googleService" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-room = { id = "androidx.room", version.ref = "androidxRoom" }
+room3 = { id = "androidx.room3", version.ref = "androidxRoom3" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

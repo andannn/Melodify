@@ -4,8 +4,8 @@
  */
 package com.andannn.melodify.core.database.helper.sync
 
-import androidx.room.immediateTransaction
-import androidx.room.useWriterConnection
+import androidx.room3.immediateTransaction
+import androidx.room3.useWriterConnection
 import com.andannn.melodify.core.database.MediaType
 import com.andannn.melodify.core.database.MelodifyDataBase
 import com.andannn.melodify.core.database.dao.MediaLibraryDao

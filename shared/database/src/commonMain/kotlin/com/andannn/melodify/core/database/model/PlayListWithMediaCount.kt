@@ -4,7 +4,7 @@
  */
 package com.andannn.melodify.core.database.model
 
-import androidx.room.Embedded
+import androidx.room3.Embedded
 import com.andannn.melodify.core.database.entity.PlayListEntity
 
 data class PlayListWithMediaCount(
