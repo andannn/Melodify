@@ -42,7 +42,7 @@ internal fun SearchBarInputField(
         textFieldState = state.textFieldState,
         searchBarState = state.searchBarState,
         onSearch = {
-            state.eventSink.invoke(SearchBarUiEvent.OnConfirmSearch(it))
+            state.eventSink.invoke(HomeLayoutEvent.OnConfirmSearch(it))
         },
         placeholder = {
             Box(
@@ -57,7 +57,7 @@ internal fun SearchBarInputField(
                 SearchLeadingIcon(
                     searchBarState = state.searchBarState,
                     onBackClick = {
-                        state.eventSink.invoke(SearchBarUiEvent.OnBackFullScreen)
+                        state.eventSink.invoke(HomeLayoutEvent.OnBackFullScreen)
                     },
                 )
             }

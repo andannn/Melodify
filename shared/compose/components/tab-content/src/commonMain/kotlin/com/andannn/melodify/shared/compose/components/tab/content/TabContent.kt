@@ -53,6 +53,9 @@ import kotlinx.coroutines.launch
 fun TabContent(
     state: TabContentState,
     modifier: Modifier = Modifier,
+    isInSelectingMode: Boolean = false,
+    selectedMediaItemSet: Set<MediaItemModel> = emptySet(),
+    onClickMediaItemWhenSelecting: (MediaItemModel) -> Unit = {},
 ) {
     LazyListContent(
         selectedTab = state.selectedTab,
@@ -62,6 +65,8 @@ fun TabContent(
             state.pagingItems[it]
         },
         tabSortRule = state.tabSortRule,
+        selectedMediaItemSet = selectedMediaItemSet,
+        isInSelectingMode = isInSelectingMode,
         modifier = modifier.fillMaxSize(),
         onMediaItemClick = {
             state.eventSink.invoke(TabContentEvent.OnPlayMedia(it))
@@ -80,6 +85,7 @@ fun TabContent(
                 },
             )
         },
+        onClickMediaItemWhenSelecting = onClickMediaItemWhenSelecting,
     )
 }
 
@@ -91,9 +97,12 @@ private fun LazyListContent(
     audioTrackStyle: AudioTrackStyle?,
     itemSnapshotList: List<MediaItemModel?>,
     modifier: Modifier = Modifier,
+    isInSelectingMode: Boolean = false,
+    selectedMediaItemSet: Set<MediaItemModel> = emptySet(),
     onMediaItemClick: (MediaItemModel) -> Unit = {},
     onShowMediaItemOption: (MediaItemModel) -> Unit = {},
     onTriggerReadOfIndex: (Int) -> Unit = {},
+    onClickMediaItemWhenSelecting: (MediaItemModel) -> Unit = {},
     onBuildGroupHeader: @Composable (
         groupKey: GroupKey,
         parentHeaderGroupKey: GroupKey?,
@@ -136,7 +145,7 @@ private fun LazyListContent(
 
                     itemsIndexed(
                         items = items,
-                        key = { index, item ->
+                        key = { _, item ->
                             item.hashCode()
                         },
                     ) { index, item ->
@@ -162,6 +171,7 @@ private fun LazyListContent(
                                     isLast = index == items.lastIndex,
                                 )
                             }
+                            val isSelected = selectedMediaItemSet.contains(item)
                             when (item) {
                                 is AudioItemModel -> {
                                     ListTileItemView(
@@ -170,14 +180,21 @@ private fun LazyListContent(
                                                 top = 4.dp,
                                                 bottom = 4.dp,
                                             ),
+                                        isSelected = isSelected,
                                         isActive = false,
                                         thumbnailSourceUri = item.artWorkUri,
                                         title = item.name,
                                         trackNum = item.cdTrackNumber.takeIf { audioTrackStyle == AudioTrackStyle.TRACK_NUMBER },
                                         onItemClick = {
-                                            onMediaItemClick(item)
+                                            if (isInSelectingMode) {
+                                                onClickMediaItemWhenSelecting(item)
+                                            } else {
+                                                onMediaItemClick(item)
+                                            }
                                         },
-                                        onLongPress = {},
+                                        onLongPress = {
+                                            onClickMediaItemWhenSelecting(item)
+                                        },
                                         onOptionButtonClick = {
                                             onShowMediaItemOption(item)
                                         },
@@ -188,10 +205,17 @@ private fun LazyListContent(
                                     VideoListTileItemView(
                                         item = item,
                                         tab = selectedTab,
+                                        isSelected = isSelected,
                                         onItemClick = {
-                                            onMediaItemClick(item)
+                                            if (isInSelectingMode) {
+                                                onClickMediaItemWhenSelecting(item)
+                                            } else {
+                                                onMediaItemClick(item)
+                                            }
                                         },
-                                        onLongPress = {},
+                                        onLongPress = {
+                                            onClickMediaItemWhenSelecting(item)
+                                        },
                                         onOptionButtonClick = {
                                             onShowMediaItemOption(item)
                                         },

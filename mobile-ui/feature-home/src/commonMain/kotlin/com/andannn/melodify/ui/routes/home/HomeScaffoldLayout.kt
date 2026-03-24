@@ -37,11 +37,14 @@ internal fun HomeScaffoldLayout(
     enabled: Boolean = true,
     onLibraryButtonClick: () -> Unit = {},
     onMenuSelected: (MenuOption) -> Unit = {},
+    onExitSelecting: () -> Unit = {},
+    onMultiSelectionOptionClick: () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
     val textFieldState = homeLayoutState.textFieldState
     val searchBarState = homeLayoutState.searchBarState
     val homeState = homeLayoutState.homeState
+    val selectedMediaSet = homeLayoutState.selectedMediaSet
     val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
 
     val inputField = @Composable {
@@ -58,7 +61,9 @@ internal fun HomeScaffoldLayout(
         topBar = {
             if (homeState is HomeState.MultiSelecting) {
                 MultiSelectingAppBar(
-                    selectedCount = homeState.selectedMedia.size,
+                    selectedCount = selectedMediaSet.size,
+                    onExitSelecting = onExitSelecting,
+                    onOptionClick = onMultiSelectionOptionClick,
                 )
             } else {
                 AppBarWithSearch(
@@ -73,7 +78,7 @@ internal fun HomeScaffoldLayout(
                     navigationIcon = {
                         if (homeState is HomeState.Search) {
                             NavigationBackButton(onBack = {
-                                homeLayoutState.eventSink.invoke(SearchBarUiEvent.OnExitSearch)
+                                homeLayoutState.eventSink.invoke(HomeLayoutEvent.OnExitSearch)
                             })
                         } else {
                             NavigateLibraryIcon(onClick = onLibraryButtonClick)
@@ -94,14 +99,14 @@ internal fun HomeScaffoldLayout(
                             query = textFieldState,
                             onConfirmSearch = {
                                 homeLayoutState.eventSink.invoke(
-                                    SearchBarUiEvent.OnConfirmSearch(
+                                    HomeLayoutEvent.OnConfirmSearch(
                                         it,
                                     ),
                                 )
                             },
                             onResultItemClick = {
                                 homeLayoutState.eventSink.invoke(
-                                    SearchBarUiEvent.OnSuggestionItemClick(
+                                    HomeLayoutEvent.OnSuggestionItemClick(
                                         it,
                                     ),
                                 )
