@@ -16,16 +16,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import com.andannn.melodify.domain.Repository
 import com.andannn.melodify.domain.model.MediaItemModel
-import com.andannn.melodify.domain.model.browsable
 import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.LocalRepository
-import com.andannn.melodify.shared.compose.common.NavigationRequest
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
-import com.andannn.melodify.shared.compose.common.model.asLibraryDataSource
 import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
-import com.andannn.melodify.shared.compose.usecase.playMediaItems
 import com.andannn.melodify.shared.compose.usecase.playOrGoToBrowsable
 import io.github.aakira.napier.Napier
 import io.github.andannn.popup.PopupHostState
@@ -34,7 +30,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "SearchWithContent"
 
 @Composable
-internal fun retainSearchBarPresenter(
+internal fun retainHomeLayoutPresenter(
     navigationRequestEventSink: NavigationRequestEventSink = LocalNavigationRequestEventSink.current,
     popupHostState: PopupHostState = LocalPopupHostState.current,
     repository: Repository = LocalRepository.current,
@@ -43,7 +39,7 @@ internal fun retainSearchBarPresenter(
     popupHostState,
     repository,
 ) {
-    SearchBarPresenter(
+    HomeLayoutPresenter(
         navigationRequestEventSink,
         popupHostState,
         repository,
@@ -51,24 +47,29 @@ internal fun retainSearchBarPresenter(
 }
 
 @Stable
-internal data class SearchBarLayoutState
+internal data class HomeLayoutState
     @OptIn(ExperimentalMaterial3Api::class)
     constructor(
-        val currentContent: ContentState,
+        val homeState: HomeState,
         val textFieldState: TextFieldState,
         val searchBarState: androidx.compose.material3.SearchBarState,
         val eventSink: (SearchBarUiEvent) -> Unit = {},
     )
 
 @Stable
-internal sealed interface ContentState {
+internal sealed interface HomeState {
     @Stable
     data class Search(
         val query: String,
-    ) : ContentState
+    ) : HomeState
 
     @Stable
-    data object Library : ContentState
+    data object Library : HomeState
+
+    @Stable
+    data class MultiSelecting(
+        val selectedMedia: List<MediaItemModel>,
+    ) : HomeState
 }
 
 internal sealed interface SearchBarUiEvent {
@@ -89,16 +90,16 @@ internal sealed interface SearchBarUiEvent {
     ) : SearchBarUiEvent
 }
 
-internal class SearchBarPresenter(
+internal class HomeLayoutPresenter(
     private val navigationRequestEventSink: NavigationRequestEventSink,
     private val popupHostState: PopupHostState,
     private val repository: Repository,
-) : RetainedPresenter<SearchBarLayoutState>() {
-    private val contentState = mutableStateOf<ContentState>(ContentState.Library)
+) : RetainedPresenter<HomeLayoutState>() {
+    private val homeState = mutableStateOf<HomeState>(HomeState.Library)
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun present(): SearchBarLayoutState {
+    override fun present(): HomeLayoutState {
         val textFieldState = rememberTextFieldState()
         val searchBarState = rememberSearchBarState()
         val animationScope = rememberCoroutineScope()
@@ -111,13 +112,13 @@ internal class SearchBarPresenter(
 
         fun exitSearch() {
             textFieldState.clearText()
-            contentState.value = ContentState.Library
+            homeState.value = HomeState.Library
         }
 
-        return SearchBarLayoutState(
+        return HomeLayoutState(
             textFieldState = textFieldState,
             searchBarState = searchBarState,
-            currentContent = contentState.value,
+            homeState = homeState.value,
         ) { event ->
             context(popupHostState, repository, navigationRequestEventSink) {
                 when (event) {
@@ -144,7 +145,7 @@ internal class SearchBarPresenter(
                             searchBarState.animateToCollapsed()
                         }
                         textFieldState.setTextAndPlaceCursorAtEnd(text = event.text)
-                        contentState.value = ContentState.Search(event.text)
+                        homeState.value = HomeState.Search(event.text)
 
                         retainedScope.launch {
                             addToSearchHistory(event.text)

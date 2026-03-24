@@ -39,27 +39,27 @@ import kotlinx.coroutines.launch
 internal fun HomeUiScreen(
     navigator: Navigator,
     modifier: Modifier = Modifier,
-    searchBarPresenter: Presenter<SearchBarLayoutState> = retainSearchBarPresenter(),
+    presenter: Presenter<HomeLayoutState> = retainHomeLayoutPresenter(),
     popupHostState: PopupHostState = LocalPopupHostState.current,
 ) {
     val tabUiState = retainTabUiPresenter().present()
     val tabContentState =
         retainTabContentPresenter(selectedTab = tabUiState.selectedTab).present()
-    val searchBarState = searchBarPresenter.present()
+    val layoutState = presenter.present()
 
     val scope = rememberCoroutineScope()
     val isPopupShowing = popupHostState.currentPopup != null
     NavigationEventHandler(
         state = rememberNavigationEventState(NavigationEventInfo.None),
-        isBackEnabled = searchBarState.currentContent is ContentState.Search,
+        isBackEnabled = layoutState.homeState is HomeState.Search,
     ) {
-        searchBarState.eventSink.invoke(SearchBarUiEvent.OnExitSearch)
+        layoutState.eventSink.invoke(SearchBarUiEvent.OnExitSearch)
     }
 
-    SearchScaffoldLayout(
+    HomeScaffoldLayout(
         modifier = modifier,
         enabled = !isPopupShowing,
-        searchBarLayoutState = searchBarState,
+        homeLayoutState = layoutState,
         onLibraryButtonClick = {
             navigator.navigateTo(Screen.Library)
         },
@@ -76,14 +76,14 @@ internal fun HomeUiScreen(
         },
     ) {
         AnimatedContent(
-            searchBarState.currentContent,
+            layoutState.homeState,
             transitionSpec = {
                 fadeIn(animationSpec = tween(220, delayMillis = 90))
                     .togetherWith(fadeOut(animationSpec = tween(90)))
             },
         ) { state ->
             when (state) {
-                is ContentState.Library -> {
+                is HomeState.MultiSelecting, HomeState.Library -> {
                     Column {
                         TabUi(
                             state = tabUiState,
@@ -96,11 +96,11 @@ internal fun HomeUiScreen(
                     }
                 }
 
-                is ContentState.Search -> {
+                is HomeState.Search -> {
                     SearchResultPage(
                         query = state.query,
                         onResultItemClick = {
-                            searchBarState.eventSink.invoke(
+                            layoutState.eventSink.invoke(
                                 SearchBarUiEvent.OnSearchResultItemClick(
                                     it,
                                 ),

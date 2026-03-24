@@ -177,6 +177,7 @@ private fun LazyListContent(
                                         onItemClick = {
                                             onMediaItemClick(item)
                                         },
+                                        onLongPress = {},
                                         onOptionButtonClick = {
                                             onShowMediaItemOption(item)
                                         },
@@ -190,6 +191,7 @@ private fun LazyListContent(
                                         onItemClick = {
                                             onMediaItemClick(item)
                                         },
+                                        onLongPress = {},
                                         onOptionButtonClick = {
                                             onShowMediaItemOption(item)
                                         },

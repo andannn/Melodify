@@ -31,23 +31,22 @@ import com.andannn.melodify.shared.compose.popup.snackbar.rememberAndSetupSnackB
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SearchScaffoldLayout(
+internal fun HomeScaffoldLayout(
     modifier: Modifier = Modifier,
-    searchBarLayoutState: SearchBarLayoutState,
+    homeLayoutState: HomeLayoutState,
     enabled: Boolean = true,
     onLibraryButtonClick: () -> Unit = {},
     onMenuSelected: (MenuOption) -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
-    val textFieldState = searchBarLayoutState.textFieldState
-    val searchBarState = searchBarLayoutState.searchBarState
-    val homeContent = searchBarLayoutState.currentContent
+    val textFieldState = homeLayoutState.textFieldState
+    val searchBarState = homeLayoutState.searchBarState
+    val homeState = homeLayoutState.homeState
     val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
 
-    val inputField =
-        @Composable {
-            SearchBarInputField(searchBarLayoutState, enabled = enabled)
-        }
+    val inputField = @Composable {
+        SearchBarInputField(homeLayoutState, enabled = enabled)
+    }
     Scaffold(
         modifier = modifier,
         snackbarHost = {
@@ -57,62 +56,64 @@ internal fun SearchScaffoldLayout(
             )
         },
         topBar = {
-            AppBarWithSearch(
-                modifier = Modifier.statusBarsPadding(),
-                scrollBehavior = scrollBehavior,
-                colors =
-                    SearchBarDefaults.appBarWithSearchColors(
-                        scrolledAppBarContainerColor = MaterialTheme.colorScheme.surface,
-                    ),
-                state = searchBarState,
-                inputField = inputField,
-                navigationIcon = {
-                    if (homeContent is ContentState.Search) {
-                        NavigationBackButton(onBack = {
-                            searchBarLayoutState.eventSink.invoke(SearchBarUiEvent.OnExitSearch)
-                        })
-                    } else {
-                        NavigateLibraryIcon(onClick = onLibraryButtonClick)
-                    }
-                },
-                actions = {
-                    DropDownMenuActionButton(
-                        onSelectItem = onMenuSelected,
-                    )
-                },
-            )
-            if (enabled) {
-                ExpandedFullScreenSearchBar(
+            if (homeState is HomeState.MultiSelecting) {
+                MultiSelectingAppBar(
+                    selectedCount = homeState.selectedMedia.size,
+                )
+            } else {
+                AppBarWithSearch(
+                    modifier = Modifier.statusBarsPadding(),
+                    scrollBehavior = scrollBehavior,
+                    colors =
+                        SearchBarDefaults.appBarWithSearchColors(
+                            scrolledAppBarContainerColor = MaterialTheme.colorScheme.surface,
+                        ),
                     state = searchBarState,
                     inputField = inputField,
-                ) {
-                    Suggestions(
-                        query = textFieldState,
-                        onConfirmSearch = {
-                            searchBarLayoutState.eventSink.invoke(
-                                SearchBarUiEvent.OnConfirmSearch(
-                                    it,
-                                ),
-                            )
-                        },
-                        onResultItemClick = {
-                            searchBarLayoutState.eventSink.invoke(
-                                SearchBarUiEvent.OnSuggestionItemClick(
-                                    it,
-                                ),
-                            )
-                        },
-                    )
+                    navigationIcon = {
+                        if (homeState is HomeState.Search) {
+                            NavigationBackButton(onBack = {
+                                homeLayoutState.eventSink.invoke(SearchBarUiEvent.OnExitSearch)
+                            })
+                        } else {
+                            NavigateLibraryIcon(onClick = onLibraryButtonClick)
+                        }
+                    },
+                    actions = {
+                        DropDownMenuActionButton(
+                            onSelectItem = onMenuSelected,
+                        )
+                    },
+                )
+                if (enabled) {
+                    ExpandedFullScreenSearchBar(
+                        state = searchBarState,
+                        inputField = inputField,
+                    ) {
+                        Suggestions(
+                            query = textFieldState,
+                            onConfirmSearch = {
+                                homeLayoutState.eventSink.invoke(
+                                    SearchBarUiEvent.OnConfirmSearch(
+                                        it,
+                                    ),
+                                )
+                            },
+                            onResultItemClick = {
+                                homeLayoutState.eventSink.invoke(
+                                    SearchBarUiEvent.OnSuggestionItemClick(
+                                        it,
+                                    ),
+                                )
+                            },
+                        )
+                    }
                 }
             }
         },
     ) { padding ->
         Box(
-            modifier =
-                Modifier
-                    .padding(padding)
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-                    .fillMaxSize(),
+            modifier = Modifier.padding(padding).nestedScroll(scrollBehavior.nestedScrollConnection).fillMaxSize(),
         ) {
             content()
         }

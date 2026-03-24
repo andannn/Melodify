@@ -33,7 +33,7 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SearchBarInputField(
-    state: SearchBarLayoutState,
+    state: HomeLayoutState,
     enabled: Boolean = true,
     isFullScreen: Boolean = true,
 ) {
