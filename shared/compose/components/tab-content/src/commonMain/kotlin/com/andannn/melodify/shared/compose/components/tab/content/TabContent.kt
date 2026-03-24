@@ -170,7 +170,6 @@ private fun LazyListContent(
                                                 top = 4.dp,
                                                 bottom = 4.dp,
                                             ),
-                                        playable = true,
                                         isActive = false,
                                         thumbnailSourceUri = item.artWorkUri,
                                         title = item.name,

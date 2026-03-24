@@ -5,6 +5,7 @@
 package com.andannn.melodify.shared.compose.common.widgets
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,8 +19,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,13 +33,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import melodify.shared.compose.resource.generated.resources.Res
-import melodify.shared.compose.resource.generated.resources.default_image_icon
-import org.jetbrains.compose.resources.DrawableResource
+import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 
 enum class ActionType {
     NONE,
@@ -47,11 +48,11 @@ enum class ActionType {
 @Composable
 fun ListTileItemView(
     modifier: Modifier = Modifier,
-    playable: Boolean = true,
     paddingValues: PaddingValues = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
     actionType: ActionType = ActionType.OPTION,
     swapIconModifier: Modifier? = null,
     thumbnailSourceUri: String? = null,
+    isSelected: Boolean = false,
     isActive: Boolean = false,
     defaultColor: Color = MaterialTheme.colorScheme.surface,
     title: String = "",
@@ -59,6 +60,7 @@ fun ListTileItemView(
     trackNum: Int? = null,
     onItemClick: (() -> Unit)? = null,
     onOptionButtonClick: (() -> Unit)? = null,
+    onLongPress: (() -> Unit)? = null,
 ) {
     @Composable
     fun CustomContainer(
@@ -66,32 +68,26 @@ fun ListTileItemView(
         content: @Composable () -> Unit,
     ) {
         if (onItemClick != null) {
+            val combinedClickModifier = Modifier.combinedClickable(onClick = onItemClick, onLongClick = onLongPress)
             Surface(
-                modifier = modifier,
-                onClick = onItemClick,
-                color = if (isActive) MaterialTheme.colorScheme.inversePrimary else defaultColor,
+                modifier = modifier.then(combinedClickModifier),
+                color = if (isActive || isSelected) MaterialTheme.colorScheme.inversePrimary else defaultColor,
                 content = content,
             )
         } else {
             Surface(
                 modifier = modifier,
                 content = content,
-                color = if (isActive) MaterialTheme.colorScheme.inversePrimary else defaultColor,
+                color = if (isActive || isSelected) MaterialTheme.colorScheme.inversePrimary else defaultColor,
             )
         }
     }
 
     CustomContainer(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .alpha(if (playable) 1f else 0.5f),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Row(
-            modifier =
-                Modifier
-                    .padding(paddingValues)
-                    .height(IntrinsicSize.Min),
+            modifier = Modifier.padding(paddingValues).height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (trackNum != null || thumbnailSourceUri != null) {
@@ -111,10 +107,7 @@ fun ListTileItemView(
                         )
                     } else {
                         MediaCoverImageWidget(
-                            modifier =
-                                Modifier
-                                    .size(50.dp)
-                                    .background(MaterialTheme.colorScheme.surfaceDim),
+                            modifier = Modifier.size(50.dp).background(MaterialTheme.colorScheme.surfaceDim),
                             model = thumbnailSourceUri,
                         )
                     }
@@ -144,28 +137,70 @@ fun ListTileItemView(
                 }
             }
 
-            when (actionType) {
-                ActionType.NONE -> {
-                    Spacer(Modifier)
+            if (isSelected) {
+                Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.Center) {
+                    Icon(imageVector = Icons.Filled.CheckCircle, contentDescription = null)
                 }
-
-                ActionType.OPTION -> {
-                    IconButton(
-                        enabled = playable,
-                        onClick = onOptionButtonClick!!,
-                    ) {
-                        Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "menu")
+            } else {
+                when (actionType) {
+                    ActionType.NONE -> {
+                        Spacer(Modifier)
                     }
-                }
 
-                ActionType.SWAP -> {
-                    Icon(
-                        modifier = Modifier.padding(12.dp).then(swapIconModifier!!),
-                        imageVector = Icons.Filled.Menu,
-                        contentDescription = "swap",
-                    )
+                    ActionType.OPTION -> {
+                        IconButton(
+                            onClick = {
+                                onOptionButtonClick?.invoke()
+                            },
+                        ) {
+                            Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "menu")
+                        }
+                    }
+
+                    ActionType.SWAP -> {
+                        Icon(
+                            modifier = Modifier.padding(12.dp).then(swapIconModifier!!),
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "swap",
+                        )
+                    }
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ListTileItemViewPreview() {
+    MelodifyTheme {
+        ListTileItemView(
+            title = "Title",
+            subTitle = "sub Title",
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ListTileItemViewActivePreview() {
+    MelodifyTheme {
+        ListTileItemView(
+            title = "Title",
+            subTitle = "sub Title",
+            isActive = true,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ListTileItemViewSelectedPreview() {
+    MelodifyTheme {
+        ListTileItemView(
+            title = "Title",
+            subTitle = "sub Title",
+            isSelected = true,
+        )
     }
 }
