@@ -4,11 +4,6 @@
  */
 package com.andannn.melodify.ui.routes.home
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -39,27 +34,39 @@ import kotlinx.coroutines.launch
 internal fun HomeUiScreen(
     navigator: Navigator,
     modifier: Modifier = Modifier,
-    searchBarPresenter: Presenter<SearchBarLayoutState> = retainSearchBarPresenter(),
+    presenter: Presenter<HomeLayoutState> = retainHomeLayoutPresenter(),
     popupHostState: PopupHostState = LocalPopupHostState.current,
 ) {
     val tabUiState = retainTabUiPresenter().present()
-    val tabContentState =
-        retainTabContentPresenter(selectedTab = tabUiState.selectedTab).present()
-    val searchBarState = searchBarPresenter.present()
-
+    val tabContentState = retainTabContentPresenter(selectedTab = tabUiState.selectedTab).present()
+    val layoutState = presenter.present()
+    val selectedMediaSet = layoutState.selectedMediaSet
     val scope = rememberCoroutineScope()
     val isPopupShowing = popupHostState.currentPopup != null
+
     NavigationEventHandler(
         state = rememberNavigationEventState(NavigationEventInfo.None),
-        isBackEnabled = searchBarState.currentContent is ContentState.Search,
+        isBackEnabled = layoutState.homeState is HomeState.Search,
     ) {
-        searchBarState.eventSink.invoke(SearchBarUiEvent.OnExitSearch)
+        layoutState.eventSink.invoke(HomeLayoutEvent.OnExitSearch)
+    }
+    NavigationEventHandler(
+        state = rememberNavigationEventState(NavigationEventInfo.None),
+        isBackEnabled = layoutState.homeState is HomeState.MultiSelecting,
+    ) {
+        layoutState.eventSink.invoke(HomeLayoutEvent.OnExitSelecting)
     }
 
-    SearchScaffoldLayout(
+    HomeScaffoldLayout(
         modifier = modifier,
         enabled = !isPopupShowing,
-        searchBarLayoutState = searchBarState,
+        homeLayoutState = layoutState,
+        onExitSelecting = {
+            layoutState.eventSink.invoke(HomeLayoutEvent.OnExitSelecting)
+        },
+        onMultiSelectionOptionClick = {
+            layoutState.eventSink.invoke(HomeLayoutEvent.OnMultiSelectionOptionClick)
+        },
         onLibraryButtonClick = {
             navigator.navigateTo(Screen.Library)
         },
@@ -75,33 +82,26 @@ internal fun HomeUiScreen(
             }
         },
     ) {
-        AnimatedContent(
-            searchBarState.currentContent,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(220, delayMillis = 90))
-                    .togetherWith(fadeOut(animationSpec = tween(90)))
-            },
-        ) { state ->
-            when (state) {
-                is ContentState.Library -> {
-                    Column {
-                        TabUi(
-                            state = tabUiState,
-                            onTabManagementClick = {
-                                navigator.navigateTo(Screen.TabManage)
-                            },
-                        )
+        when (val state = layoutState.homeState) {
+            HomeState.Library,
+            HomeState.MultiSelecting,
+            -> {
+                Column {
+                    TabUi(
+                        state = tabUiState,
+                        onTabManagementClick = {
+                            navigator.navigateTo(Screen.TabManage)
+                        },
+                    )
 
-                        TabContent(tabContentState, modifier = Modifier)
-                    }
-                }
-
-                is ContentState.Search -> {
-                    SearchResultPage(
-                        query = state.query,
-                        onResultItemClick = {
-                            searchBarState.eventSink.invoke(
-                                SearchBarUiEvent.OnSearchResultItemClick(
+                    TabContent(
+                        state = tabContentState,
+                        modifier = Modifier,
+                        isInSelectingMode = state is HomeState.MultiSelecting,
+                        selectedMediaItemSet = selectedMediaSet,
+                        onClickMediaItemWhenSelecting = {
+                            layoutState.eventSink.invoke(
+                                HomeLayoutEvent.OnClickMediaItemWhenSelecting(
                                     it,
                                 ),
                             )
@@ -109,13 +109,24 @@ internal fun HomeUiScreen(
                     )
                 }
             }
+
+            is HomeState.Search -> {
+                SearchResultPage(
+                    query = state.query,
+                    onResultItemClick = {
+                        layoutState.eventSink.invoke(
+                            HomeLayoutEvent.OnSearchResultItemClick(
+                                it,
+                            ),
+                        )
+                    },
+                )
+            }
         }
     }
 
     ResumePointIndicatorContainer(
-        modifier =
-            Modifier
-                .zIndex(1f),
+        modifier = Modifier.zIndex(1f),
     )
 }
 

@@ -28,7 +28,9 @@ internal fun VideoListTileItemView(
     modifier: Modifier = Modifier,
     tab: Tab?,
     item: VideoItemModel,
+    isSelected: Boolean = false,
     onItemClick: (() -> Unit)? = null,
+    onLongPress: (() -> Unit)? = null,
     onOptionButtonClick: (() -> Unit)? = null,
 ) {
     Column(
@@ -40,9 +42,11 @@ internal fun VideoListTileItemView(
                     top = 4.dp,
                     bottom = 4.dp,
                 ),
+            isSelected = isSelected,
             isActive = false,
             thumbnailSourceUri = null,
             title = item.name,
+            onLongPress = onLongPress,
             onItemClick = onItemClick,
             onOptionButtonClick = onOptionButtonClick,
         )
