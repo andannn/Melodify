@@ -42,7 +42,6 @@ internal fun HomeUiScreen(
     val layoutState = presenter.present()
     val selectedMediaSet = layoutState.selectedMediaSet
     val scope = rememberCoroutineScope()
-    val isPopupShowing = popupHostState.currentPopup != null
 
     NavigationEventHandler(
         state = rememberNavigationEventState(NavigationEventInfo.None),
@@ -59,7 +58,6 @@ internal fun HomeUiScreen(
 
     HomeScaffoldLayout(
         modifier = modifier,
-        enabled = !isPopupShowing,
         homeLayoutState = layoutState,
         onExitSelecting = {
             layoutState.eventSink.invoke(HomeLayoutEvent.OnExitSelecting)
