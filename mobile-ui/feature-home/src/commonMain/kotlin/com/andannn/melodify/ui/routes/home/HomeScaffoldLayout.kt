@@ -90,29 +90,27 @@ internal fun HomeScaffoldLayout(
                         )
                     },
                 )
-                if (enabled) {
-                    ExpandedFullScreenSearchBar(
-                        state = searchBarState,
-                        inputField = inputField,
-                    ) {
-                        Suggestions(
-                            query = textFieldState,
-                            onConfirmSearch = {
-                                homeLayoutState.eventSink.invoke(
-                                    HomeLayoutEvent.OnConfirmSearch(
-                                        it,
-                                    ),
-                                )
-                            },
-                            onResultItemClick = {
-                                homeLayoutState.eventSink.invoke(
-                                    HomeLayoutEvent.OnSuggestionItemClick(
-                                        it,
-                                    ),
-                                )
-                            },
-                        )
-                    }
+                ExpandedFullScreenSearchBar(
+                    state = searchBarState,
+                    inputField = inputField,
+                ) {
+                    Suggestions(
+                        query = textFieldState,
+                        onConfirmSearch = {
+                            homeLayoutState.eventSink.invoke(
+                                HomeLayoutEvent.OnConfirmSearch(
+                                    it,
+                                ),
+                            )
+                        },
+                        onResultItemClick = {
+                            homeLayoutState.eventSink.invoke(
+                                HomeLayoutEvent.OnSuggestionItemClick(
+                                    it,
+                                ),
+                            )
+                        },
+                    )
                 }
             }
         },
