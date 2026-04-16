@@ -15,7 +15,6 @@ kmpExt {
         includeDeviceTestToCommonTest = true
     }
     withDesktopTarget()
-    withIOSTarget()
 }
 
 room3 {
@@ -35,12 +34,6 @@ kotlin {
             implementation(libs.room3.runtime)
             implementation(libs.room3.paging)
             implementation(libs.okio)
-        }
-
-        if (project.isConfigIOS()) {
-            iosMain.dependencies {
-                implementation(libs.androidx.sqlite.bundled)
-            }
         }
 
         jvmMain.dependencies {
@@ -89,8 +82,4 @@ tasks.withType<KotlinNativeLink>().configureEach {
 dependencies {
     add("kspAndroid", libs.room3.compiler)
     add("kspJvm", libs.room3.compiler)
-    if (project.isConfigIOS()) {
-        add("kspIosSimulatorArm64", libs.room3.compiler)
-        add("kspIosArm64", libs.room3.compiler)
-    }
 }

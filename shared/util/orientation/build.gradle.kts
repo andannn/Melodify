@@ -11,5 +11,4 @@ kotlin {
 
 kmpExt {
     withAndroidTarget()
-    withIOSTarget()
 }

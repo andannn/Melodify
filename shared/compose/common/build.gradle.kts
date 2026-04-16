@@ -7,7 +7,6 @@ plugins {
 
 kmpExt {
     withAndroidTarget()
-    withIOSTarget()
     withDesktopTarget()
 }
 
@@ -24,13 +23,6 @@ kotlin {
             implementation(libs.coil3.compose)
             implementation(libs.coil3.network.ktor3)
             implementation(libs.reorderable)
-        }
-
-        if (project.isConfigIOS()) {
-            iosMain.dependencies {
-                implementation(project(":shared:util:artwork-ios"))
-                implementation(project(":shared:syncer:scanner:platform-ios"))
-            }
         }
     }
 }

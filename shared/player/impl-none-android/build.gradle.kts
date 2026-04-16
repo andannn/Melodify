@@ -4,7 +4,6 @@ plugins {
 
 kmpExt {
     withDesktopTarget()
-    withIOSTarget()
 }
 
 kotlin {
@@ -16,13 +15,6 @@ kotlin {
         afterEvaluate {
             jvmMain.dependencies {
                 implementation(libs.vlcj)
-            }
-        }
-
-        if (project.isConfigIOS()) {
-            iosMain.dependencies {
-                implementation(project(":shared:player:platform-player-ios"))
-                implementation(project(":shared:network:service:siren"))
             }
         }
     }

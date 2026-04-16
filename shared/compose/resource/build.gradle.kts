@@ -9,7 +9,6 @@ plugins {
 
 kmpExt {
     withAndroidTarget()
-    withIOSTarget()
     withDesktopTarget()
 }
 

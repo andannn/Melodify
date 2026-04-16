@@ -8,7 +8,6 @@ plugins {
 kmpExt {
     withAndroidTarget()
     withDesktopTarget()
-    withIOSTarget()
 }
 
 kotlin {
@@ -21,11 +20,6 @@ kotlin {
             api(project(":shared:syncer:scanner:api"))
         }
 
-        if (project.isConfigIOS()) {
-            iosMain.dependencies {
-                implementation(project(":shared:syncer:scanner:platform-ios"))
-            }
-        }
         jvmMain.dependencies {
             // https://mvnrepository.com/artifact/org/jaudiotagger
             implementation(libs.jaudiotagger)

@@ -114,18 +114,6 @@ abstract class KmpExtension
             }
         }
 
-        fun withIOSTarget() {
-            if (!project.isConfigIOS()) return
-
-            project.extensions.configure<KotlinMultiplatformExtension> {
-                listOf(
-                    iosArm64(),
-                    iosSimulatorArm64(),
-                )
-                configCommonDependencyIfNeeded()
-            }
-        }
-
         private fun KotlinMultiplatformExtension.configCommonDependencyIfNeeded() {
             if (!alreadyConfigCommonDependency) {
                 configKMPCommonDependency()
