@@ -8,7 +8,6 @@ kmpExt {
     withAndroidTarget {
         enableDeviceTest = true
     }
-    withIOSTarget()
 }
 
 kotlin {

@@ -12,8 +12,6 @@ data object Desktop : Platform
 
 interface Mobile : Platform {
     data object Android : Mobile
-
-    data object IOS : Mobile
 }
 
 interface PlatformInfo {

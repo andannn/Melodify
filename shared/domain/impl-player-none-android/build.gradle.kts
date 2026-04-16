@@ -4,7 +4,6 @@ plugins {
 
 kmpExt {
     withDesktopTarget()
-    withIOSTarget()
 }
 
 kotlin {
