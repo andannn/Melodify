@@ -30,8 +30,6 @@ import com.andannn.melodify.shared.compose.usecase.item
 import com.andannn.melodify.shared.compose.usecase.playMediaItems
 import io.github.aakira.napier.Napier
 import io.github.andannn.popup.PopupHostState
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import melodify.shared.compose.resource.generated.resources.Res
 import melodify.shared.compose.resource.generated.resources.album_page_title

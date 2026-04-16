@@ -42,14 +42,20 @@ import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "GroupHeaderPresenter"
 
+data class GroupKeyWithParent(
+    val groupKey: GroupKey,
+    val parent: GroupKey?,
+) {
+    fun getKeys() = listOf(groupKey, parent).filterNotNull()
+}
+
 internal data class GroupInfo(
     val groupKey: GroupKey,
     val parentHeaderGroupKey: GroupKey? = null,
     val tabSortRule: TabSortRule?,
     val selectedTab: Tab?,
 ) {
-    val selection
-        get() = listOf(groupKey, parentHeaderGroupKey)
+    val selection = GroupKeyWithParent(groupKey, parentHeaderGroupKey)
 }
 
 @Composable
@@ -192,7 +198,7 @@ private class GroupHeaderPresenter(
     context(_: Repository, _: PopupHostState, _: SnackBarController, _: MediaFileDeleteHelper)
     private suspend fun handleGroupOption(
         optionItem: OptionItem,
-        groupKeys: List<GroupKey?>,
+        groupKeys: GroupKeyWithParent,
         tabSortRule: TabSortRule?,
         selectedTab: Tab?,
     ) {
@@ -200,7 +206,7 @@ private class GroupHeaderPresenter(
             selectedTab
                 ?.contentFlow(
                     sorts = tabSortRule?.sortOptions() ?: return,
-                    whereGroups = groupKeys.filterNotNull(),
+                    whereGroups = groupKeys.getKeys(),
                 )?.first() ?: emptyList()
         when (optionItem) {
             OptionItem.PLAY_NEXT -> {

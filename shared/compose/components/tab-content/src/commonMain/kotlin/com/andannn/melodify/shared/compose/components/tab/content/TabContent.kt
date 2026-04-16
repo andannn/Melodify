@@ -43,6 +43,7 @@ import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import com.andannn.melodify.shared.compose.components.tab.content.header.GroupHeaderContainer
+import com.andannn.melodify.shared.compose.components.tab.content.header.GroupKeyWithParent
 import com.andannn.melodify.shared.compose.components.tab.content.video.VideoListTileItemView
 import com.andannn.melodify.shared.compose.components.tab.content.widget.GroupConnection
 import com.andannn.melodify.shared.compose.components.tab.content.widget.GroupIndicator
@@ -56,6 +57,7 @@ fun TabContent(
     isInSelectingMode: Boolean = false,
     selectedMediaItemSet: Set<MediaItemModel> = emptySet(),
     onClickMediaItemWhenSelecting: (MediaItemModel) -> Unit = {},
+    onClickHeaderWhenSelecting: (GroupKeyWithParent) -> Unit = {},
 ) {
     LazyListContent(
         selectedTab = state.selectedTab,
@@ -81,7 +83,11 @@ fun TabContent(
                 groupKey = groupKey,
                 parentHeaderGroupKey = parentHeaderGroupKey,
                 onGroupItemClick = { groupKeyList ->
-                    state.eventSink.invoke(TabContentEvent.OnGroupItemClick(groupKeyList))
+                    if (isInSelectingMode) {
+                        onClickHeaderWhenSelecting(groupKeyList)
+                    } else {
+                        state.eventSink.invoke(TabContentEvent.OnGroupItemClick(groupKeyList))
+                    }
                 },
             )
         },

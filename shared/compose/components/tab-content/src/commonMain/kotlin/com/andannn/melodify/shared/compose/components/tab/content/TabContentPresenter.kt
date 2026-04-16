@@ -29,6 +29,7 @@ import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.model.LibraryDataSource
 import com.andannn.melodify.shared.compose.common.retainPresenter
 import com.andannn.melodify.shared.compose.common.stateInRetainedModel
+import com.andannn.melodify.shared.compose.components.tab.content.header.GroupKeyWithParent
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
@@ -100,7 +101,7 @@ sealed interface TabContentEvent {
     ) : TabContentEvent
 
     data class OnGroupItemClick(
-        val groupKeys: List<GroupKey?>,
+        val groupKeys: GroupKeyWithParent,
     ) : TabContentEvent
 }
 
@@ -223,7 +224,7 @@ private class TabContentPresenter(
 
     context(repository: Repository, popupHostState: PopupHostState)
     private suspend fun handleGroupItemClick(
-        groupKeys: List<GroupKey?>,
+        groupKeys: GroupKeyWithParent,
         tabSortRule: TabSortRule,
         selectedTab: Tab?,
     ) {
@@ -231,7 +232,7 @@ private class TabContentPresenter(
             selectedTab
                 ?.contentFlow(
                     sorts = tabSortRule.sortOptions(),
-                    whereGroups = groupKeys.filterNotNull(),
+                    whereGroups = groupKeys.getKeys(),
                 )?.first() ?: emptyList()
         if (items.isNotEmpty()) {
             playMedia(

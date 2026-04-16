@@ -40,7 +40,7 @@ internal fun GroupHeaderContainer(
     tabSortRule: TabSortRule?,
     groupKey: GroupKey,
     parentHeaderGroupKey: GroupKey? = null,
-    onGroupItemClick: (List<GroupKey?>) -> Unit = {},
+    onGroupItemClick: (GroupKeyWithParent) -> Unit = {},
 ) {
     val groupState =
         GroupInfo(

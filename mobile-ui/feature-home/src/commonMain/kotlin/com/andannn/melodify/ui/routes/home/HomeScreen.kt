@@ -97,6 +97,13 @@ internal fun HomeUiScreen(
                         modifier = Modifier,
                         isInSelectingMode = state is HomeState.MultiSelecting,
                         selectedMediaItemSet = selectedMediaSet,
+                        onClickHeaderWhenSelecting = {
+                            layoutState.eventSink.invoke(
+                                HomeLayoutEvent.OnClickHeaderWhenSelecting(
+                                    it,
+                                ),
+                            )
+                        },
                         onClickMediaItemWhenSelecting = {
                             layoutState.eventSink.invoke(
                                 HomeLayoutEvent.OnClickMediaItemWhenSelecting(

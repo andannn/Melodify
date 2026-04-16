@@ -17,12 +17,14 @@ import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.rememberCoroutineScope
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.domain.Repository
+import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
+import com.andannn.melodify.shared.compose.components.tab.content.header.GroupKeyWithParent
 import com.andannn.melodify.shared.compose.popup.LocalPopupHostState
 import com.andannn.melodify.shared.compose.popup.entry.option.MediaOptionDialogResult
 import com.andannn.melodify.shared.compose.popup.entry.option.OptionItem
@@ -107,6 +109,10 @@ internal sealed interface HomeLayoutEvent {
 
     data class OnClickMediaItemWhenSelecting(
         val mediaItem: MediaItemModel,
+    ) : HomeLayoutEvent
+
+    data class OnClickHeaderWhenSelecting(
+        val groupKeys: GroupKeyWithParent,
     ) : HomeLayoutEvent
 
     data object OnExitSelecting : HomeLayoutEvent
@@ -205,6 +211,9 @@ internal class HomeLayoutPresenter(
                             homeState.value = HomeState.MultiSelecting
                             selectedMediaSet.add(event.mediaItem)
                         }
+                    }
+
+                    is HomeLayoutEvent.OnClickHeaderWhenSelecting -> {
                     }
 
                     HomeLayoutEvent.OnExitSelecting -> {
