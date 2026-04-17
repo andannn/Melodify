@@ -43,20 +43,17 @@ import org.koin.mp.KoinPlatform.getKoin
 private const val TAG = "GroupHeaderPresenter"
 
 data class GroupKeyWithParent(
-    val groupKey: GroupKey,
-    val parent: GroupKey?,
+    val key: GroupKey,
+    val parentKey: GroupKey?,
 ) {
-    fun getKeys() = listOf(groupKey, parent).filterNotNull()
+    fun getKeys() = listOfNotNull(key, parentKey)
 }
 
 internal data class GroupInfo(
-    val groupKey: GroupKey,
-    val parentHeaderGroupKey: GroupKey? = null,
+    val groupKey: GroupKeyWithParent,
     val tabSortRule: TabSortRule?,
     val selectedTab: Tab?,
-) {
-    val selection = GroupKeyWithParent(groupKey, parentHeaderGroupKey)
-}
+)
 
 @Composable
 internal fun retainGroupHeaderPresenter(
@@ -105,7 +102,7 @@ private class GroupHeaderPresenter(
     init {
         retainedScope.launch {
             mediaItem =
-                when (val groupKey = groupInfo.groupKey) {
+                when (val groupKey = groupInfo.groupKey.key) {
                     is GroupKey.Artist -> repository.getArtistByArtistId(artistId = groupKey.artistId)
                     is GroupKey.Album -> repository.getAlbumByAlbumId(albumId = groupKey.albumId)
                     is GroupKey.Genre -> repository.getGenreByGenreId(genreId = groupKey.genreId)
@@ -140,7 +137,7 @@ private class GroupHeaderPresenter(
                             OptionPopup(
                                 options =
                                     buildList {
-                                        if (groupKey.canPinToHome()) add(OptionItem.ADD_TO_HOME_TAB)
+                                        if (groupKey.key.canPinToHome()) add(OptionItem.ADD_TO_HOME_TAB)
                                         add(OptionItem.PLAY_NEXT)
                                         add(OptionItem.ADD_TO_QUEUE)
                                         add(OptionItem.ADD_TO_PLAYLIST)
@@ -178,7 +175,7 @@ private class GroupHeaderPresenter(
                                         launch {
                                             handleGroupOption(
                                                 result.optionItem,
-                                                groupInfo.selection,
+                                                groupInfo.groupKey,
                                                 groupInfo.tabSortRule,
                                                 groupInfo.selectedTab,
                                             )

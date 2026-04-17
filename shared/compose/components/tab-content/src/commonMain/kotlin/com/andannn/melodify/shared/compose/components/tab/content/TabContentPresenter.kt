@@ -222,7 +222,7 @@ private class TabContentPresenter(
         }
     }
 
-    context(repository: Repository, popupHostState: PopupHostState)
+    context(repository: Repository)
     private suspend fun handleGroupItemClick(
         groupKeys: GroupKeyWithParent,
         tabSortRule: TabSortRule,

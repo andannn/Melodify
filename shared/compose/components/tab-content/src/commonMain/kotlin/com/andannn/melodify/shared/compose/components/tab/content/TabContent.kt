@@ -56,8 +56,9 @@ fun TabContent(
     modifier: Modifier = Modifier,
     isInSelectingMode: Boolean = false,
     selectedMediaItemSet: Set<MediaItemModel> = emptySet(),
+    selectedGroupSet: Set<GroupKeyWithParent> = emptySet(),
     onClickMediaItemWhenSelecting: (MediaItemModel) -> Unit = {},
-    onClickHeaderWhenSelecting: (GroupKeyWithParent) -> Unit = {},
+    onClickHeaderWhenSelecting: (Tab, GroupKeyWithParent) -> Unit = { _, _ -> },
 ) {
     LazyListContent(
         selectedTab = state.selectedTab,
@@ -77,17 +78,25 @@ fun TabContent(
             state.eventSink.invoke(TabContentEvent.OnShowMediaItemOption(it))
         },
         onBuildGroupHeader = { groupKey, parentHeaderGroupKey ->
+            val key =
+                remember(groupKey, parentHeaderGroupKey) {
+                    GroupKeyWithParent(groupKey, parentHeaderGroupKey)
+                }
+            val selected = selectedGroupSet.contains(key)
             GroupHeaderContainer(
+                selected = selected,
                 selectedTab = state.selectedTab,
                 tabSortRule = state.tabSortRule,
-                groupKey = groupKey,
-                parentHeaderGroupKey = parentHeaderGroupKey,
-                onGroupItemClick = { groupKeyList ->
+                groupKey = key,
+                onGroupItemClick = { groupKey ->
                     if (isInSelectingMode) {
-                        onClickHeaderWhenSelecting(groupKeyList)
+                        onClickHeaderWhenSelecting(state.selectedTab!!, groupKey)
                     } else {
-                        state.eventSink.invoke(TabContentEvent.OnGroupItemClick(groupKeyList))
+                        state.eventSink.invoke(TabContentEvent.OnGroupItemClick(groupKey))
                     }
+                },
+                onGroupItemLongClick = {
+                    onClickHeaderWhenSelecting(state.selectedTab!!, it)
                 },
             )
         },

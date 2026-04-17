@@ -17,8 +17,8 @@ import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.rememberCoroutineScope
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.domain.Repository
-import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MediaItemModel
+import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.NavigationRequestEventSink
@@ -34,13 +34,13 @@ import com.andannn.melodify.shared.compose.popup.snackbar.SnackBarController
 import com.andannn.melodify.shared.compose.usecase.addToNextPlay
 import com.andannn.melodify.shared.compose.usecase.addToPlaylist
 import com.andannn.melodify.shared.compose.usecase.addToQueue
+import com.andannn.melodify.shared.compose.usecase.contentFlow
 import com.andannn.melodify.shared.compose.usecase.deleteItems
 import com.andannn.melodify.shared.compose.usecase.playOrGoToBrowsable
 import io.github.andannn.popup.PopupHostState
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform.getKoin
-
-private const val TAG = "SearchWithContent"
 
 @Composable
 internal fun retainHomeLayoutPresenter(
@@ -73,6 +73,7 @@ internal data class HomeLayoutState
         val textFieldState: TextFieldState,
         val searchBarState: androidx.compose.material3.SearchBarState,
         val selectedMediaSet: Set<MediaItemModel>,
+        val selectedGroup: Set<GroupKeyWithParent>,
         val eventSink: (HomeLayoutEvent) -> Unit = {},
     )
 
@@ -112,7 +113,8 @@ internal sealed interface HomeLayoutEvent {
     ) : HomeLayoutEvent
 
     data class OnClickHeaderWhenSelecting(
-        val groupKeys: GroupKeyWithParent,
+        val selectedTab: Tab,
+        val groupKey: GroupKeyWithParent,
     ) : HomeLayoutEvent
 
     data object OnExitSelecting : HomeLayoutEvent
@@ -128,6 +130,7 @@ internal class HomeLayoutPresenter(
     private val repository: Repository,
 ) : RetainedPresenter<HomeLayoutState>() {
     private val homeState = mutableStateOf<HomeState>(HomeState.Library)
+    private val selectedGroupKeys = mutableStateSetOf<GroupKeyWithParent>()
     private val selectedMediaSet = mutableStateSetOf<MediaItemModel>()
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -152,6 +155,7 @@ internal class HomeLayoutPresenter(
             textFieldState = textFieldState,
             searchBarState = searchBarState,
             selectedMediaSet = selectedMediaSet,
+            selectedGroup = selectedGroupKeys,
             homeState = homeState.value,
         ) { event ->
             context(popupHostState, repository, navigationRequestEventSink) {
@@ -204,7 +208,7 @@ internal class HomeLayoutPresenter(
                             } else {
                                 selectedMediaSet.remove(event.mediaItem)
                                 if (selectedMediaSet.isEmpty()) {
-                                    homeState.value = HomeState.Library
+                                    exitMultiSelectingMode()
                                 }
                             }
                         } else {
@@ -214,11 +218,43 @@ internal class HomeLayoutPresenter(
                     }
 
                     is HomeLayoutEvent.OnClickHeaderWhenSelecting -> {
+                        retainedScope.launch {
+                            if (selectedGroupKeys.contains(event.groupKey)) {
+                                // remove selected item
+                                val state = homeState.value
+                                if (state !is HomeState.MultiSelecting) {
+                                    throw IllegalStateException("remove selected item ${event.groupKey} in $state.")
+                                } else {
+                                    selectedGroupKeys.remove(event.groupKey)
+                                    selectedMediaSet -=
+                                        event.selectedTab
+                                            .contentFlow(
+                                                emptyList(),
+                                                whereGroups = event.groupKey.getKeys(),
+                                            ).first()
+                                            .toSet()
+                                    if (selectedMediaSet.isEmpty()) {
+                                        exitMultiSelectingMode()
+                                    }
+                                }
+                            } else {
+                                homeState.value = HomeState.MultiSelecting
+                                selectedGroupKeys.add(event.groupKey)
+                                selectedMediaSet +=
+                                    event.selectedTab
+                                        .contentFlow(
+                                            emptyList(),
+                                            whereGroups = event.groupKey.getKeys(),
+                                        ).first()
+                                        .toSet()
+                            }
+                        }
                     }
 
                     HomeLayoutEvent.OnExitSelecting -> {
                         homeState.value = HomeState.Library
                         selectedMediaSet.clear()
+                        selectedGroupKeys.clear()
                     }
 
                     HomeLayoutEvent.OnMultiSelectionOptionClick -> {
@@ -234,6 +270,7 @@ internal class HomeLayoutPresenter(
     private fun exitMultiSelectingMode() {
         homeState.value = HomeState.Library
         selectedMediaSet.clear()
+        selectedGroupKeys.clear()
     }
 
     private suspend fun showMultiSelectionOption() {

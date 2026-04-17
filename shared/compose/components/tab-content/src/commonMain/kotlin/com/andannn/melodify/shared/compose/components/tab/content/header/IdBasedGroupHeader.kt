@@ -4,6 +4,7 @@
  */
 package com.andannn.melodify.shared.compose.components.tab.content.header
 
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -27,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabSortRule
 import com.andannn.melodify.shared.compose.common.Presenter
@@ -36,46 +36,54 @@ import com.andannn.melodify.shared.compose.common.widgets.MediaCoverImageWidget
 
 @Composable
 internal fun GroupHeaderContainer(
+    selected: Boolean,
     selectedTab: Tab?,
     tabSortRule: TabSortRule?,
-    groupKey: GroupKey,
-    parentHeaderGroupKey: GroupKey? = null,
+    groupKey: GroupKeyWithParent,
     onGroupItemClick: (GroupKeyWithParent) -> Unit = {},
+    onGroupItemLongClick: (GroupKeyWithParent) -> Unit = {},
 ) {
     val groupState =
         GroupInfo(
             groupKey = groupKey,
-            parentHeaderGroupKey = parentHeaderGroupKey,
             tabSortRule = tabSortRule,
             selectedTab = selectedTab,
         )
     GroupHeader(
+        selected = selected,
         groupInfo = groupState,
-        isPrimary = parentHeaderGroupKey == null,
+        isPrimary = groupKey.parentKey == null,
         onGroupHeaderClick = {
-            onGroupItemClick.invoke(groupState.selection)
+            onGroupItemClick.invoke(groupState.groupKey)
+        },
+        onGroupHeaderLongClick = {
+            onGroupItemLongClick.invoke(groupState.groupKey)
         },
     )
 }
 
 @Composable
 private fun GroupHeader(
+    selected: Boolean,
     isPrimary: Boolean,
     groupInfo: GroupInfo,
     modifier: Modifier = Modifier,
     presenter: Presenter<GroupHeaderState> = retainGroupHeaderPresenter(groupInfo),
     onGroupHeaderClick: () -> Unit = {},
+    onGroupHeaderLongClick: () -> Unit = {},
 ) {
     val state = presenter.present()
     HeaderInfo(
         modifier = modifier,
         isPrimary = isPrimary,
+        selected = selected,
         coverArtUri = state.cover,
         title = state.title,
         onOptionClick = {
             state.eventSink.invoke(GroupHeaderEvent.OnOptionClick)
         },
         onClick = onGroupHeaderClick,
+        onLongClick = onGroupHeaderLongClick,
     )
 }
 
@@ -84,14 +92,18 @@ private fun HeaderInfo(
     modifier: Modifier = Modifier,
     coverArtUri: String?,
     isPrimary: Boolean,
+    selected: Boolean = false,
     title: String = "",
     onOptionClick: () -> Unit = {},
     onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
 ) {
+    val color =
+        if (selected) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.surface
     Surface(
         modifier =
-            modifier.fillMaxWidth(),
-        onClick = onClick,
+            modifier.fillMaxWidth().combinedClickable(onClick = onClick, onLongClick = onLongClick),
+        color = color,
     ) {
         Row(
             modifier =
