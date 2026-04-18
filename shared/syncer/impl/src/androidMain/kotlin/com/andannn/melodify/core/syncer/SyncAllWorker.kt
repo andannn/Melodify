@@ -24,33 +24,20 @@ import com.andannn.melodify.core.datastore.UserSettingPreferences
 import io.github.aakira.napier.Napier
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-internal class SyncWorkHelperImpl(
-    private val setupProperty: SyncerSetupProperty,
-) : SyncWorkHelper {
+internal class SyncWorkHelperImpl : SyncWorkHelper {
     companion object {
         private const val PERIODIC_SYNC_WORK_NAME = "periodic_sync_work_name"
     }
 
     override fun registerPeriodicSyncWork(context: Context) {
-        val isNeedNetwork = setupProperty.needNetwork
-        val backgroundSyncIntervalHour = setupProperty.backgroundSyncIntervalHour
+        val backgroundSyncIntervalHour = 12L
 
         val periodicWorkRequest =
             PeriodicWorkRequestBuilder<SyncAllMediaWorker>(backgroundSyncIntervalHour, TimeUnit.HOURS)
                 .apply {
                     setInitialDelay(2, TimeUnit.HOURS)
-
-                    if (isNeedNetwork) {
-                        val networkConstraints =
-                            Constraints
-                                .Builder()
-                                .setRequiredNetworkType(NetworkType.CONNECTED)
-                                .build()
-                        setConstraints(networkConstraints)
-                    }
                 }.build()
 
         val workManager = WorkManager.getInstance(context = context)
@@ -87,14 +74,12 @@ internal class SyncAllMediaWorker(
 ) : CoroutineWorker(appContext, params),
     KoinComponent {
     private val mediaLibrarySyncer: MediaLibrarySyncer by inject()
-    private val syncerProperty: SyncerSetupProperty by inject()
     private val userPreferenceRepository: UserSettingPreferences by inject()
 
     override suspend fun doWork(): Result {
         Napier.d(tag = TAG) { "doWork" }
 
-        val needLocalMediaPermission = syncerProperty.needLocalMediaPermission
-        if (needLocalMediaPermission && !haveMediaPermission()) {
+        if (!haveMediaPermission()) {
             Napier.d(tag = TAG) { "no permission finish task." }
             return Result.failure()
         }

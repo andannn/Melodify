@@ -19,7 +19,6 @@ kotlin {
         commonMain.dependencies {
             api(project(":shared:syncer:api"))
             implementation(project(":shared:syncer:scanner:impl-local"))
-            implementation(project(":shared:syncer:scanner:impl-monster-siren"))
             implementation(project(":shared:database"))
             implementation(project(":shared:datastore"))
         }

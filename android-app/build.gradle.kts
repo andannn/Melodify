@@ -53,6 +53,7 @@ android {
 
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -76,23 +77,6 @@ android {
     }
     buildFeatures {
         buildConfig = true
-    }
-
-    flavorDimensions += "content"
-    productFlavors {
-        create("local") {
-            dimension = "content"
-
-            buildConfigField("String", "content", "\"local\"")
-        }
-
-        create("siren") {
-            dimension = "content"
-
-            buildConfigField("String", "content", "\"monster_siren\"")
-            applicationIdSuffix = ".siren"
-            versionNameSuffix = "-siren"
-        }
     }
 }
 

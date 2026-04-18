@@ -69,14 +69,12 @@ include(":shared:database")
 
 include(":shared:network:common")
 include(":shared:network:service:lrclib")
-include(":shared:network:service:siren")
 
 include(":shared:syncer:api")
 include(":shared:syncer:impl")
 include(":shared:syncer:scanner:api")
 include(":shared:syncer:scanner:common")
 include(":shared:syncer:scanner:impl-local")
-include(":shared:syncer:scanner:impl-monster-siren")
 
 include(":shared:platform")
 

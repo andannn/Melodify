@@ -6,5 +6,4 @@ package com.andannn.melodify.core.syncer
 
 enum class ScannerType {
     LOCAL,
-    MONSTER_SIREN,
 }

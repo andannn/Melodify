@@ -4,12 +4,11 @@ plugins {
 
 android {
     namespace = "com.andannn.melodify.ui.core.player"
-    compileSdk = libs.versions.android.compileSdk.get().toString().toInt()
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 }
 
 dependencies {
     api(project(":shared:player:common"))
-    implementation(project(":shared:network:service:siren"))
 
     implementation(project(":shared:player:sleep-timer"))
     implementation(libs.kotlinx.coroutines.guava)
