@@ -36,6 +36,7 @@ fun PipParamUpdateEffect(playerStateMonitoryRepository: PlayerStateMonitoryRepos
     val pipParamUpdater = remember { PipParamUpdater(activity) }
     val playerState by playerStateMonitoryRepository.observePlayerState().collectAsState(false)
     val playingItem by playerStateMonitoryRepository.getPlayingMediaStateFlow().collectAsState(null)
+    val isVideo = remember(playingItem) { playingItem is VideoItemModel }
     val videoSize =
         remember(playingItem) {
             when (val item = playingItem) {
@@ -50,7 +51,7 @@ fun PipParamUpdateEffect(playerStateMonitoryRepository: PlayerStateMonitoryRepos
         }
     LaunchedEffect(pipParamUpdater, videoSize, playerState) {
         delay(50)
-        pipParamUpdater.isAutoEnterEnabled = playerState == PlayerState.PLAYING
+        pipParamUpdater.isAutoEnterEnabled = isVideo && playerState == PlayerState.PLAYING
         if (videoSize != null) {
             pipParamUpdater.aspectRatio =
                 Rational(videoSize.width.toInt(), videoSize.height.toInt())
