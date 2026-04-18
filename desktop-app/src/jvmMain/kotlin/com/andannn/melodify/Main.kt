@@ -25,7 +25,7 @@ fun main() =
             modules(
                 listOf(
                     domainImplModule,
-                    syncerModule(ScannerType.LOCAL),
+                    syncerModule,
                     extraModel,
                 ),
             )
