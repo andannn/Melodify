@@ -117,10 +117,10 @@ private class GroupHeaderPresenter(
         Napier.d(tag = TAG) { "GroupHeaderPresenter present $groupKey" }
         val title =
             remember(mediaItem, groupKey) {
-                when (groupKey) {
-                    is GroupKey.Title -> "# " + groupKey.firstCharacterString
-                    is GroupKey.Year -> "# " + groupKey.year
-                    is GroupKey.BucketId -> "# " + groupKey.bucketDisplayName
+                when (groupKey.key) {
+                    is GroupKey.Title -> "# " + groupKey.key.firstCharacterString
+                    is GroupKey.Year -> "# " + groupKey.key.year
+                    is GroupKey.BucketId -> "# " + groupKey.key.bucketDisplayName
                     else -> mediaItem?.name ?: ""
                 }
             }
@@ -155,10 +155,10 @@ private class GroupHeaderPresenter(
                                 when (result.optionItem) {
                                     OptionItem.ADD_TO_HOME_TAB -> {
                                         launch {
-                                            if (groupInfo.groupKey is GroupKey.BucketId) {
+                                            if (groupInfo.groupKey.key is GroupKey.BucketId) {
                                                 pinToHomeTab(
-                                                    externalId = groupInfo.groupKey.bucketId.toString(),
-                                                    tabName = groupInfo.groupKey.bucketDisplayName,
+                                                    externalId = groupInfo.groupKey.key.bucketId.toString(),
+                                                    tabName = groupInfo.groupKey.key.bucketDisplayName,
                                                     tabKind = TabKind.VIDEO_BUCKET,
                                                 )
                                             } else {
