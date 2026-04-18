@@ -16,7 +16,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import com.andannn.melodify.core.network.service.siren.MonsterSirenService
 import com.andannn.melodify.player.SleepTimeCounterState
 import com.andannn.melodify.player.SleepTimerController
 import io.github.aakira.napier.Napier
@@ -36,7 +35,6 @@ class PlayerService :
     private val playerWrapper: ExoPlayerWrapper by inject()
 
     private val sleepCounterController: SleepTimerController by inject()
-    private val sirenService: MonsterSirenService by inject()
 
     private lateinit var session: MediaSession
 
@@ -60,22 +58,6 @@ class PlayerService :
             ResolvingDataSource.Factory(
                 upstreamDataSourceFactory,
             ) { dataSpec ->
-                val originalUrl = dataSpec.uri.toString()
-                if (originalUrl.contains("monster-siren.hypergryph.com")) {
-                    Napier.d(tag = TAG) { "resolve siren url: $originalUrl, currentThread: ${Thread.currentThread()}" }
-                    val sourceUrl =
-                        runBlocking {
-                            val cid = originalUrl.substringAfterLast("/")
-                            sirenService.getSourceUrlOfSong(cid).getOrNull()
-                        } ?: return@Factory dataSpec
-
-                    Napier.d(tag = TAG) { "setup source url $sourceUrl, currentThread: ${Thread.currentThread()}" }
-                    return@Factory dataSpec
-                        .buildUpon()
-                        .setUri(sourceUrl)
-                        .build()
-                }
-
                 dataSpec
             }
 

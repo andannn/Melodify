@@ -32,7 +32,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.andannn.melodify.core.syncer.MediaLibrarySyncRepository
 import com.andannn.melodify.core.syncer.SyncJobService
 import com.andannn.melodify.core.syncer.SyncWorkHelper
-import com.andannn.melodify.core.syncer.SyncerSetupProperty
 import com.andannn.melodify.domain.MediaFileDeleteHelper
 import com.andannn.melodify.domain.UserPreferenceRepository
 import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
@@ -74,7 +73,6 @@ class MainActivity : ComponentActivity() {
     private val mediaFileDeleteHelper: MediaFileDeleteHelper by inject()
     private val syncWorkHelper: SyncWorkHelper by inject()
     private val syncer: MediaLibrarySyncRepository by inject()
-    private val syncerSetupProperty: SyncerSetupProperty by inject()
 
     private val deleteHelper: MediaFileDeleteHelperImpl
         get() = mediaFileDeleteHelper as MediaFileDeleteHelperImpl
@@ -119,50 +117,43 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            if (syncerSetupProperty.needLocalMediaPermission) {
-                var permissionGranted by remember {
-                    mutableStateOf(isPermissionGranted())
-                }
-                val launcher =
-                    rememberLauncherForActivityResult(
-                        contract = ActivityResultContracts.RequestMultiplePermissions(),
-                        onResult = {
-                            it.forEach { (_, granted) ->
-                                if (!granted) {
-                                    finish()
-                                }
+            var permissionGranted by remember {
+                mutableStateOf(isPermissionGranted())
+            }
+            val launcher =
+                rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.RequestMultiplePermissions(),
+                    onResult = {
+                        it.forEach { (_, granted) ->
+                            if (!granted) {
+                                finish()
                             }
-                            permissionGranted = true
-                        },
-                    )
+                        }
+                        permissionGranted = true
+                    },
+                )
 
-                if (!permissionGranted) {
-                    LaunchedEffect(Unit) {
-                        runTimePermissions
-                            .filter { permission ->
-                                ContextCompat.checkSelfPermission(
-                                    this@MainActivity,
-                                    permission,
-                                ) == PackageManager.PERMISSION_DENIED
-                            }.let {
-                                Napier.d(tag = TAG) { "requesting permissions: $it" }
-                                launcher.launch(it.toTypedArray())
-                            }
-                    }
-                }
-
-                LaunchedEffect(permissionGranted) {
-                    if (permissionGranted && savedInstanceState == null) {
-                        syncIfNeeded()
-                    }
-                }
-            } else {
+            if (!permissionGranted) {
                 LaunchedEffect(Unit) {
-                    if (savedInstanceState == null) {
-                        syncIfNeeded()
-                    }
+                    runTimePermissions
+                        .filter { permission ->
+                            ContextCompat.checkSelfPermission(
+                                this@MainActivity,
+                                permission,
+                            ) == PackageManager.PERMISSION_DENIED
+                        }.let {
+                            Napier.d(tag = TAG) { "requesting permissions: $it" }
+                            launcher.launch(it.toTypedArray())
+                        }
                 }
             }
+
+            LaunchedEffect(permissionGranted) {
+                if (permissionGranted && savedInstanceState == null) {
+                    syncIfNeeded()
+                }
+            }
+
 
             if (uiState is MainUiState.Ready) {
                 PipParamUpdateEffect()
@@ -179,9 +170,9 @@ class MainActivity : ComponentActivity() {
                     } else {
                         CompositionLocalProvider(
                             LocalScreenOrientationController provides
-                                ScreenOrientationController(
-                                    this,
-                                ),
+                                    ScreenOrientationController(
+                                        this,
+                                    ),
                             LocalBrightnessController provides AndroidBrightnessController(this),
                             LocalSystemUiController provides AndroidSystemUiController(this),
                             LocalAppTitleHolder provides AppTitleHolder(resources.getString(R.string.app_name)),
