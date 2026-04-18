@@ -42,15 +42,18 @@ import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "GroupHeaderPresenter"
 
+data class GroupKeyWithParent(
+    val key: GroupKey,
+    val parentKey: GroupKey?,
+) {
+    fun getKeys() = listOfNotNull(key, parentKey)
+}
+
 internal data class GroupInfo(
-    val groupKey: GroupKey,
-    val parentHeaderGroupKey: GroupKey? = null,
+    val groupKey: GroupKeyWithParent,
     val tabSortRule: TabSortRule?,
     val selectedTab: Tab?,
-) {
-    val selection
-        get() = listOf(groupKey, parentHeaderGroupKey)
-}
+)
 
 @Composable
 internal fun retainGroupHeaderPresenter(
@@ -99,7 +102,7 @@ private class GroupHeaderPresenter(
     init {
         retainedScope.launch {
             mediaItem =
-                when (val groupKey = groupInfo.groupKey) {
+                when (val groupKey = groupInfo.groupKey.key) {
                     is GroupKey.Artist -> repository.getArtistByArtistId(artistId = groupKey.artistId)
                     is GroupKey.Album -> repository.getAlbumByAlbumId(albumId = groupKey.albumId)
                     is GroupKey.Genre -> repository.getGenreByGenreId(genreId = groupKey.genreId)
@@ -134,7 +137,7 @@ private class GroupHeaderPresenter(
                             OptionPopup(
                                 options =
                                     buildList {
-                                        if (groupKey.canPinToHome()) add(OptionItem.ADD_TO_HOME_TAB)
+                                        if (groupKey.key.canPinToHome()) add(OptionItem.ADD_TO_HOME_TAB)
                                         add(OptionItem.PLAY_NEXT)
                                         add(OptionItem.ADD_TO_QUEUE)
                                         add(OptionItem.ADD_TO_PLAYLIST)
@@ -172,7 +175,7 @@ private class GroupHeaderPresenter(
                                         launch {
                                             handleGroupOption(
                                                 result.optionItem,
-                                                groupInfo.selection,
+                                                groupInfo.groupKey,
                                                 groupInfo.tabSortRule,
                                                 groupInfo.selectedTab,
                                             )
@@ -192,7 +195,7 @@ private class GroupHeaderPresenter(
     context(_: Repository, _: PopupHostState, _: SnackBarController, _: MediaFileDeleteHelper)
     private suspend fun handleGroupOption(
         optionItem: OptionItem,
-        groupKeys: List<GroupKey?>,
+        groupKeys: GroupKeyWithParent,
         tabSortRule: TabSortRule?,
         selectedTab: Tab?,
     ) {
@@ -200,7 +203,7 @@ private class GroupHeaderPresenter(
             selectedTab
                 ?.contentFlow(
                     sorts = tabSortRule?.sortOptions() ?: return,
-                    whereGroups = groupKeys.filterNotNull(),
+                    whereGroups = groupKeys.getKeys(),
                 )?.first() ?: emptyList()
         when (optionItem) {
             OptionItem.PLAY_NEXT -> {

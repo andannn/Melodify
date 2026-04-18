@@ -43,6 +43,7 @@ import com.andannn.melodify.shared.compose.common.theme.MelodifyTheme
 import com.andannn.melodify.shared.compose.common.widgets.ExtraPaddingBottom
 import com.andannn.melodify.shared.compose.common.widgets.ListTileItemView
 import com.andannn.melodify.shared.compose.components.tab.content.header.GroupHeaderContainer
+import com.andannn.melodify.shared.compose.components.tab.content.header.GroupKeyWithParent
 import com.andannn.melodify.shared.compose.components.tab.content.video.VideoListTileItemView
 import com.andannn.melodify.shared.compose.components.tab.content.widget.GroupConnection
 import com.andannn.melodify.shared.compose.components.tab.content.widget.GroupIndicator
@@ -55,7 +56,9 @@ fun TabContent(
     modifier: Modifier = Modifier,
     isInSelectingMode: Boolean = false,
     selectedMediaItemSet: Set<MediaItemModel> = emptySet(),
+    selectedGroupSet: Set<GroupKeyWithParent> = emptySet(),
     onClickMediaItemWhenSelecting: (MediaItemModel) -> Unit = {},
+    onClickHeaderWhenSelecting: (Tab, GroupKeyWithParent) -> Unit = { _, _ -> },
 ) {
     LazyListContent(
         selectedTab = state.selectedTab,
@@ -75,13 +78,25 @@ fun TabContent(
             state.eventSink.invoke(TabContentEvent.OnShowMediaItemOption(it))
         },
         onBuildGroupHeader = { groupKey, parentHeaderGroupKey ->
+            val key =
+                remember(groupKey, parentHeaderGroupKey) {
+                    GroupKeyWithParent(groupKey, parentHeaderGroupKey)
+                }
+            val selected = selectedGroupSet.contains(key)
             GroupHeaderContainer(
+                selected = selected,
                 selectedTab = state.selectedTab,
                 tabSortRule = state.tabSortRule,
-                groupKey = groupKey,
-                parentHeaderGroupKey = parentHeaderGroupKey,
-                onGroupItemClick = { groupKeyList ->
-                    state.eventSink.invoke(TabContentEvent.OnGroupItemClick(groupKeyList))
+                groupKey = key,
+                onGroupItemClick = { groupKey ->
+                    if (isInSelectingMode) {
+                        onClickHeaderWhenSelecting(state.selectedTab!!, groupKey)
+                    } else {
+                        state.eventSink.invoke(TabContentEvent.OnGroupItemClick(groupKey))
+                    }
+                },
+                onGroupItemLongClick = {
+                    onClickHeaderWhenSelecting(state.selectedTab!!, it)
                 },
             )
         },

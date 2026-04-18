@@ -41,6 +41,7 @@ internal fun HomeUiScreen(
     val tabContentState = retainTabContentPresenter(selectedTab = tabUiState.selectedTab).present()
     val layoutState = presenter.present()
     val selectedMediaSet = layoutState.selectedMediaSet
+    val selectedGroup = layoutState.selectedGroup
     val scope = rememberCoroutineScope()
 
     NavigationEventHandler(
@@ -97,6 +98,15 @@ internal fun HomeUiScreen(
                         modifier = Modifier,
                         isInSelectingMode = state is HomeState.MultiSelecting,
                         selectedMediaItemSet = selectedMediaSet,
+                        selectedGroupSet = selectedGroup,
+                        onClickHeaderWhenSelecting = { selectedTab, groupKey ->
+                            layoutState.eventSink.invoke(
+                                HomeLayoutEvent.OnClickHeaderWhenSelecting(
+                                    selectedTab,
+                                    groupKey,
+                                ),
+                            )
+                        },
                         onClickMediaItemWhenSelecting = {
                             layoutState.eventSink.invoke(
                                 HomeLayoutEvent.OnClickMediaItemWhenSelecting(
