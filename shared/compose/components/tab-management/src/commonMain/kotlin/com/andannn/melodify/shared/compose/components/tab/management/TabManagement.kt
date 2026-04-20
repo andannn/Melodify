@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -122,37 +124,41 @@ private fun ReorderableCollectionItemScope.CustomTabItem(
     onDeleteItem: () -> Unit = {},
     onSwapFinish: () -> Unit = {},
 ) {
-    Row(
+    Surface(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
+        color = MaterialTheme.colorScheme.surface,
     ) {
-        Box(modifier = Modifier.size(48.dp)) {
-            IconButton(
-                modifier =
-                    Modifier
-                        .testTag("delete")
-                        .padding(start = 10.dp),
-                onClick = onDeleteItem,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    tint = Color.Red,
-                    contentDescription = "Delete",
-                )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(modifier = Modifier.size(48.dp)) {
+                IconButton(
+                    modifier =
+                        Modifier
+                            .testTag("delete")
+                            .padding(start = 10.dp),
+                    onClick = onDeleteItem,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        tint = Color.Red,
+                        contentDescription = "Delete",
+                    )
+                }
             }
+
+            Spacer(Modifier.width(12.dp))
+
+            ListTileItemView(
+                modifier = modifier,
+                actionType = ActionType.SWAP,
+                swapIconModifier =
+                    Modifier.draggableHandle(
+                        onDragStopped = onSwapFinish,
+                    ),
+                title = getCategoryResource(item),
+            )
         }
-
-        Spacer(Modifier.width(12.dp))
-
-        ListTileItemView(
-            modifier = modifier,
-            actionType = ActionType.SWAP,
-            swapIconModifier =
-                Modifier.draggableHandle(
-                    onDragStopped = onSwapFinish,
-                ),
-            title = getCategoryResource(item),
-        )
     }
 }
 

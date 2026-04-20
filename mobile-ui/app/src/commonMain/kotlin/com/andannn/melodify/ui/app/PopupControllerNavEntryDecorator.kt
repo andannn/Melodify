@@ -20,6 +20,7 @@ import com.andannn.melodify.shared.compose.popup.entry.sleep.timer.sleepTimerOpt
 import com.andannn.melodify.shared.compose.popup.entry.sort.rule.addChangeSortRuleDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.sort.rule.defaultSortRuleSettingDialogEntry
 import com.andannn.melodify.shared.compose.popup.entry.sync.syncStatusDialogEntry
+import com.andannn.melodify.ui.routes.home.addTabManagementDialogEntry
 import io.github.andannn.popup.DialogFactoryProvider
 import io.github.andannn.popup.PopupHost
 import io.github.andannn.popup.PopupHostState
@@ -49,6 +50,7 @@ private class PopupControllerNavEntryDecorator<T : Any> :
                     entryProvider =
                         entryProvider {
                             addMediaOptionDialogEntry()
+                            addTabManagementDialogEntry()
                             addChangeSortRuleDialogEntry()
                             newPlayListDialogEntry()
                             addToPlayListDialogEntry()

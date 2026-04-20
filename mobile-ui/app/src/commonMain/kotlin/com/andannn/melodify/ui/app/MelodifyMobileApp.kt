@@ -25,7 +25,6 @@ import com.andannn.melodify.ui.buildSavedStateConfiguration
 import com.andannn.melodify.ui.player.rememberPlayerProviderNavEntryDecorator
 import com.andannn.melodify.ui.routes.home.homeEntryBuilder
 import com.andannn.melodify.ui.routes.library.libraryEntryBuilder
-import com.andannn.melodify.ui.routes.tag.management.tabManagementEntryBuilder
 import kotlin.collections.listOf
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -75,7 +74,6 @@ fun MelodifyMobileApp(modifier: Modifier = Modifier) {
                 entryProvider {
                     homeEntryBuilder(navigator)
                     libraryEntryBuilder(navigator)
-                    tabManagementEntryBuilder(navigator)
                 },
         )
     }
