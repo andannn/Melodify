@@ -32,24 +32,20 @@ interface UserPreferenceRepository {
      * @param tabName name of new custom tab
      * @param tabKind kind of new custom tab
      */
-    suspend fun addNewCustomTab(
-        externalId: String,
-        tabName: String,
-        tabKind: TabKind,
-    )
+    suspend fun addNewCustomTab(externalId: String, tabName: String, tabKind: TabKind)
 
-    suspend fun isTabExist(
-        externalId: String,
-        tabName: String,
-        tabKind: TabKind,
-    ): Boolean
+    suspend fun isTabExist(externalId: String, tabName: String, tabKind: TabKind): Boolean
+
+    fun isTabExistFlow(externalId: String, tabName: String, tabKind: TabKind): Flow<Boolean>
 
     /**
      * delete custom tab
      *
-     * @param tab tab to delete
+     * @param tabId tab to delete
      */
-    suspend fun deleteCustomTab(tab: Tab)
+    suspend fun deleteCustomTabById(tabId: Long)
+
+    suspend fun deleteCustomTabByInfo(externalId: String, tabName: String, tabKind: TabKind)
 
     /**
      * add library path

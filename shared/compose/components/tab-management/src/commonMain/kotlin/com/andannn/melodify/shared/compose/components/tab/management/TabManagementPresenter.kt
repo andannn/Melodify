@@ -78,7 +78,7 @@ private class TabManagementPresenter(
                     retainedScope.launch {
                         val toDelete =
                             currentTabList[event.index]
-                        repository.deleteCustomTab(toDelete)
+                        repository.deleteCustomTabById(toDelete.tabId)
                     }
                 }
             }

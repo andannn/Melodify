@@ -836,7 +836,7 @@ abstract class AbstractDatabaseTest {
             dao.getCustomTabsFlow().first().let {
                 println(it)
             }
-            dao.isTabExist("external id", "name", "bbbbb").let {
+            dao.isTabExistFlow("external id", "name", "bbbbb").first().let {
                 assertEquals(true, it)
             }
         }

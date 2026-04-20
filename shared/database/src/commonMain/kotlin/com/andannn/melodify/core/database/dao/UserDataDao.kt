@@ -74,6 +74,14 @@ interface UserDataDao {
     @Query("DELETE FROM custom_tab_table WHERE custom_tab_id = :tabId")
     suspend fun deleteCustomTab(tabId: Long)
 
+    @Query("""
+        DELETE FROM custom_tab_table 
+            WHERE custom_tab_external_id = :externalId
+            AND custom_tab_name = :name
+            AND custom_tab_type = :type
+    """)
+    suspend fun deleteCustomTabByInfo(externalId: String, name: String, type: String)
+
     @Query(
         """
         SELECT EXISTS(
@@ -85,11 +93,7 @@ interface UserDataDao {
         )
     """,
     )
-    suspend fun isTabExist(
-        externalId: String,
-        name: String,
-        type: String,
-    ): Boolean
+    fun isTabExistFlow(externalId: String, name: String, type: String): Flow<Boolean>
 
     @Query(
         """
@@ -100,7 +104,7 @@ interface UserDataDao {
         )
     """,
     )
-    suspend fun isTabKindExist(type: String): Boolean
+    fun isTabKindExistFlow(type: String): Flow<Boolean>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSearchHistory(searchHistories: List<SearchHistoryEntity>)

@@ -148,7 +148,7 @@ suspend fun PlayListItemModel.delete() {
 
     Napier.d(tag = TAG) { "deletedTab $deletedTab" }
     if (deletedTab != null) {
-        repo.deleteCustomTab(deletedTab)
+        repo.deleteCustomTabById(deletedTab.tabId)
     }
 }
 

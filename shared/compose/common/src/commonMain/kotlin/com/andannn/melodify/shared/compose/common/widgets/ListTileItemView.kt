@@ -144,7 +144,7 @@ fun ListTileItemView(
             } else {
                 when (actionType) {
                     ActionType.NONE -> {
-                        Spacer(Modifier)
+                        Spacer(Modifier.size(48.dp))
                     }
 
                     ActionType.OPTION -> {

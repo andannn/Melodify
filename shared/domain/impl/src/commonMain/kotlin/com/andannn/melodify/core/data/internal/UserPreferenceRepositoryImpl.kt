@@ -78,16 +78,22 @@ internal class UserPreferenceRepositoryImpl(
         externalId: String,
         tabName: String,
         tabKind: TabKind,
-    ): Boolean =
+    ): Boolean = isTabExistFlow(externalId, tabName, tabKind).first()
+
+    override fun isTabExistFlow(
+        externalId: String,
+        tabName: String,
+        tabKind: TabKind
+    ): Flow<Boolean>  =
         when (tabKind) {
             TabKind.ALL_MUSIC,
             TabKind.ALL_VIDEO,
-            -> {
-                userDataDao.isTabKindExist(tabKind.toEntityName())
+                -> {
+                userDataDao.isTabKindExistFlow(tabKind.toEntityName())
             }
 
             else -> {
-                userDataDao.isTabExist(
+                userDataDao.isTabExistFlow(
                     externalId = externalId,
                     name = tabName,
                     type = tabKind.toEntityName(),
@@ -95,8 +101,20 @@ internal class UserPreferenceRepositoryImpl(
             }
         }
 
-    override suspend fun deleteCustomTab(tab: Tab) {
-        userDataDao.deleteCustomTab(tabId = tab.tabId)
+    override suspend fun deleteCustomTabById(tabId: Long) {
+        userDataDao.deleteCustomTab(tabId = tabId)
+    }
+
+    override suspend fun deleteCustomTabByInfo(
+        externalId: String,
+        tabName: String,
+        tabKind: TabKind
+    ) {
+        userDataDao.deleteCustomTabByInfo(
+            externalId = externalId,
+            name = tabName,
+            type = tabKind.toEntityName(),
+        )
     }
 
     override suspend fun addLibraryPath(path: String): Boolean {
