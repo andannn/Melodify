@@ -89,7 +89,7 @@ internal fun HomeUiScreen(
                     TabUi(
                         state = tabUiState,
                         onTabManagementClick = {
-                            navigator.navigateTo(Screen.TabManage)
+                            scope.launch { popupHostState.showDialog(TabManagementDialogID) }
                         },
                     )
 

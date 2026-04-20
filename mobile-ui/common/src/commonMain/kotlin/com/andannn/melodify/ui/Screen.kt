@@ -27,8 +27,6 @@ sealed interface Screen : NavKey {
     @Serializable
     object Search : Screen
 
-    @Serializable
-    object TabManage : Screen
 }
 
 fun buildSavedStateConfiguration() =
@@ -40,7 +38,6 @@ fun buildSavedStateConfiguration() =
                     subclass(Screen.Library::class, Screen.Library.serializer())
                     subclass(Screen.LibraryDetail::class, Screen.LibraryDetail.serializer())
                     subclass(Screen.Search::class, Screen.Search.serializer())
-                    subclass(Screen.TabManage::class, Screen.TabManage.serializer())
                 }
             }
     }

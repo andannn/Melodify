@@ -15,6 +15,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":shared:syncer:api"))
+            implementation(project(":shared:compose:components:tab-management"))
             implementation(project(":shared:compose:components:tab"))
             implementation(project(":shared:compose:components:play-control"))
             implementation(project(":shared:compose:components:tab-content"))
