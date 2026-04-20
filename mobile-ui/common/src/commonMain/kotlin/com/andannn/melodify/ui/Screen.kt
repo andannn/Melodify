@@ -26,7 +26,6 @@ sealed interface Screen : NavKey {
 
     @Serializable
     object Search : Screen
-
 }
 
 fun buildSavedStateConfiguration() =

@@ -157,7 +157,9 @@ private class GroupHeaderPresenter(
                                         launch {
                                             if (groupInfo.groupKey.key is GroupKey.BucketId) {
                                                 pinToHomeTab(
-                                                    externalId = groupInfo.groupKey.key.bucketId.toString(),
+                                                    externalId =
+                                                        groupInfo.groupKey.key.bucketId
+                                                            .toString(),
                                                     tabName = groupInfo.groupKey.key.bucketDisplayName,
                                                     tabKind = TabKind.VIDEO_BUCKET,
                                                 )

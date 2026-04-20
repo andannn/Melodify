@@ -126,7 +126,7 @@ private fun ReorderableCollectionItemScope.CustomTabItem(
 ) {
     Surface(
         modifier = modifier,
-        color = MaterialTheme.colorScheme.surface
+        color = MaterialTheme.colorScheme.surface,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
