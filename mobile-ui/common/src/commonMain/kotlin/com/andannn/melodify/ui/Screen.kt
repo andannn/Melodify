@@ -17,15 +17,9 @@ sealed interface Screen : NavKey {
     data object Home : Screen
 
     @Serializable
-    data object Library : Screen
-
-    @Serializable
     data class LibraryDetail(
         val datasource: LibraryDataSource,
     ) : Screen
-
-    @Serializable
-    object Search : Screen
 }
 
 fun buildSavedStateConfiguration() =
@@ -34,9 +28,7 @@ fun buildSavedStateConfiguration() =
             SerializersModule {
                 polymorphic(NavKey::class) {
                     subclass(Screen.Home::class, Screen.Home.serializer())
-                    subclass(Screen.Library::class, Screen.Library.serializer())
                     subclass(Screen.LibraryDetail::class, Screen.LibraryDetail.serializer())
-                    subclass(Screen.Search::class, Screen.Search.serializer())
                 }
             }
     }

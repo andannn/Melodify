@@ -66,9 +66,6 @@ internal fun HomeUiScreen(
         onMultiSelectionOptionClick = {
             layoutState.eventSink.invoke(HomeLayoutEvent.OnMultiSelectionOptionClick)
         },
-        onLibraryButtonClick = {
-            navigator.navigateTo(Screen.Library)
-        },
         onMenuSelected = { selected ->
             when (selected) {
                 MenuOption.DEFAULT_SORT -> {

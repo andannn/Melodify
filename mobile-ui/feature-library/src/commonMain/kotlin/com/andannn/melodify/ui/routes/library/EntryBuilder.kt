@@ -10,10 +10,6 @@ import com.andannn.melodify.ui.Navigator
 import com.andannn.melodify.ui.Screen
 
 fun EntryProviderScope<NavKey>.libraryEntryBuilder(navigator: Navigator) {
-    entry<Screen.Library> {
-        Library(navigator)
-    }
-
     entry<Screen.LibraryDetail> { screen ->
         LibraryDetail(
             navigator = navigator,
