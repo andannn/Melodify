@@ -34,9 +34,7 @@ fun PopupEntryProviderScope<PopupId<*>>.addTabManagementDialogEntry() {
 }
 
 @Composable
-private fun TabManagementDialogContent(
-    modifier: Modifier = Modifier
-) {
+private fun TabManagementDialogContent(modifier: Modifier = Modifier) {
     Surface(modifier = modifier) {
         Column {
             TabManagementUi(modifier = Modifier.weight(2f))

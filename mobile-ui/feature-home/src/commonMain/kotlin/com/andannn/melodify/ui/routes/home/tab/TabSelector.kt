@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.routes.home.tab
 
 import androidx.compose.foundation.layout.Column
@@ -45,7 +49,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun TabSelector(
     modifier: Modifier = Modifier,
-    state: TabSelectorState
+    state: TabSelectorState,
 ) {
     val selectedIndex by rememberUpdatedState(
         TabSelectorKind.entries.indexOf(state.selectedKind),
@@ -94,16 +98,15 @@ internal enum class TabSelectorKind {
 }
 
 @Composable
-internal fun retainTabSelectorPresenter(
-    repository: Repository = LocalRepository.current
-) = retainPresenter(repository) {
-    TabSelectorPresenter(repository)
-}
+internal fun retainTabSelectorPresenter(repository: Repository = LocalRepository.current) =
+    retainPresenter(repository) {
+        TabSelectorPresenter(repository)
+    }
 
 internal data class TabSelectorState(
     val selectedKind: TabSelectorKind,
     val currentTabs: List<TabSource>,
-    val eventSink: (TabSelectorUiEvent) -> Unit
+    val eventSink: (TabSelectorUiEvent) -> Unit,
 )
 
 internal data class TabSource(
@@ -113,19 +116,21 @@ internal data class TabSource(
 )
 
 internal sealed interface TabSelectorUiEvent {
-    data class OnChangeSelectedTabKind(val kind: TabSelectorKind) : TabSelectorUiEvent
+    data class OnChangeSelectedTabKind(
+        val kind: TabSelectorKind,
+    ) : TabSelectorUiEvent
 }
 
 internal class TabSelectorPresenter(
-    val repository: Repository
+    val repository: Repository,
 ) : RetainedPresenter<TabSelectorState>() {
-
     internal val selectedKindStateFlow = MutableStateFlow(TabSelectorKind.PRESET)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    internal val currentTabs = selectedKindStateFlow
-        .flatMapLatest { tabKind -> tabKind.contents(repository) }
-        .stateInRetainedModel(emptyList())
+    internal val currentTabs =
+        selectedKindStateFlow
+            .flatMapLatest { tabKind -> tabKind.contents(repository) }
+            .stateInRetainedModel(emptyList())
 
     @Composable
     override fun present(): TabSelectorState {
@@ -163,58 +168,64 @@ private fun TabSelectorKind.contents(repository: Repository): Flow<List<TabSourc
         TabSelectorKind.VIDEO_BUCKET -> TODO()
     }
 
-
-private fun presetTabsFlow(): Flow<List<TabSource>> = flow {
-    emit(
-        listOf(
-            TabSource(
-                tabKind = TabKind.ALL_MUSIC,
-                label = getString(Res.string.audio_page_title)
+private fun presetTabsFlow(): Flow<List<TabSource>> =
+    flow {
+        emit(
+            listOf(
+                TabSource(
+                    tabKind = TabKind.ALL_MUSIC,
+                    label = getString(Res.string.audio_page_title),
+                ),
+                TabSource(
+                    tabKind = TabKind.ALL_VIDEO,
+                    label = getString(Res.string.video_page_title),
+                ),
             ),
-            TabSource(
-                tabKind = TabKind.ALL_VIDEO,
-                label = getString(Res.string.video_page_title)
-            ),
         )
-    )
-}
-
-private fun mapMediaItemsToTabSource(items: List<MediaItemModel>) = items.map { item ->
-    when (item) {
-        is AlbumItemModel -> TabSource(
-            tabKind = TabKind.ALBUM,
-            externalId = item.id,
-            label = item.name
-        )
-
-        is ArtistItemModel -> TabSource(
-            tabKind = TabKind.ARTIST,
-            externalId = item.id,
-            label = item.name
-        )
-
-        is GenreItemModel -> TabSource(
-            tabKind = TabKind.GENRE,
-            externalId = item.id,
-            label = item.name
-        )
-
-        is PlayListItemModel -> TabSource(
-            tabKind = TabKind.GENRE,
-            externalId = item.id,
-            label = item.name
-        )
-
-        else -> error("Never")
     }
-}
 
-private fun TabSelectorKind.titleResource() = when (this) {
-    TabSelectorKind.PRESET -> Res.string.preset
-    TabSelectorKind.ALBUM -> Res.string.album_page_title
-    TabSelectorKind.ARTIST -> Res.string.artist_page_title
-    TabSelectorKind.GENRE -> Res.string.genre_title
-    TabSelectorKind.PLAYLIST -> Res.string.playlist_page_title
+private fun mapMediaItemsToTabSource(items: List<MediaItemModel>) =
+    items.map { item ->
+        when (item) {
+            is AlbumItemModel ->
+                TabSource(
+                    tabKind = TabKind.ALBUM,
+                    externalId = item.id,
+                    label = item.name,
+                )
+
+            is ArtistItemModel ->
+                TabSource(
+                    tabKind = TabKind.ARTIST,
+                    externalId = item.id,
+                    label = item.name,
+                )
+
+            is GenreItemModel ->
+                TabSource(
+                    tabKind = TabKind.GENRE,
+                    externalId = item.id,
+                    label = item.name,
+                )
+
+            is PlayListItemModel ->
+                TabSource(
+                    tabKind = TabKind.PLAYLIST,
+                    externalId = item.id,
+                    label = item.name,
+                )
+
+            else -> error("Never")
+        }
+    }
+
+private fun TabSelectorKind.titleResource() =
+    when (this) {
+        TabSelectorKind.PRESET -> Res.string.preset
+        TabSelectorKind.ALBUM -> Res.string.album_page_title
+        TabSelectorKind.ARTIST -> Res.string.artist_page_title
+        TabSelectorKind.GENRE -> Res.string.genre_title
+        TabSelectorKind.PLAYLIST -> Res.string.playlist_page_title
 // TODO: add bucket title
-    TabSelectorKind.VIDEO_BUCKET -> Res.string.playlist_page_title
-}
+        TabSelectorKind.VIDEO_BUCKET -> Res.string.playlist_page_title
+    }

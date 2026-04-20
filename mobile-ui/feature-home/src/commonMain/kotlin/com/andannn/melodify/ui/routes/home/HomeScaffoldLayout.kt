@@ -86,7 +86,7 @@ internal fun HomeScaffoldLayout(
                                 Icon(
                                     modifier = Modifier,
                                     imageVector = Icons.Rounded.MusicNote,
-                                    contentDescription = ""
+                                    contentDescription = "",
                                 )
                             }
                         }
@@ -123,8 +123,11 @@ internal fun HomeScaffoldLayout(
         },
     ) { padding ->
         Box(
-            modifier = Modifier.padding(padding).nestedScroll(scrollBehavior.nestedScrollConnection)
-                .fillMaxSize(),
+            modifier =
+                Modifier
+                    .padding(padding)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .fillMaxSize(),
         ) {
             content()
         }

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the Melodify project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.melodify.ui.routes.home.tab
 
 import androidx.compose.runtime.Composable
@@ -25,7 +29,7 @@ internal fun TabSourceItem(
         tabSource = tabSource,
         onItemClick = {
             state.eventSink.invoke(TabSourceItemUiEvent.OnToggleSelect)
-        }
+        },
     )
 }
 
@@ -41,7 +45,7 @@ private fun TabSourceItemContent(
         isActive = isSelected,
         actionType = ActionType.NONE,
         title = tabSource.label,
-        onItemClick = onItemClick
+        onItemClick = onItemClick,
     )
 }
 
@@ -55,7 +59,7 @@ internal fun retainTabSourceItemPresenter(
 
 internal data class TabSourceItemState(
     val isSelected: Boolean,
-    val eventSink: (TabSourceItemUiEvent) -> Unit
+    val eventSink: (TabSourceItemUiEvent) -> Unit,
 )
 
 internal sealed interface TabSourceItemUiEvent {
@@ -64,13 +68,15 @@ internal sealed interface TabSourceItemUiEvent {
 
 internal class TabSourceItemPresenter(
     val tabSource: TabSource,
-    val repository: Repository
+    val repository: Repository,
 ) : RetainedPresenter<TabSourceItemState>() {
-    val isSelectedFlow = repository.isTabExistFlow(
-        externalId = tabSource.externalId.toString(),
-        tabName = tabSource.label,
-        tabKind = tabSource.tabKind
-    ).stateInRetainedModel(false)
+    val isSelectedFlow =
+        repository
+            .isTabExistFlow(
+                externalId = tabSource.externalId.toString(),
+                tabName = tabSource.label,
+                tabKind = tabSource.tabKind,
+            ).stateInRetainedModel(false)
 
     @Composable
     override fun present(): TabSourceItemState {
@@ -83,13 +89,13 @@ internal class TabSourceItemPresenter(
                             repository.deleteCustomTabByInfo(
                                 externalId = tabSource.externalId.toString(),
                                 tabName = tabSource.label,
-                                tabKind = tabSource.tabKind
+                                tabKind = tabSource.tabKind,
                             )
                         } else {
                             repository.addNewCustomTab(
                                 externalId = tabSource.externalId.toString(),
                                 tabName = tabSource.label,
-                                tabKind = tabSource.tabKind
+                                tabKind = tabSource.tabKind,
                             )
                         }
                     }

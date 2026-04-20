@@ -74,13 +74,19 @@ interface UserDataDao {
     @Query("DELETE FROM custom_tab_table WHERE custom_tab_id = :tabId")
     suspend fun deleteCustomTab(tabId: Long)
 
-    @Query("""
+    @Query(
+        """
         DELETE FROM custom_tab_table 
             WHERE custom_tab_external_id = :externalId
             AND custom_tab_name = :name
             AND custom_tab_type = :type
-    """)
-    suspend fun deleteCustomTabByInfo(externalId: String, name: String, type: String)
+    """,
+    )
+    suspend fun deleteCustomTabByInfo(
+        externalId: String,
+        name: String,
+        type: String,
+    )
 
     @Query(
         """
@@ -93,7 +99,11 @@ interface UserDataDao {
         )
     """,
     )
-    fun isTabExistFlow(externalId: String, name: String, type: String): Flow<Boolean>
+    fun isTabExistFlow(
+        externalId: String,
+        name: String,
+        type: String,
+    ): Flow<Boolean>
 
     @Query(
         """

@@ -83,12 +83,12 @@ internal class UserPreferenceRepositoryImpl(
     override fun isTabExistFlow(
         externalId: String,
         tabName: String,
-        tabKind: TabKind
-    ): Flow<Boolean>  =
+        tabKind: TabKind,
+    ): Flow<Boolean> =
         when (tabKind) {
             TabKind.ALL_MUSIC,
             TabKind.ALL_VIDEO,
-                -> {
+            -> {
                 userDataDao.isTabKindExistFlow(tabKind.toEntityName())
             }
 
@@ -108,7 +108,7 @@ internal class UserPreferenceRepositoryImpl(
     override suspend fun deleteCustomTabByInfo(
         externalId: String,
         tabName: String,
-        tabKind: TabKind
+        tabKind: TabKind,
     ) {
         userDataDao.deleteCustomTabByInfo(
             externalId = externalId,
