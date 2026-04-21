@@ -81,7 +81,14 @@ data class GenreItemModel(
     override val trackCount: Int,
 ) : MediaItemModel
 
-data class PlayListItemModel constructor(
+data class VideoBucketModel(
+    override val id: Long,
+    override val name: String,
+    override val trackCount: Int,
+    override val artWorkUri: String? = null,
+) : MediaItemModel
+
+data class PlayListItemModel(
     override val id: Long,
     override val name: String,
     override val artWorkUri: String?,
@@ -96,11 +103,12 @@ val MediaItemModel.browsable
             is ArtistItemModel,
             is GenreItemModel,
             is PlayListItemModel,
-            -> true
+            is VideoBucketModel,
+                -> true
 
             is AudioItemModel,
             is VideoItemModel,
-            -> false
+                -> false
         }
 
 val MediaItemModel.extraUniqueId

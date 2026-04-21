@@ -14,7 +14,6 @@ import com.andannn.melodify.core.database.entity.PlayListItemEntryEntity
 import com.andannn.melodify.core.database.helper.paging.PagingProviderFactory
 import com.andannn.melodify.core.database.model.PlayListWithMediaCount
 import com.andannn.melodify.domain.PlayListRepository
-import com.andannn.melodify.domain.impl.mapToAudioItemModel
 import com.andannn.melodify.domain.impl.mapToMediaItemModel
 import com.andannn.melodify.domain.impl.toAppItem
 import com.andannn.melodify.domain.model.AudioItemModel

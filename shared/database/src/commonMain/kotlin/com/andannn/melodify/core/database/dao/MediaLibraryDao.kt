@@ -14,6 +14,7 @@ import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.model.AlbumWithMediaCount
 import com.andannn.melodify.core.database.model.ArtistWithMediaCount
 import com.andannn.melodify.core.database.model.LibraryContentSearchResult
+import com.andannn.melodify.core.database.model.VideoBucketWithCount
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -85,6 +86,35 @@ interface MediaLibraryDao {
     """,
     )
     fun getAllArtistFlow(): Flow<List<ArtistWithMediaCount>>
+
+    @Query(
+        """
+        SELECT 
+            v.video_bucket_id, 
+            v.video_bucket_display_name, 
+            COUNT(v.video_bucket_id) AS track_count
+        FROM library_video_table AS v
+        GROUP BY 
+            v.video_bucket_id,
+            v.video_bucket_display_name
+    """,
+    )
+    fun getAllBucketsFlow(): Flow<List<VideoBucketWithCount>>
+
+    @Query(
+        """
+        SELECT 
+            v.video_bucket_id, 
+            v.video_bucket_display_name, 
+            COUNT(v.video_bucket_id) AS track_count
+        FROM library_video_table AS v
+        WHERE v.video_bucket_id = :videoBucketId
+        GROUP BY 
+            v.video_bucket_id,
+            v.video_bucket_display_name
+    """,
+    )
+    fun getVideoBucketById(videoBucketId: Long) : Flow<VideoBucketWithCount>
 
     @Query("SELECT * FROM library_media_table WHERE media_genre_id = :genreId")
     fun getMediasByGenreIdFlow(genreId: String): Flow<List<AudioEntity>>

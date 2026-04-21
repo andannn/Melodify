@@ -83,6 +83,14 @@ fun LibraryDataSource.content(): Flow<List<MediaItemModel>> =
                     .filterIsInstance<SortOption.PlayListOption>(),
             )
         }
+
+        is LibraryDataSource.VideoBucketDetail -> repository.getVideoBucketItemsFlow(
+            id,
+            TabSortRule.Preset.Video.BucketNameASC
+                .sortOptions()
+                .filterIsInstance<SortOption.VideoOption>(),
+        )
+
     }
 
 context(repository: Repository)

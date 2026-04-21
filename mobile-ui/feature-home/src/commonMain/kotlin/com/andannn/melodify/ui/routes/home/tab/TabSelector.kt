@@ -25,6 +25,7 @@ import com.andannn.melodify.domain.model.GenreItemModel
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayListItemModel
 import com.andannn.melodify.domain.model.TabKind
+import com.andannn.melodify.domain.model.VideoBucketModel
 import com.andannn.melodify.shared.compose.common.LocalRepository
 import com.andannn.melodify.shared.compose.common.RetainedPresenter
 import com.andannn.melodify.shared.compose.common.retainPresenter
@@ -42,6 +43,7 @@ import melodify.shared.compose.resource.generated.resources.audio_page_title
 import melodify.shared.compose.resource.generated.resources.genre_title
 import melodify.shared.compose.resource.generated.resources.playlist_page_title
 import melodify.shared.compose.resource.generated.resources.preset
+import melodify.shared.compose.resource.generated.resources.video_buckets_page_title
 import melodify.shared.compose.resource.generated.resources.video_page_title
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -165,7 +167,9 @@ private fun TabSelectorKind.contents(repository: Repository): Flow<List<TabSourc
             repository.getAllPlayListFlow().map(::mapMediaItemsToTabSource)
         }
 
-        TabSelectorKind.VIDEO_BUCKET -> TODO()
+        TabSelectorKind.VIDEO_BUCKET -> {
+            repository.getAllVideoBucketsFlow().map(::mapMediaItemsToTabSource)
+        }
     }
 
 private fun presetTabsFlow(): Flow<List<TabSource>> =
@@ -215,6 +219,14 @@ private fun mapMediaItemsToTabSource(items: List<MediaItemModel>) =
                     label = item.name,
                 )
 
+            is VideoBucketModel -> {
+                TabSource(
+                    tabKind = TabKind.VIDEO_BUCKET,
+                    externalId = item.id,
+                    label = item.name,
+                )
+            }
+
             else -> error("Never")
         }
     }
@@ -226,6 +238,5 @@ private fun TabSelectorKind.titleResource() =
         TabSelectorKind.ARTIST -> Res.string.artist_page_title
         TabSelectorKind.GENRE -> Res.string.genre_title
         TabSelectorKind.PLAYLIST -> Res.string.playlist_page_title
-// TODO: add bucket title
-        TabSelectorKind.VIDEO_BUCKET -> Res.string.playlist_page_title
+        TabSelectorKind.VIDEO_BUCKET -> Res.string.video_buckets_page_title
     }

@@ -5,6 +5,7 @@
     <string name="album_page_title">Alben</string>
     <string name="artist_page_title">Interpreten</string>
     <string name="playlist_page_title">Wiedergabelisten</string>
+    <string name="video_buckets_page_title">Videoordner</string>
     <string name="genre_title">Genres</string>
     <string name="add_to_queue">Zur Warteschlange</string>
     <string name="delete">Löschen</string>

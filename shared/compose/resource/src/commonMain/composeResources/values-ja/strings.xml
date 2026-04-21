@@ -5,6 +5,7 @@
     <string name="album_page_title">アルバム</string>
     <string name="artist_page_title">アーティスト</string>
     <string name="playlist_page_title">プレイリスト</string>
+    <string name="video_buckets_page_title">動画フォルダ</string>
     <string name="genre_title">ジャンル</string>
     <string name="add_to_queue">再生キューに追加</string>
     <string name="delete">削除</string>

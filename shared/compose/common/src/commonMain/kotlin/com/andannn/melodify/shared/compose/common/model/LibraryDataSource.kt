@@ -10,6 +10,7 @@ import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.GenreItemModel
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayListItemModel
+import com.andannn.melodify.domain.model.VideoBucketModel
 import com.andannn.melodify.domain.model.VideoItemModel
 import kotlinx.serialization.Serializable
 
@@ -52,6 +53,10 @@ sealed interface LibraryDataSource {
     data class PlayListDetail(
         val id: Long,
     ) : LibraryDataSource
+    @Serializable
+    data class VideoBucketDetail(
+        val id: Long,
+    ) : LibraryDataSource
 }
 
 fun LibraryDataSource.browseable() =
@@ -68,28 +73,17 @@ fun LibraryDataSource.browseable() =
         is LibraryDataSource.ArtistDetail,
         is LibraryDataSource.GenreDetail,
         is LibraryDataSource.PlayListDetail,
+        is LibraryDataSource.VideoBucketDetail,
         -> false
     }
 
 fun MediaItemModel.asLibraryDataSource() =
     when (this) {
-        is AlbumItemModel -> {
-            LibraryDataSource.AlbumDetail(id)
-        }
-
-        is ArtistItemModel -> {
-            LibraryDataSource.ArtistDetail(id)
-        }
-
-        is GenreItemModel -> {
-            LibraryDataSource.GenreDetail(id)
-        }
-
-        is PlayListItemModel -> {
-            LibraryDataSource.PlayListDetail(
-                id,
-            )
-        }
+        is AlbumItemModel -> LibraryDataSource.AlbumDetail(id)
+        is ArtistItemModel -> LibraryDataSource.ArtistDetail(id)
+        is GenreItemModel -> LibraryDataSource.GenreDetail(id)
+        is PlayListItemModel -> LibraryDataSource.PlayListDetail(id)
+        is VideoBucketModel -> LibraryDataSource.VideoBucketDetail(id)
 
         is AudioItemModel -> {
             error("AudioItemModel should not be converted to DataSource")

@@ -5,6 +5,7 @@
     <string name="album_page_title">Álbum</string>
     <string name="artist_page_title">Artista</string>
     <string name="playlist_page_title">Listas de reproducción</string>
+    <string name="video_buckets_page_title">Carpetas de videos</string>
     <string name="genre_title">Género</string>
     <string name="add_to_queue">Añadir a la cola</string>
     <string name="delete">Eliminar</string>
