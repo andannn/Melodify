@@ -17,6 +17,7 @@ import com.andannn.melodify.core.database.model.ArtistWithMediaCount
 import com.andannn.melodify.core.database.model.AudioVideoMergedResult
 import com.andannn.melodify.core.database.model.LibraryContentSearchResult
 import com.andannn.melodify.core.database.model.PlayListWithMediaCount
+import com.andannn.melodify.core.database.model.VideoBucketWithCount
 import com.andannn.melodify.domain.model.AlbumItemModel
 import com.andannn.melodify.domain.model.ArtistItemModel
 import com.andannn.melodify.domain.model.AudioItemModel
@@ -29,6 +30,7 @@ import com.andannn.melodify.domain.model.PlayerState
 import com.andannn.melodify.domain.model.SortOption
 import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabSortRule
+import com.andannn.melodify.domain.model.VideoBucketModel
 import com.andannn.melodify.domain.model.VideoItemModel
 import kotlin.Long
 
@@ -53,6 +55,11 @@ fun List<VideoEntity>.mapToVideoItemModel() =
     }
 
 fun List<ArtistWithMediaCount>.mapToArtistItemModel() =
+    map {
+        it.toAppItem()
+    }
+
+fun List<VideoBucketWithCount>.mapToVideoBucketItemModel() =
     map {
         it.toAppItem()
     }
@@ -126,6 +133,13 @@ fun GenreEntity.toAppItem() =
         name = name ?: "V.A.",
         artWorkUri = null,
         trackCount = 0,
+    )
+
+fun VideoBucketWithCount.toAppItem() =
+    VideoBucketModel(
+        id = videoBucket.bucketId,
+        name = videoBucket.bucketDisplayName ?: "",
+        trackCount = count,
     )
 
 fun PlayListWithMediaCount.toAppItem() =
@@ -413,5 +427,6 @@ fun Int.toMediaType() =
         com.andannn.melodify.core.database.MediaType.GENRE -> MediaType.GENRE
         com.andannn.melodify.core.database.MediaType.VIDEO -> MediaType.VIDEO
         com.andannn.melodify.core.database.MediaType.PLAY_LIST -> MediaType.PLAYLIST
+        com.andannn.melodify.core.database.MediaType.VIDEO_BUCKET -> MediaType.VIDEO_BUCKET
         else -> error("Invalid")
     }

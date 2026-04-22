@@ -5,6 +5,7 @@
     <string name="album_page_title">Альбомы</string>
     <string name="artist_page_title">Исполнители</string>
     <string name="playlist_page_title">Плейлисты</string>
+    <string name="video_buckets_page_title">Папки с видео</string>
     <string name="genre_title">Жанры</string>
     <string name="add_to_queue">Добавить в очередь</string>
     <string name="delete">Удалить</string>

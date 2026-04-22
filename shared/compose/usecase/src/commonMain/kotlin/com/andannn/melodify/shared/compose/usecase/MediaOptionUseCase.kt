@@ -17,6 +17,7 @@ import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.PlayListItemModel
 import com.andannn.melodify.domain.model.Tab
 import com.andannn.melodify.domain.model.TabKind
+import com.andannn.melodify.domain.model.VideoBucketModel
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.popup.entry.alert.AlertDialogAction
 import com.andannn.melodify.shared.compose.popup.entry.alert.DuplicatedAlert
@@ -42,12 +43,10 @@ suspend fun MediaItemModel.pinToHomeTab() {
     val tabKind =
         when (this) {
             is AlbumItemModel -> TabKind.ALBUM
-
             is ArtistItemModel -> TabKind.ARTIST
-
             is GenreItemModel -> TabKind.GENRE
-
             is PlayListItemModel -> TabKind.PLAYLIST
+            is VideoBucketModel -> TabKind.VIDEO_BUCKET
 
             is AudioItemModel,
             is VideoItemModel,
@@ -148,7 +147,7 @@ suspend fun PlayListItemModel.delete() {
 
     Napier.d(tag = TAG) { "deletedTab $deletedTab" }
     if (deletedTab != null) {
-        repo.deleteCustomTab(deletedTab)
+        repo.deleteCustomTabById(deletedTab.tabId)
     }
 }
 

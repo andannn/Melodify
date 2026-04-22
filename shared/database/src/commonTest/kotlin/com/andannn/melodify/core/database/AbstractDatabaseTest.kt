@@ -836,7 +836,7 @@ abstract class AbstractDatabaseTest {
             dao.getCustomTabsFlow().first().let {
                 println(it)
             }
-            dao.isTabExist("external id", "name", "bbbbb").let {
+            dao.isTabExistFlow("external id", "name", "bbbbb").first().let {
                 assertEquals(true, it)
             }
         }
@@ -1364,6 +1364,9 @@ abstract class AbstractDatabaseTest {
                     ),
                 ),
             )
+            libraryDao.searchContentByKeyword("bucket").also {
+                assertEquals(1, it.count { it.contentType == MediaType.VIDEO_BUCKET })
+            }
             libraryDao.searchContentByKeyword("title").also {
                 assertEquals(2, it.count { it.contentType == MediaType.VIDEO })
                 assertEquals(2, it.count { it.contentType == MediaType.ARTIST })
@@ -1494,6 +1497,30 @@ abstract class AbstractDatabaseTest {
                 assertEquals(null, it)
             }
         }
+
+    @Test
+    fun `get all video bucket test`() =
+        runTest {
+            syncHelper.insertDummyData()
+
+            libraryDao.getAllBucketsFlow().first().let {
+                assertEquals(1, it.count())
+                assertEquals(12, it.first().videoBucket.bucketId)
+                assertEquals("bucket 1", it.first().videoBucket.bucketDisplayName)
+            }
+        }
+
+    @Test
+    fun `get video bucket by id test`() =
+        runTest {
+            syncHelper.insertDummyData()
+
+            libraryDao.getVideoBucketById(12).first().let {
+                assertEquals(2, it.count)
+                assertEquals(12, it.videoBucket.bucketId)
+                assertEquals("bucket 1", it.videoBucket.bucketDisplayName)
+            }
+        }
 }
 
 private suspend fun MediaLibrarySyncHelper.insertDummyData() {
@@ -1502,10 +1529,14 @@ private suspend fun MediaLibrarySyncHelper.insertDummyData() {
             listOf(
                 VideoEntity(
                     id = 5,
+                    bucketId = 12,
+                    bucketDisplayName = "bucket 1",
                     title = "title 1",
                 ),
                 VideoEntity(
                     id = 6,
+                    bucketId = 12,
+                    bucketDisplayName = "bucket 1",
                     title = "title 2",
                 ),
             ),

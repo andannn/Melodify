@@ -141,7 +141,7 @@ class TabUiPresenter(
                             context(repository, popupHostState, snackBarController) {
                                 when (result.optionItem) {
                                     OptionItem.DELETE_TAB -> {
-                                        repository.deleteCustomTab(tab)
+                                        repository.deleteCustomTabById(tab.tabId)
                                     }
 
                                     OptionItem.PLAY_NEXT -> {

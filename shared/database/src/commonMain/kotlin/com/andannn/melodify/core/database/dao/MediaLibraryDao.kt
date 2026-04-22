@@ -14,6 +14,7 @@ import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.model.AlbumWithMediaCount
 import com.andannn.melodify.core.database.model.ArtistWithMediaCount
 import com.andannn.melodify.core.database.model.LibraryContentSearchResult
+import com.andannn.melodify.core.database.model.VideoBucketWithCount
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -85,6 +86,27 @@ interface MediaLibraryDao {
     """,
     )
     fun getAllArtistFlow(): Flow<List<ArtistWithMediaCount>>
+
+    @Query(
+        """
+        SELECT vb.*, COUNT(m.video_bucket_id) AS track_count
+        FROM library_video_bucket_table AS vb
+        LEFT JOIN library_video_table AS m ON vb.video_bucket_id = m.video_bucket_id
+        GROUP BY vb.video_bucket_id
+    """,
+    )
+    fun getAllBucketsFlow(): Flow<List<VideoBucketWithCount>>
+
+    @Query(
+        """
+        SELECT vb.*, COUNT(m.video_bucket_id) AS track_count
+        FROM library_video_bucket_table AS vb
+        LEFT JOIN library_video_table AS m ON vb.video_bucket_id = m.video_bucket_id
+        WHERE vb.video_bucket_id = :videoBucketId
+        GROUP BY vb.video_bucket_id
+    """,
+    )
+    fun getVideoBucketById(videoBucketId: Long): Flow<VideoBucketWithCount>
 
     @Query("SELECT * FROM library_media_table WHERE media_genre_id = :genreId")
     fun getMediasByGenreIdFlow(genreId: String): Flow<List<AudioEntity>>
@@ -180,6 +202,14 @@ interface MediaLibraryDao {
         WHERE play_list_id IN (
             SELECT rowid FROM play_list_fts_table
             WHERE play_list_fts_table MATCH :keyword
+        )
+        
+        UNION
+
+        SELECT vb.video_bucket_id AS id, vb.video_bucket_display_name AS title, ${MediaType.VIDEO_BUCKET} AS type FROM library_video_bucket_table AS vb 
+        WHERE video_bucket_id IN (
+            SELECT rowid FROM library_video_bucket_fts_table
+            WHERE library_video_bucket_fts_table MATCH :keyword
         )
 
         ORDER BY type

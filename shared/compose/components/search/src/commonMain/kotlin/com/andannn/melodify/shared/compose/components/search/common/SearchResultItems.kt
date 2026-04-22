@@ -22,6 +22,7 @@ import melodify.shared.compose.resource.generated.resources.artist_page_title
 import melodify.shared.compose.resource.generated.resources.audio_page_title
 import melodify.shared.compose.resource.generated.resources.genre_title
 import melodify.shared.compose.resource.generated.resources.playlist_page_title
+import melodify.shared.compose.resource.generated.resources.video_buckets_page_title
 import melodify.shared.compose.resource.generated.resources.video_page_title
 import org.jetbrains.compose.resources.stringResource
 import kotlin.collections.component1
@@ -68,4 +69,5 @@ private fun MediaType.label() =
         MediaType.ARTIST -> Res.string.artist_page_title
         MediaType.GENRE -> Res.string.genre_title
         MediaType.PLAYLIST -> Res.string.playlist_page_title
+        MediaType.VIDEO_BUCKET -> Res.string.video_buckets_page_title
     }

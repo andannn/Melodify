@@ -18,6 +18,7 @@ import com.andannn.melodify.domain.model.GenreItemModel
 import com.andannn.melodify.domain.model.MediaItemModel
 import com.andannn.melodify.domain.model.MediaType
 import com.andannn.melodify.domain.model.PlayListItemModel
+import com.andannn.melodify.domain.model.VideoBucketModel
 import com.andannn.melodify.domain.model.VideoItemModel
 import com.andannn.melodify.shared.compose.common.LocalNavigationRequestEventSink
 import com.andannn.melodify.shared.compose.common.LocalRepository
@@ -95,6 +96,7 @@ private class FindMediaItemRetainedModel(
                     MediaType.ARTIST -> repository.getArtistByArtistId(artistId = contentId)
                     MediaType.GENRE -> repository.getGenreByGenreId(genreId = contentId)
                     MediaType.PLAYLIST -> repository.getPlayListById(playListId = contentId)
+                    MediaType.VIDEO_BUCKET -> repository.getVideoBucketById(videoBucketId = contentId)
                 }
             mediaItem.value = item
         }
@@ -142,21 +144,17 @@ private fun MediaLibraryItemContent(
     val cover = mediaItemModel?.artWorkUri ?: ""
     val subTitle =
         when (mediaItemModel) {
-            is AlbumItemModel -> {
+            is AlbumItemModel ->
                 stringResource(Res.string.track_count, mediaItemModel.trackCount)
-            }
 
-            is ArtistItemModel -> {
+            is ArtistItemModel ->
                 stringResource(Res.string.track_count, mediaItemModel.trackCount)
-            }
 
-            is AudioItemModel -> {
-                mediaItemModel.album
-            }
+            is AudioItemModel -> mediaItemModel.album
 
-            is GenreItemModel -> {
-                ""
-            }
+            is GenreItemModel -> ""
+
+            is VideoBucketModel -> ""
 
             is PlayListItemModel -> {
                 stringResource(

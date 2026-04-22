@@ -7,11 +7,12 @@ package com.andannn.melodify.ui.routes.home
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material3.AppBarWithSearch
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
@@ -35,7 +37,6 @@ internal fun HomeScaffoldLayout(
     modifier: Modifier = Modifier,
     homeLayoutState: HomeLayoutState,
     enabled: Boolean = true,
-    onLibraryButtonClick: () -> Unit = {},
     onMenuSelected: (MenuOption) -> Unit = {},
     onExitSelecting: () -> Unit = {},
     onMultiSelectionOptionClick: () -> Unit = {},
@@ -81,7 +82,13 @@ internal fun HomeScaffoldLayout(
                                 homeLayoutState.eventSink.invoke(HomeLayoutEvent.OnExitSearch)
                             })
                         } else {
-                            NavigateLibraryIcon(onClick = onLibraryButtonClick)
+                            Box(Modifier.size(48.dp), contentAlignment = Alignment.Center) {
+                                Icon(
+                                    modifier = Modifier,
+                                    imageVector = Icons.Rounded.MusicNote,
+                                    contentDescription = "",
+                                )
+                            }
                         }
                     },
                     actions = {
@@ -116,7 +123,11 @@ internal fun HomeScaffoldLayout(
         },
     ) { padding ->
         Box(
-            modifier = Modifier.padding(padding).nestedScroll(scrollBehavior.nestedScrollConnection).fillMaxSize(),
+            modifier =
+                Modifier
+                    .padding(padding)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .fillMaxSize(),
         ) {
             content()
         }
@@ -147,19 +158,5 @@ private fun DropDownMenuActionButton(
             onSelectItem(selected)
         },
         imageVector = Icons.Rounded.MoreVert,
-    )
-}
-
-@Composable
-private fun NavigateLibraryIcon(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    IconButton(
-        modifier = modifier,
-        onClick = onClick,
-        content = {
-            Icon(Icons.Rounded.Menu, contentDescription = "")
-        },
     )
 }

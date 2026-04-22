@@ -14,6 +14,7 @@ import com.andannn.melodify.domain.impl.mapToAlbumItemModel
 import com.andannn.melodify.domain.impl.mapToArtistItemModel
 import com.andannn.melodify.domain.impl.mapToAudioItemModel
 import com.andannn.melodify.domain.impl.mapToGenreItemModel
+import com.andannn.melodify.domain.impl.mapToVideoBucketItemModel
 import com.andannn.melodify.domain.impl.mapToVideoItemModel
 import com.andannn.melodify.domain.impl.toAppItem
 import com.andannn.melodify.domain.impl.toModel
@@ -21,6 +22,7 @@ import com.andannn.melodify.domain.model.AudioItemModel
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MatchedContentTitle
 import com.andannn.melodify.domain.model.SortOption
+import com.andannn.melodify.domain.model.VideoBucketModel
 import com.andannn.melodify.domain.model.VideoItemModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -130,6 +132,11 @@ internal class MediaContentRepositoryImpl(
         mediaLibraryDao
             .getAllArtistFlow()
             .map { it.mapToArtistItemModel() }
+
+    override fun getAllVideoBucketsFlow(): Flow<List<VideoBucketModel>> =
+        mediaLibraryDao
+            .getAllBucketsFlow()
+            .map { it.mapToVideoBucketItemModel() }
 
     override fun getAllGenreFlow() =
         mediaLibraryDao
@@ -250,6 +257,8 @@ internal class MediaContentRepositoryImpl(
     override suspend fun getArtistByArtistId(artistId: Long) = mediaLibraryDao.getArtistByArtistIdFlow(artistId).first()?.toAppItem()
 
     override suspend fun getGenreByGenreId(genreId: Long) = mediaLibraryDao.getGenreByGenreId(genreId)?.toAppItem()
+
+    override suspend fun getVideoBucketById(videoBucketId: Long) = mediaLibraryDao.getVideoBucketById(videoBucketId).first().toAppItem()
 
     override suspend fun getMatchedContentTitle(keyword: String): List<MatchedContentTitle> =
         mediaLibraryDao.searchContentByKeyword(keyword).map {

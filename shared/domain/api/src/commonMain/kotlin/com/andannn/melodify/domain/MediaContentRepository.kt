@@ -12,6 +12,7 @@ import com.andannn.melodify.domain.model.GenreItemModel
 import com.andannn.melodify.domain.model.GroupKey
 import com.andannn.melodify.domain.model.MatchedContentTitle
 import com.andannn.melodify.domain.model.SortOption
+import com.andannn.melodify.domain.model.VideoBucketModel
 import com.andannn.melodify.domain.model.VideoItemModel
 import kotlinx.coroutines.flow.Flow
 
@@ -67,6 +68,11 @@ interface MediaContentRepository {
      * Return flow of all artists
      */
     fun getAllArtistFlow(): Flow<List<ArtistItemModel>>
+
+    /**
+     * Return flow of all video buckets
+     */
+    fun getAllVideoBucketsFlow(): Flow<List<VideoBucketModel>>
 
     /**
      * Return flow of all genres
@@ -147,6 +153,11 @@ interface MediaContentRepository {
      * Return genre by genreId
      */
     suspend fun getGenreByGenreId(genreId: Long): GenreItemModel?
+
+    /**
+     * Return video bucket model by id
+     */
+    suspend fun getVideoBucketById(videoBucketId: Long): VideoBucketModel?
 
     /**
      * Search content by keyword
