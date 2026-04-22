@@ -44,11 +44,12 @@ import com.andannn.melodify.core.database.entity.TabCustomSettingEntity
 import com.andannn.melodify.core.database.entity.TabCustomSortRuleEntity
 import com.andannn.melodify.core.database.entity.TabEntity
 import com.andannn.melodify.core.database.entity.TabPresetDisplaySettingEntity
+import com.andannn.melodify.core.database.entity.VideoBucketEntity
+import com.andannn.melodify.core.database.entity.VideoBucketFtsEntity
 import com.andannn.melodify.core.database.entity.VideoEntity
 import com.andannn.melodify.core.database.entity.VideoFtsEntity
 import com.andannn.melodify.core.database.entity.VideoPlayProgressEntity
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 
 @Database(
     entities = [
@@ -60,6 +61,8 @@ import kotlinx.coroutines.IO
         ArtistEntity::class,
         GenreEntity::class,
         AudioEntity::class,
+        VideoBucketEntity::class,
+        VideoBucketFtsEntity::class,
         TabEntity::class,
         AlbumFtsEntity::class,
         ArtistFtsEntity::class,
@@ -92,8 +95,9 @@ import kotlinx.coroutines.IO
         AutoMigration(from = 20, to = 21, AutoMigration20To21Spec::class),
         AutoMigration(from = 21, to = 22, AutoMigration21To22Spec::class),
         AutoMigration(from = 22, to = 23, AutoMigration22To23Spec::class),
+        AutoMigration(from = 23, to = 24, AutoMigration23To24Spec::class),
     ],
-    version = 23,
+    version = 24,
 )
 @TypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)
@@ -131,6 +135,7 @@ internal fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() =
 internal val addInitialCustomTabsCallback =
     object : RoomDatabase.Callback() {
         override suspend fun onCreate(connection: SQLiteConnection) {
+            createVideoBucketSyncTrigger(connection)
             connection.execSQL("INSERT INTO custom_tab_table (custom_tab_type, sort_order) VALUES ('all_music', 0)")
         }
     }
@@ -382,4 +387,75 @@ internal class AutoMigration22To23Spec : AutoMigrationSpec {
         connection.execSQL("DROP TRIGGER IF EXISTS update_album_song_count_on_insert")
         connection.execSQL("DROP TRIGGER IF EXISTS update_album_song_count_on_delete")
     }
+}
+
+internal class AutoMigration23To24Spec : AutoMigrationSpec {
+    override suspend fun onPostMigrate(connection: SQLiteConnection) {
+        connection.execSQL("""
+            INSERT INTO library_video_bucket_table (
+                video_bucket_id, 
+                video_bucket_display_name
+            )
+            SELECT
+                v.video_bucket_id,
+                v.video_bucket_display_name 
+            FROM library_video_table AS v
+            GROUP BY
+                v.video_bucket_id,
+                v.video_bucket_display_name
+        """.trimIndent())
+        createVideoBucketSyncTrigger(connection)
+    }
+}
+
+private fun createVideoBucketSyncTrigger(connection: SQLiteConnection) {
+    connection.execSQL("""
+        CREATE TRIGGER IF NOT EXISTS trg_video_insert_bucket
+        AFTER INSERT ON library_video_table
+        BEGIN
+            INSERT OR REPLACE INTO library_video_bucket_table (
+                video_bucket_id,
+                video_bucket_display_name
+            )
+            VALUES (
+                NEW.video_bucket_id,
+                NEW.video_bucket_display_name
+            );
+        END;
+    """.trimIndent())
+    connection.execSQL("""
+        CREATE TRIGGER IF NOT EXISTS trg_video_delete_bucket
+        AFTER DELETE ON library_video_table
+        BEGIN
+            DELETE FROM library_video_bucket_table
+            WHERE video_bucket_id = OLD.video_bucket_id
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM library_video_table
+                  WHERE video_bucket_id = OLD.video_bucket_id
+              );
+        END;
+    """.trimIndent())
+    connection.execSQL("""
+        CREATE TRIGGER IF NOT EXISTS trg_video_update_bucket
+        AFTER UPDATE OF video_bucket_id, video_bucket_display_name ON library_video_table
+        BEGIN
+            INSERT OR REPLACE INTO library_video_bucket_table (
+                video_bucket_id,
+                video_bucket_display_name
+            )
+            VALUES (
+                NEW.video_bucket_id,
+                NEW.video_bucket_display_name
+            );
+
+            DELETE FROM library_video_bucket_table
+            WHERE video_bucket_id = OLD.video_bucket_id
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM library_video_table
+                  WHERE video_bucket_id = OLD.video_bucket_id
+              );
+        END;
+    """.trimIndent())
 }

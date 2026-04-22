@@ -89,29 +89,21 @@ interface MediaLibraryDao {
 
     @Query(
         """
-        SELECT 
-            v.video_bucket_id, 
-            v.video_bucket_display_name, 
-            COUNT(v.video_bucket_id) AS track_count
-        FROM library_video_table AS v
-        GROUP BY 
-            v.video_bucket_id,
-            v.video_bucket_display_name
+        SELECT vb.*, COUNT(m.video_bucket_id) AS track_count
+        FROM library_video_bucket_table AS vb
+        LEFT JOIN library_video_table AS m ON vb.video_bucket_id = m.video_bucket_id
+        GROUP BY vb.video_bucket_id
     """,
     )
     fun getAllBucketsFlow(): Flow<List<VideoBucketWithCount>>
 
     @Query(
         """
-        SELECT 
-            v.video_bucket_id, 
-            v.video_bucket_display_name, 
-            COUNT(v.video_bucket_id) AS track_count
-        FROM library_video_table AS v
-        WHERE v.video_bucket_id = :videoBucketId
-        GROUP BY 
-            v.video_bucket_id,
-            v.video_bucket_display_name
+        SELECT vb.*, COUNT(m.video_bucket_id) AS track_count
+        FROM library_video_bucket_table AS vb
+        LEFT JOIN library_video_table AS m ON vb.video_bucket_id = m.video_bucket_id
+        WHERE vb.video_bucket_id = :videoBucketId
+        GROUP BY vb.video_bucket_id
     """,
     )
     fun getVideoBucketById(videoBucketId: Long) : Flow<VideoBucketWithCount>

@@ -137,8 +137,8 @@ fun GenreEntity.toAppItem() =
 
 fun VideoBucketWithCount.toAppItem() =
     VideoBucketModel(
-        id = bucketId,
-        name = bucketDisplayName ?: "",
+        id = videoBucket.bucketId,
+        name = videoBucket.bucketDisplayName ?: "",
         trackCount = count,
     )
 
