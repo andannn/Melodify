@@ -7,6 +7,7 @@ package com.andannn.melodify.domain.model
 enum class MediaType {
     AUDIO,
     VIDEO,
+    VIDEO_BUCKET,
     ALBUM,
     ARTIST,
     GENRE,

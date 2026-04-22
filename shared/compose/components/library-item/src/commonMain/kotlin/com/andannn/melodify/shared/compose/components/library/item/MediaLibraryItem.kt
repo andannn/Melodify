@@ -96,6 +96,7 @@ private class FindMediaItemRetainedModel(
                     MediaType.ARTIST -> repository.getArtistByArtistId(artistId = contentId)
                     MediaType.GENRE -> repository.getGenreByGenreId(genreId = contentId)
                     MediaType.PLAYLIST -> repository.getPlayListById(playListId = contentId)
+                    MediaType.VIDEO_BUCKET -> repository.getVideoBucketById(videoBucketId = contentId)
                 }
             mediaItem.value = item
         }

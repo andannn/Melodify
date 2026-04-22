@@ -203,6 +203,14 @@ interface MediaLibraryDao {
             SELECT rowid FROM play_list_fts_table
             WHERE play_list_fts_table MATCH :keyword
         )
+        
+        UNION
+
+        SELECT vb.video_bucket_id AS id, vb.video_bucket_display_name AS title, ${MediaType.VIDEO_BUCKET} AS type FROM library_video_bucket_table AS vb 
+        WHERE video_bucket_id IN (
+            SELECT rowid FROM library_video_bucket_fts_table
+            WHERE library_video_bucket_fts_table MATCH :keyword
+        )
 
         ORDER BY type
     """,

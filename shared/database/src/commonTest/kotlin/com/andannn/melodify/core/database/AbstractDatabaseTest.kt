@@ -1364,6 +1364,9 @@ abstract class AbstractDatabaseTest {
                     ),
                 ),
             )
+            libraryDao.searchContentByKeyword("bucket").also {
+                assertEquals(1, it.count { it.contentType == MediaType.VIDEO_BUCKET })
+            }
             libraryDao.searchContentByKeyword("title").also {
                 assertEquals(2, it.count { it.contentType == MediaType.VIDEO })
                 assertEquals(2, it.count { it.contentType == MediaType.ARTIST })

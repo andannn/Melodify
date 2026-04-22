@@ -497,6 +497,13 @@ abstract class AbstractMigrationTest {
                         assertEquals("bucket 2",it.getText(0))
                         assertEquals(false, it.step())
                     }
+                migratedConnection.prepare(
+                    "SELECT 1 FROM library_video_bucket_fts_table"
+                )
+                    .use {
+                        it.step()
+                        assertEquals(1,it.getInt(0))
+                    }
                 migratedConnection.close()
             }
         }
