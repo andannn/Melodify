@@ -170,7 +170,6 @@ private fun MediaLibraryItemContent(
             null -> {
                 ""
             }
-
         }
 
     ListTileItemView(

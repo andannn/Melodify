@@ -391,7 +391,8 @@ internal class AutoMigration22To23Spec : AutoMigrationSpec {
 
 internal class AutoMigration23To24Spec : AutoMigrationSpec {
     override suspend fun onPostMigrate(connection: SQLiteConnection) {
-        connection.execSQL("""
+        connection.execSQL(
+            """
             INSERT INTO library_video_bucket_table (
                 video_bucket_id, 
                 video_bucket_display_name
@@ -403,13 +404,15 @@ internal class AutoMigration23To24Spec : AutoMigrationSpec {
             GROUP BY
                 v.video_bucket_id,
                 v.video_bucket_display_name
-        """.trimIndent())
+            """.trimIndent(),
+        )
         createVideoBucketSyncTrigger(connection)
     }
 }
 
 private fun createVideoBucketSyncTrigger(connection: SQLiteConnection) {
-    connection.execSQL("""
+    connection.execSQL(
+        """
         CREATE TRIGGER IF NOT EXISTS trg_video_insert_bucket
         AFTER INSERT ON library_video_table
         BEGIN
@@ -422,8 +425,10 @@ private fun createVideoBucketSyncTrigger(connection: SQLiteConnection) {
                 NEW.video_bucket_display_name
             );
         END;
-    """.trimIndent())
-    connection.execSQL("""
+        """.trimIndent(),
+    )
+    connection.execSQL(
+        """
         CREATE TRIGGER IF NOT EXISTS trg_video_delete_bucket
         AFTER DELETE ON library_video_table
         BEGIN
@@ -435,8 +440,10 @@ private fun createVideoBucketSyncTrigger(connection: SQLiteConnection) {
                   WHERE video_bucket_id = OLD.video_bucket_id
               );
         END;
-    """.trimIndent())
-    connection.execSQL("""
+        """.trimIndent(),
+    )
+    connection.execSQL(
+        """
         CREATE TRIGGER IF NOT EXISTS trg_video_update_bucket
         AFTER UPDATE OF video_bucket_id, video_bucket_display_name ON library_video_table
         BEGIN
@@ -457,5 +464,6 @@ private fun createVideoBucketSyncTrigger(connection: SQLiteConnection) {
                   WHERE video_bucket_id = OLD.video_bucket_id
               );
         END;
-    """.trimIndent())
+        """.trimIndent(),
+    )
 }

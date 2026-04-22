@@ -201,7 +201,7 @@ private suspend fun LibraryDataSource.getTitle(): String =
                 ?: ""
         }
 
-        is LibraryDataSource.VideoBucketDetail ->{
+        is LibraryDataSource.VideoBucketDetail -> {
             repository.getVideoById(id)?.name ?: ""
         }
     }

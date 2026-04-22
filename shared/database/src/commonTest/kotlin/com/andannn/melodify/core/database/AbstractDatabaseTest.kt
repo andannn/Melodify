@@ -1499,26 +1499,28 @@ abstract class AbstractDatabaseTest {
         }
 
     @Test
-    fun `get all video bucket test`() = runTest {
-        syncHelper.insertDummyData()
+    fun `get all video bucket test`() =
+        runTest {
+            syncHelper.insertDummyData()
 
-        libraryDao.getAllBucketsFlow().first().let {
-            assertEquals(1, it.count())
-            assertEquals(12, it.first().videoBucket.bucketId)
-            assertEquals("bucket 1", it.first().videoBucket.bucketDisplayName)
+            libraryDao.getAllBucketsFlow().first().let {
+                assertEquals(1, it.count())
+                assertEquals(12, it.first().videoBucket.bucketId)
+                assertEquals("bucket 1", it.first().videoBucket.bucketDisplayName)
+            }
         }
-    }
 
     @Test
-    fun `get video bucket by id test`() = runTest {
-        syncHelper.insertDummyData()
+    fun `get video bucket by id test`() =
+        runTest {
+            syncHelper.insertDummyData()
 
-        libraryDao.getVideoBucketById(12).first().let {
-            assertEquals(2, it.count)
-            assertEquals(12, it.videoBucket.bucketId)
-            assertEquals("bucket 1", it.videoBucket.bucketDisplayName)
+            libraryDao.getVideoBucketById(12).first().let {
+                assertEquals(2, it.count)
+                assertEquals(12, it.videoBucket.bucketId)
+                assertEquals("bucket 1", it.videoBucket.bucketDisplayName)
+            }
         }
-    }
 }
 
 private suspend fun MediaLibrarySyncHelper.insertDummyData() {

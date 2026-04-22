@@ -105,11 +105,11 @@ val MediaItemModel.browsable
             is GenreItemModel,
             is PlayListItemModel,
             is VideoBucketModel,
-                -> true
+            -> true
 
             is AudioItemModel,
             is VideoItemModel,
-                -> false
+            -> false
         }
 
 val MediaItemModel.extraUniqueId

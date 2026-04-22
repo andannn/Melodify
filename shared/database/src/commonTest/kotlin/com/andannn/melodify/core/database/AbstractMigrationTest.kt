@@ -482,27 +482,33 @@ abstract class AbstractMigrationTest {
         runTest {
             helper.let { helper ->
                 val newConnection = helper.createDatabase(23)
-                newConnection.execSQL("INSERT INTO library_video_table(video_id, video_bucket_id, video_bucket_display_name) VALUES (1, 10, 'bucket 1')")
-                newConnection.execSQL("INSERT INTO library_video_table(video_id, video_bucket_id, video_bucket_display_name) VALUES (2, 11, 'bucket 2')")
-                newConnection.execSQL("INSERT INTO library_video_table(video_id, video_bucket_id, video_bucket_display_name) VALUES (4, 11, 'bucket 2')")
+                newConnection.execSQL(
+                    "INSERT INTO library_video_table(video_id, video_bucket_id, video_bucket_display_name) VALUES (1, 10, 'bucket 1')",
+                )
+                newConnection.execSQL(
+                    "INSERT INTO library_video_table(video_id, video_bucket_id, video_bucket_display_name) VALUES (2, 11, 'bucket 2')",
+                )
+                newConnection.execSQL(
+                    "INSERT INTO library_video_table(video_id, video_bucket_id, video_bucket_display_name) VALUES (4, 11, 'bucket 2')",
+                )
                 newConnection.close()
                 val migratedConnection = helper.runMigrationsAndValidate(24, migrations = listOf())
-                migratedConnection.prepare(
-                    "SELECT v.video_bucket_display_name FROM library_video_bucket_table AS v"
-                )
-                    .use {
+                migratedConnection
+                    .prepare(
+                        "SELECT v.video_bucket_display_name FROM library_video_bucket_table AS v",
+                    ).use {
                         it.step()
-                        assertEquals("bucket 1",it.getText(0))
+                        assertEquals("bucket 1", it.getText(0))
                         it.step()
-                        assertEquals("bucket 2",it.getText(0))
+                        assertEquals("bucket 2", it.getText(0))
                         assertEquals(false, it.step())
                     }
-                migratedConnection.prepare(
-                    "SELECT 1 FROM library_video_bucket_fts_table"
-                )
-                    .use {
+                migratedConnection
+                    .prepare(
+                        "SELECT 1 FROM library_video_bucket_fts_table",
+                    ).use {
                         it.step()
-                        assertEquals(1,it.getInt(0))
+                        assertEquals(1, it.getInt(0))
                     }
                 migratedConnection.close()
             }

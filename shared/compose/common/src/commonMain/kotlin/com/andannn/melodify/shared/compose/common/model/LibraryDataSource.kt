@@ -53,6 +53,7 @@ sealed interface LibraryDataSource {
     data class PlayListDetail(
         val id: Long,
     ) : LibraryDataSource
+
     @Serializable
     data class VideoBucketDetail(
         val id: Long,

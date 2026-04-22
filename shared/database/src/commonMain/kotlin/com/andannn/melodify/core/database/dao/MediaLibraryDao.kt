@@ -106,7 +106,7 @@ interface MediaLibraryDao {
         GROUP BY vb.video_bucket_id
     """,
     )
-    fun getVideoBucketById(videoBucketId: Long) : Flow<VideoBucketWithCount>
+    fun getVideoBucketById(videoBucketId: Long): Flow<VideoBucketWithCount>
 
     @Query("SELECT * FROM library_media_table WHERE media_genre_id = :genreId")
     fun getMediasByGenreIdFlow(genreId: String): Flow<List<AudioEntity>>

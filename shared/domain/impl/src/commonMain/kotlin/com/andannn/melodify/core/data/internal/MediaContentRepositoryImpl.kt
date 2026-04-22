@@ -133,11 +133,10 @@ internal class MediaContentRepositoryImpl(
             .getAllArtistFlow()
             .map { it.mapToArtistItemModel() }
 
-    override fun getAllVideoBucketsFlow(): Flow<List<VideoBucketModel>> {
-       return mediaLibraryDao
+    override fun getAllVideoBucketsFlow(): Flow<List<VideoBucketModel>> =
+        mediaLibraryDao
             .getAllBucketsFlow()
             .map { it.mapToVideoBucketItemModel() }
-    }
 
     override fun getAllGenreFlow() =
         mediaLibraryDao
