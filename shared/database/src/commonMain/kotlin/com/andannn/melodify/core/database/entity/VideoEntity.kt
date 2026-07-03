@@ -60,4 +60,3 @@ data class VideoEntity constructor(
     @ColumnInfo(name = "video_deleted")
     val deleted: Int? = null,
 )
-

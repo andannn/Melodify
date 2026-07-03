@@ -13,22 +13,9 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.resources.Resources
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.AbstractEncoder
-import kotlinx.serialization.encoding.CompositeEncoder
-import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 import org.koin.dsl.module
 
-@OptIn(ExperimentalSerializationApi::class)
-object A : AbstractEncoder() {
-    init {
-    }
-    override val serializersModule: SerializersModule
-        get() = TODO("Not yet implemented")
-}
 val httpClientModule =
     module {
         single<HttpClient> {
