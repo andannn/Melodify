@@ -20,8 +20,6 @@ androidxDatastore = "1.2.1"
 okio = "3.17.0"
 androidxMedia3 = "1.10.1"
 androidxTestRunner = "1.7.0"
-googleService = "4.5.0"
-firebaseCrashlytics = "3.0.7"
 reorderable = "3.1.0"
 kotlinxSerializationJson = "1.11.0"
 ktor = "3.5.1"
@@ -39,7 +37,6 @@ spotless = "8.8.0"
 pagingCommonVersion = "3.5.0"
 lifecycle = "2.11.0"
 materialIconsExtended = "1.7.3"
-baselineprofile = "1.4.1"
 benchmarkMacroJunit4 = "1.4.1"
 uiautomator = "2.4.0"
 testRules = "1.7.0"
@@ -60,9 +57,6 @@ androidx-activity-compose = { group = "androidx.activity", name = "activity-comp
 androidx-palette = { module = "androidx.palette:palette", version.ref = "androidx-palette" }
 androidx-sqlite-api = { module = "androidx.sqlite:sqlite", version.ref = "sqlite" }
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 jaudiotagger = { module = "org:jaudiotagger", version.ref = "jaudiotagger" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
@@ -146,15 +140,11 @@ android-kmp-library-gradlePlugin = { group = "com.android.kotlin.multiplatform.l
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
-android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
-baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "androidGradlePlugin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
-google-service = { id = "com.google.gms.google-services", version.ref = "googleService" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 room3 = { id = "androidx.room3", version.ref = "androidxRoom3" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
