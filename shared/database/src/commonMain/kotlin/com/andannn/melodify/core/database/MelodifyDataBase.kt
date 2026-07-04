@@ -5,6 +5,7 @@
 package com.andannn.melodify.core.database
 
 import androidx.room3.AutoMigration
+import androidx.room3.ColumnTypeConverters
 import androidx.room3.ConstructedBy
 import androidx.room3.Database
 import androidx.room3.DeleteColumn
@@ -13,10 +14,8 @@ import androidx.room3.RenameColumn
 import androidx.room3.RenameTable
 import androidx.room3.RoomDatabase
 import androidx.room3.RoomDatabaseConstructor
-import androidx.room3.TypeConverters
 import androidx.room3.migration.AutoMigrationSpec
 import androidx.room3.migration.Migration
-import androidx.room3.util.foreignKeyCheck
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import com.andannn.melodify.core.database.dao.LyricDao
@@ -99,7 +98,7 @@ import kotlinx.coroutines.Dispatchers
     ],
     version = 24,
 )
-@TypeConverters(SortOptionJsonConverter::class)
+@ColumnTypeConverters(SortOptionJsonConverter::class)
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class MelodifyDataBase : RoomDatabase() {
     abstract fun getLyricDao(): LyricDao
