@@ -5,11 +5,11 @@
 package com.andannn.melodify.core.database.entity
 
 import androidx.room3.ColumnInfo
+import androidx.room3.ColumnTypeConverter
 import androidx.room3.Entity
 import androidx.room3.ForeignKey
 import androidx.room3.Index
 import androidx.room3.PrimaryKey
-import androidx.room3.TypeConverter
 
 @Entity(
     tableName = "sort_rule_table",
@@ -43,7 +43,7 @@ data class TabCustomSortRuleEntity(
 )
 
 internal class SortOptionJsonConverter {
-    @TypeConverter
+    @ColumnTypeConverter
     fun from(value: String?): SortOptionData? =
         value?.let {
             val (type, isAscending) = it.split(",")
@@ -53,7 +53,7 @@ internal class SortOptionJsonConverter {
             )
         }
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun to(date: SortOptionData?): String? =
         date?.let {
             listOf(it.type.toString(), it.isAscending.toString()).joinToString(",")
