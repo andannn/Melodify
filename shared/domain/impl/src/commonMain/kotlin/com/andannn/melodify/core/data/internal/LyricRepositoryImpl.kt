@@ -18,6 +18,15 @@ import kotlinx.coroutines.flow.flow
 
 private const val TAG = "LyricRepository"
 
+private val CLEANUP_PATTERNS = listOf("Remastered", "Deluxe", "Extended", "Album Version")
+
+private val cleanupRegex = Regex(
+    "\\s*\\(${CLEANUP_PATTERNS.joinToString("|") { Regex.escape(it) }}[^)]*\\)",
+    RegexOption.IGNORE_CASE,
+)
+
+internal fun String.cleanTrackMetadata(): String = cleanupRegex.replace(this, "").trim()
+
 internal class LyricRepositoryImpl(
     private val lyricDao: LyricDao,
     private val lyricLocalDataSource: LrclibService,
@@ -40,9 +49,9 @@ internal class LyricRepositoryImpl(
                 emit(LyricRepository.State.Loading)
                 val lyricDataResult =
                     lyricLocalDataSource.getLyric(
-                        trackName = trackName,
+                        trackName = trackName.cleanTrackMetadata(),
                         artistName = artistName,
-                        albumName = albumName,
+                        albumName = albumName?.cleanTrackMetadata(),
                         duration = duration,
                     )
                 val lyricData = lyricDataResult.getOrThrow()
