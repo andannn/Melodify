@@ -15,9 +15,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Melodify"
 include(":android-app")
-// include(":android-benchmark")
-
-include(":desktop-app")
 
 include(":mobile-ui:common")
 include(":mobile-ui:app")
@@ -54,12 +51,10 @@ include(":shared:compose:components:tab-management")
 include(":shared:domain:api")
 include(":shared:domain:shared")
 include(":shared:domain:impl")
-include(":shared:domain:impl-player-none-android")
 include(":shared:domain:impl-player-android")
 
 include(":shared:player:common")
 include(":shared:player:sleep-timer")
-include(":shared:player:impl-none-android")
 include(":shared:player:impl-android")
 
 include(":shared:datastore")

@@ -5,7 +5,6 @@ plugins {
 
 kmpExt {
     withAndroidTarget()
-    withDesktopTarget()
 }
 
 kotlin {
@@ -23,7 +22,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
         }
 
-        getByName("jvmAndAndroidMain").dependencies {
+        androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
         }
     }

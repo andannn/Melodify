@@ -34,10 +34,6 @@ abstract class KmpExtension
 
                 if (composeEnabled) {
                     sourceSets.apply {
-                        jvmMain.dependencies {
-                            implementation(libs.findLibrary("jetbrains.compose.desktop").get())
-                        }
-
                         jvmTest.dependencies {}
                     }
                 }
@@ -163,7 +159,6 @@ abstract class KmpExtension
                 commonTest.dependencies {
                     implementation(libs.findLibrary("kotlin.test").get())
                     implementation(libs.findLibrary("kotlinx.coroutines.test").get())
-                    implementation(libs.findLibrary("turbine").get())
                 }
             }
         }

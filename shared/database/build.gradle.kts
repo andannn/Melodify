@@ -36,14 +36,12 @@ kotlin {
             implementation(libs.okio)
         }
 
-        jvmMain.dependencies {
-            implementation(libs.androidx.sqlite.bundled)
-        }
-
         getByName("androidDeviceTest").dependencies {
             implementation(libs.room3.runtime)
         }
-
+        jvmMain.dependencies {
+            implementation(libs.androidx.sqlite.bundled)
+        }
         commonTest.dependencies {
             implementation(libs.room3.testing)
             implementation(libs.okio)

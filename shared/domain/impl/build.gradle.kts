@@ -5,7 +5,6 @@ plugins {
 
 kmpExt {
     withAndroidTarget()
-    withDesktopTarget()
 }
 
 kotlin {
@@ -17,9 +16,7 @@ kotlin {
         androidMain.dependencies {
             implementation(project(":shared:domain:impl-player-android"))
         }
-        jvmMain.dependencies {
-            implementation(project(":shared:domain:impl-player-none-android"))
-        }
+
         commonMain.dependencies {
             implementation(project(":shared:player:sleep-timer"))
             implementation(project(":shared:domain:shared"))
